@@ -1,0 +1,10 @@
+.gridBox {
+  display: flex;
+}
+.gridBox .gridBoxInner {
+  display: flex;
+  align-items: center;
+}
+.filterBox {
+  width: 100%;
+}
