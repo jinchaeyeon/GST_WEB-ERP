@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -10,6 +10,8 @@ import {
   GridExpandChangeEvent,
   GridItemChangeEvent,
   GridEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import {
   DropDownList,
@@ -63,7 +65,35 @@ import Itemlvl3DDL from "../components/DropDownLists/Itemlvl3DDL";
 import LocationDDL from "../components/DropDownLists/LocationDDL";
 //import {useAuth} from "../../hooks/auth";
 
-const MA_B7000: React.FC = () => {
+const convertDateToStr = (date: Date) => {
+  const year = date.getFullYear();
+  const month = ("0" + (1 + date.getMonth())).slice(-2);
+  const day = ("0" + date.getDate()).slice(-2);
+
+  return year + month + day;
+};
+
+const getToday = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = ("0" + (1 + date.getMonth())).slice(-2);
+  const day = ("0" + date.getDate()).slice(-2);
+
+  return year + month + day;
+};
+
+interface Iparameters {
+  procedureName: string;
+  pageNumber: number;
+  pageSize: number;
+  parameters: {};
+}
+const MA_B7000_ing: React.FC = () => {
+  const DATA_ITEM_KEY = "itemcd";
+  const DETAIL_DATA_ITEM_KEY = "lotnum";
+  const SELECTED_FIELD = "selected";
+  const idGetter = getter(DATA_ITEM_KEY);
+  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [dataState, setDataState] = React.useState<State>({
     skip: 0,
@@ -76,36 +106,27 @@ const MA_B7000: React.FC = () => {
     process([], dataState)
   );
 
-  const [detailDataResult, setDetailDataResult] = React.useState<DataResult>(
+  const [detail1DataResult, setDetail1DataResult] = React.useState<DataResult>(
     process([], dataState)
   );
 
-  //조회조건 초기값
-  const [filters, setFilters] = useState({
-    pgNum: 1,
-    pgSize: 10,
-    orgdiv: "01",
-    itemcd: "",
-    itemnm: "",
-    insiz: "",
-    yyyymm: new Date(),
-    itemacnt: "",
-    zeroyn: "%",
-    lotnum: "",
-    load_place: "",
-    heatno: "",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
-    useyn: "Y",
-    service_id: "",
-  });
+  const [detail2DataResult, setDetail2DataResult] = React.useState<DataResult>(
+    process([], dataState)
+  );
+
+  const [selectedState, setSelectedState] = React.useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [detailSelectedState, setDetailSelectedState] = React.useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   const itemacntVal = useRecoilValue(itemacntState);
   const itemlvl1Val = useRecoilValue(itemlvl1State);
   const itemlvl2Val = useRecoilValue(itemlvl2State);
   const itemlvl3Val = useRecoilValue(itemlvl3State);
-  const locationVal = useRecoilValue(locationState);
+  const [locationVal, setLocationVal] = useRecoilState(locationState);
 
   //조회조건 Input Change 함수
   const filterInputChange = (e: any) => {
@@ -126,15 +147,278 @@ const MA_B7000: React.FC = () => {
     });
   };
 
-  //조회조건 DropDownList Change 함수
-  const filterDropDownListChange = (e: DropDownListChangeEvent) => {
-    const { value, name } = e.target;
+  //조회조건 초기값
+  const [filters, setFilters] = useState({
+    pgNum: 1,
+    pgSize: 10,
+    work_type: "LIST",
+    orgdiv: "01",
+    itemcd: "",
+    itemnm: "",
+    insiz: "",
+    yyyymm: new Date(),
+    itemacnt: "",
+    zeroyn: "%",
+    lotnum: "",
+    load_place: "",
+    heatno: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
+    useyn: "Y",
+    service_id: "",
+  });
 
-    if (name) {
-      setFilters({
-        ...filters,
-        [name]: value,
-      });
+  const [detailFilters, setDetailFilters] = useState({
+    pgNum: 1,
+    pgSize: 10,
+    work_type: "DETAIL1",
+    orgdiv: "01",
+    itemcd: "",
+    itemnm: "",
+    insiz: "",
+    yyyymm: new Date(),
+    itemacnt: "",
+    zeroyn: "%",
+    lotnum: "",
+    load_place: "",
+    heatno: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
+    useyn: "Y",
+    service_id: "",
+  });
+
+  const [detailFilters2, setDetailFilters2] = useState({
+    pgNum: 1,
+    pgSize: 10,
+    work_type: "DETAIL2",
+    orgdiv: "01",
+    itemcd: "",
+    itemnm: "",
+    insiz: "",
+    yyyymm: new Date(),
+    itemacnt: "",
+    zeroyn: "%",
+    lotnum: "",
+    load_place: "",
+    heatno: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
+    useyn: "Y",
+    service_id: "",
+  });
+
+  const parameters: Iparameters = {
+    procedureName: "P_TEST_WEB_MA_B7000_Q",
+    pageNumber: filters.pgNum,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": locationVal.sub_code,
+      "@p_yyyymm": convertDateToStr(filters.yyyymm),
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_insiz": filters.insiz,
+      "@p_itemacnt": itemacntVal.sub_code,
+      "@p_zeroyn": filters.zeroyn,
+      "@p_lotnum": filters.lotnum,
+      "@p_load_place": filters.load_place,
+      "@p_heatno": filters.heatno,
+      "@p_itemlvl1": itemlvl1Val.sub_code,
+      "@p_itemlvl2": itemlvl2Val.sub_code,
+      "@p_itemlvl3": itemlvl3Val.sub_code,
+      "@p_useyn": filters.useyn,
+      "@p_service_id": filters.service_id,
+    },
+  };
+
+  const detailParameters: Iparameters = {
+    procedureName: "P_TEST_WEB_MA_B7000_Q",
+    pageNumber: detailFilters.pgNum,
+    pageSize: detailFilters.pgSize,
+    parameters: {
+      "@p_work_type": "DETAIL1",
+      "@p_orgdiv": detailFilters.orgdiv,
+      "@p_location": locationVal.sub_code,
+      "@p_yyyymm": convertDateToStr(detailFilters.yyyymm),
+      "@p_itemcd": detailFilters.itemcd,
+      "@p_itemnm": detailFilters.itemnm,
+      "@p_insiz": detailFilters.insiz,
+      "@p_itemacnt": detailFilters.itemacnt,
+      "@p_zeroyn": detailFilters.zeroyn,
+      "@p_lotnum": detailFilters.lotnum,
+      "@p_load_place": detailFilters.load_place,
+      "@p_heatno": detailFilters.heatno,
+      "@p_itemlvl1": itemlvl1Val.sub_code,
+      "@p_itemlvl2": itemlvl2Val.sub_code,
+      "@p_itemlvl3": itemlvl3Val.sub_code,
+      "@p_useyn": detailFilters.useyn,
+      "@p_service_id": detailFilters.service_id,
+    },
+  };
+
+  const detail2Parameters: Iparameters = {
+    procedureName: "P_TEST_WEB_MA_B7000_Q",
+    pageNumber: detailFilters2.pgNum,
+    pageSize: detailFilters2.pgSize,
+    parameters: {
+      "@p_work_type": "DETAIL2",
+      "@p_orgdiv": detailFilters2.orgdiv,
+      "@p_location": locationVal.sub_code,
+      "@p_yyyymm": convertDateToStr(detailFilters2.yyyymm),
+      "@p_itemcd": detailFilters.itemcd,
+      "@p_itemnm": detailFilters2.itemnm,
+      "@p_insiz": "",
+      "@p_itemacnt": detailFilters.itemacnt,
+      "@p_zeroyn": "",
+      "@p_lotnum": detailFilters2.lotnum,
+      "@p_load_place": "",
+      "@p_heatno": detailFilters2.heatno,
+      "@p_itemlvl1": "",
+      "@p_itemlvl2": "",
+      "@p_itemlvl3": "",
+      "@p_useyn": "",
+      "@p_service_id": detailFilters2.service_id,
+    },
+  };
+
+  const fetchMainGrid = async () => {
+    let data: any; // :CategoryDto[] = []
+
+    console.log("parameters");
+    console.log(parameters);
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      const totalRowsCnt = data.result.totalRowCount;
+      const rows = data.result.data.Rows;
+
+      setDataResult({ data: rows, total: totalRowsCnt });
+    }
+  };
+
+  const fetchDetailGrid1 = async () => {
+    let data: any; // :CategoryDto[] = []
+
+    console.log("detailParameters11");
+    console.log(detailParameters);
+    try {
+      data = await processApi<any>("procedure", detailParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      const totalRowsCnt = data.result.totalRowCount;
+      const rows = data.result.data.Rows;
+
+      setDetail1DataResult({ data: rows, total: totalRowsCnt });
+    }
+  };
+
+  const fetchDetailGrid2 = async () => {
+    let data: any; // :CategoryDto[] = []
+
+    console.log("detailParameters22");
+    console.log(detail2Parameters);
+    try {
+      data = await processApi<any>("procedure", detail2Parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      const totalRowsCnt = data.result.totalRowCount;
+      const rows = data.result.data.Rows;
+
+      setDetail2DataResult({ data: rows, total: totalRowsCnt });
+    }
+  };
+
+  useEffect(() => {
+    setLocationVal({ sub_code: "01", code_name: "본사" });
+    fetchMainGrid();
+  }, []);
+
+  useEffect(() => {
+    fetchDetailGrid1();
+  }, [detailFilters]);
+
+  useEffect(() => {
+    fetchDetailGrid2();
+  }, [detailFilters2]);
+
+  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setSelectedState(newSelectedState);
+    console.log("event");
+    console.log(event);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    console.log("selectedRowData.itemacnt");
+    console.log(selectedRowData.itemacnt);
+
+    setDetailFilters((prev) => ({
+      ...prev,
+      itemacnt: selectedRowData.itemacnt,
+      itemcd: selectedRowData.itemcd,
+      work_type: "DETAIL1",
+    }));
+
+    console.log(detailFilters.itemacnt);
+  };
+
+  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: detailSelectedState,
+      dataItemKey: DETAIL_DATA_ITEM_KEY,
+    });
+    setDetailSelectedState(newSelectedState);
+    console.log("event");
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    console.log("selectedRowData.itemacnt");
+    console.log(selectedRowData.itemacnt);
+
+    setDetailFilters2({
+      ...detailFilters2,
+      lotnum: selectedRowData.lotnum,
+      work_type: "DETAIL2",
+    });
+
+    console.log(detailFilters.itemacnt);
+  };
+
+  const scrollHandler = (event: GridEvent) => {
+    const e = event.nativeEvent;
+    if (
+      e.target.scrollTop + 10 >=
+      e.target.scrollHeight - e.target.clientHeight
+    ) {
+      alert(1);
+      // const moreData = availableProducts.splice(0, 10);
+      // if (moreData.length > 0) {
+      //   alert(2);
+      //   setGridData((oldData) => oldData.concat(moreData));
+      // }
     }
   };
 
@@ -160,114 +444,6 @@ const MA_B7000: React.FC = () => {
     );
 
     setDataResult({ data: newData, total: newData.length });
-  };
-
-  const getToday = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = ("0" + (1 + date.getMonth())).slice(-2);
-    const day = ("0" + date.getDate()).slice(-2);
-
-    return year + month + day;
-  };
-
-  const convertDateToStr = (date: Date) => {
-    const year = date.getFullYear();
-    const month = ("0" + (1 + date.getMonth())).slice(-2);
-    const day = ("0" + date.getDate()).slice(-2);
-
-    return year + month + day;
-  };
-
-  interface IformData {
-    procedureName: string;
-    pageNumber: number;
-    pageSize: number;
-    parameters: {};
-  }
-
-  const formData: IformData = {
-    procedureName: "P_TEST_WEB_MA_B7000_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": locationVal.sub_code,
-      "@p_yyyymm": convertDateToStr(filters.yyyymm),
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_itemacnt": itemacntVal.sub_code,
-      "@p_zeroyn": filters.zeroyn,
-      "@p_lotnum": filters.lotnum,
-      "@p_load_place": filters.load_place,
-      "@p_heatno": filters.heatno,
-      "@p_itemlvl1": itemlvl1Val.sub_code,
-      "@p_itemlvl2": itemlvl2Val.sub_code,
-      "@p_itemlvl3": itemlvl3Val.sub_code,
-      "@p_useyn": filters.useyn,
-      "@p_service_id": filters.service_id,
-    },
-  };
-
-  const fetchMainGrid = async () => {
-    let data: any; // :CategoryDto[] = []
-    console.log(formData);
-    console.log("formData");
-    try {
-      data = await processApi<any>("procedure", formData);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
-
-      setDataResult({ data: rows, total: totalRowsCnt });
-    }
-  };
-
-  // const fetchItemacnt = useCallback(async () => {
-  //   let data: any;
-  //   let queryStr =
-  //     "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA061' AND system_yn = 'Y'";
-
-  //   let query = {
-  //     query: "query?query=" + queryStr,
-  //   };
-
-  //   try {
-  //     data = await processApi<any>("query", query);
-  //   } catch (error) {
-  //     data = null;
-  //   }
-
-  //   if (data != null) {
-  //     const rows = data.result.data.Rows;
-  //     setItemacnts(rows);
-  //   }
-  // }, []);
-
-  React.useEffect(() => {
-    fetchMainGrid();
-    //  fetchItemacnt();
-  }, []);
-
-  const scrollHandler = (event: GridEvent) => {
-    const e = event.nativeEvent;
-    if (
-      e.target.scrollTop + 10 >=
-      e.target.scrollHeight - e.target.clientHeight
-    ) {
-      alert(1);
-      // const moreData = availableProducts.splice(0, 10);
-      // if (moreData.length > 0) {
-      //   alert(2);
-      //   setGridData((oldData) => oldData.concat(moreData));
-      // }
-    }
   };
 
   return (
@@ -465,11 +641,22 @@ const MA_B7000: React.FC = () => {
             //filterable={true}
             groupable={false}
             reorderable={true}
-            data={dataResult}
-            {...dataState}
+            //data={dataResult}
+            data={dataResult.data.map((item) => ({
+              ...item,
+              [SELECTED_FIELD]: selectedState[idGetter(item)],
+            }))}
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange}
             onDataStateChange={dataStateChange}
             onItemChange={itemChange}
             editField={editField}
+            {...dataState}
           >
             <GridColumn field="itemcd" title="품목코드" />
             <GridColumn field="itemnm" title="품목명" />
@@ -487,21 +674,32 @@ const MA_B7000: React.FC = () => {
         </ExcelExport>
       </GridContainer>
       <GridContainerWrap>
-        <GridContainer>
+        <GridContainer maxWidth="500px">
           <GridTitleContainer>
             <GridTitle>계정별LOT</GridTitle>
           </GridTitleContainer>
           <Grid
             style={{ height: "370px" }}
+            data={detail1DataResult.data.map((item) => ({
+              ...item,
+              [SELECTED_FIELD]: detailSelectedState[detailIdGetter(item)],
+            }))}
             sortable={true}
             groupable={false}
             reorderable={true}
-            data={detailDataResult}
-            {...dataState}
+            //data={detail1DataResult}
+            dataItemKey={DETAIL_DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onDetailSelectionChange}
             onDataStateChange={dataStateChange}
+            {...dataState}
           >
-            <GridColumn field="shipName" title="LOT NO" />
-            <GridColumn field="freight" title="재고수량" />
+            <GridColumn field="lotnum" title="LOT NO" />
+            <GridColumn field="stockqty" title="재고수량" />
           </Grid>
         </GridContainer>
         <GridContainer>
@@ -512,19 +710,19 @@ const MA_B7000: React.FC = () => {
             style={{ height: "370px" }}
             sortable={true}
             reorderable={true}
-            data={detailDataResult}
+            data={detail2DataResult}
             {...dataState}
             onDataStateChange={dataStateChange}
           >
-            <GridColumn field="ProductName" title="구분" />
-            <GridColumn field="ProductName" title="발생일자" />
-            <GridColumn field="UnitsInStock" title="기초재고수량" />
-            <GridColumn field="UnitsInStock" title="입고수량" />
-            <GridColumn field="UnitsInStock" title="출고수량" />
-            <GridColumn field="UnitsInStock" title="입고중량" />
-            <GridColumn field="ProductName" title="업체명" />
-            <GridColumn field="ProductName" title="관리번호" />
-            <GridColumn field="ProductName" title="비고" />
+            <GridColumn field="gubun" title="구분" />
+            <GridColumn field="indt" title="발생일자" />
+            <GridColumn field="baseqty" title="기초재고수량" />
+            <GridColumn field="inqty" title="입고수량" />
+            <GridColumn field="outqty" title="출고수량" />
+            <GridColumn field="inwgt" title="입고중량" />
+            <GridColumn field="custnm" title="업체명" />
+            <GridColumn field="recnum" title="관리번호" />
+            <GridColumn field="remark" title="비고" />
           </Grid>
         </GridContainer>
       </GridContainerWrap>
@@ -532,4 +730,4 @@ const MA_B7000: React.FC = () => {
   );
 };
 
-export default MA_B7000;
+export default MA_B7000_ing;

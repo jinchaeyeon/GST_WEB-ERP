@@ -58,8 +58,13 @@ export const GridContainerWrap = styled.div`
   display: flex;
 `;
 
-export const GridContainer = styled.div`
+type GridContainerType = {
+  maxWidth?: string;
+};
+
+export const GridContainer = styled.div<GridContainerType>`
   flex-direction: column;
+  max-width: ${(props) => props.maxWidth};
 
   .k-grid {
     margin: 5px;
