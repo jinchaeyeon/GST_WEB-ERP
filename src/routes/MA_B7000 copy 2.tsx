@@ -10,6 +10,7 @@ import {
   GridExpandChangeEvent,
   GridItemChangeEvent,
   GridEvent,
+  GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import {
   DropDownList,
@@ -63,7 +64,10 @@ import Itemlvl3DDL from "../components/DropDownLists/Itemlvl3DDL";
 import LocationDDL from "../components/DropDownLists/LocationDDL";
 //import {useAuth} from "../../hooks/auth";
 
-const MA_B7000: React.FC = () => {
+const MA_B70002: React.FC = () => {
+  const DATA_ITEM_KEY = "itemcd";
+  const SELECTED_FIELD = "selected";
+  const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [dataState, setDataState] = React.useState<State>({
     skip: 0,
@@ -71,10 +75,18 @@ const MA_B7000: React.FC = () => {
     //sort: [{ field: "customerID", dir: "asc" }],
     //group: [{ field: "itemacnt" }],
   });
-
-  const [dataResult, setDataResult] = React.useState<DataResult>(
-    process([], dataState)
+  const [data, setData] = React.useState<DataResult[]>(
+    [].map((dataItem: DataResult) =>
+      Object.assign({ selected: false }, dataItem)
+    )
   );
+  const [dataResult, setDataResult] = React.useState<DataResult>(
+    process(data, dataState)
+  );
+
+  const [selectedState, setSelectedState] = React.useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   const [detailDataResult, setDetailDataResult] = React.useState<DataResult>(
     process([], dataState)
@@ -254,6 +266,23 @@ const MA_B7000: React.FC = () => {
     fetchMainGrid();
     //  fetchItemacnt();
   }, []);
+
+  // const onSelectionChange = (event: GridSelectionChangeEvent) => {
+  //   const selectedState = getSelectedState({
+  //     event,
+  //     selectedState: this.state.selectedState,
+  //     dataItemKey: DATA_ITEM_KEY,
+  //   });
+
+  //   this.setState({ selectedState });
+
+  //   this.setState({
+  //     lotData: products.map((dataItem: Product) =>
+  //       Object.assign({ selected: true }, dataItem)
+  //     ),
+  //   });
+  //   console.log(Object.keys(this.state.selectedState));
+  // };
 
   const scrollHandler = (event: GridEvent) => {
     const e = event.nativeEvent;
@@ -465,11 +494,20 @@ const MA_B7000: React.FC = () => {
             //filterable={true}
             groupable={false}
             reorderable={true}
-            data={dataResult}
-            {...dataState}
+            //data={dataResult}
+            data={data.map((item) => ({
+              ...item,
+              [SELECTED_FIELD]: selectedState[idGetter(item)],
+            }))}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            //onSelectionChange={onSelectionChange}
             onDataStateChange={dataStateChange}
             onItemChange={itemChange}
             editField={editField}
+            {...dataState}
           >
             <GridColumn field="itemcd" title="품목코드" />
             <GridColumn field="itemnm" title="품목명" />
@@ -532,4 +570,4 @@ const MA_B7000: React.FC = () => {
   );
 };
 
-export default MA_B7000;
+export default MA_B70002;

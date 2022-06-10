@@ -1,13 +1,5 @@
 /* ============================ 기본 html css 리셋 ============================*/
-table {
-  border-spacing: 0;
-  border-collapse: collapse;
-}
-h1,
-h2,
-h3 {
-  margin: 0;
-}
+
 .k-button-text {
   display: flex;
   align-items: center;
@@ -19,9 +11,7 @@ h3 {
 #root > div {
 }
 /* ============================ 상단 (화면타이틀, 버튼) ============================ */
-#programTitle {
-  margin: 5px;
-}
+
 .title-box {
   display: flex;
   align-items: center;
@@ -64,8 +54,7 @@ h3 {
   padding: 5px;
 }
 
-#filterBox tr td input#f_itemcd,
-#filterBox tr td input#f_itemnm {
+#filterBox tr td.item-box input {
   width: 48%;
 }
 

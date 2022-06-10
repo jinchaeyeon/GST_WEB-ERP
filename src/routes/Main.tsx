@@ -1,20 +1,43 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 //import Movie from "../components/Movie";
+
+import { useApi } from "../hooks/api";
 
 function Main() {
   const [loading, setLoading] = useState(true);
   const [movies, setMovies] = useState([]);
+
+  const processApi = useApi();
+  const processTEST = useCallback(async () => {
+    //console.log("processLogin", formData);
+    try {
+      console.log("sstart");
+      const response = await processApi<any>("test");
+
+      console.log("response!!!");
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
   const getMovies = async () => {
-    const json = await (
-      await fetch(
-        `https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year`
-      )
-    ).json();
-    setMovies(json.data.movies);
+    console.log(2);
+    const json = await fetch(`125.141.105.80:50555/api/data/procedure`);
+
+    console.log(json);
+
+    const json2 = await json.json();
+
+    console.log(json2);
+    //setMovies(json);
     setLoading(false);
   };
   useEffect(() => {
-    getMovies();
+    console.log(1);
+    //getMovies();
+
+    processTEST();
   }, []);
   return (
     <div>
@@ -24,8 +47,9 @@ function Main() {
         </div>
       ) : (
         <div>
-          {movies.map((movie) => ( <div>1</div>
-           /* <Movie
+          {movies.map((movie) => (
+            <div>1</div>
+            /* <Movie
               key={movie.id}
               id={movie.id}
               year={movie.year}

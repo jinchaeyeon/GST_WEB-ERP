@@ -5,12 +5,31 @@ import {
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
 import { withRouter } from "react-router-dom";
+import styled from "styled-components";
+
+export const Wrapper = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+export const Gnv = styled.div`
+  min-width: 150px;
+  text-align: center;
+`;
+
+export const AppName = styled.h1`
+  font-size: 28px;
+  font-weight: 600;
+  padding: 10px 0;
+  border-right: 1px solid #ebebeb;
+`;
 
 const paths = [
   { path: "/", index: ".0" },
-  { path: "/MA_B7000", index: ".1" },
-  { path: "/about", index: ".2" },
-  { path: "/about/team", index: ".2.0" },
+  { index: ".1" },
+  { path: "/MA_B7000", index: ".1.0" },
+  { index: ".2" },
+  { path: "/SA_B2000", index: ".2.0" },
 ];
 
 const PanelBarNavContainer = (props: any) => {
@@ -28,29 +47,27 @@ const PanelBarNavContainer = (props: any) => {
   const selected = setSelectedIndex(props.location.pathname);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-      }}
-    >
-      <div>
+    <Wrapper>
+      <Gnv>
+        <AppName>GST ERP</AppName>
         <PanelBar selected={selected} expandMode={"single"} onSelect={onSelect}>
-          <PanelBarItem title={"Home"} route="/" />
-          <PanelBarItem title={"재고조회"} route="/MA_B7000" />
-          <PanelBarItem title={"About"} route="/about">
-            <PanelBarItem title={"Team"} route="/about/team" />
+          <PanelBarItem title={"Home"} href="/" route="/" />
+          <PanelBarItem title={"물류"}>
+            <PanelBarItem title={"재고조회"} route="/MA_B7000" />
+          </PanelBarItem>
+          <PanelBarItem title={"영업"}>
+            <PanelBarItem title={"수주처리"} route="/SA_B2000" />
           </PanelBarItem>
         </PanelBar>
-      </div>
+      </Gnv>
       <div
         style={{
-          paddingLeft: "10pt",
+          padding: "0 15px",
         }}
       >
         {props.children}
       </div>
-    </div>
+    </Wrapper>
   );
 };
 
