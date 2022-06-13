@@ -17,7 +17,7 @@ import {
   DropDownList,
   DropDownListChangeEvent,
 } from "@progress/kendo-react-dropdowns";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { Calendar, DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   IntlProvider,
@@ -63,6 +63,8 @@ import Itemlvl1DDL from "../components/DropDownLists/Itemlvl1DDL";
 import Itemlvl2DDL from "../components/DropDownLists/Itemlvl2DDL";
 import Itemlvl3DDL from "../components/DropDownLists/Itemlvl3DDL";
 import LocationDDL from "../components/DropDownLists/LocationDDL";
+import YearCalendar from "../components/YearCalendar";
+
 //import {useAuth} from "../../hooks/auth";
 
 const convertDateToStr = (date: Date) => {
@@ -481,7 +483,7 @@ const MA_B7000_ing: React.FC = () => {
                   defaultValue={filters.yyyymm}
                   format="yyyy"
                   onChange={filterInputChange}
-                  // calendar={CustomCalendar}
+                  calendar={YearCalendar}
                 />
               </td>
 
