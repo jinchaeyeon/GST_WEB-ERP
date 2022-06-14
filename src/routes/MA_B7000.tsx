@@ -3,33 +3,18 @@ import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
-  GridDetailRow,
-  GridToolbar,
-  GridDetailRowProps,
   GridDataStateChangeEvent,
-  GridExpandChangeEvent,
   GridItemChangeEvent,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
+  GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import {
-  DropDownList,
-  DropDownListChangeEvent,
-} from "@progress/kendo-react-dropdowns";
-import { Calendar, DatePicker } from "@progress/kendo-react-dateinputs";
+
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import {
-  IntlProvider,
-  load,
-  LocalizationProvider,
-  loadMessages,
-  IntlService,
-} from "@progress/kendo-react-intl";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import orders from "./orders.json";
-import { Order, CategoryDto } from "./interfaces";
 
 import {
   Title,
@@ -59,38 +44,16 @@ import {
   itemlvl3State,
   locationState,
 } from "../store/atoms";
+import { Iparameters } from "../store/types";
 import Itemlvl1DDL from "../components/DropDownLists/Itemlvl1DDL";
 import Itemlvl2DDL from "../components/DropDownLists/Itemlvl2DDL";
 import Itemlvl3DDL from "../components/DropDownLists/Itemlvl3DDL";
 import LocationDDL from "../components/DropDownLists/LocationDDL";
 import YearCalendar from "../components/YearCalendar";
-
+import { convertDateToStr } from "../components/CommonFunction";
 //import {useAuth} from "../../hooks/auth";
 
-const convertDateToStr = (date: Date) => {
-  const year = date.getFullYear();
-  const month = ("0" + (1 + date.getMonth())).slice(-2);
-  const day = ("0" + date.getDate()).slice(-2);
-
-  return year + month + day;
-};
-
-const getToday = () => {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = ("0" + (1 + date.getMonth())).slice(-2);
-  const day = ("0" + date.getDate()).slice(-2);
-
-  return year + month + day;
-};
-
-interface Iparameters {
-  procedureName: string;
-  pageNumber: number;
-  pageSize: number;
-  parameters: {};
-}
-const MA_B7000_ing: React.FC = () => {
+const MA_B7000: React.FC = () => {
   const DATA_ITEM_KEY = "itemcd";
   const DETAIL_DATA_ITEM_KEY = "lotnum";
   const SELECTED_FIELD = "selected";
@@ -101,10 +64,10 @@ const MA_B7000_ing: React.FC = () => {
     skip: 0,
     take: 20,
     //sort: [{ field: "customerID", dir: "asc" }],
-    //group: [{ field: "itemacnt" }],
+    group: [{ field: "itemacnt" }],
   });
 
-  const [dataResult, setDataResult] = React.useState<DataResult>(
+  const [mainDataResult, setMainDataResult] = React.useState<DataResult>(
     process([], dataState)
   );
 
@@ -124,34 +87,37 @@ const MA_B7000_ing: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
+  const [mainPgNum, setMainPgNum] = useState(1);
+  const [detail1PgNum, setDetail1PgNum] = useState(1);
+  const [detail2PgNum, setDetail2PgNum] = useState(1);
+
   const itemacntVal = useRecoilValue(itemacntState);
   const itemlvl1Val = useRecoilValue(itemlvl1State);
   const itemlvl2Val = useRecoilValue(itemlvl2State);
   const itemlvl3Val = useRecoilValue(itemlvl3State);
   const [locationVal, setLocationVal] = useRecoilState(locationState);
 
-  //조회조건 Input Change 함수
+  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters({
-      ...filters,
+    setFilters((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
-  //조회조건 Radio button Change 함수
+  //조회조건 Radio button Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: RadioButtonChangeEvent) => {
     const name = e.syntheticEvent.currentTarget.name;
     const value = e.value;
-    setFilters({
-      ...filters,
+    setFilters((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgNum: 1,
     pgSize: 10,
     work_type: "LIST",
     orgdiv: "01",
@@ -171,8 +137,7 @@ const MA_B7000_ing: React.FC = () => {
     service_id: "",
   });
 
-  const [detailFilters, setDetailFilters] = useState({
-    pgNum: 1,
+  const [detailFilters1, setDetailFilters1] = useState({
     pgSize: 10,
     work_type: "DETAIL1",
     orgdiv: "01",
@@ -193,7 +158,6 @@ const MA_B7000_ing: React.FC = () => {
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
-    pgNum: 1,
     pgSize: 10,
     work_type: "DETAIL2",
     orgdiv: "01",
@@ -213,14 +177,15 @@ const MA_B7000_ing: React.FC = () => {
     service_id: "",
   });
 
+  //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_TEST_WEB_MA_B7000_Q",
-    pageNumber: filters.pgNum,
+    pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": locationVal.sub_code,
+      "@p_location": locationVal.sub_code ? locationVal.sub_code : "01",
       "@p_yyyymm": convertDateToStr(filters.yyyymm),
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
@@ -240,42 +205,42 @@ const MA_B7000_ing: React.FC = () => {
 
   const detailParameters: Iparameters = {
     procedureName: "P_TEST_WEB_MA_B7000_Q",
-    pageNumber: detailFilters.pgNum,
-    pageSize: detailFilters.pgSize,
+    pageNumber: detail1PgNum,
+    pageSize: detailFilters1.pgSize,
     parameters: {
       "@p_work_type": "DETAIL1",
-      "@p_orgdiv": detailFilters.orgdiv,
+      "@p_orgdiv": detailFilters1.orgdiv,
       "@p_location": locationVal.sub_code,
-      "@p_yyyymm": convertDateToStr(detailFilters.yyyymm),
-      "@p_itemcd": detailFilters.itemcd,
-      "@p_itemnm": detailFilters.itemnm,
-      "@p_insiz": detailFilters.insiz,
-      "@p_itemacnt": detailFilters.itemacnt,
-      "@p_zeroyn": detailFilters.zeroyn,
-      "@p_lotnum": detailFilters.lotnum,
-      "@p_load_place": detailFilters.load_place,
-      "@p_heatno": detailFilters.heatno,
+      "@p_yyyymm": convertDateToStr(detailFilters1.yyyymm),
+      "@p_itemcd": detailFilters1.itemcd,
+      "@p_itemnm": detailFilters1.itemnm,
+      "@p_insiz": detailFilters1.insiz,
+      "@p_itemacnt": detailFilters1.itemacnt,
+      "@p_zeroyn": detailFilters1.zeroyn,
+      "@p_lotnum": detailFilters1.lotnum,
+      "@p_load_place": detailFilters1.load_place,
+      "@p_heatno": detailFilters1.heatno,
       "@p_itemlvl1": itemlvl1Val.sub_code,
       "@p_itemlvl2": itemlvl2Val.sub_code,
       "@p_itemlvl3": itemlvl3Val.sub_code,
-      "@p_useyn": detailFilters.useyn,
-      "@p_service_id": detailFilters.service_id,
+      "@p_useyn": detailFilters1.useyn,
+      "@p_service_id": detailFilters1.service_id,
     },
   };
 
   const detail2Parameters: Iparameters = {
     procedureName: "P_TEST_WEB_MA_B7000_Q",
-    pageNumber: detailFilters2.pgNum,
+    pageNumber: detail2PgNum,
     pageSize: detailFilters2.pgSize,
     parameters: {
       "@p_work_type": "DETAIL2",
       "@p_orgdiv": detailFilters2.orgdiv,
       "@p_location": locationVal.sub_code,
       "@p_yyyymm": convertDateToStr(detailFilters2.yyyymm),
-      "@p_itemcd": detailFilters.itemcd,
+      "@p_itemcd": detailFilters1.itemcd,
       "@p_itemnm": detailFilters2.itemnm,
       "@p_insiz": "",
-      "@p_itemacnt": detailFilters.itemacnt,
+      "@p_itemacnt": detailFilters1.itemacnt,
       "@p_zeroyn": "",
       "@p_lotnum": detailFilters2.lotnum,
       "@p_load_place": "",
@@ -288,11 +253,9 @@ const MA_B7000_ing: React.FC = () => {
     },
   };
 
+  //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    let data: any; // :CategoryDto[] = []
-
-    console.log("parameters");
-    console.log(parameters);
+    let data: any;
 
     try {
       data = await processApi<any>("procedure", parameters);
@@ -304,15 +267,18 @@ const MA_B7000_ing: React.FC = () => {
       const totalRowsCnt = data.result.totalRowCount;
       const rows = data.result.data.Rows;
 
-      setDataResult({ data: rows, total: totalRowsCnt });
+      setMainDataResult((prev) => {
+        return {
+          data: [...prev.data, ...rows],
+          total: totalRowsCnt,
+        };
+      });
     }
   };
 
   const fetchDetailGrid1 = async () => {
-    let data: any; // :CategoryDto[] = []
+    let data: any;
 
-    console.log("detailParameters11");
-    console.log(detailParameters);
     try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
@@ -323,15 +289,18 @@ const MA_B7000_ing: React.FC = () => {
       const totalRowsCnt = data.result.totalRowCount;
       const rows = data.result.data.Rows;
 
-      setDetail1DataResult({ data: rows, total: totalRowsCnt });
+      setDetail1DataResult((prev) => {
+        return {
+          data: [...prev.data, ...rows],
+          total: totalRowsCnt,
+        };
+      });
     }
   };
 
   const fetchDetailGrid2 = async () => {
-    let data: any; // :CategoryDto[] = []
+    let data: any;
 
-    console.log("detailParameters22");
-    console.log(detail2Parameters);
     try {
       data = await processApi<any>("procedure", detail2Parameters);
     } catch (error) {
@@ -342,23 +311,53 @@ const MA_B7000_ing: React.FC = () => {
       const totalRowsCnt = data.result.totalRowCount;
       const rows = data.result.data.Rows;
 
-      setDetail2DataResult({ data: rows, total: totalRowsCnt });
+      setDetail2DataResult((prev) => {
+        return {
+          data: [...prev.data, ...rows],
+          total: totalRowsCnt,
+        };
+      });
     }
   };
 
   useEffect(() => {
     setLocationVal({ sub_code: "01", code_name: "본사" });
     fetchMainGrid();
-  }, []);
+  }, [mainPgNum]);
 
   useEffect(() => {
+    resetAllDetailGrid();
     fetchDetailGrid1();
-  }, [detailFilters]);
+  }, [detailFilters1]);
 
   useEffect(() => {
+    resetDetail2Grid();
     fetchDetailGrid2();
   }, [detailFilters2]);
 
+  //그리드 리셋
+  const resetAllGrid = () => {
+    setMainPgNum(1);
+    setDetail1PgNum(1);
+    setDetail2PgNum(1);
+    setMainDataResult(process([], dataState));
+    setDetail1DataResult(process([], dataState));
+    setDetail2DataResult(process([], dataState));
+  };
+
+  const resetAllDetailGrid = () => {
+    setDetail1PgNum(1);
+    setDetail2PgNum(1);
+    setDetail1DataResult(process([], dataState));
+    setDetail2DataResult(process([], dataState));
+  };
+
+  const resetDetail2Grid = () => {
+    setDetail2PgNum(1);
+    setDetail2DataResult(process([], dataState));
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -366,25 +365,19 @@ const MA_B7000_ing: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    console.log("event");
-    console.log(event);
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    console.log("selectedRowData.itemacnt");
-    console.log(selectedRowData.itemacnt);
-
-    setDetailFilters((prev) => ({
+    setDetailFilters1((prev) => ({
       ...prev,
       itemacnt: selectedRowData.itemacnt,
       itemcd: selectedRowData.itemcd,
       work_type: "DETAIL1",
     }));
-
-    console.log(detailFilters.itemacnt);
   };
 
+  //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -392,43 +385,18 @@ const MA_B7000_ing: React.FC = () => {
       dataItemKey: DETAIL_DATA_ITEM_KEY,
     });
     setDetailSelectedState(newSelectedState);
-    console.log("event");
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
-    console.log("selectedRowData.itemacnt");
-    console.log(selectedRowData.itemacnt);
 
     setDetailFilters2({
       ...detailFilters2,
       lotnum: selectedRowData.lotnum,
       work_type: "DETAIL2",
     });
-
-    console.log(detailFilters.itemacnt);
   };
 
-  const scrollHandler = (event: GridEvent) => {
-    const e = event.nativeEvent;
-    if (
-      e.target.scrollTop + 10 >=
-      e.target.scrollHeight - e.target.clientHeight
-    ) {
-      alert(1);
-      // const moreData = availableProducts.splice(0, 10);
-      // if (moreData.length > 0) {
-      //   alert(2);
-      //   setGridData((oldData) => oldData.concat(moreData));
-      // }
-    }
-  };
-
-  const dataStateChange = (event: GridDataStateChangeEvent) => {
-    setDataResult(process(orders, event.dataState));
-    setDataState(event.dataState);
-  };
-
+  //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
@@ -436,18 +404,97 @@ const MA_B7000_ing: React.FC = () => {
     }
   };
 
+  //스크롤 핸들러 => 10개씩 조회
+  const scrollHandler = (event: GridEvent) => {
+    const e = event.nativeEvent;
+    const showedRowNumber = 10;
+    const totalNumber = event.target.props.total;
+
+    if (totalNumber === undefined) {
+      console.log("[scrollHandler check!] grid 'total' property를 입력하세요.");
+      return false;
+    }
+
+    if (
+      e.target.scrollTop + 10 >=
+      e.target.scrollHeight - e.target.clientHeight
+    ) {
+      if (totalNumber > mainPgNum * showedRowNumber) {
+        setMainPgNum((prev) => prev + 1);
+      }
+    }
+  };
+
+  // 스크롤 기능 공통함수화 필요 (현재까지 조회된 데이터 수(rowData) 타입체크 필요함)
+  // const scrollHandler = (event: GridEvent) => {
+  //   const e = event.nativeEvent;
+  //   const totalNumber = event.target.props.total;
+  //   const rowData = event.target.props.data;
+
+  //   console.log("event");
+  //   console.log(event);
+
+  //   if (!Array.isArray([rowData]) || rowData === null || rowData === undefined) return false;
+
+  //   if (totalNumber === undefined) {
+  //     console.log("[scrollHandler check!] grid 'total' property를 입력하세요.");
+  //     return false;
+  //   }
+
+  //   if (
+  //     e.target.scrollTop + 10 >=
+  //     e.target.scrollHeight - e.target.clientHeight
+  //   ) {
+  //     if (totalNumber > rowData.length) {
+  //       setMainPgNum((prev) => prev + 1);
+  //     }
+  //   }
+  // };
+
+  //dataStateChange 사용 용도 체크 필요
+  const dataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataResult(process(mainDataResult.data, event.dataState));
+    setDataState(event.dataState);
+  };
+
   const editField: string = "inEdit";
 
+  //사용 원리 체크 필요
   const itemChange = (event: GridItemChangeEvent) => {
-    const newData = dataResult.data.map((item) =>
+    const newData = mainDataResult.data.map((item) =>
       item.ProductID === event.dataItem.ProductID
         ? { ...item, [event.field || ""]: event.value }
         : item
     );
 
-    setDataResult({ data: newData, total: newData.length });
+    setMainDataResult({ data: newData, total: newData.length });
   };
 
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {mainDataResult.total}건
+      </td>
+    );
+  };
+
+  const detail1TotalFooterCell = (props: GridFooterCellProps) => {
+    //alert(detail1DataResult.total);
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {detail1DataResult.total}건
+      </td>
+    );
+  };
+
+  const detail2TotalFooterCell = (props: GridFooterCellProps) => {
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {detail2DataResult.total}건
+      </td>
+    );
+  };
   return (
     <>
       <TitleContainer>
@@ -455,7 +502,10 @@ const MA_B7000_ing: React.FC = () => {
 
         <ButtonContainer>
           <Button
-            onClick={fetchMainGrid}
+            onClick={() => {
+              resetAllGrid();
+              fetchMainGrid();
+            }}
             className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
           >
             <Icon name="search" />
@@ -629,7 +679,7 @@ const MA_B7000_ing: React.FC = () => {
 
       <GridContainer>
         <ExcelExport
-          data={orders}
+          data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
@@ -640,11 +690,9 @@ const MA_B7000_ing: React.FC = () => {
           <Grid
             style={{ height: "370px" }}
             sortable={true}
-            //filterable={true}
             groupable={false}
             reorderable={true}
-            //data={dataResult}
-            data={dataResult.data.map((item) => ({
+            data={mainDataResult.data.map((item) => ({
               ...item,
               [SELECTED_FIELD]: selectedState[idGetter(item)],
             }))}
@@ -655,12 +703,19 @@ const MA_B7000_ing: React.FC = () => {
               mode: "single",
             }}
             onSelectionChange={onSelectionChange}
-            onDataStateChange={dataStateChange}
-            onItemChange={itemChange}
-            editField={editField}
+            //onDataStateChange={dataStateChange}
+            //onItemChange={itemChange}
+            //editField={editField}
+            fixedScroll={true}
+            total={mainDataResult.total}
+            onScroll={scrollHandler}
             {...dataState}
           >
-            <GridColumn field="itemcd" title="품목코드" />
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              footerCell={mainTotalFooterCell}
+            />
             <GridColumn field="itemnm" title="품목명" />
             <GridColumn field="itemlvl1" title="대분류" />
             <GridColumn field="itemlvl2" title="중분류" />
@@ -697,10 +752,17 @@ const MA_B7000_ing: React.FC = () => {
               mode: "single",
             }}
             onSelectionChange={onDetailSelectionChange}
-            onDataStateChange={dataStateChange}
+            //onDataStateChange={dataStateChange}
+            fixedScroll={true}
+            total={mainDataResult.total}
+            onScroll={scrollHandler}
             {...dataState}
           >
-            <GridColumn field="lotnum" title="LOT NO" />
+            <GridColumn
+              field="lotnum"
+              title="LOT NO"
+              footerCell={detail1TotalFooterCell}
+            />
             <GridColumn field="stockqty" title="재고수량" />
           </Grid>
         </GridContainer>
@@ -713,10 +775,17 @@ const MA_B7000_ing: React.FC = () => {
             sortable={true}
             reorderable={true}
             data={detail2DataResult}
+            //onDataStateChange={dataStateChange}
+            fixedScroll={true}
+            total={mainDataResult.total}
+            onScroll={scrollHandler}
             {...dataState}
-            onDataStateChange={dataStateChange}
           >
-            <GridColumn field="gubun" title="구분" />
+            <GridColumn
+              field="gubun"
+              title="구분"
+              footerCell={detail2TotalFooterCell}
+            />
             <GridColumn field="indt" title="발생일자" />
             <GridColumn field="baseqty" title="기초재고수량" />
             <GridColumn field="inqty" title="입고수량" />
@@ -732,4 +801,4 @@ const MA_B7000_ing: React.FC = () => {
   );
 };
 
-export default MA_B7000_ing;
+export default MA_B7000;

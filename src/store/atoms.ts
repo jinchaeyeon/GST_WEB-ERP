@@ -50,3 +50,8 @@ export const locationState = atom<CommonCode>({
   key: "locationState",
   default: { sub_code: "", code_name: "전체" },
 });
+
+export const totalDataNumber = atom({
+  key: "totalDataNumber",
+  default: 0,
+});

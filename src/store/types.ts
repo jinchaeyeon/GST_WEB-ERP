@@ -24,6 +24,13 @@ export class List<T> {
   }
 }
 
+export interface Iparameters {
+  procedureName: string;
+  pageNumber: number;
+  pageSize: number;
+  parameters: {};
+}
+
 export type Token = {
   token: string;
 };
