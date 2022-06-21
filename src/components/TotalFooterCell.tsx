@@ -5,8 +5,8 @@ import {
 } from "@progress/kendo-react-dropdowns";
 
 import { useRecoilState, useRecoilValue } from "recoil";
-import { totalDataNumber } from "../../store/atoms";
-import { useApi } from "../../hooks/api";
+import { totalDataNumber } from "../store/atoms";
+import { useApi } from "../hooks/api";
 import { GridFooterCellProps } from "@progress/kendo-react-grid";
 
 const TotalFooterCell = (props: GridFooterCellProps) => {

@@ -2,16 +2,23 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   DropDownList,
   DropDownListChangeEvent,
+  DropDownListFilterChangeEvent,
 } from "@progress/kendo-react-dropdowns";
 
 import { useRecoilState } from "recoil";
-import { locationState } from "../../store/atoms";
+import { usersState } from "../../store/atoms";
 import { useApi } from "../../hooks/api";
+import {
+  CompositeFilterDescriptor,
+  FilterDescriptor,
+  filterBy,
+} from "@progress/kendo-data-query";
 
-const LocationDDL: React.FC = () => {
+const DDL: React.FC = () => {
   const processApi = useApi();
-  const [listData, setListData] = useState([]);
-  const [state, setState] = useRecoilState(locationState); //상태
+  const [listData, setListData] = useState([]); //원본 데이터
+  const [filteredData, setFilterdData] = useState([]); //필터링된 데이터
+  const [state, setState] = useRecoilState(usersState); //상태
 
   useEffect(() => {
     fetchData();
@@ -20,8 +27,7 @@ const LocationDDL: React.FC = () => {
   const fetchData = useCallback(async () => {
     let data: any;
     let queryStr =
-      "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA002' AND system_yn = 'Y'";
-
+      "SELECT user_id sub_code, user_name code_name FROM sysUserMaster WHERE rtrchk <> 'Y' AND hold_check_yn <> 'Y'";
     let query = {
       query: "query?query=" + queryStr,
     };
@@ -35,6 +41,7 @@ const LocationDDL: React.FC = () => {
     if (data != null) {
       const rows = data.result.data.Rows;
       setListData(rows);
+      setFilterdData(rows.slice());
     }
   }, []);
 
@@ -43,19 +50,30 @@ const LocationDDL: React.FC = () => {
     setState({ sub_code: value.sub_code, code_name: value.code_name });
   };
 
+  const filterData = (filter: FilterDescriptor | CompositeFilterDescriptor) => {
+    const data = listData;
+    return filterBy(data, filter);
+  };
+
+  const filterChange = (event: DropDownListFilterChangeEvent) => {
+    setFilterdData(filterData(event.filter));
+  };
+
   return (
     <DropDownList
-      data={listData}
+      data={filteredData}
       dataItemKey="sub_code"
       textField="code_name"
       value={state}
       defaultItem={{
         sub_code: "",
-        code_name: "",
+        code_name: "전체",
       }}
       onChange={onChangeHandle}
+      filterable={true}
+      onFilterChange={filterChange}
     />
   );
 };
 
-export default LocationDDL;
+export default DDL;

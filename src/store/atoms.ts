@@ -26,6 +26,12 @@ export const tokenState = atom<Token>({
   default: null as any,
   effects_UNSTABLE: [localStorageEffect("accessToken")],
 });
+
+export const totalDataNumber = atom({
+  key: "totalDataNumber",
+  default: 0,
+});
+
 export const itemacntState = atom<CommonCode>({
   key: "itemacntState",
   default: { sub_code: "", code_name: "전체" },
@@ -51,7 +57,32 @@ export const locationState = atom<CommonCode>({
   default: { sub_code: "", code_name: "전체" },
 });
 
-export const totalDataNumber = atom({
-  key: "totalDataNumber",
-  default: 0,
+export const ordstsState = atom<CommonCode>({
+  key: "ordstsState",
+  default: { sub_code: "", code_name: "전체" },
+});
+
+export const ordtypeState = atom<CommonCode>({
+  key: "ordtypeState",
+  default: { sub_code: "", code_name: "전체" },
+});
+
+export const departmentsState = atom<CommonCode>({
+  key: "departmentsState",
+  default: { sub_code: "", code_name: "전체" },
+});
+
+export const usersState = atom<CommonCode>({
+  key: "usersState",
+  default: { sub_code: "", code_name: "전체" },
+});
+
+export const doexdivState = atom<CommonCode>({
+  key: "doexdivState",
+  default: { sub_code: "", code_name: "전체" },
+});
+
+export const deletedRowsState = atom<object[]>({
+  key: "deletedRowsState",
+  default: [],
 });

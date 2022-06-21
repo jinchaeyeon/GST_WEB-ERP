@@ -7,6 +7,7 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 
 const domain: any = {
   query: { action: "get", url: "api/data/:query" },
+  "platform-query": { action: "get", url: "api/data/:query" },
   procedure: { action: "post", url: "api/data/procedure" },
   login: { action: "post", url: "/auth/token" },
   "login-social": { action: "post", url: "/auth/token/social" },
@@ -100,6 +101,8 @@ export const useApi = () => {
       url = `${BASE_URL}${url}`;
 
       let headers = {};
+      if (name === "platform-query") headers = { ...{ DBAlias: "Platform" } };
+
       if (token) {
         headers = { ...{ Authorization: `Bearer ${token.token}` } };
       }

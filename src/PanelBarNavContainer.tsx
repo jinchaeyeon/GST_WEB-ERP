@@ -17,6 +17,14 @@ export const Gnv = styled.div`
   text-align: center;
 `;
 
+type ContentType = {
+  clientWidth?: number;
+};
+export const Content = styled.div<ContentType>`
+  padding: 0 15px;
+  width: calc(${(props) => props.clientWidth}px - 150px);
+`;
+
 export const AppName = styled.h1`
   font-size: 28px;
   font-weight: 600;
@@ -46,6 +54,8 @@ const PanelBarNavContainer = (props: any) => {
 
   const selected = setSelectedIndex(props.location.pathname);
 
+  const clientWidth = document.documentElement.clientWidth;
+
   return (
     <Wrapper>
       <Gnv>
@@ -60,13 +70,7 @@ const PanelBarNavContainer = (props: any) => {
           </PanelBarItem>
         </PanelBar>
       </Gnv>
-      <div
-        style={{
-          padding: "0 15px",
-        }}
-      >
-        {props.children}
-      </div>
+      <Content clientWidth={clientWidth}>{props.children}</Content>
     </Wrapper>
   );
 };

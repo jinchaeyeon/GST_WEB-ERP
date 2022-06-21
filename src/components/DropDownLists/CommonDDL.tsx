@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  DropDownList,
-  DropDownListChangeEvent,
-} from "@progress/kendo-react-dropdowns";
-
-import { useRecoilState } from "recoil";
-import { locationState } from "../../store/atoms";
+import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { useApi } from "../../hooks/api";
+import { FieldRenderProps } from "@progress/kendo-react-form";
 
-const LocationDDL: React.FC = () => {
+type TDDL = {
+  fieldRenderProps: FieldRenderProps;
+  queryStr: String;
+  setData(id: string): void;
+};
+const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr, setData }: TDDL) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
-  const [state, setState] = useRecoilState(locationState); //상태
+  const { validationMessage, value, visited, label, id, valid, ...others } =
+    fieldRenderProps;
 
   useEffect(() => {
     fetchData();
@@ -19,8 +20,6 @@ const LocationDDL: React.FC = () => {
 
   const fetchData = useCallback(async () => {
     let data: any;
-    let queryStr =
-      "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA002' AND system_yn = 'Y'";
 
     let query = {
       query: "query?query=" + queryStr,
@@ -34,28 +33,27 @@ const LocationDDL: React.FC = () => {
 
     if (data != null) {
       const rows = data.result.data.Rows;
+
+      setData(rows);
       setListData(rows);
     }
   }, []);
-
-  const onChangeHandle = (e: DropDownListChangeEvent) => {
-    const { value } = e.target;
-    setState({ sub_code: value.sub_code, code_name: value.code_name });
-  };
 
   return (
     <DropDownList
       data={listData}
       dataItemKey="sub_code"
       textField="code_name"
-      value={state}
+      value={value}
       defaultItem={{
         sub_code: "",
         code_name: "",
       }}
-      onChange={onChangeHandle}
+      valid={valid}
+      id={id}
+      {...others}
     />
   );
 };
 
-export default LocationDDL;
+export default DDL;

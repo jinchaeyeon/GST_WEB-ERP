@@ -4,7 +4,7 @@ export const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px;
+  padding: 5px 0;
   margin-top: 5px;
 `;
 
@@ -19,7 +19,7 @@ export const ButtonContainer = styled.div`
 `;
 
 export const FilterBoxWrap = styled.div`
-  padding: 5px;
+  padding: 5px 0;
 `;
 
 export const FilterBox = styled.table`
@@ -45,11 +45,13 @@ export const FilterBox = styled.table`
     width: 270px;
     text-align: center;
     padding: 5px;
+    position: relative;
   }
   tr td.item-box {
     min-width: 300px;
   }
-  tr td.item-box input {
+  tr td.item-box > input,
+  tr td.item-box > .k-input {
     width: 48%;
   }
 `;
@@ -67,7 +69,7 @@ export const GridContainer = styled.div<GridContainerType>`
   max-width: ${(props) => props.maxWidth};
 
   .k-grid {
-    margin: 5px;
+    margin: 5px 0;
   }
 `;
 
@@ -81,4 +83,39 @@ export const GridTitleContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin: 0 5px;
+`;
+
+export const ButtonInInput = styled.div`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+`;
+export const ButtonInFieldWrap = styled.div`
+  position: relative;
+`;
+
+export const ButtonInField = styled(ButtonInInput)`
+  top: -7px;
+  right: 0;
+`;
+
+export const FieldWrap = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  :last-child {
+    margin-bottom: 30px;
+  }
+  > span {
+    margin: 0 5px;
+  }
+  > span:first-child {
+    margin-left: 0;
+  }
+  > span:last-child {
+    margin-right: 0;
+  }
+  > .k-form-field {
+    width: 25%;
+  }
 `;

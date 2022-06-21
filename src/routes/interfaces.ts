@@ -1,79 +1,43 @@
-export interface ProductCategory {
-  CategoryID?: number;
-  CategoryName?: string;
-  Description?: string;
-  details?: any;
+export interface IWindowPosition {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 }
-
-export interface Product {
-  ProductID: number;
-  ProductName?: string;
-  SupplierID?: number;
-  CategoryID?: number;
-  QuantityPerUnit?: string;
-  UnitPrice?: number;
-  UnitsInStock?: number;
-  UnitsOnOrder?: number;
-  ReorderLevel?: number;
-  Discontinued?: boolean;
-  Category?: ProductCategory;
-  expanded?: boolean;
-  inEdit?: boolean | string;
-  locked?: boolean;
-}
-
-export interface columnInterface {
-  title?: string;
-  field?: string;
-  show?: boolean;
-  filter?: "boolean" | "numeric" | "text" | "date" | undefined;
-  minWidth?: number;
-  minGridWidth?: number;
-  locked?: boolean;
-  width?: string | number;
-}
-
-export interface OrderShipAddress {
-  street: string;
-  city: string;
-  region: string;
-  postalCode: number;
-  country: string;
-}
-
-export interface OrderDetails {
-  productID: number;
-  unitPrice: number;
-  quantity: number;
-  discount: number;
-}
-export interface Order {
-  orderID: number;
-  OrderID?: number;
-  customerID: string;
-  employeeID: number;
-  orderDate?: Date;
-  requiredDate: Date;
-  shippedDate?: Date;
-  shipVia: number;
-  freight: number;
-  shipName: string;
-  shipAddress: OrderShipAddress;
-  details: OrderDetails[];
-}
-
-export interface Person {
-  id: number;
-  firstName: string;
-  lastName: string;
-  city: string;
-  title: string;
-}
-
-export interface CategoryDto {
-  id: number;
-  firstName: string;
-  lastName: string;
-  city: string;
-  title: string;
+export interface IItemData {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
 }

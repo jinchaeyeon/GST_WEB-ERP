@@ -5,13 +5,13 @@ import {
 } from "@progress/kendo-react-dropdowns";
 
 import { useRecoilState } from "recoil";
-import { locationState } from "../../store/atoms";
+import { departmentsState } from "../../store/atoms";
 import { useApi } from "../../hooks/api";
 
-const LocationDDL: React.FC = () => {
+const DDL: React.FC = () => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
-  const [state, setState] = useRecoilState(locationState); //상태
+  const [state, setState] = useRecoilState(departmentsState); //상태
 
   useEffect(() => {
     fetchData();
@@ -20,8 +20,7 @@ const LocationDDL: React.FC = () => {
   const fetchData = useCallback(async () => {
     let data: any;
     let queryStr =
-      "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA002' AND system_yn = 'Y'";
-
+      "SELECT dptcd sub_code, dptnm code_name FROM BA040T WHERE useyn = 'Y'";
     let query = {
       query: "query?query=" + queryStr,
     };
@@ -51,11 +50,11 @@ const LocationDDL: React.FC = () => {
       value={state}
       defaultItem={{
         sub_code: "",
-        code_name: "",
+        code_name: "전체",
       }}
       onChange={onChangeHandle}
     />
   );
 };
 
-export default LocationDDL;
+export default DDL;

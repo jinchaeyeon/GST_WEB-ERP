@@ -50,7 +50,11 @@ import Itemlvl2DDL from "../components/DropDownLists/Itemlvl2DDL";
 import Itemlvl3DDL from "../components/DropDownLists/Itemlvl3DDL";
 import LocationDDL from "../components/DropDownLists/LocationDDL";
 import YearCalendar from "../components/YearCalendar";
-import { convertDateToStr } from "../components/CommonFunction";
+import {
+  chkScrollHandler,
+  convertDateToStr,
+  pageSize,
+} from "../components/CommonFunction";
 //import {useAuth} from "../../hooks/auth";
 
 const MA_B7000: React.FC = () => {
@@ -118,7 +122,7 @@ const MA_B7000: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: 10,
+    pgSize: pageSize,
     work_type: "LIST",
     orgdiv: "01",
     itemcd: "",
@@ -138,7 +142,7 @@ const MA_B7000: React.FC = () => {
   });
 
   const [detailFilters1, setDetailFilters1] = useState({
-    pgSize: 10,
+    pgSize: pageSize,
     work_type: "DETAIL1",
     orgdiv: "01",
     itemcd: "",
@@ -158,7 +162,7 @@ const MA_B7000: React.FC = () => {
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
-    pgSize: 10,
+    pgSize: pageSize,
     work_type: "DETAIL2",
     orgdiv: "01",
     itemcd: "",
@@ -276,6 +280,35 @@ const MA_B7000: React.FC = () => {
     }
   };
 
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (mainDataResult.total > 0) {
+      const firstRowData = mainDataResult.data[0];
+      setSelectedState({ [firstRowData.itemcd]: true });
+
+      setDetailFilters1((prev) => ({
+        ...prev,
+        itemacnt: firstRowData.itemacnt,
+        itemcd: firstRowData.itemcd,
+        work_type: "DETAIL1",
+      }));
+    }
+  }, [mainDataResult]);
+
+  //디테일1 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (detail1DataResult.total > 0) {
+      const firstRowData = detail1DataResult.data[0];
+      setDetailSelectedState({ [firstRowData.lotnum]: true });
+
+      setDetailFilters2((prev) => ({
+        ...prev,
+        lotnum: firstRowData.lotnum,
+        work_type: "DETAIL2",
+      }));
+    }
+  }, [detail1DataResult]);
+
   const fetchDetailGrid1 = async () => {
     let data: any;
 
@@ -326,6 +359,14 @@ const MA_B7000: React.FC = () => {
   }, [mainPgNum]);
 
   useEffect(() => {
+    fetchDetailGrid1();
+  }, [detail1PgNum]);
+
+  useEffect(() => {
+    fetchDetailGrid2();
+  }, [detail2PgNum]);
+
+  useEffect(() => {
     resetAllDetailGrid();
     fetchDetailGrid1();
   }, [detailFilters1]);
@@ -364,6 +405,8 @@ const MA_B7000: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
+
+    console.log(newSelectedState);
     setSelectedState(newSelectedState);
 
     const selectedIdx = event.startRowIndex;
@@ -404,60 +447,25 @@ const MA_B7000: React.FC = () => {
     }
   };
 
-  //스크롤 핸들러 => 10개씩 조회
-  const scrollHandler = (event: GridEvent) => {
-    const e = event.nativeEvent;
-    const showedRowNumber = 10;
-    const totalNumber = event.target.props.total;
-
-    if (totalNumber === undefined) {
-      console.log("[scrollHandler check!] grid 'total' property를 입력하세요.");
-      return false;
-    }
-
-    if (
-      e.target.scrollTop + 10 >=
-      e.target.scrollHeight - e.target.clientHeight
-    ) {
-      if (totalNumber > mainPgNum * showedRowNumber) {
-        setMainPgNum((prev) => prev + 1);
-      }
-    }
+  //스크롤 핸들러
+  const mainScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, mainPgNum, pageSize))
+      setMainPgNum((prev) => prev + 1);
   };
-
-  // 스크롤 기능 공통함수화 필요 (현재까지 조회된 데이터 수(rowData) 타입체크 필요함)
-  // const scrollHandler = (event: GridEvent) => {
-  //   const e = event.nativeEvent;
-  //   const totalNumber = event.target.props.total;
-  //   const rowData = event.target.props.data;
-
-  //   console.log("event");
-  //   console.log(event);
-
-  //   if (!Array.isArray([rowData]) || rowData === null || rowData === undefined) return false;
-
-  //   if (totalNumber === undefined) {
-  //     console.log("[scrollHandler check!] grid 'total' property를 입력하세요.");
-  //     return false;
-  //   }
-
-  //   if (
-  //     e.target.scrollTop + 10 >=
-  //     e.target.scrollHeight - e.target.clientHeight
-  //   ) {
-  //     if (totalNumber > rowData.length) {
-  //       setMainPgNum((prev) => prev + 1);
-  //     }
-  //   }
-  // };
+  const detail1ScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, detail1PgNum, pageSize))
+      setDetail1PgNum((prev) => prev + 1);
+  };
+  const detail2ScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, detail2PgNum, pageSize))
+      setDetail2PgNum((prev) => prev + 1);
+  };
 
   //dataStateChange 사용 용도 체크 필요
   const dataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataResult(process(mainDataResult.data, event.dataState));
     setDataState(event.dataState);
   };
-
-  const editField: string = "inEdit";
 
   //사용 원리 체크 필요
   const itemChange = (event: GridItemChangeEvent) => {
@@ -506,18 +514,19 @@ const MA_B7000: React.FC = () => {
               resetAllGrid();
               fetchMainGrid();
             }}
-            className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
+            icon="search"
+            //fillMode="outline"
+            themeColor={"primary"}
           >
-            <Icon name="search" />
             조회
           </Button>
-
           <Button
             title="Export Excel"
-            className="k-button k-button-md k-rounded-md k-button-solid"
             onClick={exportExcel}
+            icon="download"
+            fillMode="outline"
+            themeColor={"primary"}
           >
-            <Icon name="download" />
             Excel
           </Button>
         </ButtonContainer>
@@ -708,7 +717,7 @@ const MA_B7000: React.FC = () => {
             //editField={editField}
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={scrollHandler}
+            onScroll={mainScrollHandler}
             {...dataState}
           >
             <GridColumn
@@ -754,8 +763,8 @@ const MA_B7000: React.FC = () => {
             onSelectionChange={onDetailSelectionChange}
             //onDataStateChange={dataStateChange}
             fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={scrollHandler}
+            total={detail1DataResult.total}
+            onScroll={detail1ScrollHandler}
             {...dataState}
           >
             <GridColumn
@@ -777,8 +786,8 @@ const MA_B7000: React.FC = () => {
             data={detail2DataResult}
             //onDataStateChange={dataStateChange}
             fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={scrollHandler}
+            total={detail2DataResult.total}
+            onScroll={detail2ScrollHandler}
             {...dataState}
           >
             <GridColumn
