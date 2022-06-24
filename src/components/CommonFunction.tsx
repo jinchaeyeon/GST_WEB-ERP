@@ -61,63 +61,8 @@ export const dateformat4 = (str: string) => {
   return date_str;
 };
 
-export const UseCommonCodeQuery = (str: string) => {
-  const processApi = useApi();
-  let rows: [] = [];
-
-  React.useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = React.useCallback(async () => {
-    let data: any;
-    let queryStr =
-      "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = '" +
-      str +
-      "' AND system_yn = 'Y'";
-
-    let query = {
-      query: "query?query=" + queryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-
-      console.log("[1]");
-      console.log(data);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data != null) {
-      rows = data.result.data.Rows;
-
-      console.log("[2]");
-      console.log(rows);
-    }
-  }, []);
-
-  console.log("[3]");
-  console.log(rows);
-
-  return rows;
-};
-
-type TCommonDataDDLArg = [
-  {
-    sub_code: any;
-    code_name: any;
-  }
-];
-type TUseCommonDataDDL = {
-  queryStr: String;
-  setData(arg: TCommonDataDDLArg): void;
-};
-
-export const UseCommonDataDDL: React.FC<TUseCommonDataDDL> = ({
-  queryStr,
-  setData,
-}: TUseCommonDataDDL) => {
+//쿼리 스트링을 받아서 조회 후 결과값을 반환
+export const UseCommonQuery = (queryStr: string, setListData: any) => {
   const processApi = useApi();
 
   React.useEffect(() => {
@@ -139,15 +84,15 @@ export const UseCommonDataDDL: React.FC<TUseCommonDataDDL> = ({
 
     if (data != null) {
       const rows = data.result.data.Rows;
-      setData(rows);
+      setListData(rows);
     }
   }, []);
-
-  return <></>;
 };
 
+//한번에 조회할 데이터 수 디폴트 값
 export const pageSize = 10;
 
+//그리드 스크롤을 맨 아래로 내렸을 때, 조회할 데이터가 남았으면 true 반환
 export const chkScrollHandler = (
   event: GridEvent,
   PgNum: number,
@@ -172,4 +117,26 @@ export const chkScrollHandler = (
     }
   }
   return chk;
+};
+
+//object로 custcd, custnm 받아서 업체정보 조회 쿼리 스트링 반환
+export const getCustQuery = (para: any) => {
+  return (
+    "SELECT * FROM ba020t WHERE custcd LIKE '" +
+    para.custcd +
+    "'% AND custnm like '" +
+    para.custnm +
+    "'"
+  );
+};
+
+//object로 itemcd, itemnm 받아서 품목정보 조회 쿼리 스트링 반환
+export const getItemQuery = (para: any) => {
+  return (
+    "SELECT * FROM ba030t WHERE itemcd LIKE '" +
+    para.itemcd +
+    "%' AND itemnm LIKE '" +
+    para.itemnm +
+    "%'"
+  );
 };

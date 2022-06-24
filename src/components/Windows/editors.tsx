@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
+import { Checkbox, Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import {
   Field,
   FieldRenderProps,
@@ -9,21 +9,12 @@ import { Label, Error, Hint } from "@progress/kendo-react-labels";
 import { GridCellProps, GridFilterCellProps } from "@progress/kendo-react-grid";
 
 import { FormGridEditContext } from "./SA_B2000_Window";
-import LocationDDL from "../DropDownLists/LocationDDL";
-import OrdstsDDL from "../DropDownLists/OrdstsDDL";
-import DepartmentsDDL from "../DropDownLists/DepartmentsDDL";
-import UsersDDL from "../DropDownLists/UsersDDL";
-import OrdtypeDDL from "../DropDownLists/OrdtypeDDL";
-import DoexdivDDL from "../DropDownLists/DoexdivDDL";
 import CommonDDL from "../DropDownLists/CommonDDL";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import {
-  DropDownList,
-  DropDownListChangeEvent,
-} from "@progress/kendo-react-dropdowns";
-import { UseCommonCodeQuery } from "../CommonFunction";
-import { useState } from "react";
-import { useApi } from "../../hooks/api";
+
+import { itemacntQuery, qtyunitQuery } from "../CommonString";
+import { BlurEvent } from "@progress/kendo-react-dropdowns/dist/npm/common/events";
+import { getItemQuery } from "../CommonFunction";
 
 const FORM_DATA_INDEX = "formDataIndex";
 
@@ -33,11 +24,27 @@ const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
   return <>{fieldRenderProps.value}</>;
 };
 
+const DisplayDDLValue = (fieldRenderProps: FieldRenderProps) => {
+  return <>{fieldRenderProps.value.code_name}</>;
+};
+
 const TextInputWithValidation = (fieldRenderProps: FieldRenderProps) => {
-  const { validationMessage, visited, ...others } = fieldRenderProps;
+  const { validationMessage, visited, onBlur, value, name, ...others } =
+    fieldRenderProps;
+
+  const onInputBlur = (e: any) => {
+    console.log("e");
+    console.log(e);
+    console.log(value);
+    console.log(name);
+    console.log(fieldRenderProps);
+
+    let queryStr = "";
+    if (name?.includes("itemcd")) queryStr = getItemQuery({ itemcd: value });
+  };
   return (
     <div>
-      <Input {...others} />
+      <Input onBlur={onInputBlur} value={value} {...others} />
       {visited && validationMessage && <Error>{validationMessage}</Error>}
     </div>
   );
@@ -47,14 +54,47 @@ const DDLWithValidation = (fieldRenderProps: FieldRenderProps) => {
   const { validationMessage, visited, queryStr } = fieldRenderProps;
 
   const setData = (setData: string) => {};
-  // const queryStr =
-  //   "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA061' AND system_yn = 'Y'";
+
   return (
     <div>
       <CommonDDL
         fieldRenderProps={fieldRenderProps}
         queryStr={queryStr}
         setData={setData}
+      />
+      {visited && validationMessage && <Error>{validationMessage}</Error>}
+    </div>
+  );
+};
+
+const CheckBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
+  const { validationMessage, visited, value, label, id, valid, ...others } =
+    fieldRenderProps;
+
+  return (
+    <div>
+      <Checkbox
+        defaultChecked={value === "Y" || value === true ? true : false}
+        valid={valid}
+        id={id}
+        {...others}
+      />
+      {visited && validationMessage && <Error>{validationMessage}</Error>}
+    </div>
+  );
+};
+const CheckBoxReadOnly = (fieldRenderProps: FieldRenderProps) => {
+  const { validationMessage, visited, value, label, id, valid, ...others } =
+    fieldRenderProps;
+
+  return (
+    <div>
+      <Checkbox
+        defaultChecked={value === "Y" || value === true ? true : false}
+        valid={valid}
+        id={id}
+        {...others}
+        readOnly
       />
       {visited && validationMessage && <Error>{validationMessage}</Error>}
     </div>
@@ -74,6 +114,7 @@ const NumericTextBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
   );
 };
 
+//Grid Cell에서 사용되는 Number Feild
 export const NumberCell = (props: GridCellProps) => {
   const { parentField, editIndex } = React.useContext(FormGridEditContext);
   const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
@@ -89,7 +130,7 @@ export const NumberCell = (props: GridCellProps) => {
     </td>
   );
 };
-
+//Grid Cell에서 사용되는 Name Feild
 export const NameCell = (props: GridCellProps) => {
   const { parentField, editIndex } = React.useContext(FormGridEditContext);
   const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
@@ -106,11 +147,32 @@ export const NameCell = (props: GridCellProps) => {
   );
 };
 
+//Grid Cell에서 사용되는 DropDownList Feild
 export const CellDropDownList = (props: GridCellProps) => {
-  // const { queryStr } = props;
+  const { field } = props;
+  const { parentField, editIndex } = React.useContext(FormGridEditContext);
+  const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
 
-  // console.log("queryStr");
-  // console.log(queryStr);
+  let queryStr = "SELECT '' sub_code, '' code_name";
+
+  if (field === "itemacnt") queryStr = itemacntQuery;
+  else if (field === "qtyunit") queryStr = qtyunitQuery;
+
+  const required = props.className?.includes("required");
+  return (
+    <td>
+      <Field
+        component={isInEdit ? DDLWithValidation : DisplayDDLValue}
+        name={`${parentField}[${props.dataItem[FORM_DATA_INDEX]}].${props.field}`}
+        validator={required ? requiredValidator : undefined}
+        queryStr={queryStr}
+      />
+    </td>
+  );
+};
+
+//Grid Cell에서 사용되는 CheckBox Feild
+export const CellCheckBox = (props: GridCellProps) => {
   const { parentField, editIndex } = React.useContext(FormGridEditContext);
   const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
 
@@ -118,24 +180,33 @@ export const CellDropDownList = (props: GridCellProps) => {
   return (
     <td>
       <Field
-        component={
-          isInEdit
-            ? TextInputWithValidation /*DDLWithValidation*/
-            : DisplayValue
-        }
+        component={isInEdit ? CheckBoxWithValidation : CheckBoxReadOnly}
         name={`${parentField}[${props.dataItem[FORM_DATA_INDEX]}].${props.field}`}
         validator={required ? requiredValidator : undefined}
-        queryStr={""}
       />
     </td>
   );
 };
+
+//Grid Cell에서 사용되는 ReadOnly CheckBox Feild
+export const CellCheckBoxReadOnly = (props: GridCellProps) => {
+  const { parentField } = React.useContext(FormGridEditContext);
+
+  return (
+    <td>
+      <Field
+        component={CheckBoxReadOnly}
+        name={`${parentField}[${props.dataItem[FORM_DATA_INDEX]}].${props.field}`}
+      />
+    </td>
+  );
+};
+
+//Form Field에서 사용되는 Input
 export const FormInput = (fieldRenderProps: FieldRenderProps) => {
   const { validationMessage, visited, label, id, valid, ...others } =
     fieldRenderProps;
 
-  const showValidationMessage: string | false | null =
-    visited && validationMessage;
   return (
     <FieldWrapper>
       <Label editorId={id} editorValid={valid}>
@@ -148,6 +219,7 @@ export const FormInput = (fieldRenderProps: FieldRenderProps) => {
   );
 };
 
+//Form Field에서 사용되는 ReadOnly Input
 export const FormReadOnly = (fieldRenderProps: FieldRenderProps) => {
   const { validationMessage, visited, label, id, valid, ...others } =
     fieldRenderProps;
@@ -163,6 +235,8 @@ export const FormReadOnly = (fieldRenderProps: FieldRenderProps) => {
     </FieldWrapper>
   );
 };
+
+//Form Field에서 사용되는 드롭다운리스트
 export const FormDropDownList = (fieldRenderProps: FieldRenderProps) => {
   const { label, id, valid, queryStr } = fieldRenderProps;
   const setData = (setData: string) => {};
@@ -183,134 +257,7 @@ export const FormDropDownList = (fieldRenderProps: FieldRenderProps) => {
   );
 };
 
-// export const FormDoexdivDDL = (fieldRenderProps: FieldRenderProps) => {
-//   const { label, id, valid } = fieldRenderProps;
-//   const setData = (setData: string) => {};
-//   const queryStr =
-//     "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA005' AND system_yn = 'Y'";
-
-//   return (
-//     <FieldWrapper>
-//       <Label editorId={id} editorValid={valid}>
-//         {label}
-//       </Label>
-//       <div className={"k-form-field-wrap"}>
-//         <CommonDDL
-//           fieldRenderProps={fieldRenderProps}
-//           queryStr={queryStr}
-//           setData={setData}
-//         />
-//       </div>
-//     </FieldWrapper>
-//   );
-// };
-// export const FormOrdstsDDL = (fieldRenderProps: FieldRenderProps) => {
-//   const { label, id, valid } = fieldRenderProps;
-//   const setData = (setData: string) => {};
-//   const queryStr =
-//     "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'SA002' AND system_yn = 'Y'";
-
-//   return (
-//     <FieldWrapper>
-//       <Label editorId={id} editorValid={valid}>
-//         {label}
-//       </Label>
-//       <div className={"k-form-field-wrap"}>
-//         <CommonDDL
-//           fieldRenderProps={fieldRenderProps}
-//           queryStr={queryStr}
-//           setData={setData}
-//         />
-//       </div>
-//     </FieldWrapper>
-//   );
-// };
-// export const FormOrdtypeDDL = (fieldRenderProps: FieldRenderProps) => {
-//   const { label, id, valid } = fieldRenderProps;
-//   const setData = (setData: string) => {};
-//   const queryStr =
-//     "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA007' AND system_yn = 'Y'";
-
-//   return (
-//     <FieldWrapper>
-//       <Label editorId={id} editorValid={valid}>
-//         {label}
-//       </Label>
-//       <div className={"k-form-field-wrap"}>
-//         <CommonDDL
-//           fieldRenderProps={fieldRenderProps}
-//           queryStr={queryStr}
-//           setData={setData}
-//         />
-//       </div>
-//     </FieldWrapper>
-//   );
-// };
-
-// export const FormDepartmentsDDL = (fieldRenderProps: FieldRenderProps) => {
-//   const { label, id, valid } = fieldRenderProps;
-//   const setData = (setData: string) => {};
-//   const queryStr =
-//     "SELECT dptcd sub_code, dptnm code_name FROM BA040T WHERE useyn = 'Y'";
-
-//   return (
-//     <FieldWrapper>
-//       <Label editorId={id} editorValid={valid}>
-//         {label}
-//       </Label>
-//       <div className={"k-form-field-wrap"}>
-//         <CommonDDL
-//           fieldRenderProps={fieldRenderProps}
-//           queryStr={queryStr}
-//           setData={setData}
-//         />
-//       </div>
-//     </FieldWrapper>
-//   );
-// };
-// export const FormUsersDDL = (fieldRenderProps: FieldRenderProps) => {
-//   const { label, id, valid } = fieldRenderProps;
-//   const setData = (setData: string) => {};
-//   const groupCode =
-//     "SELECT user_id sub_code, user_name code_name FROM sysUserMaster WHERE rtrchk <> 'Y' AND hold_check_yn <> 'Y'";
-
-//   return (
-//     <FieldWrapper>
-//       <Label editorId={id} editorValid={valid}>
-//         {label}
-//       </Label>
-//       <div className={"k-form-field-wrap"}>
-//         <CommonDDL
-//           fieldRenderProps={fieldRenderProps}
-//           queryStr={groupCode}
-//           setData={setData}
-//         />
-//       </div>
-//     </FieldWrapper>
-//   );
-// };
-
-// export const FormTaxdivDDL = (fieldRenderProps: FieldRenderProps) => {
-//   const { label, id, valid } = fieldRenderProps;
-//   const setData = (setData: string) => {};
-//   const queryStr =
-//     "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA029' AND system_yn = 'Y'";
-
-//   return (
-//     <FieldWrapper>
-//       <Label editorId={id} editorValid={valid}>
-//         {label}
-//       </Label>
-//       <div className={"k-form-field-wrap"}>
-//         <CommonDDL
-//           fieldRenderProps={fieldRenderProps}
-//           queryStr={queryStr}
-//           setData={setData}
-//         />
-//       </div>
-//     </FieldWrapper>
-//   );
-// };
+//Form Field에서 사용되는 DatePicker
 export const FormDatePicker = (fieldRenderProps: FieldRenderProps) => {
   const { validationMessage, visited, label, id, valid, ...others } =
     fieldRenderProps;
@@ -321,7 +268,7 @@ export const FormDatePicker = (fieldRenderProps: FieldRenderProps) => {
         {label}
       </Label>
       <div className={"k-form-field-wrap"}>
-        <DatePicker valid={valid} id={id} {...others} />
+        <DatePicker format="yyyy-MM-dd" valid={valid} id={id} {...others} />
       </div>
     </FieldWrapper>
   );

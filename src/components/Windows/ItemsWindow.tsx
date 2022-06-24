@@ -28,7 +28,7 @@ import {
 import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { chkScrollHandler } from "../CommonFunction";
-import { IWindowPosition } from "../../routes/interfaces";
+import { IWindowPosition } from "../../hooks/interfaces";
 
 type IWindow = {
   workType: string;

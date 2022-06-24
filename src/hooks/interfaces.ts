@@ -1,8 +1,25 @@
+export type TCommonCodeData = {
+  sub_code: string;
+  code_name: string;
+};
+
 export interface IWindowPosition {
   left: number;
   top: number;
   width: number;
   height: number;
+}
+
+export interface ICustData {
+  custcd: string;
+  custnm: string;
+  custabbr: string;
+  bizregnum: string;
+  custdivnm: string;
+  useyn: string;
+  remark: string;
+  compclass: string;
+  ceonm: string;
 }
 export interface IItemData {
   itemcd: string;

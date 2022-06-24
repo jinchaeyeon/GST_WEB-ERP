@@ -28,13 +28,7 @@ import LocationDDL from "../DropDownLists/LocationDDL";
 
 import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
-
-interface PositionInterface {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}
+import { IWindowPosition } from "../../hooks/interfaces";
 
 type IKendoWindow = {
   getVisible(t: boolean): void;
@@ -44,7 +38,7 @@ type IKendoWindow = {
 };
 
 const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
-  const [position, setPosition] = useState<PositionInterface>({
+  const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: 1200,
