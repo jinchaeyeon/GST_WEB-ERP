@@ -30,16 +30,9 @@ import {
   FieldArray,
   FieldArrayRenderProps,
 } from "@progress/kendo-react-form";
-import { Input } from "@progress/kendo-react-inputs";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import LocationDDL from "../DropDownLists/LocationDDL";
-import { DropDownList } from "@progress/kendo-react-dropdowns";
-
 import { Error } from "@progress/kendo-react-labels";
 
 import { clone } from "@progress/kendo-react-common";
-
-import { sampleProducts } from "./sample-products";
 
 import {
   NumberCell,
@@ -50,20 +43,40 @@ import {
   FormDatePicker,
   FormReadOnly,
   CellDropDownList,
+  CellCheckBoxReadOnly,
 } from "./editors";
 import { Iparameters } from "../../store/types";
 import {
+  chkScrollHandler,
   convertDateToStr,
   dateformat,
-  UseCommonDataDDL,
+  UseCommonQuery,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-import { deletedRowsState, usersState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
 
+import AttachmentsWindow from "../../components/Windows/AttachmentsWindow";
 import CustomersWindow from "../../components/Windows/CustomersWindow";
 import ItemsWindow from "./ItemsWindow";
-import { IItemData } from "../../routes/interfaces";
+import {
+  ICustData,
+  IItemData,
+  IWindowPosition,
+  TCommonCodeData,
+} from "../../hooks/interfaces";
+import {
+  amtunitQuery,
+  commonCodeDefaultValue,
+  departmentsQuery,
+  doexdivQuery,
+  itemacntQuery,
+  locationQuery,
+  ordstsQuery,
+  ordtypeQuery,
+  pageSize,
+  qtyunitQuery,
+  taxdivQuery,
+  usersQuery,
+} from "../CommonString";
 
 // Validate the entire Form
 const arrayLengthValidator = (value: any) =>
@@ -82,19 +95,10 @@ export const FormGridEditContext = React.createContext<{
 
 const deletedRows: object[] = [];
 
-//const [deletedRows, setDeletedRows] = useRecoilState(deletedRowsState);
-
 const FORM_DATA_INDEX = "formDataIndex";
 const DATA_ITEM_KEY = "ordseq1";
 
-interface PositionInterface {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}
-
-type IKendoWindow = {
+type TKendoWindow = {
   getVisible(t: boolean): void;
   reloadData(workType: string): void;
   workType: string;
@@ -103,7 +107,7 @@ type IKendoWindow = {
   para?: Iparameters; //{};
 };
 
-type MyType = {
+type TDetailData = {
   rowstatus_s: string[];
   chk_s: string[];
   ordseq_s: string[];
@@ -139,23 +143,6 @@ type MyType = {
   heatno_s: string[];
   bf_qty_s: string[];
 };
-
-const locationQuery =
-  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA002' AND system_yn = 'Y'";
-const doexdivQuery =
-  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA005' AND system_yn = 'Y'";
-const ordstsQuery =
-  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'SA002' AND system_yn = 'Y'";
-const ordtypeQuery =
-  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA007' AND system_yn = 'Y'";
-const departmentsQuery =
-  "SELECT dptcd sub_code, dptnm code_name FROM BA040T WHERE useyn = 'Y'";
-const usersQuery =
-  "SELECT user_id sub_code, user_name code_name FROM sysUserMaster WHERE rtrchk <> 'Y' AND hold_check_yn <> 'Y'";
-const taxdivQuery =
-  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA029' AND system_yn = 'Y'";
-const itemacntQuery =
-  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA061' AND system_yn = 'Y'";
 
 // Add a command cell to Edit, Update, Cancel and Delete an item
 const CommandCell = (props: GridCellProps) => {
@@ -333,6 +320,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           length: 0,
           dlramt: 0,
           chk: "N",
+          itemacnt: commonCodeDefaultValue,
+          qtyunit: commonCodeDefaultValue,
         },
       });
 
@@ -357,17 +346,15 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   // Update an item from the Grid and update the index of the edited item
   const onEdit = React.useCallback((dataItem: any, isNewItem: any) => {
     if (!isNewItem) {
-      alert(1);
+      alert();
       editItemCloneRef.current = clone(dataItem);
     }
 
-    console.log("onedit dataItem");
-    console.log(dataItem);
     fieldArrayRenderProps.onReplace({
       index: dataItem[FORM_DATA_INDEX],
       value: {
         ...dataItem,
-        rowstatus: dataItem.rowstatus === "" ? "U" : dataItem.rowstatus,
+        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
       },
     });
 
@@ -409,42 +396,34 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  //스크롤 핸들러 => 10개씩 조회
+  //스크롤 핸들러
   const scrollHandler = (event: GridEvent) => {
-    const e = event.nativeEvent;
-    const showedRowNumber = 10;
-    const totalNumber = event.target.props.total;
-
-    if (totalNumber === undefined) {
-      console.log("[scrollHandler check!] grid 'total' property를 입력하세요.");
-      return false;
-    }
-
-    if (
-      e.target.scrollTop + 10 >=
-      e.target.scrollHeight - e.target.clientHeight
-    ) {
-      if (totalNumber > detailPgNum * showedRowNumber) {
-        setDetailPgNum((prev) => prev + 1);
-      }
-    }
+    if (chkScrollHandler(event, detailPgNum, pageSize))
+      setDetailPgNum((prev) => prev + 1);
   };
 
-  const getItemData = (data: IItemData, rowIdx: number, rowData: any) => {
-    // setFilters((prev) => ({
-    //   ...prev,
-    //   itemcd: data.itemcd,
-    //   itemnm: data.itemnm,
-    // }));
+  //드롭다운리스트 데이터 조회 (품목계정)
+  const [itemacntListData, setItemacntListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  UseCommonQuery(itemacntQuery, setItemacntListData);
 
+  const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
     if (rowIdx === -1) {
+      //신규생성
       fieldArrayRenderProps.onUnshift({
         value: {
           rowstatus: "N",
           itemcd: data.itemcd,
           itemnm: data.itemnm,
           insiz: data.insiz,
-          itemacnt: data.itemacnt,
+          itemacnt: {
+            sub_code: data.itemacnt,
+            code_name: itemacntListData.find(
+              (item: any) => item.sub_code === data.itemacnt
+            )?.code_name,
+          },
+          qtyunit: commonCodeDefaultValue,
           qty: 0,
           specialunp: 0,
           specialamt: 0,
@@ -472,8 +451,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
       setEditIndex(0);
     } else {
-      console.log("rowData");
-      console.log(rowData);
+      //기존 행 업데이트
       const dataItem = rowData;
       fieldArrayRenderProps.onReplace({
         index: dataItem[FORM_DATA_INDEX],
@@ -483,7 +461,13 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           itemcd: data.itemcd,
           itemnm: data.itemnm,
           insiz: data.insiz,
-          itemacnt: data.itemacnt,
+          itemacnt: {
+            sub_code: data.itemacnt,
+            code_name: itemacntListData.find(
+              (item: any) => item.sub_code === data.itemacnt
+            )?.code_name,
+          },
+          qtyunit: commonCodeDefaultValue,
         },
       });
     }
@@ -543,8 +527,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             품목참조
           </Button>
         </GridToolbar>
-        {/* <GridColumn field="ProductName" title="Name" cell={NameCell} />
-        <GridColumn field="UnitsOnOrder" title="Units" cell={NumberCell} /> */}
 
         <GridColumn cell={CommandCell} width="130px" />
         <GridColumn
@@ -575,7 +557,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           title="품목계정"
           width="120px"
           cell={CellDropDownList}
-          queryStr={itemacntQuery}
         />
         <GridColumn
           field="qty"
@@ -588,7 +569,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           field="qtyunit"
           title="단위"
           width="120px"
-          cell={NameCell}
+          cell={CellDropDownList}
         />
         <GridColumn
           field="specialunp"
@@ -615,12 +596,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           width="120px"
           cell={NumberCell}
         />
-        <GridColumn
-          field="totamt"
-          title="합계금액"
-          width="120px"
-          cell={NumberCell}
-        />
+        <GridColumn field="totamt" title="합계금액" width="120px" />
         <GridColumn field="remark" title="비고" width="120px" cell={NameCell} />
         <GridColumn
           field="purcustnm"
@@ -628,24 +604,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           width="120px"
           cell={NameCell}
         />
-        <GridColumn
-          field="outqty"
-          title="출하수량"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="sale_qty"
-          title="판매수량"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="finyn"
-          title="완료여부"
-          width="120px"
-          cell={NameCell}
-        />
+        <GridColumn field="outqty" title="출하수량" width="120px" />
+        <GridColumn field="sale_qty" title="판매수량" width="120px" />
+        <GridColumn field="finyn" title="완료여부" width="120px" />
         <GridColumn
           field="bf_qty"
           title="LOT수량"
@@ -664,7 +625,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         <ItemsWindow
           workType={"ROW"} //신규 : N, 수정 : U
           getVisible={setItemWindowVisible}
-          getData={getItemData}
+          getData={setItemData}
           rowIdx={editedRowIdx}
           rowData={editedRowData}
           para={undefined}
@@ -680,61 +641,50 @@ const KendoWindow = ({
   ordnum,
   isCopy,
   para,
-}: IKendoWindow) => {
-  type ValueType = {
-    sub_code: string;
-    code_name: string;
-  };
+}: TKendoWindow) => {
+  //드롭다운 리스트 데이터 조회 (품목계정,수량단위)
+  const [locationListData, setLocationListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [doexdivListData, setDoexdivListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [ordstsListData, setOrdstsListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [ordtypeListData, setOrdtypeListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [departmentsListData, setDepartmentsListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [usersListData, setUsersListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [taxdivListData, setTaxdivListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [amtunitListData, setAmtunitListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [itemacntListData, setItemacntListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [qtyunitListData, setQtyunitListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  UseCommonQuery(locationQuery, setLocationListData);
+  UseCommonQuery(doexdivQuery, setDoexdivListData);
+  UseCommonQuery(ordstsQuery, setOrdstsListData);
+  UseCommonQuery(ordtypeQuery, setOrdtypeListData);
+  UseCommonQuery(departmentsQuery, setDepartmentsListData);
+  UseCommonQuery(usersQuery, setUsersListData);
+  UseCommonQuery(taxdivQuery, setTaxdivListData);
+  UseCommonQuery(amtunitQuery, setAmtunitListData);
+  UseCommonQuery(itemacntQuery, setItemacntListData);
+  UseCommonQuery(qtyunitQuery, setQtyunitListData);
 
-  const [locationListData, setLocationListData] = useState<Array<ValueType>>(
-    []
-  );
-  const [doexdivListData, setDoexdivListData] = useState<Array<ValueType>>([]);
-  const [ordstsListData, setOrdstsListData] = useState<Array<ValueType>>([]);
-  const [ordtypeListData, setOrdtypeListData] = useState<Array<ValueType>>([]);
-  const [departmentsListData, setDepartmentsListData] = useState<
-    Array<ValueType>
-  >([]);
-  const [usersListData, setUsersListData] = useState<Array<ValueType>>([]);
-  const [taxdivListData, setTaxdivListData] = useState<Array<ValueType>>([]);
-  const [itemacntListData, setItemacntListData] = useState<Array<ValueType>>(
-    []
-  );
-
-  const locationProp = (data: Array<ValueType>) => {
-    setLocationListData(data);
-  };
-  const doexdivProp = (data: Array<ValueType>) => {
-    setDoexdivListData(data);
-  };
-  const ordstsProp = (data: Array<ValueType>) => {
-    setOrdstsListData(data);
-  };
-  const ordtypeProp = (data: Array<ValueType>) => {
-    setOrdtypeListData(data);
-  };
-  const departmentsProp = (data: Array<ValueType>) => {
-    setDepartmentsListData(data);
-  };
-  const usersProp = (data: Array<ValueType>) => {
-    setUsersListData(data);
-  };
-  const taxdivProp = (data: Array<ValueType>) => {
-    setTaxdivListData(data);
-  };
-  const itemacntProp = (data: Array<ValueType>) => {
-    setItemacntListData(data);
-  };
-  useEffect(() => resetForm(), [locationListData]);
-  useEffect(() => resetForm(), [doexdivListData]);
-  useEffect(() => resetForm(), [ordstsListData]);
-  useEffect(() => resetForm(), [ordtypeListData]);
-  useEffect(() => resetForm(), [departmentsListData]);
-  useEffect(() => resetForm(), [usersListData]);
-  useEffect(() => resetForm(), [taxdivListData]);
-  useEffect(() => resetForm(), [itemacntListData]);
-
-  const [position, setPosition] = useState<PositionInterface>({
+  const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: 1200,
@@ -787,7 +737,7 @@ const KendoWindow = ({
   useEffect(() => {
     if (workType === "U" || isCopy === true) {
       fetchMain();
-      fetchGrid();
+      //fetchGrid();
     }
   }, []);
 
@@ -818,6 +768,7 @@ const KendoWindow = ({
     ship_method: "",
     poregnum: "",
     attdatnum: "",
+    files: "",
     remark: "",
   });
 
@@ -889,15 +840,32 @@ const KendoWindow = ({
           ship_method: rows.ship_method,
           poregnum: rows.poregnum,
           attdatnum: rows.attdatnum,
+          files: rows.files,
           remark: rows.remark,
         };
       });
     }
   };
 
+  //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
   useEffect(() => {
-    resetForm(); //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
+    resetForm();
   }, [initialVal]);
+
+  //fetch된 그리드 데이터가 그리드 폼에 세팅되도록 하기 위해 적용
+  useEffect(() => {
+    resetForm();
+  }, [detailDataResult]);
+
+  //itemacnt, qtyunit list가 조회된 후 상세그리드 조회
+  useEffect(() => {
+    if (workType === "U" || isCopy === true) {
+      if (itemacntListData.length > 0 && qtyunitListData.length > 0) {
+        resetAllGrid();
+        fetchGrid();
+      }
+    }
+  }, [itemacntListData, qtyunitListData]);
 
   //상세그리드 조회
   const fetchGrid = async () => {
@@ -911,7 +879,25 @@ const KendoWindow = ({
 
     if (data !== null) {
       const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+      let rows = data.result.data.Rows;
+
+      rows = rows.map((row: any) => {
+        return {
+          ...row,
+          itemacnt: {
+            sub_code: row.itemacnt,
+            code_name: itemacntListData.find(
+              (item: any) => item.sub_code === row.itemacnt
+            )?.code_name,
+          },
+          qtyunit: {
+            sub_code: row.qtyunit,
+            code_name: qtyunitListData.find(
+              (item: any) => item.sub_code === row.qtyunit
+            )?.code_name,
+          },
+        };
+      });
 
       setDetailDataResult((prev) => {
         return {
@@ -920,10 +906,10 @@ const KendoWindow = ({
         };
       });
 
-      resetForm();
+      //resetForm();
     }
   };
-  //조회조건 초기값
+  //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
     service_id: "20190218001",
@@ -995,7 +981,7 @@ const KendoWindow = ({
     form_id: "",
   });
 
-  //조회조건 파라미터
+  //프로시저 파라미터
   const paraSaved: Iparameters = {
     procedureName: "P_TEST_WEB_SA_A2000_S",
     pageNumber: 1,
@@ -1112,7 +1098,7 @@ const KendoWindow = ({
   };
 
   const handleSubmit = (dataItem: { [name: string]: any }) => {
-    alert(JSON.stringify(dataItem));
+    //alert(JSON.stringify(dataItem));
 
     const {
       location,
@@ -1143,10 +1129,10 @@ const KendoWindow = ({
       ship_method,
       dlv_method,
       hullno,
-      products,
+      orderDetails,
     } = dataItem;
 
-    let detailArr: MyType = {
+    let detailArr: TDetailData = {
       rowstatus_s: [],
       chk_s: [],
       ordseq_s: [],
@@ -1182,7 +1168,7 @@ const KendoWindow = ({
       heatno_s: [],
       bf_qty_s: [],
     };
-    products.forEach((item: any) => {
+    orderDetails.forEach((item: any) => {
       const {
         rowstatus,
         chk,
@@ -1232,7 +1218,9 @@ const KendoWindow = ({
       detailArr.insiz_s.push(insiz);
       detailArr.bnatur_s.push(bnatur);
       detailArr.qty_s.push(qty);
-      detailArr.qtyunit_s.push(qtyunit);
+      detailArr.qtyunit_s.push(
+        typeof qtyunit === "object" ? qtyunit.sub_code : ""
+      );
       detailArr.totwgt_s.push(totwgt);
       detailArr.wgtunit_s.push(wgtunit);
       detailArr.len_s.push(len);
@@ -1249,7 +1237,7 @@ const KendoWindow = ({
       detailArr.wonamt_s.push(wonamt);
       detailArr.remark_s.push(remark);
       detailArr.pac_s.push(pac);
-      detailArr.finyn_s.push(finyn);
+      detailArr.finyn_s.push(finyn === true ? "Y" : "N");
       detailArr.specialunp_s.push(specialunp);
       detailArr.lotnum_s.push(lotnum);
       detailArr.dlvdt_s.push(dlvdt);
@@ -1308,7 +1296,9 @@ const KendoWindow = ({
       detailArr.insiz_s.push(insiz);
       detailArr.bnatur_s.push(bnatur);
       detailArr.qty_s.push(qty);
-      detailArr.qtyunit_s.push(qtyunit);
+      detailArr.qtyunit_s.push(
+        typeof qtyunit === "object" ? qtyunit.sub_code : ""
+      );
       detailArr.totwgt_s.push(totwgt);
       detailArr.wgtunit_s.push(wgtunit);
       detailArr.len_s.push(len);
@@ -1348,7 +1338,7 @@ const KendoWindow = ({
       dlvdt: convertDateToStr(dlvdt),
       dptcd: dptcd.sub_code,
       person: person.sub_code,
-      amtunit,
+      amtunit: amtunit.sub_code,
       portnm,
       finaldes: "",
       paymeth,
@@ -1400,20 +1390,7 @@ const KendoWindow = ({
       heatno_s: detailArr.heatno_s.join("|"),
       bf_qty_s: detailArr.bf_qty_s.join("|"),
     }));
-
-    console.log("paraData!!");
-    console.log(paraData);
   };
-
-  // useEffect(() => {
-  //   if (isCopy === true)
-  //     setInitialVal((prev) => ({
-  //       ...prev,
-  //       ordnum: "",
-  //     }));
-
-  //   resetForm();
-  // }, []);
 
   useEffect(() => {
     if (paraData.work_type !== "") fetchGridSaved();
@@ -1427,20 +1404,13 @@ const KendoWindow = ({
     setCustType("RCVCUST");
     setCustWindowVisible(true);
   };
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
 
   const getCustData = (data: ICustData) => {
     if (custType === "CUST") {
@@ -1462,6 +1432,7 @@ const KendoWindow = ({
     }
   };
 
+  const getAttachmentsData = (data: ICustData) => {};
   return (
     <Window
       title={workType === "N" ? "수주생성" : "수주정보"}
@@ -1526,7 +1497,12 @@ const KendoWindow = ({
           rcvcustnm: initialVal.rcvcustnm,
           rcvcustcd: initialVal.rcvcustcd,
           project: initialVal.project,
-          amtunit: initialVal.amtunit, //"KRW",
+          amtunit: {
+            sub_code: initialVal.amtunit,
+            code_name: amtunitListData.find(
+              (item: any) => item.sub_code === initialVal.amtunit
+            )?.code_name,
+          }, //"KRW",
           wonchgrat: initialVal.wonchgrat, //0,
           uschgrat: initialVal.uschgrat, //0,
           quokey: initialVal.quokey,
@@ -1537,10 +1513,9 @@ const KendoWindow = ({
           ship_method: initialVal.ship_method,
           poregnum: initialVal.poregnum,
           attdatnum: initialVal.attdatnum,
+          files: initialVal.files,
           remark: initialVal.remark,
-          products: detailDataResult.data, //detailDataResult.data,
-          // lastName: "Peterson",
-          // email: "johnpeterson@company.com",
+          orderDetails: detailDataResult.data, //detailDataResult.data,
         }}
         render={() => (
           <FormElement horizontal={true}>
@@ -1648,7 +1623,8 @@ const KendoWindow = ({
                 />
                 <Field
                   name={"amtunit"}
-                  component={FormInput}
+                  component={FormDropDownList}
+                  queryStr={amtunitQuery}
                   label={"화폐단위"}
                 />
                 <Field
@@ -1697,10 +1673,20 @@ const KendoWindow = ({
                   label={"PO번호"}
                 />
                 <Field
-                  name={"attdatnum"}
-                  component={FormInput}
+                  name={"files"}
+                  component={FormReadOnly}
                   label={"첨부파일"}
                 />
+                <ButtonInFieldWrap>
+                  <ButtonInField>
+                    <Button
+                      type={"button"}
+                      onClick={onAttachmentsWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInField>
+                </ButtonInFieldWrap>
               </FieldWrap>
               <FieldWrap>
                 <Field
@@ -1719,7 +1705,7 @@ const KendoWindow = ({
               </FieldWrap>
             </fieldset>
             <FieldArray
-              name="products"
+              name="orderDetails"
               dataItemKey={DATA_ITEM_KEY}
               component={FormGrid}
               validator={arrayLengthValidator}
@@ -1733,14 +1719,6 @@ const KendoWindow = ({
           </FormElement>
         )}
       />
-      <UseCommonDataDDL queryStr={locationQuery} setData={locationProp} />
-      <UseCommonDataDDL queryStr={doexdivQuery} setData={doexdivProp} />
-      <UseCommonDataDDL queryStr={ordstsQuery} setData={ordstsProp} />
-      <UseCommonDataDDL queryStr={ordtypeQuery} setData={ordtypeProp} />
-      <UseCommonDataDDL queryStr={departmentsQuery} setData={departmentsProp} />
-      <UseCommonDataDDL queryStr={usersQuery} setData={usersProp} />
-      <UseCommonDataDDL queryStr={taxdivQuery} setData={taxdivProp} />
-      <UseCommonDataDDL queryStr={itemacntQuery} setData={itemacntProp} />
 
       {custWindowVisible && (
         <CustomersWindow
@@ -1748,6 +1726,14 @@ const KendoWindow = ({
           workType={custType} //신규 : N, 수정 : U
           getData={getCustData}
           para={undefined}
+        />
+      )}
+
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          getVisible={setAttachmentsWindowVisible}
+          getData={getAttachmentsData}
+          para={initialVal.attdatnum}
         />
       )}
     </Window>
