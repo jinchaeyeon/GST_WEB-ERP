@@ -30,6 +30,7 @@ import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { pageSize } from "../CommonString";
+import { Upload } from "@progress/kendo-react-upload";
 
 type IKendoWindow = {
   getVisible(arg: boolean): void;
@@ -69,7 +70,7 @@ const KendoWindow = ({ getVisible, getData, para }: IKendoWindow) => {
   );
 
   useEffect(() => {
-    fetchMain();
+    fetchGrid();
   }, []);
 
   //요약정보 조회조건 파라미터
@@ -83,8 +84,28 @@ const KendoWindow = ({ getVisible, getData, para }: IKendoWindow) => {
     },
   };
 
+  const uploadFile = async (file: File) => {
+    console.log("file");
+    console.log(file);
+    let data: any;
+
+    const filePara = { Name: "TEST", File: file };
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    console.log(formData);
+    try {
+      data = await processApi<any>("file-upload", filePara);
+    } catch (error) {
+      data = null;
+    }
+
+    console.log("data");
+    console.log(data);
+  };
   //요약정보 조회
-  const fetchMain = async () => {
+  const fetchGrid = async () => {
     let data: any;
 
     try {
@@ -106,6 +127,7 @@ const KendoWindow = ({ getVisible, getData, para }: IKendoWindow) => {
     }
   };
 
+  const excelInput: any = React.useRef();
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], {}));
@@ -137,6 +159,9 @@ const KendoWindow = ({ getVisible, getData, para }: IKendoWindow) => {
       </td>
     );
   };
+
+  const uploadInput = document.getElementById("upload");
+
   return (
     <Window
       title={"파일첨부관리"}
@@ -146,6 +171,22 @@ const KendoWindow = ({ getVisible, getData, para }: IKendoWindow) => {
       onResize={handleResize}
       onClose={onClose}
     >
+      <Button onClick={() => uploadInput!.click()}>
+        업로드
+        <input
+          id="upload"
+          style={{ display: "none" }}
+          type="file"
+          ref={excelInput}
+          onChange={(event: any) => {
+            // setResultMessage(null)
+            // setErrorList(null)
+            // setSuccessList(null)
+            const file = event.target.files[0];
+            uploadFile(file);
+          }}
+        />
+      </Button>
       <Grid
         style={{ height: "500px" }}
         data={mainDataResult.data}

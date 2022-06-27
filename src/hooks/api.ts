@@ -10,48 +10,18 @@ const domain: any = {
   "platform-query": { action: "get", url: "api/data/:query" },
   procedure: { action: "post", url: "api/data/procedure" },
   login: { action: "post", url: "/auth/token" },
-  "login-social": { action: "post", url: "/auth/token/social" },
-
-  clinic: { action: "get", url: "/clinic" },
-  "clinic-all": { action: "get", url: "/clinic/all" },
-  "clinic-item": { action: "get", url: "/clinic/:id" },
-  "clinic-count": { action: "get", url: "/clinic/count" },
-
-  promotion: { action: "get", url: "/promotion" },
-  video: { action: "get", url: "/video" },
-  "video-category": { action: "get", url: "/video/category" },
-  "video-item": { action: "get", url: "/video/:id" },
-  skinwiki: { action: "get", url: "/skinwiki" },
-  "skinwiki-item": { action: "get", url: "/skinwiki/:id" },
-  survey: { action: "post", url: "/survey" },
-  "check-username": { action: "put", url: "/user/usernameExist/:username" },
-  reg: { action: "post", url: "/user" },
-  "reg-social": { action: "post", url: "/user/reg/social" },
-  "social-url": { action: "get", url: "/social/login/:type" },
-
-  user: { action: "get", url: "/user/me" },
-  "update-user": { action: "put", url: "/user/me" },
-  "update-password": { action: "put", url: "/user/me/password" },
-  "update-password-by-token": { action: "put", url: "/user/password" },
-  "update-user-nick": { action: "put", url: "/user/me/nick/:nick" },
-  "check-nick": { action: "put", url: "/user/nickExist/:nick" },
-  "delete-user": { action: "delete", url: "/user/me" },
-
-  notice: { action: "get", url: "/notice" },
-  "notice-item": { action: "get", url: "/notice/:id" },
-  terms: { action: "get", url: "/term" },
-  "terms-item": { action: "get", url: "/term/:id" },
-  faq: { action: "get", url: "/faq" },
-  "faq-item": { action: "get", url: "/faq/:id" },
-  "faq-category": { action: "get", url: "/faq/category" },
-  "clinic-fav": { action: "get", url: "/clinic/fav" },
-  "clinic-fav-add": { action: "post", url: "/clinic/fav/:id" },
-  "clinic-fav-del": { action: "delete", url: "/clinic/fav/:id" },
-  "video-fav": { action: "get", url: "/video/fav" },
-  "video-fav-add": { action: "post", url: "/video/fav/:id" },
-  "video-fav-del": { action: "delete", url: "/video/fav/:id" },
-  main: { action: "get", url: "/main" },
-  "video-playcount-increase": { action: "put", url: "/video/:id/playCount" },
+  "file-upload": {
+    action: "post",
+    url: "api/FileUpload/file-upload",
+  },
+  "file-upload-multi": {
+    action: "post",
+    url: "api/FileUpload/file-upload-multi",
+  },
+  "file-download": {
+    action: "get",
+    url: "api/FileUpload/file-download/:filename",
+  },
 };
 
 const initCache = () => {
@@ -101,7 +71,12 @@ export const useApi = () => {
       url = `${BASE_URL}${url}`;
 
       let headers = {};
-      if (name === "platform-query") headers = { ...{ DBAlias: "Platform" } };
+      if (
+        name === "file-upload" ||
+        name === "file-upload-multi" ||
+        name === "file-download"
+      )
+        headers = { "Content-Type": "multipart/form-data" };
 
       if (token) {
         headers = { ...{ Authorization: `Bearer ${token.token}` } };
