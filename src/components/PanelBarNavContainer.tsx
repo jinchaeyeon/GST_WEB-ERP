@@ -6,6 +6,9 @@ import {
 } from "@progress/kendo-react-layout";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
+import { Button } from "@progress/kendo-react-buttons";
+import { useRecoilState } from "recoil";
+import { tokenState } from "../store/atoms";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -15,6 +18,12 @@ export const Wrapper = styled.div`
 export const Gnv = styled.div`
   min-width: 150px;
   text-align: center;
+  .logout span {
+    color: #656565;
+  }
+  .logout > .k-link {
+    justify-content: center;
+  }
 `;
 
 type ContentType = {
@@ -41,6 +50,8 @@ const paths = [
 ];
 
 const PanelBarNavContainer = (props: any) => {
+  const [token, setToken] = useRecoilState(tokenState);
+
   const onSelect = (event: PanelBarSelectEventArguments) => {
     console.log(event.target.props.route);
     props.history.push(event.target.props.route);
@@ -56,6 +67,11 @@ const PanelBarNavContainer = (props: any) => {
 
   const clientWidth = document.documentElement.clientWidth;
 
+  const logout = React.useCallback(() => {
+    setToken(null as any);
+    // 전체 페이지 reload (cache 삭제)
+    (window as any).location = "/Login";
+  }, []);
   return (
     <Wrapper>
       <Gnv>
@@ -69,6 +85,14 @@ const PanelBarNavContainer = (props: any) => {
             <PanelBarItem title={"수주처리"} route="/SA_B2000" />
           </PanelBarItem>
         </PanelBar>
+        <Button
+          onClick={logout}
+          icon={"logout"}
+          fillMode={"flat"}
+          themeColor={"secondary"}
+        >
+          로그아웃
+        </Button>
       </Gnv>
       <Content clientWidth={clientWidth}>{props.children}</Content>
     </Wrapper>

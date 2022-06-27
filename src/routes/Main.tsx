@@ -11,10 +11,8 @@ function Main() {
   const processTEST = useCallback(async () => {
     //console.log("processLogin", formData);
     try {
-      console.log("sstart");
       const response = await processApi<any>("test");
 
-      console.log("response!!!");
       console.log(response);
     } catch (e) {
       console.log(e);

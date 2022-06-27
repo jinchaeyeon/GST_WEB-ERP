@@ -1,12 +1,15 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
-import { CommonCode, Token } from "./types";
+import { User, CommonCode, Token } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
   ({ setSelf, onSet }) => {
     const savedValue = localStorage.getItem(key);
+    console.log("savedValue");
+    console.log(savedValue);
     if (savedValue != null) {
       try {
+        console.log(JSON.parse(savedValue));
         setSelf(JSON.parse(savedValue));
       } catch (e) {
         localStorage.removeItem(key);
@@ -25,6 +28,11 @@ export const tokenState = atom<Token>({
   key: "tokenState",
   default: null as any,
   effects_UNSTABLE: [localStorageEffect("accessToken")],
+});
+
+export const userState = atom<User>({
+  key: "userState",
+  default: null as any,
 });
 
 export const totalDataNumber = atom({

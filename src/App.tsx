@@ -8,11 +8,14 @@ import {
 import React, { Component } from "react";
 import "@progress/kendo-theme-default/dist/all.css";
 import "./App.css";
+import Login from "./routes/Login";
 import Main from "./routes/Main";
 import MA_B7000 from "./routes/MA_B7000";
 import SA_B2000 from "./routes/SA_B2000";
-import PanelBarNavContainer from "./PanelBarNavContainer";
+import PanelBarNavContainer from "./components/PanelBarNavContainer";
 import styled, { createGlobalStyle } from "styled-components";
+import AuthRoute from "./components/AuthRoute";
+import UserEffect from "./components/UserEffect";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -80,13 +83,15 @@ class App extends Component {
       <RecoilRoot>
         <GlobalStyle />
         <Router>
-          <PanelBarNavContainer>
-            <Switch>
-              <Route exact={true} path="/" component={withRouter(Main)} />
-              <Route path="/MA_B7000" component={MA_B7000} />
-              <Route path="/SA_B2000" component={withRouter(SA_B2000)} />
-            </Switch>
-          </PanelBarNavContainer>
+          <Switch>
+            <Route path="/Login" component={Login} />
+            <PanelBarNavContainer>
+              <UserEffect />
+              <AuthRoute path="/" component={Main} exact />
+              <AuthRoute path="/MA_B7000" component={MA_B7000} exact />
+              <AuthRoute path="/SA_B2000" component={SA_B2000} exact />
+            </PanelBarNavContainer>
+          </Switch>
         </Router>
       </RecoilRoot>
     );

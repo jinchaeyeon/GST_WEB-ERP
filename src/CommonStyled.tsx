@@ -119,3 +119,22 @@ export const FieldWrap = styled.div`
     width: 25%;
   }
 `;
+
+export const LoginBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding-bottom: 50px;
+
+  form {
+    background-color: #f7f7f7;
+    width: 400px;
+    padding: 50px;
+    border-radius: 5px;
+  }
+  button {
+    width: 100%;
+    margin-top: 15px;
+  }
+`;

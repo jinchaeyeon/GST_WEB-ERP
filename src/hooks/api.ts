@@ -9,7 +9,7 @@ const domain: any = {
   query: { action: "get", url: "api/data/:query" },
   "platform-query": { action: "get", url: "api/data/:query" },
   procedure: { action: "post", url: "api/data/procedure" },
-  login: { action: "post", url: "/auth/token" },
+  login: { action: "post", url: "api/auth/login" },
   "file-upload": {
     action: "post",
     url: "api/FileUpload/file-upload",
@@ -117,7 +117,7 @@ export const useApi = () => {
           if (res && res.status == 401) {
             setToken(null as any);
             // 전체 페이지 reload
-            (window as any).location = "/";
+            //(window as any).location = "/"; //로그인 실패시 새로고침돼서 일단 주석 처리 해둠
           }
           reject(res.data);
         });

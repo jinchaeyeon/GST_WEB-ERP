@@ -50,3 +50,10 @@ export type CommonCode = {
   sub_code: string;
   code_name: string;
 };
+
+export type User = {
+  nick: string;
+  route: string;
+  username: string;
+  realName: string;
+};
