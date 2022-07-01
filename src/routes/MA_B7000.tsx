@@ -26,6 +26,7 @@ import {
   TitleContainer,
   ButtonContainer,
   GridTitleContainer,
+  ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import {
@@ -34,7 +35,7 @@ import {
   RadioButtonChangeEvent,
 } from "@progress/kendo-react-inputs";
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useApi } from "../hooks/api";
 import ItemacntDDL from "../components/DropDownLists/ItemacntDDL";
 import {
@@ -54,7 +55,19 @@ import {
   chkScrollHandler,
   convertDateToStr,
   pageSize,
+  UseCommonQuery,
 } from "../components/CommonFunction";
+import ItemsWindow from "../components/Windows/ItemsWindow";
+import { IItemData } from "../hooks/interfaces";
+import {
+  commonCodeDefaultValue,
+  itemgradeQuery,
+  itemlvl1Query,
+  itemlvl2Query,
+  itemlvl3Query,
+} from "../components/CommonString";
+import NumberCell from "../components/Cells/NumberCell";
+import DateCell from "../components/Cells/DateCell";
 //import {useAuth} from "../../hooks/auth";
 
 const MA_B7000: React.FC = () => {
@@ -64,30 +77,35 @@ const MA_B7000: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
-  const [dataState, setDataState] = React.useState<State>({
-    skip: 0,
-    take: 20,
-    //sort: [{ field: "customerID", dir: "asc" }],
-    group: [{ field: "itemacnt" }],
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
   });
 
-  const [mainDataResult, setMainDataResult] = React.useState<DataResult>(
-    process([], dataState)
+  const [detail1DataState, setDetail1DataState] = useState<State>({
+    sort: [],
+  });
+
+  const [detail2DataState, setDetail2DataState] = useState<State>({
+    sort: [],
+  });
+
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
   );
 
-  const [detail1DataResult, setDetail1DataResult] = React.useState<DataResult>(
-    process([], dataState)
+  const [detail1DataResult, setDetail1DataResult] = useState<DataResult>(
+    process([], detail1DataState)
   );
 
-  const [detail2DataResult, setDetail2DataResult] = React.useState<DataResult>(
-    process([], dataState)
+  const [detail2DataResult, setDetail2DataResult] = useState<DataResult>(
+    process([], detail2DataState)
   );
 
-  const [selectedState, setSelectedState] = React.useState<{
+  const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  const [detailSelectedState, setDetailSelectedState] = React.useState<{
+  const [detailSelectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -381,32 +399,31 @@ const MA_B7000: React.FC = () => {
     setMainPgNum(1);
     setDetail1PgNum(1);
     setDetail2PgNum(1);
-    setMainDataResult(process([], dataState));
-    setDetail1DataResult(process([], dataState));
-    setDetail2DataResult(process([], dataState));
+    setMainDataResult(process([], mainDataState));
+    setDetail1DataResult(process([], detail1DataState));
+    setDetail2DataResult(process([], detail2DataState));
   };
 
   const resetAllDetailGrid = () => {
     setDetail1PgNum(1);
     setDetail2PgNum(1);
-    setDetail1DataResult(process([], dataState));
-    setDetail2DataResult(process([], dataState));
+    setDetail1DataResult(process([], detail1DataState));
+    setDetail2DataResult(process([], detail2DataState));
   };
 
   const resetDetail2Grid = () => {
     setDetail2PgNum(1);
-    setDetail2DataResult(process([], dataState));
+    setDetail2DataResult(process([], detail2DataState));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
-  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+  const onMainSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
 
-    console.log(newSelectedState);
     setSelectedState(newSelectedState);
 
     const selectedIdx = event.startRowIndex;
@@ -448,36 +465,29 @@ const MA_B7000: React.FC = () => {
   };
 
   //스크롤 핸들러
-  const mainScrollHandler = (event: GridEvent) => {
+  const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, pageSize))
       setMainPgNum((prev) => prev + 1);
   };
-  const detail1ScrollHandler = (event: GridEvent) => {
+  const onDetail1ScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, detail1PgNum, pageSize))
       setDetail1PgNum((prev) => prev + 1);
   };
-  const detail2ScrollHandler = (event: GridEvent) => {
+  const onDetail2ScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, detail2PgNum, pageSize))
       setDetail2PgNum((prev) => prev + 1);
   };
 
-  //dataStateChange 사용 용도 체크 필요
-  const dataStateChange = (event: GridDataStateChangeEvent) => {
-    setMainDataResult(process(mainDataResult.data, event.dataState));
-    setDataState(event.dataState);
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
   };
-
-  //사용 원리 체크 필요
-  const itemChange = (event: GridItemChangeEvent) => {
-    const newData = mainDataResult.data.map((item) =>
-      item.ProductID === event.dataItem.ProductID
-        ? { ...item, [event.field || ""]: event.value }
-        : item
-    );
-
-    setMainDataResult({ data: newData, total: newData.length });
+  const onDetail1DataStateChange = (event: GridDataStateChangeEvent) => {
+    setDetail1DataState(event.dataState);
   };
-
+  const onDetail2DataStateChange = (event: GridDataStateChangeEvent) => {
+    setDetail2DataState(event.dataState);
+  };
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     return (
@@ -488,7 +498,6 @@ const MA_B7000: React.FC = () => {
   };
 
   const detail1TotalFooterCell = (props: GridFooterCellProps) => {
-    //alert(detail1DataResult.total);
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총 {detail1DataResult.total}건
@@ -503,6 +512,118 @@ const MA_B7000: React.FC = () => {
       </td>
     );
   };
+
+  //품목마스터 팝업
+  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const onItemWndClick = () => {
+    setItemWindowVisible(true);
+  };
+  const getItemData = (data: IItemData) => {
+    setFilters((prev) => ({
+      ...prev,
+      itemcd: data.itemcd,
+      itemnm: data.itemnm,
+    }));
+  };
+
+  const onMainSortChange = (e: any) => {
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onDetail1SortChange = (e: any) => {
+    setDetail1DataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onDetail2SortChange = (e: any) => {
+    setDetail2DataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
+  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
+
+  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
+
+  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
+
+  const [itemgradeListData, setItemgradeListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  UseCommonQuery(itemgradeQuery, setItemgradeListData);
+
+  //공통코드 리스트 조회 후 그리드 데이터 세팅
+  useEffect(() => {
+    setMainDataResult((prev) => {
+      const rows = prev.data.map((row: any) => ({
+        ...row,
+        itemlvl1: itemlvl1ListData.find(
+          (item: any) => item.sub_code === row.itemlvl1
+        )?.code_name,
+      }));
+
+      console.log(rows);
+
+      return {
+        data: [...prev.data, ...rows],
+        total: prev.total,
+      };
+    });
+  }, [itemlvl1ListData]);
+
+  useEffect(() => {
+    setMainDataResult((prev) => {
+      const rows = prev.data.map((row: any) => ({
+        ...row,
+        itemlvl2: itemlvl2ListData.find(
+          (item: any) => item.sub_code === row.itemlvl2
+        )?.code_name,
+      }));
+
+      return {
+        data: [...prev.data, ...rows],
+        total: prev.total,
+      };
+    });
+  }, [itemlvl2ListData]);
+
+  useEffect(() => {
+    setMainDataResult((prev) => {
+      const rows = prev.data.map((row: any) => ({
+        ...row,
+        itemlvl3: itemlvl3ListData.find(
+          (item: any) => item.sub_code === row.itemlvl3
+        )?.code_name,
+      }));
+
+      return {
+        data: [...prev.data, ...rows],
+        total: prev.total,
+      };
+    });
+  }, [itemlvl3ListData]);
+
+  useEffect(() => {
+    setMainDataResult((prev) => {
+      const rows = prev.data.map((row: any) => ({
+        ...row,
+        itemgrade: itemgradeListData.find(
+          (item: any) => item.sub_code === row.itemgrade
+        )?.code_name,
+      }));
+
+      return {
+        data: [...prev.data, ...rows],
+        total: prev.total,
+      };
+    });
+  }, [itemgradeListData]);
+
   return (
     <>
       <TitleContainer>
@@ -546,14 +667,24 @@ const MA_B7000: React.FC = () => {
                 />
               </td>
 
-              <th>품목</th>
-              <td colSpan={3} className="item-box">
+              <th>품목코드</th>
+              <td>
                 <Input
                   name="itemcd"
                   type="text"
                   value={filters.itemcd}
                   onChange={filterInputChange}
                 />
+                <ButtonInInput>
+                  <Button
+                    onClick={onItemWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>품목명</th>
+              <td>
                 <Input
                   name="itemnm"
                   type="text"
@@ -698,27 +829,46 @@ const MA_B7000: React.FC = () => {
           </GridTitleContainer>
           <Grid
             style={{ height: "370px" }}
-            sortable={true}
-            groupable={false}
-            reorderable={true}
-            data={mainDataResult.data.map((item) => ({
-              ...item,
-              [SELECTED_FIELD]: selectedState[idGetter(item)],
-            }))}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                itemlvl1: itemlvl1ListData.find(
+                  (item: any) => item.sub_code === row.itemlvl1
+                )?.code_name,
+                itemlvl2: itemlvl2ListData.find(
+                  (item: any) => item.sub_code === row.itemlvl2
+                )?.code_name,
+                itemlvl3: itemlvl3ListData.find(
+                  (item: any) => item.sub_code === row.itemlvl3
+                )?.code_name,
+                itemgrade: itemgradeListData.find(
+                  (item: any) => item.sub_code === row.itemgrade
+                )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
             dataItemKey={DATA_ITEM_KEY}
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
               mode: "single",
             }}
-            onSelectionChange={onSelectionChange}
-            //onDataStateChange={dataStateChange}
-            //onItemChange={itemChange}
-            //editField={editField}
+            onSelectionChange={onMainSelectionChange}
+            //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={mainScrollHandler}
-            {...dataState}
+            onScroll={onMainScrollHandler}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
           >
             <GridColumn
               field="itemcd"
@@ -731,11 +881,16 @@ const MA_B7000: React.FC = () => {
             <GridColumn field="itemlvl3" title="소분류" />
             <GridColumn field="insiz" title="규격" />
             <GridColumn field="spec" title="사양" />
-            <GridColumn field="bnatur_insiz" title="소재규격" />
-            <GridColumn field="safeqty" title="안전재고량" />
-            <GridColumn field="stockqty" title="재고수량" />
-            <GridColumn field="stockwgt" title="재고중량" />
+            <GridColumn
+              field="bnatur_insiz"
+              title="소재규격"
+              cell={NumberCell}
+            />
+            <GridColumn field="safeqty" title="안전재고량" cell={NumberCell} />
+            <GridColumn field="stockqty" title="재고수량" cell={NumberCell} />
+            <GridColumn field="stockwgt" title="재고중량" cell={NumberCell} />
             <GridColumn field="load_place_bc" title="적재장소" />
+            <GridColumn field="itemgrade" title="품목등급" />
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -746,14 +901,16 @@ const MA_B7000: React.FC = () => {
           </GridTitleContainer>
           <Grid
             style={{ height: "370px" }}
-            data={detail1DataResult.data.map((item) => ({
-              ...item,
-              [SELECTED_FIELD]: detailSelectedState[detailIdGetter(item)],
-            }))}
-            sortable={true}
-            groupable={false}
-            reorderable={true}
-            //data={detail1DataResult}
+            data={process(
+              detail1DataResult.data.map((row) => ({
+                ...row,
+                [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
+              })),
+              detail1DataState
+            )}
+            {...detail1DataState}
+            onDataStateChange={onDetail1DataStateChange}
+            //선택기능
             dataItemKey={DETAIL_DATA_ITEM_KEY}
             selectedField={SELECTED_FIELD}
             selectable={{
@@ -761,18 +918,24 @@ const MA_B7000: React.FC = () => {
               mode: "single",
             }}
             onSelectionChange={onDetailSelectionChange}
-            //onDataStateChange={dataStateChange}
+            //정렬기능
+            sortable={true}
+            onSortChange={onDetail1SortChange}
+            //스크롤 조회 기능
             fixedScroll={true}
             total={detail1DataResult.total}
-            onScroll={detail1ScrollHandler}
-            {...dataState}
+            onScroll={onDetail1ScrollHandler}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
           >
             <GridColumn
               field="lotnum"
               title="LOT NO"
               footerCell={detail1TotalFooterCell}
             />
-            <GridColumn field="stockqty" title="재고수량" />
+            <GridColumn field="stockqty" title="재고수량" cell={NumberCell} />
           </Grid>
         </GridContainer>
         <GridContainer>
@@ -781,31 +944,49 @@ const MA_B7000: React.FC = () => {
           </GridTitleContainer>
           <Grid
             style={{ height: "370px" }}
+            data={process(detail2DataResult.data, detail2DataState)}
+            {...detail2DataState}
+            onDataStateChange={onDetail2DataStateChange}
+            //정렬기능
             sortable={true}
-            reorderable={true}
-            data={detail2DataResult}
-            //onDataStateChange={dataStateChange}
+            onSortChange={onDetail2SortChange}
+            //스크롤 조회 기능
             fixedScroll={true}
             total={detail2DataResult.total}
-            onScroll={detail2ScrollHandler}
-            {...dataState}
+            onScroll={onDetail2ScrollHandler}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
           >
             <GridColumn
               field="gubun"
               title="구분"
               footerCell={detail2TotalFooterCell}
             />
-            <GridColumn field="indt" title="발생일자" />
-            <GridColumn field="baseqty" title="기초재고수량" />
-            <GridColumn field="inqty" title="입고수량" />
-            <GridColumn field="outqty" title="출고수량" />
-            <GridColumn field="inwgt" title="입고중량" />
+            <GridColumn field="indt" title="발생일자" cell={DateCell} />
+            <GridColumn
+              field="baseqty"
+              title="기초재고수량"
+              cell={NumberCell}
+            />
+            <GridColumn field="inqty" title="입고수량" cell={NumberCell} />
+            <GridColumn field="outqty" title="출고수량" cell={NumberCell} />
+            <GridColumn field="inwgt" title="입고중량" cell={NumberCell} />
             <GridColumn field="custnm" title="업체명" />
             <GridColumn field="recnum" title="관리번호" />
             <GridColumn field="remark" title="비고" />
           </Grid>
         </GridContainer>
       </GridContainerWrap>
+      {itemWindowVisible && (
+        <ItemsWindow
+          getVisible={setItemWindowVisible}
+          workType={"FILTER"}
+          getData={getItemData}
+          para={undefined}
+        />
+      )}
     </>
   );
 };

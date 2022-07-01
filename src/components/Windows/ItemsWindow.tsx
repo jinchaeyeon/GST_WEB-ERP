@@ -7,11 +7,15 @@ import {
   GridFooterCellProps,
   GridCellProps,
   GridEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+  GridDataStateChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DataResult, process } from "@progress/kendo-data-query";
+import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
 
 import {
+  BottomContainer,
   ButtonContainer,
   FilterBox,
   FilterBoxWrap,
@@ -31,12 +35,12 @@ import { chkScrollHandler } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
 
 type IWindow = {
-  workType: string;
+  workType: string; //구분자 "FILTER", "ROW"
   getVisible(t: boolean): void;
-  getData(data: object, rowIdx: number, rowData: object): void;
-  rowIdx?: number;
-  rowData?: object;
-  para?: Iparameters; //{};
+  getData(data: object, rowIdx: number, rowData: object): void; //data : 품목참조팝업에서 선택한 데이터 // rowIdx, rowData : 그리드 인라인 품목참조시 사용
+  rowIdx?: number; // (그리드 인라인 품목참조시 사용) 참조버튼 클릭한 행 번호
+  rowData?: object; // (그리드 인라인 품목참조시 사용) 참조버튼 클릭한 행 번호
+  para?: Iparameters; //현재 미사용
 };
 
 const pageSize = 20;
@@ -55,7 +59,13 @@ const ItemsWindow = ({
     width: 1200,
     height: 800,
   });
+  const DATA_ITEM_KEY = "itemcd";
+  const SELECTED_FIELD = "selected";
 
+  const idGetter = getter(DATA_ITEM_KEY);
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -93,8 +103,11 @@ const ItemsWindow = ({
 
   const processApi = useApi();
 
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], {})
+    process([], mainDataState)
   );
   const [mainPgNum, setMainPgNum] = useState(1);
 
@@ -165,13 +178,23 @@ const ItemsWindow = ({
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setMainPgNum(1);
     setMainDataResult(process([], {}));
   };
 
   //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const scrollHandler = (event: GridEvent) => {
+  const onScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, pageSize))
       setMainPgNum((prev) => prev + 1);
+  };
+
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
+
+  const onMainSortChange = (e: any) => {
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const CommandCell = (props: GridCellProps) => {
@@ -193,6 +216,35 @@ const ItemsWindow = ({
         ></Button>
       </td>
     );
+  };
+
+  const onRowDoubleClick = (props: any) => {
+    const selectedData = props.dataItem;
+    selectData(selectedData);
+  };
+
+  const onConfirmBtnClick = (props: any) => {
+    const selectedData = mainDataResult.data.find(
+      (row: any) => row.itemcd === Object.keys(selectedState)[0]
+    );
+    selectData(selectedData);
+  };
+
+  // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
+  const selectData = (selectedData: any) => {
+    getData(selectedData, rowIdx ?? -1, rowData ?? {});
+    if (rowIdx !== -1 || rowIdx === undefined) onClose();
+  };
+
+  //메인 그리드 선택 이벤트
+  const onMainSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+
+    setSelectedState(newSelectedState);
   };
 
   return (
@@ -315,16 +367,37 @@ const ItemsWindow = ({
       </FilterBoxWrap>
       <Grid
         style={{ height: "500px" }}
-        data={mainDataResult.data}
-        sortable={true}
-        groupable={false}
-        reorderable={true}
-        //onDataStateChange={dataStateChange}
+        data={process(
+          mainDataResult.data.map((row) => ({
+            ...row,
+            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+          })),
+          mainDataState
+        )}
+        onDataStateChange={onMainDataStateChange}
+        {...mainDataState}
+        //선택 기능
+        dataItemKey={DATA_ITEM_KEY}
+        selectedField={SELECTED_FIELD}
+        selectable={{
+          enabled: true,
+          mode: "single",
+        }}
+        onSelectionChange={onMainSelectionChange}
+        //스크롤 조회기능
         fixedScroll={true}
         total={mainDataResult.total}
-        onScroll={scrollHandler}
+        onScroll={onScrollHandler}
+        //정렬기능
+        sortable={true}
+        onSortChange={onMainSortChange}
+        //컬럼순서조정
+        reorderable={true}
+        //컬럼너비조정
+        resizable={true}
+        //더블클릭
+        onRowDoubleClick={onRowDoubleClick}
       >
-        <GridColumn cell={CommandCell} width="55px" filterable={false} />
         <GridColumn
           field="itemcd"
           title="품목코드"
@@ -344,6 +417,16 @@ const ItemsWindow = ({
         <GridColumn field="maker" title="메이커" width="120px" />
         <GridColumn field="remark" title="비고" width="120px" />
       </Grid>
+      <BottomContainer>
+        <ButtonContainer>
+          <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
+            확인
+          </Button>
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            닫기
+          </Button>
+        </ButtonContainer>
+      </BottomContainer>
     </Window>
   );
 };

@@ -39,12 +39,10 @@ import {
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import ItemacntDDL from "../components/DropDownLists/ItemacntDDL";
 import {
   ordstsState,
   ordtypeState,
   departmentsState,
-  itemlvl3State,
   usersState,
   doexdivState,
   locationState,
@@ -60,14 +58,24 @@ import {
   chkScrollHandler,
   convertDateToStr,
   pageSize,
+  UseCommonQuery,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_B2000_Window";
 import CustomersWindow from "../components/Windows/CustomersWindow";
 import ItemsWindow from "../components/Windows/ItemsWindow";
-
-//import {useAuth} from "../../hooks/auth";
-
-// Add a command cell to Edit, Update, Cancel and Delete an item
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import {
+  commonCodeDefaultValue,
+  departmentsQuery,
+  doexdivQuery,
+  itemacntQuery,
+  locationQuery,
+  ordstsQuery,
+  qtyunitQuery,
+  taxdivQuery,
+  usersQuery,
+} from "../components/CommonString";
 
 const SA_B2000: React.FC = () => {
   const DATA_ITEM_KEY = "ordnum";
@@ -76,11 +84,11 @@ const SA_B2000: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
-  const [dataState, setDataState] = useState<State>({
-    skip: 0,
-    take: 20,
-    //sort: [{ field: "customerID", dir: "asc" }],
-    group: [{ field: "itemacnt" }],
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+  const [detailDataState, setDetailDataState] = useState<State>({
+    sort: [],
   });
 
   const CommandCell = (props: GridCellProps) => {
@@ -113,11 +121,11 @@ const SA_B2000: React.FC = () => {
   };
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], dataState)
+    process([], mainDataState)
   );
 
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], dataState)
+    process([], detailDataState)
   );
 
   const [selectedState, setSelectedState] = useState<{
@@ -405,13 +413,13 @@ const SA_B2000: React.FC = () => {
   const resetAllGrid = () => {
     setMainPgNum(1);
     setDetailPgNum(1);
-    setMainDataResult(process([], dataState));
-    setDetailDataResult(process([], dataState));
+    setMainDataResult(process([], mainDataState));
+    setDetailDataResult(process([], detailDataState));
   };
 
   const resetDetailGrid = () => {
     setDetailPgNum(1);
-    setDetailDataResult(process([], dataState));
+    setDetailDataResult(process([], detailDataState));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -442,32 +450,22 @@ const SA_B2000: React.FC = () => {
   };
 
   //스크롤 핸들러
-  const mainScrollHandler = (event: GridEvent) => {
+  const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, pageSize))
       setMainPgNum((prev) => prev + 1);
   };
 
-  const detailScrollHandler = (event: GridEvent) => {
+  const onDetailScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, detailPgNum, pageSize))
       setDetailPgNum((prev) => prev + 1);
   };
-  //dataStateChange 사용 용도 체크 필요
-  const dataStateChange = (event: GridDataStateChangeEvent) => {
-    setMainDataResult(process(mainDataResult.data, event.dataState));
-    setDataState(event.dataState);
+
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
   };
 
-  const editField: string = "inEdit";
-
-  //사용 원리 체크 필요
-  const itemChange = (event: GridItemChangeEvent) => {
-    const newData = mainDataResult.data.map((item) =>
-      item.ProductID === event.dataItem.ProductID
-        ? { ...item, [event.field || ""]: event.value }
-        : item
-    );
-
-    setMainDataResult({ data: newData, total: newData.length });
+  const onDetailDataStateChange = (event: GridDataStateChangeEvent) => {
+    setDetailDataState(event.dataState);
   };
 
   //그리드 푸터
@@ -638,6 +636,7 @@ const SA_B2000: React.FC = () => {
     custitemnm: string;
   }
 
+  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const getCustData = (data: ICustData) => {
     setFilters((prev) => ({
       ...prev,
@@ -645,6 +644,8 @@ const SA_B2000: React.FC = () => {
       custnm: data.custnm,
     }));
   };
+
+  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const getItemData = (data: IItemData) => {
     setFilters((prev) => ({
       ...prev,
@@ -652,6 +653,63 @@ const SA_B2000: React.FC = () => {
       itemnm: data.itemnm,
     }));
   };
+
+  const onMainSortChange = (e: any) => {
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onDetailSortChange = (e: any) => {
+    setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  //공통코드 리스트 조회 (수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서)
+  const [ordstsListData, setOrdstsListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [doexdivListData, setDoexdivListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [taxdivListData, setTaxdivListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [locationListData, setLocationListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [usersListData, setUsersListData] = useState([commonCodeDefaultValue]);
+
+  const [departmentsListData, setDepartmentsListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [itemacntListData, setItemacntListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [qtyunitListData, setQtyunitListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+
+  UseCommonQuery(ordstsQuery, setOrdstsListData);
+  UseCommonQuery(doexdivQuery, setDoexdivListData);
+  UseCommonQuery(taxdivQuery, setTaxdivListData);
+  UseCommonQuery(locationQuery, setLocationListData);
+  UseCommonQuery(usersQuery, setUsersListData);
+  UseCommonQuery(departmentsQuery, setDepartmentsListData);
+  UseCommonQuery(itemacntQuery, setItemacntListData);
+  UseCommonQuery(qtyunitQuery, setQtyunitListData);
+
+  //공통코드 리스트 조회 후 그리드 데이터 세팅
+  useEffect(() => {
+    // setMainDataResult((prev) => {
+    //   const rows = prev.data.map((row: any) => ({
+    //     ...row,
+    //     ordsts: ordstsListData.find((item: any) => item.sub_code === row.ordsts)
+    //       ?.code_name,
+    //   }));
+    //   return {
+    //     data: [...prev.data, ...rows],
+    //     total: prev.total,
+    //   };
+    // });
+  }, [ordstsListData]);
+
   return (
     <>
       <TitleContainer>
@@ -717,12 +775,12 @@ const SA_B2000: React.FC = () => {
             </tr>
 
             <tr>
-              <th>품목명</th>
+              <th>품목코드</th>
               <td>
                 <Input
-                  name="itemnm"
+                  name="itemcd"
                   type="text"
-                  value={filters.itemnm}
+                  value={filters.itemcd}
                   onChange={filterInputChange}
                 />
                 <ButtonInInput>
@@ -733,12 +791,12 @@ const SA_B2000: React.FC = () => {
                   />
                 </ButtonInInput>
               </td>
-              <th>품목코드</th>
+              <th>품목명</th>
               <td>
                 <Input
-                  name="itemcd"
+                  name="itemnm"
                   type="text"
-                  value={filters.itemcd}
+                  value={filters.itemnm}
                   onChange={filterInputChange}
                 />
               </td>
@@ -759,15 +817,14 @@ const SA_B2000: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <th>업체명</th>
+              <th>업체코드</th>
               <td>
                 <Input
-                  name="custnm"
+                  name="custcd"
                   type="text"
-                  value={filters.custnm}
+                  value={filters.custcd}
                   onChange={filterInputChange}
                 />
-
                 <ButtonInInput>
                   <Button
                     onClick={onCustWndClick}
@@ -776,12 +833,12 @@ const SA_B2000: React.FC = () => {
                   />
                 </ButtonInInput>
               </td>
-              <th>업체코드</th>
+              <th>업체명</th>
               <td>
                 <Input
-                  name="custcd"
+                  name="custnm"
                   type="text"
-                  value={filters.custcd}
+                  value={filters.custnm}
                   onChange={filterInputChange}
                 />
               </td>
@@ -871,14 +928,34 @@ const SA_B2000: React.FC = () => {
           </GridTitleContainer>
           <Grid
             style={{ height: "310px" }}
-            sortable={true}
-            groupable={false}
-            resizable={true}
-            reorderable={true}
-            data={mainDataResult.data.map((item) => ({
-              ...item,
-              [SELECTED_FIELD]: selectedState[idGetter(item)],
-            }))}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                ordsts: ordstsListData.find(
+                  (item: any) => item.sub_code === row.ordsts
+                )?.code_name,
+                doexdiv: doexdivListData.find(
+                  (item: any) => item.sub_code === row.doexdiv
+                )?.code_name,
+                taxdiv: taxdivListData.find(
+                  (item: any) => item.sub_code === row.taxdiv
+                )?.code_name,
+                location: locationListData.find(
+                  (item: any) => item.sub_code === row.location
+                )?.code_name,
+                person: usersListData.find(
+                  (item: any) => item.sub_code === row.person
+                )?.code_name,
+                dptcd: departmentsListData.find(
+                  (item: any) => item.sub_code === row.dptcd
+                )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)],
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
             dataItemKey={DATA_ITEM_KEY}
             selectedField={SELECTED_FIELD}
             selectable={{
@@ -886,39 +963,80 @@ const SA_B2000: React.FC = () => {
               mode: "single",
             }}
             onSelectionChange={onSelectionChange}
-            //onDataStateChange={dataStateChange}
-            //onItemChange={itemChange}
-            //editField={editField}
+            //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={mainScrollHandler}
-            {...dataState}
+            onScroll={onMainScrollHandler}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
           >
             <GridColumn cell={CommandCell} width="55px" />
             <GridColumn
               field="orddt"
               title="수주일자"
+              cell={DateCell}
               footerCell={mainTotalFooterCell}
-              width="120px"
+              width="100px"
             />
             <GridColumn
               field="dlvdt"
               title="납기일자"
-              width="120px"
+              cell={DateCell}
+              width="100px"
               //width={calculateWidth("dlvdt")}
             />
             <GridColumn field="ordnum" title="수주번호" width="120px" />
-            <GridColumn field="custnm" title="업체명" width="120px" />
-            <GridColumn field="ordsts" title="수주상태" width="120px" />
-            <GridColumn field="doexdiv" title="내수구분" width="120px" />
-            <GridColumn field="taxdiv" title="과세구분" width="120px" />
-            <GridColumn field="out_qty" title="출하수량" width="120px" />
-            <GridColumn field="sale_qty" title="판매수량" width="120px" />
-            <GridColumn field="qty" title="수주수량" width="120px" />
-            <GridColumn field="specialamt" title="발주금액" width="120px" />
-            <GridColumn field="amt" title="금액" width="120px" />
-            <GridColumn field="taxamt" title="세액" width="120px" />
-            <GridColumn field="totamt" title="합계금액" width="120px" />
+            <GridColumn field="custnm" title="업체명" width="170px" />
+            <GridColumn field="ordsts" title="수주상태" width="100px" />
+            <GridColumn field="doexdiv" title="내수구분" width="100px" />
+            <GridColumn field="taxdiv" title="과세구분" width="100px" />
+            <GridColumn
+              field="out_qty"
+              title="출하수량"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="sale_qty"
+              title="판매수량"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="qty"
+              title="수주수량"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="specialamt"
+              title="발주금액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="amt"
+              title="금액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="taxamt"
+              title="세액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="totamt"
+              title="합계금액"
+              width="120px"
+              cell={NumberCell}
+            />
             <GridColumn field="location" title="사업장" width="120px" />
             <GridColumn field="dptcd" title="부서" width="120px" />
             <GridColumn field="person" title="담당자" width="120px" />
@@ -935,46 +1053,98 @@ const SA_B2000: React.FC = () => {
         </GridTitleContainer>
         <Grid
           style={{ height: "310px" }}
-          data={detailDataResult.data.map((item) => ({
-            ...item,
-            [SELECTED_FIELD]: detailSelectedState[detailIdGetter(item)],
-          }))}
-          sortable={true}
-          groupable={false}
-          reorderable={true}
-          dataItemKey={DETAIL_DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
-          }}
-          //onDataStateChange={dataStateChange}
+          data={process(
+            detailDataResult.data.map((row) => ({
+              ...row,
+              itemacnt: itemacntListData.find(
+                (item: any) => item.sub_code === row.itemacnt
+              )?.code_name,
+              qtyunit: qtyunitListData.find(
+                (item: any) => item.sub_code === row.qtyunit
+              )?.code_name,
+            })),
+            detailDataState
+          )}
+          {...detailDataState}
+          onDataStateChange={onDetailDataStateChange}
+          //스크롤 조회 기능
           fixedScroll={true}
           total={detailDataResult.total}
-          onScroll={detailScrollHandler}
-          {...dataState}
+          onScroll={onDetailScrollHandler}
+          //정렬기능
+          sortable={true}
+          onSortChange={onDetailSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
         >
           <GridColumn
-            field="itemnm"
-            title="품목명"
-            width="180px"
+            field="itemcd"
+            title="품목코드"
+            width="160px"
             footerCell={detailTotalFooterCell}
           />
-          <GridColumn field="itemcd" title="품목코드" width="160px" />
+          <GridColumn field="itemnm" title="품목명" width="180px" />
           <GridColumn field="insiz" title="규격" width="200px" />
           <GridColumn field="itemacnt" title="품목계정" width="120px" />
-          <GridColumn field="qty" title="수주량" width="120px" />
+          <GridColumn
+            field="qty"
+            title="수주량"
+            width="120px"
+            cell={NumberCell}
+          />
           <GridColumn field="qtyunit" title="단위" width="120px" />
-          <GridColumn field="specialunp" title="발주단가" width="120px" />
-          <GridColumn field="specialamt" title="발주금액" width="120px" />
-          <GridColumn field="unp" title="단가" width="120px" />
-          <GridColumn field="wonamt" title="금액" width="120px" />
-          <GridColumn field="taxamt" title="세액" width="120px" />
-          <GridColumn field="totamt" title="합계금액" width="120px" />
+          <GridColumn
+            field="specialunp"
+            title="발주단가"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="specialamt"
+            title="발주금액"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="unp"
+            title="단가"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="wonamt"
+            title="금액"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="taxamt"
+            title="세액"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="totamt"
+            title="합계금액"
+            width="120px"
+            cell={NumberCell}
+          />
           <GridColumn field="remark" title="비고" width="120px" />
           <GridColumn field="purcustnm" title="발주처" width="120px" />
-          <GridColumn field="outqty" title="출하수량" width="120px" />
-          <GridColumn field="sale_qty" title="판매수량" width="120px" />
+          <GridColumn
+            field="outqty"
+            title="출하수량"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="sale_qty"
+            title="판매수량"
+            width="120px"
+            cell={NumberCell}
+          />
           <GridColumn field="finyn" title="완료여부" width="120px" />
           <GridColumn field="bf_qty" title="LOT수량" width="120px" />
           <GridColumn field="lotnum" title="LOT NO" width="120px" />

@@ -32,3 +32,18 @@ export const qtyunitQuery =
 
 export const amtunitQuery =
   "SELECT convert(varchar(5), sub_code) as sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA020' AND use_yn='Y' ORDER BY (case when use_yn='Y' then 'Y' else 'N' END),sort_seq,sub_code,code_name";
+
+export const itemlvl1Query =
+  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA171' AND use_yn  = 'Y'";
+
+export const itemlvl2Query =
+  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA172' AND use_yn  = 'Y'";
+
+export const itemlvl3Query =
+  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA173' AND use_yn  = 'Y'";
+
+export const itemgradeQuery =
+  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA130' AND use_yn  = 'Y'";
+
+export const custdivQuery =
+  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA026' AND use_yn  = 'Y'";

@@ -13,15 +13,22 @@ import {
   GridCellProps,
   GridToolbar,
   GridItemChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+  GridHeaderSelectionChangeEvent,
+  GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
 
 import {
+  BottomContainer,
+  ButtonContainer,
   ButtonInField,
   ButtonInFieldWrap,
   FieldWrap,
+  GridContainer,
 } from "../../CommonStyled";
 import {
   Form,
@@ -29,6 +36,7 @@ import {
   FormElement,
   FieldArray,
   FieldArrayRenderProps,
+  FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 
@@ -44,12 +52,15 @@ import {
   FormReadOnly,
   CellDropDownList,
   CellCheckBoxReadOnly,
+  ReadOnlyNumberCell,
 } from "./editors";
 import { Iparameters } from "../../store/types";
 import {
+  checkIsDDLValid,
   chkScrollHandler,
   convertDateToStr,
   dateformat,
+  getItemQuery,
   UseCommonQuery,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
@@ -78,9 +89,12 @@ import {
   usersQuery,
 } from "../CommonString";
 
+import { CellRender, RowRender } from "./renderers";
+import UserEffect from "../UserEffect";
+
 // Validate the entire Form
 const arrayLengthValidator = (value: any) =>
-  value && value.length ? "" : "Please add at least one record.";
+  value && value.length ? "" : "최소 1개 행을 입력해주세요";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = React.createContext<{
@@ -91,12 +105,16 @@ export const FormGridEditContext = React.createContext<{
   onCancel: () => void;
   editIndex: number | undefined;
   parentField: string;
+  getItemcd: (itemcd: string) => void;
 }>({} as any);
 
 const deletedRows: object[] = [];
 
 const FORM_DATA_INDEX = "formDataIndex";
-const DATA_ITEM_KEY = "ordseq1";
+const DATA_ITEM_KEY = "ordseq";
+
+const idGetter = getter(FORM_DATA_INDEX);
+const SELECTED_FIELD: string = "selected";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -268,25 +286,24 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const ItemBtnCell = (props: GridCellProps) => {
     const { editIndex } = React.useContext(FormGridEditContext);
-    const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
+    //const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
 
     const onRowItemWndClick = () => {
-      if (editIndex !== undefined) setEditedRowIdx(editIndex);
-      console.log("c dataItem");
-      console.log(props.dataItem);
+      //if (editIndex !== undefined)
+      setEditedRowIdx(editIndex!);
       setEditedRowData(props.dataItem);
       setItemWindowVisible(true);
     };
 
     return (
-      <td className="k-command-cell">
+      <td className="k-command-cell required">
         <Button
           type={"button"}
           className="k-grid-save-command"
           //fillMode="flat"
           onClick={onRowItemWndClick}
           icon="more-horizontal"
-          disabled={isInEdit ? false : true}
+          //disabled={isInEdit ? false : true}
         />
       </td>
     );
@@ -295,7 +312,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const onAdd = React.useCallback(
     (e: any) => {
       e.preventDefault();
-      fieldArrayRenderProps.onUnshift({
+      fieldArrayRenderProps.onPush({
         value: {
           rowstatus: "N",
           qty: 0,
@@ -329,24 +346,43 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     },
     [fieldArrayRenderProps]
   );
-  // Remove a new item to the Form FieldArray that will be removed from the Grid
-  const onRemove = React.useCallback(
-    (dataItem: any) => {
-      deletedRows.push(dataItem);
 
+  const onRemove = React.useCallback(() => {
+    let newData: any[] = [];
+
+    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
+      if (!selectedState[index]) {
+        newData.push(item);
+      } else {
+        deletedRows.push(item);
+      }
+    });
+
+    //전체 데이터 삭제
+    fieldArrayRenderProps.value.forEach(() => {
       fieldArrayRenderProps.onRemove({
-        index: dataItem[FORM_DATA_INDEX],
+        index: 0,
       });
+    });
 
-      setEditIndex(undefined);
-    },
-    [fieldArrayRenderProps]
-  );
+    //newData 생성
+    newData.forEach((item: any) => {
+      fieldArrayRenderProps.onPush({
+        value: item,
+      });
+    });
+
+    //선택 상태 초기화
+    setSelectedState({});
+
+    //수정 상태 초기화
+    setEditIndex(undefined);
+  }, [fieldArrayRenderProps]);
 
   // Update an item from the Grid and update the index of the edited item
   const onEdit = React.useCallback((dataItem: any, isNewItem: any) => {
     if (!isNewItem) {
-      alert();
       editItemCloneRef.current = clone(dataItem);
     }
 
@@ -361,14 +397,29 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setEditIndex(dataItem[FORM_DATA_INDEX]);
   }, []);
 
-  const onCopy = React.useCallback((dataItem: any) => {
-    fieldArrayRenderProps.onInsert({
-      index: dataItem[FORM_DATA_INDEX],
-      value: { ...dataItem, rowstatus: "N" },
+  const onCopy = React.useCallback(() => {
+    let newData: any[] = [];
+
+    //복사할 데이터 newData에 push
+    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
+      if (selectedState[index]) {
+        newData.push(item);
+      }
     });
 
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
-  }, []);
+    //newData 생성
+    newData.forEach((item: any) => {
+      fieldArrayRenderProps.onPush({
+        value: { ...item, rowstatus: "N" },
+      });
+    });
+
+    //선택 상태 초기화
+    setSelectedState({});
+
+    //수정 상태 초기화
+    setEditIndex(undefined);
+  }, [fieldArrayRenderProps]);
 
   // Cancel the editing of an item and return its initial value
   const onCancel = React.useCallback(() => {
@@ -411,7 +462,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
     if (rowIdx === -1) {
       //신규생성
-      fieldArrayRenderProps.onUnshift({
+      fieldArrayRenderProps.onPush({
         value: {
           rowstatus: "N",
           itemcd: data.itemcd,
@@ -478,160 +529,393 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setItemWindowVisible(true);
   };
 
-  // const itemChange = (event: GridItemChangeEvent) => {
-  //   alert(1);
-  //   // const inEditID = event.dataItem.ProductID;
-  //   // const field = event.field || "";
-  //   // const newData = data.map((item) =>
-  //   //   item.ProductID === inEditID ? { ...item, [field]: event.value } : item
-  //   // );
-  //   // setData(newData);
-  // };
+  const itemChange = (event: GridItemChangeEvent) => {
+    // const inEditID = event.dataItem.ProductID;
+    // const field = event.field || "";
+    // const newData = data.map((item) =>
+    //   item.ProductID === inEditID ? { ...item, [field]: event.value } : item
+    // );
+    // setData(newData);
+  };
+
+  const EDIT_FIELD = "inEdit";
+
+  const enterEdit = (dataItem: any, field: string | undefined) => {
+    fieldArrayRenderProps.onReplace({
+      index: dataItem[FORM_DATA_INDEX],
+      value: {
+        ...dataItem,
+        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+        [EDIT_FIELD]: field,
+      },
+    });
+
+    setEditIndex(dataItem[FORM_DATA_INDEX]);
+  };
+
+  const exitEdit = (item: any) => {
+    fieldArrayRenderProps.value.forEach((item: any, index: any) => {
+      fieldArrayRenderProps.onReplace({
+        index: index,
+        value: {
+          ...item,
+          [EDIT_FIELD]: undefined,
+        },
+      });
+    });
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const [selectedState, setSelectedState] = React.useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const onSelectionChange = React.useCallback(
+    (event: GridSelectionChangeEvent) => {
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: selectedState,
+        dataItemKey: FORM_DATA_INDEX,
+      });
+
+      setSelectedState(newSelectedState);
+    },
+    [selectedState]
+  );
+
+  const onHeaderSelectionChange = React.useCallback(
+    (event: GridHeaderSelectionChangeEvent) => {
+      const checkboxElement: any = event.syntheticEvent.target;
+      const checked = checkboxElement.checked;
+      const newSelectedState: {
+        [id: string]: boolean | number[];
+      } = {};
+
+      event.dataItems.forEach((item) => {
+        newSelectedState[idGetter(item)] = checked;
+      });
+
+      setSelectedState(newSelectedState);
+
+      //선택된 상태로 리랜더링
+      event.dataItems.forEach((item: any, index: number) => {
+        fieldArrayRenderProps.onReplace({
+          index: index,
+          value: {
+            ...item,
+          },
+        });
+      });
+    },
+    []
+  );
+
+  interface ProductNameHeaderProps extends GridHeaderCellProps {
+    children: any;
+  }
+
+  const RequiredHeader = (props: ProductNameHeaderProps) => {
+    return (
+      <span className="k-cell-inner">
+        <a className="k-link" onClick={props.onClick}>
+          <span style={{ color: "#ff6358" }}>{props.title}</span>
+          {props.children}
+        </a>
+      </span>
+    );
+  };
+
+  const getItemcd = (itemcd: string) => {
+    return false;
+    console.log("editIndex");
+    console.log(editIndex);
+    const index = editIndex ?? 0;
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData(queryStr, index);
+  };
+  const processApi = useApi();
+
+  const fetchData = React.useCallback(
+    async (queryStr: string, index: number) => {
+      let data: any;
+
+      console.log("queryStr");
+      console.log(queryStr);
+      let query = {
+        query: "query?query=" + queryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      const rows = data.result.data.Rows;
+      console.log(rows.length > 0);
+
+      if (rows.length > 0) {
+        setRowItem(rows[0], index);
+      }
+    },
+    []
+  );
+
+  const setRowItem = (row: any, index: number) => {
+    const item = fieldArrayRenderProps.value[index];
+
+    // console.log("itemacntListData");
+    // console.log(itemacntListData);
+    // console.log(
+    //   itemacntListData.find((item: any) => item.sub_code === row.itemacnt)
+    //     ?.code_name
+    // );
+
+    fieldArrayRenderProps.onReplace({
+      index: index,
+      value: {
+        ...item,
+        rowstatus: item.rowstatus === "N" ? item.rowstatus : "U",
+        itemcd: row.itemcd,
+        itemnm: row.itemnm,
+        insiz: row.insiz,
+        itemacnt: {
+          sub_code: row.itemacnt,
+          code_name: itemacntListData.find(
+            (item: any) => item.sub_code === row.itemacnt
+          )?.code_name,
+        },
+        qtyunit: commonCodeDefaultValue,
+      },
+    });
+  };
+
   return (
-    <FormGridEditContext.Provider
-      value={{
-        onCancel,
-        onEdit,
-        onCopy,
-        onRemove,
-        onSave,
-        editIndex,
-        parentField: name,
-      }}
-    >
-      {visited && validationMessage && <Error>{validationMessage}</Error>}
-      <Grid
-        data={dataWithIndexes}
-        total={dataWithIndexes.total}
-        dataItemKey={dataItemKey}
-        style={{ height: "300px" }}
-        //onItemChange={itemChange}
-        onScroll={scrollHandler}
+    <GridContainer>
+      <FormGridEditContext.Provider
+        value={{
+          onCancel,
+          onEdit,
+          onCopy,
+          onRemove,
+          onSave,
+          editIndex,
+          parentField: name,
+          getItemcd,
+        }}
       >
-        <GridToolbar>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onAdd}
-            icon="add"
-          >
-            추가
-          </Button>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onItemWndClick}
-          >
-            품목참조
-          </Button>
-        </GridToolbar>
+        {visited && validationMessage && <Error>{validationMessage}</Error>}
+        <Grid
+          data={dataWithIndexes.map((item: any) => ({
+            ...item,
+            [SELECTED_FIELD]: selectedState[idGetter(item)],
+          }))}
+          total={dataWithIndexes.total}
+          dataItemKey={dataItemKey}
+          style={{ height: "300px" }}
+          cellRender={customCellRender}
+          rowRender={customRowRender}
+          onItemChange={itemChange}
+          onScroll={scrollHandler}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            drag: false,
+            cell: false,
+            mode: "multiple",
+          }}
+          onSelectionChange={onSelectionChange}
+          onHeaderSelectionChange={onHeaderSelectionChange}
+        >
+          <GridToolbar>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onAdd}
+              icon="add"
+            >
+              추가
+            </Button>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onRemove}
+              icon="minus"
+            >
+              삭제
+            </Button>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onCopy}
+              icon="copy"
+            >
+              복사
+            </Button>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onItemWndClick}
+            >
+              품목참조
+            </Button>
+          </GridToolbar>
 
-        <GridColumn cell={CommandCell} width="130px" />
-        <GridColumn
-          field="rowstatus"
-          title=" "
-          width="50px"
-          //cell={NameCell}
-          className="required"
-        />
-        <GridColumn
-          field="itemnm"
-          title="품목명"
-          width="180px"
-          cell={NameCell}
-          className="required"
-        />
-        <GridColumn cell={ItemBtnCell} width="55px" />
-        <GridColumn
-          field="itemcd"
-          title="품목코드"
-          width="160px"
-          cell={NameCell}
-          className="required"
-        />
-        <GridColumn field="insiz" title="규격" width="200px" cell={NameCell} />
-        <GridColumn
-          field="itemacnt"
-          title="품목계정"
-          width="120px"
-          cell={CellDropDownList}
-        />
-        <GridColumn
-          field="qty"
-          title="수주량"
-          width="120px"
-          cell={NumberCell}
-          className="required"
-        />
-        <GridColumn
-          field="qtyunit"
-          title="단위"
-          width="120px"
-          cell={CellDropDownList}
-        />
-        <GridColumn
-          field="specialunp"
-          title="발주단가"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="specialamt"
-          title="발주금액"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn field="unp" title="단가" width="120px" cell={NumberCell} />
-        <GridColumn
-          field="wonamt"
-          title="금액"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="taxamt"
-          title="세액"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn field="totamt" title="합계금액" width="120px" />
-        <GridColumn field="remark" title="비고" width="120px" cell={NameCell} />
-        <GridColumn
-          field="purcustnm"
-          title="발주처"
-          width="120px"
-          cell={NameCell}
-        />
-        <GridColumn field="outqty" title="출하수량" width="120px" />
-        <GridColumn field="sale_qty" title="판매수량" width="120px" />
-        <GridColumn field="finyn" title="완료여부" width="120px" />
-        <GridColumn
-          field="bf_qty"
-          title="LOT수량"
-          width="120px"
-          cell={NameCell}
-        />
-        <GridColumn
-          field="lotnum"
-          title="LOT NO"
-          width="120px"
-          cell={NameCell}
-        />
-      </Grid>
+          {/* <GridColumn cell={CommandCell} width="130px" /> */}
+          <GridColumn
+            field={SELECTED_FIELD}
+            width="45px"
+            headerSelectionValue={
+              dataWithIndexes.findIndex(
+                (item: any) => !selectedState[idGetter(item)]
+              ) === -1
+            }
+          />
+          <GridColumn field="rowstatus" title=" " width="40px" />
+          <GridColumn
+            field="itemcd"
+            title="품목코드"
+            width="160px"
+            cell={NameCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn cell={ItemBtnCell} width="55px" />
+          <GridColumn
+            field="itemnm"
+            title="품목명"
+            width="180px"
+            cell={NameCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="insiz"
+            title="규격"
+            width="200px"
+            cell={NameCell}
+          />
+          <GridColumn
+            field="itemacnt"
+            title="품목계정"
+            width="120px"
+            cell={CellDropDownList}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="qty"
+            title="수주량"
+            width="120px"
+            cell={NumberCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="qtyunit"
+            title="단위"
+            width="120px"
+            cell={CellDropDownList}
+          />
+          <GridColumn
+            field="specialunp"
+            title="발주단가"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="specialamt"
+            title="발주금액"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="unp"
+            title="단가"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="wonamt"
+            title="금액"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="taxamt"
+            title="세액"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="totamt"
+            title="합계금액"
+            width="120px"
+            cell={ReadOnlyNumberCell}
+          />
+          <GridColumn
+            field="remark"
+            title="비고"
+            width="120px"
+            cell={NameCell}
+          />
+          <GridColumn
+            field="purcustnm"
+            title="발주처"
+            width="120px"
+            cell={NameCell}
+          />
+          <GridColumn field="outqty" title="출하수량" width="120px" />
+          <GridColumn field="sale_qty" title="판매수량" width="120px" />
+          <GridColumn field="finyn" title="완료여부" width="120px" />
+          <GridColumn
+            field="bf_qty"
+            title="LOT수량"
+            width="120px"
+            cell={NameCell}
+          />
+          <GridColumn
+            field="lotnum"
+            title="LOT NO"
+            width="120px"
+            cell={NameCell}
+          />
+        </Grid>
 
-      {itemWindowVisible && (
-        <ItemsWindow
-          workType={"ROW"} //신규 : N, 수정 : U
-          getVisible={setItemWindowVisible}
-          getData={setItemData}
-          rowIdx={editedRowIdx}
-          rowData={editedRowData}
-          para={undefined}
-        />
-      )}
-    </FormGridEditContext.Provider>
+        {itemWindowVisible && (
+          <ItemsWindow
+            workType={"ROW"} //인라인 : ROW, FORM : FILTER ..?
+            getVisible={setItemWindowVisible}
+            getData={setItemData}
+            rowIdx={editedRowIdx}
+            rowData={editedRowData}
+            para={undefined}
+          />
+        )}
+      </FormGridEditContext.Provider>
+    </GridContainer>
   );
 };
 const KendoWindow = ({
@@ -683,6 +967,12 @@ const KendoWindow = ({
   UseCommonQuery(amtunitQuery, setAmtunitListData);
   UseCommonQuery(itemacntQuery, setItemacntListData);
   UseCommonQuery(qtyunitQuery, setQtyunitListData);
+
+  //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
+  useEffect(() => {
+    resetAllGrid();
+    resetForm();
+  }, [qtyunitListData]);
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -753,7 +1043,7 @@ const KendoWindow = ({
     dptcd: "",
     person: "",
     ordsts: "2",
-    ordtype: "",
+    ordtype: "A",
     rcvcustnm: "",
     rcvcustcd: "",
     project: "",
@@ -1099,6 +1389,34 @@ const KendoWindow = ({
 
   const handleSubmit = (dataItem: { [name: string]: any }) => {
     //alert(JSON.stringify(dataItem));
+
+    let valid = true;
+
+    //검증
+    dataItem.orderDetails.forEach((item: any) => {
+      if (!item.itemcd) {
+        alert("품목코드를 입력하세요.");
+        valid = false;
+        return false;
+      }
+      if (!item.itemnm) {
+        alert("품목명을 입력하세요.");
+        valid = false;
+        return false;
+      }
+      if (!checkIsDDLValid(item.itemacnt)) {
+        alert("품목계정을 선택하세요.");
+        valid = false;
+        return false;
+      }
+      if (item.qty < 1) {
+        alert("수주량을 1 이상 입력하세요.");
+        valid = false;
+        return false;
+      }
+    });
+
+    if (!valid) return false;
 
     const {
       location,
@@ -1449,7 +1767,7 @@ const KendoWindow = ({
           rowstatus: "",
           ordnum: isCopy === true ? "" : initialVal.ordnum,
           doexdiv: {
-            sub_code: initialVal.doexdiv, //"A"
+            sub_code: initialVal.doexdiv,
             code_name: doexdivListData.find(
               (item: any) => item.sub_code === initialVal.doexdiv
             )?.code_name,
@@ -1517,7 +1835,7 @@ const KendoWindow = ({
           remark: initialVal.remark,
           orderDetails: detailDataResult.data, //detailDataResult.data,
         }}
-        render={() => (
+        render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
             <fieldset className={"k-form-fieldset"}>
               <FieldWrap>
@@ -1525,18 +1843,21 @@ const KendoWindow = ({
                   name={"ordnum"}
                   label={"수주번호"}
                   component={FormReadOnly}
+                  className="readonly"
                 />
                 <Field
                   name={"doexdiv"}
                   label={"내수구분"}
                   component={FormDropDownList}
                   queryStr={doexdivQuery}
+                  className="required"
                 />
                 <Field
                   name={"taxdiv"}
                   component={FormDropDownList}
                   label={"과세구분"}
                   queryStr={taxdivQuery}
+                  className="required"
                 />
                 <Field
                   name={"location"}
@@ -1548,35 +1869,40 @@ const KendoWindow = ({
 
               <FieldWrap>
                 <Field
+                  label={"수주일자"}
                   name={"orddt"}
                   component={FormDatePicker}
-                  label={"수주일자"}
+                  className="required"
                 />
                 <Field
+                  label={"납기일자"}
                   name={"dlvdt"}
                   component={FormDatePicker}
-                  label={"납기일자"}
+                  className="required"
                 />
                 <Field
+                  label={"수주상태"}
                   name={"ordsts"}
                   component={FormDropDownList}
                   queryStr={ordstsQuery}
-                  label={"수주상태"}
+                  className="required"
                 />
                 <Field
+                  label={"수주형태"}
                   name={"ordtype"}
                   component={FormDropDownList}
                   queryStr={ordtypeQuery}
-                  label={"수주형태"}
+                  className="required"
                 />
               </FieldWrap>
 
               <FieldWrap>
                 <Field
-                  name={"custnm"}
+                  label={"업체코드"}
+                  name={"custcd"}
                   component={FormInput}
                   validator={validator}
-                  label={"업체명"}
+                  className="required"
                 />
                 <ButtonInFieldWrap>
                   <ButtonInField>
@@ -1589,15 +1915,16 @@ const KendoWindow = ({
                   </ButtonInField>
                 </ButtonInFieldWrap>
                 <Field
-                  name={"custcd"}
+                  label={"업체명"}
+                  name={"custnm"}
                   component={FormInput}
                   validator={validator}
-                  label={"업체코드"}
+                  className="required"
                 />
                 <Field
-                  name={"rcvcustnm"}
+                  name={"rcvcustcd"}
                   component={FormInput}
-                  label={"인수처"}
+                  label={"인수처코드"}
                 />
                 <ButtonInFieldWrap>
                   <ButtonInField>
@@ -1610,9 +1937,9 @@ const KendoWindow = ({
                   </ButtonInField>
                 </ButtonInFieldWrap>
                 <Field
-                  name={"rcvcustcd"}
+                  name={"rcvcustnm"}
                   component={FormInput}
-                  label={"인수처코드"}
+                  label={"인수처"}
                 />
               </FieldWrap>
               <FieldWrap>
@@ -1622,12 +1949,24 @@ const KendoWindow = ({
                   label={"프로젝트"}
                 />
                 <Field
+                  name={"dptcd"}
+                  component={FormDropDownList}
+                  queryStr={departmentsQuery}
+                  label={"부서"}
+                />
+                <Field
+                  name={"person"}
+                  component={FormDropDownList}
+                  queryStr={usersQuery}
+                  label={"담당자"}
+                />
+                <Field
                   name={"amtunit"}
                   component={FormDropDownList}
                   queryStr={amtunitQuery}
                   label={"화폐단위"}
                 />
-                <Field
+                {/* <Field
                   name={"wonchgrat"}
                   component={FormInput}
                   label={"원화환율"}
@@ -1636,7 +1975,7 @@ const KendoWindow = ({
                   name={"uschgrat"}
                   component={FormInput}
                   label={"대미환율"}
-                />
+                /> */}
               </FieldWrap>
               <FieldWrap>
                 <Field
@@ -1689,18 +2028,6 @@ const KendoWindow = ({
                 </ButtonInFieldWrap>
               </FieldWrap>
               <FieldWrap>
-                <Field
-                  name={"dptcd"}
-                  component={FormDropDownList}
-                  queryStr={departmentsQuery}
-                  label={"부서"}
-                />
-                <Field
-                  name={"person"}
-                  component={FormDropDownList}
-                  queryStr={usersQuery}
-                  label={"담당자"}
-                />
                 <Field name={"remark"} component={FormInput} label={"비고"} />
               </FieldWrap>
             </fieldset>
@@ -1711,11 +2038,13 @@ const KendoWindow = ({
               validator={arrayLengthValidator}
             />
 
-            <div className="k-form-buttons">
-              <Button type={"submit"} themeColor={"primary"} icon="save">
-                저장
-              </Button>
-            </div>
+            <BottomContainer>
+              <ButtonContainer>
+                <Button type={"submit"} themeColor={"primary"} icon="save">
+                  저장
+                </Button>
+              </ButtonContainer>
+            </BottomContainer>
           </FormElement>
         )}
       />

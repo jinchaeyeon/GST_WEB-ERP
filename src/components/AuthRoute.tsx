@@ -5,8 +5,6 @@ import { useAuth } from "../hooks/auth";
 function AuthRoute({ component, ...rest }: RouteProps) {
   const { isLoggedIn } = useAuth();
   useEffect(() => {
-    console.log("isLoggedIn");
-    console.log(isLoggedIn);
     // if (!isLoggedIn) {
     //   alert("로그인 후 이용해주세요.");
     // }

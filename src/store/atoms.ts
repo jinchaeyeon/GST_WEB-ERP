@@ -5,11 +5,9 @@ const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
   ({ setSelf, onSet }) => {
     const savedValue = localStorage.getItem(key);
-    console.log("savedValue");
-    console.log(savedValue);
+
     if (savedValue != null) {
       try {
-        console.log(JSON.parse(savedValue));
         setSelf(JSON.parse(savedValue));
       } catch (e) {
         localStorage.removeItem(key);

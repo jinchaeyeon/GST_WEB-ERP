@@ -7,12 +7,8 @@ export const useAuth = () => {
   const [user] = useRecoilState(userState);
   const latestUser = useRef<any>();
 
-  //console.log('useAuth', user)
   useEffect(() => {
-    console.log("user!!");
-    console.log(user);
     latestUser.current = user;
-    console.log("latestUser", latestUser.current);
   }, [user]);
 
   //return { isLoggedIn: !!latestUser.current, user: latestUser.current };

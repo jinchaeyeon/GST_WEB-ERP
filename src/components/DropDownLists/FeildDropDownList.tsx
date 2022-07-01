@@ -2,17 +2,26 @@ import React, { useCallback, useEffect, useState } from "react";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { useApi } from "../../hooks/api";
 import { FieldRenderProps } from "@progress/kendo-react-form";
+import { checkIsDDLValid } from "../CommonFunction";
+import { commonCodeDefaultValue } from "../CommonString";
 
 type TDDL = {
   fieldRenderProps: FieldRenderProps;
   queryStr: String;
-  setData(id: string): void;
 };
-const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr, setData }: TDDL) => {
+const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr }: TDDL) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
-  const { validationMessage, value, visited, label, id, valid, ...others } =
-    fieldRenderProps;
+  const {
+    validationMessage,
+    visited,
+    value,
+    label,
+    id,
+    valid,
+    className,
+    ...others
+  } = fieldRenderProps;
 
   useEffect(() => {
     fetchData();
@@ -34,10 +43,13 @@ const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr, setData }: TDDL) => {
     if (data != null) {
       const rows = data.result.data.Rows;
 
-      setData(rows);
       setListData(rows);
     }
   }, []);
+
+  const required = className?.includes("required");
+  let DDLvalid = valid;
+  if (required) DDLvalid = checkIsDDLValid(value);
 
   return (
     <DropDownList
@@ -45,11 +57,9 @@ const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr, setData }: TDDL) => {
       dataItemKey="sub_code"
       textField="code_name"
       value={value}
-      defaultItem={{
-        sub_code: "",
-        code_name: "",
-      }}
-      valid={valid}
+      className={className}
+      defaultItem={commonCodeDefaultValue}
+      valid={DDLvalid}
       id={id}
       {...others}
     />

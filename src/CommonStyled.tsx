@@ -18,6 +18,14 @@ export const ButtonContainer = styled.div`
   }
 `;
 
+export const BottomContainer = styled(TitleContainer)`
+  flex-direction: row-reverse;
+  button {
+    width: 100px;
+    height: 40px;
+  }
+`;
+
 export const FilterBoxWrap = styled.div`
   padding: 5px 0;
 `;
@@ -71,6 +79,12 @@ export const GridContainer = styled.div<GridContainerType>`
   .k-grid {
     margin: 5px 0;
   }
+  .k-grid .k-grid-header .k-header .k-cell-inner > .k-link {
+    justify-content: center; //공통설정 : 그리드 헤더 텍스트 중앙정렬
+  }
+  /* .required {
+    background-color: #fff0ef;
+  } */
 `;
 
 export const GridTitle = styled.h3`
@@ -117,6 +131,19 @@ export const FieldWrap = styled.div`
   }
   > .k-form-field {
     width: 25%;
+  }
+  .k-picker,
+  .k-picker:hover,
+  .k-picker.k-hover {
+    background-color: #ffffff;
+  }
+  .required,
+  .required:hover,
+  .required.k-hover {
+    background-color: #fff0ef;
+  }
+  .readonly {
+    background-color: #efefef;
   }
 `;
 
