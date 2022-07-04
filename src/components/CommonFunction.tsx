@@ -148,9 +148,9 @@ export const getCustQuery = (para: any) => {
 //object로 itemcd, itemnm 받아서 품목정보 조회 쿼리 스트링 반환
 export const getItemQuery = (para: any) => {
   return (
-    "SELECT * FROM ba030t WHERE itemcd LIKE '" +
+    "SELECT * FROM ba030t WHERE itemcd = '" +
     para.itemcd +
-    "%' AND itemnm LIKE '" +
+    "' AND itemnm LIKE '" +
     para.itemnm +
     "%'"
   );

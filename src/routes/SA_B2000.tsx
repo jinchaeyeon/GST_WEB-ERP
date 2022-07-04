@@ -35,6 +35,8 @@ import {
   Input,
   RadioButton,
   RadioButtonChangeEvent,
+  RadioGroup,
+  RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -69,6 +71,7 @@ import {
   commonCodeDefaultValue,
   departmentsQuery,
   doexdivQuery,
+  finynRadioButtonData,
   itemacntQuery,
   locationQuery,
   ordstsQuery,
@@ -164,8 +167,8 @@ const SA_B2000: React.FC = () => {
     }));
   };
 
-  //조회조건 Radio button Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioButtonChangeEvent) => {
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: RadioGroupChangeEvent) => {
     const name = e.syntheticEvent.currentTarget.name;
     const value = e.value;
     setFilters((prev) => ({
@@ -864,26 +867,12 @@ const SA_B2000: React.FC = () => {
               </td>
               <th>완료여부</th>
               <td>
-                <RadioButton
+                <RadioGroup
                   name="finyn"
-                  value="Y"
-                  checked={filters.finyn === "Y"}
+                  data={finynRadioButtonData}
+                  layout={"horizontal"}
+                  defaultValue={filters.finyn}
                   onChange={filterRadioChange}
-                  label="Y"
-                />
-                <RadioButton
-                  name="finyn"
-                  value="N"
-                  checked={filters.finyn === "N"}
-                  onChange={filterRadioChange}
-                  label="N"
-                />
-                <RadioButton
-                  name="finyn"
-                  value="%"
-                  checked={filters.finyn === "%"}
-                  onChange={filterRadioChange}
-                  label="전체"
                 />
               </td>
             </tr>

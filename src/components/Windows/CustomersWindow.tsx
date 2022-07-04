@@ -27,6 +27,7 @@ import {
   ButtonContainer,
   FilterBox,
   FilterBoxWrap,
+  GridContainer,
   Title,
   TitleContainer,
 } from "../../CommonStyled";
@@ -35,6 +36,8 @@ import {
   Input,
   RadioButton,
   RadioButtonChangeEvent,
+  RadioGroup,
+  RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
 import DropDownList from "../DropDownLists/CommonDropDownList";
 
@@ -42,7 +45,7 @@ import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition, TCommonCodeData } from "../../hooks/interfaces";
 import { chkScrollHandler } from "../CommonFunction";
-import { custdivQuery } from "../CommonString";
+import { custdivQuery, useynRadioButtonData } from "../CommonString";
 
 type IKendoWindow = {
   getVisible(t: boolean): void;
@@ -78,8 +81,8 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
     }));
   };
 
-  //조회조건 Radio button Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioButtonChangeEvent) => {
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: RadioGroupChangeEvent) => {
     const name = e.syntheticEvent.currentTarget.name;
     const value = e.value;
     setFilters((prev) => ({
@@ -276,80 +279,68 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
               </td>
               <th>사용여부</th>
               <td>
-                <RadioButton
+                <RadioGroup
                   name="useyn"
-                  value="Y"
-                  checked={filters.useyn === "Y"}
+                  data={useynRadioButtonData}
+                  layout={"horizontal"}
+                  defaultValue={filters.useyn}
                   onChange={filterRadioChange}
-                  label="Y"
-                />
-                <RadioButton
-                  name="useyn"
-                  value="N"
-                  checked={filters.useyn === "N"}
-                  onChange={filterRadioChange}
-                  label="N"
-                />
-                <RadioButton
-                  name="useyn"
-                  value="%"
-                  checked={filters.useyn === "%"}
-                  onChange={filterRadioChange}
-                  label="전체"
                 />
               </td>
             </tr>
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-      <Grid
-        style={{ height: "550px" }}
-        data={process(
-          mainDataResult.data.map((row) => ({
-            ...row,
-            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-          })),
-          mainDataState
-        )}
-        onDataStateChange={onMainDataStateChange}
-        {...mainDataState}
-        //선택 기능
-        dataItemKey={DATA_ITEM_KEY}
-        selectedField={SELECTED_FIELD}
-        selectable={{
-          enabled: true,
-          mode: "single",
-        }}
-        onSelectionChange={onMainSelectionChange}
-        //스크롤 조회 기능
-        fixedScroll={true}
-        total={mainDataResult.total}
-        onScroll={onScrollHandler}
-        //정렬기능
-        sortable={true}
-        onSortChange={onMainSortChange}
-        //컬럼순서조정
-        reorderable={true}
-        //컬럼너비조정
-        resizable={true}
-        //더블클릭
-        onRowDoubleClick={onRowDoubleClick}
-      >
-        <GridColumn
-          field="custcd"
-          title="업체코드"
-          width="160px" /*footerCell={detailTotalFooterCell}*/
-        />
+      <GridContainer>
+        <Grid
+          style={{ height: "550px" }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+            })),
+            mainDataState
+          )}
+          onDataStateChange={onMainDataStateChange}
+          {...mainDataState}
+          //선택 기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onMainSelectionChange}
+          //스크롤 조회 기능
+          fixedScroll={true}
+          total={mainDataResult.total}
+          onScroll={onScrollHandler}
+          //정렬기능
+          sortable={true}
+          onSortChange={onMainSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+          //더블클릭
+          onRowDoubleClick={onRowDoubleClick}
+        >
+          <GridColumn
+            field="custcd"
+            title="업체코드"
+            width="140px" /*footerCell={detailTotalFooterCell}*/
+          />
 
-        <GridColumn field="custnm" title="업체명" width="200px" />
-        <GridColumn field="custabbr" title="업체약어" width="120px" />
-        <GridColumn field="bizregnum" title="사업자등록번호" width="120px" />
-        <GridColumn field="custdivnm" title="업체구분" width="120px" />
-        <GridColumn field="useyn" title="사용유무" width="120px" />
-        <GridColumn field="remark" title="비고" width="120px" />
-        <GridColumn field="compclass" title="업태" width="120px" />
-        <GridColumn field="ceonm" title="대표자명" width="120px" />
-      </Grid>
+          <GridColumn field="custnm" title="업체명" width="200px" />
+          <GridColumn field="custabbr" title="업체약어" width="120px" />
+          <GridColumn field="bizregnum" title="사업자등록번호" width="140px" />
+          <GridColumn field="custdivnm" title="업체구분" width="120px" />
+          <GridColumn field="useyn" title="사용유무" width="120px" />
+          <GridColumn field="compclass" title="업태" width="120px" />
+          <GridColumn field="ceonm" title="대표자명" width="120px" />
+          <GridColumn field="remark" title="비고" width="300px" />
+        </Grid>
+      </GridContainer>
       <BottomContainer>
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmClick}>

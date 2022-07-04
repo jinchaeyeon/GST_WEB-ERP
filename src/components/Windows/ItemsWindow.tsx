@@ -19,6 +19,7 @@ import {
   ButtonContainer,
   FilterBox,
   FilterBoxWrap,
+  GridContainer,
   Title,
   TitleContainer,
 } from "../../CommonStyled";
@@ -27,12 +28,15 @@ import {
   Input,
   RadioButton,
   RadioButtonChangeEvent,
+  RadioGroup,
+  RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
 
 import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { chkScrollHandler } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
+import { useynRadioButtonData } from "../CommonString";
 
 type IWindow = {
   workType: string; //구분자 "FILTER", "ROW"
@@ -75,8 +79,8 @@ const ItemsWindow = ({
     }));
   };
 
-  //조회조건 Radio button Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioButtonChangeEvent) => {
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: RadioGroupChangeEvent) => {
     const name = e.syntheticEvent.currentTarget.name;
     const value = e.value;
     setFilters((prev) => ({
@@ -157,6 +161,8 @@ const ItemsWindow = ({
   const fetchMainGrid = async () => {
     let data: any;
 
+    console.log("parameters");
+    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -306,26 +312,12 @@ const ItemsWindow = ({
               </td>
               <th>사용여부</th>
               <td>
-                <RadioButton
+                <RadioGroup
                   name="useyn"
-                  value="Y"
-                  checked={filters.useyn === "Y"}
+                  data={useynRadioButtonData}
+                  layout={"horizontal"}
+                  defaultValue={filters.useyn}
                   onChange={filterRadioChange}
-                  label="Y"
-                />
-                <RadioButton
-                  name="useyn"
-                  value="N"
-                  checked={filters.useyn === "N"}
-                  onChange={filterRadioChange}
-                  label="N"
-                />
-                <RadioButton
-                  name="useyn"
-                  value="%"
-                  checked={filters.useyn === "%"}
-                  onChange={filterRadioChange}
-                  label="전체"
                 />
               </td>
             </tr>
@@ -365,58 +357,60 @@ const ItemsWindow = ({
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-      <Grid
-        style={{ height: "500px" }}
-        data={process(
-          mainDataResult.data.map((row) => ({
-            ...row,
-            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-          })),
-          mainDataState
-        )}
-        onDataStateChange={onMainDataStateChange}
-        {...mainDataState}
-        //선택 기능
-        dataItemKey={DATA_ITEM_KEY}
-        selectedField={SELECTED_FIELD}
-        selectable={{
-          enabled: true,
-          mode: "single",
-        }}
-        onSelectionChange={onMainSelectionChange}
-        //스크롤 조회기능
-        fixedScroll={true}
-        total={mainDataResult.total}
-        onScroll={onScrollHandler}
-        //정렬기능
-        sortable={true}
-        onSortChange={onMainSortChange}
-        //컬럼순서조정
-        reorderable={true}
-        //컬럼너비조정
-        resizable={true}
-        //더블클릭
-        onRowDoubleClick={onRowDoubleClick}
-      >
-        <GridColumn
-          field="itemcd"
-          title="품목코드"
-          width="200px" /*footerCell={detailTotalFooterCell}*/
-        />
+      <GridContainer>
+        <Grid
+          style={{ height: "500px" }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+            })),
+            mainDataState
+          )}
+          onDataStateChange={onMainDataStateChange}
+          {...mainDataState}
+          //선택 기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onMainSelectionChange}
+          //스크롤 조회기능
+          fixedScroll={true}
+          total={mainDataResult.total}
+          onScroll={onScrollHandler}
+          //정렬기능
+          sortable={true}
+          onSortChange={onMainSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+          //더블클릭
+          onRowDoubleClick={onRowDoubleClick}
+        >
+          <GridColumn
+            field="itemcd"
+            title="품목코드"
+            width="200px" /*footerCell={detailTotalFooterCell}*/
+          />
 
-        <GridColumn field="itemnm" title="품목명" width="200px" />
-        <GridColumn field="insiz" title="규격" width="120px" />
-        <GridColumn field="model" title="MODEL" width="120px" />
-        <GridColumn field="spec" title="사양" width="120px" />
-        <GridColumn field="itemacntnm" title="품목계정" width="120px" />
-        <GridColumn field="bnatur" title="재질" width="120px" />
-        <GridColumn field="invunitnm" title="수량단위" width="120px" />
-        <GridColumn field="unitwgt" title="단중" width="120px" />
-        <GridColumn field="useyn" title="사용여부" width="120px" />
-        <GridColumn field="wgtunitnm" title="중량단위" width="120px" />
-        <GridColumn field="maker" title="메이커" width="120px" />
-        <GridColumn field="remark" title="비고" width="120px" />
-      </Grid>
+          <GridColumn field="itemnm" title="품목명" width="200px" />
+          <GridColumn field="insiz" title="규격" width="120px" />
+          <GridColumn field="model" title="MODEL" width="120px" />
+          <GridColumn field="spec" title="사양" width="120px" />
+          <GridColumn field="itemacntnm" title="품목계정" width="120px" />
+          <GridColumn field="bnatur" title="재질" width="120px" />
+          <GridColumn field="invunitnm" title="수량단위" width="120px" />
+          <GridColumn field="unitwgt" title="단중" width="120px" />
+          <GridColumn field="useyn" title="사용여부" width="120px" />
+          <GridColumn field="wgtunitnm" title="중량단위" width="120px" />
+          <GridColumn field="maker" title="메이커" width="120px" />
+          <GridColumn field="remark" title="비고" width="120px" />
+        </Grid>
+      </GridContainer>
       <BottomContainer>
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>

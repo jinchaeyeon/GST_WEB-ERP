@@ -28,9 +28,12 @@ export const CellRender = (props: any) => {
         }
       : {
           onClick: () => {
-            console.log("click");
             props.enterEdit(dataItem, cellField);
           },
+          onFocus: () => {
+            props.enterEdit(dataItem, cellField);
+          },
+          tabIndex: "0",
         };
   const clonedProps = { ...props.td.props, ...additionalProps };
   return React.cloneElement(props.td, clonedProps, props.td.props.children);
@@ -39,7 +42,6 @@ export const RowRender = (props: any) => {
   const trProps = {
     ...props.tr.props,
     onBlur: () => {
-      console.log("click2");
       props.exitEdit();
     },
   };

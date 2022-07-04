@@ -3,6 +3,53 @@ export const pageSize = 10;
 
 export const commonCodeDefaultValue = { sub_code: "", code_name: "" };
 
+export const finynRadioButtonData = [
+  {
+    value: "Y",
+    label: "Y",
+  },
+  {
+    value: "N",
+    label: "N",
+  },
+  {
+    value: "%",
+    label: "전체",
+  },
+];
+
+export const useynRadioButtonData = [
+  {
+    value: "Y",
+    label: "Y",
+  },
+  {
+    value: "N",
+    label: "N",
+  },
+  {
+    value: "%",
+    label: "전체",
+  },
+];
+export const zeroynRadioButtonData = [
+  {
+    value: "Y",
+    label: "0만",
+  },
+  {
+    value: "N",
+    label: "0 제외",
+  },
+  {
+    value: "B",
+    label: "안전재고 미만",
+  },
+  {
+    value: "%",
+    label: "전체",
+  },
+];
 export const locationQuery =
   "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA002' AND system_yn = 'Y'";
 

@@ -274,7 +274,7 @@ const CommandCell = (props: GridCellProps) => {
 
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey } =
+  const { validationMessage, visited, name, dataItemKey, value } =
     fieldArrayRenderProps;
   const [editIndex, setEditIndex] = React.useState<number | undefined>();
   const editItemCloneRef = React.useRef();
@@ -399,18 +399,22 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const onCopy = React.useCallback(() => {
     let newData: any[] = [];
+    let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
 
     //복사할 데이터 newData에 push
     fieldArrayRenderProps.value.forEach((item: any, index: number) => {
       if (selectedState[index]) {
         newData.push(item);
       }
+      if (ordseq < item.ordseq) ordseq = item.ordseq;
     });
 
     //newData 생성
     newData.forEach((item: any) => {
+      ordseq++;
+
       fieldArrayRenderProps.onPush({
-        value: { ...item, rowstatus: "N" },
+        value: { ...item, rowstatus: "N", ordseq: ordseq },
       });
     });
 
@@ -643,24 +647,25 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   };
 
   const getItemcd = (itemcd: string) => {
-    return false;
-    console.log("editIndex");
-    console.log(editIndex);
     const index = editIndex ?? 0;
+    const dataItem = value[index];
     const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
 
-    fetchData(queryStr, index);
+    fetchData(queryStr, index, dataItem, itemacntListData);
   };
   const processApi = useApi();
 
   const fetchData = React.useCallback(
-    async (queryStr: string, index: number) => {
+    async (
+      queryStr: string,
+      index: number,
+      dataItem: any,
+      itemacntListData: any
+    ) => {
       let data: any;
 
-      console.log("queryStr");
-      console.log(queryStr);
       let query = {
-        query: "query?query=" + queryStr,
+        query: "query?query=" + encodeURIComponent(queryStr),
       };
 
       try {
@@ -670,30 +675,26 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       }
 
       const rows = data.result.data.Rows;
-      console.log(rows.length > 0);
 
       if (rows.length > 0) {
-        setRowItem(rows[0], index);
+        setRowItem(rows[0], index, dataItem, itemacntListData);
       }
     },
     []
   );
 
-  const setRowItem = (row: any, index: number) => {
-    const item = fieldArrayRenderProps.value[index];
-
-    // console.log("itemacntListData");
-    // console.log(itemacntListData);
-    // console.log(
-    //   itemacntListData.find((item: any) => item.sub_code === row.itemacnt)
-    //     ?.code_name
-    // );
-
+  const setRowItem = (
+    row: any,
+    index: number,
+    dataItem: any,
+    itemacntListData: any //useState의 itemacntListData 바로 사용시 다시 조회되어 조회 전 빈값을 참조하는 현상 발생해, 일단 인수로 넘겨줌. 나중에 수정 필요할듯함..
+  ) => {
     fieldArrayRenderProps.onReplace({
       index: index,
       value: {
-        ...item,
-        rowstatus: item.rowstatus === "N" ? item.rowstatus : "U",
+        ...dataItem,
+        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+        inEdit: undefined,
         itemcd: row.itemcd,
         itemnm: row.itemnm,
         insiz: row.insiz,
@@ -1189,9 +1190,9 @@ const KendoWindow = ({
         };
       });
 
-      setDetailDataResult((prev) => {
+      setDetailDataResult(() => {
         return {
-          data: [...prev.data, ...rows],
+          data: [...rows],
           total: totalRowsCnt,
         };
       });
@@ -2040,7 +2041,12 @@ const KendoWindow = ({
 
             <BottomContainer>
               <ButtonContainer>
-                <Button type={"submit"} themeColor={"primary"} icon="save">
+                <Button
+                  type={"submit"}
+                  themeColor={"primary"}
+                  icon="save"
+                  disabled={!formRenderProps.allowSubmit}
+                >
                   저장
                 </Button>
               </ButtonContainer>

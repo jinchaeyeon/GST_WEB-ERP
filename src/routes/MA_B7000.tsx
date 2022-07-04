@@ -33,6 +33,8 @@ import {
   Input,
   RadioButton,
   RadioButtonChangeEvent,
+  RadioGroup,
+  RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
 
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -65,6 +67,8 @@ import {
   itemlvl1Query,
   itemlvl2Query,
   itemlvl3Query,
+  useynRadioButtonData,
+  zeroynRadioButtonData,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
@@ -128,8 +132,8 @@ const MA_B7000: React.FC = () => {
     }));
   };
 
-  //조회조건 Radio button Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioButtonChangeEvent) => {
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: RadioGroupChangeEvent) => {
     const name = e.syntheticEvent.currentTarget.name;
     const value = e.value;
     setFilters((prev) => ({
@@ -717,26 +721,12 @@ const MA_B7000: React.FC = () => {
             <tr>
               <th>사용여부</th>
               <td>
-                <RadioButton
+                <RadioGroup
                   name="useyn"
-                  value="Y"
-                  checked={filters.useyn === "Y"}
+                  data={useynRadioButtonData}
+                  layout={"horizontal"}
+                  defaultValue={filters.useyn}
                   onChange={filterRadioChange}
-                  label="Y"
-                />
-                <RadioButton
-                  name="useyn"
-                  value="N"
-                  checked={filters.useyn === "N"}
-                  onChange={filterRadioChange}
-                  label="N"
-                />
-                <RadioButton
-                  name="useyn"
-                  value="%"
-                  checked={filters.useyn === "%"}
-                  onChange={filterRadioChange}
-                  label="전체"
                 />
               </td>
 
@@ -744,7 +734,14 @@ const MA_B7000: React.FC = () => {
               <td colSpan={3}>
                 <div className="radio_form_box">
                   <div className="radio_inner">
-                    <RadioButton
+                    <RadioGroup
+                      name="zeroyn"
+                      data={zeroynRadioButtonData}
+                      layout={"horizontal"}
+                      defaultValue={filters.zeroyn}
+                      onChange={filterRadioChange}
+                    />
+                    {/* <RadioButton
                       name="zeroyn"
                       value="Y"
                       checked={filters.zeroyn === "Y"}
@@ -774,7 +771,7 @@ const MA_B7000: React.FC = () => {
                       checked={filters.zeroyn === "%"}
                       onChange={filterRadioChange}
                       label="전체"
-                    />
+                    /> */}
                   </div>
                 </div>
               </td>

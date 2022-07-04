@@ -31,7 +31,7 @@ export const FilterBoxWrap = styled.div`
 `;
 
 export const FilterBox = styled.table`
-  line-height: 1.5;
+  /* line-height: 1.5; */
   border: solid 1px #d7d7d7;
   background-color: #fff;
   width: 100%;
@@ -46,6 +46,7 @@ export const FilterBox = styled.table`
     font-weight: 400;
     font-size: 14px;
     text-align: center;
+    vertical-align: middle;
   }
   tr td {
     background-color: #ffffff;
@@ -54,6 +55,7 @@ export const FilterBox = styled.table`
     text-align: center;
     padding: 5px;
     position: relative;
+    vertical-align: middle;
   }
   tr td.item-box {
     min-width: 300px;
@@ -61,6 +63,9 @@ export const FilterBox = styled.table`
   tr td.item-box > input,
   tr td.item-box > .k-input {
     width: 48%;
+  }
+  .k-radio-list.k-list-horizontal {
+    justify-content: center;
   }
 `;
 
@@ -78,6 +83,9 @@ export const GridContainer = styled.div<GridContainerType>`
 
   .k-grid {
     margin: 5px 0;
+  }
+  .k-grid td {
+    white-space: nowrap; //그리드 셀 말줄임표
   }
   .k-grid .k-grid-header .k-header .k-cell-inner > .k-link {
     justify-content: center; //공통설정 : 그리드 헤더 텍스트 중앙정렬
@@ -164,4 +172,8 @@ export const LoginBox = styled.div`
     width: 100%;
     margin-top: 15px;
   }
+`;
+
+export const RadioButtonBox = styled.div`
+  display: flex;
 `;
