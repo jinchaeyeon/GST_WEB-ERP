@@ -574,7 +574,7 @@ const MA_B7000: React.FC = () => {
       console.log(rows);
 
       return {
-        data: [...prev.data, ...rows],
+        data: [...rows],
         total: prev.total,
       };
     });
@@ -590,7 +590,7 @@ const MA_B7000: React.FC = () => {
       }));
 
       return {
-        data: [...prev.data, ...rows],
+        data: [...rows],
         total: prev.total,
       };
     });
@@ -606,7 +606,7 @@ const MA_B7000: React.FC = () => {
       }));
 
       return {
-        data: [...prev.data, ...rows],
+        data: [...rows],
         total: prev.total,
       };
     });
@@ -622,7 +622,7 @@ const MA_B7000: React.FC = () => {
       }));
 
       return {
-        data: [...prev.data, ...rows],
+        data: [...rows],
         total: prev.total,
       };
     });

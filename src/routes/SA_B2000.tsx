@@ -345,7 +345,7 @@ const SA_B2000: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
+    if (data.result.isSuccess === true) {
       const totalRowsCnt = data.result.totalRowCount;
       const rows = data.result.data.Rows;
 
@@ -355,6 +355,9 @@ const SA_B2000: React.FC = () => {
           total: totalRowsCnt,
         };
       });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
     }
   };
 

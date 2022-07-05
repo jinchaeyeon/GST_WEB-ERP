@@ -69,19 +69,28 @@ export const FilterBox = styled.table`
   }
 `;
 
-export const GridContainerWrap = styled.div`
-  display: flex;
-`;
-
-type GridContainerType = {
+type TGridContainerWrap = {
+  flexDirection?: string;
   maxWidth?: string;
 };
 
-export const GridContainer = styled.div<GridContainerType>`
+export const GridContainerWrap = styled.div<TGridContainerWrap>`
+  display: flex;
+  gap: ${(props) => (props.flexDirection === "column" ? "0" : "15px")};
+  flex-direction: ${(props) => props.flexDirection};
+  max-width: ${(props) => props.maxWidth};
+`;
+
+type TGridContainer = {
+  maxWidth?: string;
+};
+
+export const GridContainer = styled.div<TGridContainer>`
   flex-direction: column;
   max-width: ${(props) => props.maxWidth};
 
-  .k-grid {
+  .k-grid,
+  .k-scheduler {
     margin: 5px 0;
   }
   .k-grid td {
@@ -105,6 +114,7 @@ export const GridTitleContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin: 0 5px;
+  height: 30px;
 `;
 
 export const ButtonInInput = styled.div`
@@ -176,4 +186,28 @@ export const LoginBox = styled.div`
 
 export const RadioButtonBox = styled.div`
   display: flex;
+`;
+
+export const ApprovalBox = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  width: 500px;
+  height: 80px;
+  /* border: solid 1px; */
+  /* margin-top: 30px; */
+  margin-bottom: 15px;
+`;
+
+export const ApprovalInner = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  width: 33%;
+  height: 100%;
+  align-items: center;
+  border: solid 1px #ff6358;
+
+  :nth-child(2) {
+    border-right: 0;
+    border-left: 0;
+  }
 `;

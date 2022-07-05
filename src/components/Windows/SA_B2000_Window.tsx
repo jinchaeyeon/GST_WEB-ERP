@@ -1377,6 +1377,8 @@ const KendoWindow = ({
         reloadData("N");
       }
     } else {
+      console.log("[오류 발생]");
+      console.log(data);
       alert(
         "[" +
           data.result.statusCode +
@@ -2045,7 +2047,7 @@ const KendoWindow = ({
                   type={"submit"}
                   themeColor={"primary"}
                   icon="save"
-                  disabled={!formRenderProps.allowSubmit}
+                  //disabled={!formRenderProps.allowSubmit}
                 >
                   저장
                 </Button>
