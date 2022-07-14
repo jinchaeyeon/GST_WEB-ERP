@@ -88,7 +88,7 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
     let data: any;
 
     let query = {
-      query: "query?query=" + queryStr,
+      query: "query?query=" + encodeURIComponent(queryStr),
     };
 
     try {

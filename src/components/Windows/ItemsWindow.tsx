@@ -133,7 +133,7 @@ const ItemsWindow = ({
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_TEST_ITEM_POPUP",
+    procedureName: "P_WEB_ITEM_POPUP",
     pageNumber: mainPgNum,
     pageSize: pageSize,
     parameters: {

@@ -7,7 +7,7 @@ import { commonCodeDefaultValue } from "../CommonString";
 
 type TDDL = {
   fieldRenderProps: FieldRenderProps;
-  queryStr: String;
+  queryStr: string;
 };
 const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr }: TDDL) => {
   const processApi = useApi();
@@ -31,7 +31,7 @@ const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr }: TDDL) => {
     let data: any;
 
     let query = {
-      query: "query?query=" + queryStr,
+      query: "query?query=" + encodeURIComponent(queryStr),
     };
 
     try {

@@ -94,3 +94,20 @@ export const itemgradeQuery =
 
 export const custdivQuery =
   "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'BA026' AND use_yn  = 'Y'";
+
+//공정
+export const proccdQuery =
+  "SELECT convert(varchar(20), sub_code) as sub_code, code_name,  extra_field1 FROM comCodeMaster where group_code = 'PR010' AND use_yn='Y' ORDER BY (case when use_yn='Y' then 'Y' else 'N' END), len(sub_code), sub_code";
+
+//외주구분
+export const outprocynQuery =
+  "SELECT convert(varchar(20), sub_code) as sub_code, code_name,  extra_field1 FROM comCodeMaster WHERE group_code = 'BA011' AND use_yn='Y' ORDER BY (case when use_yn='Y' then 'Y' else 'N' END),sort_seq,sub_code,code_name";
+
+//설비
+export const prodmacQuery =
+  //"SELECT  fxcode sub_code, fxnum + (case when fxnm = '' then '' else ' / ' end) + fxnm as code_name,  fxno FROM fx100t WHERE 1 = 1   AND useyn = 'Y' ORDER BY (CASE WHEN useyn = 'Y' THEN 'Y' ELSE 'N' END) desc, code_name, sub_code , fxno";
+  "SELECT  fxcode sub_code, fxnum + (case when fxnm = '' then '' else ' / ' end) + fxnm as code_name,   fxno,  fxdiv,  ISNULL(b.user_name,'') as person,  (CASE WHEN useyn = 'Y' THEN '사용' ELSE '미사용' END) as useyn,  dptcd  FROM fx100t LEFT OUTER JOIN (SELECT orgdiv, user_id, user_name FROM sysUserMaster) b ON fx100t.orgdiv = b.orgdiv AND fx100t.person = b.user_id WHERE 1 = 1   AND useyn = 'Y' ORDER BY (CASE WHEN useyn = 'Y' THEN 'Y' ELSE 'N' END) desc, code_name, fxcode , fxno";
+
+//자재사용구분
+export const outgbQuery =
+  "SELECT convert(varchar(5), sub_code) as sub_code,  code_name FROM comCodeMaster WHERE group_code = 'BA041'  AND use_yn='Y' ORDER BY (case when use_yn='Y' then 'Y' else 'N' END),sort_seq,sub_code,code_name";

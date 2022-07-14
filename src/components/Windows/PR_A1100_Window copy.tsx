@@ -29,6 +29,12 @@ import {
   ButtonInFieldWrap,
   FieldWrap,
   GridContainer,
+  GridContainerWrap,
+  GridTitleContainer,
+  InfoItem,
+  InfoLabel,
+  InfoList,
+  InfoValue,
 } from "../../CommonStyled";
 import {
   Form,
@@ -65,8 +71,8 @@ import {
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
-import AttachmentsWindow from "../../components/Windows/AttachmentsWindow";
-import CustomersWindow from "../../components/Windows/CustomersWindow";
+import AttachmentsWindow from "./AttachmentsWindow";
+import CustomersWindow from "./CustomersWindow";
 import ItemsWindow from "./ItemsWindow";
 import {
   IAttachmentData,
@@ -107,14 +113,12 @@ export const FormGridEditContext = React.createContext<{
   editIndex: number | undefined;
   parentField: string;
   getItemcd: (itemcd: string) => void;
-  calculateAmt: () => void;
-  calculateSpecialAmt: () => void;
 }>({} as any);
 
 const deletedRows: object[] = [];
 
 const FORM_DATA_INDEX = "formDataIndex";
-const DATA_ITEM_KEY = "ordseq";
+const DATA_ITEM_KEY = "idx";
 
 const idGetter = getter(FORM_DATA_INDEX);
 const SELECTED_FIELD: string = "selected";
@@ -123,7 +127,8 @@ type TKendoWindow = {
   getVisible(t: boolean): void;
   reloadData(workType: string): void;
   workType: string;
-  ordnum?: string;
+  ordkey?: string;
+  itemcd?: string;
   isCopy: boolean;
   para?: Iparameters; //{};
 };
@@ -165,116 +170,6 @@ type TDetailData = {
   bf_qty_s: string[];
 };
 
-// Add a command cell to Edit, Update, Cancel and Delete an item
-const CommandCell = (props: GridCellProps) => {
-  const { onRemove, onEdit, onSave, onCancel, onCopy, editIndex } =
-    React.useContext(FormGridEditContext);
-  const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
-  const isNewItem = !props.dataItem[DATA_ITEM_KEY];
-
-  const onRemoveClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onRemove(props.dataItem);
-    },
-    [props.dataItem, onRemove]
-  );
-
-  const onCopyClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onCopy(props.dataItem);
-    },
-    [props.dataItem, onCopy]
-  );
-
-  const onEditClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onEdit(props.dataItem, isNewItem);
-    },
-    [props.dataItem, onEdit, isNewItem]
-  );
-
-  const onSaveClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onSave();
-    },
-    [onSave]
-  );
-
-  const onCancelClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onCancel();
-    },
-    [onCancel]
-  );
-
-  return isInEdit ? (
-    <td className="k-command-cell">
-      <Button
-        className="k-grid-save-command"
-        themeColor={"primary"}
-        //fillMode="outline"
-        onClick={onSaveClick}
-        icon="check"
-      >
-        {/* {isNewItem ? "수정완료" : "수정완료2"} */}
-      </Button>
-      <Button
-        className="k-grid-edit-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={onCopyClick}
-        icon="copy"
-      >
-        {/* 복사 */}
-      </Button>
-      <Button
-        className="k-grid-cancel-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={isNewItem ? onRemoveClick : onCancelClick}
-        icon="delete"
-      >
-        {/* {isNewItem ? "삭제" : "취소"} */}
-      </Button>
-    </td>
-  ) : (
-    <td className="k-command-cell">
-      <Button
-        className="k-grid-edit-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={onEditClick}
-        icon="edit"
-      >
-        {/* 수정 */}
-      </Button>
-      <Button
-        className="k-grid-edit-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={onCopyClick}
-        icon="copy"
-      >
-        {/* 복사 */}
-      </Button>
-      <Button
-        className="k-grid-remove-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={onRemoveClick}
-        icon="delete"
-      >
-        {/* 삭제 */}
-      </Button>
-    </td>
-  );
-};
-
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const { validationMessage, visited, name, dataItemKey, value } =
@@ -287,61 +182,16 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const [editedRowIdx, setEditedRowIdx] = useState(-1);
   const [editedRowData, setEditedRowData] = useState({});
 
-  const ItemBtnCell = (props: GridCellProps) => {
-    const { editIndex } = React.useContext(FormGridEditContext);
-    //const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
-
-    const onRowItemWndClick = () => {
-      //if (editIndex !== undefined)
-      setEditedRowIdx(editIndex!);
-      setEditedRowData(props.dataItem);
-      setItemWindowVisible(true);
-    };
-
-    return (
-      <td className="k-command-cell required">
-        <Button
-          type={"button"}
-          className="k-grid-save-command"
-          //fillMode="flat"
-          onClick={onRowItemWndClick}
-          icon="more-horizontal"
-          //disabled={isInEdit ? false : true}
-        />
-      </td>
-    );
-  };
   // Add a new item to the Form FieldArray that will be shown in the Grid
   const onAdd = React.useCallback(
     (e: any) => {
       e.preventDefault();
+
       fieldArrayRenderProps.onPush({
         value: {
           rowstatus: "N",
-          qty: 0,
-          specialunp: 0,
-          specialamt: 0,
-          unp: 0,
-          amt: 0,
-          wonamt: 0,
-          taxamt: 0,
-          totamt: 0,
-          outqty: 0,
-          sale_qty: 0,
-          finyn: "N",
-          bf_qty: 0,
-          ordseq: 0,
-          poregseq: 0,
-          totwgt: 0,
-          len: 0,
-          totlen: 0,
-          thickness: 0,
-          width: 0,
-          length: 0,
-          dlramt: 0,
-          chk: "N",
-          itemacnt: commonCodeDefaultValue,
-          qtyunit: commonCodeDefaultValue,
+          procseq: 0,
+          //outprocyn:  commonCodeDefaultValue,
         },
       });
 
@@ -448,6 +298,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
+      console.log("item?!");
+      console.log(item);
       return { ...item, [FORM_DATA_INDEX]: index };
     }
   );
@@ -712,29 +564,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     });
   };
 
-  const calculateAmt = () => {
-    const index = editIndex ?? 0;
-    const dataItem = value[index];
-
-    console.log("dataItem.qty");
-    console.log(dataItem.qty);
-    console.log(dataItem.unp);
-
-    fieldArrayRenderProps.onReplace({
-      index: index,
-      value: {
-        ...dataItem,
-        //inEdit: undefined,
-        wonamt: dataItem.qty * dataItem.unp,
-        taxamt: (dataItem.qty * dataItem.unp) / 10,
-        totamt:
-          dataItem.qty * dataItem.unp + (dataItem.qty * dataItem.unp) / 10,
-      },
-    });
-  };
-  const calculateSpecialAmt = () => {};
   return (
-    <GridContainer>
+    <GridContainer maxWidth="calc(50% - 7.5px)">
       <FormGridEditContext.Provider
         value={{
           onCancel,
@@ -745,11 +576,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           editIndex,
           parentField: name,
           getItemcd,
-          calculateAmt,
-          calculateSpecialAmt,
         }}
       >
         {visited && validationMessage && <Error>{validationMessage}</Error>}
+        <GridTitleContainer>공정</GridTitleContainer>
         <Grid
           data={dataWithIndexes.map((item: any) => ({
             ...item,
@@ -779,34 +609,21 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
               fillMode="outline"
               onClick={onAdd}
               icon="add"
-            >
-              추가
-            </Button>
+            ></Button>
             <Button
               type={"button"}
               themeColor={"primary"}
               fillMode="outline"
               onClick={onRemove}
               icon="minus"
-            >
-              삭제
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onCopy}
-              icon="copy"
-            >
-              복사
-            </Button>
+            ></Button>
             <Button
               type={"button"}
               themeColor={"primary"}
               fillMode="outline"
               onClick={onItemWndClick}
             >
-              품목참조
+              패턴공정도
             </Button>
           </GridToolbar>
 
@@ -821,113 +638,587 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             }
           />
           <GridColumn field="rowstatus" title=" " width="40px" />
+
           <GridColumn
-            field="itemcd"
-            title="품목코드"
-            width="160px"
+            field="proccd"
+            title="공정"
+            width="100px"
             cell={NameCell}
+            //cell={CellDropDownList}
             headerCell={RequiredHeader}
             className="required"
+          />
+          {/* <GridColumn
+            field="procseq"
+            title="공정순서"
+            width="100px"
+            cell={NumberCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="outprocyn"
+            title="외주구분"
+            width="100px"
+            cell={NameCell}
+            // cell={CellDropDownList}
+          />
+          <GridColumn
+            field="prodemp"
+            title="작업자"
+            width="100px"
+            cell={NameCell}
+            // cell={CellDropDownList}
+          />
+          <GridColumn
+            field="prodmac"
+            title="설비"
+            width="100px"
+            cell={NameCell}
+            //cell={CellDropDownList}
+          /> */}
+        </Grid>
+
+        {itemWindowVisible && (
+          <ItemsWindow
+            workType={"ROW"} //인라인 : ROW, FORM : FILTER ..?
+            getVisible={setItemWindowVisible}
+            getData={setItemData}
+            rowIdx={editedRowIdx}
+            rowData={editedRowData}
+            para={undefined}
+          />
+        )}
+      </FormGridEditContext.Provider>
+    </GridContainer>
+  );
+};
+
+const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
+  const { validationMessage, visited, name, dataItemKey, value } =
+    fieldArrayRenderProps;
+  const [editIndex, setEditIndex] = React.useState<number | undefined>();
+  const editItemCloneRef = React.useRef();
+
+  const [detailPgNum, setDetailPgNum] = useState(1);
+
+  const [editedRowIdx, setEditedRowIdx] = useState(-1);
+  const [editedRowData, setEditedRowData] = useState({});
+
+  const ItemBtnCell = (props: GridCellProps) => {
+    const { editIndex } = React.useContext(FormGridEditContext);
+    //const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
+
+    const onRowItemWndClick = () => {
+      //if (editIndex !== undefined)
+      setEditedRowIdx(editIndex!);
+      setEditedRowData(props.dataItem);
+      setItemWindowVisible(true);
+    };
+
+    return (
+      <td className="k-command-cell required">
+        <Button
+          type={"button"}
+          className="k-grid-save-command"
+          //fillMode="flat"
+          onClick={onRowItemWndClick}
+          icon="more-horizontal"
+          //disabled={isInEdit ? false : true}
+        />
+      </td>
+    );
+  };
+  // Add a new item to the Form FieldArray that will be shown in the Grid
+  const onAdd = React.useCallback(
+    (e: any) => {
+      e.preventDefault();
+      fieldArrayRenderProps.onPush({
+        value: {
+          rowstatus: "N",
+          procseq: 0,
+          //outprocyn:  commonCodeDefaultValue,
+        },
+      });
+
+      setEditIndex(0);
+    },
+    [fieldArrayRenderProps]
+  );
+
+  const onRemove = React.useCallback(() => {
+    let newData: any[] = [];
+
+    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
+      if (!selectedState[index]) {
+        newData.push(item);
+      } else {
+        deletedRows.push(item);
+      }
+    });
+
+    //전체 데이터 삭제
+    fieldArrayRenderProps.value.forEach(() => {
+      fieldArrayRenderProps.onRemove({
+        index: 0,
+      });
+    });
+
+    //newData 생성
+    newData.forEach((item: any) => {
+      fieldArrayRenderProps.onPush({
+        value: item,
+      });
+    });
+
+    //선택 상태 초기화
+    setSelectedState({});
+
+    //수정 상태 초기화
+    setEditIndex(undefined);
+  }, [fieldArrayRenderProps]);
+
+  // Update an item from the Grid and update the index of the edited item
+  const onEdit = React.useCallback((dataItem: any, isNewItem: any) => {
+    if (!isNewItem) {
+      editItemCloneRef.current = clone(dataItem);
+    }
+
+    fieldArrayRenderProps.onReplace({
+      index: dataItem[FORM_DATA_INDEX],
+      value: {
+        ...dataItem,
+        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+      },
+    });
+
+    setEditIndex(dataItem[FORM_DATA_INDEX]);
+  }, []);
+
+  const onCopy = React.useCallback(() => {
+    let newData: any[] = [];
+    let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
+
+    //복사할 데이터 newData에 push
+    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
+      if (selectedState[index]) {
+        newData.push(item);
+      }
+      if (ordseq < item.ordseq) ordseq = item.ordseq;
+    });
+
+    //newData 생성
+    newData.forEach((item: any) => {
+      ordseq++;
+
+      fieldArrayRenderProps.onPush({
+        value: { ...item, rowstatus: "N", ordseq: ordseq },
+      });
+    });
+
+    //선택 상태 초기화
+    setSelectedState({});
+
+    //수정 상태 초기화
+    setEditIndex(undefined);
+  }, [fieldArrayRenderProps]);
+
+  // Cancel the editing of an item and return its initial value
+  const onCancel = React.useCallback(() => {
+    if (editItemCloneRef.current) {
+      fieldArrayRenderProps.onReplace({
+        index: editItemCloneRef.current[FORM_DATA_INDEX],
+        value: editItemCloneRef.current,
+      });
+    }
+
+    editItemCloneRef.current = undefined;
+    setEditIndex(undefined);
+  }, [fieldArrayRenderProps]);
+
+  // Save the changes
+  const onSave = React.useCallback(() => {
+    setEditIndex(undefined);
+  }, [fieldArrayRenderProps]);
+
+  const dataWithIndexes = fieldArrayRenderProps.value.map(
+    (item: any, index: any) => {
+      console.log("item??");
+      console.log(item);
+      return { ...item, [FORM_DATA_INDEX]: index };
+    }
+  );
+
+  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+
+  //스크롤 핸들러
+  const scrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, detailPgNum, pageSize))
+      setDetailPgNum((prev) => prev + 1);
+  };
+
+  //드롭다운리스트 데이터 조회 (품목계정)
+  const [itemacntListData, setItemacntListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  UseCommonQuery(itemacntQuery, setItemacntListData);
+
+  const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
+    if (rowIdx === -1) {
+      //신규생성
+      fieldArrayRenderProps.onPush({
+        value: {
+          rowstatus: "N",
+          itemcd: data.itemcd,
+          itemnm: data.itemnm,
+          insiz: data.insiz,
+          itemacnt: {
+            sub_code: data.itemacnt,
+            code_name: itemacntListData.find(
+              (item: any) => item.sub_code === data.itemacnt
+            )?.code_name,
+          },
+          qtyunit: commonCodeDefaultValue,
+          qty: 0,
+          specialunp: 0,
+          specialamt: 0,
+          unp: 0,
+          amt: 0,
+          wonamt: 0,
+          taxamt: 0,
+          totamt: 0,
+          outqty: 0,
+          sale_qty: 0,
+          finyn: "N",
+          bf_qty: 0,
+          ordseq: 0,
+          poregseq: 0,
+          totwgt: 0,
+          len: 0,
+          totlen: 0,
+          thickness: 0,
+          width: 0,
+          length: 0,
+          dlramt: 0,
+          chk: "N",
+        },
+      });
+
+      setEditIndex(0);
+    } else {
+      //기존 행 업데이트
+      const dataItem = rowData;
+      fieldArrayRenderProps.onReplace({
+        index: dataItem[FORM_DATA_INDEX],
+        value: {
+          ...dataItem,
+          rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+          itemcd: data.itemcd,
+          itemnm: data.itemnm,
+          insiz: data.insiz,
+          itemacnt: {
+            sub_code: data.itemacnt,
+            code_name: itemacntListData.find(
+              (item: any) => item.sub_code === data.itemacnt
+            )?.code_name,
+          },
+          qtyunit: commonCodeDefaultValue,
+        },
+      });
+    }
+  };
+
+  const onItemWndClick = () => {
+    setEditedRowIdx(-1);
+    setItemWindowVisible(true);
+  };
+
+  const itemChange = (event: GridItemChangeEvent) => {
+    // const inEditID = event.dataItem.ProductID;
+    // const field = event.field || "";
+    // const newData = data.map((item) =>
+    //   item.ProductID === inEditID ? { ...item, [field]: event.value } : item
+    // );
+    // setData(newData);
+  };
+
+  const EDIT_FIELD = "inEdit";
+
+  const enterEdit = (dataItem: any, field: string | undefined) => {
+    fieldArrayRenderProps.onReplace({
+      index: dataItem[FORM_DATA_INDEX],
+      value: {
+        ...dataItem,
+        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+        [EDIT_FIELD]: field,
+      },
+    });
+
+    setEditIndex(dataItem[FORM_DATA_INDEX]);
+  };
+
+  const exitEdit = (item: any) => {
+    fieldArrayRenderProps.value.forEach((item: any, index: any) => {
+      fieldArrayRenderProps.onReplace({
+        index: index,
+        value: {
+          ...item,
+          [EDIT_FIELD]: undefined,
+        },
+      });
+    });
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const [selectedState, setSelectedState] = React.useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const onSelectionChange = React.useCallback(
+    (event: GridSelectionChangeEvent) => {
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: selectedState,
+        dataItemKey: FORM_DATA_INDEX,
+      });
+
+      setSelectedState(newSelectedState);
+    },
+    [selectedState]
+  );
+
+  const onHeaderSelectionChange = React.useCallback(
+    (event: GridHeaderSelectionChangeEvent) => {
+      const checkboxElement: any = event.syntheticEvent.target;
+      const checked = checkboxElement.checked;
+      const newSelectedState: {
+        [id: string]: boolean | number[];
+      } = {};
+
+      event.dataItems.forEach((item) => {
+        newSelectedState[idGetter(item)] = checked;
+      });
+
+      setSelectedState(newSelectedState);
+
+      //선택된 상태로 리랜더링
+      event.dataItems.forEach((item: any, index: number) => {
+        fieldArrayRenderProps.onReplace({
+          index: index,
+          value: {
+            ...item,
+          },
+        });
+      });
+    },
+    []
+  );
+
+  interface ProductNameHeaderProps extends GridHeaderCellProps {
+    children: any;
+  }
+
+  const RequiredHeader = (props: ProductNameHeaderProps) => {
+    return (
+      <span className="k-cell-inner">
+        <a className="k-link" onClick={props.onClick}>
+          <span style={{ color: "#ff6358" }}>{props.title}</span>
+          {props.children}
+        </a>
+      </span>
+    );
+  };
+
+  const getItemcd = (itemcd: string) => {
+    const index = editIndex ?? 0;
+    const dataItem = value[index];
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData(queryStr, index, dataItem, itemacntListData);
+  };
+  const processApi = useApi();
+
+  const fetchData = React.useCallback(
+    async (
+      queryStr: string,
+      index: number,
+      dataItem: any,
+      itemacntListData: any
+    ) => {
+      let data: any;
+
+      let query = {
+        query: "query?query=" + encodeURIComponent(queryStr),
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      const rows = data.result.data.Rows;
+
+      if (rows.length > 0) {
+        setRowItem(rows[0], index, dataItem, itemacntListData);
+      }
+    },
+    []
+  );
+
+  const setRowItem = (
+    row: any,
+    index: number,
+    dataItem: any,
+    itemacntListData: any //useState의 itemacntListData 바로 사용시 다시 조회되어 조회 전 빈값을 참조하는 현상 발생해, 일단 인수로 넘겨줌. 나중에 수정 필요할듯함..
+  ) => {
+    fieldArrayRenderProps.onReplace({
+      index: index,
+      value: {
+        ...dataItem,
+        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+        inEdit: undefined,
+        itemcd: row.itemcd,
+        itemnm: row.itemnm,
+        insiz: row.insiz,
+        itemacnt: {
+          sub_code: row.itemacnt,
+          code_name: itemacntListData.find(
+            (item: any) => item.sub_code === row.itemacnt
+          )?.code_name,
+        },
+        qtyunit: commonCodeDefaultValue,
+      },
+    });
+  };
+
+  return (
+    <GridContainer maxWidth="calc(50% - 7.5px)">
+      <FormGridEditContext.Provider
+        value={{
+          onCancel,
+          onEdit,
+          onCopy,
+          onRemove,
+          onSave,
+          editIndex,
+          parentField: name,
+          getItemcd,
+        }}
+      >
+        {visited && validationMessage && <Error>{validationMessage}</Error>}
+        <GridTitleContainer>자재</GridTitleContainer>
+        <Grid
+          data={dataWithIndexes.map((item: any) => ({
+            ...item,
+            [SELECTED_FIELD]: selectedState[idGetter(item)],
+          }))}
+          total={dataWithIndexes.total}
+          dataItemKey={dataItemKey}
+          style={{ height: "300px" }}
+          cellRender={customCellRender}
+          rowRender={customRowRender}
+          onItemChange={itemChange}
+          onScroll={scrollHandler}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            drag: false,
+            cell: false,
+            mode: "multiple",
+          }}
+          onSelectionChange={onSelectionChange}
+          onHeaderSelectionChange={onHeaderSelectionChange}
+        >
+          <GridToolbar>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onAdd}
+              icon="add"
+            ></Button>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onRemove}
+              icon="minus"
+            ></Button>
+          </GridToolbar>
+          <GridColumn
+            field={SELECTED_FIELD}
+            width="45px"
+            headerSelectionValue={
+              dataWithIndexes.findIndex(
+                (item: any) => !selectedState[idGetter(item)]
+              ) === -1
+            }
+          />
+          <GridColumn field="rowstatus" title=" " width="40px" />
+          <GridColumn
+            field="proccd"
+            title="공정"
+            width="100px"
+            cell={NameCell}
+            //            cell={CellDropDownList}
+          />
+          <GridColumn
+            field="chlditemcd"
+            title="소요자재코드"
+            width="160px"
+            cell={NameCell}
           />
           <GridColumn cell={ItemBtnCell} width="55px" />
           <GridColumn
-            field="itemnm"
-            title="품목명"
+            field="chlditemnm"
+            title="소요자재명"
             width="180px"
             cell={NameCell}
-            headerCell={RequiredHeader}
-            className="required"
           />
           <GridColumn
-            field="insiz"
-            title="규격"
-            width="200px"
-            cell={NameCell}
+            field="outgb"
+            title="자재사용구분"
+            width="100px"
+            cell={NumberCell}
+            //cell={CellDropDownList}
           />
           <GridColumn
-            field="itemacnt"
-            title="품목계정"
-            width="120px"
-            cell={CellDropDownList}
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn
-            field="qty"
-            title="수주량"
+            field="unitqty"
+            title="소요량"
             width="120px"
             cell={NumberCell}
-            headerCell={RequiredHeader}
-            className="required"
+          />
+          <GridColumn
+            field="procqty"
+            title="재공생산량"
+            width="120px"
+            cell={NumberCell}
           />
           <GridColumn
             field="qtyunit"
-            title="단위"
-            width="120px"
-            cell={CellDropDownList}
-          />
-          <GridColumn
-            field="specialunp"
-            title="발주단가"
-            width="120px"
+            title="수량단위"
+            width="100px"
             cell={NumberCell}
-          />
-          <GridColumn
-            field="specialamt"
-            title="발주금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="unp"
-            title="단가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="wonamt"
-            title="금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="taxamt"
-            title="세액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="totamt"
-            title="합계금액"
-            width="120px"
-            cell={ReadOnlyNumberCell}
-          />
-          <GridColumn
-            field="remark"
-            title="비고"
-            width="120px"
-            cell={NameCell}
-          />
-          <GridColumn
-            field="purcustnm"
-            title="발주처"
-            width="120px"
-            cell={NameCell}
-          />
-          <GridColumn field="outqty" title="출하수량" width="120px" />
-          <GridColumn field="sale_qty" title="판매수량" width="120px" />
-          <GridColumn field="finyn" title="완료여부" width="120px" />
-          <GridColumn
-            field="bf_qty"
-            title="LOT수량"
-            width="120px"
-            cell={NameCell}
-          />
-          <GridColumn
-            field="lotnum"
-            title="LOT NO"
-            width="120px"
-            cell={NameCell}
+            //cell={CellDropDownList}
           />
         </Grid>
 
@@ -945,11 +1236,13 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     </GridContainer>
   );
 };
+
 const KendoWindow = ({
   getVisible,
   reloadData,
   workType,
-  ordnum,
+  ordkey,
+  itemcd,
   isCopy,
   para,
 }: TKendoWindow) => {
@@ -1024,7 +1317,7 @@ const KendoWindow = ({
     getVisible(false);
   };
 
-  const DETAIL_DATA_ITEM_KEY = "ordseq";
+  const DETAIL_DATA_ITEM_KEY = "idx";
   const SELECTED_FIELD = "selected";
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const [formKey, setFormKey] = React.useState(1);
@@ -1065,63 +1358,87 @@ const KendoWindow = ({
 
   const [initialVal, setInitialVal] = useState({
     ordnum: "",
-    doexdiv: "A",
-    taxdiv: "A",
-    location: "01",
-    orddt: new Date(),
-    dlvdt: new Date(),
-    custnm: "",
-    custcd: "",
-    dptcd: "",
+    ordseq: 0,
+    frdt: new Date(),
+    planqty: 0,
     person: "",
-    ordsts: "2",
-    ordtype: "A",
-    rcvcustnm: "",
-    rcvcustcd: "",
-    project: "",
-    amtunit: "KRW",
-    wonchgrat: 0,
-    uschgrat: 0,
-    quokey: "",
-    prcterms: "",
-    paymeth: "",
-    dlv_method: "",
-    portnm: "",
-    ship_method: "",
-    poregnum: "",
-    attdatnum: "",
-    files: "",
-    remark: "",
   });
 
-  //요약정보 조회조건 파라미터
+  //수주정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_SA_A2000_Q",
+    procedureName: "P_WEB_PR_A1100_Q",
     pageNumber: 1,
     pageSize: 1,
     parameters: {
-      "@p_work_type": "HEADER",
+      "@p_work_type": "LIST",
       "@p_orgdiv": "01",
-      "@p_location": "",
+      "@p_location": "01",
       "@p_dtgb": "",
       "@p_frdt": "19990101",
       "@p_todt": "20991231",
-      "@p_ordnum": ordnum,
       "@p_custcd": "",
       "@p_custnm": "",
-      "@p_itemcd": "",
+      "@p_itemcd": itemcd,
       "@p_itemnm": "",
-      "@p_person": "",
-      "@p_finyn": "%",
-      "@p_dptcd": "",
-      "@p_ordsts": "",
-      "@p_doexdiv": "",
-      "@p_ordtype": "",
+      "@p_insiz": "",
       "@p_poregnum": "",
+      "@p_ordnum": "",
+      "@p_ordseq": "",
+      "@p_ordkey": ordkey,
+      "@p_plankey": "",
+      "@p_ordyn ": "%",
+      "@p_planyn": "%",
+      "@p_ordsts": "",
+      "@p_remark": "",
+      "@p_lotno": "",
+      "@p_service_id": "",
+      "@p_dptcd": "",
+      "@p_person": "",
     },
   };
 
-  //요약정보 조회
+  const parametersBom: Iparameters = {
+    procedureName: "P_WEB_PR_A1100_Q",
+    pageNumber: 1,
+    pageSize: 100,
+    parameters: {
+      "@p_work_type": "BOM",
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_dtgb": "",
+      "@p_frdt": "19990101",
+      "@p_todt": "20991231",
+      "@p_custcd": "",
+      "@p_custnm": "",
+      "@p_itemcd": itemcd,
+      "@p_itemnm": "",
+      "@p_insiz": "",
+      "@p_poregnum": "",
+      "@p_ordnum": ordkey!.split("-", 2)[0],
+      "@p_ordseq": ordkey!.split("-", 2)[1],
+      "@p_ordkey": ordkey,
+      "@p_plankey": "",
+      "@p_ordyn ": "%",
+      "@p_planyn": "%",
+      "@p_ordsts": "",
+      "@p_remark": "",
+      "@p_lotno": "",
+      "@p_service_id": "",
+      "@p_dptcd": "",
+      "@p_person": "",
+    },
+  };
+
+  const [infoVal, setInfoVal] = useState({
+    itemcd: "",
+    itemnm: "",
+    itemacnt: "",
+    insiz: "",
+    bnatur: "",
+    qty: 0,
+    planqty: 0,
+  });
+  //수주정보 조회
   const fetchMain = async () => {
     let data: any;
     try {
@@ -1130,40 +1447,19 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data !== null) {
+    if (data.result.isSuccess === true) {
       const rows = data.result.data.Rows[0];
 
-      setInitialVal((prev) => {
+      setInfoVal((prev) => {
         return {
           ...prev,
-          ordnum: rows.ordnum,
-          doexdiv: rows.doexdiv,
-          taxdiv: rows.taxdiv,
-          location: rows.location,
-          orddt: new Date(dateformat(rows.orddt)),
-          dlvdt: new Date(dateformat(rows.dlvdt)),
-          custnm: rows.custnm,
-          custcd: rows.custcd,
-          dptcd: rows.dptcd,
-          person: rows.person,
-          ordsts: rows.ordsts,
-          ordtype: rows.ordtype,
-          rcvcustnm: rows.rcvcustnm,
-          rcvcustcd: rows.rcvcustcd,
-          project: rows.project,
-          amtunit: rows.amtunit,
-          wonchgrat: rows.wonchgrat, //0,
-          uschgrat: rows.uschgrat, //0,
-          quokey: rows.quokey,
-          prcterms: rows.prcterms,
-          paymeth: rows.paymeth,
-          dlv_method: rows.dlv_method,
-          portnm: rows.portnm,
-          ship_method: rows.ship_method,
-          poregnum: rows.poregnum,
-          attdatnum: rows.attdatnum,
-          files: rows.files,
-          remark: rows.remark,
+          itemcd: rows.itemcd,
+          itemnm: rows.itemnm,
+          itemacnt: rows.itemacnt,
+          insiz: rows.insiz,
+          bnatur: rows.bnatur,
+          qty: rows.qty,
+          planqty: rows.planqty,
         };
       });
     }
@@ -1177,6 +1473,8 @@ const KendoWindow = ({
   //fetch된 그리드 데이터가 그리드 폼에 세팅되도록 하기 위해 적용
   useEffect(() => {
     resetForm();
+    console.log("detailDataResult!");
+    console.log(detailDataResult);
   }, [detailDataResult]);
 
   //itemacnt, qtyunit list가 조회된 후 상세그리드 조회
@@ -1193,8 +1491,10 @@ const KendoWindow = ({
   const fetchGrid = async () => {
     let data: any;
 
+    console.log("parametersBom");
+    console.log(parametersBom);
     try {
-      data = await processApi<any>("procedure", para);
+      data = await processApi<any>("procedure", parametersBom);
     } catch (error) {
       data = null;
     }
@@ -1203,24 +1503,21 @@ const KendoWindow = ({
       const totalRowsCnt = data.result.totalRowCount;
       let rows = data.result.data.Rows;
 
-      rows = rows.map((row: any) => {
+      rows = rows.map((row: any, idx: number) => {
         return {
           ...row,
-          itemacnt: {
-            sub_code: row.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === row.itemacnt
-            )?.code_name,
-          },
           qtyunit: {
             sub_code: row.qtyunit,
             code_name: qtyunitListData.find(
               (item: any) => item.sub_code === row.qtyunit
             )?.code_name,
           },
+          idx,
         };
       });
 
+      console.log("rows!!");
+      console.log(rows);
       setDetailDataResult(() => {
         return {
           data: [...rows],
@@ -1234,72 +1531,63 @@ const KendoWindow = ({
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    service_id: "20190218001",
-    orgdiv: "01",
-    location: "01",
-    ordnum: "",
-    poregnum: "",
-    project: "",
-    ordtype: "",
-    ordsts: "",
-    taxdiv: "",
-    orddt: "",
-    dlvdt: "",
-    dptcd: "",
-    person: "",
-    amtunit: "",
-    portnm: "",
-    finaldes: "",
-    paymeth: "",
-    prcterms: "",
-    custcd: "",
-    custnm: "",
-    rcvcustcd: "",
-    rcvcustnm: "",
-    wonchgrat: 0,
-    uschgrat: 0,
-    doexdiv: "",
-    remark: "",
-    attdatnum: "",
-    userid: "admin",
-    pc: "WEB TEST",
-    ship_method: "",
-    dlv_method: "",
-    hullno: "",
+    orgdiv: "",
+    location: "",
+    planqty: "",
     rowstatus_s: "",
-    chk_s: "",
+    ordnum_s: "",
     ordseq_s: "",
-    poregseq_s: "",
+    orddt_s: "",
+    dlvdt_s: "",
+    ordsts_s: "",
+    project_s: "",
+    poregnum_s: "",
+    amtunit_s: "",
+    baseamt_s: "",
+    wonchgrat_s: "",
+    uschgrat_s: "",
+    attdatnum_s: "",
+    remark_s: "",
+    custcd_s: "",
+    custnm_s: "",
+    dptcd_s: "",
+    person_s: "",
     itemcd_s: "",
     itemnm_s: "",
     itemacnt_s: "",
     insiz_s: "",
-    bnatur_s: "",
     qty_s: "",
-    qtyunit_s: "",
-    totwgt_s: "",
-    wgtunit_s: "",
-    len_s: "",
-    totlen_s: "",
-    lenunit_s: "",
-    thickness_s: "",
-    width_s: "",
-    length_s: "",
-    unpcalmeth_s: "",
-    unp_s: "",
-    amt_s: "",
-    taxamt_s: "",
-    dlramt_s: "",
-    wonamt_s: "",
-    remark_s: "",
-    pac_s: "",
-    finyn_s: "",
-    specialunp_s: "",
-    lotnum_s: "",
-    dlvdt_s: "",
-    specialamt_s: "",
-    heatno_s: "",
     bf_qty_s: "",
+    unp_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+    amt_s: "",
+    dlramt_s: "",
+    bnatur_s: "",
+    planno_s: "",
+    planseq_s: "",
+    seq_s: "",
+    unitqty_s: "",
+    qtyunit_s: "",
+    outgb_s: "",
+    procqty_s: "",
+    chlditemcd_s: "",
+    qtyunit_s2: "",
+    proccd_s2: "",
+    plandt_s: "",
+    finexpdt_s: "",
+    prodmac_s: "",
+    prodemp_s: "",
+    proccd_s: "",
+    procseq_s: "",
+    outprocyn_s: "",
+    lotnum_s: "",
+    ordyn_s: "",
+    userid: "",
+    pc: "",
+    purtype: "",
+    urgencyyn: "",
+    service_id: "",
     form_id: "",
   });
 
@@ -1310,72 +1598,63 @@ const KendoWindow = ({
     pageSize: 10,
     parameters: {
       "@p_work_type": paraData.work_type,
-      "@p_service_id": paraData.service_id,
       "@p_orgdiv": paraData.orgdiv,
       "@p_location": paraData.location,
-      "@p_ordnum": paraData.ordnum,
-      "@p_poregnum": paraData.poregnum,
-      "@p_project": paraData.project,
-      "@p_ordtype": paraData.ordtype,
-      "@p_ordsts": paraData.ordsts,
-      "@p_taxdiv": paraData.taxdiv,
-      "@p_orddt": paraData.orddt,
-      "@p_dlvdt": paraData.dlvdt,
-      "@p_dptcd": paraData.dptcd,
-      "@p_person": paraData.person,
-      "@p_amtunit": paraData.amtunit,
-      "@p_portnm": paraData.portnm,
-      "@p_finaldes": paraData.finaldes,
-      "@p_paymeth": paraData.paymeth,
-      "@p_prcterms": paraData.prcterms,
-      "@p_custcd": paraData.custcd,
-      "@p_custnm": paraData.custnm,
-      "@p_rcvcustcd": paraData.rcvcustcd,
-      "@p_rcvcustnm": paraData.rcvcustnm,
-      "@p_wonchgrat": paraData.wonchgrat,
-      "@p_uschgrat": paraData.uschgrat,
-      "@p_doexdiv": paraData.doexdiv,
-      "@p_remark": paraData.remark,
-      "@p_attdatnum": paraData.attdatnum,
-      "@p_userid": paraData.userid,
-      "@p_pc": paraData.pc,
-      "@p_ship_method": paraData.ship_method,
-      "@p_dlv_method": paraData.dlv_method,
-      "@p_hullno": paraData.hullno,
+      "@p_planqty": paraData.planqty,
       "@p_rowstatus_s": paraData.rowstatus_s,
-      "@p_chk_s": paraData.chk_s,
+      "@p_ordnum_s": paraData.ordnum_s,
       "@p_ordseq_s": paraData.ordseq_s,
-      "@p_poregseq_s": paraData.poregseq_s,
+      "@p_orddt_s": paraData.orddt_s,
+      "@p_dlvdt_s": paraData.dlvdt_s,
+      "@p_ordsts_s": paraData.ordsts_s,
+      "@p_project_s": paraData.project_s,
+      "@p_poregnum_s": paraData.poregnum_s,
+      "@p_amtunit_s": paraData.amtunit_s,
+      "@p_baseamt_s": paraData.baseamt_s,
+      "@p_wonchgrat_s": paraData.wonchgrat_s,
+      "@p_uschgrat_s": paraData.uschgrat_s,
+      "@p_attdatnum_s": paraData.attdatnum_s,
+      "@p_remark_s": paraData.remark_s,
+      "@p_custcd_s": paraData.custcd_s,
+      "@p_custnm_s": paraData.custnm_s,
+      "@p_dptcd_s": paraData.dptcd_s,
+      "@p_person_s": paraData.person_s,
       "@p_itemcd_s": paraData.itemcd_s,
       "@p_itemnm_s": paraData.itemnm_s,
       "@p_itemacnt_s": paraData.itemacnt_s,
       "@p_insiz_s": paraData.insiz_s,
-      "@p_bnatur_s": paraData.bnatur_s,
       "@p_qty_s": paraData.qty_s,
-      "@p_qtyunit_s": paraData.qtyunit_s,
-      "@p_totwgt_s": paraData.totwgt_s,
-      "@p_wgtunit_s": paraData.wgtunit_s,
-      "@p_len_s": paraData.len_s,
-      "@p_totlen_s": paraData.totlen_s,
-      "@p_lenunit_s": paraData.lenunit_s,
-      "@p_thickness_s": paraData.thickness_s,
-      "@p_width_s": paraData.width_s,
-      "@p_length_s": paraData.length_s,
-      "@p_unpcalmeth_s": paraData.unpcalmeth_s,
-      "@p_unp_s": paraData.unp_s,
-      "@p_amt_s": paraData.amt_s,
-      "@p_taxamt_s": paraData.taxamt_s,
-      "@p_dlramt_s": paraData.dlramt_s,
-      "@p_wonamt_s": paraData.wonamt_s,
-      "@p_remark_s": paraData.remark_s,
-      "@p_pac_s": paraData.pac_s,
-      "@p_finyn_s": paraData.finyn_s,
-      "@p_specialunp_s": paraData.specialunp_s,
-      "@p_lotnum_s": paraData.lotnum_s,
-      "@p_dlvdt_s": paraData.dlvdt_s,
-      "@p_specialamt_s": paraData.specialamt_s,
-      "@p_heatno_s": paraData.heatno_s,
       "@p_bf_qty_s": paraData.bf_qty_s,
+      "@p_unp_s": paraData.unp_s,
+      "@p_wonamt_s": paraData.wonamt_s,
+      "@p_taxamt_s": paraData.taxamt_s,
+      "@p_amt_s": paraData.amt_s,
+      "@p_dlramt_s": paraData.dlramt_s,
+      "@p_bnatur_s": paraData.bnatur_s,
+      "@p_planno_s": paraData.planno_s,
+      "@p_planseq_s": paraData.planseq_s,
+      "@p_seq_s": paraData.seq_s,
+      "@p_unitqty_s": paraData.unitqty_s,
+      "@p_qtyunit_s": paraData.qtyunit_s,
+      "@p_outgb_s": paraData.outgb_s,
+      "@p_procqty_s": paraData.procqty_s,
+      "@p_chlditemcd_s": paraData.chlditemcd_s,
+      "@p_qtyunit_s2": paraData.qtyunit_s2,
+      "@p_proccd_s2": paraData.proccd_s2,
+      "@p_plandt_s": paraData.plandt_s,
+      "@p_finexpdt_s": paraData.finexpdt_s,
+      "@p_prodmac_s": paraData.prodmac_s,
+      "@p_prodemp_s": paraData.prodemp_s,
+      "@p_proccd_s": paraData.proccd_s,
+      "@p_procseq_s": paraData.procseq_s,
+      "@p_outprocyn_s": paraData.outprocyn_s,
+      "@p_lotnum_s": paraData.lotnum_s,
+      "@p_ordyn_s": paraData.ordyn_s,
+      "@p_userid": paraData.userid,
+      "@p_pc": paraData.pc,
+      "@p_purtype": paraData.purtype,
+      "@p_urgencyyn": paraData.urgencyyn,
+      "@p_service_id": paraData.service_id,
       "@p_form_id": paraData.form_id,
     },
   };
@@ -1428,7 +1707,7 @@ const KendoWindow = ({
 
     //검증
     try {
-      dataItem.orderDetails.forEach((item: any) => {
+      dataItem.processList.forEach((item: any) => {
         if (!item.itemcd) {
           throw "품목코드를 입력하세요.";
         }
@@ -1478,7 +1757,8 @@ const KendoWindow = ({
       ship_method,
       dlv_method,
       hullno,
-      orderDetails,
+      processList,
+      materialList,
     } = dataItem;
 
     let detailArr: TDetailData = {
@@ -1517,7 +1797,7 @@ const KendoWindow = ({
       heatno_s: [],
       bf_qty_s: [],
     };
-    orderDetails.forEach((item: any) => {
+    processList.forEach((item: any) => {
       const {
         rowstatus,
         chk,
@@ -1794,7 +2074,7 @@ const KendoWindow = ({
   };
   return (
     <Window
-      title={workType === "N" ? "수주생성" : "수주정보"}
+      title={workType === "N" ? "계획처리" : "계획처리"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
@@ -1806,78 +2086,56 @@ const KendoWindow = ({
         key={formKey}
         initialValues={{
           rowstatus: "",
-          ordnum: isCopy === true ? "" : initialVal.ordnum,
-          doexdiv: {
-            sub_code: initialVal.doexdiv,
-            code_name: doexdivListData.find(
-              (item: any) => item.sub_code === initialVal.doexdiv
-            )?.code_name,
-          },
-          taxdiv: {
-            sub_code: initialVal.taxdiv,
-            code_name: taxdivListData.find(
-              (item: any) => item.sub_code === initialVal.taxdiv
-            )?.code_name,
-          },
-          location: {
-            sub_code: initialVal.location,
-            code_name: locationListData.find(
-              (item: any) => item.sub_code === initialVal.location
-            )?.code_name,
-          },
-          orddt: initialVal.orddt, //new Date(),
-          dlvdt: initialVal.dlvdt,
-          custnm: initialVal.custnm,
-          custcd: initialVal.custcd,
-          dptcd: {
-            sub_code: initialVal.dptcd,
-            code_name: departmentsListData.find(
-              (item: any) => item.sub_code === initialVal.dptcd
-            )?.code_name,
-          },
+          ordnum: initialVal.ordnum,
+          frdt: initialVal.frdt, //new Date(),
           person: {
             sub_code: initialVal.person,
             code_name: usersListData.find(
               (item: any) => item.sub_code === initialVal.person
             )?.code_name,
           },
-          ordsts: {
-            sub_code: initialVal.ordsts,
-            code_name: ordstsListData.find(
-              (item: any) => item.sub_code === initialVal.ordsts
-            )?.code_name,
-          },
-          ordtype: {
-            sub_code: initialVal.ordtype,
-            code_name: ordtypeListData.find(
-              (item: any) => item.sub_code === initialVal.ordtype
-            )?.code_name,
-          },
-          rcvcustnm: initialVal.rcvcustnm,
-          rcvcustcd: initialVal.rcvcustcd,
-          project: initialVal.project,
-          amtunit: {
-            sub_code: initialVal.amtunit,
-            code_name: amtunitListData.find(
-              (item: any) => item.sub_code === initialVal.amtunit
-            )?.code_name,
-          }, //"KRW",
-          wonchgrat: initialVal.wonchgrat, //0,
-          uschgrat: initialVal.uschgrat, //0,
-          quokey: initialVal.quokey,
-          prcterms: initialVal.prcterms,
-          paymeth: initialVal.paymeth,
-          dlv_method: initialVal.dlv_method,
-          portnm: initialVal.portnm,
-          ship_method: initialVal.ship_method,
-          poregnum: initialVal.poregnum,
-          attdatnum: initialVal.attdatnum,
-          files: initialVal.files,
-          remark: initialVal.remark,
-          orderDetails: detailDataResult.data, //detailDataResult.data,
+
+          planqty: initialVal.planqty, //new Date(),
+          processList: detailDataResult.data,
+          materialList: [], //detailDataResult.data,
         }}
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
+            <InfoList>
+              <InfoItem>
+                <InfoLabel>품목코드</InfoLabel>
+                <InfoValue>{infoVal.itemcd}</InfoValue>
+              </InfoItem>
+              <InfoItem>
+                <InfoLabel>품목명</InfoLabel>
+                <InfoValue>{infoVal.itemnm}</InfoValue>
+              </InfoItem>
+              <InfoItem>
+                <InfoLabel>품목계정</InfoLabel>
+                <InfoValue>{infoVal.itemacnt}</InfoValue>
+              </InfoItem>
+              <InfoItem>
+                <InfoLabel>규격</InfoLabel>
+                <InfoValue>{infoVal.insiz}</InfoValue>
+              </InfoItem>
+              <InfoItem>
+                <InfoLabel>재질</InfoLabel>
+                <InfoValue>{infoVal.bnatur}</InfoValue>
+              </InfoItem>
+              <InfoItem>
+                <InfoLabel>수주량</InfoLabel>
+                <InfoValue>{infoVal.qty}</InfoValue>
+              </InfoItem>
+              {/* <InfoItem>
+                <InfoLabel>기계획량</InfoLabel>
+                <InfoValue id=""></InfoValue>
+              </InfoItem> */}
+              <InfoItem>
+                <InfoLabel>잔량</InfoLabel>
+                <InfoValue>{infoVal.planqty}</InfoValue>
+              </InfoItem>
+            </InfoList>
+
             <fieldset className={"k-form-fieldset"}>
               <button
                 id="valueChanged"
@@ -1889,206 +2147,52 @@ const KendoWindow = ({
                   });
                 }}
               ></button>
-              <FieldWrap>
-                <Field
-                  name={"ordnum"}
-                  label={"수주번호"}
-                  component={FormReadOnly}
-                  className="readonly"
-                />
-                <Field
-                  name={"doexdiv"}
-                  label={"내수구분"}
-                  component={FormDropDownList}
-                  queryStr={doexdivQuery}
-                  className="required"
-                />
-                <Field
-                  name={"taxdiv"}
-                  component={FormDropDownList}
-                  label={"과세구분"}
-                  queryStr={taxdivQuery}
-                  className="required"
-                />
-                <Field
-                  name={"location"}
-                  component={FormDropDownList}
-                  label={"사업장"}
-                  queryStr={locationQuery}
-                />
-              </FieldWrap>
 
               <FieldWrap>
                 <Field
-                  label={"수주일자"}
-                  name={"orddt"}
+                  label={"완료예정일"}
+                  name={"frdt"}
                   component={FormDatePicker}
-                  className="required"
-                />
-                <Field
-                  label={"납기일자"}
-                  name={"dlvdt"}
-                  component={FormDatePicker}
-                  className="required"
-                />
-                <Field
-                  label={"수주상태"}
-                  name={"ordsts"}
-                  component={FormDropDownList}
-                  queryStr={ordstsQuery}
-                  className="required"
-                />
-                <Field
-                  label={"수주형태"}
-                  name={"ordtype"}
-                  component={FormDropDownList}
-                  queryStr={ordtypeQuery}
                   className="required"
                 />
               </FieldWrap>
 
               <FieldWrap>
                 <Field
-                  label={"업체코드"}
-                  name={"custcd"}
-                  component={FormInput}
-                  validator={validator}
-                  className="required"
-                />
-                <ButtonInFieldWrap>
-                  <ButtonInField>
-                    <Button
-                      type={"button"}
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInField>
-                </ButtonInFieldWrap>
-                <Field
-                  label={"업체명"}
-                  name={"custnm"}
-                  component={FormInput}
-                  validator={validator}
-                  className="required"
-                />
-                <Field
-                  name={"rcvcustcd"}
-                  component={FormInput}
-                  label={"인수처코드"}
-                />
-                <ButtonInFieldWrap>
-                  <ButtonInField>
-                    <Button
-                      type={"button"}
-                      onClick={onRcvcustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInField>
-                </ButtonInFieldWrap>
-                <Field
-                  name={"rcvcustnm"}
-                  component={FormInput}
-                  label={"인수처"}
-                />
-              </FieldWrap>
-              <FieldWrap>
-                <Field
-                  name={"project"}
-                  component={FormInput}
-                  label={"프로젝트"}
-                />
-                <Field
-                  name={"dptcd"}
-                  component={FormDropDownList}
-                  queryStr={departmentsQuery}
-                  label={"부서"}
-                />
-                <Field
+                  label={"담당자"}
                   name={"person"}
                   component={FormDropDownList}
                   queryStr={usersQuery}
-                  label={"담당자"}
-                />
-                <Field
-                  name={"amtunit"}
-                  component={FormDropDownList}
-                  queryStr={amtunitQuery}
-                  label={"화폐단위"}
-                />
-                {/* <Field
-                  name={"wonchgrat"}
-                  component={FormInput}
-                  label={"원화환율"}
-                />
-                <Field
-                  name={"uschgrat"}
-                  component={FormInput}
-                  label={"대미환율"}
-                /> */}
-              </FieldWrap>
-              <FieldWrap>
-                <Field
-                  name={"quokey"}
-                  component={FormReadOnly}
-                  label={"견적번호"}
-                />
-                <Field
-                  name={"prcterms"}
-                  component={FormInput}
-                  label={"인도조건"}
-                />
-                <Field
-                  name={"paymeth"}
-                  component={FormInput}
-                  label={"지불조건"}
-                />
-                <Field
-                  name={"dlv_method"}
-                  component={FormInput}
-                  label={"납기조건"}
+                  className="required"
                 />
               </FieldWrap>
+
               <FieldWrap>
-                <Field name={"portnm"} component={FormInput} label={"선적지"} />
                 <Field
-                  name={"ship_method"}
+                  label={"수량"}
+                  name={"planqty"}
                   component={FormInput}
-                  label={"선적방법"}
+                  validator={validator}
+                  className="required"
                 />
-                <Field
-                  name={"poregnum"}
-                  component={FormInput}
-                  label={"PO번호"}
-                />
-                <Field
-                  name={"files"}
-                  component={FormReadOnly}
-                  label={"첨부파일"}
-                />
-                <ButtonInFieldWrap>
-                  <ButtonInField>
-                    <Button
-                      type={"button"}
-                      onClick={onAttachmentsWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInField>
-                </ButtonInFieldWrap>
-              </FieldWrap>
-              <FieldWrap>
-                <Field name={"remark"} component={FormInput} label={"비고"} />
               </FieldWrap>
             </fieldset>
-            <FieldArray
-              name="orderDetails"
-              dataItemKey={DATA_ITEM_KEY}
-              component={FormGrid}
-              validator={arrayLengthValidator}
-            />
 
+            <GridContainerWrap>
+              <FieldArray
+                name="processList"
+                dataItemKey={DATA_ITEM_KEY}
+                component={FormGrid}
+                validator={arrayLengthValidator}
+              />
+
+              <FieldArray
+                name="materialList"
+                dataItemKey={DATA_ITEM_KEY}
+                component={FormGridMtr}
+                validator={arrayLengthValidator}
+              />
+            </GridContainerWrap>
             <BottomContainer>
               <ButtonContainer>
                 <Button
@@ -2111,14 +2215,6 @@ const KendoWindow = ({
           workType={custType} //신규 : N, 수정 : U
           getData={getCustData}
           para={undefined}
-        />
-      )}
-
-      {attachmentsWindowVisible && (
-        <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible}
-          getData={getAttachmentsData}
-          para={initialVal.attdatnum}
         />
       )}
     </Window>

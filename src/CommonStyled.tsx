@@ -8,6 +8,10 @@ export const TitleContainer = styled.div`
   margin-top: 5px;
 `;
 
+export const MainTopContainer = styled(TitleContainer)`
+  justify-content: flex-end;
+`;
+
 export const Title = styled.h3`
   font-size: 24px;
   font-weight: 600;
@@ -83,11 +87,21 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
 
 type TGridContainer = {
   maxWidth?: string;
+  clientWidth?: number;
+  inTab?: boolean;
 };
 
 export const GridContainer = styled.div<TGridContainer>`
   flex-direction: column;
   max-width: ${(props) => props.maxWidth};
+  width: ${(props) =>
+    props.clientWidth
+      ? "calc(" +
+        props.clientWidth +
+        "px - " +
+        (props.inTab ? 65 : 0) +
+        "px - 150px)"
+      : ""};
 
   .k-grid,
   .k-scheduler {
@@ -95,9 +109,6 @@ export const GridContainer = styled.div<TGridContainer>`
   }
   .k-grid td {
     white-space: nowrap; //그리드 셀 말줄임표
-  }
-  .k-grid .k-grid-header .k-header .k-cell-inner > .k-link {
-    justify-content: center; //공통설정 : 그리드 헤더 텍스트 중앙정렬
   }
   /* .required {
     background-color: #fff0ef;
@@ -191,11 +202,21 @@ export const RadioButtonBox = styled.div`
 export const ApprovalBox = styled.div`
   display: flex;
   justify-content: space-evenly;
-  width: 500px;
-  height: 80px;
-  /* border: solid 1px; */
-  /* margin-top: 30px; */
-  margin-bottom: 15px;
+  width: 350px;
+  height: 60px;
+  margin-left: 15px;
+  border: solid 1px #dfdfdf;
+  background-color: #fafafa;
+
+  > div:nth-child(1) > div:last-child {
+    background-color: #ffb849;
+  }
+  > div:nth-child(2) > div:last-child {
+    background-color: #49c9ff;
+  }
+  > div:nth-child(3) > div:last-child {
+    background-color: #ff8549;
+  }
 `;
 
 export const ApprovalInner = styled.div`
@@ -204,10 +225,24 @@ export const ApprovalInner = styled.div`
   width: 33%;
   height: 100%;
   align-items: center;
-  border: solid 1px #ff6358;
 
   :nth-child(2) {
     border-right: 0;
     border-left: 0;
   }
+  > div:last-child {
+    width: 40px;
+    line-height: 35px;
+    border-radius: 5px;
+    vertical-align: middle;
+    text-align: center;
+    font-weight: 600;
+    color: #fff;
+  }
 `;
+
+export const InfoList = styled.ul``;
+export const InfoTitle = styled.p``;
+export const InfoItem = styled.li``;
+export const InfoLabel = styled.span``;
+export const InfoValue = styled.span``;

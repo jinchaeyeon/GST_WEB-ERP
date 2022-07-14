@@ -9,10 +9,22 @@ import { Label, Error, Hint } from "@progress/kendo-react-labels";
 import { GridCellProps, GridFilterCellProps } from "@progress/kendo-react-grid";
 
 import { FormGridEditContext } from "./SA_B2000_Window";
+import {
+  PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT,
+  PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT,
+} from "./PR_A1100_Window";
 import FeildDropDownList from "../DropDownLists/FeildDropDownList";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 
-import { itemacntQuery, qtyunitQuery } from "../CommonString";
+import {
+  itemacntQuery,
+  outgbQuery,
+  outprocynQuery,
+  proccdQuery,
+  prodmacQuery,
+  qtyunitQuery,
+  usersQuery,
+} from "../CommonString";
 import { BlurEvent } from "@progress/kendo-react-dropdowns/dist/npm/common/events";
 import { checkIsDDLValid, getItemQuery } from "../CommonFunction";
 import moment from "moment";
@@ -36,7 +48,7 @@ const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
 
 //Grid Cell에 표시되는 DropDownList Name Value
 const DisplayDDLValue = (fieldRenderProps: FieldRenderProps) => {
-  return <>{fieldRenderProps.value.code_name} </>;
+  return <>{fieldRenderProps.value ? fieldRenderProps.value.code_name : ""}</>;
 };
 
 //Grid Cell 수정모드에서 사용되는 Text Input
@@ -74,13 +86,33 @@ const TextInputWithValidation = (fieldRenderProps: FieldRenderProps) => {
 
 //Grid Cell 수정모드에서 사용되는 Numeric Text Input
 const NumericTextBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
-  const { validationMessage, visited, valid, value, className, ...others } =
-    fieldRenderProps;
+  const {
+    onBlur,
+    validationMessage,
+    visited,
+    valid,
+    value,
+    name,
+    className,
+    ...others
+  } = fieldRenderProps;
+  const { calculateAmt, calculateSpecialAmt } =
+    React.useContext(FormGridEditContext);
   const anchor: any = React.useRef(null);
+
+  const onInputBlur = () => {
+    console.log(name);
+
+    if (name?.includes("qty") || name?.includes("unp")) calculateAmt();
+    if (name?.includes("qty") || name?.includes("specialunp"))
+      calculateSpecialAmt();
+  };
+
   const required = className?.includes("required");
   return (
     <div>
       <NumericTextBox
+        onBlur={onInputBlur}
         value={value}
         valid={required && Number(value) < 1 ? false : true}
         className={className ?? ""}
@@ -143,11 +175,30 @@ const CheckBoxReadOnly = (fieldRenderProps: FieldRenderProps) => {
   );
 };
 
+//그리드에 맞는 FormGridEditContext를 반환
+export const UseGetParentField = (srcPgName: string) => {
+  const { parentField: SA_B2000_Window_parentField } =
+    React.useContext(FormGridEditContext);
+  const { parentField: PR_A1100_WINDOW_PRC_PARENT_FIELD } = React.useContext(
+    PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT
+  );
+  const { parentField: PR_A1100_WINDOW_MTR_PARENT_FIELD } = React.useContext(
+    PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT
+  );
+  return srcPgName === "PR_A1100_WINDOW_PRC"
+    ? PR_A1100_WINDOW_PRC_PARENT_FIELD
+    : srcPgName === "PR_A1100_WINDOW_MTL"
+    ? PR_A1100_WINDOW_MTR_PARENT_FIELD
+    : SA_B2000_Window_parentField;
+};
+
 //Grid Cell에서 사용되는 Number Feild
 export const NumberCell = (props: GridCellProps) => {
-  const { parentField } = React.useContext(FormGridEditContext);
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
+
+  const srcPgName = dataItem.srcPgName;
+  const parentField = UseGetParentField(srcPgName);
 
   let defaultRendering = (
     <td className={className ?? ""} style={{ textAlign: "right" }}>
@@ -163,11 +214,18 @@ export const NumberCell = (props: GridCellProps) => {
     ? render.call(undefined, defaultRendering, props)
     : defaultRendering;
 };
+
 //Grid Cell에서 사용되는 Name Feild
 export const NameCell = (props: GridCellProps) => {
-  const { parentField } = React.useContext(FormGridEditContext);
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
+
+  const srcPgName = dataItem.srcPgName;
+  const parentField = UseGetParentField(srcPgName);
+
+  console.log("namecell");
+  console.log(parentField);
+  console.log(`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`);
 
   let defaultRendering = (
     <td className={className ?? ""}>
@@ -185,8 +243,11 @@ export const NameCell = (props: GridCellProps) => {
 
 //Grid Cell에서 사용되는 ReadOnly Cell
 export const ReadOnlyNameCell = (props: GridCellProps) => {
-  const { parentField } = React.useContext(FormGridEditContext);
+  //  const { parentField } = React.useContext(FormGridEditContext);
   const { field, dataItem, className } = props;
+
+  const srcPgName = dataItem.srcPgName;
+  const parentField = UseGetParentField(srcPgName);
 
   return (
     <td className={className ?? ""}>
@@ -200,8 +261,10 @@ export const ReadOnlyNameCell = (props: GridCellProps) => {
 
 //Grid Cell에서 사용되는 ReadOnly NumberCell
 export const ReadOnlyNumberCell = (props: GridCellProps) => {
-  const { parentField } = React.useContext(FormGridEditContext);
   const { field, dataItem, className } = props;
+
+  const srcPgName = dataItem.srcPgName;
+  const parentField = UseGetParentField(srcPgName);
 
   return (
     <td className={className ?? ""} style={{ textAlign: "right" }}>
@@ -216,13 +279,26 @@ export const ReadOnlyNumberCell = (props: GridCellProps) => {
 //Grid Cell에서 사용되는 DropDownList Feild
 export const CellDropDownList = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
-  const { parentField } = React.useContext(FormGridEditContext);
   const isInEdit = field === dataItem.inEdit;
+
+  const srcPgName = dataItem.srcPgName;
+  const parentField = UseGetParentField(srcPgName);
+
+  console.log("CellDropDownList ");
+  console.log(dataItem);
+  console.log(srcPgName);
+  console.log(parentField);
+  console.log(`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`);
 
   let queryStr = "SELECT '' sub_code, '' code_name";
 
   if (field === "itemacnt") queryStr = itemacntQuery;
   else if (field === "qtyunit") queryStr = qtyunitQuery;
+  else if (field === "proccd") queryStr = proccdQuery;
+  else if (field === "outprocyn") queryStr = outprocynQuery;
+  else if (field === "prodmac") queryStr = prodmacQuery;
+  else if (field === "outgb") queryStr = outgbQuery;
+  else if (field === "prodemp") queryStr = usersQuery;
 
   const required = className?.includes("required");
 
@@ -288,6 +364,23 @@ export const FormInput = (fieldRenderProps: FieldRenderProps) => {
       </Label>
       <div className={"k-form-field-wrap"}>
         <Input valid={valid} id={id} {...others} />
+      </div>
+    </FieldWrapper>
+  );
+};
+
+//Form Field에서 사용되는 NumericTextBox
+export const FormNumericTextBox = (fieldRenderProps: FieldRenderProps) => {
+  const { validationMessage, visited, label, id, valid, ...others } =
+    fieldRenderProps;
+
+  return (
+    <FieldWrapper>
+      <Label editorId={id} editorValid={valid}>
+        {label}
+      </Label>
+      <div className={"k-form-field-wrap"}>
+        <NumericTextBox valid={valid} id={id} {...others} />
       </div>
     </FieldWrapper>
   );

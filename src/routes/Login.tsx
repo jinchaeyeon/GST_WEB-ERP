@@ -32,11 +32,9 @@ const Login: React.FC = () => {
   const processLogin = useCallback(
     async (formData: { [name: string]: any }) => {
       try {
-        console.log("formData");
-        console.log(formData);
         let para = Object.assign({}, formData);
-        const md5 = require("md5");
-        para.password = sha256(md5(para.password));
+        //const md5 = require("md5");
+        //para.password = sha256(md5(para.password));
 
         //setShowLoading(true);
         const response = await processApi<any>("login", para);

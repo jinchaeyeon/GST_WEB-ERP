@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import React, { Component } from "react";
 import "@progress/kendo-theme-default/dist/all.css";
-import "./App.css";
+//import "./App.css";
 import Login from "./routes/Login";
 import Main from "./routes/Main";
 import MA_B7000 from "./routes/MA_B7000";
@@ -16,6 +16,7 @@ import PanelBarNavContainer from "./components/PanelBarNavContainer";
 import styled, { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
 import UserEffect from "./components/UserEffect";
+import PR_A1100 from "./routes/PR_A1100";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -75,6 +76,11 @@ body {
 a {
   text-decoration:none;
 }
+
+.k-grid .k-grid-header .k-header .k-cell-inner > .k-link {
+  justify-content: center; /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
+}
+
 `;
 
 class App extends Component {
@@ -90,6 +96,7 @@ class App extends Component {
               <AuthRoute path="/" component={Main} exact />
               <AuthRoute path="/MA_B7000" component={MA_B7000} exact />
               <AuthRoute path="/SA_B2000" component={SA_B2000} exact />
+              <AuthRoute path="/PR_A1100" component={PR_A1100} exact />
             </PanelBarNavContainer>
           </Switch>
         </Router>

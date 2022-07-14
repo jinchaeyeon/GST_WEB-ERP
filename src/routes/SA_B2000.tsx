@@ -97,7 +97,7 @@ const SA_B2000: React.FC = () => {
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      const rowData = mainDataResult.data[props.dataIndex];
+      const rowData = props.dataItem;
       setSelectedState({ [rowData.ordnum]: true });
 
       setDetailFilters((prev) => ({
@@ -201,7 +201,7 @@ const SA_B2000: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_TEST_WEB_SA_A2000_Q",
+    procedureName: "P_WEB_SA_A2000_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -227,7 +227,7 @@ const SA_B2000: React.FC = () => {
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_TEST_WEB_SA_A2000_Q",
+    procedureName: "P_WEB_SA_A2000_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
@@ -261,7 +261,7 @@ const SA_B2000: React.FC = () => {
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_TEST_WEB_SA_A2000_S",
+    procedureName: "P_WEB_SA_A2000_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
@@ -748,7 +748,7 @@ const SA_B2000: React.FC = () => {
         <FilterBox>
           <tbody>
             <tr>
-              <th>일자</th>
+              <th>납기일자</th>
               <td colSpan={3} className="item-box">
                 <DatePicker
                   name="frdt"

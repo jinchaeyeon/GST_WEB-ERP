@@ -10,6 +10,12 @@ export interface IWindowPosition {
   height: number;
 }
 
+export interface IAttachmentData {
+  attdatnum: string;
+  original_name: string;
+  rowCount: number;
+}
+
 export interface ICustData {
   custcd: string;
   custnm: string;

@@ -10,18 +10,10 @@ const domain: any = {
   "platform-query": { action: "get", url: "api/data/:query" },
   procedure: { action: "post", url: "api/data/procedure" },
   login: { action: "post", url: "api/auth/login" },
-  "file-upload": {
-    action: "post",
-    url: "api/FileUpload/file-upload",
-  },
-  "file-upload-multi": {
-    action: "post",
-    url: "api/FileUpload/file-upload-multi",
-  },
-  "file-download": {
-    action: "get",
-    url: "api/FileUpload/file-download/:filename",
-  },
+  "file-list": { action: "get", url: "api/files/attached/:attached" },
+  "file-upload": { action: "post", url: "api/files/:attached" },
+  "file-download": { action: "get", url: "api/files/attached/:attached" },
+  "file-delete": { action: "delete", url: "api/files/attached/:attached" },
 };
 
 const initCache = () => {
@@ -71,16 +63,15 @@ export const useApi = () => {
       url = `${BASE_URL}${url}`;
 
       let headers = {};
-      if (
-        name === "file-upload" ||
-        name === "file-upload-multi" ||
-        name === "file-download"
-      )
+      if (name === "file-upload" || name === "file-download")
         headers = { "Content-Type": "multipart/form-data" };
+      if (name === "file-list")
+        headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
 
       if (token) {
-        headers = { ...{ Authorization: `Bearer ${token.token}` } };
+        headers = { ...headers, Authorization: `Bearer ${token.token}` };
       }
+
       if (info.action != "get") {
         initCache();
       }

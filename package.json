@@ -6,11 +6,13 @@
     "@progress/kendo-data-query": "^1.5.6",
     "@progress/kendo-date-math": "^1.5.7",
     "@progress/kendo-drawing": "^1.16.3",
+    "@progress/kendo-file-saver": "^1.1.1",
     "@progress/kendo-licensing": "^1.2.2",
     "@progress/kendo-react-animation": "^5.3.0",
     "@progress/kendo-react-buttons": "^5.5.0",
     "@progress/kendo-react-data-tools": "^5.3.0",
     "@progress/kendo-react-dateinputs": "^5.5.0",
+    "@progress/kendo-react-dialogs": "^5.5.0",
     "@progress/kendo-react-dropdowns": "^5.5.0",
     "@progress/kendo-react-excel-export": "^5.3.0",
     "@progress/kendo-react-form": "^5.5.0",
@@ -33,7 +35,9 @@
     "@types/react-dom": "^18.0.4",
     "axios": "^0.27.2",
     "calculate-size": "^1.1.1",
+    "file-saver": "^2.0.5",
     "js-sha256": "^0.9.0",
+    "jszip": "^3.10.0",
     "md5": "^2.3.0",
     "moment": "^2.29.3",
     "react": "^18.1.0",
@@ -72,6 +76,7 @@
     ]
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.5",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.25"
   }

@@ -135,7 +135,7 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_TEST_CUST_POPUP",
+    procedureName: "P_WEB_CUST_POPUP",
     pageNumber: mainPgNum,
     pageSize: pageSize,
     parameters: {
