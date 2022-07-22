@@ -734,7 +734,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   };
   const calculateSpecialAmt = () => {};
   return (
-    <GridContainer>
+    <GridContainer margin={{ top: "30px" }}>
       <FormGridEditContext.Provider
         value={{
           onCancel,
@@ -1889,7 +1889,7 @@ const KendoWindow = ({
                   });
                 }}
               ></button>
-              <FieldWrap>
+              <FieldWrap fieldWidth="25%">
                 <Field
                   name={"ordnum"}
                   label={"수주번호"}
@@ -1918,7 +1918,7 @@ const KendoWindow = ({
                 />
               </FieldWrap>
 
-              <FieldWrap>
+              <FieldWrap fieldWidth="25%">
                 <Field
                   label={"수주일자"}
                   name={"orddt"}
@@ -1947,7 +1947,7 @@ const KendoWindow = ({
                 />
               </FieldWrap>
 
-              <FieldWrap>
+              <FieldWrap fieldWidth="25%">
                 <Field
                   label={"업체코드"}
                   name={"custcd"}
@@ -1993,7 +1993,7 @@ const KendoWindow = ({
                   label={"인수처"}
                 />
               </FieldWrap>
-              <FieldWrap>
+              <FieldWrap fieldWidth="25%">
                 <Field
                   name={"project"}
                   component={FormInput}
@@ -2028,7 +2028,7 @@ const KendoWindow = ({
                   label={"대미환율"}
                 /> */}
               </FieldWrap>
-              <FieldWrap>
+              <FieldWrap fieldWidth="25%">
                 <Field
                   name={"quokey"}
                   component={FormReadOnly}
@@ -2050,7 +2050,7 @@ const KendoWindow = ({
                   label={"납기조건"}
                 />
               </FieldWrap>
-              <FieldWrap>
+              <FieldWrap fieldWidth="25%">
                 <Field name={"portnm"} component={FormInput} label={"선적지"} />
                 <Field
                   name={"ship_method"}
@@ -2078,7 +2078,7 @@ const KendoWindow = ({
                   </ButtonInField>
                 </ButtonInFieldWrap>
               </FieldWrap>
-              <FieldWrap>
+              <FieldWrap fieldWidth="25%">
                 <Field name={"remark"} component={FormInput} label={"비고"} />
               </FieldWrap>
             </fieldset>

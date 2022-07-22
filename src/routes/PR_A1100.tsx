@@ -10,6 +10,7 @@ import {
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
+  GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -58,6 +59,7 @@ import OrdtypeDDL from "../components/DropDownLists/OrdtypeDDL";
 import UsersDDL from "../components/DropDownLists/UsersDDL";
 import LocationDDL from "../components/DropDownLists/LocationDDL";
 import {
+  checkIsDDLValid,
   chkScrollHandler,
   convertDateToStr,
   dateformat,
@@ -75,8 +77,16 @@ import {
   doexdivQuery,
   finynRadioButtonData,
   itemacntQuery,
+  itemlvl1Query,
+  itemlvl2Query,
+  itemlvl3Query,
   locationQuery,
   ordstsQuery,
+  outgbQuery,
+  outprocynQuery,
+  proccdQuery,
+  prodmacQuery,
+  purtypeQuery,
   qtyunitQuery,
   taxdivQuery,
   usersQuery,
@@ -85,19 +95,23 @@ import { CellRender, RowRender } from "../components/Windows/renderers2";
 import DropDownCell from "../components/Cells/DropDownCell";
 
 const pageSize = 20;
+
+let deletedPlanRows: object[] = [];
+let deletedMaterialRows: object[] = [];
+
 const PR_A1100: React.FC = () => {
   const processApi = useApi();
   const SELECTED_FIELD = "selected";
 
   const DATA_ITEM_KEY = "ordkey";
-  const PLAN_DATA_ITEM_KEY = "plankey";
-  const DETAIL_DATA_ITEM_KEY = "ordseq";
+  const PLAN_DATA_ITEM_KEY = "idx";
+  const MATERIAL_DATA_ITEM_KEY = "idx";
 
   const idGetter = getter(DATA_ITEM_KEY);
   const planIdGetter = getter(PLAN_DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
+  const materialIdGetter = getter(MATERIAL_DATA_ITEM_KEY);
 
-  const [tabSelected, setTabSelected] = React.useState(0);
+  const [tabSelected, setTabSelected] = React.useState(1);
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
   };
@@ -117,7 +131,7 @@ const PR_A1100: React.FC = () => {
       },
     ],
   });
-  const [detailDataState, setDetailDataState] = useState<State>({
+  const [detailDataState, setMaterialDataState] = useState<State>({
     sort: [],
   });
 
@@ -133,7 +147,7 @@ const PR_A1100: React.FC = () => {
       setOrdkey(rowData.ordkey);
       setItemcd(rowData.itemcd);
 
-      // setDetailFilters((prev) => ({
+      // setMaterialFilters((prev) => ({
       //   ...prev,
       //   location: rowData.location,
       //   ordnum: rowData.ordnum,
@@ -167,7 +181,7 @@ const PR_A1100: React.FC = () => {
     process([], planDataState)
   );
 
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
+  const [materialDataResult, setMaterialDataResult] = useState<DataResult>(
     process([], detailDataState)
   );
 
@@ -175,7 +189,11 @@ const PR_A1100: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [detailSelectedState, setDetailSelectedState] = useState<{
+  const [planSelectedState, setPlanSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [materialSelectedState, setMaterialSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -185,7 +203,7 @@ const PR_A1100: React.FC = () => {
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [planPgNum, setPlanPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
+  const [detailPgNum, setMaterialPgNum] = useState(1);
 
   const [workType, setWorkType] = useState("");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -247,7 +265,7 @@ const PR_A1100: React.FC = () => {
     person: "",
   });
 
-  const [detailFilters, setDetailFilters] = useState({
+  const [detailFilters, setMaterialFilters] = useState({
     pgSize: 10,
     orgdiv: "01",
     plankey: "",
@@ -436,6 +454,138 @@ const PR_A1100: React.FC = () => {
     },
   };
 
+  //계획 저장 파라미터 초기값
+  const [paraDataPlanSaved, setParaDataPlanSaved] = useState({
+    work_type: "",
+    orgdiv: "01",
+    //ordnum: "",
+    location: "01",
+    planqty: 0,
+    rowstatus_s: "",
+    ordnum_s: "",
+    ordseq_s: "",
+    orddt_s: "",
+    dlvdt_s: "",
+    ordsts_s: "",
+    project_s: "",
+    poregnum_s: "",
+    amtunit_s: "",
+    baseamt_s: "",
+    wonchgrat_s: "",
+    uschgrat_s: "",
+    attdatnum_s: "",
+    remark_s: "",
+    custcd_s: "",
+    custnm_s: "",
+    dptcd_s: "",
+    person_s: "",
+    itemcd_s: "",
+    itemnm_s: "",
+    itemacnt_s: "",
+    insiz_s: "",
+    qty_s: "",
+    bf_qty_s: "",
+    unp_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+    amt_s: "",
+    dlramt_s: "",
+    bnatur_s: "",
+    planno_s: "",
+    planseq_s: "",
+    seq_s: "",
+    unitqty_s: "",
+    qtyunit_s: "",
+    outgb_s: "",
+    procqty_s: "",
+    chlditemcd_s: "",
+    qtyunit_s2: "",
+    proccd_s2: "",
+    plandt_s: "",
+    finexpdt_s: "",
+    prodmac_s: "",
+    prodemp_s: "",
+    proccd_s: "",
+    procseq_s: "",
+    outprocyn_s: "",
+    lotnum_s: "",
+    ordyn_s: "",
+    userid: "admin",
+    pc: "",
+    purtype: "",
+    urgencyyn: "",
+    service_id: "",
+    form_id: "PR_A1100",
+  });
+
+  //계획 저장 파라미터
+  const paraPlanSaved: Iparameters = {
+    procedureName: "P_WEB_PR_A1100_S",
+    pageNumber: 1,
+    pageSize: 10,
+    parameters: {
+      "@p_work_type": paraDataPlanSaved.work_type,
+      "@p_orgdiv": paraDataPlanSaved.orgdiv,
+      "@p_location": paraDataPlanSaved.location,
+      "@p_planqty": paraDataPlanSaved.planqty,
+      "@p_rowstatus_s": paraDataPlanSaved.rowstatus_s,
+      "@p_ordnum_s": paraDataPlanSaved.ordnum_s,
+      "@p_ordseq_s": paraDataPlanSaved.ordseq_s,
+      "@p_orddt_s": paraDataPlanSaved.orddt_s,
+      "@p_dlvdt_s": paraDataPlanSaved.dlvdt_s,
+      "@p_ordsts_s": paraDataPlanSaved.ordsts_s,
+      "@p_project_s": paraDataPlanSaved.project_s,
+      "@p_poregnum_s": paraDataPlanSaved.poregnum_s,
+      "@p_amtunit_s": paraDataPlanSaved.amtunit_s,
+      "@p_baseamt_s": paraDataPlanSaved.baseamt_s,
+      "@p_wonchgrat_s": paraDataPlanSaved.wonchgrat_s,
+      "@p_uschgrat_s": paraDataPlanSaved.uschgrat_s,
+      "@p_attdatnum_s": paraDataPlanSaved.attdatnum_s,
+      "@p_remark_s": paraDataPlanSaved.remark_s,
+      "@p_custcd_s": paraDataPlanSaved.custcd_s,
+      "@p_custnm_s": paraDataPlanSaved.custnm_s,
+      "@p_dptcd_s": paraDataPlanSaved.dptcd_s,
+      "@p_person_s": paraDataPlanSaved.person_s,
+      "@p_itemcd_s": paraDataPlanSaved.itemcd_s,
+      "@p_itemnm_s": paraDataPlanSaved.itemnm_s,
+      "@p_itemacnt_s": paraDataPlanSaved.itemacnt_s,
+      "@p_insiz_s": paraDataPlanSaved.insiz_s,
+      "@p_qty_s": paraDataPlanSaved.qty_s,
+      "@p_bf_qty_s": paraDataPlanSaved.bf_qty_s,
+      "@p_unp_s": paraDataPlanSaved.unp_s,
+      "@p_wonamt_s": paraDataPlanSaved.wonamt_s,
+      "@p_taxamt_s": paraDataPlanSaved.taxamt_s,
+      "@p_amt_s": paraDataPlanSaved.amt_s,
+      "@p_dlramt_s": paraDataPlanSaved.dlramt_s,
+      "@p_bnatur_s": paraDataPlanSaved.bnatur_s,
+      "@p_planno_s": paraDataPlanSaved.planno_s,
+      "@p_planseq_s": paraDataPlanSaved.planseq_s,
+      "@p_seq_s": paraDataPlanSaved.seq_s,
+      "@p_unitqty_s": paraDataPlanSaved.unitqty_s,
+      "@p_qtyunit_s": paraDataPlanSaved.qtyunit_s,
+      "@p_outgb_s": paraDataPlanSaved.outgb_s,
+      "@p_procqty_s": paraDataPlanSaved.procqty_s,
+      "@p_chlditemcd_s": paraDataPlanSaved.chlditemcd_s,
+      "@p_qtyunit_s2": paraDataPlanSaved.qtyunit_s2,
+      "@p_proccd_s2": paraDataPlanSaved.proccd_s2,
+      "@p_plandt_s": paraDataPlanSaved.plandt_s,
+      "@p_finexpdt_s": paraDataPlanSaved.finexpdt_s,
+      "@p_prodmac_s": paraDataPlanSaved.prodmac_s,
+      "@p_prodemp_s": paraDataPlanSaved.prodemp_s,
+      "@p_proccd_s": paraDataPlanSaved.proccd_s,
+      "@p_procseq_s": paraDataPlanSaved.procseq_s,
+      "@p_outprocyn_s": paraDataPlanSaved.outprocyn_s,
+      "@p_lotnum_s": paraDataPlanSaved.lotnum_s,
+      "@p_ordyn_s": paraDataPlanSaved.ordyn_s,
+      "@p_userid": paraDataPlanSaved.userid,
+      "@p_pc": paraDataPlanSaved.pc,
+      "@p_purtype": paraDataPlanSaved.purtype,
+      "@p_urgencyyn": paraDataPlanSaved.urgencyyn,
+      "@p_service_id": paraDataPlanSaved.service_id,
+      "@p_form_id": paraDataPlanSaved.form_id,
+    },
+  };
+
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     let data: any;
@@ -472,7 +622,10 @@ const PR_A1100: React.FC = () => {
 
     if (data.result.isSuccess === true) {
       const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+      const rows = data.result.data.Rows.map((row: any, idx: number) => ({
+        ...row,
+        idx: idx,
+      }));
 
       setPlanDataResult((prev) => {
         return {
@@ -486,7 +639,7 @@ const PR_A1100: React.FC = () => {
     }
   };
 
-  const fetchDetailGrid = async () => {
+  const fetchMaterialGrid = async () => {
     let data: any;
 
     try {
@@ -495,13 +648,16 @@ const PR_A1100: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
+    if (data.result.isSuccess === true) {
       const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+      const rows = data.result.data.Rows.map((row: any, idx: number) => ({
+        ...row,
+        idx: idx,
+      }));
 
-      setDetailDataResult((prev) => {
+      setMaterialDataResult((prev) => {
         return {
-          data: [...prev.data, ...rows],
+          data: [...rows],
           total: totalRowsCnt,
         };
       });
@@ -519,13 +675,17 @@ const PR_A1100: React.FC = () => {
   }, [planPgNum]);
 
   useEffect(() => {
-    resetDetailGrid();
-    fetchDetailGrid();
+    resetMaterialGrid();
+    fetchMaterialGrid();
   }, [detailFilters]);
 
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
+
+  useEffect(() => {
+    if (paraDataPlanSaved.work_type !== "") fetchToSavePlan();
+  }, [paraDataPlanSaved]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -534,7 +694,7 @@ const PR_A1100: React.FC = () => {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.ordnum]: true });
 
-        setDetailFilters((prev) => ({
+        setMaterialFilters((prev) => ({
           ...prev,
           location: firstRowData.location,
           ordnum: firstRowData.ordnum,
@@ -549,35 +709,93 @@ const PR_A1100: React.FC = () => {
   const resetAllGrid = () => {
     setMainPgNum(1);
     setPlanPgNum(1);
-    setDetailPgNum(1);
+    setMaterialPgNum(1);
     setMainDataResult(process([], mainDataState));
     setPlanDataResult(process([], planDataState));
-    setDetailDataResult(process([], detailDataState));
+    setMaterialDataResult(process([], detailDataState));
   };
 
-  const resetDetailGrid = () => {
-    setDetailPgNum(1);
-    setDetailDataResult(process([], detailDataState));
+  const resetMaterialGrid = () => {
+    setMaterialPgNum(1);
+    setMaterialDataResult(process([], detailDataState));
   };
 
   //생산계획 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: planSelectedState,
       dataItemKey: PLAN_DATA_ITEM_KEY,
     });
-    setSelectedState(newSelectedState);
+    setPlanSelectedState(newSelectedState);
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    setDetailFilters((prev) => ({
+    setMaterialFilters((prev) => ({
       ...prev,
       plankey: selectedRowData.planno,
     }));
   };
 
+  const onMaterialSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: materialSelectedState,
+      dataItemKey: MATERIAL_DATA_ITEM_KEY,
+    });
+    setMaterialSelectedState(newSelectedState);
+  };
+
+  const onHeaderSelectionChange = React.useCallback(
+    (event: GridHeaderSelectionChangeEvent) => {
+      const checkboxElement: any = event.syntheticEvent.target;
+      const checked = checkboxElement.checked;
+      const newSelectedState: {
+        [id: string]: boolean | number[];
+      } = {};
+
+      event.dataItems.forEach((item) => {
+        newSelectedState[planIdGetter(item)] = checked;
+      });
+
+      setPlanSelectedState(newSelectedState);
+
+      // setPlanDataResult((prev: any) => {
+      //   return {
+      //     data: event.dataItems,
+      //     total: prev.total,
+      //   };
+      // });
+      //선택된 상태로 리랜더링
+      // event.dataItems.forEach((item: any, index: number) => {
+      //   // fieldArrayRenderProps.onReplace({
+      //   //   index: index,
+      //   //   value: {
+      //   //     ...item,
+      //   //   },
+      //   // });
+      // });
+    },
+    []
+  );
+
+  const onMeterialHeaderSelectionChange = React.useCallback(
+    (event: GridHeaderSelectionChangeEvent) => {
+      const checkboxElement: any = event.syntheticEvent.target;
+      const checked = checkboxElement.checked;
+      const newSelectedState: {
+        [id: string]: boolean | number[];
+      } = {};
+
+      event.dataItems.forEach((item) => {
+        newSelectedState[materialIdGetter(item)] = checked;
+      });
+
+      setMaterialSelectedState(newSelectedState);
+    },
+    []
+  );
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -597,9 +815,9 @@ const PR_A1100: React.FC = () => {
       setPlanPgNum((prev) => prev + 1);
   };
 
-  const onDetailScrollHandler = (event: GridEvent) => {
+  const onMaterialScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, detailPgNum, pageSize))
-      setDetailPgNum((prev) => prev + 1);
+      setMaterialPgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -610,8 +828,8 @@ const PR_A1100: React.FC = () => {
     setPlanDataState(event.dataState);
   };
 
-  const onDetailDataStateChange = (event: GridDataStateChangeEvent) => {
-    setDetailDataState(event.dataState);
+  const onMaterialDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMaterialDataState(event.dataState);
   };
 
   //그리드 푸터
@@ -634,7 +852,7 @@ const PR_A1100: React.FC = () => {
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult.total}건
+        총 {materialDataResult.total}건
       </td>
     );
   };
@@ -654,10 +872,94 @@ const PR_A1100: React.FC = () => {
     return maxWidth;
   };
 
-  const onAddClick = () => {
-    setIsCopy(false);
-    setWorkType("N");
-    setPlanWindowVisible(true);
+  // const onAddClick = () => {
+  //   setIsCopy(false);
+  //   setWorkType("N");
+  //   setPlanWindowVisible(true);
+  // };
+
+  const onPlanAddClick = () => {
+    let seq = 1;
+    let planseq = 1;
+    if (planDataResult.total > 0) {
+      planDataResult.data.forEach((item) => {
+        if (item[PLAN_DATA_ITEM_KEY] > seq) {
+          seq = item[PLAN_DATA_ITEM_KEY];
+        }
+
+        if (item["planseq"] > planseq) {
+          planseq = item["planseq"];
+        }
+      });
+
+      seq++;
+      planseq++;
+    }
+
+    const idx: number =
+      Number(Object.getOwnPropertyNames(planSelectedState)[0]) ??
+      //Number(planDataResult.data[0].idx) ??
+      null;
+    if (idx === null) return false;
+    const selectedRowData = planDataResult.data.find(
+      (item) => item.idx === idx
+    );
+
+    const newDataItem = {
+      ...selectedRowData,
+      [PLAN_DATA_ITEM_KEY]: seq,
+      planno: selectedRowData.planno,
+      planseq: planseq,
+      plandt: convertDateToStr(new Date()),
+      finexpdt: convertDateToStr(new Date()),
+      rowstatus: "N",
+    };
+
+    setPlanDataResult((prev) => {
+      return {
+        data: [...prev.data, newDataItem],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onMtrAddClick = () => {
+    let seq = 1;
+
+    if (materialDataResult.total > 0) {
+      materialDataResult.data.forEach((item) => {
+        if (item[MATERIAL_DATA_ITEM_KEY] > seq) {
+          seq = item[MATERIAL_DATA_ITEM_KEY];
+        }
+      });
+      seq++;
+    }
+
+    const idx: number =
+      Number(Object.getOwnPropertyNames(planSelectedState)[0]) ??
+      //Number(planDataResult.data[0].idx) ??
+      null;
+    if (idx === null) return false;
+    const selectedRowData = planDataResult.data.find(
+      (item) => item.idx === idx
+    );
+
+    const newDataItem = {
+      [MATERIAL_DATA_ITEM_KEY]: seq,
+      planno: selectedRowData.planno,
+      planseq: selectedRowData.planseq,
+      proccd: selectedRowData.proccd,
+      procqty: 0,
+      unitqty: 0,
+      //  inEdit: true,
+      rowstatus: "N",
+    };
+    setMaterialDataResult((prev) => {
+      return {
+        data: [...prev.data, newDataItem],
+        total: prev.total,
+      };
+    });
   };
 
   const onCustWndClick = () => {
@@ -675,7 +977,7 @@ const PR_A1100: React.FC = () => {
       (item) => item.ordnum === ordnum
     );
 
-    setDetailFilters((prev) => ({
+    setMaterialFilters((prev) => ({
       ...prev,
       location: selectedRowData.location,
       ordnum: selectedRowData.ordnum,
@@ -700,6 +1002,50 @@ const PR_A1100: React.FC = () => {
     }));
   };
 
+  const onRemovePlanClick = () => {
+    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+    let newData: any[] = [];
+
+    planDataResult.data.forEach((item: any, index: number) => {
+      if (!planSelectedState[item.idx]) {
+        newData.push(item);
+      } else {
+        deletedPlanRows.push(item);
+      }
+    });
+
+    //newData 생성
+    setPlanDataResult((prev) => ({
+      data: newData,
+      total: newData.length,
+    }));
+
+    //선택 상태 초기화
+    setPlanSelectedState({});
+  };
+
+  const onRemoveMaterialClick = () => {
+    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+    let newData: any[] = [];
+
+    materialDataResult.data.forEach((item: any, index: number) => {
+      if (!materialSelectedState[index]) {
+        newData.push(item);
+      } else {
+        deletedMaterialRows.push(item);
+      }
+    });
+
+    //newData 생성
+    setMaterialDataResult((prev) => ({
+      data: newData,
+      total: newData.length,
+    }));
+
+    //선택 상태 초기화
+    setMaterialSelectedState({});
+  };
+
   const fetchToDelete = async () => {
     let data: any;
 
@@ -713,7 +1059,335 @@ const PR_A1100: React.FC = () => {
       alert("삭제가 완료되었습니다.");
 
       resetAllGrid();
-      fetchMainGrid();
+      fetchPlanGrid();
+    } else {
+      alert(
+        "[" +
+          data.result.statusCode +
+          "] 처리 중 오류가 발생하였습니다. " +
+          data.result.resultMessage
+      );
+    }
+
+    paraDataDeleted.work_type = ""; //초기화
+    paraDataDeleted.ordnum = "";
+    paraDataDeleted.orgdiv = "01";
+  };
+
+  const onSavePlanClick = () => {
+    const dataItem: { [name: string]: any } = planDataResult.data.filter(
+      (item: any) => {
+        //console.log(item.rowstatus === "N" || "U" ? item : {});
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      }
+    );
+    if (dataItem.length === 0 && deletedPlanRows.length === 0) return false;
+
+    //검증
+    let valid = true;
+    try {
+      dataItem.forEach((item: any) => {
+        planDataResult.data.forEach((chkItem: any) => {
+          if (
+            (item.proccd === chkItem.proccd ||
+              item.procseq === chkItem.procseq) &&
+            item[PLAN_DATA_ITEM_KEY] !== chkItem[PLAN_DATA_ITEM_KEY] &&
+            item.planno === chkItem.planno
+          ) {
+            throw "공정과 공정순서를 확인하세요.";
+          }
+        });
+
+        if (!checkIsDDLValid(item.proccd)) {
+          throw "공정을 입력하세요.";
+        }
+
+        if (item.procseq < 0) {
+          throw "공정순서를 입력하세요.";
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
+    type TPlanData = {
+      rowstatus_s: string[];
+      ordnum_s: string[];
+      ordseq_s: string[];
+      remark_s: string[];
+      itemcd_s: string[];
+      qty_s: string[];
+      planno_s: string[];
+      planseq_s: string[];
+      qtyunit_s: string[];
+      procqty_s: string[];
+      plandt_s: string[];
+      finexpdt_s: string[];
+      prodmac_s: string[];
+      prodemp_s: string[];
+      proccd_s: string[];
+      procseq_s: string[];
+      outprocyn_s: string[];
+      //lotnum_s: string[];
+    };
+
+    let planArr: TPlanData = {
+      rowstatus_s: [],
+      ordnum_s: [],
+      ordseq_s: [],
+      remark_s: [],
+      itemcd_s: [],
+      qty_s: [],
+      planno_s: [],
+      planseq_s: [],
+      qtyunit_s: [],
+      procqty_s: [],
+      plandt_s: [],
+      finexpdt_s: [],
+      prodmac_s: [],
+      prodemp_s: [],
+      proccd_s: [],
+      procseq_s: [],
+      outprocyn_s: [],
+      //lotnum_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus,
+        ordnum,
+        ordseq,
+        remark,
+        itemcd,
+        qty,
+        planno,
+        planseq,
+        qtyunit,
+        procqty,
+        plandt,
+        finexpdt,
+        prodmac,
+        prodemp,
+        proccd,
+        procseq,
+        outprocyn,
+        //lotnum,
+      } = item;
+
+      planArr.rowstatus_s.push(rowstatus);
+      planArr.ordnum_s.push(ordnum);
+      planArr.ordseq_s.push(ordseq);
+      planArr.remark_s.push(remark);
+      planArr.itemcd_s.push(itemcd);
+      planArr.qty_s.push(qty);
+      planArr.planno_s.push(planno);
+      planArr.planseq_s.push(planseq);
+      planArr.qtyunit_s.push(qtyunit);
+      planArr.procqty_s.push(procqty);
+      planArr.plandt_s.push(plandt);
+      planArr.finexpdt_s.push(finexpdt);
+      planArr.prodmac_s.push(prodmac);
+      planArr.prodemp_s.push(prodemp);
+      planArr.proccd_s.push(proccd);
+      planArr.procseq_s.push(procseq);
+      planArr.outprocyn_s.push(outprocyn);
+      //planArr.lotnum_s.push(lotnum);
+    });
+
+    deletedPlanRows.forEach((item: any) => {
+      const {
+        ordnum,
+        ordseq,
+        remark,
+        itemcd,
+        qty,
+        planno,
+        planseq,
+        qtyunit,
+        procqty,
+        plandt,
+        finexpdt,
+        prodmac,
+        prodemp,
+        proccd,
+        procseq,
+        outprocyn,
+      } = item;
+
+      planArr.rowstatus_s.push("D");
+      planArr.ordnum_s.push(ordnum);
+      planArr.ordseq_s.push(ordseq);
+      planArr.remark_s.push(remark);
+      planArr.itemcd_s.push(itemcd);
+      planArr.qty_s.push(qty);
+      planArr.planno_s.push(planno);
+      planArr.planseq_s.push(planseq);
+      planArr.qtyunit_s.push(qtyunit);
+      planArr.procqty_s.push(procqty);
+      planArr.plandt_s.push(plandt);
+      planArr.finexpdt_s.push(finexpdt);
+      planArr.prodmac_s.push(prodmac);
+      planArr.prodemp_s.push(prodemp);
+      planArr.proccd_s.push(proccd);
+      planArr.procseq_s.push(procseq);
+      planArr.outprocyn_s.push(outprocyn);
+    });
+
+    setParaDataPlanSaved((prev) => ({
+      ...prev,
+      work_type: "PLAN",
+      rowstatus_s: planArr.rowstatus_s.join("|"),
+      ordnum_s: planArr.ordnum_s.join("|"),
+      ordseq_s: planArr.ordseq_s.join("|"),
+      remark_s: planArr.remark_s.join("|"),
+      itemcd_s: planArr.itemcd_s.join("|"),
+      qty_s: planArr.qty_s.join("|"),
+      planno_s: planArr.planno_s.join("|"),
+      planseq_s: planArr.planseq_s.join("|"),
+      qtyunit_s: planArr.qtyunit_s.join("|"),
+      procqty_s: planArr.procqty_s.join("|"),
+      plandt_s: planArr.plandt_s.join("|"),
+      finexpdt_s: planArr.finexpdt_s.join("|"),
+      prodmac_s: planArr.prodmac_s.join("|"),
+      prodemp_s: planArr.prodemp_s.join("|"),
+      proccd_s: planArr.proccd_s.join("|"),
+      procseq_s: planArr.procseq_s.join("|"),
+      outprocyn_s: planArr.outprocyn_s.join("|"),
+      //lotnum_s: planArr.lotnum_s.join("|"),
+    }));
+  };
+
+  const onSaveMtrClick = () => {
+    const dataItem: { [name: string]: any } = materialDataResult.data.filter(
+      (item: any) => {
+        //console.log(item.rowstatus === "N" || "U" ? item : {});
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      }
+    );
+    if (dataItem.length === 0) return false;
+
+    type TMaterialArr = {
+      rowstatus_s: string[];
+      planno_s: string[];
+      planseq_s: string[];
+      seq_s: string[];
+      unitqty_s: string[];
+      outgb_s: string[];
+      procqty_s: string[];
+      chlditemcd_s: string[];
+      qtyunit_s2: string[];
+      proccd_s2: string[];
+    };
+
+    let materialArr: TMaterialArr = {
+      rowstatus_s: [],
+      planno_s: [],
+      planseq_s: [],
+      seq_s: [],
+      unitqty_s: [],
+      outgb_s: [],
+      procqty_s: [],
+      chlditemcd_s: [],
+      qtyunit_s2: [],
+      proccd_s2: [],
+    };
+
+    dataItem.forEach((item: any) => {
+      const {
+        rowstatus,
+        planno,
+        planseq,
+        seq,
+        unitqty,
+        outgb,
+        procqty,
+        chlditemcd,
+        qtyunit,
+        proccd,
+      } = item;
+
+      materialArr.rowstatus_s.push(rowstatus);
+      materialArr.planno_s.push(planno);
+      materialArr.planseq_s.push(planseq);
+      materialArr.seq_s.push(seq);
+      materialArr.unitqty_s.push(unitqty);
+      materialArr.outgb_s.push(outgb);
+      materialArr.procqty_s.push(procqty);
+      materialArr.chlditemcd_s.push(chlditemcd);
+      materialArr.qtyunit_s2.push(qtyunit);
+      materialArr.proccd_s2.push(proccd);
+      //planArr.lotnum_s.push(lotnum);
+    });
+
+    deletedMaterialRows.forEach((item: any) => {
+      const {
+        planno,
+        planseq,
+        seq,
+        unitqty,
+        outgb,
+        procqty,
+        chlditemcd,
+        qtyunit,
+        proccd,
+      } = item;
+
+      materialArr.rowstatus_s.push("D");
+      materialArr.planno_s.push(planno);
+      materialArr.planseq_s.push(planseq);
+      materialArr.seq_s.push(seq);
+      materialArr.unitqty_s.push(unitqty);
+      materialArr.outgb_s.push(outgb);
+      materialArr.procqty_s.push(procqty);
+      materialArr.chlditemcd_s.push(chlditemcd);
+      materialArr.qtyunit_s2.push(qtyunit);
+      materialArr.proccd_s2.push(proccd);
+    });
+
+    setParaDataPlanSaved((prev) => ({
+      ...prev,
+      work_type: "INLIST",
+      rowstatus_s: materialArr.rowstatus_s.join("|"),
+      planno_s: materialArr.planno_s.join("|"),
+      planseq_s: materialArr.planseq_s.join("|"),
+      seq_s: materialArr.seq_s.join("|"),
+      unitqty_s: materialArr.unitqty_s.join("|"),
+      outgb_s: materialArr.outgb_s.join("|"),
+      procqty_s: materialArr.procqty_s.join("|"),
+      chlditemcd_s: materialArr.chlditemcd_s.join("|"),
+      qtyunit_s2: materialArr.qtyunit_s2.join("|"),
+      proccd_s2: materialArr.proccd_s2.join("|"),
+    }));
+  };
+
+  const fetchToSavePlan = async () => {
+    let data: any;
+
+    console.log("paraPlanSaved");
+    console.log(paraPlanSaved);
+    try {
+      data = await processApi<any>("procedure", paraPlanSaved);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.result.isSuccess === true) {
+      alert("저장이 완료되었습니다.");
+
+      resetAllGrid();
+      fetchPlanGrid();
+      fetchMaterialGrid();
+      deletedPlanRows = [];
+      deletedMaterialRows = [];
     } else {
       alert(
         "[" +
@@ -738,7 +1412,7 @@ const PR_A1100: React.FC = () => {
 
     resetAllGrid();
     fetchMainGrid();
-    // fetchDetailGrid();
+    // fetchMaterialGrid();
   };
 
   interface ICustData {
@@ -816,8 +1490,8 @@ const PR_A1100: React.FC = () => {
     setPlanDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const onDetailSortChange = (e: any) => {
-    setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
+  const onMaterialSortChange = (e: any) => {
+    setMaterialDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   //공통코드 리스트 조회 (수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서)
@@ -844,6 +1518,32 @@ const PR_A1100: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     commonCodeDefaultValue,
   ]);
+  const [proccdListData, setProccdListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+
+  const [outprocynListData, setOutprocynListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [prodmacListData, setProdmacListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [prodempListData, setProdempListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [purtypeListData, setPurtypeListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [itemlml1ListData, setItemlml1ListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [itemlml2ListData, setItemlml2ListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [itemlml3ListData, setItemlml3ListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [outgbListData, setOutgbListData] = useState([commonCodeDefaultValue]);
 
   UseCommonQuery(ordstsQuery, setOrdstsListData);
   UseCommonQuery(doexdivQuery, setDoexdivListData);
@@ -853,6 +1553,16 @@ const PR_A1100: React.FC = () => {
   UseCommonQuery(departmentsQuery, setDepartmentsListData);
   UseCommonQuery(itemacntQuery, setItemacntListData);
   UseCommonQuery(qtyunitQuery, setQtyunitListData);
+  UseCommonQuery(proccdQuery, setProccdListData);
+
+  UseCommonQuery(outprocynQuery, setOutprocynListData);
+  UseCommonQuery(prodmacQuery, setProdmacListData);
+  UseCommonQuery(usersQuery, setProdempListData);
+  UseCommonQuery(purtypeQuery, setPurtypeListData);
+  UseCommonQuery(itemlvl1Query, setItemlml1ListData);
+  UseCommonQuery(itemlvl2Query, setItemlml2ListData);
+  UseCommonQuery(itemlvl3Query, setItemlml3ListData);
+  UseCommonQuery(outgbQuery, setOutgbListData);
 
   //공통코드 리스트 조회 후 그리드 데이터 세팅
   useEffect(() => {
@@ -890,13 +1600,17 @@ const PR_A1100: React.FC = () => {
   const EDIT_FIELD = "inEdit";
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = planDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]:
-        item[PLAN_DATA_ITEM_KEY] === dataItem[PLAN_DATA_ITEM_KEY]
-          ? field
-          : undefined,
-    }));
+    const newData = planDataResult.data.map((item) =>
+      item[PLAN_DATA_ITEM_KEY] === dataItem[PLAN_DATA_ITEM_KEY]
+        ? {
+            ...item,
+            // plandt: new Date(dateformat(item.plandt)),
+            // finexpdt: new Date(dateformat(item.finexpdt)),
+            rowstatus: "U",
+            [EDIT_FIELD]: field,
+          }
+        : { ...item, [EDIT_FIELD]: undefined }
+    );
 
     setPlanDataResult((prev) => {
       return {
@@ -940,18 +1654,137 @@ const PR_A1100: React.FC = () => {
     />
   );
 
-  const onPlanItemChange = (event: GridItemChangeEvent) => {
+  const materialEnterEdit = (dataItem: any, field: string) => {
+    const newData = materialDataResult.data.map((item) => ({
+      ...item,
+      rowstatus:
+        item.rowstatus !== "N" &&
+        item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
+          ? "U"
+          : item.rowstatus,
+      [EDIT_FIELD]:
+        item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
+          ? field
+          : undefined,
+    }));
+
+    setMaterialDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+
+    //setPlanDataResult(process(newData, planDataState));
+  };
+
+  const materialExitEdit = () => {
+    const newData = materialDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setMaterialDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const materialCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={materialEnterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const materialRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={materialExitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const getGridItemChangedData = (
+    event: GridItemChangeEvent,
+    dataResult: any,
+    setDataResult: any,
+    DATA_ITEM_KEY: string
+  ) => {
     let field = event.field || "";
     event.dataItem[field] = event.value;
-    let newData = planDataResult.data.map((item) => {
-      if (item[PLAN_DATA_ITEM_KEY] === event.dataItem[PLAN_DATA_ITEM_KEY]) {
+    let newData = dataResult.data.map((item: any) => {
+      if (item[DATA_ITEM_KEY] === event.dataItem[DATA_ITEM_KEY]) {
         item[field] = event.value;
       }
 
       return item;
     });
-    setPlanDataResult(process(newData, planDataState));
-    //setChanges(true);
+
+    if (event.value)
+      newData = newData.map((item: any) => {
+        const result =
+          item.inEdit &&
+          typeof event.value === "object" &&
+          !Array.isArray(event.value) &&
+          event.value !== null
+            ? {
+                ...item,
+                [field]: item[field].sub_code ?? "",
+              }
+            : item;
+
+        return result;
+      });
+
+    //return newData;
+
+    setDataResult((prev: any) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const onPlanItemChange = (event: GridItemChangeEvent) => {
+    //const newData = getGridItemChangedData(event, planDataResult, setPlanDataResult);
+
+    getGridItemChangedData(
+      event,
+      planDataResult,
+      setPlanDataResult,
+      PLAN_DATA_ITEM_KEY
+    );
+
+    // setPlanDataResult((prev) => {
+    //   return {
+    //     data: newData,
+    //     total: prev.total,
+    //   };
+    // });
+  };
+
+  const onMaterialItemChange = (event: GridItemChangeEvent) => {
+    // const newData = getGridItemChangedData(event);
+
+    getGridItemChangedData(
+      event,
+      materialDataResult,
+      setMaterialDataResult,
+      MATERIAL_DATA_ITEM_KEY
+    );
+    // setMaterialDataResult((prev) => {
+    //   return {
+    //     data: newData,
+    //     total: prev.total,
+    //   };
+    // });
   };
 
   return (
@@ -1340,19 +2173,19 @@ const PR_A1100: React.FC = () => {
                   <GridTitle>생산계획정보</GridTitle>
                   <ButtonContainer>
                     <Button
-                      onClick={onAddClick}
+                      onClick={onPlanAddClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="plus"
                     ></Button>
                     <Button
-                      onClick={onCopyClick}
+                      onClick={onRemovePlanClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
                     ></Button>
                     <Button
-                      onClick={onDeleteClick}
+                      onClick={onSavePlanClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
@@ -1363,37 +2196,40 @@ const PR_A1100: React.FC = () => {
                   style={{ height: "680px" }}
                   //   data={planDataResult.data}
                   data={process(
-                    planDataResult.data.map((row) => ({
+                    planDataResult.data.map((row, idx) => ({
                       ...row,
                       plandt: new Date(dateformat(row.plandt)),
                       finexpdt: new Date(dateformat(row.finexpdt)),
-                      // ordsts: ordstsListData.find(
-                      //   (item: any) => item.sub_code === row.ordsts
-                      // )?.code_name,
-                      // doexdiv: doexdivListData.find(
-                      //   (item: any) => item.sub_code === row.doexdiv
-                      // )?.code_name,
-                      // taxdiv: taxdivListData.find(
-                      //   (item: any) => item.sub_code === row.taxdiv
-                      // )?.code_name,
-                      // location: locationListData.find(
-                      //   (item: any) => item.sub_code === row.location
-                      // )?.code_name,
-                      // person: usersListData.find(
-                      //   (item: any) => item.sub_code === row.person
-                      // )?.code_name,
-                      // dptcd: departmentsListData.find(
-                      //   (item: any) => item.sub_code === row.dptcd
-                      // )?.code_name,
-                      // itemacnt: itemacntListData.find(
-                      //   (item: any) => item.sub_code === row.itemacnt
-                      // )?.code_name,
-                      // qtyunit: qtyunitListData.find(
-                      //   (item: any) => item.sub_code === row.qtyunit
-                      // )?.code_name,
-                      [SELECTED_FIELD]: selectedState[planIdGetter(row)],
+                      proccd: proccdListData.find(
+                        (item: any) => item.sub_code === row.proccd
+                      ),
+                      outprocyn: outprocynListData.find(
+                        (item: any) => item.sub_code === row.outprocyn
+                      ),
+                      prodmac: prodmacListData.find(
+                        (item: any) => item.sub_code === row.prodmac
+                      ),
+                      prodemp: prodempListData.find(
+                        (item: any) => item.sub_code === row.prodemp
+                      ),
+                      qtyunit: qtyunitListData.find(
+                        (item: any) => item.sub_code === row.qtyunit
+                      )?.code_name,
+                      purtype: purtypeListData.find(
+                        (item: any) => item.sub_code === row.purtype
+                      )?.code_name,
+                      itemlml1: itemlml1ListData.find(
+                        (item: any) => item.sub_code === row.itemlml1
+                      )?.code_name,
+                      itemlml2: itemlml2ListData.find(
+                        (item: any) => item.sub_code === row.itemlml2
+                      )?.code_name,
+                      itemlml3: itemlml3ListData.find(
+                        (item: any) => item.sub_code === row.itemlml3
+                      )?.code_name,
+                      [SELECTED_FIELD]: planSelectedState[planIdGetter(row)],
                     })),
-                    {} //planDataState
+                    planDataState
                   )}
                   {...planDataState}
                   onDataStateChange={onPlanDataStateChange}
@@ -1402,9 +2238,10 @@ const PR_A1100: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "single",
+                    mode: "multiple",
                   }}
                   onSelectionChange={onSelectionChange}
+                  onHeaderSelectionChange={onHeaderSelectionChange}
                   //스크롤 조회 기능
                   fixedScroll={true}
                   total={planDataResult.total}
@@ -1427,12 +2264,29 @@ const PR_A1100: React.FC = () => {
                   editField={EDIT_FIELD}
                 >
                   <GridColumn
+                    field={SELECTED_FIELD}
+                    width="45px"
+                    headerSelectionValue={
+                      planDataResult.data.findIndex(
+                        (item: any) => !planSelectedState[planIdGetter(item)]
+                      ) === -1
+                    }
+                  />
+                  <GridColumn
+                    field="rowstatus"
+                    title=" "
+                    width="40px"
+                    editable={false}
+                  />
+                  <GridColumn
                     field="plandt"
                     title="계획일자"
-                    editor="date"
-                    format="{0:yyyy-MM-dd}"
+                    editor=""
+                    // format="{0:yyyy-MM-dd}"
+                    // filter="date"
+                    cell={DateCell}
                     footerCell={planTotalFooterCell}
-                    width="110px"
+                    width="150px"
                   />
                   <GridColumn
                     field="finexpdt"
@@ -1442,7 +2296,12 @@ const PR_A1100: React.FC = () => {
                     editor="date"
                   />
 
-                  <GridColumn field="proccd" title="공정" width="170px" />
+                  <GridColumn
+                    field="proccd"
+                    title="공정"
+                    width="170px"
+                    cell={DropDownCell}
+                  />
                   <GridColumn
                     field="procseq"
                     title="공정순서"
@@ -1453,9 +2312,14 @@ const PR_A1100: React.FC = () => {
                     field="outprocyn"
                     title="외주구분"
                     width="180px"
-                    cell={NameCell}
+                    cell={DropDownCell}
                   />
-                  <GridColumn field="itemcd" title="제공품코드" width="200px" />
+                  <GridColumn
+                    field="itemcd"
+                    title="재공품코드"
+                    width="200px"
+                    editable={false}
+                  />
                   <GridColumn
                     field="qty"
                     title="수량"
@@ -1473,26 +2337,31 @@ const PR_A1100: React.FC = () => {
                     field="qtyunit"
                     title="수량단위"
                     width="120px"
-                    cell={DropDownCell}
+                    editable={false}
                   />
-                  <GridColumn field="insiz" title="규격" width="120px" />
+                  <GridColumn
+                    field="insiz"
+                    title="규격"
+                    width="120px"
+                    editable={false}
+                  />
                   <GridColumn
                     field="prodmac"
                     title="설비"
                     width="120px"
-                    cell={NameCell}
+                    cell={DropDownCell}
                   />
                   <GridColumn
                     field="prodemp"
                     title="작업자"
                     width="120px"
-                    cell={NameCell}
+                    cell={DropDownCell}
                   />
                   <GridColumn
                     field="plankey"
                     title="생산계획번호"
                     width="120px"
-                    cell={NameCell}
+                    editable={false}
                   />
                   <GridColumn
                     field="ordkey"
@@ -1500,39 +2369,54 @@ const PR_A1100: React.FC = () => {
                     width="120px"
                     editable={false}
                   />
-                  <GridColumn field="poregnum" title="PO번호" width="120px" />
+                  <GridColumn
+                    field="poregnum"
+                    title="PO번호"
+                    width="120px"
+                    editable={false}
+                  />
                   <GridColumn
                     field="purtype"
                     title="발주유형"
                     width="120px"
-                    cell={NameCell}
+                    editable={false}
                   />
-                  <GridColumn field="itemnm" title="품목명" width="120px" />
+                  <GridColumn
+                    field="itemnm"
+                    title="품목명"
+                    width="120px"
+                    editable={false}
+                  />
                   <GridColumn
                     field="itemlml1"
                     title="대분류"
                     width="120px"
-                    cell={NameCell}
+                    editable={false}
                   />
                   <GridColumn
                     field="itemlml2"
                     title="중분류"
                     width="120px"
-                    cell={NameCell}
+                    editable={false}
                   />
                   <GridColumn
                     field="itemlml3"
                     title="소분류"
                     width="120px"
-                    cell={NameCell}
+                    editable={false}
                   />
                   <GridColumn
                     field="urgencyyn"
                     title="긴급여부"
                     width="120px"
-                    cell={NameCell}
+                    editable={false}
                   />
-                  <GridColumn field="custnm" title="업체명" width="120px" />
+                  <GridColumn
+                    field="custnm"
+                    title="업체명"
+                    width="120px"
+                    editable={false}
+                  />
                   <GridColumn field="remark" title="비고" width="120px" />
                 </Grid>
               </ExcelExport>
@@ -1544,19 +2428,19 @@ const PR_A1100: React.FC = () => {
 
                 <ButtonContainer>
                   <Button
-                    onClick={onAddClick}
+                    onClick={onMtrAddClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="plus"
                   ></Button>
                   <Button
-                    onClick={onCopyClick}
+                    onClick={onRemoveMaterialClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
                   ></Button>
                   <Button
-                    onClick={onDeleteClick}
+                    onClick={onSaveMtrClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
@@ -1566,35 +2450,74 @@ const PR_A1100: React.FC = () => {
               <Grid
                 style={{ height: "680px" }}
                 data={process(
-                  detailDataResult.data.map((row) => ({
+                  materialDataResult.data.map((row) => ({
                     ...row,
                     /* itemacnt: itemacntListData.find(
                       (item: any) => item.sub_code === row.itemacnt
                     )?.code_name,*/
                     qtyunit: qtyunitListData.find(
                       (item: any) => item.sub_code === row.qtyunit
-                    )?.code_name,
+                    ), //?.code_name,
+                    proccd: proccdListData.find(
+                      (item: any) => item.sub_code === row.proccd
+                    ), //?.code_name,
+                    outgb: outgbListData.find(
+                      (item: any) => item.sub_code === row.outgb
+                    ), //?.code_name,
+                    [SELECTED_FIELD]:
+                      materialSelectedState[materialIdGetter(row)],
                   })),
                   detailDataState
                 )}
                 {...detailDataState}
-                onDataStateChange={onDetailDataStateChange}
+                onDataStateChange={onMaterialDataStateChange}
+                //선택 기능
+                dataItemKey={MATERIAL_DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "multiple",
+                }}
+                onSelectionChange={onMaterialSelectionChange}
+                onHeaderSelectionChange={onMeterialHeaderSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={detailDataResult.total}
-                onScroll={onDetailScrollHandler}
+                total={materialDataResult.total}
+                onScroll={onMaterialScrollHandler}
                 //정렬기능
                 sortable={true}
-                onSortChange={onDetailSortChange}
+                onSortChange={onMaterialSortChange}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
+                //incell 수정 기능
+                onItemChange={onMaterialItemChange}
+                cellRender={materialCellRender}
+                rowRender={materialRowRender}
+                editField={EDIT_FIELD}
               >
+                <GridColumn
+                  field={SELECTED_FIELD}
+                  width="45px"
+                  headerSelectionValue={
+                    materialDataResult.data.findIndex(
+                      (item: any) =>
+                        !materialSelectedState[materialIdGetter(item)]
+                    ) === -1
+                  }
+                />
+                <GridColumn
+                  field="rowstatus"
+                  title=" "
+                  width="40px"
+                  editable={false}
+                />
                 <GridColumn
                   field="proccd"
                   title="공정"
                   width="160px"
+                  cell={DropDownCell}
                   footerCell={detailTotalFooterCell}
                 />
                 <GridColumn
@@ -1607,15 +2530,30 @@ const PR_A1100: React.FC = () => {
                   title="소요자재명"
                   width="200px"
                 />
-                <GridColumn field="procqty" title="재공생산량" width="120px" />
+                <GridColumn
+                  field="procqty"
+                  title="재공생산량"
+                  width="120px"
+                  editor="numeric"
+                />
                 <GridColumn
                   field="unitqty"
                   title="소요량"
                   width="120px"
-                  cell={NumberCell}
+                  editor="numeric"
                 />
-                <GridColumn field="qtyunit" title="수량단위" width="120px" />
-                <GridColumn field="outgb" title="자재사용구분" width="120px" />
+                <GridColumn
+                  field="qtyunit"
+                  title="수량단위"
+                  width="120px"
+                  cell={DropDownCell}
+                />
+                <GridColumn
+                  field="outgb"
+                  title="자재사용구분"
+                  width="120px"
+                  cell={DropDownCell}
+                />
               </Grid>
             </GridContainer>
           </GridContainerWrap>

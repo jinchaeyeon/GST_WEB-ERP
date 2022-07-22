@@ -34,6 +34,9 @@ export interface Iparameters {
 export type Token = {
   token: string;
 };
+export type Api = {
+  api: string;
+};
 
 export type CategoryDto = {
   id?: number;
@@ -46,7 +49,7 @@ export type Category = {
   code_name?: string;
 };
 
-export type CommonCode = {
+export type TCommonCode = {
   sub_code: string;
   code_name: string;
 };

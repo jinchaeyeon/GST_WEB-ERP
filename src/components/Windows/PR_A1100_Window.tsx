@@ -188,11 +188,18 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     (e: any) => {
       e.preventDefault();
 
+      //공정순서(procseq) 1씩 증가
+      const arrLength = fieldArrayRenderProps.value.length;
+      const procseq =
+        arrLength > 0
+          ? fieldArrayRenderProps.value[arrLength - 1].procseq + 1
+          : 1;
+
       fieldArrayRenderProps.onPush({
         value: {
           srcPgName: "PR_A1100_WINDOW_PRC",
           proccd: commonCodeDefaultValue,
-          procseq: 0,
+          procseq: procseq,
           outprocyn: commonCodeDefaultValue,
           prodemp: commonCodeDefaultValue,
           prodmac: commonCodeDefaultValue,
@@ -575,7 +582,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           }))}
           total={dataWithIndexes.total}
           dataItemKey={dataItemKey}
-          style={{ height: "300px" }}
+          style={{ height: "290px" }}
           cellRender={customCellRender}
           rowRender={customRowRender}
           onItemChange={itemChange}
@@ -627,7 +634,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="proccd"
             title="공정"
-            width="100px"
+            width="150px"
             cell={CellDropDownList}
           />
           <GridColumn
@@ -640,19 +647,19 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="outprocyn"
             title="외주구분"
-            width="100px"
+            width="110px"
             cell={CellDropDownList}
           />
           <GridColumn
             field="prodemp"
             title="작업자"
-            width="100px"
+            width="120px"
             cell={CellDropDownList}
           />
           <GridColumn
             field="prodmac"
             title="설비"
-            width="100px"
+            width="200px"
             cell={CellDropDownList}
           />
         </Grid>
@@ -887,8 +894,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     } else {
       //기존 행 업데이트
       const dataItem = rowData;
-      alert(dataItem[FORM_DATA_INDEX]);
-      alert(data.itemcd);
+
       fieldArrayRenderProps.onReplace({
         index: dataItem[FORM_DATA_INDEX],
         value: {
@@ -1113,7 +1119,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           }))}
           total={dataWithIndexes.total}
           dataItemKey={dataItemKey}
-          style={{ height: "300px" }}
+          style={{ height: "290px" }}
           cellRender={customCellRender}
           rowRender={customRowRender}
           onItemChange={itemChange}
@@ -1157,7 +1163,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="proccd"
             title="공정"
-            width="100px"
+            width="130px"
             cell={CellDropDownList}
           />
           <GridColumn
@@ -1176,7 +1182,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="outgb"
             title="자재사용구분"
-            width="100px"
+            width="120px"
             cell={CellDropDownList}
           />
           <GridColumn
@@ -1498,6 +1504,17 @@ const KendoWindow = ({
 
   //itemacnt, qtyunit list가 조회된 후 상세그리드 조회
   useEffect(() => {
+    if (itemacntListData.length > 0) {
+      setInfoVal((prev) => {
+        return {
+          ...prev,
+          itemacnt:
+            itemacntListData.find(
+              (item: any) => item.sub_code === prev.itemacnt
+            )?.code_name ?? "",
+        };
+      });
+    }
     if (
       proccdListData.length > 0 &&
       outprocynListData.length > 0 &&
@@ -1803,9 +1820,41 @@ const KendoWindow = ({
   };
 
   const handleSubmit = (dataItem: { [name: string]: any }) => {
-    alert(JSON.stringify(dataItem));
+    //alert(JSON.stringify(dataItem));
 
-    //return false;
+    let valid = true;
+
+    //검증
+    try {
+      if (dataItem.planqty < 1) {
+        throw "계획수량을 입력하세요.";
+      }
+      dataItem.processList.forEach((item: any, idx: number) => {
+        dataItem.processList.forEach((chkItem: any, chkIdx: number) => {
+          if (
+            (item.proccd === chkItem.proccd ||
+              item.procseq === chkItem.procseq) &&
+            idx !== chkIdx
+          ) {
+            throw "공정과 공정순서를 확인하세요.";
+          }
+        });
+
+        if (!checkIsDDLValid(item.proccd)) {
+          throw "공정을 입력하세요.";
+        }
+
+        if (item.procseq < 0) {
+          throw "공정순서를 입력하세요.";
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
     const {
       orgdiv,
       location,
@@ -1886,7 +1935,6 @@ const KendoWindow = ({
       );
     });
 
-    //파라미터 qty 등 , 그리드 두개 값 넣기~!
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
@@ -2038,56 +2086,55 @@ const KendoWindow = ({
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
             <GridContainerWrap>
-              <InfoList>
-                <InfoTitle>수주정보</InfoTitle>
-                <InfoItem>
-                  <InfoLabel>품목코드</InfoLabel>
-                  <InfoValue>{infoVal.itemcd}</InfoValue>
-                </InfoItem>
-                <InfoItem>
-                  <InfoLabel>품목명</InfoLabel>
-                  <InfoValue>{infoVal.itemnm}</InfoValue>
-                </InfoItem>
-                <InfoItem>
-                  <InfoLabel>품목계정</InfoLabel>
-                  <InfoValue>{infoVal.itemacnt}</InfoValue>
-                </InfoItem>
-                <InfoItem>
-                  <InfoLabel>규격</InfoLabel>
-                  <InfoValue>{infoVal.insiz}</InfoValue>
-                </InfoItem>
-                <InfoItem>
-                  <InfoLabel>재질</InfoLabel>
-                  <InfoValue>{infoVal.bnatur}</InfoValue>
-                </InfoItem>
-                <InfoItem>
-                  <InfoLabel>수주량</InfoLabel>
-                  <InfoValue>{infoVal.qty}</InfoValue>
-                </InfoItem>
-                {/* <InfoItem>
+              <GridContainer>
+                <InfoList>
+                  <InfoTitle>수주정보</InfoTitle>
+                  <InfoItem>
+                    <InfoLabel>품목코드</InfoLabel>
+                    <InfoValue>{infoVal.itemcd}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>품목명</InfoLabel>
+                    <InfoValue>{infoVal.itemnm}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>품목계정</InfoLabel>
+                    <InfoValue>{infoVal.itemacnt}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>규격</InfoLabel>
+                    <InfoValue>{infoVal.insiz}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>재질</InfoLabel>
+                    <InfoValue>{infoVal.bnatur}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>수주량</InfoLabel>
+                    <InfoValue>{infoVal.qty}</InfoValue>
+                  </InfoItem>
+                  {/* <InfoItem>
                 <InfoLabel>기계획량</InfoLabel>
                 <InfoValue id=""></InfoValue>
               </InfoItem> */}
-                <InfoItem>
-                  <InfoLabel>잔량</InfoLabel>
-                  <InfoValue>{infoVal.planqty}</InfoValue>
-                </InfoItem>
-                <InfoItem>
-                  <InfoLabel>계획수량</InfoLabel>
+                  <InfoItem>
+                    <InfoLabel>잔량</InfoLabel>
+                    <InfoValue>{infoVal.planqty}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <fieldset className={"k-form-fieldset"}>
+                      <button
+                        id="valueChanged"
+                        style={{ display: "none" }}
+                        onClick={(e) => {
+                          e.preventDefault(); // Changing desired field value
+                          formRenderProps.onChange("valueChanged", {
+                            value: "1",
+                          });
+                        }}
+                      ></button>
 
-                  <fieldset className={"k-form-fieldset"}>
-                    <button
-                      id="valueChanged"
-                      style={{ display: "none" }}
-                      onClick={(e) => {
-                        e.preventDefault(); // Changing desired field value
-                        formRenderProps.onChange("valueChanged", {
-                          value: "1",
-                        });
-                      }}
-                    ></button>
-
-                    {/* <FieldWrap>
+                      {/* <FieldWrap>
                 <Field
                   label={"완료예정일"}
                   name={"frdt"}
@@ -2106,20 +2153,20 @@ const KendoWindow = ({
                 />
               </FieldWrap> */}
 
-                    <FieldWrap>
-                      <Field
-                        //label={"수량"}
-                        name={"planqty"}
-                        component={FormNumericTextBox}
-                        validator={validator}
-                        className="required"
-                      />
-                    </FieldWrap>
-                  </fieldset>
-                </InfoItem>
-              </InfoList>
-
-              <GridContainer>
+                      <FieldWrap>
+                        <Field
+                          label={"계획수량"}
+                          name={"planqty"}
+                          component={FormNumericTextBox}
+                          validator={validator}
+                          className="required big-input"
+                        />
+                      </FieldWrap>
+                    </fieldset>
+                  </InfoItem>
+                </InfoList>
+              </GridContainer>
+              <GridContainer clientWidth={position.width - 250}>
                 <FieldArray
                   name="processList"
                   dataItemKey={DATA_ITEM_KEY}

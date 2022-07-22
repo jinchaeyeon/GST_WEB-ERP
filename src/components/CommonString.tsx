@@ -97,7 +97,7 @@ export const custdivQuery =
 
 //공정
 export const proccdQuery =
-  "SELECT convert(varchar(20), sub_code) as sub_code, code_name,  extra_field1 FROM comCodeMaster where group_code = 'PR010' AND use_yn='Y' ORDER BY (case when use_yn='Y' then 'Y' else 'N' END), len(sub_code), sub_code";
+  "SELECT convert(varchar(20), sub_code) as sub_code, code_name  FROM comCodeMaster where group_code = 'PR010' AND use_yn='Y' ORDER BY (case when use_yn='Y' then 'Y' else 'N' END), len(sub_code), sub_code";
 
 //외주구분
 export const outprocynQuery =
@@ -111,3 +111,7 @@ export const prodmacQuery =
 //자재사용구분
 export const outgbQuery =
   "SELECT convert(varchar(5), sub_code) as sub_code,  code_name FROM comCodeMaster WHERE group_code = 'BA041'  AND use_yn='Y' ORDER BY (case when use_yn='Y' then 'Y' else 'N' END),sort_seq,sub_code,code_name";
+
+//발주형태(발주유형)
+export const purtypeQuery =
+  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code = 'MA003'  AND use_yn='Y'  ORDER BY (case when use_yn='Y' then 'Y' else 'N' END),sort_seq,sub_code,code_name";

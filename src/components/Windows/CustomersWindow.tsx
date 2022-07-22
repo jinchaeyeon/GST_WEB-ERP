@@ -39,7 +39,7 @@ import {
   RadioGroup,
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
-import DropDownList from "../DropDownLists/CommonDropDownList";
+import CommonDropDownList from "../DropDownLists/CommonDropDownList";
 
 import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
@@ -271,7 +271,7 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
               </td>
               <th>업체구분</th>
               <td>
-                <DropDownList
+                <CommonDropDownList
                   name="custdiv"
                   queryStr={custdivQuery}
                   changeData={filterDropDownListChange}

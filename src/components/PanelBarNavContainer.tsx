@@ -8,7 +8,7 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
-import { tokenState } from "../store/atoms";
+import { apiState, tokenState } from "../store/atoms";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -42,9 +42,16 @@ export const AppName = styled.h1`
 `;
 
 const paths = [
-  { path: "/", index: ".0" },
+  {
+    path: "/",
+    index: ".0",
+    menuName: "home",
+    menuCategory: "GROUP",
+    parentMenuId: "",
+  },
   { index: ".1" },
   { path: "/MA_B7000", index: ".1.0" },
+  { path: "/MA_B70002", index: ".1.1" },
   { index: ".2" },
   { path: "/PR_A1100", index: ".2.0" },
   { index: ".3" },
@@ -53,6 +60,7 @@ const paths = [
 
 const PanelBarNavContainer = (props: any) => {
   const [token, setToken] = useRecoilState(tokenState);
+  const [api, setApi] = useRecoilState(apiState);
 
   const onSelect = (event: PanelBarSelectEventArguments) => {
     console.log(event.target.props.route);
@@ -71,6 +79,7 @@ const PanelBarNavContainer = (props: any) => {
 
   const logout = React.useCallback(() => {
     setToken(null as any);
+    setApi(null as any);
     // 전체 페이지 reload (cache 삭제)
     (window as any).location = "/Login";
   }, []);
@@ -82,6 +91,7 @@ const PanelBarNavContainer = (props: any) => {
           <PanelBarItem title={"Home"} href="/" route="/" />
           <PanelBarItem title={"물류"}>
             <PanelBarItem title={"재고조회"} route="/MA_B7000" />
+            <PanelBarItem title={"재고조회2"} route="/MA_B70002" />
           </PanelBarItem>
           <PanelBarItem title={"생산"} icon={""}>
             <PanelBarItem title={"계획생산"} route="/PR_A1100" />

@@ -284,12 +284,6 @@ export const CellDropDownList = (props: GridCellProps) => {
   const srcPgName = dataItem.srcPgName;
   const parentField = UseGetParentField(srcPgName);
 
-  console.log("CellDropDownList ");
-  console.log(dataItem);
-  console.log(srcPgName);
-  console.log(parentField);
-  console.log(`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`);
-
   let queryStr = "SELECT '' sub_code, '' code_name";
 
   if (field === "itemacnt") queryStr = itemacntQuery;

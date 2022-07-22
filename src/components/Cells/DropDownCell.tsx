@@ -18,7 +18,14 @@ import {
   usersQuery,
 } from "../CommonString";
 const DropDownCell = (props: GridCellProps) => {
-  const { ariaColumnIndex, columnIndex, dataItem, field } = props;
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+  } = props;
 
   // console.log("props");
   // console.log(props);
@@ -40,6 +47,7 @@ const DropDownCell = (props: GridCellProps) => {
   else if (field === "prodmac") queryStr = prodmacQuery;
   else if (field === "outgb") queryStr = outgbQuery;
   else if (field === "prodemp") queryStr = usersQuery;
+  else if (field === "proccd") queryStr = proccdQuery;
 
   useEffect(() => {
     fetchData();
@@ -64,35 +72,49 @@ const DropDownCell = (props: GridCellProps) => {
     }
   }, []);
 
-  const onChangeHandle = (e: DropDownListChangeEvent) => {
-    const { value } = e.target;
-    const selectedData = {
-      sub_code: value.sub_code,
-      code_name: value.code_name,
-    };
+  // const onChangeHandle = (e: DropDownListChangeEvent) => {
+  //   const { value } = e.target;
+  //   const selectedData = {
+  //     sub_code: value.sub_code,
+  //     code_name: value.code_name,
+  //   };
 
-    setState(selectedData);
-    // changeData(name, selectedData);
+  //   setState(selectedData);
+  //   // changeData(name, selectedData);
+  // };
+
+  const onChangeHandle = (ev: DropDownListChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: ev.syntheticEvent,
+        value: ev.target.value ?? ev.target.value.text,
+      });
+    }
   };
 
-  return (
+  const defaultRendering = (
     <td>
-      {/* {isInEdit ? ( */}
-      <DropDownList
-        dataItemKey="sub_code"
-        textField="code_name"
-        value={state}
-        defaultItem={{
-          sub_code: "",
-          code_name: "전체",
-        }}
-        onChange={onChangeHandle}
-      />
-      {/* ) : (
-        state.code_name.toString()
-      )} */}
+      {isInEdit ? (
+        <DropDownList
+          data={listData}
+          dataItemKey="sub_code"
+          textField="code_name"
+          value={dataItem[field]}
+          defaultItem={commonCodeDefaultValue}
+          onChange={onChangeHandle}
+        />
+      ) : dataItem[field] ? (
+        dataItem[field].code_name
+      ) : (
+        ""
+      )}
     </td>
   );
+
+  return render?.call(undefined, defaultRendering, props);
 };
 
 export default DropDownCell;

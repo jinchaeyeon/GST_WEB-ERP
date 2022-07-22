@@ -1,9 +1,9 @@
 import { useRecoilState } from "recoil";
-import { tokenState } from "../store/atoms";
+import { apiState, tokenState } from "../store/atoms";
 import axios from "axios";
 import cachios from "cachios";
 
-const BASE_URL = process.env.REACT_APP_API_URL;
+let BASE_URL = process.env.REACT_APP_API_URL;
 
 const domain: any = {
   query: { action: "get", url: "api/data/:query" },
@@ -53,9 +53,13 @@ const generateUrl = (url: string, params: any) => {
 
 export const useApi = () => {
   const [token, setToken] = useRecoilState(tokenState);
+  const [api, setApi] = useRecoilState(apiState);
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
+      if (api) {
+        BASE_URL = api.api + "/";
+      }
       let info: any = domain[name];
       let url = null;
       let p = null;
@@ -107,6 +111,7 @@ export const useApi = () => {
           const res = err.response;
           if (res && res.status == 401) {
             setToken(null as any);
+            setApi(null as any);
             // 전체 페이지 reload
             //(window as any).location = "/"; //로그인 실패시 새로고침돼서 일단 주석 처리 해둠
           }

@@ -72,7 +72,7 @@ import {
   UseCommonQuery,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/ItemsWindow";
-import { IItemData } from "../hooks/interfaces";
+import { IItemData, TCommonCodeData } from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
   itemgradeQuery,
@@ -85,6 +85,7 @@ import {
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import CenterCell from "../components/Cells/CenterCell";
+import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
 //import {useAuth} from "../../hooks/auth";
 
 const Main: React.FC = () => {
@@ -107,6 +108,16 @@ const Main: React.FC = () => {
   const [workOrderDataResult, setWorkOrderDataResult] = useState<DataResult>(
     process([], workOrderDataState)
   );
+
+  const defaultData: any[] = [
+    {
+      id: 0,
+      title: "Default Data",
+      start: new Date("2021-01-01T08:30:00.000Z"),
+      end: new Date("2021-01-01T09:00:00.000Z"),
+    },
+  ];
+  const [schedulerDataResult, setSchedulerDataResult] = useState(defaultData);
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -155,6 +166,9 @@ const Main: React.FC = () => {
     ref_key: "N",
   });
 
+  const [schedulerFilter, setSchedulerFilter] = useState({
+    work_type: "MyScheduler",
+  });
   const noticeParameters: Iparameters = {
     procedureName: "sys_sel_web_default_home",
     pageNumber: noticePgNum,
@@ -193,6 +207,22 @@ const Main: React.FC = () => {
     pageSize: 10,
     parameters: {
       "@p_work_type": "Approval",
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_user_id": "admin",
+      "@p_frdt": "",
+      "@p_todt": "",
+      "@p_ref_date": "",
+      "@p_ref_key": "N",
+    },
+  };
+
+  const schedulerParameters: Iparameters = {
+    procedureName: "sys_sel_web_default_home",
+    pageNumber: 1,
+    pageSize: 10,
+    parameters: {
+      "@p_work_type": schedulerFilter.work_type,
       "@p_orgdiv": "01",
       "@p_location": "01",
       "@p_user_id": "admin",
@@ -271,11 +301,41 @@ const Main: React.FC = () => {
     }
   };
 
+  const fetchScheduler = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", schedulerParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      let rows = data.result.data.Rows.map((row: any) => ({
+        //...row,
+        id: row.datnum,
+        title: row.title,
+        start: new Date(row.strtime),
+        end: new Date(row.endtime),
+      }));
+
+      console.log("rows");
+      console.log(rows);
+
+      setSchedulerDataResult(rows);
+    }
+  };
+
   useEffect(() => {
     fetchApproaval();
     fetchNoticeGrid();
     fetchWorkOrderGrid();
   }, []);
+
+  useEffect(() => {
+    console.log(schedulerFilter);
+    fetchScheduler();
+  }, [schedulerFilter]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -407,6 +467,15 @@ const Main: React.FC = () => {
   //     };
   //   });
   // }, [itemlvl1ListData]);
+  const displayDate: Date = new Date();
+
+  //스케줄러조회조건 DropDownList Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅
+  const filterDropDownListChange = (name: string, data: TCommonCodeData) => {
+    setSchedulerFilter((prev) => ({
+      ...prev,
+      [name]: data.sub_code,
+    }));
+  };
 
   return (
     <>
@@ -450,7 +519,14 @@ const Main: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>Work Calendar</GridTitle>
             <div>
-              <DoexdivDDL />
+              <CommonDropDownList
+                name="work_type"
+                queryStr={
+                  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code='TO001'"
+                }
+                changeData={filterDropDownListChange}
+                defaultValue={{ sub_code: "MyScheduler", code_name: "개인" }}
+              />
             </div>
             {/* <ButtonContainer>
               <Button fillMode="outline">개인일정</Button>
@@ -458,7 +534,9 @@ const Main: React.FC = () => {
             </ButtonContainer> */}
           </GridTitleContainer>
           <Scheduler
-            height={"718px"} /*data={sampleData} defaultDate={displayDate}*/
+            height={"718px"}
+            data={schedulerDataResult}
+            defaultDate={displayDate}
           >
             <MonthView />
             <DayView />

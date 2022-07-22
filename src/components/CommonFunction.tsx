@@ -25,6 +25,7 @@ export const convertDateToStr = (date: Date) => {
 
 //8자리 날짜 stirng에 구분자 추가
 export const dateformat = (str: string) => {
+  if (!str) return "";
   //구분자 -> '/'
   const date_str =
     str.substring(0, 4) + "/" + str.substring(4, 6) + "/" + str.substring(6);

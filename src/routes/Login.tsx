@@ -9,7 +9,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { tokenState } from "../store/atoms";
+import { apiState, tokenState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useRecoilState } from "recoil";
 import { FormInput } from "../components/Windows/editors";
@@ -17,11 +17,13 @@ import { LoginBox } from "../CommonStyled";
 import { sha256 } from "js-sha256";
 
 interface FormData {
-  id: string;
-  pw: string;
+  companyCode: string;
+  userId: string;
+  password: string;
 }
 const Login: React.FC = () => {
   const [token, setToken] = useRecoilState(tokenState);
+  const [api, setApi] = useRecoilState(apiState);
   const history = useHistory();
   const processApi = useApi();
 
@@ -40,6 +42,7 @@ const Login: React.FC = () => {
         const response = await processApi<any>("login", para);
 
         setToken({ token: response.token });
+        setApi({ api: response.serviceUrl });
         //setShowLoading(false);
         history.replace("/");
       } catch (e: any) {
@@ -59,6 +62,11 @@ const Login: React.FC = () => {
         onSubmit={handleSubmit}
         render={() => (
           <FormElement horizontal={true}>
+            <Field
+              name={"companyCode"}
+              label={"업체코드"}
+              component={FormInput}
+            />
             <Field
               name={"userId"}
               label={"ID"}

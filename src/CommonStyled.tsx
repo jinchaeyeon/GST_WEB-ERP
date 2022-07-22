@@ -89,6 +89,14 @@ type TGridContainer = {
   maxWidth?: string;
   clientWidth?: number;
   inTab?: boolean;
+  margin?: TMargin;
+};
+
+type TMargin = {
+  left?: string;
+  top?: string;
+  bottom?: string;
+  right?: string;
 };
 
 export const GridContainer = styled.div<TGridContainer>`
@@ -99,9 +107,14 @@ export const GridContainer = styled.div<TGridContainer>`
       ? "calc(" +
         props.clientWidth +
         "px - " +
-        (props.inTab ? 65 : 0) +
-        "px - 150px)"
+        (props.inTab ? 65 : 0) + //65: 탭 마진
+        "px - 150px)" //150: 기본 마진
       : ""};
+
+  margin-top: ${(props) => (props.margin ? props.margin.top ?? "" : "")};
+  margin-bottom: ${(props) => (props.margin ? props.margin.bottom ?? "" : "")};
+  margin-left: ${(props) => (props.margin ? props.margin.left ?? "" : "")};
+  margin-right: ${(props) => (props.margin ? props.margin.right ?? "" : "")};
 
   .k-grid,
   .k-scheduler {
@@ -142,13 +155,14 @@ export const ButtonInField = styled(ButtonInInput)`
   right: 0;
 `;
 
-export const FieldWrap = styled.div`
+type TFieldWrap = {
+  fieldWidth?: string;
+};
+export const FieldWrap = styled.div<TFieldWrap>`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  :last-child {
-    margin-bottom: 30px;
-  }
+
   > span {
     margin: 0 5px;
   }
@@ -159,7 +173,7 @@ export const FieldWrap = styled.div`
     margin-right: 0;
   }
   > .k-form-field {
-    width: 25%;
+    width: ${(props) => props.fieldWidth ?? ""};
   }
   .k-picker,
   .k-picker:hover,
@@ -241,8 +255,55 @@ export const ApprovalInner = styled.div`
   }
 `;
 
-export const InfoList = styled.ul``;
-export const InfoTitle = styled.p``;
-export const InfoItem = styled.li``;
+export const InfoList = styled.ul`
+  display: flex;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  border: solid 1px #ebebeb;
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 35px;
+
+  .k-form-fieldset {
+    margin: 0;
+    border-top: solid 1px gainsboro;
+    padding-top: 40px;
+    margin-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .k-form-field {
+    margin: 0;
+  }
+
+  .k-form-field > .k-label {
+    display: flex;
+    justify-content: center;
+    padding-top: 0;
+  }
+
+  .big-input {
+    height: 50px;
+    border: solid 1px #ff6358;
+    border-radius: 10px;
+    color: #ff6358;
+    text-align: right;
+    padding-left: 15px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+`;
+export const InfoTitle = styled.p`
+  text-align: center;
+  color: #727272;
+  padding-bottom: 10px;
+`;
+export const InfoItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+`;
 export const InfoLabel = styled.span``;
-export const InfoValue = styled.span``;
+export const InfoValue = styled.span`
+  font-weight: 600;
+`;
