@@ -58,6 +58,7 @@ import {
   convertDateToStr,
   pageSize,
   UseCommonQuery,
+  UseMenuColumns,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -411,7 +412,9 @@ const MA_B7000: React.FC = () => {
 
   useEffect(() => {
     setLocationVal({ sub_code: "01", code_name: "본사" });
-    fetchMainGrid();
+    if (columnsListData.length > 0) {
+      fetchMainGrid();
+    }
   }, [mainPgNum]);
 
   useEffect(() => {
@@ -574,6 +577,11 @@ const MA_B7000: React.FC = () => {
     setDetail2DataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
+  //컬럼 세팅
+  const [columnsListData, setColumnsListData] = React.useState([]);
+  const pathname: string = window.location.pathname;
+  UseMenuColumns(pathname, setColumnsListData);
+
   //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
   const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
     commonCodeDefaultValue,
@@ -594,6 +602,13 @@ const MA_B7000: React.FC = () => {
     commonCodeDefaultValue,
   ]);
   UseCommonQuery(itemgradeQuery, setItemgradeListData);
+
+  //columnsListData 조회 후 컬럼 세팅
+  useEffect(() => {
+    if (columnsListData.length > 0) {
+      fetchMainGrid();
+    }
+  }, [columnsListData]);
 
   //공통코드 리스트 조회 후 그리드 데이터 세팅
   useEffect(() => {
@@ -901,22 +916,23 @@ const MA_B7000: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            {/* {dummyColumnData.map(
-              (item: any) =>
-                item.visible === "Y" && (
+            {columnsListData.map(
+              (item: any, idx: number) =>
+                item.column_visible === "Y" &&
+                item.parent_component === "MainGrid" && (
                   <GridColumn
-                    field={item.field}
-                    title={item.title}
-                    cell={item.type === "number" ? NumberCell : ""}
+                    key={idx}
+                    field={item.field_name}
+                    title={item.caption}
+                    width={item.width + "px"}
+                    cell={item.column_type === "NUMBER" ? NumberCell : ""}
+                    footerCell={idx === 0 ? mainTotalFooterCell : ""}
                   ></GridColumn>
                 )
             )}
-             */}
-            <GridColumn
-              field="itemcd"
-              title="품목코드"
-              footerCell={mainTotalFooterCell}
-            />
+
+            <GridColumn />
+            {/*
             <GridColumn field="itemnm" title="품목명" />
             <GridColumn field="itemlvl1" title="대분류" />
             <GridColumn field="itemlvl2" title="중분류" />
@@ -932,7 +948,7 @@ const MA_B7000: React.FC = () => {
             <GridColumn field="stockqty" title="재고수량" cell={NumberCell} />
             <GridColumn field="stockwgt" title="재고중량" cell={NumberCell} />
             <GridColumn field="load_place_bc" title="적재장소" />
-            <GridColumn field="itemgrade" title="품목등급" />
+            <GridColumn field="itemgrade" title="품목등급" /> */}
           </Grid>
         </ExcelExport>
       </GridContainer>
