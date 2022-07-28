@@ -33,9 +33,14 @@ export interface Iparameters {
 
 export type Token = {
   token: string;
-};
-export type Api = {
-  api: string;
+  userId: string;
+  userName: string;
+  role: string;
+  companyCode: string;
+  serviceName: string;
+  customerName: string;
+  serviceUrl: string;
+  internalIp: string;
 };
 
 export type CategoryDto = {

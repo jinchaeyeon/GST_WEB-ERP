@@ -1,5 +1,5 @@
 import { FieldRenderProps } from "@progress/kendo-react-form";
-import { GridEvent } from "@progress/kendo-react-grid";
+import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
 import * as React from "react";
 import { useApi } from "../hooks/api";
 import { commonCodeDefaultValue } from "./CommonString";
@@ -164,4 +164,46 @@ export const checkIsDDLValid = (value: object) => {
     !value
     ? false
     : true;
+};
+
+export const getGridItemChangedData = (
+  event: GridItemChangeEvent,
+  dataResult: any,
+  setDataResult: any,
+  DATA_ITEM_KEY: string
+) => {
+  let field = event.field || "";
+  event.dataItem[field] = event.value;
+  let newData = dataResult.data.map((item: any) => {
+    if (item[DATA_ITEM_KEY] === event.dataItem[DATA_ITEM_KEY]) {
+      item[field] = event.value;
+    }
+
+    return item;
+  });
+
+  if (event.value)
+    newData = newData.map((item: any) => {
+      const result =
+        item.inEdit &&
+        typeof event.value === "object" &&
+        !Array.isArray(event.value) &&
+        event.value !== null
+          ? {
+              ...item,
+              [field]: item[field].sub_code ?? "",
+            }
+          : item;
+
+      return result;
+    });
+
+  //return newData;
+
+  setDataResult((prev: any) => {
+    return {
+      data: newData,
+      total: prev.total,
+    };
+  });
 };

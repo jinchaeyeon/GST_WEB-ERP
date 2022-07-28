@@ -9,7 +9,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { apiState, tokenState } from "../store/atoms";
+import { tokenState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useRecoilState } from "recoil";
 import { FormInput } from "../components/Windows/editors";
@@ -23,7 +23,7 @@ interface FormData {
 }
 const Login: React.FC = () => {
   const [token, setToken] = useRecoilState(tokenState);
-  const [api, setApi] = useRecoilState(apiState);
+  //const [api, setApi] = useRecoilState(apiState);
   const history = useHistory();
   const processApi = useApi();
 
@@ -40,9 +40,31 @@ const Login: React.FC = () => {
 
         //setShowLoading(true);
         const response = await processApi<any>("login", para);
+        const {
+          token,
+          userId,
+          userName,
+          role,
+          companyCode,
+          serviceName,
+          customerName,
+          serviceUrl,
+          internalIp,
+        } = response;
 
-        setToken({ token: response.token });
-        setApi({ api: response.serviceUrl });
+        setToken({
+          token,
+          userId,
+          userName,
+          role,
+          companyCode,
+          serviceName,
+          customerName,
+          serviceUrl,
+          internalIp,
+        });
+
+        //setApi({ api: response.serviceUrl });
         //setShowLoading(false);
         history.replace("/");
       } catch (e: any) {

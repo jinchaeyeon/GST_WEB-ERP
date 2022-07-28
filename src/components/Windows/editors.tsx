@@ -13,6 +13,7 @@ import {
   PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT,
   PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT,
 } from "./PR_A1100_Window";
+import { USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT } from "./UserOptionsColumnWindow";
 import FeildDropDownList from "../DropDownLists/FeildDropDownList";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 
@@ -185,10 +186,16 @@ export const UseGetParentField = (srcPgName: string) => {
   const { parentField: PR_A1100_WINDOW_MTR_PARENT_FIELD } = React.useContext(
     PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT
   );
+
+  const { parentField: USER_OPTIONS_COLUMN_WINDOW_PARENT_FIELD } =
+    React.useContext(USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT);
+
   return srcPgName === "PR_A1100_WINDOW_PRC"
     ? PR_A1100_WINDOW_PRC_PARENT_FIELD
     : srcPgName === "PR_A1100_WINDOW_MTL"
     ? PR_A1100_WINDOW_MTR_PARENT_FIELD
+    : srcPgName === "USER_OPTIONS_COLUMN_WINDOW"
+    ? USER_OPTIONS_COLUMN_WINDOW_PARENT_FIELD
     : SA_B2000_Window_parentField;
 };
 
@@ -222,10 +229,6 @@ export const NameCell = (props: GridCellProps) => {
 
   const srcPgName = dataItem.srcPgName;
   const parentField = UseGetParentField(srcPgName);
-
-  console.log("namecell");
-  console.log(parentField);
-  console.log(`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`);
 
   let defaultRendering = (
     <td className={className ?? ""}>

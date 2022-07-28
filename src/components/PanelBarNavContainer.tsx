@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useCallback, useState } from "react";
 import {
   PanelBar,
   PanelBarItem,
@@ -8,7 +8,8 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
-import { apiState, tokenState } from "../store/atoms";
+import { tokenState } from "../store/atoms";
+import UserOptionsWindow from "../components/Windows/UserOptionsWindow";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -56,11 +57,15 @@ const paths = [
   { path: "/PR_A1100", index: ".2.0" },
   { index: ".3" },
   { path: "/SA_B2000", index: ".3.0" },
+  { index: ".4" },
+  { path: "/QC_A0120", index: ".4.0" },
 ];
 
 const PanelBarNavContainer = (props: any) => {
   const [token, setToken] = useRecoilState(tokenState);
-  const [api, setApi] = useRecoilState(apiState);
+
+  const [userOptionsWindowVisible, setUserOptionsWindowVisible] =
+    useState<boolean>(false);
 
   const onSelect = (event: PanelBarSelectEventArguments) => {
     console.log(event.target.props.route);
@@ -77,12 +82,15 @@ const PanelBarNavContainer = (props: any) => {
 
   const clientWidth = document.documentElement.clientWidth;
 
-  const logout = React.useCallback(() => {
+  const logout = useCallback(() => {
     setToken(null as any);
-    setApi(null as any);
     // 전체 페이지 reload (cache 삭제)
     (window as any).location = "/Login";
   }, []);
+
+  const onClickUserOptions = () => {
+    setUserOptionsWindowVisible(true);
+  };
   return (
     <Wrapper>
       <Gnv>
@@ -99,6 +107,9 @@ const PanelBarNavContainer = (props: any) => {
           <PanelBarItem title={"영업"}>
             <PanelBarItem title={"수주처리"} route="/SA_B2000" />
           </PanelBarItem>
+          <PanelBarItem title={"품질"}>
+            <PanelBarItem title={"불량내역조회"} route="/QC_A0120" />
+          </PanelBarItem>
         </PanelBar>
         <Button
           onClick={logout}
@@ -108,8 +119,18 @@ const PanelBarNavContainer = (props: any) => {
         >
           로그아웃
         </Button>
+        <Button
+          onClick={onClickUserOptions}
+          fillMode={"flat"}
+          themeColor={"secondary"}
+        >
+          사용자 옵션
+        </Button>
       </Gnv>
       <Content clientWidth={clientWidth}>{props.children}</Content>
+      {userOptionsWindowVisible && (
+        <UserOptionsWindow getVisible={setUserOptionsWindowVisible} />
+      )}
     </Wrapper>
   );
 };

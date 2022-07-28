@@ -1,3 +1,6 @@
+export const SELECTED_FIELD = "selected";
+export const EDIT_FIELD = "inEdit";
+
 //한번에 조회할 데이터 수 디폴트 값
 export const pageSize = 10;
 

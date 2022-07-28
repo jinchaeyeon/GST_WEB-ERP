@@ -24,6 +24,7 @@ import { saveAs, encodeBase64 } from "@progress/kendo-file-saver";
 import fileDownload from "file-saver";
 import NumberCell from "../Cells/NumberCell";
 import CenterCell from "../Cells/CenterCell";
+import * as base64 from "byte-base64";
 
 type IKendoWindow = {
   getVisible(arg: boolean): void;
@@ -86,9 +87,6 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
     }
 
     if (data !== null) {
-      console.log("data");
-      console.log(data);
-
       if (data.attachmentNumber !== attachmentNumber) {
         setAttachmentNumber(data.attachmentNumber);
       } else {
@@ -157,75 +155,27 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
         data = null;
       }
 
+      return false;
       if (data !== null) {
-        console.log("data");
+        //console.log("data");
         //console.log(data);
 
-        const original_name = mainDataResult.data.map((row: any) => {
-          if (row["saved_name"] === parameter) {
-            return row["original_name"];
-          }
-        });
+        const original_name = mainDataResult.data.find((row: any) => {
+          return row["saved_name"] === parameter;
+        }).original_name;
 
-        // 참고 : https://soobakba.tistory.com/30
         const url = window.URL.createObjectURL(new Blob([data]));
         const link = document.createElement("a");
-        // const contentDisposition = headers['content-disposition']; // 파일 이름
-        // let fileName = 'unknown';
-        // if (contentDisposition) {
-        //   const [ fileNameMatch ] = contentDisposition.split(';').filter(str => str.includes('filename'));
-        //   if (fileNameMatch)
-        //     [ , fileName ] = fileNameMatch.split('=');
-        // }
+
+        console.log("url");
+        console.log(url);
+
         link.href = url;
-        link.setAttribute("download", original_name[0]);
+        link.setAttribute("download", "");
         link.style.cssText = "display:none";
         document.body.appendChild(link);
         link.click();
         link.remove();
-
-        // const blob = new Blob([data]); // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다. // const blob = new Blob([this.content], {type: 'text/plain'}) // blob을 사용해 객체 URL을 생성합니다.
-        // const fileObjectUrl = window.URL.createObjectURL(blob); // blob 객체 URL을 설정할 링크를 만듭니다.
-
-        // alert(1);
-        // const link = document.createElement("a");
-        // link.href = fileObjectUrl;
-        // link.style.display = "none"; // 다운로드 파일 이름을 지정 할 수 있습니다. // 일반적으로 서버에서 전달해준 파일 이름은 응답 Header의 Content-Disposition에 설정됩니다.
-
-        // link.download = original_name[0]; //extractDownloadFilename(response); // 다운로드 파일 이름을 추출하는 함수
-
-        // alert(2);
-        // const extractDownloadFilename = (response: any) => {
-        //   const disposition = response.headers["content-disposition"];
-        //   const fileName = decodeURI(
-        //     disposition
-        //       .match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1]
-        //       .replace(/['"]/g, "")
-        //   );
-        //   return fileName;
-        // }; // 다운로드 파일의 이름은 직접 지정 할 수 있습니다. // link.download = "sample-file.xlsx"; // 링크를 body에 추가하고 강제로 click 이벤트를 발생시켜 파일 다운로드를 실행시킵니다.
-
-        // alert(3);
-        // document.body.appendChild(link);
-        // alert(4);
-        // link.click();
-        // alert(5);
-        // link.remove(); // 다운로드가 끝난 리소스(객체 URL)를 해제합니다.
-
-        // alert(6);
-        // window.URL.revokeObjectURL(fileObjectUrl);
-
-        // alert(7);
-        // const dataURI = "data:text/plain;base64," + encodeBase64(data);
-        // saveAs(dataURI, original_name[0]);
-
-        // const url = window.URL.createObjectURL(new Blob([data]));
-        // const link = document.createElement("a");
-        // link.href = url;
-        // link.setAttribute("download", original_name[0]);
-        // link.setAttribute("id", "tempLink");
-        // document.body.appendChild(link);
-        // link.click();
       }
     });
   };

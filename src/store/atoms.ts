@@ -1,5 +1,5 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
-import { User, TCommonCode, Token, Api } from "./types";
+import { User, TCommonCode, Token } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
@@ -26,12 +26,6 @@ export const tokenState = atom<Token>({
   key: "tokenState",
   default: null as any,
   effects_UNSTABLE: [localStorageEffect("accessToken")],
-});
-
-export const apiState = atom<Api>({
-  key: "apiState",
-  default: null as any,
-  effects_UNSTABLE: [localStorageEffect("accessApi")],
 });
 
 export const userState = atom<User>({

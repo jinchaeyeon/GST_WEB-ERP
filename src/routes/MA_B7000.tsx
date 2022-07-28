@@ -74,6 +74,38 @@ import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 //import {useAuth} from "../../hooks/auth";
 
+const dummyData: any = [
+  {
+    name: "itemacnt",
+    value: "1",
+  },
+  {
+    name: "useyn",
+    value: "%",
+  },
+];
+
+const dummyColumnData: any = [
+  {
+    field: "itemcd",
+    width: 100,
+    title: "품목코드",
+    visible: "Y",
+  },
+  {
+    field: "itemnm",
+    width: 100,
+    title: "품목명",
+    visible: "N",
+  },
+  {
+    field: "safeqty",
+    width: 100,
+    title: "수량",
+    type: "Number",
+    visible: "Y",
+  },
+];
 const MA_B7000: React.FC = () => {
   const DATA_ITEM_KEY = "itemcd";
   const DETAIL_DATA_ITEM_KEY = "lotnum";
@@ -113,6 +145,8 @@ const MA_B7000: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
+  const [filterData, setFilterData] = useState(dummyData);
+
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detail1PgNum, setDetail1PgNum] = useState(1);
   const [detail2PgNum, setDetail2PgNum] = useState(1);
@@ -151,7 +185,7 @@ const MA_B7000: React.FC = () => {
     itemnm: "",
     insiz: "",
     yyyymm: new Date(),
-    itemacnt: "",
+    itemacnt: filterData.find((item: any) => item.name === "itemacnt").value,
     zeroyn: "%",
     lotnum: "",
     load_place: "",
@@ -159,7 +193,7 @@ const MA_B7000: React.FC = () => {
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
-    useyn: "Y",
+    useyn: filterData.find((item: any) => item.name === "useyn").value,
     service_id: "",
   });
 
@@ -867,6 +901,17 @@ const MA_B7000: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
+            {/* {dummyColumnData.map(
+              (item: any) =>
+                item.visible === "Y" && (
+                  <GridColumn
+                    field={item.field}
+                    title={item.title}
+                    cell={item.type === "number" ? NumberCell : ""}
+                  ></GridColumn>
+                )
+            )}
+             */}
             <GridColumn
               field="itemcd"
               title="품목코드"

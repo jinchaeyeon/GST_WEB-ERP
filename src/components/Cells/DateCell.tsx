@@ -19,6 +19,7 @@ const DateCell = (props: GridCellProps) => {
       });
     }
   };
+
   const defaultRendering = (
     <td
       style={{ textAlign: "center" }}
@@ -43,7 +44,9 @@ const DateCell = (props: GridCellProps) => {
     </td>
   );
 
-  return render?.call(undefined, defaultRendering, props);
+  return typeof value === "string"
+    ? defaultRendering
+    : render?.call(undefined, defaultRendering, props);
 };
 
 export default DateCell;

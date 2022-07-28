@@ -1,5 +1,5 @@
 import { useRecoilState } from "recoil";
-import { apiState, tokenState } from "../store/atoms";
+import { tokenState } from "../store/atoms";
 import axios from "axios";
 import cachios from "cachios";
 
@@ -8,11 +8,15 @@ let BASE_URL = process.env.REACT_APP_API_URL;
 const domain: any = {
   query: { action: "get", url: "api/data/:query" },
   "platform-query": { action: "get", url: "api/data/:query" },
+  "platform-procedure": { action: "post", url: "api/data/procedure" },
   procedure: { action: "post", url: "api/data/procedure" },
   login: { action: "post", url: "api/auth/login" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },
   "file-upload": { action: "post", url: "api/files/:attached" },
-  "file-download": { action: "get", url: "api/files/attached/:attached" },
+  "file-download": {
+    action: "get",
+    url: "api/files/attached/:attached",
+  },
   "file-delete": { action: "delete", url: "api/files/attached/:attached" },
 };
 
@@ -53,12 +57,11 @@ const generateUrl = (url: string, params: any) => {
 
 export const useApi = () => {
   const [token, setToken] = useRecoilState(tokenState);
-  const [api, setApi] = useRecoilState(apiState);
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
-      if (api) {
-        BASE_URL = api.api + "/";
+      if (token) {
+        BASE_URL = token.serviceUrl + "/";
       }
       let info: any = domain[name];
       let url = null;
@@ -68,9 +71,15 @@ export const useApi = () => {
 
       let headers = {};
       if (name === "file-upload" || name === "file-download")
-        headers = { "Content-Type": "multipart/form-data" };
+        headers = {
+          "Content-Type": "multipart/form-data",
+          responseType: "stream",
+        };
       if (name === "file-list")
         headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
+
+      if (name === "platform-procedure")
+        headers = { ...headers, DBAlias: "Platform" };
 
       if (token) {
         headers = { ...headers, Authorization: `Bearer ${token.token}` };
@@ -106,12 +115,16 @@ export const useApi = () => {
           throw message;
       }
       return p
-        .then((response: any) => resolve(response.data))
+        .then((response: any) => {
+          return name === "file-download"
+            ? resolve(response)
+            : resolve(response.data);
+        })
         .catch((err: any) => {
           const res = err.response;
           if (res && res.status == 401) {
             setToken(null as any);
-            setApi(null as any);
+
             // 전체 페이지 reload
             //(window as any).location = "/"; //로그인 실패시 새로고침돼서 일단 주석 처리 해둠
           }

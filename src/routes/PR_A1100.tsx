@@ -111,7 +111,7 @@ const PR_A1100: React.FC = () => {
   const planIdGetter = getter(PLAN_DATA_ITEM_KEY);
   const materialIdGetter = getter(MATERIAL_DATA_ITEM_KEY);
 
-  const [tabSelected, setTabSelected] = React.useState(1);
+  const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
   };
@@ -896,20 +896,25 @@ const PR_A1100: React.FC = () => {
       planseq++;
     }
 
-    const idx: number =
-      Number(Object.getOwnPropertyNames(planSelectedState)[0]) ??
-      //Number(planDataResult.data[0].idx) ??
-      null;
-    if (idx === null) return false;
-    const selectedRowData = planDataResult.data.find(
-      (item) => item.idx === idx
-    );
+    let selectedRowData: any[] = [];
+    planDataResult.data.forEach((item: any, index: number) => {
+      if (planSelectedState[index]) {
+        selectedRowData.push(item);
+      }
+    });
+
+    if (selectedRowData.length === 0) return false;
+
+    const selectedFirstRowData = selectedRowData[0];
 
     const newDataItem = {
-      ...selectedRowData,
+      ...selectedFirstRowData,
       [PLAN_DATA_ITEM_KEY]: seq,
-      planno: selectedRowData.planno,
+      planno: selectedFirstRowData.planno,
       planseq: planseq,
+      procseq: 0,
+      proccd: commonCodeDefaultValue,
+      plankey: "",
       plandt: convertDateToStr(new Date()),
       finexpdt: convertDateToStr(new Date()),
       rowstatus: "N",
@@ -1604,9 +1609,7 @@ const PR_A1100: React.FC = () => {
       item[PLAN_DATA_ITEM_KEY] === dataItem[PLAN_DATA_ITEM_KEY]
         ? {
             ...item,
-            // plandt: new Date(dateformat(item.plandt)),
-            // finexpdt: new Date(dateformat(item.finexpdt)),
-            rowstatus: "U",
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
         : { ...item, [EDIT_FIELD]: undefined }
@@ -1618,8 +1621,6 @@ const PR_A1100: React.FC = () => {
         total: prev.total,
       };
     });
-
-    //setPlanDataResult(process(newData, planDataState));
   };
 
   const exitEdit = () => {
@@ -1655,18 +1656,15 @@ const PR_A1100: React.FC = () => {
   );
 
   const materialEnterEdit = (dataItem: any, field: string) => {
-    const newData = materialDataResult.data.map((item) => ({
-      ...item,
-      rowstatus:
-        item.rowstatus !== "N" &&
-        item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
-          ? "U"
-          : item.rowstatus,
-      [EDIT_FIELD]:
-        item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
-          ? field
-          : undefined,
-    }));
+    const newData = materialDataResult.data.map((item) =>
+      item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: field,
+          }
+        : { ...item, [EDIT_FIELD]: undefined }
+    );
 
     setMaterialDataResult((prev) => {
       return {
@@ -2281,19 +2279,15 @@ const PR_A1100: React.FC = () => {
                   <GridColumn
                     field="plandt"
                     title="계획일자"
-                    editor=""
-                    // format="{0:yyyy-MM-dd}"
-                    // filter="date"
                     cell={DateCell}
                     footerCell={planTotalFooterCell}
-                    width="150px"
+                    width="145px"
                   />
                   <GridColumn
                     field="finexpdt"
                     title="완료예정일"
-                    format="{0:yyyy-MM-dd}"
-                    width="110px"
-                    editor="date"
+                    cell={DateCell}
+                    width="145px"
                   />
 
                   <GridColumn
