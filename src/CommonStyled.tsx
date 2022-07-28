@@ -17,6 +17,9 @@ export const Title = styled.h3`
   font-weight: 600;
 `;
 export const ButtonContainer = styled.div`
+  display: flex;
+
+  input,
   button {
     margin-left: 5px;
   }
@@ -122,6 +125,15 @@ export const GridContainer = styled.div<TGridContainer>`
   }
   .k-grid td {
     white-space: nowrap; //그리드 셀 말줄임표
+  }
+  .k-chart.QC_A0120_TAB1 {
+    width: 400px;
+  }
+  .k-chart.QC_A0120_TAB2 {
+    width: 400px;
+  }
+  .k-chart.QC_A0120_TAB3 {
+    width: 600px;
   }
   /* .required {
     background-color: #fff0ef;
