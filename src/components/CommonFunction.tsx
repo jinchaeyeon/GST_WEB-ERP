@@ -2,6 +2,7 @@ import { FieldRenderProps } from "@progress/kendo-react-form";
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
 import * as React from "react";
 import { useApi } from "../hooks/api";
+import { Iparameters } from "../store/types";
 import { commonCodeDefaultValue } from "./CommonString";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
@@ -98,9 +99,53 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
       data = null;
     }
 
-    if (data != null) {
+    if (data.result.isSuccess === true) {
       const rows = data.result.data.Rows;
       setListData(rows);
+    }
+  }, []);
+};
+
+//현재 경로를 받아서 컬럼 리스트 조회 후 결과값을 반환
+export const UseMenuColumns = (pathname: string, setListData: any) => {
+  const processApi = useApi();
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const parameters: Iparameters = {
+    procedureName: "WEB_sys_sel_column_view_config",
+    pageNumber: 1,
+    pageSize: 200,
+    parameters: {
+      "@p_work_type": "CustomDetail",
+      "@p_dbname": "SYSTEM",
+      "@p_form_id": pathname,
+      "@p_lang_id": "",
+      "@p_parent_component": "",
+      "@p_message": "",
+    },
+  };
+  const fetchData = React.useCallback(async () => {
+    let data: any;
+
+    console.log("parameters");
+    console.log(parameters);
+    try {
+      data = await processApi<any>("platform-procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    console.log("data");
+    console.log(data);
+    if (data.result.isSuccess === true) {
+      const rows = data.result.data.Rows;
+      setListData(rows);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
     }
   }, []);
 };
