@@ -45,6 +45,8 @@ import {
   ChartTitle,
 } from "@progress/kendo-react-charts";
 
+import "hammerjs";
+
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useApi } from "../hooks/api";
 import ItemacntDDL from "../components/DropDownLists/ItemacntDDL";
@@ -98,27 +100,6 @@ const dummyData: any = [
   },
 ];
 
-const dummyColumnData: any = [
-  {
-    field: "itemcd",
-    width: 100,
-    title: "품목코드",
-    visible: "Y",
-  },
-  {
-    field: "itemnm",
-    width: 100,
-    title: "품목명",
-    visible: "N",
-  },
-  {
-    field: "safeqty",
-    width: 100,
-    title: "수량",
-    type: "Number",
-    visible: "Y",
-  },
-];
 const QC_A0120: React.FC = () => {
   const DATA_ITEM_KEY = "itemcd";
   const DETAIL_DATA_ITEM_KEY = "lotnum";
@@ -170,6 +151,7 @@ const QC_A0120: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
+    onRefreshClick();
     setTabSelected(e.selected);
     resetAllGrid();
   };
@@ -177,16 +159,6 @@ const QC_A0120: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioGroupChangeEvent) => {
-    const name = e.syntheticEvent.currentTarget.name;
-    const value = e.value;
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -213,22 +185,6 @@ const QC_A0120: React.FC = () => {
     select_item: "all",
     select_code: "%",
     dptcd: "",
-
-    // orgdiv: "01",
-    // itemcd: "",
-    // itemnm: "",
-    // insiz: "",
-    // yyyymm: new Date(),
-    // itemacnt: filterData.find((item: any) => item.name === "itemacnt").value,
-    // zeroyn: "%",
-    // lotnum: "",
-    // load_place: "",
-    // heatno: "",
-    // itemlvl1: "",
-    // itemlvl2: "",
-    // itemlvl3: "",
-    // useyn: filterData.find((item: any) => item.name === "useyn").value,
-    // service_id: "",
   });
 
   const [detailFilters1, setDetailFilters1] = useState({
@@ -656,17 +612,70 @@ const QC_A0120: React.FC = () => {
     return `${props.dataItem.argument} : ${formatedNumber}`;
   };
 
+  const [selectedChartData, setSelectedChartData] = useState({
+    gubun: "전체",
+    argument: "-",
+  });
+
   const onChartSeriesClick = (props: any) => {
     console.log("props");
     console.log(props);
-    alert(1);
+    const { item, argument, gubun } = props.dataItem;
+
+    setSelectedChartData({
+      gubun,
+      argument,
+    });
+
+    setDetail1DataState({
+      filter: {
+        logic: "and",
+        filters: [
+          { field: item /*"proccd"*/, operator: "eq", value: argument },
+          //{ field: "unitPrice", operator: "lt", value: 22 },
+        ],
+      },
+    });
   };
 
-  const CusomizedGrid = () => {
+  const onRefreshClick = () => {
+    setSelectedChartData({
+      gubun: "전체",
+      argument: "-",
+    });
+
+    setDetail1DataState({});
+  };
+
+  type TCusomizedGrid = {
+    maxWidth: string;
+  };
+  const CusomizedGrid = (props: TCusomizedGrid) => {
+    const { maxWidth } = props;
     return (
-      <GridContainer maxWidth="1000px">
+      <GridContainer maxWidth={maxWidth}>
         <GridTitleContainer>
           <GridTitle>상세정보</GridTitle>
+          <ButtonContainer>
+            <Input
+              name="gubun"
+              type="text"
+              value={selectedChartData.gubun}
+              readOnly
+            />
+            <Input
+              name="argument"
+              type="text"
+              value={selectedChartData.argument}
+              readOnly
+            />
+            <Button
+              onClick={onRefreshClick}
+              themeColor={"primary"}
+              fillMode={"outline"}
+              icon="refresh"
+            ></Button>
+          </ButtonContainer>
         </GridTitleContainer>
         <Grid
           style={{ height: "680px" }}
@@ -752,13 +761,14 @@ const QC_A0120: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>재고조회</Title>
+        <Title>불량내역조회</Title>
 
         <ButtonContainer>
           <Button
             onClick={() => {
               resetAllGrid();
               fetchMainGrid();
+              fetchDetailGrid1();
             }}
             icon="search"
             //fillMode="outline"
@@ -857,28 +867,31 @@ const QC_A0120: React.FC = () => {
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="공정불량">
           <GridContainerWrap>
-            <GridContainer maxWidth="100%">
+            <GridContainer>
               <GridContainerWrap>
-                <Chart onSeriesClick={onChartSeriesClick}>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB1"}
+                >
                   <ChartTitle text="공정별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
                     <ChartSeriesItem
-                      width={850}
-                      size={800}
-                      autoFit={true}
+                      //autoFit={true}
                       type="pie"
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "공정별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
                     />
                   </ChartSeries>
                 </Chart>
-                <Chart>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB1"}
+                >
                   <ChartTitle text="설비별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
@@ -888,7 +901,6 @@ const QC_A0120: React.FC = () => {
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "설비별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
@@ -897,7 +909,10 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
               <GridContainerWrap>
-                <Chart>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB1"}
+                >
                   <ChartTitle text="불량유형별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
@@ -906,14 +921,16 @@ const QC_A0120: React.FC = () => {
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "불량유형별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
                     />
                   </ChartSeries>
                 </Chart>
-                <Chart>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB1"}
+                >
                   <ChartTitle text="품목별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
@@ -922,7 +939,6 @@ const QC_A0120: React.FC = () => {
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "품목별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
@@ -932,33 +948,35 @@ const QC_A0120: React.FC = () => {
               </GridContainerWrap>
             </GridContainer>
 
-            <CusomizedGrid></CusomizedGrid>
+            <CusomizedGrid maxWidth="850px"></CusomizedGrid>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="소재불량">
           <GridContainerWrap>
             <GridContainer maxWidth="100%">
               <GridContainerWrap>
-                <Chart onSeriesClick={onChartSeriesClick}>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB2"}
+                >
                   <ChartTitle text="공정별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
                     <ChartSeriesItem
-                      width={850}
-                      size={800}
-                      autoFit={true}
                       type="pie"
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "공정별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
                     />
                   </ChartSeries>
                 </Chart>
-                <Chart>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB2"}
+                >
                   <ChartTitle text="설비별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
@@ -977,7 +995,10 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
               <GridContainerWrap>
-                <Chart>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB2"}
+                >
                   <ChartTitle text="불량유형별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
@@ -993,7 +1014,10 @@ const QC_A0120: React.FC = () => {
                     />
                   </ChartSeries>
                 </Chart>
-                <Chart>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB2"}
+                >
                   <ChartTitle text="품목별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
@@ -1012,14 +1036,17 @@ const QC_A0120: React.FC = () => {
               </GridContainerWrap>
             </GridContainer>
 
-            <CusomizedGrid></CusomizedGrid>
+            <CusomizedGrid maxWidth="850px"></CusomizedGrid>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="검사불량">
           <GridContainerWrap>
             <GridContainer maxWidth="100%">
               <GridContainerWrap>
-                <Chart>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB3"}
+                >
                   <ChartTitle text="불량유형별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
@@ -1037,7 +1064,10 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
               <GridContainerWrap>
-                <Chart>
+                <Chart
+                  onSeriesClick={onChartSeriesClick}
+                  className={"QC_A0120_TAB3"}
+                >
                   <ChartTitle text="품목별" />
                   <ChartLegend position="bottom" />
                   <ChartSeries>
@@ -1056,7 +1086,7 @@ const QC_A0120: React.FC = () => {
               </GridContainerWrap>
             </GridContainer>
 
-            <CusomizedGrid></CusomizedGrid>
+            <CusomizedGrid maxWidth="1050px"></CusomizedGrid>
           </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
