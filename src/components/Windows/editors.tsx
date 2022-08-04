@@ -14,6 +14,7 @@ import {
   PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT,
 } from "./PR_A1100_Window";
 import { USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT } from "./UserOptionsColumnWindow";
+import { USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT } from "./UserOptionsDefaultWindow";
 import FeildDropDownList from "../DropDownLists/FeildDropDownList";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 
@@ -186,9 +187,10 @@ export const UseGetParentField = (srcPgName: string) => {
   const { parentField: PR_A1100_WINDOW_MTR_PARENT_FIELD } = React.useContext(
     PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT
   );
-
   const { parentField: USER_OPTIONS_COLUMN_WINDOW_PARENT_FIELD } =
     React.useContext(USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT);
+  const { parentField: USER_OPTIONS_DEFAULT_WINDOW_PARENT_FIELD } =
+    React.useContext(USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT);
 
   return srcPgName === "PR_A1100_WINDOW_PRC"
     ? PR_A1100_WINDOW_PRC_PARENT_FIELD
@@ -196,6 +198,8 @@ export const UseGetParentField = (srcPgName: string) => {
     ? PR_A1100_WINDOW_MTR_PARENT_FIELD
     : srcPgName === "USER_OPTIONS_COLUMN_WINDOW"
     ? USER_OPTIONS_COLUMN_WINDOW_PARENT_FIELD
+    : srcPgName === "USER_OPTIONS_DEFAULT_WINDOW"
+    ? USER_OPTIONS_DEFAULT_WINDOW_PARENT_FIELD
     : SA_B2000_Window_parentField;
 };
 

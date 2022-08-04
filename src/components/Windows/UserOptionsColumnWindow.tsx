@@ -35,10 +35,8 @@ import { NumberCell, NameCell, FormInput, validator } from "./editors";
 import { Iparameters } from "../../store/types";
 import { chkScrollHandler } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-
 import { IWindowPosition } from "../../hooks/interfaces";
 import { pageSize } from "../CommonString";
-
 import { CellRender, RowRender } from "./renderers";
 
 // Validate the entire Form
@@ -335,7 +333,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           />
           <GridColumn
             field="column_visible"
-            title="숨김여부"
+            title="컬럼 보이기"
             width="120px"
             cell={NameCell}
             headerCell={RequiredHeader}
@@ -533,9 +531,9 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const totalRowsCnt = data.result.totalRowCount;
-      let rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowsCnt = data.tables[0].Rows.length;
+      let rows = data.tables[0].Rows;
 
       rows = rows.map((row: any) => {
         return {
@@ -551,7 +549,7 @@ const KendoWindow = ({
         };
       });
 
-      const row = data.result.data.Rows[0];
+      const row = data.tables[0].Rows[0];
       const { parent_component, message_id } = row;
 
       setInitialVal((prev) => {
@@ -567,16 +565,13 @@ const KendoWindow = ({
   const fetchGridSaved = async () => {
     let data: any;
 
-    console.log("paraSaved");
-    console.log(paraSaved);
-
     try {
       data = await processApi<any>("platform-procedure", paraSaved);
     } catch (error) {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("저장이 완료되었습니다.");
       if (workType === "U") {
         fetchMain();
@@ -609,7 +604,7 @@ const KendoWindow = ({
           throw "필드명을 입력하세요.";
         }
         if (!item.column_visible) {
-          throw "숨김여부를 선택하세요.";
+          throw "컬럼 보이기를 선택하세요.";
         }
         if (!item.user_edit_yn) {
           throw "수정가능여부 선택하세요.";

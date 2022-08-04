@@ -50,7 +50,10 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   });
 
   const [columnWindowWorkType, setColumnWindowWorkType] = useState("");
+  const [defaultWindowWorkType, setDefaultWindowWorkType] = useState("");
+
   const [parentComponent, setParentComponent] = useState("");
+  const [processType, setProcessType] = useState("");
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -76,11 +79,11 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   };
   useEffect(() => {
     if (tabSelected === 0) {
-      fetchMainColumn();
+      fetchMainDefault();
     } else {
       fetchMainColumn();
     }
-  }, []);
+  }, [tabSelected]);
 
   const pathname: string = window.location.pathname;
 
@@ -98,10 +101,25 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_message": "",
     },
   };
+  const defaultMainParameters: Iparameters = {
+    procedureName: "WEB_sys_sel_default_management",
+    pageNumber: 1,
+    pageSize: 20,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_form_id": pathname,
+      "@p_lang_id": "",
+      "@p_process_type": "",
+      "@p_message": "",
+    },
+  };
 
   const [columnDetailInitialVal, setColumnDetailInitialVal] = useState({
     dbname: "",
     parent_component: "",
+  });
+  const [defaultDetailInitialVal, setDetailDefaultInitialVal] = useState({
+    process_type: "",
   });
 
   const columnDetailParameters: Iparameters = {
@@ -118,10 +136,27 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     },
   };
 
+  const defaultDetailParameters: Iparameters = {
+    procedureName: "WEB_sys_sel_default_management",
+    pageNumber: 1,
+    pageSize: 20,
+    parameters: {
+      "@p_work_type": "DETAIL",
+      "@p_form_id": pathname,
+      "@p_lang_id": "",
+      "@p_process_type": defaultDetailInitialVal.process_type,
+      "@p_message": "",
+    },
+  };
+
   //메인 컬럼 그리드 선택시 디테일 그리드 조회
   useEffect(() => {
     fetchDetailColumn();
   }, [columnDetailInitialVal]);
+
+  useEffect(() => {
+    fetchDetailDefault();
+  }, [defaultDetailInitialVal]);
 
   //요약정보 조회
   const fetchMainColumn = async () => {
@@ -132,10 +167,28 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
 
       setMainColumnDataResult(process(rows, mainColumnDataState));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  };
+
+  const fetchMainDefault = async () => {
+    let data: any;
+    try {
+      data = await processApi<any>("platform-procedure", defaultMainParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+
+      setMainDefaultDataResult(process(rows, mainDefaultDataState));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -155,9 +208,9 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const totalRowsCnt = data.result.totalRowCount;
-      let rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowsCnt = data.tables[0].Rows.length;
+      const rows = data.tables[0].Rows;
 
       setDetailColumnDataResult(() => {
         return {
@@ -165,8 +218,30 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
           total: totalRowsCnt,
         };
       });
+    }
+  };
+  const fetchDetailDefault = async () => {
+    let data: any;
 
-      //resetForm();
+    try {
+      data = await processApi<any>(
+        "platform-procedure",
+        defaultDetailParameters
+      );
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowsCnt = data.tables[0].Rows.length;
+      const rows = data.tables[0].Rows;
+
+      setDetailDefaultDataResult(() => {
+        return {
+          data: [...rows],
+          total: totalRowsCnt,
+        };
+      });
     }
   };
 
@@ -334,7 +409,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("저장이 완료되었습니다.");
       if ("U" === "U") {
         resetAllGrid();
@@ -371,22 +446,34 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     useState<boolean>(false);
 
   const MAIN_COLUMN_DATA_ITEM_KEY = "parent_component";
-  const MATERIAL_DATA_ITEM_KEY = "field_name";
+  const DETAIL_COLUMN_DATA_ITEM_KEY = "field_name";
+  const MAIN_DEFAULT_DATA_ITEM_KEY = "process_type";
+  const DETAIL_DEFAULT_DATA_ITEM_KEY = "field_name";
 
   const mainColumnIdGetter = getter(MAIN_COLUMN_DATA_ITEM_KEY);
-  const detailColumnIdGetter = getter(MATERIAL_DATA_ITEM_KEY);
+  const detailColumnIdGetter = getter(DETAIL_COLUMN_DATA_ITEM_KEY);
+  const mainDefaultIdGetter = getter(MAIN_DEFAULT_DATA_ITEM_KEY);
+  const detailDefaultIdGetter = getter(DETAIL_DEFAULT_DATA_ITEM_KEY);
 
   const [mainColumnDataState, setMainColumnDataState] = useState<State>({});
   const [detailColumnDataState, setDetailColumnDataState] = useState<State>({
+    sort: [],
+  });
+  const [mainDefaultDataState, setMainDefaultDataState] = useState<State>({});
+  const [detailDefaultDataState, setDetailDefaultDataState] = useState<State>({
     sort: [],
   });
 
   const [mainColumnDataResult, setMainColumnDataResult] = useState<DataResult>(
     process([], mainColumnDataState)
   );
-
   const [detailColumnDataResult, setDetailColumnDataResult] =
     useState<DataResult>(process([], detailColumnDataState));
+
+  const [mainDefaultDataResult, setMainDefaultDataResult] =
+    useState<DataResult>(process([], mainDefaultDataState));
+  const [detailDefaultDataResult, setDetailDefaultDataResult] =
+    useState<DataResult>(process([], detailDefaultDataState));
 
   const [mainColumnSelectedState, setMainColumnSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -395,9 +482,18 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const [detailColumnSelectedState, setDetailColumnSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const [mainDefaultSelectedState, setMainDefaultSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [detailDefaultSelectedState, setDetailDefaultSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   const [mainColumnPgNum, setMainColumnPgNum] = useState(1);
-  const [detailPgNum, setDetailColumnPgNum] = useState(1);
+  const [detailColumnPgNum, setDetailColumnPgNum] = useState(1);
+  const [mainDefaultPgNum, setMainDefaultPgNum] = useState(1);
+  const [detailDefaultPgNum, setDetailDefaultPgNum] = useState(1);
 
   const onMainColumnScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainColumnPgNum, pageSize))
@@ -405,8 +501,17 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   };
 
   const onDetailColumnScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailColumnPgNum, pageSize))
       setDetailColumnPgNum((prev) => prev + 1);
+  };
+  const onMainDefaultScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, mainDefaultPgNum, pageSize))
+      setMainDefaultPgNum((prev) => prev + 1);
+  };
+
+  const onDetailDefaultScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, detailDefaultPgNum, pageSize))
+      setDetailDefaultPgNum((prev) => prev + 1);
   };
 
   const onMainColumnDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -416,6 +521,13 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const onDetailColumnDataStateChange = (event: GridDataStateChangeEvent) => {
     setDetailColumnDataState(event.dataState);
   };
+  const onMainDefaultDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDefaultDataState(event.dataState);
+  };
+
+  const onDetailDefaultDataStateChange = (event: GridDataStateChangeEvent) => {
+    setDetailDefaultDataState(event.dataState);
+  };
 
   const onMainColumnSortChange = (e: any) => {
     setMainColumnDataState((prev) => ({ ...prev, sort: e.sort }));
@@ -424,8 +536,15 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const onDetailColumnSortChange = (e: any) => {
     setDetailColumnDataState((prev) => ({ ...prev, sort: e.sort }));
   };
+  const onMainDefaultSortChange = (e: any) => {
+    setMainDefaultDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
 
-  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+  const onDetailDefaultSortChange = (e: any) => {
+    setDetailDefaultDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const onMainColumnSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
       selectedState: mainColumnSelectedState,
@@ -447,9 +566,34 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     const newSelectedState = getSelectedState({
       event,
       selectedState: detailColumnSelectedState,
-      dataItemKey: MATERIAL_DATA_ITEM_KEY,
+      dataItemKey: DETAIL_COLUMN_DATA_ITEM_KEY,
     });
     setDetailColumnSelectedState(newSelectedState);
+  };
+  const onMainDefaultSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: mainDefaultSelectedState,
+      dataItemKey: MAIN_DEFAULT_DATA_ITEM_KEY,
+    });
+    setMainDefaultSelectedState(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    setDetailDefaultInitialVal((prev) => ({
+      ...prev,
+      process_type: selectedRowData.process_type,
+    }));
+  };
+
+  const onDetailDefaultSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: detailDefaultSelectedState,
+      dataItemKey: DETAIL_COLUMN_DATA_ITEM_KEY,
+    });
+    setDetailDefaultSelectedState(newSelectedState);
   };
 
   const onDetailColumnItemChange = (event: GridItemChangeEvent) => {
@@ -459,19 +603,24 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       event,
       detailColumnDataResult,
       setDetailColumnDataResult,
-      MATERIAL_DATA_ITEM_KEY
+      DETAIL_COLUMN_DATA_ITEM_KEY
     );
-    // setDetailColumnDataResult((prev) => {
-    //   return {
-    //     data: newData,
-    //     total: prev.total,
-    //   };
-    // });
+  };
+  const onDetailDefaultItemChange = (event: GridItemChangeEvent) => {
+    // const newData = getGridItemChangedData(event);
+
+    getGridItemChangedData(
+      event,
+      detailDefaultDataResult,
+      setDetailDefaultDataResult,
+      DETAIL_COLUMN_DATA_ITEM_KEY
+    );
   };
 
   const detailColumnEnterEdit = (dataItem: any, field: string) => {
     const newData = detailColumnDataResult.data.map((item) =>
-      item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
+      item[DETAIL_COLUMN_DATA_ITEM_KEY] ===
+      dataItem[DETAIL_COLUMN_DATA_ITEM_KEY]
         ? {
             ...item,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
@@ -501,6 +650,39 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       };
     });
   };
+  const detailDefaultEnterEdit = (dataItem: any, field: string) => {
+    const newData = detailDefaultDataResult.data.map((item) =>
+      item[DETAIL_COLUMN_DATA_ITEM_KEY] ===
+      dataItem[DETAIL_COLUMN_DATA_ITEM_KEY]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: field,
+          }
+        : { ...item, [EDIT_FIELD]: undefined }
+    );
+
+    setDetailDefaultDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const detailDefaultExitEdit = () => {
+    const newData = detailDefaultDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setDetailDefaultDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
 
   const detailColumnCellRender = (td: any, props: any) => (
     <CellRender
@@ -519,10 +701,32 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       editField={EDIT_FIELD}
     />
   );
+  const detailDefaultCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={detailDefaultEnterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const detailDefaultRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={detailDefaultExitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
 
   const onCreateColumnClick = () => {
     setColumnWindowWorkType("N");
     setColumnWindowVisible(true);
+  };
+
+  const onCreateDefaultClick = () => {
+    setDefaultWindowWorkType("N");
+    setDefaultWindowVisible(true);
   };
 
   //프로시저 파라미터 초기값
@@ -544,6 +748,11 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     column_type: "",
     column_className: "",
     exec_pc: "",
+  });
+  const [defaultParaDataDeleted, setDefaultParaDataDeleted] = useState({
+    work_type: "",
+    process_type: "",
+    form_id: pathname,
   });
 
   //프로시저 파라미터
@@ -571,27 +780,67 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_exec_pc": paraDataDeleted.exec_pc,
     },
   };
+  const defaultParaDeleted: Iparameters = {
+    procedureName: "WEB_sys_sav_default_management",
+    pageNumber: 1,
+    pageSize: 10,
+    parameters: {
+      "@p_work_type": defaultParaDataDeleted.work_type,
+      "@p_process_type": defaultParaDataDeleted.process_type,
+      "@p_form_id": defaultParaDataDeleted.form_id,
+      "@p_component": "",
+      "@p_parent_component": "",
+      "@p_field_name": "",
+      "@p_word_id": "",
+      "@p_caption": "",
+      "@p_biz_component_id": "",
+      "@p_where_query": "",
+      "@p_add_empty_row": "",
+      "@p_repository_item": "",
+      "@p_component_type": "",
+      "@p_component_full_type": "",
+      "@p_sort_seq": "",
+      "@p_message_id": "",
+      "@p_value_type": "",
+      "@p_value": "",
+      "@p_value_name": "",
+      "@p_add_year": "",
+      "@p_add_month": "",
+      "@p_add_day": "",
+      "@p_user_edit_yn": "",
+      "@p_use_session": "",
+      "@p_allow_session": "",
+      "@p_session_item": "",
+      "@p_exec_pc": "",
+    },
+  };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "DELETE") fetchToDelete();
+    if (paraDataDeleted.work_type === "DELETE") fetchToDelete(paraDeleted);
   }, [paraDataDeleted]);
 
-  const fetchToDelete = async () => {
+  useEffect(() => {
+    if (defaultParaDataDeleted.work_type === "DELETE")
+      fetchToDelete(defaultParaDeleted);
+  }, [defaultParaDataDeleted]);
+
+  const fetchToDelete = async (para: any) => {
     let data: any;
 
-    console.log("paraDeleted");
-    console.log(paraDeleted);
+    console.log("defaultParaDeleted");
+    console.log(defaultParaDeleted);
     try {
-      data = await processApi<any>("platform-procedure", paraDeleted);
+      data = await processApi<any>("platform-procedure", para);
     } catch (error) {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("삭제가 완료되었습니다.");
 
       resetAllGrid();
       fetchMainColumn();
+      fetchMainDefault();
     } else {
       alert(
         "[" +
@@ -603,6 +852,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.parent_component = "";
+    defaultParaDataDeleted.work_type = "";
+    defaultParaDataDeleted.process_type = "";
   };
 
   const onDeleteColumnClick = () => {
@@ -618,6 +869,22 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       ...prev,
       work_type: "DELETE",
       parent_component,
+    }));
+  };
+
+  const onDeleteDefaultClick = () => {
+    if (!window.confirm("삭제하시겠습니까?")) {
+      return false;
+    }
+
+    const process_type = Object.getOwnPropertyNames(
+      mainDefaultSelectedState
+    )[0];
+
+    setDefaultParaDataDeleted((prev) => ({
+      ...prev,
+      work_type: "DELETE",
+      process_type,
     }));
   };
 
@@ -644,12 +911,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     const onEditClick = () => {
       // 요약정보 행 클릭
       const rowData = props.dataItem;
-      setMainColumnSelectedState({ [rowData.parent_component]: true });
+      setMainColumnSelectedState({ [rowData.process_type]: true });
 
       // 컬럼 팝업 창 오픈 (수정용)
-      setParentComponent(rowData.parent_component);
-      setColumnWindowWorkType("U");
-      setColumnWindowVisible(true);
+      setProcessType(rowData.process_type);
+      setDefaultWindowWorkType("U");
+      setDefaultWindowVisible(true);
     };
 
     return (
@@ -676,7 +943,9 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
   const reloadData = () => {
     fetchMainColumn();
+    fetchMainDefault();
     fetchDetailColumn();
+    fetchDetailDefault();
   };
 
   return (
@@ -698,37 +967,38 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
               <Grid
                 style={{ height: "600px" }}
                 data={process(
-                  mainColumnDataResult.data.map((row) => ({
+                  mainDefaultDataResult.data.map((row) => ({
                     ...row,
                     [SELECTED_FIELD]:
-                      mainColumnSelectedState[mainColumnIdGetter(row)],
+                      mainDefaultSelectedState[mainDefaultIdGetter(row)],
                   })),
-                  mainColumnDataState
+                  mainDefaultDataState
                 )}
-                {...mainColumnDataState}
-                onDataStateChange={onMainColumnDataStateChange}
+                {...mainDefaultDataState}
+                onDataStateChange={onMainDefaultDataStateChange}
                 //선택 기능
-                dataItemKey={MAIN_COLUMN_DATA_ITEM_KEY}
+                dataItemKey={MAIN_DEFAULT_DATA_ITEM_KEY}
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
                   mode: "multiple",
                 }}
-                onSelectionChange={onSelectionChange}
+                onSelectionChange={onMainDefaultSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={mainColumnDataResult.total}
-                onScroll={onMainColumnScrollHandler}
+                total={mainDefaultDataResult.total}
+                onScroll={onMainDefaultScrollHandler}
                 //정렬기능
                 sortable={true}
-                onSortChange={onMainColumnSortChange}
+                onSortChange={onMainDefaultSortChange}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
               >
                 <GridColumn cell={DefaultCommandCell} width="55px" />
-                <GridColumn field="message_id" title="영역" />
+                <GridColumn field="process_type" title="타입ID" />
+                <GridColumn field="message_id" title="설명" />
               </Grid>
             </GridContainer>
 
@@ -741,7 +1011,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
                 <ButtonContainer>
                   <Button
-                    onClick={onCreateColumnClick}
+                    onClick={onCreateDefaultClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="file-add"
@@ -749,7 +1019,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                     신규
                   </Button>
                   <Button
-                    onClick={onDeleteColumnClick}
+                    onClick={onDeleteDefaultClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
@@ -768,38 +1038,38 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
               <Grid
                 style={{ height: "600px" }}
                 data={process(
-                  detailColumnDataResult.data.map((row) => ({
+                  detailDefaultDataResult.data.map((row) => ({
                     ...row,
                     [SELECTED_FIELD]:
-                      detailColumnSelectedState[detailColumnIdGetter(row)],
+                      detailDefaultSelectedState[detailDefaultIdGetter(row)],
                   })),
-                  detailColumnDataState
+                  detailDefaultDataState
                 )}
-                {...detailColumnDataState}
-                onDataStateChange={onDetailColumnDataStateChange}
+                {...detailDefaultDataState}
+                onDataStateChange={onDetailDefaultDataStateChange}
                 //선택 기능
-                dataItemKey={MATERIAL_DATA_ITEM_KEY}
+                dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
                   mode: "multiple",
                 }}
-                onSelectionChange={onDetailColumnSelectionChange}
+                onSelectionChange={onDetailDefaultSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={detailColumnDataResult.total}
-                onScroll={onDetailColumnScrollHandler}
+                total={detailDefaultDataResult.total}
+                onScroll={onDetailDefaultScrollHandler}
                 //정렬기능
                 sortable={true}
-                onSortChange={onDetailColumnSortChange}
+                onSortChange={onDetailDefaultSortChange}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
                 //incell 수정 기능
-                onItemChange={onDetailColumnItemChange}
-                cellRender={detailColumnCellRender}
-                rowRender={detailColumnRowRender}
+                onItemChange={onDetailDefaultItemChange}
+                cellRender={detailDefaultCellRender}
+                rowRender={detailDefaultRowRender}
                 editField={EDIT_FIELD}
               >
                 <GridColumn
@@ -810,14 +1080,26 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 />
                 <GridColumn
                   field="caption"
-                  title="컬럼"
+                  title="항목"
                   width=""
                   editable={false}
                 />
-                <GridColumn field="column_visible" title="숨김여부" width="" />
+                <GridColumn field="value" title="기본값" width="" />
                 <GridColumn
-                  field="column_width"
-                  title="너비"
+                  field="add_year"
+                  title="연 추가"
+                  width=""
+                  editor={"numeric"}
+                />
+                <GridColumn
+                  field="add_month"
+                  title="월 추가"
+                  width=""
+                  editor={"numeric"}
+                />
+                <GridColumn
+                  field="add_day"
+                  title="일 추가"
                   width=""
                   editor={"numeric"}
                 />
@@ -850,7 +1132,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                   enabled: true,
                   mode: "multiple",
                 }}
-                onSelectionChange={onSelectionChange}
+                onSelectionChange={onMainColumnSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
                 total={mainColumnDataResult.total}
@@ -914,7 +1196,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 {...detailColumnDataState}
                 onDataStateChange={onDetailColumnDataStateChange}
                 //선택 기능
-                dataItemKey={MATERIAL_DATA_ITEM_KEY}
+                dataItemKey={DETAIL_COLUMN_DATA_ITEM_KEY}
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
@@ -950,7 +1232,11 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                   width=""
                   editable={false}
                 />
-                <GridColumn field="column_visible" title="숨김여부" width="" />
+                <GridColumn
+                  field="column_visible"
+                  title="컬럼 보이기"
+                  width=""
+                />
                 <GridColumn
                   field="column_width"
                   title="너비"
@@ -973,7 +1259,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       )}
 
       {defaultWindowVisible && (
-        <DefaultWindow getVisible={setDefaultWindowVisible} />
+        <DefaultWindow
+          getVisible={setDefaultWindowVisible}
+          workType={defaultWindowWorkType}
+          processType={processType}
+          reloadData={reloadData}
+        />
       )}
     </Window>
   );
