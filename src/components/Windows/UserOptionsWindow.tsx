@@ -729,6 +729,61 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setDefaultWindowVisible(true);
   };
 
+  type TDataInfo = {
+    DATA_ITEM_KEY: string;
+    selectedState: {
+      [id: string]: boolean | number[];
+    };
+    dataResult: DataResult;
+    setDataResult: (p: any) => any;
+  };
+  type TArrowBtnClick = {
+    direction: string;
+    dataInfo: TDataInfo;
+  };
+
+  const arrowBtnClickPara = {
+    DATA_ITEM_KEY: DETAIL_COLUMN_DATA_ITEM_KEY,
+    selectedState: detailColumnSelectedState,
+    dataResult: detailColumnDataResult,
+    setDataResult: setDetailColumnDataResult,
+  };
+
+  const onArrowsBtnClick = (para: TArrowBtnClick) => {
+    const { direction, dataInfo } = para;
+    const { DATA_ITEM_KEY, selectedState, dataResult, setDataResult } =
+      dataInfo;
+    const selectedField = Object.getOwnPropertyNames(selectedState)[0];
+
+    const rowData = dataResult.data.find(
+      (row) => row[DATA_ITEM_KEY] === selectedField
+    );
+
+    const rowIndex = dataResult.data.findIndex(
+      (row) => row[DATA_ITEM_KEY] === selectedField
+    );
+
+    if (rowIndex === -1) {
+      alert("이동시킬 행을 선택해주세요.");
+      return false;
+    }
+
+    const newData = dataResult.data.map((item: any) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    newData.splice(rowIndex, 1);
+    newData.splice(rowIndex + (direction === "UP" ? -1 : 1), 0, rowData);
+
+    setDataResult((prev: any) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
   //프로시저 파라미터 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
@@ -922,6 +977,35 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     return (
       <td className="k-command-cell">
         <CommandCellBtn onClick={onEditClick} />
+      </td>
+    );
+  };
+
+  const ArrowsCell = (props: GridCellProps) => {
+    const onClick = (item: any) => {
+      console.log("item");
+      console.log(item);
+      const { dataIndex, dataItem } = item;
+
+      const newData = detailColumnDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+
+      newData.splice(dataIndex, 1);
+      newData.splice(dataIndex + 1, 0, dataItem);
+
+      setDetailColumnDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <td className="k-command-cell">
+        <CommandCellBtn onClick={() => onClick(props)} />
       </td>
     );
   };
@@ -1159,6 +1243,28 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
                 <ButtonContainer>
                   <Button
+                    onClick={() =>
+                      onArrowsBtnClick({
+                        direction: "UP",
+                        dataInfo: arrowBtnClickPara,
+                      })
+                    }
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="chevron-up"
+                  ></Button>
+                  <Button
+                    onClick={() =>
+                      onArrowsBtnClick({
+                        direction: "DOWN",
+                        dataInfo: arrowBtnClickPara,
+                      })
+                    }
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="chevron-down"
+                  ></Button>
+                  <Button
                     onClick={onCreateColumnClick}
                     fillMode="outline"
                     themeColor={"primary"}
@@ -1220,6 +1326,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 rowRender={detailColumnRowRender}
                 editField={EDIT_FIELD}
               >
+                {/* <GridColumn cell={ArrowsCell} width="55px" /> */}
+
                 <GridColumn
                   field="rowstatus"
                   title=" "
