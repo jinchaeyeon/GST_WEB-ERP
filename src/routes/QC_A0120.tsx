@@ -170,7 +170,7 @@ const QC_A0120: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: 200,
     work_type: "CHART",
     orgdiv: "01",
     //div: "0",
@@ -602,13 +602,10 @@ const QC_A0120: React.FC = () => {
   UseCommonQuery(usersQuery, setProdempListData);
 
   const labelContent = (props: any) => {
-    let formatedNumber = Number(props.dataItem.value).toLocaleString(
-      undefined,
-      {
-        style: "percent",
-        minimumFractionDigits: 2,
-      }
-    );
+    let formatedNumber = Number(props.percentage).toLocaleString(undefined, {
+      style: "percent",
+      //minimumFractionDigits: 2, //소수점
+    });
     return `${props.dataItem.argument} : ${formatedNumber}`;
   };
 
