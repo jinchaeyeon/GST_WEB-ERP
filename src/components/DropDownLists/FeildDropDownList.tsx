@@ -40,8 +40,8 @@ const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr }: TDDL) => {
       data = null;
     }
 
-    if (data != null) {
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
 
       setListData(rows);
     }

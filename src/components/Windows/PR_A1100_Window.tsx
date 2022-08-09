@@ -1060,9 +1060,8 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         data = null;
       }
 
-      const rows = data.result.data.Rows;
-
-      if (rows.length > 0) {
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
         setRowItem(rows[0], index, dataItem, itemacntListData);
       }
     },
@@ -1464,8 +1463,8 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const rows = data.result.data.Rows[0];
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows[0];
 
       setInitialVal((prev) => {
         return {
@@ -1548,11 +1547,9 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      let rows = data.result.data.Rows;
-
-      rows = rows.map((row: any, idx: number) => {
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any, idx: number) => {
         return {
           ...row,
           srcPgName: "PR_A1100_WINDOW_PRC",
@@ -1587,7 +1584,7 @@ const KendoWindow = ({
       setDetailDataResult(() => {
         return {
           data: [...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
 
@@ -1604,12 +1601,9 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      let rows = data.result.data.Rows;
-
-      rows = rows.map((row: any, idx: number) => {
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any, idx: number) => {
         return {
           ...row,
           srcPgName: "PR_A1100_WINDOW_MTL",
@@ -1638,7 +1632,7 @@ const KendoWindow = ({
       setMtrDataResult(() => {
         return {
           data: [...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
 
@@ -1794,7 +1788,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("저장이 완료되었습니다.");
       if (workType === "U") {
         resetAllGrid();
@@ -1810,9 +1804,9 @@ const KendoWindow = ({
     } else {
       alert(
         "[" +
-          data.result.statusCode +
+          data.statusCode +
           "] 처리 중 오류가 발생하였습니다. " +
-          data.result.resultMessage
+          data.resultMessage
       );
     }
 

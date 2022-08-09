@@ -300,11 +300,8 @@ const QC_A0120: React.FC = () => {
       data = null;
     }
 
-    console.log("data");
-    console.log(data);
-    if (data !== null) {
-      //const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
 
       setMainDataResult(rows);
     }
@@ -347,14 +344,14 @@ const QC_A0120: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
 
       setDetail1DataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     }

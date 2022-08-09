@@ -304,16 +304,14 @@ const MA_B7000: React.FC = () => {
       data = null;
     }
 
-    console.log("data");
-    console.log(data);
     if (data.isSuccess === true) {
-      const totalRowsCnt = data.tables[0].Rows.length;
+      const totalRowCnt = data.tables[0].totalRowCount;
       const rows = data.tables[0].Rows;
 
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     }
@@ -362,13 +360,13 @@ const MA_B7000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowsCnt = data.tables[0].Rows.length;
+      const totalRowCnt = data.tables[0].totalRowCount;
       const rows = data.tables[0].Rows;
 
       setDetail1DataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     }

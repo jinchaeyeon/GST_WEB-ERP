@@ -677,9 +677,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         data = null;
       }
 
-      const rows = data.result.data.Rows;
-
-      if (rows.length > 0) {
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
         setRowItem(rows[0], index, dataItem, itemacntListData);
       }
     },
@@ -1130,40 +1129,40 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data !== null) {
-      const rows = data.result.data.Rows[0];
+    if (data.isSuccess === true) {
+      const row = data.tables[0].Rows[0];
 
       setInitialVal((prev) => {
         return {
           ...prev,
-          ordnum: rows.ordnum,
-          doexdiv: rows.doexdiv,
-          taxdiv: rows.taxdiv,
-          location: rows.location,
-          orddt: new Date(dateformat(rows.orddt)),
-          dlvdt: new Date(dateformat(rows.dlvdt)),
-          custnm: rows.custnm,
-          custcd: rows.custcd,
-          dptcd: rows.dptcd,
-          person: rows.person,
-          ordsts: rows.ordsts,
-          ordtype: rows.ordtype,
-          rcvcustnm: rows.rcvcustnm,
-          rcvcustcd: rows.rcvcustcd,
-          project: rows.project,
-          amtunit: rows.amtunit,
-          wonchgrat: rows.wonchgrat, //0,
-          uschgrat: rows.uschgrat, //0,
-          quokey: rows.quokey,
-          prcterms: rows.prcterms,
-          paymeth: rows.paymeth,
-          dlv_method: rows.dlv_method,
-          portnm: rows.portnm,
-          ship_method: rows.ship_method,
-          poregnum: rows.poregnum,
-          attdatnum: rows.attdatnum,
-          files: rows.files,
-          remark: rows.remark,
+          ordnum: row.ordnum,
+          doexdiv: row.doexdiv,
+          taxdiv: row.taxdiv,
+          location: row.location,
+          orddt: new Date(dateformat(row.orddt)),
+          dlvdt: new Date(dateformat(row.dlvdt)),
+          custnm: row.custnm,
+          custcd: row.custcd,
+          dptcd: row.dptcd,
+          person: row.person,
+          ordsts: row.ordsts,
+          ordtype: row.ordtype,
+          rcvcustnm: row.rcvcustnm,
+          rcvcustcd: row.rcvcustcd,
+          project: row.project,
+          amtunit: row.amtunit,
+          wonchgrat: row.wonchgrat, //0,
+          uschgrat: row.uschgrat, //0,
+          quokey: row.quokey,
+          prcterms: row.prcterms,
+          paymeth: row.paymeth,
+          dlv_method: row.dlv_method,
+          portnm: row.portnm,
+          ship_method: row.ship_method,
+          poregnum: row.poregnum,
+          attdatnum: row.attdatnum,
+          files: row.files,
+          remark: row.remark,
         };
       });
     }
@@ -1199,11 +1198,9 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      let rows = data.result.data.Rows;
-
-      rows = rows.map((row: any) => {
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
           itemacnt: {
@@ -1224,7 +1221,7 @@ const KendoWindow = ({
       setDetailDataResult(() => {
         return {
           data: [...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
 
@@ -1395,7 +1392,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("저장이 완료되었습니다.");
       if (workType === "U") {
         resetAllGrid();

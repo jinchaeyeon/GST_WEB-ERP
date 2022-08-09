@@ -595,14 +595,14 @@ const PR_A1100: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
 
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     } else {
@@ -620,9 +620,9 @@ const PR_A1100: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows.map((row: any, idx: number) => ({
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
         idx: idx,
       }));
@@ -630,7 +630,7 @@ const PR_A1100: React.FC = () => {
       setPlanDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     } else {
@@ -648,9 +648,9 @@ const PR_A1100: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows.map((row: any, idx: number) => ({
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
         idx: idx,
       }));
@@ -658,7 +658,7 @@ const PR_A1100: React.FC = () => {
       setMaterialDataResult((prev) => {
         return {
           data: [...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     }
@@ -1060,7 +1060,7 @@ const PR_A1100: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("삭제가 완료되었습니다.");
 
       resetAllGrid();
@@ -1385,7 +1385,7 @@ const PR_A1100: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("저장이 완료되었습니다.");
 
       resetAllGrid();

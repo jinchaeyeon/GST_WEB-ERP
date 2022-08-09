@@ -117,20 +117,20 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
     };
 
     if (data !== null) {
-      const totalRowsCnt = data.result.rowCount;
+      const totalRowCnt = data.result.rowCount;
       const rows = data.result.data.Rows;
 
       setMainDataResult((prev) => {
         return {
           data: [...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
 
       result = {
         attdatnum: rows[0].attdatnum,
         original_name: rows[0].original_name,
-        rowCount: totalRowsCnt,
+        rowCount: totalRowCnt,
       };
     }
 

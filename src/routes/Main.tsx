@@ -4,18 +4,14 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridItemChangeEvent,
   GridEvent,
   GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
 
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import DoexdivDDL from "../components/DropDownLists/DoexdivDDL";
+
 // ES2015 module syntax
 import {
   Scheduler,
@@ -26,32 +22,18 @@ import {
   MonthView,
 } from "@progress/kendo-react-scheduler";
 import {
-  Title,
-  FilterBoxWrap,
-  FilterBox,
   GridContainer,
   GridTitle,
   GridContainerWrap,
-  TitleContainer,
   ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
   ApprovalInner,
   ApprovalBox,
   MainTopContainer,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Input,
-  RadioButton,
-  RadioButtonChangeEvent,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
-
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useApi } from "../hooks/api";
-import ItemacntDDL from "../components/DropDownLists/ItemacntDDL";
 import {
   itemacntState,
   itemlvl1State,
@@ -60,30 +42,20 @@ import {
   locationState,
 } from "../store/atoms";
 import { Iparameters } from "../store/types";
-import Itemlvl1DDL from "../components/DropDownLists/Itemlvl1DDL";
-import Itemlvl2DDL from "../components/DropDownLists/Itemlvl2DDL";
-import Itemlvl3DDL from "../components/DropDownLists/Itemlvl3DDL";
-import LocationDDL from "../components/DropDownLists/LocationDDL";
-import YearCalendar from "../components/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
   pageSize,
   UseCommonQuery,
 } from "../components/CommonFunction";
-import ItemsWindow from "../components/Windows/ItemsWindow";
-import { IItemData, TCommonCodeData } from "../hooks/interfaces";
+import { TCommonCodeData } from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
   itemgradeQuery,
   itemlvl1Query,
   itemlvl2Query,
   itemlvl3Query,
-  useynRadioButtonData,
-  zeroynRadioButtonData,
 } from "../components/CommonString";
-import NumberCell from "../components/Cells/NumberCell";
-import DateCell from "../components/Cells/DateCell";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
 //import {useAuth} from "../../hooks/auth";
@@ -242,8 +214,8 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
 
       setApprovalValueState((prev) => ({
         ...prev,
@@ -266,14 +238,14 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
 
       setNoticeDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     }
@@ -288,14 +260,14 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
 
       setWorkOrderDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     }
@@ -310,8 +282,8 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
-      let rows = data.result.data.Rows.map((row: any) => ({
+    if (data.isSuccess === true) {
+      let rows = data.tables[0].Rows.map((row: any) => ({
         //...row,
         id: row.datnum,
         title: row.title,

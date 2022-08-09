@@ -345,14 +345,14 @@ const SA_B2000: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
 
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     } else {
@@ -370,14 +370,14 @@ const SA_B2000: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
 
       setDetailDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
     }
