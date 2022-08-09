@@ -59,11 +59,15 @@ import {
   pageSize,
   UseCommonQuery,
   UseMenuColumns,
+  UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
+  gnvWidth,
+  clientWidth,
+  gridMargin,
   itemgradeQuery,
   itemlvl1Query,
   itemlvl2Query,
@@ -75,38 +79,6 @@ import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 //import {useAuth} from "../../hooks/auth";
 
-const dummyData: any = [
-  {
-    name: "itemacnt",
-    value: "1",
-  },
-  {
-    name: "useyn",
-    value: "%",
-  },
-];
-
-const dummyColumnData: any = [
-  {
-    field: "itemcd",
-    width: 100,
-    title: "품목코드",
-    visible: "Y",
-  },
-  {
-    field: "itemnm",
-    width: 100,
-    title: "품목명",
-    visible: "N",
-  },
-  {
-    field: "safeqty",
-    width: 100,
-    title: "수량",
-    type: "Number",
-    visible: "Y",
-  },
-];
 const MA_B7000: React.FC = () => {
   const DATA_ITEM_KEY = "itemcd";
   const DETAIL_DATA_ITEM_KEY = "lotnum";
@@ -114,6 +86,16 @@ const MA_B7000: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
+
+  //컬럼 세팅
+  const pathname: string = window.location.pathname;
+  const [columnsListData, setColumnsListData] = React.useState([]);
+  UseMenuColumns(pathname, setColumnsListData);
+
+  //기본값
+  const [defaultsListData, setDefaultsListData] = React.useState([]);
+  UseMenuDefaults(pathname, setDefaultsListData);
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -145,8 +127,6 @@ const MA_B7000: React.FC = () => {
   const [detailSelectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [filterData, setFilterData] = useState(dummyData);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detail1PgNum, setDetail1PgNum] = useState(1);
@@ -186,7 +166,7 @@ const MA_B7000: React.FC = () => {
     itemnm: "",
     insiz: "",
     yyyymm: new Date(),
-    itemacnt: filterData.find((item: any) => item.name === "itemacnt").value,
+    itemacnt: "", //filterData.find((item: any) => item.name === "itemacnt").value,
     zeroyn: "%",
     lotnum: "",
     load_place: "",
@@ -194,7 +174,7 @@ const MA_B7000: React.FC = () => {
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
-    useyn: filterData.find((item: any) => item.name === "useyn").value,
+    useyn: "Y", //filterData.find((item: any) => item.name === "useyn").value,
     service_id: "",
   });
 
@@ -324,9 +304,11 @@ const MA_B7000: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    console.log("data");
+    console.log(data);
+    if (data.isSuccess === true) {
+      const totalRowsCnt = data.tables[0].Rows.length;
+      const rows = data.tables[0].Rows;
 
       setMainDataResult((prev) => {
         return {
@@ -351,6 +333,10 @@ const MA_B7000: React.FC = () => {
       }));
     }
   }, [mainDataResult]);
+  useEffect(() => {
+    console.log("filters");
+    console.log(filters);
+  }, [filters]);
 
   //디테일1 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -375,9 +361,9 @@ const MA_B7000: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowsCnt = data.tables[0].Rows.length;
+      const rows = data.tables[0].Rows;
 
       setDetail1DataResult((prev) => {
         return {
@@ -397,9 +383,9 @@ const MA_B7000: React.FC = () => {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowsCnt = data.tables[0].Rows.length;
+      const rows = data.tables[0].Rows;
 
       setDetail2DataResult((prev) => {
         return {
@@ -577,11 +563,6 @@ const MA_B7000: React.FC = () => {
     setDetail2DataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  //컬럼 세팅
-  const [columnsListData, setColumnsListData] = React.useState([]);
-  const pathname: string = window.location.pathname;
-  UseMenuColumns(pathname, setColumnsListData);
-
   //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
   const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
     commonCodeDefaultValue,
@@ -609,6 +590,24 @@ const MA_B7000: React.FC = () => {
       fetchMainGrid();
     }
   }, [columnsListData]);
+
+  useEffect(() => {
+    if (defaultsListData.length > 0) {
+      const yyyymm: any = defaultsListData.find(
+        (item: any) => item.component === "yyyymm"
+      );
+
+      const add_year: any = yyyymm ? yyyymm.add_year : 0;
+
+      const initYymm = new Date();
+      initYymm.setFullYear(initYymm.getFullYear() + add_year);
+
+      setFilters((prev) => ({
+        ...prev,
+        yyyymm: initYymm,
+      }));
+    }
+  }, [defaultsListData]);
 
   //공통코드 리스트 조회 후 그리드 데이터 세팅
   useEffect(() => {
@@ -713,7 +712,7 @@ const MA_B7000: React.FC = () => {
               <td>
                 <DatePicker
                   name="yyyymm"
-                  defaultValue={filters.yyyymm}
+                  value={filters.yyyymm}
                   format="yyyy"
                   onChange={filterInputChange}
                   calendar={YearCalendar}
@@ -874,7 +873,7 @@ const MA_B7000: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "370px" }}
+            style={{ height: "360px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -924,41 +923,22 @@ const MA_B7000: React.FC = () => {
                     key={idx}
                     field={item.field_name}
                     title={item.caption}
-                    width={item.width + "px"}
+                    width={"150px"}
                     cell={item.column_type === "NUMBER" ? NumberCell : ""}
-                    footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                    footerCell={idx === 2 ? mainTotalFooterCell : ""}
                   ></GridColumn>
                 )
             )}
-
-            <GridColumn />
-            {/*
-            <GridColumn field="itemnm" title="품목명" />
-            <GridColumn field="itemlvl1" title="대분류" />
-            <GridColumn field="itemlvl2" title="중분류" />
-            <GridColumn field="itemlvl3" title="소분류" />
-            <GridColumn field="insiz" title="규격" />
-            <GridColumn field="spec" title="사양" />
-            <GridColumn
-              field="bnatur_insiz"
-              title="소재규격"
-              cell={NumberCell}
-            />
-            <GridColumn field="safeqty" title="안전재고량" cell={NumberCell} />
-            <GridColumn field="stockqty" title="재고수량" cell={NumberCell} />
-            <GridColumn field="stockwgt" title="재고중량" cell={NumberCell} />
-            <GridColumn field="load_place_bc" title="적재장소" />
-            <GridColumn field="itemgrade" title="품목등급" /> */}
           </Grid>
         </ExcelExport>
       </GridContainer>
       <GridContainerWrap>
-        <GridContainer maxWidth="500px">
+        <GridContainer width={"500px"}>
           <GridTitleContainer>
             <GridTitle>계정별LOT</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "370px" }}
+            style={{ height: "360px" }}
             data={process(
               detail1DataResult.data.map((row) => ({
                 ...row,
@@ -988,20 +968,30 @@ const MA_B7000: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              field="lotnum"
-              title="LOT NO"
-              footerCell={detail1TotalFooterCell}
-            />
-            <GridColumn field="stockqty" title="재고수량" cell={NumberCell} />
+            {columnsListData.map(
+              (item: any, idx: number) =>
+                item.column_visible === "Y" &&
+                item.parent_component === "LotGrid" && (
+                  <GridColumn
+                    key={idx}
+                    field={item.field_name}
+                    title={item.caption}
+                    width={item.column_width + "px"}
+                    cell={item.column_type === "NUMBER" ? NumberCell : ""}
+                    footerCell={idx === 0 ? detail1TotalFooterCell : ""}
+                  ></GridColumn>
+                )
+            )}
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer
+          maxWidth={clientWidth - gnvWidth - gridMargin - 500 + "px"}
+        >
           <GridTitleContainer>
             <GridTitle>LOT별 상세이력</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "370px" }}
+            style={{ height: "360px" }}
             data={process(detail2DataResult.data, detail2DataState)}
             {...detail2DataState}
             onDataStateChange={onDetail2DataStateChange}
@@ -1017,23 +1007,20 @@ const MA_B7000: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              field="gubun"
-              title="구분"
-              footerCell={detail2TotalFooterCell}
-            />
-            <GridColumn field="indt" title="발생일자" cell={DateCell} />
-            <GridColumn
-              field="baseqty"
-              title="기초재고수량"
-              cell={NumberCell}
-            />
-            <GridColumn field="inqty" title="입고수량" cell={NumberCell} />
-            <GridColumn field="outqty" title="출고수량" cell={NumberCell} />
-            <GridColumn field="inwgt" title="입고중량" cell={NumberCell} />
-            <GridColumn field="custnm" title="업체명" />
-            <GridColumn field="recnum" title="관리번호" />
-            <GridColumn field="remark" title="비고" />
+            {columnsListData.map(
+              (item: any, idx: number) =>
+                item.column_visible === "Y" &&
+                item.parent_component === "LotHistoryGrid" && (
+                  <GridColumn
+                    key={idx}
+                    field={item.field_name}
+                    title={item.caption}
+                    width={item.column_width ?? 120 + "px"}
+                    cell={item.column_type === "NUMBER" ? NumberCell : ""}
+                    footerCell={idx === 1 ? detail2TotalFooterCell : ""}
+                  ></GridColumn>
+                )
+            )}
           </Grid>
         </GridContainer>
       </GridContainerWrap>

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { clientWidth, gnvWidth, gridMargin } from "./components/CommonString";
 
 export const TitleContainer = styled.div`
   display: flex;
@@ -91,6 +92,7 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
 type TGridContainer = {
   maxWidth?: string;
   clientWidth?: number;
+  width?: string;
   inTab?: boolean;
   margin?: TMargin;
 };
@@ -106,7 +108,9 @@ export const GridContainer = styled.div<TGridContainer>`
   flex-direction: column;
   max-width: ${(props) => props.maxWidth};
   width: ${(props) =>
-    props.clientWidth
+    props.width
+      ? props.width
+      : props.clientWidth
       ? "calc(" +
         props.clientWidth +
         "px - " +

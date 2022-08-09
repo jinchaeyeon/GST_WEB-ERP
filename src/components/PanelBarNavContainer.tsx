@@ -10,6 +10,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../store/atoms";
 import UserOptionsWindow from "../components/Windows/UserOptionsWindow";
+import { clientWidth, gnvWidth } from "../components/CommonString";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -17,7 +18,7 @@ export const Wrapper = styled.div`
 `;
 
 export const Gnv = styled.div`
-  min-width: 150px;
+  min-width: ${gnvWidth}px;
   text-align: center;
   .logout span {
     color: #656565;
@@ -32,7 +33,7 @@ type ContentType = {
 };
 export const Content = styled.div<ContentType>`
   padding: 0 15px;
-  width: calc(${(props) => props.clientWidth}px - 150px);
+  width: calc(${(props) => props.clientWidth}px - ${gnvWidth}px);
 `;
 
 export const AppName = styled.h1`
@@ -79,8 +80,6 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   const selected = setSelectedIndex(props.location.pathname);
-
-  const clientWidth = document.documentElement.clientWidth;
 
   const logout = useCallback(() => {
     setToken(null as any);

@@ -99,8 +99,8 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
       setListData(rows);
     }
   }, []);
@@ -127,21 +127,58 @@ export const UseMenuColumns = (pathname: string, setListData: any) => {
       "@p_message": "",
     },
   };
+
   const fetchData = React.useCallback(async () => {
     let data: any;
 
-    console.log("parameters");
-    console.log(parameters);
     try {
       data = await processApi<any>("platform-procedure", parameters);
     } catch (error) {
       data = null;
     }
 
-    console.log("data");
-    console.log(data);
-    if (data.result.isSuccess === true) {
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  }, []);
+};
+
+//현재 경로를 받아서 기본값 리스트 조회 후 결과값을 반환
+export const UseMenuDefaults = (pathname: string, setListData: any) => {
+  const processApi = useApi();
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const parameters: Iparameters = {
+    procedureName: "WEB_sys_sel_default_management",
+    pageNumber: 1,
+    pageSize: 200,
+    parameters: {
+      "@p_work_type": "FormDefault",
+      "@p_form_id": pathname,
+      "@p_lang_id": "",
+      "@p_process_type": "",
+      "@p_message": "",
+    },
+  };
+
+  const fetchData = React.useCallback(async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("platform-procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
       setListData(rows);
     } else {
       console.log("[오류 발생]");
@@ -151,7 +188,7 @@ export const UseMenuColumns = (pathname: string, setListData: any) => {
 };
 
 //한번에 조회할 데이터 수 디폴트 값
-export const pageSize = 10;
+export const pageSize = 20;
 
 //그리드 스크롤을 맨 아래로 내렸을 때, 조회할 데이터가 남았으면 true 반환
 export const chkScrollHandler = (
@@ -173,7 +210,6 @@ export const chkScrollHandler = (
     e.target.scrollHeight - e.target.clientHeight
   ) {
     if (totalNumber > PgNum * PgSize) {
-      //setMainPgNum((prev) => prev + 1);
       chk = true;
     }
   }
