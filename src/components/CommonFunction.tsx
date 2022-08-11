@@ -1,4 +1,3 @@
-import { FieldRenderProps } from "@progress/kendo-react-form";
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
 import React, { useCallback, useEffect } from "react";
 import { useApi } from "../hooks/api";
@@ -408,4 +407,21 @@ export const findCustomOptionColumns = (customOptionData: any, id: string) => {
   return customOptionData.menuCustomDefaultOptions.query.find(
     (item: any) => item.id === id
   ).bizComponentItems;
+};
+
+export const setDefaultDate = (customOptionData: any, id: string) => {
+  const date = customOptionData.menuCustomDefaultOptions.query.find(
+    (item: any) => item.id === id
+  );
+
+  const addYear = date ? date.addYear : 0;
+  const addMonth = date ? date.addMonth : 0;
+  const addDay = date ? date.addDay : 0;
+
+  const newDate = new Date();
+  newDate.setFullYear(newDate.getFullYear() + addYear);
+  newDate.setMonth(newDate.getMonth() + addMonth);
+  newDate.setDate(newDate.getDate() + addDay);
+
+  return newDate;
 };

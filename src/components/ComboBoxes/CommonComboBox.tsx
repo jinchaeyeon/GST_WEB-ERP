@@ -8,13 +8,15 @@ import { useApi } from "../../hooks/api";
 
 type TCommonComboBox = {
   name: string;
+  value: string | number;
   customOptionData: any;
-  changeData(e: object): void;
+  changeData(e: any): void;
   textField?: string;
   valueField?: string;
 };
 const CommonComboBox = ({
   name,
+  value,
   customOptionData,
   changeData,
   textField = "code_name",
@@ -22,8 +24,6 @@ const CommonComboBox = ({
 }: TCommonComboBox) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
-
-  const [state, setState] = useState(null); //상태
 
   useEffect(() => {
     fetchData();
@@ -49,28 +49,10 @@ const CommonComboBox = ({
 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
-      //리스트 세팅
-      setListData(rows);
 
-      //커스텀 옵션에 저장된 값으로 디폴트 값 세팅
-      const strDefaultValue =
-        customOptionData.menuCustomDefaultOptions.query.find(
-          (item: any) => item.id === name
-        ).value;
-      const defaultValue = rows.find(
-        (row: any) => row[valueField] === strDefaultValue
-      );
-      setState(defaultValue);
-      changeData({ name, value: defaultValue });
+      setListData(rows); //리스트 세팅
     }
   }, []);
-
-  const onChangeHandle = (e: ComboBoxChangeEvent) => {
-    const { value } = e.target;
-
-    setState(value);
-    changeData({ name, value });
-  };
 
   const columns = customOptionData.menuCustomDefaultOptions.query.find(
     (item: any) => item.id === name
@@ -84,10 +66,17 @@ const CommonComboBox = ({
 
   newColumns = newColumns.filter((column: any) => column.width !== 0);
 
+  const onChangeHandle = (e: ComboBoxChangeEvent) => {
+    let value = e.target.value === null ? "" : e.target.value[valueField];
+    changeData({ name, value });
+  };
+
   return (
     <MultiColumnComboBox
       data={listData}
-      value={state}
+      value={
+        value ? listData.find((item: any) => item[valueField] === value) : ""
+      }
       columns={newColumns}
       textField={textField}
       onChange={onChangeHandle}

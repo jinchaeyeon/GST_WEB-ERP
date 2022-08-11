@@ -37,6 +37,7 @@ import YearCalendar from "../components/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
+  setDefaultDate,
   UseCommonQuery,
   UseCustomOption,
   //UseMenuDefaults,
@@ -138,17 +139,7 @@ const MA_B7000: React.FC = () => {
   const [detail1PgNum, setDetail1PgNum] = useState(1);
   const [detail2PgNum, setDetail2PgNum] = useState(1);
 
-  //조회조건 기본값 항목
-  const [customDefaultFilter, setCustomDefaultFilter] = useState({
-    cboItemacnt: false,
-    cboItemlvl1: false,
-    cboItemlvl2: false,
-    cboItemlvl3: false,
-    cboLocation: false,
-    //radUseyn: false, //나중에 수정
-    radzeroyn: false,
-    //ymdyyyy: false, //목요일 진행
-  });
+  const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -156,11 +147,6 @@ const MA_B7000: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       [name]: value,
-    }));
-
-    setCustomDefaultFilter((prev) => ({
-      ...prev,
-      [name]: true,
     }));
   };
 
@@ -172,47 +158,38 @@ const MA_B7000: React.FC = () => {
       ...prev,
       [name]: value,
     }));
-
-    setCustomDefaultFilter((prev) => ({
-      ...prev,
-      [name]: true,
-    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
+    console.log("e~!");
+    console.log(e);
     const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
-
-    setCustomDefaultFilter((prev) => ({
-      ...prev,
-      [name]: true,
-    }));
   };
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    fetch: false,
     pgSize: pageSize,
     work_type: "LIST",
     orgdiv: "01",
-    cboLocation: commonCodeDefaultValue,
+    cboLocation: "",
     itemcd: "",
     itemnm: "",
     insiz: "",
-    yyyymm: new Date(),
-    cboItemacnt: commonCodeDefaultValue, //filterData.find((item: any) => item.name === "itemacnt").value,
+    ymdyyyy: new Date(),
+    cboItemacnt: "", //filterData.find((item: any) => item.name === "itemacnt").value,
     radzeroyn: "%",
     lotnum: "",
     load_place: "",
     heatno: "",
-    cboItemlvl1: commonCodeDefaultValue,
-    cboItemlvl2: commonCodeDefaultValue,
-    cboItemlvl3: commonCodeDefaultValue,
+    cboItemlvl1: "",
+    cboItemlvl2: "",
+    cboItemlvl3: "",
     radUseyn: "Y", //filterData.find((item: any) => item.name === "useyn").value,
     service_id: pathname,
   });
@@ -224,7 +201,7 @@ const MA_B7000: React.FC = () => {
     itemcd: "",
     itemnm: "",
     insiz: "",
-    yyyymm: new Date(),
+    yyyymm: "",
     itemacnt: "",
     zeroyn: "%",
     lotnum: "",
@@ -244,7 +221,7 @@ const MA_B7000: React.FC = () => {
     itemcd: "",
     itemnm: "",
     insiz: "",
-    yyyymm: new Date(),
+    yyyymm: "",
     itemacnt: "",
     zeroyn: "%",
     lotnum: "",
@@ -265,19 +242,19 @@ const MA_B7000: React.FC = () => {
     parameters: {
       "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.cboLocation ? filters.cboLocation.sub_code : "",
-      "@p_yyyymm": convertDateToStr(filters.yyyymm),
+      "@p_location": filters.cboLocation,
+      "@p_yyyymm": convertDateToStr(filters.ymdyyyy),
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_insiz": filters.insiz,
-      "@p_itemacnt": filters.cboItemacnt ? filters.cboItemacnt.sub_code : "",
+      "@p_itemacnt": filters.cboItemacnt,
       "@p_zeroyn": filters.radzeroyn,
       "@p_lotnum": filters.lotnum,
       "@p_load_place": filters.load_place,
       "@p_heatno": filters.heatno,
-      "@p_itemlvl1": filters.cboItemlvl1 ? filters.cboItemlvl1.sub_code : "",
-      "@p_itemlvl2": filters.cboItemlvl2 ? filters.cboItemlvl2.sub_code : "",
-      "@p_itemlvl3": filters.cboItemlvl3 ? filters.cboItemlvl3.sub_code : "",
+      "@p_itemlvl1": filters.cboItemlvl1,
+      "@p_itemlvl2": filters.cboItemlvl2,
+      "@p_itemlvl3": filters.cboItemlvl3,
       "@p_useyn": filters.radUseyn,
       "@p_service_id": filters.service_id,
     },
@@ -290,12 +267,12 @@ const MA_B7000: React.FC = () => {
     parameters: {
       "@p_work_type": "DETAIL1",
       "@p_orgdiv": detailFilters1.orgdiv,
-      "@p_location": filters.cboLocation ? filters.cboLocation.sub_code : "",
+      "@p_location": filters.cboLocation,
       // "@p_location":
       //   (filters.cboLocation ? filters.cboLocation.sub_code : "") === ""
       //     ? "01"
       //     : filters.cboLocation.sub_code,
-      "@p_yyyymm": convertDateToStr(detailFilters1.yyyymm),
+      "@p_yyyymm": convertDateToStr(filters.ymdyyyy),
       "@p_itemcd": detailFilters1.itemcd,
       "@p_itemnm": detailFilters1.itemnm,
       "@p_insiz": detailFilters1.insiz,
@@ -319,8 +296,8 @@ const MA_B7000: React.FC = () => {
     parameters: {
       "@p_work_type": "DETAIL2",
       "@p_orgdiv": detailFilters2.orgdiv,
-      "@p_location": filters.cboLocation ? filters.cboLocation.sub_code : "",
-      "@p_yyyymm": convertDateToStr(detailFilters2.yyyymm),
+      "@p_location": filters.cboLocation,
+      "@p_yyyymm": convertDateToStr(filters.ymdyyyy),
       "@p_itemcd": detailFilters1.itemcd,
       "@p_itemnm": detailFilters2.itemnm,
       "@p_insiz": "",
@@ -360,17 +337,6 @@ const MA_B7000: React.FC = () => {
         });
     }
   };
-
-  useEffect(() => {
-    console.log("customDefaultFilter");
-    console.log(customDefaultFilter);
-    const isFinSetFilter = !Object.values(customDefaultFilter).includes(false);
-
-    console.log(isFinSetFilter);
-    if (isFinSetFilter) {
-      fetchMainGrid();
-    }
-  }, [customDefaultFilter]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -645,59 +611,45 @@ const MA_B7000: React.FC = () => {
   ]);
   UseCommonQuery(itemgradeQuery, setItemgradeListData);
 
-  //customOptionData 조회 후 컬럼 세팅
+  //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      console.log("customOptionData");
-      console.log(customOptionData);
-      const yyyymm: any = customOptionData.menuCustomDefaultOptions.query.find(
-        (item: any) => item.id === "ymdyyyy"
-      );
-
-      console.log(yyyymm);
-      const addYear: any = yyyymm ? yyyymm.addYear : 0;
-
-      const initYymm = new Date();
-      initYymm.setFullYear(initYymm.getFullYear() + addYear);
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
 
       setFilters((prev) => ({
         ...prev,
-        yyyymm: initYymm,
-        fetch: true,
+        ymdyyyy: setDefaultDate(customOptionData, "ymdyyyy"),
+        cboItemacnt: defaultOption.find(
+          (item: any) => item.id === "cboItemacnt"
+        ).value,
+        cboItemlvl1: defaultOption.find(
+          (item: any) => item.id === "cboItemlvl1"
+        ).value,
+        cboItemlvl2: defaultOption.find(
+          (item: any) => item.id === "cboItemlvl2"
+        ).value,
+        cboItemlvl3: defaultOption.find(
+          (item: any) => item.id === "cboItemlvl3"
+        ).value,
+        cboLocation: defaultOption.find(
+          (item: any) => item.id === "cboLocation"
+        ).value,
+        //radUseyn: defaultOption.find(
+        //  (item: any) => item.id === "ymdyyyy"
+        //  ).value,
+        radzeroyn: defaultOption.find((item: any) => item.id === "radzeroyn")
+          .value,
       }));
-
-      //fetchMainGrid();
     }
   }, [customOptionData]);
 
-  // useEffect(() => {
-  //   if (customOptionData !== null && filters.fetch === true) {
-  //     fetchMainGrid();
-
-  //     setFilters((prev) => ({
-  //       ...prev,
-  //       fetch: false,
-  //     }));
-  //   }
-  // }, [filters]);
-
-  // useEffect(() => {
-  //   if (defaultsListData.length > 0) {
-  //     const yyyymm: any = defaultsListData.find(
-  //       (item: any) => item.component === "yyyymm"
-  //     );
-
-  //     const add_year: any = yyyymm ? yyyymm.add_year : 0;
-
-  //     const initYymm = new Date();
-  //     initYymm.setFullYear(initYymm.getFullYear() + add_year);
-
-  //     setFilters((prev) => ({
-  //       ...prev,
-  //       yyyymm: initYymm,
-  //     }));
-  //   }
-  // }, [defaultsListData]);
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (customOptionData !== null && isInitSearch === false) {
+      fetchMainGrid();
+      setIsInitSearch(true);
+    }
+  }, [filters]);
 
   //공통코드 리스트 조회 후 그리드 데이터 세팅
   useEffect(() => {
@@ -799,8 +751,8 @@ const MA_B7000: React.FC = () => {
               <th>재고년도</th>
               <td>
                 <DatePicker
-                  name="yyyymm"
-                  value={filters.yyyymm}
+                  name="ymdyyyy"
+                  value={filters.ymdyyyy}
                   format="yyyy"
                   onChange={filterInputChange}
                   calendar={YearCalendar}
@@ -838,6 +790,7 @@ const MA_B7000: React.FC = () => {
                 {customOptionData !== null && (
                   <CommonComboBox
                     name="cboItemacnt"
+                    value={filters.cboItemacnt}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
@@ -849,6 +802,7 @@ const MA_B7000: React.FC = () => {
                 {customOptionData !== null && (
                   <CommonComboBox
                     name="cboItemlvl1"
+                    value={filters.cboItemlvl1}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
@@ -860,6 +814,7 @@ const MA_B7000: React.FC = () => {
                 {customOptionData !== null && (
                   <CommonComboBox
                     name="cboItemlvl2"
+                    value={filters.cboItemlvl2}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
@@ -871,6 +826,7 @@ const MA_B7000: React.FC = () => {
                 {customOptionData !== null && (
                   <CommonComboBox
                     name="cboItemlvl3"
+                    value={filters.cboItemlvl3}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
@@ -923,6 +879,7 @@ const MA_B7000: React.FC = () => {
                 {customOptionData !== null && (
                   <CommonComboBox
                     name="cboLocation"
+                    value={filters.cboLocation}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />

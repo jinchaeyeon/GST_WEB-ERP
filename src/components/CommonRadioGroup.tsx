@@ -31,8 +31,6 @@ const CommonRadioGroup = ({
   const [state, setState] = useState(defaultValue); //상태
 
   useEffect(() => {
-    console.log("defaultValue");
-    console.log(defaultValue);
     changeData({ name, value: defaultValue });
   }, []);
 
