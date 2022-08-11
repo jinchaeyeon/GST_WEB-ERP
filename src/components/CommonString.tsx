@@ -10,7 +10,7 @@ export const gridMargin = 30;
 export const gnvWidth = 150;
 
 //한번에 조회할 데이터 수 디폴트 값
-export const pageSize = 10;
+export const pageSize = 20;
 
 export const commonCodeDefaultValue = { sub_code: "", code_name: "" };
 

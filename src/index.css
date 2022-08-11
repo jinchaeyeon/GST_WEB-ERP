@@ -16,3 +16,7 @@ code {
 div.k-animation-container {
   z-index: 10100 !important;
 }
+
+.k-grid tr {
+  height: 36px;
+}

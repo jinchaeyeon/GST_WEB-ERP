@@ -66,7 +66,6 @@ import YearCalendar from "../components/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
-  pageSize,
   UseCommonQuery,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/ItemsWindow";
@@ -77,6 +76,7 @@ import {
   itemlvl1Query,
   itemlvl2Query,
   itemlvl3Query,
+  pageSize,
   proccdQuery,
   prodmacQuery,
   usersQuery,

@@ -59,7 +59,6 @@ import LocationDDL from "../components/DropDownLists/LocationDDL";
 import {
   chkScrollHandler,
   convertDateToStr,
-  pageSize,
   UseCommonQuery,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_B2000_Window";
@@ -75,6 +74,7 @@ import {
   itemacntQuery,
   locationQuery,
   ordstsQuery,
+  pageSize,
   qtyunitQuery,
   taxdivQuery,
   usersQuery,

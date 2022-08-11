@@ -45,7 +45,6 @@ import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
-  pageSize,
   UseCommonQuery,
 } from "../components/CommonFunction";
 import { TCommonCodeData } from "../hooks/interfaces";
@@ -55,6 +54,7 @@ import {
   itemlvl1Query,
   itemlvl2Query,
   itemlvl3Query,
+  pageSize,
 } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
