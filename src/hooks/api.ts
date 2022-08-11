@@ -6,10 +6,12 @@ import cachios from "cachios";
 let BASE_URL = process.env.REACT_APP_API_URL;
 
 const domain: any = {
-  query: { action: "get", url: "api/data/:query" },
-  "platform-query": { action: "get", url: "api/data/:query" },
-  "platform-procedure": { action: "post", url: "api/data/procedure" },
-  procedure: { action: "post", url: "api/data/procedure" },
+  query: { action: "get", url: "api/sql/:query" },
+  procedure: { action: "post", url: "api/sql/procedure" },
+  "platform-query": { action: "get", url: "api/sql/:query" },
+  "platform-procedure": { action: "post", url: "api/sql/procedure" },
+  "custom-option": { action: "get", url: "api/data/:formId/custom-option" },
+  "biz-components": { action: "get", url: "api/data/:id" },
   login: { action: "post", url: "api/auth/login" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },
   "file-upload": { action: "post", url: "api/files/:attached" },
@@ -29,8 +31,8 @@ const axiosInstance: any = axios.create({
   headers: { "Cache-Control": "no-cache" },
 });
 let cachedHttp = cachios.create(axiosInstance, {
-  stdTTL: 30,
   checkperiod: 120,
+  stdTTL: 30,
 });
 
 const generateUrl = (url: string, params: any) => {

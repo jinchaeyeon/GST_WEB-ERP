@@ -53,18 +53,18 @@ export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =
 const deletedRows: object[] = [];
 
 const FORM_DATA_INDEX = "formDataIndex";
-const DATA_ITEM_KEY = "field_name ";
+const DATA_ITEM_KEY = "default_id ";
 
 const idGetter = getter(FORM_DATA_INDEX);
 const SELECTED_FIELD: string = "selected";
 
-const pathname: string = window.location.pathname;
+const pathname: string = window.location.pathname.replace("/", "");
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
   workType: string;
   reloadData: () => void;
-  processType?: string;
+  option_id?: string;
 };
 
 type TDetailData = {
@@ -330,7 +330,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           />
           <GridColumn field="rowstatus" title=" " width="40px" />
           <GridColumn
-            field="field_name"
+            field="default_id"
             title="필드명"
             width="160px"
             cell={NameCell}
@@ -355,6 +355,18 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="value"
             title="VALUE"
             width="120px"
+            cell={NameCell}
+          />
+          <GridColumn
+            field="bc_id"
+            title="비즈니스 컴포넌트 ID"
+            width="180px"
+            cell={NameCell}
+          />
+          <GridColumn
+            field="user_editable"
+            title="사용자 수정 가능 여부"
+            width="180px"
             cell={NameCell}
           />
           <GridColumn
@@ -384,7 +396,7 @@ const KendoWindow = ({
   getVisible,
   workType,
   reloadData,
-  processType,
+  option_id,
 }: TKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -433,8 +445,8 @@ const KendoWindow = ({
   );
 
   const [initialVal, setInitialVal] = useState({
-    message_id: "",
-    process_type: "",
+    option_id: "",
+    option_name: "",
   });
 
   //요약정보 조회조건 파라미터
@@ -446,7 +458,7 @@ const KendoWindow = ({
       "@p_work_type": "DETAIL",
       "@p_form_id": pathname,
       "@p_lang_id": "",
-      "@p_process_type": workType === "U" ? processType : "",
+      "@p_process_type": workType === "U" ? option_id : "",
       "@p_message": "",
     },
   };
@@ -544,6 +556,7 @@ const KendoWindow = ({
   const fetchMain = async () => {
     let data: any;
 
+    console.log(parameters);
     try {
       data = await processApi<any>("platform-procedure", parameters);
     } catch (error) {
@@ -569,13 +582,13 @@ const KendoWindow = ({
       });
 
       const row = data.tables[0].Rows[0];
-      const { process_type, message_id } = row;
+      const { option_id, option_name } = row;
 
       setInitialVal((prev) => {
         return {
           ...prev,
-          process_type,
-          message_id,
+          option_id,
+          option_name,
         };
       });
     }
@@ -742,8 +755,8 @@ const KendoWindow = ({
         key={formKey}
         initialValues={{
           rowstatus: "",
-          process_type: initialVal.process_type,
-          message_id: initialVal.message_id,
+          option_id: initialVal.option_id,
+          option_name: initialVal.option_name,
           orderDetails: detailDataResult.data, //detailDataResult.data,
         }}
         render={(formRenderProps: FormRenderProps) => (
@@ -762,14 +775,14 @@ const KendoWindow = ({
               <FieldWrap fieldWidth="25%">
                 <Field
                   label={"타입ID"}
-                  name={"process_type"}
+                  name={"option_id"}
                   component={FormInput}
                   validator={validator}
                   className="required"
                 />
                 <Field
                   label={"설명"}
-                  name={"message_id"}
+                  name={"option_name"}
                   component={FormInput}
                   validator={validator}
                   className="required"

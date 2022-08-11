@@ -53,12 +53,12 @@ export const USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT =
 const deletedRows: object[] = [];
 
 const FORM_DATA_INDEX = "formDataIndex";
-const DATA_ITEM_KEY = "field_name ";
+const DATA_ITEM_KEY = "column_id ";
 
 const idGetter = getter(FORM_DATA_INDEX);
 const SELECTED_FIELD: string = "selected";
 
-const pathname: string = window.location.pathname;
+const pathname: string = window.location.pathname.replace("/", "");
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -142,7 +142,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
-      return { ...item, [FORM_DATA_INDEX]: index };
+      return {
+        ...item,
+        [FORM_DATA_INDEX]: index,
+      };
     }
   );
 
@@ -318,9 +321,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           />
           <GridColumn field="rowstatus" title=" " width="40px" />
           <GridColumn
-            field="field_name"
+            field="column_id"
             title="필드명"
-            width="160px"
+            //width="160px"
             cell={NameCell}
             headerCell={RequiredHeader}
             className="required"
@@ -328,52 +331,30 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="caption"
             title="캡션"
-            width="180px"
+            //width="180px"
             cell={NameCell}
           />
           <GridColumn
-            field="column_visible"
-            title="컬럼 보이기"
-            width="120px"
-            cell={NameCell}
+            field="sort_order"
+            title="컬럼 순서"
+            width="200px"
+            cell={NumberCell}
             headerCell={RequiredHeader}
             className="required"
           />
           <GridColumn
-            field="column_width"
+            field="width"
             title="컬럼너비"
-            width="120px"
+            width="180px"
             cell={NumberCell}
           />
           <GridColumn
-            field="user_edit_yn"
-            title="수정가능여부"
-            width="120px"
+            field="user_editable"
+            title="사용자 수정가능여부"
+            width="180px"
             cell={NameCell}
             headerCell={RequiredHeader}
             className="required"
-          />
-          <GridColumn
-            field="user_required_yn"
-            title="필수여부"
-            width="120px"
-            cell={NameCell}
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn
-            field="column_type"
-            title="컬럼타입"
-            width="120px"
-            cell={NameCell} //CellDropDownList
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn
-            field="column_className"
-            title="ClassName"
-            width="120px"
-            cell={NameCell}
           />
         </Grid>
       </USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider>
@@ -433,8 +414,8 @@ const KendoWindow = ({
   );
 
   const [initialVal, setInitialVal] = useState({
-    message_id: "",
-    parent_component: "",
+    option_id: "",
+    option_name: "",
   });
 
   //요약정보 조회조건 파라미터
@@ -550,13 +531,13 @@ const KendoWindow = ({
       });
 
       const row = data.tables[0].Rows[0];
-      const { parent_component, message_id } = row;
+      const { option_id, option_name } = row;
 
       setInitialVal((prev) => {
         return {
           ...prev,
-          parent_component,
-          message_id,
+          option_id,
+          option_name,
         };
       });
     }
@@ -607,7 +588,7 @@ const KendoWindow = ({
           throw "컬럼 보이기를 선택하세요.";
         }
         if (!item.user_edit_yn) {
-          throw "수정가능여부 선택하세요.";
+          throw "사용자 수정가능여부 선택하세요.";
         }
         if (!item.user_required_yn) {
           throw "필수여부를 선택하세요.";
@@ -697,8 +678,8 @@ const KendoWindow = ({
         key={formKey}
         initialValues={{
           rowstatus: "",
-          parent_component: initialVal.parent_component,
-          message_id: initialVal.message_id,
+          option_id: initialVal.option_id,
+          option_name: initialVal.option_name,
           orderDetails: detailDataResult.data, //detailDataResult.data,
         }}
         render={(formRenderProps: FormRenderProps) => (
@@ -717,14 +698,14 @@ const KendoWindow = ({
               <FieldWrap fieldWidth="25%">
                 <Field
                   label={"영역ID"}
-                  name={"parent_component"}
+                  name={"option_id"}
                   component={FormInput}
                   validator={validator}
                   className="required"
                 />
                 <Field
                   label={"영역명"}
-                  name={"message_id"}
+                  name={"option_name"}
                   component={FormInput}
                   validator={validator}
                   className="required"

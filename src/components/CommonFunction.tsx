@@ -1,6 +1,6 @@
 import { FieldRenderProps } from "@progress/kendo-react-form";
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
-import * as React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useApi } from "../hooks/api";
 import { Iparameters } from "../store/types";
 import { commonCodeDefaultValue } from "./CommonString";
@@ -78,15 +78,53 @@ export const numberWithCommas = (num: number) => {
   }
 };
 
+//비즈니스 컴포넌트 조회
+export const UseBizComponents = (bizComponentId: string, setListData: any) => {
+  const processApi = useApi();
+
+  useEffect(() => {
+    console.log("bizComponentId");
+    console.log(bizComponentId);
+
+    if (bizComponentId !== null) {
+      fetchData();
+    }
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    let data: any;
+
+    let id = {
+      id: "biz-components?id=" + bizComponentId,
+    };
+
+    console.log("id~!");
+    console.log(id);
+
+    try {
+      data = await processApi<any>("biz-components", id);
+    } catch (error) {
+      data = null;
+    }
+
+    console.log("data~!");
+    console.log(data);
+
+    if (data.isSuccess === true) {
+      setListData(data);
+    }
+  }, []);
+};
+
 //쿼리 스트링을 받아서 조회 후 결과값을 반환
 export const UseCommonQuery = (queryStr: string, setListData: any) => {
   const processApi = useApi();
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = React.useCallback(async () => {
+  const fetchData = useCallback(async () => {
     let data: any;
 
     let query = {
@@ -102,6 +140,78 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
+    }
+  }, []);
+};
+
+//현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
+export const UseCustomOption = (pathname: string, setListData: any) => {
+  //const [bizComponentData, setBizComponentData] = React.useState(null);
+  const processApi = useApi();
+
+  React.useEffect(() => {
+    fetchCustomOptionData();
+  }, []);
+
+  //커스텀 옵션 조회
+  const fetchCustomOptionData = React.useCallback(async () => {
+    let data: any;
+    try {
+      data = await processApi<any>("custom-option", {
+        formId: pathname.replace("/", ""),
+      });
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      fetchBizComponentData(data);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  }, []);
+
+  //비즈니스 컴포넌트 조회
+  const fetchBizComponentData = useCallback(async (customOptionData: any) => {
+    let data: any;
+
+    const bizComponentId = Object.values(
+      customOptionData.menuCustomDefaultOptions.query.map(
+        (item: any) => item.bizComponentId
+      )
+    ).toString();
+
+    let id = {
+      id: "biz-components?id=" + bizComponentId,
+    };
+
+    try {
+      data = await processApi<any>("biz-components", id);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      //비즈니스 컴포넌트 조회 반환문 참조하여 쿼리 및 컬럼정보 추가
+      data.forEach((bcItem: any) => {
+        customOptionData.menuCustomDefaultOptions.query.forEach(
+          (defaultItem: any) => {
+            if (bcItem.bizComponentId === defaultItem.bizComponentId) {
+              defaultItem["query"] = (
+                bcItem["querySelect"] +
+                " " +
+                bcItem["queryWhere"] +
+                " " +
+                bcItem["queryFooter"]
+              ).replace(/\r\n/gi, " ");
+              defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
+            }
+          }
+        );
+      });
+
+      setListData(customOptionData);
     }
   }, []);
 };
@@ -148,47 +258,44 @@ export const UseMenuColumns = (pathname: string, setListData: any) => {
 };
 
 //현재 경로를 받아서 기본값 리스트 조회 후 결과값을 반환
-export const UseMenuDefaults = (pathname: string, setListData: any) => {
-  const processApi = useApi();
+// export const UseMenuDefaults = (pathname: string, setListData: any) => {
+//   const processApi = useApi();
 
-  React.useEffect(() => {
-    fetchData();
-  }, []);
+//   React.useEffect(() => {
+//     fetchData();
+//   }, []);
 
-  const parameters: Iparameters = {
-    procedureName: "WEB_sys_sel_default_management",
-    pageNumber: 1,
-    pageSize: 200,
-    parameters: {
-      "@p_work_type": "FormDefault",
-      "@p_form_id": pathname,
-      "@p_lang_id": "",
-      "@p_process_type": "",
-      "@p_message": "",
-    },
-  };
+//   const parameters: Iparameters = {
+//     procedureName: "WEB_sys_sel_default_management",
+//     pageNumber: 1,
+//     pageSize: 200,
+//     parameters: {
+//       "@p_work_type": "FormDefault",
+//       "@p_form_id": pathname.replace("/", ""),
+//       "@p_lang_id": "",
+//       "@p_process_type": "",
+//       "@p_message": "",
+//     },
+//   };
 
-  const fetchData = React.useCallback(async () => {
-    let data: any;
+//   const fetchData = React.useCallback(async () => {
+//     let data: any;
 
-    try {
-      data = await processApi<any>("platform-procedure", parameters);
-    } catch (error) {
-      data = null;
-    }
+//     try {
+//       data = await processApi<any>("platform-procedure", parameters);
+//     } catch (error) {
+//       data = null;
+//     }
 
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-  }, []);
-};
-
-//한번에 조회할 데이터 수 디폴트 값
-export const pageSize = 20;
+//     if (data.isSuccess === true) {
+//       const rows = data.tables[0].Rows;
+//       setListData(rows);
+//     } else {
+//       console.log("[오류 발생]");
+//       console.log(data);
+//     }
+//   }, []);
+// };
 
 //그리드 스크롤을 맨 아래로 내렸을 때, 조회할 데이터가 남았으면 true 반환
 export const chkScrollHandler = (
@@ -287,4 +394,18 @@ export const getGridItemChangedData = (
       total: prev.total,
     };
   });
+};
+
+//[조회조건] queryStr 변수값 구하기
+export const findCustomOptionQuery = (customOptionData: any, id: string) => {
+  return customOptionData.menuCustomDefaultOptions.query.find(
+    (item: any) => item.id === id
+  ).query;
+};
+
+//[조회조건] columns 변수값 구하기
+export const findCustomOptionColumns = (customOptionData: any, id: string) => {
+  return customOptionData.menuCustomDefaultOptions.query.find(
+    (item: any) => item.id === id
+  ).bizComponentItems;
 };

@@ -85,6 +85,7 @@ type TGridContainerWrap = {
 export const GridContainerWrap = styled.div<TGridContainerWrap>`
   display: flex;
   gap: ${(props) => (props.flexDirection === "column" ? "0" : "15px")};
+  justify-content: space-between;
   flex-direction: ${(props) => props.flexDirection};
   max-width: ${(props) => props.maxWidth};
 `;

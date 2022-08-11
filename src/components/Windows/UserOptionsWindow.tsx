@@ -85,7 +85,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }
   }, [tabSelected]);
 
-  const pathname: string = window.location.pathname;
+  const pathname: string = window.location.pathname.replace("/", "");
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
@@ -129,7 +129,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     parameters: {
       "@p_work_type": "DETAIL",
       "@p_dbname": columnDetailInitialVal.dbname,
-      "@p_form_id": pathname,
+      "@p_form_id": pathname.replace("/", ""),
       "@p_lang_id": "",
       "@p_parent_component": columnDetailInitialVal.parent_component,
       "@p_message": "",
@@ -223,6 +223,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const fetchDetailDefault = async () => {
     let data: any;
 
+    console.log("defaultDetailParameters");
+    console.log(defaultDetailParameters);
     try {
       data = await processApi<any>(
         "platform-procedure",
@@ -445,10 +447,10 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const [defaultWindowVisible, setDefaultWindowVisible] =
     useState<boolean>(false);
 
-  const MAIN_COLUMN_DATA_ITEM_KEY = "parent_component";
-  const DETAIL_COLUMN_DATA_ITEM_KEY = "field_name";
-  const MAIN_DEFAULT_DATA_ITEM_KEY = "process_type";
-  const DETAIL_DEFAULT_DATA_ITEM_KEY = "field_name";
+  const MAIN_COLUMN_DATA_ITEM_KEY = "option_id";
+  const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
+  const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
+  const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
 
   const mainColumnIdGetter = getter(MAIN_COLUMN_DATA_ITEM_KEY);
   const detailColumnIdGetter = getter(DETAIL_COLUMN_DATA_ITEM_KEY);
@@ -558,7 +560,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setColumnDetailInitialVal((prev) => ({
       ...prev,
       dbname: "SYSTEM", //selectedRowData.dbname,
-      parent_component: selectedRowData.parent_component,
+      parent_component: selectedRowData.option_id,
     }));
   };
 
@@ -583,7 +585,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
     setDetailDefaultInitialVal((prev) => ({
       ...prev,
-      process_type: selectedRowData.process_type,
+      process_type: selectedRowData.option_id,
     }));
   };
 
@@ -947,10 +949,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     const onEditClick = () => {
       // 요약정보 행 클릭
       const rowData = props.dataItem;
-      setMainColumnSelectedState({ [rowData.parent_component]: true });
+      setMainColumnSelectedState({
+        [rowData[MAIN_COLUMN_DATA_ITEM_KEY]]: true,
+      });
 
       // 컬럼 팝업 창 오픈 (수정용)
-      setParentComponent(rowData.parent_component);
+      setParentComponent(rowData[MAIN_COLUMN_DATA_ITEM_KEY]);
       setColumnWindowWorkType("U");
       setColumnWindowVisible(true);
     };
@@ -966,10 +970,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     const onEditClick = () => {
       // 요약정보 행 클릭
       const rowData = props.dataItem;
-      setMainColumnSelectedState({ [rowData.process_type]: true });
+      setMainColumnSelectedState({
+        [rowData[MAIN_DEFAULT_DATA_ITEM_KEY]]: true,
+      });
 
       // 컬럼 팝업 창 오픈 (수정용)
-      setProcessType(rowData.process_type);
+      setProcessType(rowData[MAIN_DEFAULT_DATA_ITEM_KEY]);
       setDefaultWindowWorkType("U");
       setDefaultWindowVisible(true);
     };
@@ -1047,6 +1053,24 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
             <GridContainer maxWidth="300px">
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onCreateDefaultClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onDeleteDefaultClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
               <Grid
                 style={{ height: "600px" }}
@@ -1081,8 +1105,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 resizable={true}
               >
                 <GridColumn cell={DefaultCommandCell} width="55px" />
-                <GridColumn field="process_type" title="타입ID" />
-                <GridColumn field="message_id" title="설명" />
+                <GridColumn field="option_id" title="타입ID" />
+                <GridColumn field="option_name" title="설명" />
               </Grid>
             </GridContainer>
 
@@ -1094,23 +1118,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 <GridTitle>상세정보</GridTitle>
 
                 <ButtonContainer>
-                  <Button
-                    onClick={onCreateDefaultClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onDeleteDefaultClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button>
-
                   <Button
                     //onClick={onSaveMtrClick}
                     fillMode="outline"
@@ -1196,6 +1203,25 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
             <GridContainer maxWidth="300px">
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
+
+                <ButtonContainer>
+                  <Button
+                    onClick={onCreateColumnClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onDeleteColumnClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
               <Grid
                 style={{ height: "600px" }}
@@ -1230,7 +1256,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 resizable={true}
               >
                 <GridColumn cell={ColumnCommandCell} width="55px" />
-                <GridColumn field="message_id" title="영역" />
+                <GridColumn field="option_name" title="영역" />
               </Grid>
             </GridContainer>
 
@@ -1264,22 +1290,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                     themeColor={"primary"}
                     icon="chevron-down"
                   ></Button>
-                  <Button
-                    onClick={onCreateColumnClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onDeleteColumnClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button>
 
                   <Button
                     //onClick={onSaveMtrClick}
@@ -1294,6 +1304,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 data={process(
                   detailColumnDataResult.data.map((row) => ({
                     ...row,
+                    sort_order: row.sort_order === -1 ? "N" : "Y",
                     [SELECTED_FIELD]:
                       detailColumnSelectedState[detailColumnIdGetter(row)],
                   })),
@@ -1334,23 +1345,9 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                   width="40px"
                   editable={false}
                 />
-                <GridColumn
-                  field="caption"
-                  title="컬럼"
-                  width=""
-                  editable={false}
-                />
-                <GridColumn
-                  field="column_visible"
-                  title="컬럼 보이기"
-                  width=""
-                />
-                <GridColumn
-                  field="column_width"
-                  title="너비"
-                  width=""
-                  editor={"numeric"}
-                />
+                <GridColumn field="caption" title="컬럼" editable={false} />
+                <GridColumn field="sort_order" title="컬럼 보이기" />
+                <GridColumn field="width" title="너비" editor={"numeric"} />
               </Grid>
             </GridContainer>
           </GridContainerWrap>
@@ -1370,7 +1367,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
         <DefaultWindow
           getVisible={setDefaultWindowVisible}
           workType={defaultWindowWorkType}
-          processType={processType}
+          option_id={processType}
           reloadData={reloadData}
         />
       )}
