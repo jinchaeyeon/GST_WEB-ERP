@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import * as React from "react";
 import { Checkbox, Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import {
@@ -16,6 +17,7 @@ import {
 import { USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT } from "./UserOptionsColumnWindow";
 import { USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT } from "./UserOptionsDefaultWindow";
 import FeildDropDownList from "../DropDownLists/FeildDropDownList";
+import FieldComboBox from "../ComboBoxes/FieldComboBox";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 
 import {
@@ -28,7 +30,11 @@ import {
   usersQuery,
 } from "../CommonString";
 import { BlurEvent } from "@progress/kendo-react-dropdowns/dist/npm/common/events";
-import { checkIsDDLValid, getItemQuery } from "../CommonFunction";
+import {
+  checkIsDDLValid,
+  getItemQuery,
+  getQueryFromBizComponent,
+} from "../CommonFunction";
 import moment from "moment";
 
 const FORM_DATA_INDEX = "formDataIndex";
@@ -50,6 +56,13 @@ const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
 
 //Grid Cell에 표시되는 DropDownList Name Value
 const DisplayDDLValue = (fieldRenderProps: FieldRenderProps) => {
+  return <>{fieldRenderProps.value ? fieldRenderProps.value.code_name : ""}</>;
+};
+
+//Grid Cell에 표시되는 ComboBox Name Value
+const DisplayComboBoxValue = (fieldRenderProps: FieldRenderProps) => {
+  console.log("fieldRenderProps");
+  console.log(fieldRenderProps);
   return <>{fieldRenderProps.value ? fieldRenderProps.value.code_name : ""}</>;
 };
 
@@ -141,6 +154,22 @@ const DDLWithValidation = (fieldRenderProps: FieldRenderProps) => {
   );
 };
 
+//Grid Cell 수정모드에서 사용되는 ComboBox
+const ComboBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
+  const { queryStr, textField } = fieldRenderProps;
+
+  return (
+    <div>
+      <FieldComboBox
+        fieldRenderProps={fieldRenderProps}
+        queryStr={queryStr}
+        textField={textField}
+      />
+      {/* {visited && validationMessage && <Error>{validationMessage}</Error>} */}
+    </div>
+  );
+};
+
 //Grid Cell 수정모드에서 사용되는 CheckBox
 const CheckBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
   const { validationMessage, visited, value, label, id, valid, ...others } =
@@ -177,39 +206,14 @@ const CheckBoxReadOnly = (fieldRenderProps: FieldRenderProps) => {
   );
 };
 
-//그리드에 맞는 FormGridEditContext를 반환
-export const UseGetParentField = (srcPgName: string) => {
-  const { parentField: SA_B2000_Window_parentField } =
-    React.useContext(FormGridEditContext);
-  const { parentField: PR_A1100_WINDOW_PRC_PARENT_FIELD } = React.useContext(
-    PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT
-  );
-  const { parentField: PR_A1100_WINDOW_MTR_PARENT_FIELD } = React.useContext(
-    PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT
-  );
-  const { parentField: USER_OPTIONS_COLUMN_WINDOW_PARENT_FIELD } =
-    React.useContext(USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT);
-  const { parentField: USER_OPTIONS_DEFAULT_WINDOW_PARENT_FIELD } =
-    React.useContext(USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT);
-
-  return srcPgName === "PR_A1100_WINDOW_PRC"
-    ? PR_A1100_WINDOW_PRC_PARENT_FIELD
-    : srcPgName === "PR_A1100_WINDOW_MTL"
-    ? PR_A1100_WINDOW_MTR_PARENT_FIELD
-    : srcPgName === "USER_OPTIONS_COLUMN_WINDOW"
-    ? USER_OPTIONS_COLUMN_WINDOW_PARENT_FIELD
-    : srcPgName === "USER_OPTIONS_DEFAULT_WINDOW"
-    ? USER_OPTIONS_DEFAULT_WINDOW_PARENT_FIELD
-    : SA_B2000_Window_parentField;
-};
-
 //Grid Cell에서 사용되는 Number Feild
 export const NumberCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
 
-  const srcPgName = dataItem.srcPgName;
-  const parentField = UseGetParentField(srcPgName);
+  //const srcPgName = dataItem.srcPgName;
+  //const parentField = UseGetParentField(srcPgName);
+  const parentField = dataItem.parentField;
 
   let defaultRendering = (
     <td className={className ?? ""} style={{ textAlign: "right" }}>
@@ -230,9 +234,7 @@ export const NumberCell = (props: GridCellProps) => {
 export const NameCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
-
-  const srcPgName = dataItem.srcPgName;
-  const parentField = UseGetParentField(srcPgName);
+  const parentField = dataItem.parentField;
 
   let defaultRendering = (
     <td className={className ?? ""}>
@@ -252,9 +254,7 @@ export const NameCell = (props: GridCellProps) => {
 export const ReadOnlyNameCell = (props: GridCellProps) => {
   //  const { parentField } = React.useContext(FormGridEditContext);
   const { field, dataItem, className } = props;
-
-  const srcPgName = dataItem.srcPgName;
-  const parentField = UseGetParentField(srcPgName);
+  const parentField = dataItem.parentField;
 
   return (
     <td className={className ?? ""}>
@@ -269,9 +269,7 @@ export const ReadOnlyNameCell = (props: GridCellProps) => {
 //Grid Cell에서 사용되는 ReadOnly NumberCell
 export const ReadOnlyNumberCell = (props: GridCellProps) => {
   const { field, dataItem, className } = props;
-
-  const srcPgName = dataItem.srcPgName;
-  const parentField = UseGetParentField(srcPgName);
+  const parentField = dataItem.parentField;
 
   return (
     <td className={className ?? ""} style={{ textAlign: "right" }}>
@@ -287,19 +285,21 @@ export const ReadOnlyNumberCell = (props: GridCellProps) => {
 export const CellDropDownList = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
+  const parentField = dataItem.parentField;
 
-  const srcPgName = dataItem.srcPgName;
-  const parentField = UseGetParentField(srcPgName);
+  const queryStr = dataItem[field ?? ""];
 
-  let queryStr = "SELECT '' sub_code, '' code_name";
+  console.log("props!!");
+  console.log(queryStr);
+  // "SELECT '' sub_code, '' code_name";
 
-  if (field === "itemacnt") queryStr = itemacntQuery;
-  else if (field === "qtyunit") queryStr = qtyunitQuery;
-  else if (field === "proccd") queryStr = proccdQuery;
-  else if (field === "outprocyn") queryStr = outprocynQuery;
-  else if (field === "prodmac") queryStr = prodmacQuery;
-  else if (field === "outgb") queryStr = outgbQuery;
-  else if (field === "prodemp") queryStr = usersQuery;
+  // if (field === "itemacnt") queryStr = itemacntQuery;
+  // else if (field === "qtyunit") queryStr = qtyunitQuery;
+  // else if (field === "proccd") queryStr = proccdQuery;
+  // else if (field === "outprocyn") queryStr = outprocynQuery;
+  // else if (field === "prodmac") queryStr = prodmacQuery;
+  // else if (field === "outgb") queryStr = outgbQuery;
+  // else if (field === "prodemp") queryStr = usersQuery;
 
   const required = className?.includes("required");
 
@@ -309,6 +309,43 @@ export const CellDropDownList = (props: GridCellProps) => {
         name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
         component={isInEdit ? DDLWithValidation : DisplayDDLValue}
         queryStr={queryStr}
+        className={className ?? ""}
+      />
+    </td>
+  );
+
+  return render
+    ? render.call(undefined, defaultRendering, props)
+    : defaultRendering;
+};
+
+interface CustomCellProps extends GridCellProps {
+  bizComponent: any;
+  textField?: string;
+}
+export const CellComboBox = (props: CustomCellProps) => {
+  const {
+    field,
+    dataItem,
+    className,
+    render,
+    bizComponent,
+    textField = "code_name",
+  } = props;
+  const isInEdit = field === dataItem.inEdit;
+  const parentField = dataItem.parentField;
+
+  const query = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
+  const bizComponentItems = bizComponent ? bizComponent.bizComponentItems : [];
+
+  let defaultRendering = (
+    <td className={className}>
+      <Field
+        name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
+        component={isInEdit ? ComboBoxWithValidation : DisplayComboBoxValue}
+        queryStr={query}
+        textField={textField}
+        columns={bizComponentItems}
         className={className ?? ""}
       />
     </td>

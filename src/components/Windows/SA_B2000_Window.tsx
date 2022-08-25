@@ -53,6 +53,7 @@ import {
   CellDropDownList,
   CellCheckBoxReadOnly,
   ReadOnlyNumberCell,
+  CellComboBox,
 } from "./editors";
 import { Iparameters } from "../../store/types";
 import {
@@ -61,7 +62,10 @@ import {
   convertDateToStr,
   dateformat,
   getItemQuery,
+  getQueryFromBizComponent,
+  UseBizComponent,
   UseCommonQuery,
+  UseCustomOption,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -92,6 +96,7 @@ import {
 
 import { CellRender, RowRender } from "./renderers";
 import UserEffect from "../UserEffect";
+import { convertTypeAcquisitionFromJson } from "typescript";
 
 // Validate the entire Form
 const arrayLengthValidator = (value: any) =>
@@ -165,114 +170,19 @@ type TDetailData = {
   bf_qty_s: string[];
 };
 
-// Add a command cell to Edit, Update, Cancel and Delete an item
-const CommandCell = (props: GridCellProps) => {
-  const { onRemove, onEdit, onSave, onCancel, onCopy, editIndex } =
-    React.useContext(FormGridEditContext);
-  const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
-  const isNewItem = !props.dataItem[DATA_ITEM_KEY];
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_BA061,L_BA015", setBizComponentData);
 
-  const onRemoveClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onRemove(props.dataItem);
-    },
-    [props.dataItem, onRemove]
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "itemacnt" ? "L_BA061" : field === "qtyunit" ? "L_BA015" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
-  const onCopyClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onCopy(props.dataItem);
-    },
-    [props.dataItem, onCopy]
-  );
-
-  const onEditClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onEdit(props.dataItem, isNewItem);
-    },
-    [props.dataItem, onEdit, isNewItem]
-  );
-
-  const onSaveClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onSave();
-    },
-    [onSave]
-  );
-
-  const onCancelClick = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      onCancel();
-    },
-    [onCancel]
-  );
-
-  return isInEdit ? (
-    <td className="k-command-cell">
-      <Button
-        className="k-grid-save-command"
-        themeColor={"primary"}
-        //fillMode="outline"
-        onClick={onSaveClick}
-        icon="check"
-      >
-        {/* {isNewItem ? "수정완료" : "수정완료2"} */}
-      </Button>
-      <Button
-        className="k-grid-edit-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={onCopyClick}
-        icon="copy"
-      >
-        {/* 복사 */}
-      </Button>
-      <Button
-        className="k-grid-cancel-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={isNewItem ? onRemoveClick : onCancelClick}
-        icon="delete"
-      >
-        {/* {isNewItem ? "삭제" : "취소"} */}
-      </Button>
-    </td>
-  ) : (
-    <td className="k-command-cell">
-      <Button
-        className="k-grid-edit-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={onEditClick}
-        icon="edit"
-      >
-        {/* 수정 */}
-      </Button>
-      <Button
-        className="k-grid-edit-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={onCopyClick}
-        icon="copy"
-      >
-        {/* 복사 */}
-      </Button>
-      <Button
-        className="k-grid-remove-command"
-        themeColor={"primary"}
-        fillMode="outline"
-        onClick={onRemoveClick}
-        icon="delete"
-      >
-        {/* 삭제 */}
-      </Button>
-    </td>
-  );
+  return <CellComboBox bizComponent={bizComponent} {...props} />;
 };
 
 // Create the Grid that will be used inside the Form
@@ -286,6 +196,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const [editedRowIdx, setEditedRowIdx] = useState(-1);
   const [editedRowData, setEditedRowData] = useState({});
+  const pathname: string = window.location.pathname.replace("/", "");
 
   const ItemBtnCell = (props: GridCellProps) => {
     const { editIndex } = React.useContext(FormGridEditContext);
@@ -311,6 +222,11 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       </td>
     );
   };
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
   // Add a new item to the Form FieldArray that will be shown in the Grid
   const onAdd = React.useCallback(
     (e: any) => {
@@ -318,6 +234,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       fieldArrayRenderProps.onPush({
         value: {
           rowstatus: "N",
+          // customOptionData.menuCustomDefaultOptions.new.find(
+          //   (item: any) => item.id === "cboOrdtype"
+          // ).value,
           qty: 0,
           specialunp: 0,
           specialamt: 0,
@@ -461,7 +380,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   };
 
   //드롭다운리스트 데이터 조회 (품목계정)
-  const [itemacntListData, setItemacntListData] = React.useState([
+  const [itemacntListData, setItemacntListData] = useState([
     commonCodeDefaultValue,
   ]);
   UseCommonQuery(itemacntQuery, setItemacntListData);
@@ -732,6 +651,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     });
   };
   const calculateSpecialAmt = () => {};
+
   return (
     <GridContainer margin={{ top: "30px" }}>
       <FormGridEditContext.Provider
@@ -752,6 +672,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         <Grid
           data={dataWithIndexes.map((item: any) => ({
             ...item,
+            parentField: name,
             [SELECTED_FIELD]: selectedState[idGetter(item)],
           }))}
           total={dataWithIndexes.total}
@@ -809,7 +730,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             </Button>
           </GridToolbar>
 
-          {/* <GridColumn cell={CommandCell} width="130px" /> */}
           <GridColumn
             field={SELECTED_FIELD}
             width="45px"
@@ -847,7 +767,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="itemacnt"
             title="품목계정"
             width="120px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
             headerCell={RequiredHeader}
             className="required"
           />
@@ -863,7 +783,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="qtyunit"
             title="단위"
             width="120px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
           />
           <GridColumn
             field="specialunp"
@@ -1179,14 +1099,14 @@ const KendoWindow = ({
   }, [detailDataResult]);
 
   //itemacnt, qtyunit list가 조회된 후 상세그리드 조회
-  useEffect(() => {
-    if (workType === "U" || isCopy === true) {
-      if (itemacntListData.length > 0 && qtyunitListData.length > 0) {
-        resetAllGrid();
-        fetchGrid();
-      }
-    }
-  }, [itemacntListData, qtyunitListData]);
+  // useEffect(() => {
+  //   if (workType === "U" || isCopy === true) {
+  //     if (itemacntListData.length > 0 && qtyunitListData.length > 0) {
+  //       resetAllGrid();
+  //       fetchGrid();
+  //     }
+  //   }
+  // }, [itemacntListData, qtyunitListData]);
 
   //상세그리드 조회
   const fetchGrid = async () => {
@@ -1789,6 +1709,19 @@ const KendoWindow = ({
       };
     });
   };
+
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_BA061,L_BA015", setBizComponentData);
+
+  useEffect(() => {
+    if (workType === "U" || isCopy === true) {
+      if (bizComponentData.length) {
+        resetAllGrid();
+        fetchGrid();
+      }
+    }
+  }, [bizComponentData]);
+
   return (
     <Window
       title={workType === "N" ? "수주생성" : "수주정보"}
@@ -2088,12 +2021,7 @@ const KendoWindow = ({
 
             <BottomContainer>
               <ButtonContainer>
-                <Button
-                  type={"submit"}
-                  themeColor={"primary"}
-                  icon="save"
-                  //disabled={!formRenderProps.allowSubmit}
-                >
+                <Button type={"submit"} themeColor={"primary"} icon="save">
                   저장
                 </Button>
               </ButtonContainer>

@@ -82,9 +82,6 @@ export const UseBizComponents = (bizComponentId: string, setListData: any) => {
   const processApi = useApi();
 
   useEffect(() => {
-    console.log("bizComponentId");
-    console.log(bizComponentId);
-
     if (bizComponentId !== null) {
       fetchData();
     }
@@ -105,9 +102,6 @@ export const UseBizComponents = (bizComponentId: string, setListData: any) => {
     } catch (error) {
       data = null;
     }
-
-    console.log("data~!");
-    console.log(data);
 
     if (data.isSuccess === true) {
       setListData(data);
@@ -215,6 +209,45 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
   }, []);
 };
 
+//비즈니스 컴포넌트 조회
+export const UseBizComponent = (bizComponentId: string, setListData: any) => {
+  //const [bizComponentData, setBizComponentData] = React.useState(null);
+  const processApi = useApi();
+
+  React.useEffect(() => {
+    fetchBizComponentData();
+  }, []);
+
+  const fetchBizComponentData = useCallback(async () => {
+    let data: any;
+
+    let id = {
+      id: "biz-components?id=" + bizComponentId,
+    };
+
+    try {
+      data = await processApi<any>("biz-components", id);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      setListData((prev: any) => [...prev, ...data]);
+    }
+  }, []);
+};
+
+//비즈니스 컴포넌트 객체를 인수로 받아서 쿼리문을 반환
+export const getQueryFromBizComponent = (bcItem: any) => {
+  return (
+    bcItem["querySelect"] +
+    " " +
+    bcItem["queryWhere"] +
+    " " +
+    bcItem["queryFooter"]
+  ).replace(/\r\n/gi, " ");
+};
+
 //현재 경로를 받아서 컬럼 리스트 조회 후 결과값을 반환
 export const UseMenuColumns = (pathname: string, setListData: any) => {
   const processApi = useApi();
@@ -255,46 +288,6 @@ export const UseMenuColumns = (pathname: string, setListData: any) => {
     }
   }, []);
 };
-
-//현재 경로를 받아서 기본값 리스트 조회 후 결과값을 반환
-// export const UseMenuDefaults = (pathname: string, setListData: any) => {
-//   const processApi = useApi();
-
-//   React.useEffect(() => {
-//     fetchData();
-//   }, []);
-
-//   const parameters: Iparameters = {
-//     procedureName: "WEB_sys_sel_default_management",
-//     pageNumber: 1,
-//     pageSize: 200,
-//     parameters: {
-//       "@p_work_type": "FormDefault",
-//       "@p_form_id": pathname.replace("/", ""),
-//       "@p_lang_id": "",
-//       "@p_process_type": "",
-//       "@p_message": "",
-//     },
-//   };
-
-//   const fetchData = React.useCallback(async () => {
-//     let data: any;
-
-//     try {
-//       data = await processApi<any>("platform-procedure", parameters);
-//     } catch (error) {
-//       data = null;
-//     }
-
-//     if (data.isSuccess === true) {
-//       const rows = data.tables[0].Rows;
-//       setListData(rows);
-//     } else {
-//       console.log("[오류 발생]");
-//       console.log(data);
-//     }
-//   }, []);
-// };
 
 //그리드 스크롤을 맨 아래로 내렸을 때, 조회할 데이터가 남았으면 true 반환
 export const chkScrollHandler = (
@@ -395,20 +388,21 @@ export const getGridItemChangedData = (
   });
 };
 
-//[조회조건] queryStr 변수값 구하기
-export const findCustomOptionQuery = (customOptionData: any, id: string) => {
-  return customOptionData.menuCustomDefaultOptions.query.find(
-    (item: any) => item.id === id
-  ).query;
-};
+// //[조회조건] queryStr 변수값 구하기
+// export const findCustomOptionQuery = (customOptionData: any, id: string) => {
+//   return customOptionData.menuCustomDefaultOptions.query.find(
+//     (item: any) => item.id === id
+//   ).query;
+// };
 
-//[조회조건] columns 변수값 구하기
-export const findCustomOptionColumns = (customOptionData: any, id: string) => {
-  return customOptionData.menuCustomDefaultOptions.query.find(
-    (item: any) => item.id === id
-  ).bizComponentItems;
-};
+// //[조회조건] columns 변수값 구하기
+// export const findCustomOptionColumns = (customOptionData: any, id: string) => {
+//   return customOptionData.menuCustomDefaultOptions.query.find(
+//     (item: any) => item.id === id
+//   ).bizComponentItems;
+// };
 
+//Date 디폴트 값 반환
 export const setDefaultDate = (customOptionData: any, id: string) => {
   const date = customOptionData.menuCustomDefaultOptions.query.find(
     (item: any) => item.id === id
