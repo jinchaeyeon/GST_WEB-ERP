@@ -61,7 +61,7 @@ import {
   CellCheckBoxReadOnly,
   ReadOnlyNumberCell,
   FormNumericTextBox,
-} from "./editors";
+} from "../editors";
 import { Iparameters } from "../../store/types";
 import {
   checkIsDDLValid,
@@ -73,9 +73,9 @@ import {
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
-import AttachmentsWindow from "./AttachmentsWindow";
-import CustomersWindow from "./CustomersWindow";
-import ItemsWindow from "./ItemsWindow";
+import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 import {
   IAttachmentData,
   ICustData,
@@ -102,7 +102,7 @@ import {
   usersQuery,
 } from "../CommonString";
 
-import { CellRender, RowRender } from "./renderers";
+import { CellRender, RowRender } from "../renderers";
 import UserEffect from "../UserEffect";
 
 // Validate the entire Form

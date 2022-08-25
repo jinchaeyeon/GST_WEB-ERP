@@ -6,13 +6,21 @@ import {
   GridColumn,
   GridFooterCellProps,
   GridCellProps,
+  GridFilterChangeEvent,
   GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridDataStateChangeEvent,
+  getSelectedState,
+  GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import {
+  CompositeFilterDescriptor,
+  DataResult,
+  process,
+  State,
+  filterBy,
+  getter,
+} from "@progress/kendo-data-query";
+import { useApi } from "../../../hooks/api";
 
 import {
   BottomContainer,
@@ -22,7 +30,7 @@ import {
   GridContainer,
   Title,
   TitleContainer,
-} from "../../CommonStyled";
+} from "../../../CommonStyled";
 
 import {
   Input,
@@ -31,45 +39,39 @@ import {
   RadioGroup,
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
+import CommonDropDownList from "../../DropDownLists/CommonDropDownList";
 
-import { Iparameters } from "../../store/types";
+import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
-import { chkScrollHandler } from "../CommonFunction";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { useynRadioButtonData } from "../CommonString";
+import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
+import { chkScrollHandler } from "../../CommonFunction";
+import { custdivQuery, useynRadioButtonData } from "../../CommonString";
 
-type IWindow = {
-  workType: string; //구분자 "FILTER", "ROW"
+type IKendoWindow = {
   getVisible(t: boolean): void;
-  getData(data: object, rowIdx: number, rowData: object): void; //data : 품목참조팝업에서 선택한 데이터 // rowIdx, rowData : 그리드 인라인 품목참조시 사용
-  rowIdx?: number; // (그리드 인라인 품목참조시 사용) 참조버튼 클릭한 행 번호
-  rowData?: object; // (그리드 인라인 품목참조시 사용) 참조버튼 클릭한 행 번호
-  para?: Iparameters; //현재 미사용
+  getData(data: object): void;
+  workType: string;
+  para?: Iparameters;
 };
 
 const pageSize = 20;
 
-const ItemsWindow = ({
-  workType,
-  getVisible,
-  getData,
-  rowIdx,
-  rowData,
-  para,
-}: IWindow) => {
+const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: 1200,
     height: 800,
   });
-  const DATA_ITEM_KEY = "itemcd";
+
+  const DATA_ITEM_KEY = "custcd";
   const SELECTED_FIELD = "selected";
 
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -86,6 +88,14 @@ const ItemsWindow = ({
     setFilters((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  //조회조건 DropDownList Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅
+  const filterDropDownListChange = (name: string, data: TCommonCodeData) => {
+    setFilters((prev) => ({
+      ...prev,
+      [name]: data.sub_code,
     }));
   };
 
@@ -106,50 +116,33 @@ const ItemsWindow = ({
   };
 
   const processApi = useApi();
-
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
+
+  const [mainPgNum, setMainPgNum] = useState(1);
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-  const [mainPgNum, setMainPgNum] = useState(1);
 
+  //조회조건 초기값
   const [filters, setFilters] = useState({
-    itemcd: "",
-    itemnm: "",
-    insiz: "",
-    bnatur: "",
-    spec: "",
-    itemacnt: "",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
     custcd: "",
     custnm: "",
-    dwgno: "",
-    useyn: "Y",
+    custdiv: "",
+    useyn: "%",
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_ITEM_POPUP",
+    procedureName: "P_WEB_CUST_POPUP",
     pageNumber: mainPgNum,
     pageSize: pageSize,
     parameters: {
       "@p_work_type": "LIST",
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_bnatur": filters.bnatur,
-      "@p_spec": filters.spec,
-      "@p_itemacnt": filters.itemacnt,
-      "@p_itemlvl1": filters.itemlvl1,
-      "@p_itemlvl2": filters.itemlvl2,
-      "@p_itemlvl3": filters.itemlvl3,
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
-      "@p_dwgno": filters.dwgno,
+      "@p_custdiv": filters.custdiv,
       "@p_useyn": filters.useyn,
     },
   };
@@ -157,26 +150,24 @@ const ItemsWindow = ({
     fetchMainGrid();
   }, [mainPgNum]);
 
-  //그리드 조회
+  //요약정보 조회
   const fetchMainGrid = async () => {
     let data: any;
 
-    console.log("parameters");
-    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+    if (data !== null) {
+      const totalRowsCnt = data.result.totalRowCount;
+      const rows = data.result.data.Rows;
 
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowCnt,
+          total: totalRowsCnt,
         };
       });
     }
@@ -185,7 +176,7 @@ const ItemsWindow = ({
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
-    setMainDataResult(process([], {}));
+    setMainDataResult(process([], mainDataState));
   };
 
   //스크롤 핸들러 => 한번에 pageSize만큼 조회
@@ -203,43 +194,21 @@ const ItemsWindow = ({
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const CommandCell = (props: GridCellProps) => {
-    const onSelectClick = () => {
-      // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
-      const selectedData = props.dataItem;
-      getData(selectedData, rowIdx ?? -1, rowData ?? {});
-      if (rowIdx !== -1 || rowIdx === undefined) onClose();
-    };
-
-    return (
-      <td className="k-command-cell">
-        <Button
-          className="k-grid-edit-command"
-          themeColor={"primary"}
-          fillMode="outline"
-          onClick={onSelectClick}
-          icon="check"
-        ></Button>
-      </td>
-    );
-  };
-
   const onRowDoubleClick = (props: any) => {
-    const selectedData = props.dataItem;
-    selectData(selectedData);
+    // 부모로 데이터 전달, 창 닫기
+    const rowData = props.dataItem;
+    getData(rowData);
+    onClose();
   };
 
-  const onConfirmBtnClick = (props: any) => {
-    const selectedData = mainDataResult.data.find(
-      (row: any) => row.itemcd === Object.keys(selectedState)[0]
+  const onConfirmClick = (props: any) => {
+    const rowData = mainDataResult.data.find(
+      (row: any) => row.custcd === Object.keys(selectedState)[0]
     );
-    selectData(selectedData);
-  };
 
-  // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
-  const selectData = (selectedData: any) => {
-    getData(selectedData, rowIdx ?? -1, rowData ?? {});
-    if (rowIdx !== -1 || rowIdx === undefined) onClose();
+    // 부모로 데이터 전달, 창 닫기
+    getData(rowData);
+    onClose();
   };
 
   //메인 그리드 선택 이벤트
@@ -255,7 +224,7 @@ const ItemsWindow = ({
 
   return (
     <Window
-      title={"품목마스터"}
+      title={"업체마스터"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
@@ -263,7 +232,7 @@ const ItemsWindow = ({
       onClose={onClose}
     >
       <TitleContainer>
-        <Title></Title>
+        <Title />
         <ButtonContainer>
           <Button
             onClick={() => {
@@ -281,33 +250,31 @@ const ItemsWindow = ({
         <FilterBox>
           <tbody>
             <tr>
-              <th>품목코드</th>
+              <th>업체명</th>
               <td>
                 <Input
-                  name="itemcd"
+                  name="custnm"
                   type="text"
-                  value={filters.itemcd}
+                  value={filters.custnm}
                   onChange={filterInputChange}
                 />
               </td>
 
-              <th>품목명</th>
+              <th>업체코드</th>
               <td>
                 <Input
-                  name="itemnm"
+                  name="custcd"
                   type="text"
-                  value={filters.itemnm}
+                  value={filters.custcd}
                   onChange={filterInputChange}
                 />
               </td>
-
-              <th>규격</th>
+              <th>업체구분</th>
               <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
-                  onChange={filterInputChange}
+                <CommonDropDownList
+                  name="custdiv"
+                  queryStr={custdivQuery}
+                  changeData={filterDropDownListChange}
                 />
               </td>
               <th>사용여부</th>
@@ -321,45 +288,12 @@ const ItemsWindow = ({
                 />
               </td>
             </tr>
-            <tr>
-              <th>사양</th>
-              <td>
-                <Input
-                  name="spec"
-                  type="text"
-                  value={filters.spec}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>재질</th>
-              <td>
-                <Input
-                  name="bnatur"
-                  type="text"
-                  value={filters.bnatur}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>품목계정</th>
-              <td>
-                <Input
-                  name="itenacnt"
-                  type="text"
-                  value={filters.itemacnt}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th></th>
-              <td></td>
-            </tr>
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
       <GridContainer>
         <Grid
-          style={{ height: "500px" }}
+          style={{ height: "550px" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -377,7 +311,7 @@ const ItemsWindow = ({
             mode: "single",
           }}
           onSelectionChange={onMainSelectionChange}
-          //스크롤 조회기능
+          //스크롤 조회 기능
           fixedScroll={true}
           total={mainDataResult.total}
           onScroll={onScrollHandler}
@@ -392,28 +326,24 @@ const ItemsWindow = ({
           onRowDoubleClick={onRowDoubleClick}
         >
           <GridColumn
-            field="itemcd"
-            title="품목코드"
-            width="200px" /*footerCell={detailTotalFooterCell}*/
+            field="custcd"
+            title="업체코드"
+            width="140px" /*footerCell={detailTotalFooterCell}*/
           />
 
-          <GridColumn field="itemnm" title="품목명" width="200px" />
-          <GridColumn field="insiz" title="규격" width="120px" />
-          <GridColumn field="model" title="MODEL" width="120px" />
-          <GridColumn field="spec" title="사양" width="120px" />
-          <GridColumn field="itemacntnm" title="품목계정" width="120px" />
-          <GridColumn field="bnatur" title="재질" width="120px" />
-          <GridColumn field="invunitnm" title="수량단위" width="120px" />
-          <GridColumn field="unitwgt" title="단중" width="120px" />
-          <GridColumn field="useyn" title="사용여부" width="120px" />
-          <GridColumn field="wgtunitnm" title="중량단위" width="120px" />
-          <GridColumn field="maker" title="메이커" width="120px" />
-          <GridColumn field="remark" title="비고" width="120px" />
+          <GridColumn field="custnm" title="업체명" width="200px" />
+          <GridColumn field="custabbr" title="업체약어" width="120px" />
+          <GridColumn field="bizregnum" title="사업자등록번호" width="140px" />
+          <GridColumn field="custdivnm" title="업체구분" width="120px" />
+          <GridColumn field="useyn" title="사용유무" width="120px" />
+          <GridColumn field="compclass" title="업태" width="120px" />
+          <GridColumn field="ceonm" title="대표자명" width="120px" />
+          <GridColumn field="remark" title="비고" width="300px" />
         </Grid>
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
+          <Button themeColor={"primary"} onClick={onConfirmClick}>
             확인
           </Button>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
@@ -425,4 +355,4 @@ const ItemsWindow = ({
   );
 };
 
-export default ItemsWindow;
+export default KendoWindow;

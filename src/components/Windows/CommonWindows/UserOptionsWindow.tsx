@@ -16,7 +16,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import { useApi } from "../../../hooks/api";
 
 import {
   ButtonContainer,
@@ -24,17 +24,17 @@ import {
   GridContainerWrap,
   GridTitle,
   GridTitleContainer,
-} from "../../CommonStyled";
-import { Iparameters } from "../../store/types";
-import { chkScrollHandler, getGridItemChangedData } from "../CommonFunction";
+} from "../../../CommonStyled";
+import { Iparameters } from "../../../store/types";
+import { chkScrollHandler, getGridItemChangedData } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
-import ColumnWindow from "../../components/Windows/UserOptionsColumnWindow";
-import DefaultWindow from "../../components/Windows/UserOptionsDefaultWindow";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, pageSize, SELECTED_FIELD } from "../CommonString";
+import ColumnWindow from "./UserOptionsColumnWindow";
+import DefaultWindow from "./UserOptionsDefaultWindow";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { EDIT_FIELD, pageSize, SELECTED_FIELD } from "../../CommonString";
 
-import { CellRender, RowRender } from "./renderers";
+import { CellRender, RowRender } from "../../renderers";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 
 type TKendoWindow = {

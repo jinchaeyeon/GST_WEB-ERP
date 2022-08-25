@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../store/atoms";
-import UserOptionsWindow from "../components/Windows/UserOptionsWindow";
+import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import { clientWidth, gnvWidth } from "../components/CommonString";
 
 export const Wrapper = styled.div`
@@ -53,13 +53,16 @@ const paths = [
   },
   { index: ".1" },
   { path: "/MA_B7000", index: ".1.0" },
-  { path: "/MA_B70002", index: ".1.1" },
   { index: ".2" },
   { path: "/PR_A1100", index: ".2.0" },
   { index: ".3" },
   { path: "/SA_B2000", index: ".3.0" },
   { index: ".4" },
   { path: "/QC_A0120", index: ".4.0" },
+  { index: ".5" },
+  { path: "/SY_A0120", index: ".5.0" },
+  { path: "/SY_A0110", index: ".5.1" },
+  { path: "/SY_A0010", index: ".5.2" },
 ];
 
 const PanelBarNavContainer = (props: any) => {
@@ -98,7 +101,6 @@ const PanelBarNavContainer = (props: any) => {
           <PanelBarItem title={"Home"} href="/" route="/" />
           <PanelBarItem title={"물류"}>
             <PanelBarItem title={"재고조회"} route="/MA_B7000" />
-            <PanelBarItem title={"재고조회2"} route="/MA_B70002" />
           </PanelBarItem>
           <PanelBarItem title={"생산"} icon={""}>
             <PanelBarItem title={"계획생산"} route="/PR_A1100" />
@@ -108,6 +110,11 @@ const PanelBarNavContainer = (props: any) => {
           </PanelBarItem>
           <PanelBarItem title={"품질"}>
             <PanelBarItem title={"불량내역조회"} route="/QC_A0120" />
+          </PanelBarItem>
+          <PanelBarItem title={"시스템"}>
+            <PanelBarItem title={"로그인 현황"} route="/SY_A0120" />
+            <PanelBarItem title={"사용자 이용 현황"} route="/SY_A0110" />
+            <PanelBarItem title={"공통코드 정보"} route="/SY_A0010" />
           </PanelBarItem>
         </PanelBar>
         <Button

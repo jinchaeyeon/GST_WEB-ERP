@@ -66,8 +66,8 @@ import {
   UseCommonQuery,
 } from "../components/CommonFunction";
 import PlanWindow from "../components/Windows/PR_A1100_Window";
-import CustomersWindow from "../components/Windows/CustomersWindow";
-import ItemsWindow from "../components/Windows/ItemsWindow";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import NameCell from "../components/Cells/NameCell";
@@ -91,7 +91,7 @@ import {
   taxdivQuery,
   usersQuery,
 } from "../components/CommonString";
-import { CellRender, RowRender } from "../components/Windows/renderers2";
+import { CellRender, RowRender } from "../components/renderers2";
 import DropDownCell from "../components/Cells/DropDownCell";
 
 const pageSize = 20;

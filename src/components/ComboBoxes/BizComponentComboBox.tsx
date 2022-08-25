@@ -5,11 +5,13 @@ import {
 } from "@progress/kendo-react-dropdowns";
 
 import { useApi } from "../../hooks/api";
+import { getQueryFromBizComponent } from "../CommonFunction";
 
 type TCommonComboBox = {
   name: string;
   value: string | number;
-  customOptionData: any;
+  bizComponentId: string;
+  bizComponentData: any;
   changeData(e: any): void;
   textField?: string;
   valueField?: string;
@@ -17,13 +19,17 @@ type TCommonComboBox = {
 const CommonComboBox = ({
   name,
   value,
-  customOptionData,
+  bizComponentId,
+  bizComponentData,
   changeData,
   textField = "code_name",
   valueField = "sub_code",
 }: TCommonComboBox) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
+  bizComponentData = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentId
+  );
 
   useEffect(() => {
     fetchData();
@@ -33,9 +39,7 @@ const CommonComboBox = ({
   const fetchData = useCallback(async () => {
     let data: any;
 
-    const queryStr = customOptionData.menuCustomDefaultOptions.query.find(
-      (item: any) => item.id === name
-    ).query;
+    const queryStr = getQueryFromBizComponent(bizComponentData);
 
     let query = {
       query: "query?query=" + queryStr,
@@ -54,9 +58,7 @@ const CommonComboBox = ({
     }
   }, []);
 
-  const columns = customOptionData.menuCustomDefaultOptions.query.find(
-    (item: any) => item.id === name
-  ).bizComponentItems;
+  const columns = bizComponentData.bizComponentItems;
 
   let newColumns = columns.map((column: any) => ({
     field: column.fieldName,

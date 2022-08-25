@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import * as React from "react";
 import { Checkbox, Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import {
@@ -8,33 +7,19 @@ import {
 } from "@progress/kendo-react-form";
 import { Label, Error, Hint } from "@progress/kendo-react-labels";
 import { GridCellProps, GridFilterCellProps } from "@progress/kendo-react-grid";
-
-import { FormGridEditContext } from "./SA_B2000_Window";
-import {
-  PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT,
-  PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT,
-} from "./PR_A1100_Window";
-import { USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT } from "./UserOptionsColumnWindow";
-import { USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT } from "./UserOptionsDefaultWindow";
-import FeildDropDownList from "../DropDownLists/FeildDropDownList";
-import FieldComboBox from "../ComboBoxes/FieldComboBox";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-
-import {
-  itemacntQuery,
-  outgbQuery,
-  outprocynQuery,
-  proccdQuery,
-  prodmacQuery,
-  qtyunitQuery,
-  usersQuery,
-} from "../CommonString";
 import { BlurEvent } from "@progress/kendo-react-dropdowns/dist/npm/common/events";
+
+import { FormGridEditContext } from "./Windows/SA_B2000_Window";
+
+import FeildDropDownList from "./DropDownLists/FeildDropDownList";
+import FieldComboBox from "./ComboBoxes/FieldComboBox";
+
 import {
   checkIsDDLValid,
   getItemQuery,
   getQueryFromBizComponent,
-} from "../CommonFunction";
+} from "./CommonFunction";
 import moment from "moment";
 
 const FORM_DATA_INDEX = "formDataIndex";

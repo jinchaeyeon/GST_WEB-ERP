@@ -33,7 +33,7 @@ import {
 } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters } from "../store/types";
-import YearCalendar from "../components/YearCalendar";
+import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -42,7 +42,7 @@ import {
   UseCustomOption,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
-import ItemsWindow from "../components/Windows/ItemsWindow";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData, TCommonCodeData } from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
@@ -60,7 +60,7 @@ import {
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
-import CommonComboBox from "../components/ComboBoxes/CommonComboBox";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import CommonRadioGroup from "../components/CommonRadioGroup";
 //import {useAuth} from "../../hooks/auth";
 
@@ -790,7 +790,7 @@ const MA_B7000: React.FC = () => {
               <th>품목계정</th>
               <td>
                 {customOptionData !== null && (
-                  <CommonComboBox
+                  <CustomOptionComboBox
                     name="cboItemacnt"
                     value={filters.cboItemacnt}
                     customOptionData={customOptionData}
@@ -802,7 +802,7 @@ const MA_B7000: React.FC = () => {
               <th>대분류</th>
               <td>
                 {customOptionData !== null && (
-                  <CommonComboBox
+                  <CustomOptionComboBox
                     name="cboItemlvl1"
                     value={filters.cboItemlvl1}
                     customOptionData={customOptionData}
@@ -814,7 +814,7 @@ const MA_B7000: React.FC = () => {
               <th>중분류</th>
               <td>
                 {customOptionData !== null && (
-                  <CommonComboBox
+                  <CustomOptionComboBox
                     name="cboItemlvl2"
                     value={filters.cboItemlvl2}
                     customOptionData={customOptionData}
@@ -826,7 +826,7 @@ const MA_B7000: React.FC = () => {
               <th>소분류</th>
               <td>
                 {customOptionData !== null && (
-                  <CommonComboBox
+                  <CustomOptionComboBox
                     name="cboItemlvl3"
                     value={filters.cboItemlvl3}
                     customOptionData={customOptionData}
@@ -879,7 +879,7 @@ const MA_B7000: React.FC = () => {
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (
-                  <CommonComboBox
+                  <CustomOptionComboBox
                     name="cboLocation"
                     value={filters.cboLocation}
                     customOptionData={customOptionData}

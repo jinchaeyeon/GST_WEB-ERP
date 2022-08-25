@@ -232,7 +232,8 @@ export const UseBizComponent = (bizComponentId: string, setListData: any) => {
     }
 
     if (data !== null) {
-      setListData((prev: any) => [...prev, ...data]);
+      //setListData((prev: any) => [...prev, ...data]);
+      setListData([...data]);
     }
   }, []);
 };

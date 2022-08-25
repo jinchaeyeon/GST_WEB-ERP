@@ -14,14 +14,14 @@ import {
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import { useApi } from "../../../hooks/api";
 
 import {
   BottomContainer,
   ButtonContainer,
   FieldWrap,
   GridContainer,
-} from "../../CommonStyled";
+} from "../../../CommonStyled";
 import {
   Form,
   Field,
@@ -31,20 +31,20 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-import { NumberCell, NameCell, FormInput, validator } from "./editors";
-import { Iparameters } from "../../store/types";
-import { chkScrollHandler } from "../CommonFunction";
+import { NumberCell, NameCell, FormInput, validator } from "../../editors";
+import { Iparameters } from "../../../store/types";
+import { chkScrollHandler } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { pageSize } from "../CommonString";
-import { CellRender, RowRender } from "./renderers";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { pageSize } from "../../CommonString";
+import { CellRender, RowRender } from "../../renderers";
 
 // Validate the entire Form
 const arrayLengthValidator = (value: any) =>
   value && value.length ? "" : "최소 1개 행을 입력해주세요";
 
 // Create React.Context to pass props to the Form Field components from the main component
-export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =
+export const USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT =
   React.createContext<{
     editIndex: number | undefined;
     parentField: string;
@@ -53,7 +53,7 @@ export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =
 const deletedRows: object[] = [];
 
 const FORM_DATA_INDEX = "formDataIndex";
-const DATA_ITEM_KEY = "default_id ";
+const DATA_ITEM_KEY = "column_id ";
 
 const idGetter = getter(FORM_DATA_INDEX);
 const SELECTED_FIELD: string = "selected";
@@ -64,32 +64,19 @@ type TKendoWindow = {
   getVisible(t: boolean): void;
   workType: string;
   reloadData: () => void;
-  option_id?: string;
+  parentComponent?: string;
 };
 
 type TDetailData = {
-  component: string[];
-  parent_component: string[];
+  rowstatus: string[];
   field_name: string[];
-  word_id: string[];
-  biz_component_id: string[];
-  where_query: string[];
-  add_empty_row: string[];
-  repository_item: string[];
-  component_type: string[];
-  component_full_type: string[];
-  sort_seq: string[];
-  value_type: string[];
-  value: string[];
-  value_name: string[];
-  add_year: string[];
-  add_month: string[];
-  add_day: string[];
-  user_edit_yn: string[];
-  use_session: string[];
   caption: string[];
-  allow_session: string[];
-  session_item: string[];
+  column_visible: string[];
+  column_width: string[];
+  user_edit_yn: string[];
+  user_required_yn: string[];
+  column_type: string[];
+  column_className: string[];
 };
 
 // Create the Grid that will be used inside the Form
@@ -105,12 +92,13 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       e.preventDefault();
       fieldArrayRenderProps.onPush({
         value: {
-          srcPgName: "USER_OPTIONS_DEFAULT_WINDOW",
+          srcPgName: "USER_OPTIONS_COLUMN_WINDOW",
           rowstatus: "N",
-          value_type: "Datetime",
-          add_year: 0,
-          add_month: 0,
-          add_day: 0,
+          column_width: 120,
+          column_type: "TEXT",
+          user_edit_yn: "N",
+          user_required_yn: "N",
+          column_visible: "Y",
         },
       });
 
@@ -154,7 +142,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
-      return { ...item, [FORM_DATA_INDEX]: index };
+      return {
+        ...item,
+        [FORM_DATA_INDEX]: index,
+      };
     }
   );
 
@@ -270,7 +261,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   return (
     <GridContainer margin={{ top: "30px" }}>
-      <USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider
+      <USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider
         value={{
           editIndex,
           parentField: name,
@@ -330,9 +321,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           />
           <GridColumn field="rowstatus" title=" " width="40px" />
           <GridColumn
-            field="default_id"
+            field="column_id"
             title="필드명"
-            width="160px"
+            //width="160px"
             cell={NameCell}
             headerCell={RequiredHeader}
             className="required"
@@ -340,55 +331,33 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="caption"
             title="캡션"
-            width="180px"
+            //width="180px"
             cell={NameCell}
           />
           <GridColumn
-            field="value_type"
-            title="VALUE타입"
-            width="120px"
-            cell={NameCell} //CellDropDownList
+            field="sort_order"
+            title="컬럼 순서"
+            width="200px"
+            cell={NumberCell}
             headerCell={RequiredHeader}
             className="required"
           />
           <GridColumn
-            field="value"
-            title="VALUE"
-            width="120px"
-            cell={NameCell}
-          />
-          <GridColumn
-            field="bc_id"
-            title="비즈니스 컴포넌트 ID"
+            field="width"
+            title="컬럼너비"
             width="180px"
-            cell={NameCell}
+            cell={NumberCell}
           />
           <GridColumn
             field="user_editable"
-            title="사용자 수정 가능 여부"
+            title="사용자 수정가능여부"
             width="180px"
             cell={NameCell}
-          />
-          <GridColumn
-            field="add_year"
-            title="연 추가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="add_month"
-            title="월 추가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="add_day"
-            title="일 추가"
-            width="120px"
-            cell={NumberCell}
+            headerCell={RequiredHeader}
+            className="required"
           />
         </Grid>
-      </USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider>
+      </USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider>
     </GridContainer>
   );
 };
@@ -396,7 +365,7 @@ const KendoWindow = ({
   getVisible,
   workType,
   reloadData,
-  option_id,
+  parentComponent,
 }: TKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -451,14 +420,15 @@ const KendoWindow = ({
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "WEB_sys_sel_default_management",
+    procedureName: "WEB_sys_sel_column_view_config",
     pageNumber: 1,
     pageSize: 50,
     parameters: {
       "@p_work_type": "DETAIL",
+      "@p_dbname": "SYSTEM",
       "@p_form_id": pathname,
       "@p_lang_id": "",
-      "@p_process_type": workType === "U" ? option_id : "",
+      "@p_parent_component": workType === "U" ? parentComponent : "",
       "@p_message": "",
     },
   };
@@ -466,66 +436,46 @@ const KendoWindow = ({
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    process_type: "",
+    dbname: "SYSTEM",
     form_id: pathname,
     component: "",
     parent_component: "",
+    message_id: "",
     field_name: "",
     word_id: "",
     caption: "",
-    biz_component_id: "",
-    where_query: "",
-    add_empty_row: "",
-    repository_item: "",
-    component_type: "",
-    component_full_type: "",
-    sort_seq: "",
-    message_id: "",
-    value_type: "",
-    value: "",
-    value_name: "",
-    add_year: "",
-    add_month: "",
-    add_day: "",
+    rowstatus_s: "",
+    column_visible: "",
+    column_width: "",
     user_edit_yn: "",
-    use_session: "",
-    allow_session: "",
-    session_item: "",
+    user_required_yn: "",
+    column_type: "",
+    column_className: "",
     exec_pc: "",
   });
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "WEB_sys_sav_default_management",
+    procedureName: "WEB_sys_sav_column_view_config",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
       "@p_work_type": paraData.work_type,
-      "@p_process_type": paraData.process_type,
+      "@p_dbname": paraData.dbname,
       "@p_form_id": paraData.form_id,
       "@p_component": paraData.component,
       "@p_parent_component": paraData.parent_component,
+      "@p_message_id": paraData.message_id,
       "@p_field_name": paraData.field_name,
       "@p_word_id": paraData.word_id,
       "@p_caption": paraData.caption,
-      "@p_biz_component_id": paraData.biz_component_id,
-      "@p_where_query": paraData.where_query,
-      "@p_add_empty_row": paraData.add_empty_row,
-      "@p_repository_item": paraData.repository_item,
-      "@p_component_type": paraData.component_type,
-      "@p_component_full_type": paraData.component_full_type,
-      "@p_sort_seq": paraData.sort_seq,
-      "@p_message_id": paraData.message_id,
-      "@p_value_type": paraData.value_type,
-      "@p_value": paraData.value,
-      "@p_value_name": paraData.value_name,
-      "@p_add_year": paraData.add_year,
-      "@p_add_month": paraData.add_month,
-      "@p_add_day": paraData.add_day,
+      "@p_rowstatus_s": paraData.rowstatus_s,
+      "@p_column_visible": paraData.column_visible,
+      "@p_column_width": paraData.column_width,
       "@p_user_edit_yn": paraData.user_edit_yn,
-      "@p_use_session": paraData.use_session,
-      "@p_allow_session": paraData.allow_session,
-      "@p_session_item": paraData.session_item,
+      "@p_user_required_yn": paraData.user_required_yn,
+      "@p_column_type": paraData.column_type,
+      "@p_column_className": paraData.column_className,
       "@p_exec_pc": paraData.exec_pc,
     },
   };
@@ -539,7 +489,7 @@ const KendoWindow = ({
 
   //저장
   useEffect(() => {
-    if (paraData.work_type !== "") fetchGridSaved();
+    if (paraData.parent_component !== "") fetchGridSaved();
   }, [paraData]);
 
   //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
@@ -556,7 +506,6 @@ const KendoWindow = ({
   const fetchMain = async () => {
     let data: any;
 
-    console.log(parameters);
     try {
       data = await processApi<any>("platform-procedure", parameters);
     } catch (error) {
@@ -570,7 +519,7 @@ const KendoWindow = ({
       rows = rows.map((row: any) => {
         return {
           ...row,
-          srcPgName: "USER_OPTIONS_DEFAULT_WINDOW",
+          srcPgName: "USER_OPTIONS_COLUMN_WINDOW",
         };
       });
 
@@ -635,8 +584,17 @@ const KendoWindow = ({
         if (!item.field_name) {
           throw "필드명을 입력하세요.";
         }
-        if (!item.value_type) {
-          throw "VALUE타입을 선택하세요.";
+        if (!item.column_visible) {
+          throw "컬럼 보이기를 선택하세요.";
+        }
+        if (!item.user_edit_yn) {
+          throw "사용자 수정가능여부 선택하세요.";
+        }
+        if (!item.user_required_yn) {
+          throw "필수여부를 선택하세요.";
+        }
+        if (!item.column_type) {
+          throw "컬럼타입을 선택하세요.";
         }
       });
     } catch (e) {
@@ -646,94 +604,59 @@ const KendoWindow = ({
 
     if (!valid) return false;
 
-    const { process_type, message_id, orderDetails } = dataItem;
+    const { parent_component, message_id, orderDetails } = dataItem;
 
     let detailArr: TDetailData = {
-      component: [],
-      parent_component: [],
+      rowstatus: [],
       field_name: [],
-      word_id: [],
-      biz_component_id: [],
-      where_query: [],
-      add_empty_row: [],
-      repository_item: [],
-      component_type: [],
-      component_full_type: [],
-      sort_seq: [],
-      value_type: [],
-      value: [],
-      value_name: [],
-      add_year: [],
-      add_month: [],
-      add_day: [],
-      user_edit_yn: [],
-      use_session: [],
       caption: [],
-      allow_session: [],
-      session_item: [],
+      column_visible: [],
+      column_width: [],
+      user_edit_yn: [],
+      user_required_yn: [],
+      column_type: [],
+      column_className: [],
     };
-    orderDetails.forEach((item: any, idx: number) => {
+    orderDetails.forEach((item: any) => {
       const {
+        rowstatus,
         field_name,
-        value_type,
-        value,
-        add_year,
-        add_month,
-        add_day,
         caption,
+        column_visible,
+        column_width,
+        user_edit_yn,
+        user_required_yn,
+        column_type,
+        column_className,
       } = item;
 
-      detailArr.component.push(field_name);
-      detailArr.parent_component.push("");
+      detailArr.rowstatus.push(rowstatus);
       detailArr.field_name.push(field_name);
-      detailArr.word_id.push("");
-      detailArr.biz_component_id.push("");
-      detailArr.where_query.push("");
-      detailArr.add_empty_row.push("");
-      detailArr.repository_item.push("");
-      detailArr.component_type.push("");
-      detailArr.component_full_type.push("");
-      detailArr.sort_seq.push(String(idx));
-      detailArr.value_type.push(value_type);
-      detailArr.value.push(value);
-      detailArr.value_name.push("");
-      detailArr.add_year.push(add_year);
-      detailArr.add_month.push(add_month);
-      detailArr.add_day.push(add_day);
-      detailArr.user_edit_yn.push("");
-      detailArr.use_session.push("N");
       detailArr.caption.push(caption);
-      detailArr.allow_session.push("N");
-      detailArr.session_item.push("");
+      detailArr.column_visible.push(column_visible);
+      detailArr.column_width.push(column_width);
+      detailArr.user_edit_yn.push(user_edit_yn);
+      detailArr.user_required_yn.push(user_required_yn);
+      detailArr.column_type.push(column_type);
+      detailArr.column_className.push(column_className);
     });
 
     setParaData((prev) => ({
       ...prev,
       work_type: "SAVE",
-      process_type,
+      parent_component,
       message_id,
-      component: detailArr.component.join("|"),
-      parent_component: detailArr.parent_component.join("|"),
+      rowstatus_s: detailArr.rowstatus.join("|"),
+      component: detailArr.field_name.join("|"),
       field_name: detailArr.field_name.join("|"),
-      word_id: detailArr.word_id.join("|"),
-      biz_component_id: detailArr.biz_component_id.join("|"),
-      where_query: detailArr.where_query.join("|"),
-      add_empty_row: detailArr.add_empty_row.join("|"),
-      repository_item: detailArr.repository_item.join("|"),
-      component_type: detailArr.component_type.join("|"),
-      component_full_type: detailArr.component_full_type.join("|"),
-      sort_seq: detailArr.sort_seq.join("|"),
-      value_type: detailArr.value_type.join("|"),
-      value: detailArr.value.join("|"),
-      value_name: detailArr.value_name.join("|"),
-      add_year: detailArr.add_year.join("|"),
-      add_month: detailArr.add_month.join("|"),
-      add_day: detailArr.add_day.join("|"),
-      user_edit_yn: detailArr.user_edit_yn.join("|"),
-      use_session: detailArr.use_session.join("|"),
+      word_id: detailArr.field_name.join("|"),
       caption: detailArr.caption.join("|"),
-      allow_session: detailArr.allow_session.join("|"),
-      session_item: detailArr.session_item.join("|"),
+      column_visible: detailArr.column_visible.join("|"),
+      column_width: detailArr.column_width.join("|"),
+      user_edit_yn: detailArr.user_edit_yn.join("|"),
+      user_required_yn: detailArr.user_required_yn.join("|"),
+      column_type: detailArr.column_type.join("|"),
+      column_className: detailArr.column_className.join("|"),
     }));
   };
 
@@ -741,8 +664,8 @@ const KendoWindow = ({
     <Window
       title={
         workType === "N"
-          ? "사용자 옵션 기본값 생성 (관리자)"
-          : "사용자 옵션 기본값 수정 (관리자)"
+          ? "사용자 옵션 컬럼 생성 (관리자)"
+          : "사용자 옵션 컬럼 수정 (관리자)"
       }
       width={position.width}
       height={position.height}
@@ -774,14 +697,14 @@ const KendoWindow = ({
               ></button>
               <FieldWrap fieldWidth="25%">
                 <Field
-                  label={"타입ID"}
+                  label={"영역ID"}
                   name={"option_id"}
                   component={FormInput}
                   validator={validator}
                   className="required"
                 />
                 <Field
-                  label={"설명"}
+                  label={"영역명"}
                   name={"option_name"}
                   component={FormInput}
                   validator={validator}

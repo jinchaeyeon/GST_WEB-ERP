@@ -12,18 +12,18 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { DataResult, process, getter } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import { useApi } from "../../../hooks/api";
 
-import { ButtonContainer, TitleContainer } from "../../CommonStyled";
+import { ButtonContainer, TitleContainer } from "../../../CommonStyled";
 
-import { Iparameters } from "../../store/types";
+import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
-import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
+import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
 import { saveAs, encodeBase64 } from "@progress/kendo-file-saver";
 //import FileSaver from "file-saver";
 import fileDownload from "file-saver";
-import NumberCell from "../Cells/NumberCell";
-import CenterCell from "../Cells/CenterCell";
+import NumberCell from "../../Cells/NumberCell";
+import CenterCell from "../../Cells/CenterCell";
 import * as base64 from "byte-base64";
 
 type IKendoWindow = {

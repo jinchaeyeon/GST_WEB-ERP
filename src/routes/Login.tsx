@@ -12,7 +12,7 @@ import { useHistory } from "react-router-dom";
 import { tokenState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useRecoilState } from "recoil";
-import { FormInput } from "../components/Windows/editors";
+import { FormInput } from "../components/editors";
 import { LoginBox } from "../CommonStyled";
 import { sha256 } from "js-sha256";
 
