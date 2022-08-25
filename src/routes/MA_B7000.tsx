@@ -84,8 +84,6 @@ const numberField = [
 
 const dateField = ["col_indt"];
 
-const pathname: string = window.location.pathname.replace("/", "");
-
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "itemcd";
 const DETAIL_DATA_ITEM_KEY = "lotnum";
@@ -94,6 +92,7 @@ const MA_B7000: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
+  const pathname: string = window.location.pathname.replace("/", "");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -335,6 +334,9 @@ const MA_B7000: React.FC = () => {
             total: totalRowCnt,
           };
         });
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
     }
   };
 
