@@ -54,7 +54,7 @@ import {
   CellCheckBoxReadOnly,
   ReadOnlyNumberCell,
   CellComboBox,
-} from "../editors";
+} from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
   checkIsDDLValid,
@@ -94,7 +94,7 @@ import {
   usersQuery,
 } from "../CommonString";
 
-import { CellRender, RowRender } from "../renderers";
+import { CellRender, RowRender } from "../Renderers";
 import UserEffect from "../UserEffect";
 import { convertTypeAcquisitionFromJson } from "typescript";
 

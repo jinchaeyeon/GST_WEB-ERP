@@ -34,7 +34,7 @@ import DefaultWindow from "./UserOptionsDefaultWindow";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { EDIT_FIELD, pageSize, SELECTED_FIELD } from "../../CommonString";
 
-import { CellRender, RowRender } from "../../renderers";
+import { CellRender, RowRender } from "../../Renderers";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 
 type TKendoWindow = {

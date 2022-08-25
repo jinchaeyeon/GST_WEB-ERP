@@ -91,7 +91,7 @@ import {
   taxdivQuery,
   usersQuery,
 } from "../components/CommonString";
-import { CellRender, RowRender } from "../components/renderers2";
+import { CellRender, RowRender } from "../components/Renderers2";
 import DropDownCell from "../components/Cells/DropDownCell";
 
 const pageSize = 20;

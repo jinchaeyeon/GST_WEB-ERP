@@ -31,13 +31,13 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-import { NumberCell, NameCell, FormInput, validator } from "../../editors";
+import { NumberCell, NameCell, FormInput, validator } from "../../Editors";
 import { Iparameters } from "../../../store/types";
 import { chkScrollHandler } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { pageSize } from "../../CommonString";
-import { CellRender, RowRender } from "../../renderers";
+import { CellRender, RowRender } from "../../Renderers";
 
 // Validate the entire Form
 const arrayLengthValidator = (value: any) =>

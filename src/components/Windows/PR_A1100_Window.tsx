@@ -61,7 +61,7 @@ import {
   CellCheckBoxReadOnly,
   ReadOnlyNumberCell,
   FormNumericTextBox,
-} from "../editors";
+} from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
   checkIsDDLValid,
@@ -102,7 +102,7 @@ import {
   usersQuery,
 } from "../CommonString";
 
-import { CellRender, RowRender } from "../renderers";
+import { CellRender, RowRender } from "../Renderers";
 import UserEffect from "../UserEffect";
 
 // Validate the entire Form
