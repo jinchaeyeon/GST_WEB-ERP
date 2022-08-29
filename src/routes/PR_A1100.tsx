@@ -116,9 +116,10 @@ const numberField = [
   "col_amt2",
   "col_unp2",
   "col_bnatur_insiz",
+  "col_procqty3",
 ];
 const dateField = ["col_finexpdt1", "col_plandt2"];
-const lookupField = ["col_outprocyn1", "col_proccd2"];
+const lookupField = ["col_outprocyn1", "col_proccd2", "col_proccd3"];
 
 let deletedPlanRows: object[] = [];
 let deletedMaterialRows: object[] = [];
@@ -157,6 +158,12 @@ const PR_A1100: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
+    resetAllGrid();
+    if (e.selected === 0) {
+      fetchMainGrid();
+    } else {
+      fetchPlanGrid();
+    }
     setTabSelected(e.selected);
   };
 
@@ -254,6 +261,7 @@ const PR_A1100: React.FC = () => {
   const [isCopy, setIsCopy] = useState(false);
 
   const [locationVal, setLocationVal] = useRecoilState(locationState);
+  const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -746,6 +754,20 @@ const PR_A1100: React.FC = () => {
       }
     }
   }, [mainDataResult]);
+
+  useEffect(() => {
+    if (planDataResult.total > 0 && isInitSearch === false) {
+      const firstRowData = planDataResult.data[0];
+      setPlanSelectedState({ [firstRowData[PLAN_DATA_ITEM_KEY]]: true });
+
+      setMaterialFilters((prev) => ({
+        ...prev,
+        plankey: firstRowData.planno,
+      }));
+
+      setIsInitSearch(true);
+    }
+  }, [planDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -2594,6 +2616,31 @@ const PR_A1100: React.FC = () => {
                   width="40px"
                   editable={false}
                 />
+
+                {/* {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["gvwInList2"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.id
+                            .replace("col_", "")
+                            .replace("1", "")
+                            .replace("2", "")}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            lookupField.includes(item.id)
+                              ? CustomComboBoxCell
+                              : ""
+                          }
+                          editor={
+                            numberField.includes(item.id) ? NumberCell : ""
+                          }
+                        ></GridColumn>
+                      )
+                  )} */}
+
                 <GridColumn
                   field="proccd"
                   title="공정"

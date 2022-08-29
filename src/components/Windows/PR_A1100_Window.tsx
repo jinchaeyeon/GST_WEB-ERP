@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext } from "react";
 import * as React from "react";
 import {
   Window,
@@ -61,15 +61,19 @@ import {
   CellCheckBoxReadOnly,
   ReadOnlyNumberCell,
   FormNumericTextBox,
+  CellComboBox,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
+  arrayLengthValidator,
   checkIsDDLValid,
   chkScrollHandler,
   convertDateToStr,
   dateformat,
   getItemQuery,
+  UseBizComponent,
   UseCommonQuery,
+  UseCustomOption,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -103,11 +107,50 @@ import {
 } from "../CommonString";
 
 import { CellRender, RowRender } from "../Renderers";
-import UserEffect from "../UserEffect";
 
-// Validate the entire Form
-const arrayLengthValidator = (value: any) =>
-  value && value.length ? "" : "최소 1개 행을 입력해주세요";
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  //공정코드,외주구분,사용자,설비,자재불출(자재사용)구분_BOM,수량단위
+  UseBizComponent(
+    "L_PR010,L_BA011,L_sysUserMaster_001,L_fxcode,L_BA041,L_BA015",
+    setBizComponentData
+  );
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "proccd"
+      ? "L_PR010"
+      : field === "outprocyn"
+      ? "L_BA011"
+      : field === "prodemp"
+      ? "L_sysUserMaster_001"
+      : field === "prodmac"
+      ? "L_fxcode"
+      : field === "outgb"
+      ? "L_BA041"
+      : field === "qtyunit"
+      ? "L_BA015"
+      : "";
+
+  const fieldName =
+    field === "prodemp"
+      ? "user_name"
+      : field === "prodmac"
+      ? "fxfull"
+      : undefined;
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return (
+    <CellComboBox
+      bizComponent={bizComponent}
+      textField={fieldName}
+      {...props}
+    />
+  );
+};
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT = React.createContext<{
@@ -170,6 +213,10 @@ type TMaterialData = {
   qtyunit: string[];
   proccd: string[];
 };
+
+const customOptionContext = createContext({
+  customOptionData: null,
+});
 
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
@@ -578,6 +625,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         <Grid
           data={dataWithIndexes.map((item: any) => ({
             ...item,
+            parentField: name,
             [SELECTED_FIELD]: selectedState[idGetter(item)],
           }))}
           total={dataWithIndexes.total}
@@ -635,7 +683,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="proccd"
             title="공정"
             width="150px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
           />
           <GridColumn
             field="procseq"
@@ -648,19 +696,19 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="outprocyn"
             title="외주구분"
             width="110px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
           />
           <GridColumn
             field="prodemp"
             title="작업자"
             width="120px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
           />
           <GridColumn
             field="prodmac"
             title="설비"
             width="200px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
           />
         </Grid>
 
@@ -1114,6 +1162,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         <Grid
           data={dataWithIndexes.map((item: any) => ({
             ...item,
+            parentField: name,
             [SELECTED_FIELD]: selectedState[idGetter(item)],
           }))}
           total={dataWithIndexes.total}
@@ -1163,7 +1212,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="proccd"
             title="공정"
             width="130px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
           />
           <GridColumn
             field="chlditemcd"
@@ -1182,7 +1231,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="outgb"
             title="자재사용구분"
             width="120px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
           />
           <GridColumn
             field="unitqty"
@@ -1200,7 +1249,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="qtyunit"
             title="수량단위"
             width="100px"
-            cell={CellDropDownList}
+            cell={CustomComboBoxCell}
           />
         </Grid>
 
@@ -1228,6 +1277,12 @@ const KendoWindow = ({
   isCopy,
   para,
 }: TKendoWindow) => {
+  const pathname: string = window.location.pathname.replace("/", "");
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
   //드롭다운 리스트 데이터 조회 (공정, 외주구분, 작업자, 설비 / 자재사용구분, (품목계정,) 수량단위)
   const [proccdListData, setProccdListData] = React.useState([
     commonCodeDefaultValue,
@@ -2046,26 +2101,32 @@ const KendoWindow = ({
       };
     });
   };
+
   return (
-    <Window
-      title={workType === "N" ? "계획처리" : "계획처리"}
-      width={position.width}
-      height={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
+    <customOptionContext.Provider
+      value={{
+        customOptionData,
+      }}
     >
-      <Form
-        onSubmit={handleSubmit}
-        key={formKey}
-        initialValues={{
-          rowstatus: "",
-          orgdiv: initialVal.orgdiv,
-          location: initialVal.location,
-          ordnum: initialVal.ordnum,
-          ordseq: initialVal.ordseq,
-          itemcd: initialVal.itemcd,
-          /* frdt: initialVal.frdt, //new Date(),
+      <Window
+        title={workType === "N" ? "계획처리" : "계획처리"}
+        width={position.width}
+        height={position.height}
+        onMove={handleMove}
+        onResize={handleResize}
+        onClose={onClose}
+      >
+        <Form
+          onSubmit={handleSubmit}
+          key={formKey}
+          initialValues={{
+            rowstatus: "",
+            orgdiv: initialVal.orgdiv,
+            location: initialVal.location,
+            ordnum: initialVal.ordnum,
+            ordseq: initialVal.ordseq,
+            itemcd: initialVal.itemcd,
+            /* frdt: initialVal.frdt, //new Date(),
           person: {
             sub_code: initialVal.person,
             code_name: usersListData.find(
@@ -2073,62 +2134,62 @@ const KendoWindow = ({
             )?.code_name,
           },*/
 
-          planqty: initialVal.planqty,
-          processList: detailDataResult.data,
-          materialList: mtrDataResult.data,
-        }}
-        render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true}>
-            <GridContainerWrap>
-              <GridContainer>
-                <InfoList>
-                  <InfoTitle>수주정보</InfoTitle>
-                  <InfoItem>
-                    <InfoLabel>품목코드</InfoLabel>
-                    <InfoValue>{infoVal.itemcd}</InfoValue>
-                  </InfoItem>
-                  <InfoItem>
-                    <InfoLabel>품목명</InfoLabel>
-                    <InfoValue>{infoVal.itemnm}</InfoValue>
-                  </InfoItem>
-                  <InfoItem>
-                    <InfoLabel>품목계정</InfoLabel>
-                    <InfoValue>{infoVal.itemacnt}</InfoValue>
-                  </InfoItem>
-                  <InfoItem>
-                    <InfoLabel>규격</InfoLabel>
-                    <InfoValue>{infoVal.insiz}</InfoValue>
-                  </InfoItem>
-                  <InfoItem>
-                    <InfoLabel>재질</InfoLabel>
-                    <InfoValue>{infoVal.bnatur}</InfoValue>
-                  </InfoItem>
-                  <InfoItem>
-                    <InfoLabel>수주량</InfoLabel>
-                    <InfoValue>{infoVal.qty}</InfoValue>
-                  </InfoItem>
-                  {/* <InfoItem>
+            planqty: initialVal.planqty,
+            processList: detailDataResult.data,
+            materialList: mtrDataResult.data,
+          }}
+          render={(formRenderProps: FormRenderProps) => (
+            <FormElement horizontal={true}>
+              <GridContainerWrap>
+                <GridContainer>
+                  <InfoList>
+                    <InfoTitle>수주정보</InfoTitle>
+                    <InfoItem>
+                      <InfoLabel>품목코드</InfoLabel>
+                      <InfoValue>{infoVal.itemcd}</InfoValue>
+                    </InfoItem>
+                    <InfoItem>
+                      <InfoLabel>품목명</InfoLabel>
+                      <InfoValue>{infoVal.itemnm}</InfoValue>
+                    </InfoItem>
+                    <InfoItem>
+                      <InfoLabel>품목계정</InfoLabel>
+                      <InfoValue>{infoVal.itemacnt}</InfoValue>
+                    </InfoItem>
+                    <InfoItem>
+                      <InfoLabel>규격</InfoLabel>
+                      <InfoValue>{infoVal.insiz}</InfoValue>
+                    </InfoItem>
+                    <InfoItem>
+                      <InfoLabel>재질</InfoLabel>
+                      <InfoValue>{infoVal.bnatur}</InfoValue>
+                    </InfoItem>
+                    <InfoItem>
+                      <InfoLabel>수주량</InfoLabel>
+                      <InfoValue>{infoVal.qty}</InfoValue>
+                    </InfoItem>
+                    {/* <InfoItem>
                 <InfoLabel>기계획량</InfoLabel>
                 <InfoValue id=""></InfoValue>
               </InfoItem> */}
-                  <InfoItem>
-                    <InfoLabel>잔량</InfoLabel>
-                    <InfoValue>{infoVal.planqty}</InfoValue>
-                  </InfoItem>
-                  <InfoItem>
-                    <fieldset className={"k-form-fieldset"}>
-                      <button
-                        id="valueChanged"
-                        style={{ display: "none" }}
-                        onClick={(e) => {
-                          e.preventDefault(); // Changing desired field value
-                          formRenderProps.onChange("valueChanged", {
-                            value: "1",
-                          });
-                        }}
-                      ></button>
+                    <InfoItem>
+                      <InfoLabel>잔량</InfoLabel>
+                      <InfoValue>{infoVal.planqty}</InfoValue>
+                    </InfoItem>
+                    <InfoItem>
+                      <fieldset className={"k-form-fieldset"}>
+                        <button
+                          id="valueChanged"
+                          style={{ display: "none" }}
+                          onClick={(e) => {
+                            e.preventDefault(); // Changing desired field value
+                            formRenderProps.onChange("valueChanged", {
+                              value: "1",
+                            });
+                          }}
+                        ></button>
 
-                      {/* <FieldWrap>
+                        {/* <FieldWrap>
                 <Field
                   label={"완료예정일"}
                   name={"frdt"}
@@ -2147,55 +2208,56 @@ const KendoWindow = ({
                 />
               </FieldWrap> */}
 
-                      <FieldWrap>
-                        <Field
-                          label={"계획수량"}
-                          name={"planqty"}
-                          component={FormNumericTextBox}
-                          validator={validator}
-                          className="required big-input"
-                        />
-                      </FieldWrap>
-                    </fieldset>
-                  </InfoItem>
-                </InfoList>
-              </GridContainer>
-              <GridContainer clientWidth={position.width - 250}>
-                <FieldArray
-                  name="processList"
-                  dataItemKey={DATA_ITEM_KEY}
-                  component={FormGrid}
-                  validator={arrayLengthValidator}
-                />
+                        <FieldWrap>
+                          <Field
+                            label={"계획수량"}
+                            name={"planqty"}
+                            component={FormNumericTextBox}
+                            validator={validator}
+                            className="required big-input"
+                          />
+                        </FieldWrap>
+                      </fieldset>
+                    </InfoItem>
+                  </InfoList>
+                </GridContainer>
+                <GridContainer clientWidth={position.width - 250}>
+                  <FieldArray
+                    name="processList"
+                    dataItemKey={DATA_ITEM_KEY}
+                    component={FormGrid}
+                    validator={arrayLengthValidator}
+                  />
 
-                <FieldArray
-                  name="materialList"
-                  dataItemKey={DATA_ITEM_KEY}
-                  component={FormGridMtr}
-                  //validator={arrayLengthValidator}
-                />
-              </GridContainer>
-            </GridContainerWrap>
-            <BottomContainer>
-              <ButtonContainer>
-                <Button type={"submit"} themeColor={"primary"} icon="save">
-                  저장
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </FormElement>
-        )}
-      />
-
-      {custWindowVisible && (
-        <CustomersWindow
-          getVisible={setCustWindowVisible}
-          workType={custType} //신규 : N, 수정 : U
-          getData={getCustData}
-          para={undefined}
+                  <FieldArray
+                    name="materialList"
+                    dataItemKey={DATA_ITEM_KEY}
+                    component={FormGridMtr}
+                    //validator={arrayLengthValidator}
+                  />
+                </GridContainer>
+              </GridContainerWrap>
+              <BottomContainer>
+                <ButtonContainer>
+                  <Button type={"submit"} themeColor={"primary"} icon="save">
+                    저장
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </FormElement>
+          )}
         />
-      )}
-    </Window>
+
+        {custWindowVisible && (
+          <CustomersWindow
+            getVisible={setCustWindowVisible}
+            workType={custType} //신규 : N, 수정 : U
+            getData={getCustData}
+            para={undefined}
+          />
+        )}
+      </Window>
+    </customOptionContext.Provider>
   );
 };
 

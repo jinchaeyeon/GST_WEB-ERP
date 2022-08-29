@@ -46,9 +46,8 @@ const DisplayDDLValue = (fieldRenderProps: FieldRenderProps) => {
 
 //Grid Cell에 표시되는 ComboBox Name Value
 const DisplayComboBoxValue = (fieldRenderProps: FieldRenderProps) => {
-  console.log("fieldRenderProps");
-  console.log(fieldRenderProps);
-  return <>{fieldRenderProps.value ? fieldRenderProps.value.code_name : ""}</>;
+  const { textField } = fieldRenderProps;
+  return <>{fieldRenderProps.value ? fieldRenderProps.value[textField] : ""}</>;
 };
 
 //Grid Cell 수정모드에서 사용되는 Text Input
