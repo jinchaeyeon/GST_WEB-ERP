@@ -392,7 +392,9 @@ const SA_B2000: React.FC = () => {
 
   useEffect(() => {
     resetDetailGrid();
-    fetchDetailGrid();
+    if (mainDataResult.total > 0) {
+      fetchDetailGrid();
+    }
   }, [detailFilters]);
 
   useEffect(() => {
