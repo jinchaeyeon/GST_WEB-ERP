@@ -169,6 +169,11 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
   const fetchBizComponentData = useCallback(async (customOptionData: any) => {
     let data: any;
 
+    if (Object.keys(customOptionData.menuCustomDefaultOptions).length === 0) {
+      setListData(customOptionData);
+      return false;
+    }
+
     const bizComponentId = Object.values(
       customOptionData.menuCustomDefaultOptions.query.map(
         (item: any) => item.bizComponentId
@@ -419,4 +424,9 @@ export const setDefaultDate = (customOptionData: any, id: string) => {
   newDate.setDate(newDate.getDate() + addDay);
 
   return newDate;
+};
+
+// Validate the entire Form
+export const arrayLengthValidator = (value: any) => {
+  return value && value.length ? "" : "최소 1개 행을 입력해주세요";
 };
