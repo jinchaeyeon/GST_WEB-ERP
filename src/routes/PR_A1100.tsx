@@ -52,24 +52,24 @@ import {
   locationState,
 } from "../store/atoms";
 import { Iparameters } from "../store/types";
-import DepartmentsDDL from "../components/DropDownLists/DepartmentsDDL";
-import DoexdivDDL from "../components/DropDownLists/DoexdivDDL";
 import OrdstsDDL from "../components/DropDownLists/OrdstsDDL";
-import OrdtypeDDL from "../components/DropDownLists/OrdtypeDDL";
 import UsersDDL from "../components/DropDownLists/UsersDDL";
-import LocationDDL from "../components/DropDownLists/LocationDDL";
 import {
   checkIsDDLValid,
   chkScrollHandler,
   convertDateToStr,
   dateformat,
+  UseBizComponent,
   UseCommonQuery,
+  UseCustomOption,
 } from "../components/CommonFunction";
 import PlanWindow from "../components/Windows/PR_A1100_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import DropDownCell from "../components/Cells/DropDownCell";
 import NameCell from "../components/Cells/NameCell";
 import {
   commonCodeDefaultValue,
@@ -84,32 +84,76 @@ import {
   ordstsQuery,
   outgbQuery,
   outprocynQuery,
+  pageSize,
   proccdQuery,
   prodmacQuery,
   purtypeQuery,
   qtyunitQuery,
+  SELECTED_FIELD,
   taxdivQuery,
   usersQuery,
 } from "../components/CommonString";
 import { CellRender, RowRender } from "../components/Renderers2";
-import DropDownCell from "../components/Cells/DropDownCell";
 
-const pageSize = 20;
+// 그리드 별 키 필드값
+const DATA_ITEM_KEY = "ordkey";
+const PLAN_DATA_ITEM_KEY = "idx";
+const MATERIAL_DATA_ITEM_KEY = "idx";
+
+const numberField = [
+  "col_safeqty",
+  "col_stockqty",
+  "col_stockqty1",
+  "col_stockwgt",
+  "col_unp",
+  "col_baseqty",
+  "col_basewgt",
+  "col_inqty",
+  "col_inwgt",
+  "col_outqty",
+  "col_outwgt",
+  "col_amt",
+  "col_amt2",
+  "col_unp2",
+  "col_bnatur_insiz",
+];
+const dateField = ["col_finexpdt1", "col_plandt2"];
+const lookupField = ["col_outprocyn1", "col_proccd2"];
 
 let deletedPlanRows: object[] = [];
 let deletedMaterialRows: object[] = [];
 
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_PR010,L_BA011", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "proccd" ? "L_PR010" : field === "outprocyn" ? "L_BA011" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <></>
+  );
+};
+
 const PR_A1100: React.FC = () => {
   const processApi = useApi();
-  const SELECTED_FIELD = "selected";
-
-  const DATA_ITEM_KEY = "ordkey";
-  const PLAN_DATA_ITEM_KEY = "idx";
-  const MATERIAL_DATA_ITEM_KEY = "idx";
 
   const idGetter = getter(DATA_ITEM_KEY);
   const planIdGetter = getter(PLAN_DATA_ITEM_KEY);
   const materialIdGetter = getter(MATERIAL_DATA_ITEM_KEY);
+
+  const pathname: string = window.location.pathname.replace("/", "");
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
@@ -210,11 +254,6 @@ const PR_A1100: React.FC = () => {
   const [isCopy, setIsCopy] = useState(false);
 
   const [locationVal, setLocationVal] = useRecoilState(locationState);
-  const ordstsVal = useRecoilValue(ordstsState);
-  const ordtypeVal = useRecoilValue(ordtypeState);
-  const departmentsVal = useRecoilValue(departmentsState);
-  const usersVal = useRecoilValue(usersState);
-  const doexdivVal = useRecoilValue(doexdivState);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -2072,7 +2111,26 @@ const PR_A1100: React.FC = () => {
                 onExpandChange={onExpandChange}
                 expandField="expanded"
               >
-                <GridColumn cell={CommandCell} width="95px" />
+                <GridColumn
+                  cell={CommandCell}
+                  width="95px"
+                  footerCell={mainTotalFooterCell}
+                />
+
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["gvwOrdList"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.id.replace("col_", "")}
+                          title={item.caption}
+                          width={item.width}
+                          cell={numberField.includes(item.id) ? NumberCell : ""}
+                        ></GridColumn>
+                      )
+                  )}
+                {/*               
                 <GridColumn
                   field="orddt"
                   title="수주일자"
@@ -2150,7 +2208,7 @@ const PR_A1100: React.FC = () => {
                 <GridColumn field="person" title="담당자" width="120px" />
                 <GridColumn field="quokey" title="견적번호" width="120px" />
                 <GridColumn field="remark" title="비고" width="120px" />
-                <GridColumn field="finyn" title="완료여부" width="120px" />
+                <GridColumn field="finyn" title="완료여부" width="120px" /> */}
               </Grid>
             </ExcelExport>
           </GridContainer>
@@ -2200,10 +2258,10 @@ const PR_A1100: React.FC = () => {
                       finexpdt: new Date(dateformat(row.finexpdt)),
                       proccd: proccdListData.find(
                         (item: any) => item.sub_code === row.proccd
-                      ),
+                      )?.sub_code,
                       outprocyn: outprocynListData.find(
                         (item: any) => item.sub_code === row.outprocyn
-                      ),
+                      )?.sub_code,
                       prodmac: prodmacListData.find(
                         (item: any) => item.sub_code === row.prodmac
                       ),
@@ -2276,7 +2334,33 @@ const PR_A1100: React.FC = () => {
                     width="40px"
                     editable={false}
                   />
-                  <GridColumn
+
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["gvwPlanList"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.id
+                              .replace("col_", "")
+                              .replace("1", "")
+                              .replace("2", "")}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.id)
+                                ? NumberCell
+                                : dateField.includes(item.id)
+                                ? DateCell
+                                : lookupField.includes(item.id)
+                                ? CustomComboBoxCell
+                                : ""
+                            }
+                          ></GridColumn>
+                        )
+                    )}
+
+                  {/* <GridColumn
                     field="plandt"
                     title="계획일자"
                     cell={DateCell}
@@ -2410,8 +2494,8 @@ const PR_A1100: React.FC = () => {
                     title="업체명"
                     width="120px"
                     editable={false}
-                  />
-                  <GridColumn field="remark" title="비고" width="120px" />
+                  /> 
+                  <GridColumn field="remark" title="비고" width="120px" />*/}
                 </Grid>
               </ExcelExport>
             </GridContainer>
