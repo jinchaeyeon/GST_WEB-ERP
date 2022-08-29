@@ -49,6 +49,62 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     height: 800,
   });
 
+  const [columnWindowVisible, setColumnWindowVisible] =
+    useState<boolean>(false);
+
+  const [defaultWindowVisible, setDefaultWindowVisible] =
+    useState<boolean>(false);
+
+  const MAIN_COLUMN_DATA_ITEM_KEY = "option_id";
+  const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
+  const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
+  const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
+
+  const mainColumnIdGetter = getter(MAIN_COLUMN_DATA_ITEM_KEY);
+  const detailColumnIdGetter = getter(DETAIL_COLUMN_DATA_ITEM_KEY);
+  const mainDefaultIdGetter = getter(MAIN_DEFAULT_DATA_ITEM_KEY);
+  const detailDefaultIdGetter = getter(DETAIL_DEFAULT_DATA_ITEM_KEY);
+
+  const [mainColumnDataState, setMainColumnDataState] = useState<State>({});
+  const [detailColumnDataState, setDetailColumnDataState] = useState<State>({
+    sort: [],
+  });
+  const [mainDefaultDataState, setMainDefaultDataState] = useState<State>({});
+  const [detailDefaultDataState, setDetailDefaultDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [mainColumnDataResult, setMainColumnDataResult] = useState<DataResult>(
+    process([], mainColumnDataState)
+  );
+  const [detailColumnDataResult, setDetailColumnDataResult] =
+    useState<DataResult>(process([], detailColumnDataState));
+
+  const [mainDefaultDataResult, setMainDefaultDataResult] =
+    useState<DataResult>(process([], mainDefaultDataState));
+  const [detailDefaultDataResult, setDetailDefaultDataResult] =
+    useState<DataResult>(process([], detailDefaultDataState));
+
+  const [mainColumnSelectedState, setMainColumnSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [detailColumnSelectedState, setDetailColumnSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [mainDefaultSelectedState, setMainDefaultSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [detailDefaultSelectedState, setDetailDefaultSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [mainColumnPgNum, setMainColumnPgNum] = useState(1);
+  const [detailColumnPgNum, setDetailColumnPgNum] = useState(1);
+  const [mainDefaultPgNum, setMainDefaultPgNum] = useState(1);
+  const [detailDefaultPgNum, setDetailDefaultPgNum] = useState(1);
+
   const [columnWindowWorkType, setColumnWindowWorkType] = useState("");
   const [defaultWindowWorkType, setDefaultWindowWorkType] = useState("");
 
@@ -118,7 +174,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     dbname: "",
     parent_component: "",
   });
-  const [defaultDetailInitialVal, setDetailDefaultInitialVal] = useState({
+  const [defaultDetailInitialVal, setDefaultDetailInitialVal] = useState({
     process_type: "",
   });
 
@@ -157,6 +213,36 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   useEffect(() => {
     fetchDetailDefault();
   }, [defaultDetailInitialVal]);
+
+  //첫번째 행 선택
+  useEffect(() => {
+    if (mainColumnDataResult.total > 0) {
+      const firstRowData = mainColumnDataResult.data[0];
+      setMainColumnSelectedState({
+        [firstRowData[MAIN_COLUMN_DATA_ITEM_KEY]]: true,
+      });
+
+      setColumnDetailInitialVal((prev) => ({
+        ...prev,
+        dbname: "SYSTEM",
+        parent_component: firstRowData.option_id,
+      }));
+    }
+  }, [mainColumnDataResult]);
+
+  useEffect(() => {
+    if (mainDefaultDataResult.total > 0) {
+      const firstRowData = mainDefaultDataResult.data[0];
+      setMainDefaultSelectedState({
+        [firstRowData[MAIN_DEFAULT_DATA_ITEM_KEY]]: true,
+      });
+
+      setDefaultDetailInitialVal((prev) => ({
+        ...prev,
+        process_type: firstRowData.option_id,
+      }));
+    }
+  }, [mainDefaultDataResult]);
 
   //요약정보 조회
   const fetchMainColumn = async () => {
@@ -441,62 +527,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     if (paraData.work_type !== "") fetchGridSaved();
   }, [paraData]);
 
-  const [columnWindowVisible, setColumnWindowVisible] =
-    useState<boolean>(false);
-
-  const [defaultWindowVisible, setDefaultWindowVisible] =
-    useState<boolean>(false);
-
-  const MAIN_COLUMN_DATA_ITEM_KEY = "option_id";
-  const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
-  const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
-  const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
-
-  const mainColumnIdGetter = getter(MAIN_COLUMN_DATA_ITEM_KEY);
-  const detailColumnIdGetter = getter(DETAIL_COLUMN_DATA_ITEM_KEY);
-  const mainDefaultIdGetter = getter(MAIN_DEFAULT_DATA_ITEM_KEY);
-  const detailDefaultIdGetter = getter(DETAIL_DEFAULT_DATA_ITEM_KEY);
-
-  const [mainColumnDataState, setMainColumnDataState] = useState<State>({});
-  const [detailColumnDataState, setDetailColumnDataState] = useState<State>({
-    sort: [],
-  });
-  const [mainDefaultDataState, setMainDefaultDataState] = useState<State>({});
-  const [detailDefaultDataState, setDetailDefaultDataState] = useState<State>({
-    sort: [],
-  });
-
-  const [mainColumnDataResult, setMainColumnDataResult] = useState<DataResult>(
-    process([], mainColumnDataState)
-  );
-  const [detailColumnDataResult, setDetailColumnDataResult] =
-    useState<DataResult>(process([], detailColumnDataState));
-
-  const [mainDefaultDataResult, setMainDefaultDataResult] =
-    useState<DataResult>(process([], mainDefaultDataState));
-  const [detailDefaultDataResult, setDetailDefaultDataResult] =
-    useState<DataResult>(process([], detailDefaultDataState));
-
-  const [mainColumnSelectedState, setMainColumnSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [detailColumnSelectedState, setDetailColumnSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-  const [mainDefaultSelectedState, setMainDefaultSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [detailDefaultSelectedState, setDetailDefaultSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [mainColumnPgNum, setMainColumnPgNum] = useState(1);
-  const [detailColumnPgNum, setDetailColumnPgNum] = useState(1);
-  const [mainDefaultPgNum, setMainDefaultPgNum] = useState(1);
-  const [detailDefaultPgNum, setDetailDefaultPgNum] = useState(1);
-
   const onMainColumnScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainColumnPgNum, pageSize))
       setMainColumnPgNum((prev) => prev + 1);
@@ -583,7 +613,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    setDetailDefaultInitialVal((prev) => ({
+    setDefaultDetailInitialVal((prev) => ({
       ...prev,
       process_type: selectedRowData.option_id,
     }));
