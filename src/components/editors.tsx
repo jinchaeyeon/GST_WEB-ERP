@@ -274,8 +274,6 @@ export const CellDropDownList = (props: GridCellProps) => {
 
   const queryStr = dataItem[field ?? ""];
 
-  console.log("props!!");
-  console.log(queryStr);
   // "SELECT '' sub_code, '' code_name";
 
   // if (field === "itemacnt") queryStr = itemacntQuery;

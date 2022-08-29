@@ -161,8 +161,6 @@ const MA_B7000: React.FC = () => {
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
-    console.log("e~!");
-    console.log(e);
     const { name, value } = e;
 
     setFilters((prev) => ({
