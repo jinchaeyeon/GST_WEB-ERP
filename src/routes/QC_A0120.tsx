@@ -348,12 +348,13 @@ const QC_A0120: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      setDetail1DataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0)
+        setDetail1DataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
     }
   };
 

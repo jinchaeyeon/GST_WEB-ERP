@@ -638,12 +638,13 @@ const PR_A1100: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      setMainDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0)
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -666,12 +667,13 @@ const PR_A1100: React.FC = () => {
         idx: idx,
       }));
 
-      setPlanDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0)
+        setPlanDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -694,12 +696,13 @@ const PR_A1100: React.FC = () => {
         idx: idx,
       }));
 
-      setMaterialDataResult((prev) => {
-        return {
-          data: [...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0)
+        setMaterialDataResult((prev) => {
+          return {
+            data: [...rows],
+            total: totalRowCnt,
+          };
+        });
     }
   };
 

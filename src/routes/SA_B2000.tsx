@@ -349,12 +349,13 @@ const SA_B2000: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      setMainDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0)
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -374,12 +375,13 @@ const SA_B2000: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      setDetailDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0)
+        setDetailDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
     }
   };
 
