@@ -161,8 +161,6 @@ const ItemsWindow = ({
   const fetchMainGrid = async () => {
     let data: any;
 
-    console.log("parameters");
-    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -251,6 +249,15 @@ const ItemsWindow = ({
     });
 
     setSelectedState(newSelectedState);
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {mainDataResult.total}건
+      </td>
+    );
   };
 
   return (
@@ -394,7 +401,8 @@ const ItemsWindow = ({
           <GridColumn
             field="itemcd"
             title="품목코드"
-            width="200px" /*footerCell={detailTotalFooterCell}*/
+            width="200px"
+            footerCell={mainTotalFooterCell}
           />
 
           <GridColumn field="itemnm" title="품목명" width="200px" />

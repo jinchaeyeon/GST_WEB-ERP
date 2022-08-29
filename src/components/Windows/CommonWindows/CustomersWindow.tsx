@@ -160,16 +160,19 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowsCnt = data.result.totalRowCount;
-      const rows = data.result.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
 
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowsCnt,
+          total: totalRowCnt,
         };
       });
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
     }
   };
 
@@ -222,6 +225,14 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
     setSelectedState(newSelectedState);
   };
 
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {mainDataResult.total}건
+      </td>
+    );
+  };
   return (
     <Window
       title={"업체마스터"}
@@ -328,7 +339,8 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
           <GridColumn
             field="custcd"
             title="업체코드"
-            width="140px" /*footerCell={detailTotalFooterCell}*/
+            width="140px"
+            footerCell={mainTotalFooterCell}
           />
 
           <GridColumn field="custnm" title="업체명" width="200px" />
