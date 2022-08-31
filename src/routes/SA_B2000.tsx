@@ -106,6 +106,7 @@ const SA_B2000: React.FC = () => {
         ordnum: rowData.ordnum,
       }));
 
+      setIsCopy(false);
       setWorkType("U");
       setDetailWindowVisible(true);
     };
@@ -565,17 +566,19 @@ const SA_B2000: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("삭제가 완료되었습니다.");
 
       resetAllGrid();
       fetchMainGrid();
     } else {
+      console.log("[오류 발생]");
+      console.log(data);
       alert(
         "[" +
-          data.result.statusCode +
+          data.statusCode +
           "] 처리 중 오류가 발생하였습니다. " +
-          data.result.resultMessage
+          data.resultMessage
       );
     }
 
