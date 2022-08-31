@@ -198,29 +198,26 @@ const PR_A1100: React.FC = () => {
       setOrdkey(rowData.ordkey);
       setItemcd(rowData.itemcd);
 
-      // setMaterialFilters((prev) => ({
-      //   ...prev,
-      //   location: rowData.location,
-      //   ordnum: rowData.ordnum,
-      //   ordkey: rowData.ordkey,
-      // }));
-
       setWorkType("N");
       setPlanWindowVisible(true);
     };
 
     return (
-      <td className="k-command-cell">
-        <Button
-          className="k-grid-edit-command"
-          themeColor={"primary"}
-          //fillMode="outline"
-          onClick={onEditClick}
-          //icon="edit"
-        >
-          계획처리
-        </Button>
-      </td>
+      <>
+        {props.rowType === "groupHeader" ? null : (
+          <td className="k-command-cell">
+            <Button
+              className="k-grid-edit-command"
+              themeColor={"primary"}
+              //fillMode="outline"
+              onClick={onEditClick}
+              //icon="edit"
+            >
+              계획처리
+            </Button>
+          </td>
+        )}
+      </>
     );
   };
 
