@@ -3,6 +3,7 @@ import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
 import { useApi } from "../../hooks/api";
 import { FieldRenderProps } from "@progress/kendo-react-form";
 import { checkIsDDLValid } from "../CommonFunction";
+import { commonCodeDefaultValue } from "../CommonString";
 
 type TCommonComboBox = {
   fieldRenderProps: FieldRenderProps;
@@ -15,8 +16,17 @@ const CommonComboBox: React.FC<TCommonComboBox> = ({
   textField,
 }: TCommonComboBox) => {
   const processApi = useApi();
-  const { validationMessage, visited, className, valid, columns, ...others } =
-    fieldRenderProps;
+  const {
+    validationMessage,
+    visited,
+    value,
+    className,
+    label,
+    id,
+    valid,
+    columns,
+    ...others
+  } = fieldRenderProps;
   const [listData, setListData] = useState([]);
 
   useEffect(() => {
@@ -52,15 +62,17 @@ const CommonComboBox: React.FC<TCommonComboBox> = ({
 
   const required = className?.includes("required");
   let DDLvalid = valid;
-  if (required) DDLvalid = checkIsDDLValid(fieldRenderProps.value);
+  if (required) DDLvalid = checkIsDDLValid(value);
 
   return (
     <MultiColumnComboBox
       data={listData}
       textField={textField}
+      value={value}
       columns={newColumns}
       className={className}
       valid={DDLvalid}
+      id={id}
       {...others}
     />
   );

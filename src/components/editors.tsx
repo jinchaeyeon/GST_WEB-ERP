@@ -9,30 +9,19 @@ import { Label, Error, Hint } from "@progress/kendo-react-labels";
 import { GridCellProps, GridFilterCellProps } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { BlurEvent } from "@progress/kendo-react-dropdowns/dist/npm/common/events";
-
 import { FormGridEditContext } from "./Windows/SA_B2000_Window";
-
-import FeildDropDownList from "./DropDownLists/FeildDropDownList";
+import FieldDropDownList from "./DropDownLists/FieldDropDownList";
 import FieldComboBox from "./ComboBoxes/FieldComboBox";
-
+import FieldCheckBox from "./FieldCheckBox";
 import {
   checkIsDDLValid,
   getItemQuery,
   getQueryFromBizComponent,
+  requiredValidator,
 } from "./CommonFunction";
 import moment from "moment";
 
 const FORM_DATA_INDEX = "formDataIndex";
-
-const requiredValidator = (value: any) => (value ? "" : "*필수입력");
-
-export const validator = (value: string) =>
-  value !== "" ? "" : "Please enter value.";
-
-export const DDLValidator = (value: object) =>
-  checkIsDDLValid(value) ? "" : "*필수선택";
-
-const minValidator = (value: any) => (value > 0 ? "" : "*필수입력");
 
 //Grid Cell에 표시되는 Value
 const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
@@ -129,7 +118,7 @@ const DDLWithValidation = (fieldRenderProps: FieldRenderProps) => {
 
   return (
     <div>
-      <FeildDropDownList
+      <FieldDropDownList
         fieldRenderProps={fieldRenderProps}
         queryStr={queryStr}
       />
@@ -160,15 +149,12 @@ const CheckBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
     fieldRenderProps;
 
   return (
-    <div>
-      <Checkbox
-        defaultChecked={value === "Y" || value === true ? true : false}
-        valid={valid}
-        id={id}
-        {...others}
-      />
-      {visited && validationMessage && <Error>{validationMessage}</Error>}
-    </div>
+    <Checkbox
+      value={value === "Y" || value === true ? true : false}
+      valid={valid}
+      id={id}
+      {...others}
+    />
   );
 };
 
@@ -218,6 +204,26 @@ export const NumberCell = (props: GridCellProps) => {
 export const NameCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
+  const parentField = dataItem.parentField;
+
+  let defaultRendering = (
+    <td className={className ?? ""}>
+      <Field
+        component={isInEdit ? TextInputWithValidation : DisplayValue}
+        name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
+        className={className ?? ""}
+      />
+    </td>
+  );
+  return render
+    ? render.call(undefined, defaultRendering, props)
+    : defaultRendering;
+};
+
+//Grid Cell에서 사용되는 Name Feild (신규 행인 경우만 수정 가능한 셀)
+export const EditableNameCellInNew = (props: GridCellProps) => {
+  const { field, dataItem, className, render } = props;
+  const isInEdit = dataItem.rowstatus === "N" ? true : false;
   const parentField = dataItem.parentField;
 
   let defaultRendering = (
@@ -340,21 +346,24 @@ export const CellComboBox = (props: CustomCellProps) => {
 
 //Grid Cell에서 사용되는 CheckBox Feild
 export const CellCheckBox = (props: GridCellProps) => {
-  const { parentField, editIndex } = React.useContext(FormGridEditContext);
   const { field, dataItem, className, render } = props;
-
-  const isInEdit = dataItem[FORM_DATA_INDEX] === editIndex;
+  const parentField = dataItem.parentField;
 
   const required = className?.includes("required");
-  return (
+
+  let defaultRendering = (
     <td>
       <Field
-        component={isInEdit ? CheckBoxWithValidation : CheckBoxReadOnly}
+        component={CheckBoxWithValidation}
         name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
         validator={required ? requiredValidator : undefined}
       />
     </td>
   );
+
+  return render
+    ? render.call(undefined, defaultRendering, props)
+    : defaultRendering;
 };
 
 //Grid Cell에서 사용되는 ReadOnly CheckBox Feild
@@ -437,7 +446,7 @@ export const FormDropDownList = (fieldRenderProps: FieldRenderProps) => {
         {label}
       </Label>
       <div className={"k-form-field-wrap"}>
-        <FeildDropDownList
+        <FieldDropDownList
           fieldRenderProps={fieldRenderProps}
           queryStr={queryStr}
         />
@@ -446,6 +455,48 @@ export const FormDropDownList = (fieldRenderProps: FieldRenderProps) => {
   );
 };
 
+//Form Field에서 사용되는 콤보박스
+export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
+  const { value, label, id, valid, queryStr, className } = fieldRenderProps;
+
+  const required = className?.includes("required");
+  let DDLvalid = valid;
+  if (required) DDLvalid = checkIsDDLValid(value);
+
+  return (
+    <FieldWrapper>
+      <Label editorId={id} editorValid={DDLvalid}>
+        {label}
+      </Label>
+      <div className={"k-form-field-wrap"}>
+        <FieldComboBox
+          fieldRenderProps={fieldRenderProps}
+          queryStr={queryStr}
+        />
+      </div>
+    </FieldWrapper>
+  );
+};
+
+//Form Field에서 사용되는 체크박스
+export const FormCheckBox = (fieldRenderProps: FieldRenderProps) => {
+  const { value, label, id, valid, className } = fieldRenderProps;
+
+  const required = className?.includes("required");
+  let DDLvalid = valid;
+  if (required) DDLvalid = checkIsDDLValid(value);
+
+  return (
+    <FieldWrapper>
+      <Label editorId={id} editorValid={DDLvalid}>
+        {label}
+      </Label>
+      <div className={"k-form-field-wrap"}>
+        <FieldCheckBox fieldRenderProps={fieldRenderProps} />
+      </div>
+    </FieldWrapper>
+  );
+};
 //Form Field에서 사용되는 DatePicker
 export const FormDatePicker = (fieldRenderProps: FieldRenderProps) => {
   const {

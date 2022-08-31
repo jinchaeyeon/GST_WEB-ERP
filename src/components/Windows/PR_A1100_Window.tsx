@@ -46,25 +46,16 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-
 import { clone } from "@progress/kendo-react-common";
-
 import {
   NumberCell,
   NameCell,
-  FormInput,
-  validator,
-  FormDropDownList,
-  FormDatePicker,
-  FormReadOnly,
-  CellDropDownList,
-  CellCheckBoxReadOnly,
-  ReadOnlyNumberCell,
   FormNumericTextBox,
   CellComboBox,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
+  validator,
   arrayLengthValidator,
   checkIsDDLValid,
   chkScrollHandler,
@@ -88,21 +79,14 @@ import {
   TCommonCodeData,
 } from "../../hooks/interfaces";
 import {
-  amtunitQuery,
   commonCodeDefaultValue,
-  departmentsQuery,
-  doexdivQuery,
   itemacntQuery,
-  locationQuery,
-  ordstsQuery,
-  ordtypeQuery,
   outgbQuery,
   outprocynQuery,
   pageSize,
   proccdQuery,
   prodmacQuery,
   qtyunitQuery,
-  taxdivQuery,
   usersQuery,
 } from "../CommonString";
 

@@ -31,17 +31,17 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-import { NumberCell, NameCell, FormInput, validator } from "../../Editors";
+import { NumberCell, NameCell, FormInput } from "../../Editors";
 import { Iparameters } from "../../../store/types";
-import { chkScrollHandler } from "../../CommonFunction";
+import {
+  arrayLengthValidator,
+  chkScrollHandler,
+  validator,
+} from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { pageSize } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
-
-// Validate the entire Form
-const arrayLengthValidator = (value: any) =>
-  value && value.length ? "" : "최소 1개 행을 입력해주세요";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =

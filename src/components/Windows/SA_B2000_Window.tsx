@@ -39,30 +39,26 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-
 import { clone } from "@progress/kendo-react-common";
 
 import {
   NumberCell,
   NameCell,
   FormInput,
-  validator,
   FormDropDownList,
   FormDatePicker,
   FormReadOnly,
-  CellDropDownList,
-  CellCheckBoxReadOnly,
   ReadOnlyNumberCell,
   CellComboBox,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
+  validator,
   checkIsDDLValid,
   chkScrollHandler,
   convertDateToStr,
   dateformat,
   getItemQuery,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,

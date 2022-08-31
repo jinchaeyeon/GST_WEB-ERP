@@ -430,3 +430,13 @@ export const setDefaultDate = (customOptionData: any, id: string) => {
 export const arrayLengthValidator = (value: any) => {
   return value && value.length ? "" : "최소 1개 행을 입력해주세요";
 };
+
+export const requiredValidator = (value: any) => (value ? "" : "*필수입력");
+
+export const validator = (value: string) =>
+  value !== "" ? "" : "Please enter value.";
+
+export const DDLValidator = (value: object) =>
+  checkIsDDLValid(value) ? "" : "*필수선택";
+
+export const minValidator = (value: any) => (value > 0 ? "" : "*필수입력");

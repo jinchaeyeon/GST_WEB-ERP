@@ -42,11 +42,13 @@ import {
   usersState,
   doexdivState,
   locationState,
+  tokenState,
 } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
+  getQueryFromBizComponent,
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
@@ -71,8 +73,10 @@ import {
   usersQuery,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 
 const numberField = [
+  "col_sort_seq",
   "col_code_length",
   "col_numref1",
   "col_numref2",
@@ -80,15 +84,25 @@ const numberField = [
   "col_numref4",
   "col_numref5",
 ];
+const checkBoxField = ["col_system_yn", "col_use_yn1"];
 
 const Page: React.FC = () => {
+  const [token] = useRecoilState(tokenState);
+  const { userId } = token;
   const DATA_ITEM_KEY = "group_code";
   const DETAIL_DATA_ITEM_KEY = "sub_code";
   const SELECTED_FIELD = "selected";
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
+
+  const [willSearch, setWillSearch] = useState(false);
   const [mainDataState, setMainDataState] = useState<State>({
+    group: [
+      {
+        field: "group_category",
+      },
+    ],
     sort: [],
   });
   const [detailDataState, setDetailDataState] = useState<State>({
@@ -102,7 +116,51 @@ const Page: React.FC = () => {
   UseCustomOption(pathname, setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_menu_group", setBizComponentData);
+  UseBizComponent("L_menu_group,L_BA000", setBizComponentData);
+
+  // 그룹 카테고리 리스트
+  const [groupCategoryListData, setGroupCategoryListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+
+  // 그룹 카테고리 조회 쿼리
+  const groupCategoryQuery =
+    bizComponentData !== null
+      ? getQueryFromBizComponent(
+          bizComponentData.find(
+            (item: any) => item.bizComponentId === "L_BA000"
+          )
+        )
+      : "";
+
+  // 그룹 카테고리 조회
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      fetchQueryData(groupCategoryQuery, setGroupCategoryListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQueryData = useCallback(
+    async (queryStr: string, setListData: any) => {
+      let data: any;
+
+      let query = {
+        query: "query?query=" + encodeURIComponent(queryStr),
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setListData(rows);
+      }
+    },
+    []
+  );
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
@@ -115,20 +173,25 @@ const Page: React.FC = () => {
         group_code: rowData.group_code,
       }));
 
+      setIsCopy(false);
       setWorkType("U");
       setDetailWindowVisible(true);
     };
 
     return (
-      <td className="k-command-cell">
-        <Button
-          className="k-grid-edit-command"
-          themeColor={"primary"}
-          fillMode="outline"
-          onClick={onEditClick}
-          icon="edit"
-        ></Button>
-      </td>
+      <>
+        {props.rowType === "groupHeader" ? null : (
+          <td className="k-command-cell">
+            <Button
+              className="k-grid-edit-command"
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onEditClick}
+              icon="edit"
+            ></Button>
+          </td>
+        )}
+      </>
     );
   };
 
@@ -203,7 +266,7 @@ const Page: React.FC = () => {
     group_code: "",
     group_name: "",
     memo: "",
-    userid: "admin",
+    userid: userId,
     sub_code: "",
     subcode_name: "",
     comment: "",
@@ -222,10 +285,10 @@ const Page: React.FC = () => {
     parameters: {
       "@p_work_type": "LIST",
       "@p_group_category": filters.group_category,
-      "@p_group_code": filters.group_code,
+      "@p_group_code": "%" + filters.group_code + "%",
       "@p_group_name": filters.group_name,
       "@p_memo": filters.memo,
-      "@p_userid": "admin",
+      "@p_userid": filters.userid,
       "@p_sub_code": filters.sub_code,
       "@p_subcode_name": filters.subcode_name,
       "@p_comment": filters.comment,
@@ -252,83 +315,35 @@ const Page: React.FC = () => {
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
-    orgdiv: "01",
-    ordnum: "",
+    [DATA_ITEM_KEY]: "",
   });
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_WEB_SA_A2000_S",
+    procedureName: "P_WEB_SY_A0010_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_service_id": "",
-      "@p_orgdiv": paraDataDeleted.orgdiv,
-      "@p_location": "",
-      "@p_ordnum": paraDataDeleted.ordnum,
-      "@p_poregnum": "",
-      "@p_project": "",
-      "@p_ordtype": "",
-      "@p_ordsts": "",
-      "@p_taxdiv": "",
-      "@p_orddt": "",
-      "@p_dlvdt": "",
-      "@p_dptcd": "",
-      "@p_person": "",
-      "@p_amtunit": "",
-      "@p_portnm": "",
-      "@p_finaldes": "",
-      "@p_paymeth": "",
-      "@p_prcterms": "",
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_rcvcustcd": "",
-      "@p_rcvcustnm": "",
-      "@p_wonchgrat": "0",
-      "@p_uschgrat": "0",
-      "@p_doexdiv": "",
-      "@p_remark": "",
+      "@p_group_code": paraDataDeleted.group_code,
+      "@p_group_name": "",
+      "@p_code_length": 0,
+      "@p_group_category": "",
+      "@p_field_caption1": "",
+      "@p_field_caption2": "",
+      "@p_field_caption3": "",
+      "@p_field_caption4": "",
+      "@p_field_caption5": "",
+      "@p_field_caption6": "",
+      "@p_field_caption7": "",
+      "@p_field_caption8": "",
+      "@p_field_caption9": "",
+      "@p_field_caption10": "",
       "@p_attdatnum": "",
+      "@p_memo": "",
+      "@p_use_yn": "",
       "@p_userid": "",
       "@p_pc": "",
-      "@p_ship_method": "",
-      "@p_dlv_method": "",
-      "@p_hullno": "",
-      "@p_rowstatus_s": "",
-      "@p_chk_s": "",
-      "@p_ordseq_s": "",
-      "@p_poregseq_s": "",
-      "@p_itemcd_s": "",
-      "@p_itemnm_s": "",
-      "@p_itemacnt_s": "",
-      "@p_insiz_s": "",
-      "@p_bnatur_s": "",
-      "@p_qty_s": "",
-      "@p_qtyunit_s": "",
-      "@p_totwgt_s": "",
-      "@p_wgtunit_s": "",
-      "@p_len_s": "",
-      "@p_totlen_s": "",
-      "@p_lenunit_s": "",
-      "@p_thickness_s": "",
-      "@p_width_s": "",
-      "@p_length_s": "",
-      "@p_unpcalmeth_s": "",
-      "@p_unp_s": "",
-      "@p_amt_s": "",
-      "@p_taxamt_s": "",
-      "@p_dlramt_s": "",
-      "@p_wonamt_s": "",
-      "@p_remark_s": "",
-      "@p_pac_s": "",
-      "@p_finyn_s": "",
-      "@p_specialunp_s": "",
-      "@p_lotnum_s": "",
-      "@p_dlvdt_s": "",
-      "@p_specialamt_s": "",
-      "@p_heatno_s": "",
-      "@p_bf_qty_s": "",
       "@p_form_id": "",
     },
   };
@@ -512,6 +527,31 @@ const Page: React.FC = () => {
     );
   };
 
+  const getCaption = (field: any, orgCaption: any) => {
+    const key = Object.getOwnPropertyNames(selectedState)[0];
+    let caption = orgCaption;
+
+    if (key) {
+      const selectedRowData = mainDataResult.data.find(
+        (item) => item[DATA_ITEM_KEY] === key
+      );
+
+      if (selectedRowData) {
+        if (field.includes("extra_field")) {
+          const extraFieldNum = field
+            .replace("extra_field", "")
+            .replace("col_", "");
+
+          const newCaption = selectedRowData["field_caption" + extraFieldNum];
+          if (newCaption !== "") {
+            caption = newCaption;
+          }
+        }
+      }
+    }
+
+    return caption;
+  };
   const onAddClick = () => {
     setIsCopy(false);
     setWorkType("N");
@@ -519,10 +559,10 @@ const Page: React.FC = () => {
   };
 
   const onCopyClick = () => {
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
+    const key = Object.getOwnPropertyNames(selectedState)[0];
 
     const selectedRowData = mainDataResult.data.find(
-      (item) => item.ordnum === ordnum
+      (item) => item[DATA_ITEM_KEY] === key
     );
 
     setDetailFilters((prev) => ({
@@ -540,12 +580,12 @@ const Page: React.FC = () => {
       return false;
     }
 
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
+    const group_code = Object.getOwnPropertyNames(selectedState)[0];
 
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      ordnum: ordnum,
+      group_code: group_code,
     }));
   };
 
@@ -558,23 +598,29 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.result.isSuccess === true) {
+    if (data.isSuccess === true) {
       alert("삭제가 완료되었습니다.");
 
       resetAllGrid();
       fetchMainGrid();
     } else {
+      console.log("[오류 발생]");
+      console.log(data);
       alert(
         "[" +
-          data.result.statusCode +
+          data.statusCode +
           "] 처리 중 오류가 발생하였습니다. " +
-          data.result.resultMessage
+          data.resultMessage
       );
     }
 
     paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.ordnum = "";
-    paraDataDeleted.orgdiv = "01";
+    paraDataDeleted.group_code = "";
+  };
+
+  const setGroupCode = (group_code: string) => {
+    setFilters((prev) => ({ ...prev, group_code }));
+    setWillSearch(true);
   };
 
   const reloadData = (workType: string) => {
@@ -712,6 +758,24 @@ const Page: React.FC = () => {
     //   };
     // });
   }, [ordstsListData]);
+
+  const onExpandChange = (event: any) => {
+    const isExpanded =
+      event.dataItem.expanded === undefined
+        ? event.dataItem.aggregates
+        : event.dataItem.expanded;
+    event.dataItem.expanded = !isExpanded;
+    setMainDataState((prev) => ({ ...prev }));
+  };
+
+  // 최초 한번만 실행
+  useEffect(() => {
+    if (willSearch === true) {
+      resetAllGrid();
+      fetchMainGrid();
+      setWillSearch(false);
+    }
+  }, [filters]);
 
   return (
     <>
@@ -863,23 +927,8 @@ const Page: React.FC = () => {
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
-                  ordsts: ordstsListData.find(
-                    (item: any) => item.sub_code === row.ordsts
-                  )?.code_name,
-                  doexdiv: doexdivListData.find(
-                    (item: any) => item.sub_code === row.doexdiv
-                  )?.code_name,
-                  taxdiv: taxdivListData.find(
-                    (item: any) => item.sub_code === row.taxdiv
-                  )?.code_name,
-                  location: locationListData.find(
-                    (item: any) => item.sub_code === row.location
-                  )?.code_name,
-                  person: usersListData.find(
-                    (item: any) => item.sub_code === row.person
-                  )?.code_name,
-                  dptcd: departmentsListData.find(
-                    (item: any) => item.sub_code === row.dptcd
+                  group_category: groupCategoryListData.find(
+                    (item: any) => item.sub_code === row.group_category
                   )?.code_name,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
@@ -906,6 +955,10 @@ const Page: React.FC = () => {
               reorderable={true}
               //컬럼너비조정
               resizable={true}
+              //그룹기능
+              groupable={true}
+              onExpandChange={onExpandChange}
+              expandField="expanded"
             >
               <GridColumn cell={CommandCell} width="55px" />
 
@@ -940,12 +993,6 @@ const Page: React.FC = () => {
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
-                )?.code_name,
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
-                )?.code_name,
               })),
               detailDataState
             )}
@@ -965,19 +1012,31 @@ const Page: React.FC = () => {
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["gvwDetail"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.id.replace("col_", "")}
-                      title={item.caption}
-                      width={item.width}
-                      cell={numberField.includes(item.id) ? NumberCell : ""}
-                      footerCell={
-                        item.sortOrder === 2 ? detailTotalFooterCell : ""
-                      }
-                    ></GridColumn>
-                  )
+                (item: any, idx: number) => {
+                  const caption = getCaption(item.id, item.caption);
+                  return (
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.id
+                          .replace("col_", "")
+                          .replace("use_yn1", "use_yn")}
+                        title={caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.id)
+                            ? NumberCell
+                            : checkBoxField.includes(item.id)
+                            ? CheckBoxReadOnlyCell
+                            : ""
+                        }
+                        footerCell={
+                          item.sortOrder === 2 ? detailTotalFooterCell : ""
+                        }
+                      ></GridColumn>
+                    )
+                  );
+                }
               )}
           </Grid>
         </GridContainer>
@@ -988,6 +1047,7 @@ const Page: React.FC = () => {
           workType={workType} //신규 : N, 수정 : U
           group_code={detailFilters.group_code}
           isCopy={isCopy}
+          setGroupCode={setGroupCode}
           reloadData={reloadData}
           para={detailParameters}
         />

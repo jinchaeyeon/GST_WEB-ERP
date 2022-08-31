@@ -9,14 +9,13 @@ const CheckBoxCell = (props: GridCellProps) => {
   } else {
     value = false;
   }
-
   return (
     <td
       style={{ textAlign: "center" }}
       aria-colindex={ariaColumnIndex}
       data-grid-col-index={columnIndex}
     >
-      <Checkbox value={value}></Checkbox>
+      <Checkbox checked={value} readOnly></Checkbox>
     </td>
   );
 };

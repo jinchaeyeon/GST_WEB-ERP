@@ -20,3 +20,12 @@ div.k-animation-container {
 .k-grid tr {
   height: 36px;
 }
+
+.k-form-horizontal .k-form-field > .k-label,
+.k-form-horizontal .k-form-field > kendo-label,
+.k-form-horizontal .k-form-field > .k-form-label {
+  width: 40% !important;
+}
+.k-form-horizontal .k-form-field-wrap {
+  max-width: calc(60% - 10px) !important;
+}
