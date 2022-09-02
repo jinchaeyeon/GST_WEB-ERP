@@ -44,7 +44,9 @@ const DateCell = (props: GridCellProps) => {
     </td>
   );
 
-  return typeof value === "string"
+  //return defaultRendering;
+  //return typeof value === "string"
+  return !(value instanceof Date)
     ? defaultRendering
     : render?.call(undefined, defaultRendering, props);
 };

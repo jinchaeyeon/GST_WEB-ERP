@@ -91,7 +91,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
   const value = listData.find((item: any) => item.sub_code === dataValue);
 
   const defaultRendering = (
-    <td>
+    <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
       {isInEdit ? (
         <MultiColumnComboBox
           data={listData}
