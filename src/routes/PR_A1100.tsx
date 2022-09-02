@@ -93,7 +93,7 @@ import {
   taxdivQuery,
   usersQuery,
 } from "../components/CommonString";
-import { CellRender, RowRender } from "../components/Renderers2";
+import { CellRender, RowRender } from "../components/GroupRenderers";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "ordkey";
@@ -118,7 +118,16 @@ const numberField = [
   "col_bnatur_insiz",
   "col_procqty3",
 ];
-const dateField = ["col_finexpdt1", "col_plandt2"];
+const dateField = [
+  "col_finexpdt1",
+  "col_plandt1",
+  "col_plandt2",
+  "col_orddt",
+  "col_dlvdt",
+  "col_plandt",
+  "col_outdt",
+  "col_indt",
+];
 const lookupField = ["col_outprocyn1", "col_proccd2", "col_proccd3"];
 
 let deletedPlanRows: object[] = [];
@@ -2148,7 +2157,13 @@ const PR_A1100: React.FC = () => {
                           field={item.id.replace("col_", "")}
                           title={item.caption}
                           width={item.width}
-                          cell={numberField.includes(item.id) ? NumberCell : ""}
+                          cell={
+                            numberField.includes(item.id)
+                              ? NumberCell
+                              : dateField.includes(item.id)
+                              ? DateCell
+                              : ""
+                          }
                         ></GridColumn>
                       )
                   )}

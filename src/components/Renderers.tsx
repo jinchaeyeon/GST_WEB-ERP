@@ -42,7 +42,14 @@ export const RowRender = (props: any) => {
   const trProps = {
     ...props.tr.props,
     onBlur: () => {
-      props.exitEdit();
+      setTimeout(() => {
+        const activeElement = document.activeElement;
+
+        if (activeElement === null) return false;
+        if (activeElement.className.indexOf("k-calendar") < 0) {
+          props.exitEdit();
+        }
+      });
     },
   };
   return React.cloneElement(props.tr, { ...trProps }, props.tr.props.children);
