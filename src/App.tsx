@@ -22,6 +22,8 @@ import SY_A0120 from "./routes/SY_A0120";
 import SY_A0110 from "./routes/SY_A0110";
 import SY_A0010 from "./routes/SY_A0010";
 import SY_A0012 from "./routes/SY_A0012";
+import SY_A0013 from "./routes/SY_A0013";
+import SY_A0011 from "./routes/SY_A0011";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -107,6 +109,8 @@ class App extends Component {
               <AuthRoute path="/SY_A0110" component={SY_A0110} exact />
               <AuthRoute path="/SY_A0010" component={SY_A0010} exact />
               <AuthRoute path="/SY_A0012" component={SY_A0012} exact />
+              <AuthRoute path="/SY_A0013" component={SY_A0013} exact />
+              <AuthRoute path="/SY_A0011" component={SY_A0011} exact />
             </PanelBarNavContainer>
           </Switch>
         </Router>

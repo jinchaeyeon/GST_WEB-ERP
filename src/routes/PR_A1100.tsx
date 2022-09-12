@@ -1447,8 +1447,6 @@ const PR_A1100: React.FC = () => {
   const fetchToSavePlan = async () => {
     let data: any;
 
-    console.log("paraPlanSaved");
-    console.log(paraPlanSaved);
     try {
       data = await processApi<any>("procedure", paraPlanSaved);
     } catch (error) {

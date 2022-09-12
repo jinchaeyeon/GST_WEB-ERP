@@ -64,6 +64,8 @@ const paths = [
   { path: "/SY_A0110", index: ".5.1" },
   { path: "/SY_A0010", index: ".5.2" },
   { path: "/SY_A0012", index: ".5.3" },
+  { path: "/SY_A0013", index: ".5.4" },
+  { path: "/SY_A0011", index: ".5.5" },
 ];
 
 const PanelBarNavContainer = (props: any) => {
@@ -117,6 +119,8 @@ const PanelBarNavContainer = (props: any) => {
             <PanelBarItem title={"사용자 이용 현황"} route="/SY_A0110" />
             <PanelBarItem title={"공통코드 정보"} route="/SY_A0010" />
             <PanelBarItem title={"사용자 정보"} route="/SY_A0012" />
+            <PanelBarItem title={"사용자 권한"} route="/SY_A0013" />
+            <PanelBarItem title={"사용자 그룹"} route="/SY_A0011" />
           </PanelBarItem>
         </PanelBar>
         <Button
