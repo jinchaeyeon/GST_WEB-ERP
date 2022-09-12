@@ -1459,6 +1459,14 @@ const SY_A0120: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>사용자별 메뉴 권한</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                ></Button>
+              </ButtonContainer>
             </GridTitleContainer>
 
             <TreeList
@@ -1577,14 +1585,6 @@ const SY_A0120: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>[참조] 전체 메뉴</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                ></Button>
-              </ButtonContainer>
             </GridTitleContainer>
             <TreeList
               style={{ height: "650px" }}
