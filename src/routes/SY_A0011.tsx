@@ -78,9 +78,10 @@ import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { tokenState } from "../store/atoms";
 import { useRecoilState } from "recoil";
 import { flatVisibleChildren } from "@progress/kendo-react-layout";
+import DetailWindow from "../components/Windows/SY_A0011_Window";
 
 //그리드 별 키 필드값
-const DATA_ITEM_KEY = "idx";
+const DATA_ITEM_KEY = "user_group_id";
 const USER_MENU_DATA_ITEM_KEY = "KeyID";
 const ALL_MENU_DATA_ITEM_KEY = "KeyID";
 const expandField: string = "expanded";
@@ -163,13 +164,16 @@ const SY_A0120: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_dptcd_001,L_SYS005,L_BA001,L_BA002,L_HU005,L_SYS1205_1",
+    "L_dptcd_001,L_COM013,L_BA001,L_BA002,L_HU005,L_SYS1205_1",
     setBizComponentData
   );
 
   const allMenuColumns: TreeListColumnProps[] = [
     { field: "menu_name", title: "메뉴명", expandable: true },
   ];
+
+  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+  const [willSearch, setWillSearch] = useState(false);
 
   const userMenuColumns: TreeListColumnProps[] = [
     {
@@ -209,6 +213,10 @@ const SY_A0120: React.FC = () => {
     },
     { field: "path", title: "경로", width: "100px" },
   ];
+
+  const [workType, setWorkType] = useState("");
+  const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
@@ -279,82 +287,54 @@ const SY_A0120: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: pageSize,
     work_type: "LIST",
-    cboOrgdiv: "01",
-    cboLocation: "",
-    dptcd: "",
-    lang_id: "KOR",
-    user_category: "",
-    user_id: "",
-    user_name: "",
-    menu_name: "",
-    layout_key: "",
-    category: "",
+    user_group_id: "",
+    user_group_name: "",
+    lang_id: "",
+    use_yn: "",
   });
 
   const [userMenuFilters, setUserMenuFilters] = useState({
     pgSize: pageSize,
-    work_type: "DETAIL",
-    lang_id: "",
-    user_id: "",
+    user_group_id: "",
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_SY_A0013W_Q ",
+    procedureName: "P_SY_A0011W_Q ",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": filters.work_type,
-      "@p_orgdiv": filters.cboOrgdiv,
-      "@p_location": filters.cboLocation,
-      "@p_dptcd": filters.dptcd,
+      "@p_user_group_id": filters.user_group_id,
+      "@p_user_group_name": filters.user_group_name,
       "@p_lang_id": filters.lang_id,
-      "@p_user_category": filters.user_category,
-      "@p_user_id": filters.user_id,
-      "@p_user_name": filters.user_name,
-      "@p_menu_name": filters.menu_name,
-      "@p_layout_key": filters.layout_key,
-      "@p_category": filters.category,
-      "@p_service_id": pathname,
+      "@p_use_yn": filters.use_yn,
     },
   };
 
   const userMenuParameters: Iparameters = {
-    procedureName: "P_SY_A0013W_Q ",
+    procedureName: "P_SY_A0011W_Q ",
     pageNumber: 1,
     pageSize: 500,
     parameters: {
-      "@p_work_type": userMenuFilters.work_type,
-      "@p_orgdiv": filters.cboOrgdiv,
-      "@p_location": filters.cboLocation,
-      "@p_dptcd": filters.dptcd,
+      "@p_work_type": "DETAIL",
+      "@p_user_group_id": userMenuFilters.user_group_id,
+      "@p_user_group_name": filters.user_group_name,
       "@p_lang_id": filters.lang_id,
-      "@p_user_category": filters.user_category,
-      "@p_user_id": userMenuFilters.user_id,
-      "@p_user_name": filters.user_name,
-      "@p_menu_name": filters.menu_name,
-      "@p_layout_key": filters.layout_key,
-      "@p_category": filters.category,
-      "@p_service_id": pathname,
+      "@p_use_yn": filters.use_yn,
     },
   };
+
   const allMenuParameters: Iparameters = {
-    procedureName: "P_SY_A0013W_Q ",
+    procedureName: "P_SY_A0011W_Q ",
     pageNumber: 1,
     pageSize: 500,
     parameters: {
-      "@p_work_type": "MENU",
-      "@p_orgdiv": filters.cboOrgdiv,
-      "@p_location": filters.cboLocation,
-      "@p_dptcd": filters.dptcd,
+      "@p_work_type": "ALL",
+      "@p_user_group_id": filters.user_group_id,
+      "@p_user_group_name": filters.user_group_name,
       "@p_lang_id": filters.lang_id,
-      "@p_user_category": filters.user_category,
-      "@p_user_id": userMenuFilters.user_id,
-      "@p_user_name": filters.user_name,
-      "@p_menu_name": filters.menu_name,
-      "@p_layout_key": filters.layout_key,
-      "@p_category": filters.category,
-      "@p_service_id": pathname,
+      "@p_use_yn": filters.use_yn,
     },
   };
 
@@ -375,13 +355,14 @@ const SY_A0120: React.FC = () => {
         idx: idx,
       }));
 
-      if (totalRowCnt > 0)
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
+      }
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -500,7 +481,7 @@ const SY_A0120: React.FC = () => {
       selectedRowIdx = 0;
       setUserMenuFilters((prev) => ({
         ...prev,
-        user_id: firstRowData.user_id,
+        user_group_id: firstRowData.user_group_id,
       }));
     }
   }, [mainDataResult]);
@@ -532,7 +513,7 @@ const SY_A0120: React.FC = () => {
 
     setUserMenuFilters((prev) => ({
       ...prev,
-      user_id: selectedRowData.user_id,
+      user_group_id: selectedRowData.user_group_id,
     }));
   };
   const onUserMenuSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -627,9 +608,7 @@ const SY_A0120: React.FC = () => {
     commonCodeDefaultValue,
   ]);
 
-  const [userCategoryListData, setUserCategoryListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
+  const [useYnListData, setUseYnListData] = React.useState<any>([]);
 
   const [pathListData, setPathListData] = React.useState<any>([]);
 
@@ -639,8 +618,8 @@ const SY_A0120: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
       );
 
-      const userCategoryQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SYS005")
+      const useYnQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_COM013")
       );
 
       const pathQueryStr = getQueryFromBizComponent(
@@ -650,7 +629,7 @@ const SY_A0120: React.FC = () => {
       );
 
       fetchQuery(postcdQueryStr, setPostcdListData);
-      fetchQuery(userCategoryQueryStr, setUserCategoryListData);
+      fetchQuery(useYnQueryStr, setUseYnListData);
       fetchQuery(pathQueryStr, setPathListData);
     }
   }, [bizComponentData]);
@@ -749,64 +728,77 @@ const SY_A0120: React.FC = () => {
   // }, [itemgradeListData]);
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    const idx: number =
-      Number(Object.getOwnPropertyNames(selectedState)[0]) ??
-      //Number(planDataResult.data[0].idx) ??
-      null;
-    if (idx === null) return false;
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item.idx === idx
-    );
-
-    const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
-      // planno: selectedRowData.planno,
-      // planseq: selectedRowData.planseq,
-      // proccd: selectedRowData.proccd,
-      apply_start_date: convertDateToStr(new Date()),
-      apply_end_date: "19991231",
-      birdt: "19991231",
-      rowstatus: "N",
-    };
-    setMainDataResult((prev) => {
-      return {
-        data: [...prev.data, newDataItem],
-        total: prev.total,
-      };
-    });
+    setWorkType("N");
+    setDetailWindowVisible(true);
   };
 
-  const onRemoveClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
-    let newData: any[] = [];
+  //삭제 프로시저 초기값
+  const [paraDataDeleted, setParaDataDeleted] = useState({
+    work_type: "",
+    user_group_id: "",
+  });
 
-    mainDataResult.data.forEach((item: any, index: number) => {
-      if (!selectedState[item[DATA_ITEM_KEY]]) {
-        newData.push(item);
-      } else {
-        deletedMainRows.push(item);
-      }
-    });
+  //삭제 프로시저 파라미터
+  const paraDeleted: Iparameters = {
+    procedureName: "P_SY_A0011W_S",
+    pageNumber: 1,
+    pageSize: 10,
+    parameters: {
+      "@p_work_type": paraDataDeleted.work_type,
+      "@p_user_group_id": paraDataDeleted.user_group_id,
+      "@p_user_group_name": "",
+      "@p_memo": "",
+      "@p_use_yn": "",
+      "@p_userid": "",
+      "@p_pc": "",
+    },
+  };
 
-    //newData 생성
-    setMainDataResult((prev) => ({
-      data: newData,
-      total: newData.length,
+  const onDeleteClick = () => {
+    if (!window.confirm("삭제하시겠습니까?")) {
+      return false;
+    }
+
+    const user_group_id = Object.getOwnPropertyNames(selectedState)[0];
+
+    setParaDataDeleted((prev) => ({
+      ...prev,
+      work_type: "D",
+      user_group_id: user_group_id,
     }));
+  };
 
-    //선택 상태 초기화
-    setSelectedState({});
+  useEffect(() => {
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
+  }, [paraDataDeleted]);
+
+  const fetchToDelete = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", paraDeleted);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      alert("삭제가 완료되었습니다.");
+
+      resetAllGrid();
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(
+        "[" +
+          data.statusCode +
+          "] 처리 중 오류가 발생하였습니다. " +
+          data.resultMessage
+      );
+    }
+
+    paraDataDeleted.work_type = ""; //초기화
+    paraDataDeleted[DATA_ITEM_KEY] = "";
   };
 
   const onSaveClick = () => {
@@ -852,87 +844,92 @@ const SY_A0120: React.FC = () => {
 
     if (!valid) return false;
 
-    type TData = {
-      row_state_s: string[];
-      add_delete_type_s: string[];
-      menu_id_s: string[];
-      form_view_yn_s: string[];
-      form_print_yn_s: string[];
-      form_save_yn_s: string[];
-      form_delete_yn_s: string[];
-    };
-
-    let dataArr: TData = {
-      row_state_s: [],
-      add_delete_type_s: [],
-      menu_id_s: [],
-      form_view_yn_s: [],
-      form_print_yn_s: [],
-      form_save_yn_s: [],
-      form_delete_yn_s: [],
-    };
-
-    dataItem.forEach((item: any, idx: number) => {
-      const {
-        rowstatus,
-        add_delete_type_s,
-        KeyID,
-        form_view_yn,
-        form_print_yn,
-        form_save_yn,
-        form_delete_yn,
-      } = item;
-
-      dataArr.row_state_s.push(rowstatus);
-      dataArr.add_delete_type_s.push(add_delete_type_s);
-      dataArr.menu_id_s.push(KeyID);
-      dataArr.form_view_yn_s.push(form_view_yn);
-      dataArr.form_print_yn_s.push(form_print_yn);
-      dataArr.form_save_yn_s.push(form_save_yn);
-      dataArr.form_delete_yn_s.push(form_delete_yn);
-    });
-
-    deletedMainRows.forEach((item: any) => {
-      const {
-        add_delete_type_s,
-        KeyID,
-        form_view_yn,
-        form_print_yn,
-        form_save_yn,
-        form_delete_yn,
-      } = item;
-
-      dataArr.row_state_s.push("D");
-      dataArr.add_delete_type_s.push(add_delete_type_s);
-      dataArr.menu_id_s.push(KeyID);
-      dataArr.form_view_yn_s.push(form_view_yn);
-      dataArr.form_print_yn_s.push(form_print_yn);
-      dataArr.form_save_yn_s.push(form_save_yn);
-      dataArr.form_delete_yn_s.push(form_delete_yn);
-    });
-
     const key = Object.getOwnPropertyNames(selectedState)[0];
 
     const selectedRowData = mainDataResult.data.find(
-      (item) => item["idx"] === Number(key)
+      (item) => item[DATA_ITEM_KEY] === key
     );
 
     selectedRowIdx = mainDataResult.data.findIndex(
-      (item) => item["idx"] === Number(key)
+      (item) => item[DATA_ITEM_KEY] === key
     );
 
-    setParaDataSaved((prev) => ({
-      ...prev,
-      work_type: "U",
-      user_id_s: selectedRowData.user_id,
-      row_state_s: dataArr.row_state_s.join("|"),
-      add_delete_type_s: dataArr.add_delete_type_s.join("|"),
-      menu_id_s: dataArr.menu_id_s.join("|"),
-      form_view_yn_s: dataArr.form_view_yn_s.join("|"),
-      form_print_yn_s: dataArr.form_print_yn_s.join("|"),
-      form_save_yn_s: dataArr.form_save_yn_s.join("|"),
-      form_delete_yn_s: dataArr.form_delete_yn_s.join("|"),
-    }));
+    try {
+      deletedMainRows.forEach((item: any) => {
+        const {
+          KeyID,
+          form_view_yn = "",
+          form_print_yn = "",
+          form_excel_yn = "",
+          form_save_yn = "",
+          form_delete_yn = "",
+        } = item;
+
+        const para: Iparameters = {
+          procedureName: "P_SY_A0011W_S1",
+          pageNumber: 1,
+          pageSize: 10,
+          parameters: {
+            "@p_work_type": "D",
+            "@p_menu_id": KeyID,
+            "@p_user_group_id": selectedRowData.user_group_id,
+            "@p_form_view_yn": form_view_yn,
+            "@p_form_print_yn": form_print_yn,
+            "@p_form_excel_yn": form_excel_yn,
+            "@p_form_save_yn": form_save_yn,
+            "@p_form_delete_yn": form_delete_yn,
+            "@p_userid": userId,
+            "@p_pc": "",
+          },
+        };
+
+        const result = fetchGridSaved(para);
+        if (result instanceof Error) throw result;
+      });
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus,
+          KeyID,
+          form_view_yn = "",
+          form_print_yn = "",
+          form_excel_yn = "",
+          form_save_yn = "",
+          form_delete_yn = "",
+        } = item;
+
+        const para: Iparameters = {
+          procedureName: "P_SY_A0011W_S1",
+          pageNumber: 1,
+          pageSize: 10,
+          parameters: {
+            "@p_work_type": rowstatus,
+            "@p_menu_id": KeyID,
+            "@p_user_group_id": selectedRowData.user_group_id,
+            "@p_form_view_yn": form_view_yn,
+            "@p_form_print_yn": form_print_yn,
+            "@p_form_excel_yn": form_excel_yn,
+            "@p_form_save_yn": form_save_yn,
+            "@p_form_delete_yn": form_delete_yn,
+            "@p_userid": userId,
+            "@p_pc": "",
+          },
+        };
+
+        const result = fetchGridSaved(para);
+        console.log(result);
+        console.log(result instanceof Error);
+        if (result instanceof Error) throw result;
+      });
+
+      alert("저장이 완료되었습니다.");
+
+      resetAllGrid();
+      fetchMainGrid();
+      deletedMainRows = [];
+    } catch (e) {
+      alert(e);
+    }
   };
 
   //계획 저장 파라미터 초기값
@@ -981,27 +978,38 @@ const SY_A0120: React.FC = () => {
     },
   };
 
-  const fetchGridSaved = async () => {
+  const fetchGridSaved = async (para: any) => {
     let data: any;
 
     console.log("paraSaved");
-    console.log(paraSaved);
+    console.log(para);
     try {
-      data = await processApi<any>("procedure", paraSaved);
+      data = await processApi<any>("procedure", para);
     } catch (error) {
       data = null;
     }
 
     console.log("data");
     console.log(data);
-    if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
+    // if (data.isSuccess === true) {
+    //   alert("저장이 완료되었습니다.");
 
-      resetAllGrid();
-      fetchMainGrid();
-      deletedMainRows = [];
-    } else {
-      alert(
+    //   resetAllGrid();
+    //   fetchMainGrid();
+    //   deletedMainRows = [];
+    // } else {
+    //   alert(
+    //     "[" +
+    //       data.statusCode +
+    //       "] 처리 중 오류가 발생하였습니다. " +
+    //       data.resultMessage
+    //   );
+    // }
+
+    if (data.isSuccess !== true) {
+      console.log("[오류 발생]");
+      console.log(data);
+      return new Error(
         "[" +
           data.statusCode +
           "] 처리 중 오류가 발생하였습니다. " +
@@ -1010,9 +1018,9 @@ const SY_A0120: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (paraDataSaved.work_type !== "") fetchGridSaved();
-  }, [paraDataSaved]);
+  // useEffect(() => {
+  //   if (paraDataSaved.work_type !== "") fetchGridSaved();
+  // }, [paraDataSaved]);
 
   const onUserMenuItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
@@ -1255,6 +1263,56 @@ const SY_A0120: React.FC = () => {
       ? extendDataItem(item, subItemsField, { [expandField]: true })
       : item;
 
+  const setGroupCode = (group_code: string) => {
+    setFilters((prev) => ({ ...prev, group_code }));
+    setWillSearch(true);
+  };
+
+  const reloadData = (workType: string) => {
+    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
+    if (workType === "U") {
+      setIfSelectFirstRow(false);
+    } else {
+      setIfSelectFirstRow(true);
+    }
+
+    resetAllGrid();
+    fetchMainGrid();
+    //fetchDetailGrid();
+  };
+
+  const CommandCell = (props: GridCellProps) => {
+    const onEditClick = () => {
+      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+      const rowData = props.dataItem;
+      setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
+
+      setUserMenuFilters((prev) => ({
+        ...prev,
+        user_group_id: rowData.user_group_id,
+      }));
+
+      setWorkType("U");
+      setDetailWindowVisible(true);
+    };
+
+    return (
+      <>
+        {props.rowType === "groupHeader" ? null : (
+          <td className="k-command-cell">
+            <Button
+              className="k-grid-edit-command"
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onEditClick}
+              icon="edit"
+            ></Button>
+          </td>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1288,70 +1346,21 @@ const SY_A0120: React.FC = () => {
         <FilterBox>
           <tbody>
             <tr>
-              <th>회사구분</th>
-              <td>
-                {/* {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboOrgdiv"
-                    value={filters.cboOrgdiv}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )} */}
-
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="cboOrgdiv"
-                    value={filters.cboOrgdiv}
-                    bizComponentId="L_BA001"
-                    bizComponentData={bizComponentData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>사업장</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="cboLocation"
-                    value={filters.cboLocation}
-                    bizComponentId="L_BA002"
-                    bizComponentData={bizComponentData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>부서코드</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="dptcd"
-                    value={filters.dptcd}
-                    bizComponentId="L_dptcd_001"
-                    bizComponentData={bizComponentData}
-                    changeData={filterComboBoxChange}
-                    textField="dptnm"
-                    valueField="dptcd"
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>사용자명ID</th>
+              <th>사용자그룹ID</th>
               <td>
                 <Input
                   name="user_id"
                   type="text"
-                  value={filters.user_id}
+                  value={filters.user_group_id}
                   onChange={filterInputChange}
                 />
               </td>
-              <th>사용자명</th>
+              <th>사용자그룹명</th>
               <td>
                 <Input
                   name="user_name"
                   type="text"
-                  value={filters.user_name}
+                  value={filters.user_group_name}
                   onChange={filterInputChange}
                 />
               </td>
@@ -1359,9 +1368,9 @@ const SY_A0120: React.FC = () => {
               <td>
                 {bizComponentData !== null && (
                   <BizComponentComboBox
-                    name="user_category"
-                    value={filters.user_category}
-                    bizComponentId="L_SYS005"
+                    name="use_yn"
+                    value={filters.use_yn}
+                    bizComponentId="L_COM013"
                     bizComponentData={bizComponentData}
                     changeData={filterComboBoxChange}
                   />
@@ -1381,16 +1390,34 @@ const SY_A0120: React.FC = () => {
             }}
           >
             <GridTitleContainer>
-              <GridTitle>사용자 리스트</GridTitle>
+              <GridTitle>사용자그룹 정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="file-add"
+                >
+                  생성
+                </Button>
+                <Button
+                  onClick={onDeleteClick}
+                  icon="delete"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                >
+                  삭제
+                </Button>
+              </ButtonContainer>
             </GridTitleContainer>
             <Grid
               style={{ height: "650px" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
-                  user_category: userCategoryListData.find(
-                    (item: any) => item.sub_code === row.user_category
-                  )?.code_name,
+                  use_yn: useYnListData.find(
+                    (item: any) => item.code === row.use_yn
+                  )?.name,
                   postcd: postcdListData.find(
                     (item: any) => item.sub_code === row.postcd
                   )?.code_name,
@@ -1427,24 +1454,20 @@ const SY_A0120: React.FC = () => {
                 editable={false}
               />
 
+              <GridColumn cell={CommandCell} width="55px" />
               <GridColumn
-                field={"user_id"}
-                title={"사용자ID"}
+                field={"user_group_id"}
+                title={"사용자그룹ID"}
                 width={"100px"}
                 //cell={numberField.includes(item.id) ? NumberCell : ""}
                 footerCell={mainTotalFooterCell}
               />
               <GridColumn
-                field={"user_name"}
-                title={"사용자명"}
+                field={"user_group_name"}
+                title={"사용자그룹명"}
                 width={"150px"}
               />
-              <GridColumn
-                field={"user_category"}
-                title={"사용자구분"}
-                width={"110px"}
-              />
-              <GridColumn field={"postcd"} title={"직위"} width={"150px"} />
+              <GridColumn field={"use_yn"} title={"사용유무"} width={"110px"} />
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1458,7 +1481,15 @@ const SY_A0120: React.FC = () => {
             }}
           >
             <GridTitleContainer>
-              <GridTitle>사용자별 메뉴 권한</GridTitle>
+              <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                ></Button>
+              </ButtonContainer>
             </GridTitleContainer>
 
             <TreeList
@@ -1577,14 +1608,6 @@ const SY_A0120: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>[참조] 전체 메뉴</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                ></Button>
-              </ButtonContainer>
             </GridTitleContainer>
             <TreeList
               style={{ height: "650px" }}
@@ -1652,6 +1675,16 @@ const SY_A0120: React.FC = () => {
           </ExcelExport>
         </GridContainer>
       </GridContainerWrap>
+      {detailWindowVisible && (
+        <DetailWindow
+          getVisible={setDetailWindowVisible}
+          workType={workType} //신규 : N, 수정 : U
+          user_group_id={userMenuFilters.user_group_id}
+          setGroupId={setGroupCode}
+          reloadData={reloadData}
+          para={userMenuParameters}
+        />
+      )}
     </>
   );
 };
