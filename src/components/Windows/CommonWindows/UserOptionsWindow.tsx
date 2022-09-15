@@ -309,8 +309,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const fetchDetailDefault = async () => {
     let data: any;
 
-    console.log("defaultDetailParameters");
-    console.log(defaultDetailParameters);
     try {
       data = await processApi<any>(
         "platform-procedure",
