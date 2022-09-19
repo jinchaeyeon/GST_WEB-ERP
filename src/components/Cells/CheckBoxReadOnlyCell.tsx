@@ -1,7 +1,7 @@
 import { GridCellProps } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
 
-const CheckBoxCell = (props: GridCellProps) => {
+const CheckBoxReadOnlyCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field } = props;
   let value = dataItem[field ?? ""];
   if (value === "Y" || value === true) {
@@ -20,4 +20,4 @@ const CheckBoxCell = (props: GridCellProps) => {
   );
 };
 
-export default CheckBoxCell;
+export default CheckBoxReadOnlyCell;
