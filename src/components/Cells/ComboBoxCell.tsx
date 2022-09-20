@@ -1,23 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ComboBoxChangeEvent,
-  DropDownList,
-  DropDownListChangeEvent,
   MultiColumnComboBox,
   MultiColumnComboBoxChangeEvent,
 } from "@progress/kendo-react-dropdowns";
 import { useApi } from "../../hooks/api";
-import { commonCodeDefaultValue } from "../CommonString";
 import { GridCellProps } from "@progress/kendo-react-grid";
-import {
-  itemacntQuery,
-  outgbQuery,
-  outprocynQuery,
-  proccdQuery,
-  prodmacQuery,
-  qtyunitQuery,
-  usersQuery,
-} from "../CommonString";
 import { getQueryFromBizComponent } from "../CommonFunction";
 
 interface CustomCellProps extends GridCellProps {
@@ -69,11 +57,11 @@ const ComboBoxCell = (props: CustomCellProps) => {
   }, []);
 
   const handleChange = (e: ComboBoxChangeEvent) => {
-    if (props.onChange) {
-      props.onChange({
+    if (onChange) {
+      onChange({
         dataIndex: 0,
-        dataItem: props.dataItem,
-        field: props.field,
+        dataItem: dataItem,
+        field: field,
         syntheticEvent: e.syntheticEvent,
         value: e.target.value ?? "",
       });
