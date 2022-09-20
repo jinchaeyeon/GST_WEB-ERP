@@ -1054,12 +1054,7 @@ const KendoWindow = ({
       console.log("[오류 발생]");
       console.log(data);
 
-      alert(
-        "[" +
-          data.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.resultMessage
-      );
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화
@@ -1086,12 +1081,7 @@ const KendoWindow = ({
       console.log("[오류 발생]");
       console.log(data);
 
-      alert(
-        "[" +
-          data.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.resultMessage
-      );
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
   };
 

@@ -1136,12 +1136,7 @@ const PR_A1100: React.FC = () => {
       resetAllGrid();
       fetchPlanGrid();
     } else {
-      alert(
-        "[" +
-          data.result.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.result.resultMessage
-      );
+      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화
@@ -1462,12 +1457,7 @@ const PR_A1100: React.FC = () => {
       deletedPlanRows = [];
       deletedMaterialRows = [];
     } else {
-      alert(
-        "[" +
-          data.result.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.result.resultMessage
-      );
+      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화

@@ -1841,12 +1841,7 @@ const KendoWindow = ({
         reloadData("N");
       }
     } else {
-      alert(
-        "[" +
-          data.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.resultMessage
-      );
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화

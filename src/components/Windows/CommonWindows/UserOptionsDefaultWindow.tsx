@@ -615,12 +615,7 @@ const KendoWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(
-        "[" +
-          data.result.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.result.resultMessage
-      );
+      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
     }
   };
 

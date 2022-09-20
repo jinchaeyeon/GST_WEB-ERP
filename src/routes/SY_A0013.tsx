@@ -984,16 +984,12 @@ const SY_A0120: React.FC = () => {
   const fetchGridSaved = async () => {
     let data: any;
 
-    console.log("paraSaved");
-    console.log(paraSaved);
     try {
       data = await processApi<any>("procedure", paraSaved);
     } catch (error) {
       data = null;
     }
 
-    console.log("data");
-    console.log(data);
     if (data.isSuccess === true) {
       alert("저장이 완료되었습니다.");
 
@@ -1001,12 +997,7 @@ const SY_A0120: React.FC = () => {
       fetchMainGrid();
       deletedMainRows = [];
     } else {
-      alert(
-        "[" +
-          data.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.resultMessage
-      );
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
   };
 
