@@ -2121,54 +2121,59 @@ const KendoWindow = ({
             <FormElement horizontal={true}>
               <GridContainerWrap>
                 <GridContainer>
-                  <InfoList>
-                    <InfoTitle>수주정보</InfoTitle>
-                    <InfoItem>
-                      <InfoLabel>품목코드</InfoLabel>
-                      <InfoValue>{infoVal.itemcd}</InfoValue>
-                    </InfoItem>
-                    <InfoItem>
-                      <InfoLabel>품목명</InfoLabel>
-                      <InfoValue>{infoVal.itemnm}</InfoValue>
-                    </InfoItem>
-                    <InfoItem>
-                      <InfoLabel>품목계정</InfoLabel>
-                      <InfoValue>{infoVal.itemacnt}</InfoValue>
-                    </InfoItem>
-                    <InfoItem>
-                      <InfoLabel>규격</InfoLabel>
-                      <InfoValue>{infoVal.insiz}</InfoValue>
-                    </InfoItem>
-                    <InfoItem>
-                      <InfoLabel>재질</InfoLabel>
-                      <InfoValue>{infoVal.bnatur}</InfoValue>
-                    </InfoItem>
-                    <InfoItem>
-                      <InfoLabel>수주량</InfoLabel>
-                      <InfoValue>{infoVal.qty}</InfoValue>
-                    </InfoItem>
-                    {/* <InfoItem>
+                  <>
+                    <InfoList>
+                      <InfoTitle>수주정보</InfoTitle>
+                      <InfoItem>
+                        <InfoLabel>품목코드</InfoLabel>
+                        <InfoValue>{infoVal.itemcd}</InfoValue>
+                      </InfoItem>
+                      <InfoItem>
+                        <InfoLabel>품목명</InfoLabel>
+                        <InfoValue>{infoVal.itemnm}</InfoValue>
+                      </InfoItem>
+                      <InfoItem>
+                        <InfoLabel>품목계정</InfoLabel>
+                        <InfoValue>{infoVal.itemacnt}</InfoValue>
+                      </InfoItem>
+                      <InfoItem>
+                        <InfoLabel>규격</InfoLabel>
+                        <InfoValue>{infoVal.insiz}</InfoValue>
+                      </InfoItem>
+                      <InfoItem>
+                        <InfoLabel>재질</InfoLabel>
+                        <InfoValue>{infoVal.bnatur}</InfoValue>
+                      </InfoItem>
+                    </InfoList>
+
+                    <InfoList>
+                      <InfoTitle>계획정보</InfoTitle>
+                      <InfoItem>
+                        <InfoLabel>수주량</InfoLabel>
+                        <InfoValue>{infoVal.qty}</InfoValue>
+                      </InfoItem>
+                      {/* <InfoItem>
                 <InfoLabel>기계획량</InfoLabel>
                 <InfoValue id=""></InfoValue>
               </InfoItem> */}
-                    <InfoItem>
-                      <InfoLabel>잔량</InfoLabel>
-                      <InfoValue>{infoVal.planqty}</InfoValue>
-                    </InfoItem>
-                    <InfoItem>
-                      <fieldset className={"k-form-fieldset"}>
-                        <button
-                          id="valueChanged"
-                          style={{ display: "none" }}
-                          onClick={(e) => {
-                            e.preventDefault(); // Changing desired field value
-                            formRenderProps.onChange("valueChanged", {
-                              value: "1",
-                            });
-                          }}
-                        ></button>
+                      <InfoItem>
+                        <InfoLabel>잔량</InfoLabel>
+                        <InfoValue>{infoVal.planqty}</InfoValue>
+                      </InfoItem>
+                      <InfoItem>
+                        <fieldset className={"k-form-fieldset"}>
+                          <button
+                            id="valueChanged"
+                            style={{ display: "none" }}
+                            onClick={(e) => {
+                              e.preventDefault(); // Changing desired field value
+                              formRenderProps.onChange("valueChanged", {
+                                value: "1",
+                              });
+                            }}
+                          ></button>
 
-                        {/* <FieldWrap>
+                          {/* <FieldWrap>
                 <Field
                   label={"완료예정일"}
                   name={"frdt"}
@@ -2187,18 +2192,19 @@ const KendoWindow = ({
                 />
               </FieldWrap> */}
 
-                        <FieldWrap>
-                          <Field
-                            label={"계획수량"}
-                            name={"planqty"}
-                            component={FormNumericTextBox}
-                            validator={validator}
-                            className="required big-input"
-                          />
-                        </FieldWrap>
-                      </fieldset>
-                    </InfoItem>
-                  </InfoList>
+                          <FieldWrap>
+                            <Field
+                              label={"계획수량"}
+                              name={"planqty"}
+                              component={FormNumericTextBox}
+                              validator={validator}
+                              className="required big-input"
+                            />
+                          </FieldWrap>
+                        </fieldset>
+                      </InfoItem>
+                    </InfoList>
+                  </>
                 </GridContainer>
                 <GridContainer clientWidth={position.width - 250}>
                   <FieldArray
