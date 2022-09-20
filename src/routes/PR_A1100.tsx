@@ -116,9 +116,39 @@ const numberField = [
   "col_amt2",
   "col_unp2",
   "col_bnatur_insiz",
+  "col_procqty",
+  "col_procqty1",
+  "col_procqty2",
   "col_procqty3",
+  "col_qty",
+  "col_qty1",
+  "col_qty2",
+  "col_qty3",
+  "col_planqty",
+  "col_baseamt",
+  "col_wonchgrat",
+  "col_uschgrat",
+  "colunp",
+  "colwonamt",
+  "coltaxamt",
+  "colamt",
+  "coldlramt",
+  "col_procseq",
+  "col_procseq1",
+  "coldlramt",
+  "coldlramt",
 ];
 const dateField = [
+  "col_finexpdt1",
+  "col_plandt1",
+  "col_plandt2",
+  "col_orddt",
+  "col_dlvdt",
+  "col_plandt",
+  "col_outdt",
+  "col_indt",
+];
+const editablePlanListField = [
   "col_finexpdt1",
   "col_plandt1",
   "col_plandt2",
@@ -652,6 +682,8 @@ const PR_A1100: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
+      console.log("rows");
+      console.log(rows);
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
@@ -1597,13 +1629,13 @@ const PR_A1100: React.FC = () => {
   const [purtypeListData, setPurtypeListData] = useState([
     commonCodeDefaultValue,
   ]);
-  const [itemlml1ListData, setItemlml1ListData] = useState([
+  const [itemlvl1ListData, setItemlvl1ListData] = useState([
     commonCodeDefaultValue,
   ]);
-  const [itemlml2ListData, setItemlml2ListData] = useState([
+  const [itemlvl2ListData, setItemlvl2ListData] = useState([
     commonCodeDefaultValue,
   ]);
-  const [itemlml3ListData, setItemlml3ListData] = useState([
+  const [itemlvl3ListData, setItemlvl3ListData] = useState([
     commonCodeDefaultValue,
   ]);
   const [outgbListData, setOutgbListData] = useState([commonCodeDefaultValue]);
@@ -1622,9 +1654,9 @@ const PR_A1100: React.FC = () => {
   UseCommonQuery(prodmacQuery, setProdmacListData);
   UseCommonQuery(usersQuery, setProdempListData);
   UseCommonQuery(purtypeQuery, setPurtypeListData);
-  UseCommonQuery(itemlvl1Query, setItemlml1ListData);
-  UseCommonQuery(itemlvl2Query, setItemlml2ListData);
-  UseCommonQuery(itemlvl3Query, setItemlml3ListData);
+  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
+  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
+  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
   UseCommonQuery(outgbQuery, setOutgbListData);
 
   //공통코드 리스트 조회 후 그리드 데이터 세팅
@@ -2100,6 +2132,20 @@ const PR_A1100: React.FC = () => {
                     qtyunit: qtyunitListData.find(
                       (item: any) => item.sub_code === row.qtyunit
                     )?.code_name,
+
+                    outdt: row.outdt ? row.outdt : "",
+                    indt: row.indt ? row.indt : "",
+                    plandt: row.plandt ? row.plandt : "",
+
+                    itemlvl1: itemlvl1ListData.find(
+                      (item: any) => item.sub_code === row.itemlvl1
+                    )?.code_name,
+                    itemlvl2: itemlvl2ListData.find(
+                      (item: any) => item.sub_code === row.itemlvl2
+                    )?.code_name,
+                    itemlvl3: itemlvl3ListData.find(
+                      (item: any) => item.sub_code === row.itemlvl3
+                    )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState
@@ -2275,7 +2321,6 @@ const PR_A1100: React.FC = () => {
                 </GridTitleContainer>
                 <Grid
                   style={{ height: "680px" }}
-                  //   data={planDataResult.data}
                   data={process(
                     planDataResult.data.map((row, idx) => ({
                       ...row,
@@ -2299,14 +2344,14 @@ const PR_A1100: React.FC = () => {
                       purtype: purtypeListData.find(
                         (item: any) => item.sub_code === row.purtype
                       )?.code_name,
-                      itemlml1: itemlml1ListData.find(
-                        (item: any) => item.sub_code === row.itemlml1
+                      itemlvl1: itemlvl1ListData.find(
+                        (item: any) => item.sub_code === row.itemlvl1
                       )?.code_name,
-                      itemlml2: itemlml2ListData.find(
-                        (item: any) => item.sub_code === row.itemlml2
+                      itemlvl2: itemlvl2ListData.find(
+                        (item: any) => item.sub_code === row.itemlvl2
                       )?.code_name,
-                      itemlml3: itemlml3ListData.find(
-                        (item: any) => item.sub_code === row.itemlml3
+                      itemlvl3: itemlvl3ListData.find(
+                        (item: any) => item.sub_code === row.itemlvl3
                       )?.code_name,
                       [SELECTED_FIELD]: planSelectedState[planIdGetter(row)],
                     })),
@@ -2491,19 +2536,19 @@ const PR_A1100: React.FC = () => {
                     editable={false}
                   />
                   <GridColumn
-                    field="itemlml1"
+                    field="itemlvl1"
                     title="대분류"
                     width="120px"
                     editable={false}
                   />
                   <GridColumn
-                    field="itemlml2"
+                    field="itemlvl2"
                     title="중분류"
                     width="120px"
                     editable={false}
                   />
                   <GridColumn
-                    field="itemlml3"
+                    field="itemlvl3"
                     title="소분류"
                     width="120px"
                     editable={false}
@@ -2662,13 +2707,13 @@ const PR_A1100: React.FC = () => {
                   field="procqty"
                   title="재공생산량"
                   width="120px"
-                  editor="numeric"
+                  cell={NumberCell}
                 />
                 <GridColumn
                   field="unitqty"
                   title="소요량"
                   width="120px"
-                  editor="numeric"
+                  cell={NumberCell}
                 />
                 <GridColumn
                   field="qtyunit"

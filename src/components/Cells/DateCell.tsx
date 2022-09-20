@@ -6,7 +6,7 @@ const DateCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange } =
     props;
   const isInEdit = field === dataItem.inEdit;
-  const value = field && dataItem[field] ? dataItem[field] : new Date();
+  const value = field && dataItem[field] ? dataItem[field] : "";
 
   const onDateChange = (e: any) => {
     if (onChange) {
@@ -29,14 +29,16 @@ const DateCell = (props: GridCellProps) => {
       {isInEdit ? (
         <DatePicker
           name={field}
-          defaultValue={value}
+          defaultValue={
+            typeof value === "string" && value !== "" ? new Date() : value
+          }
           format="yyyy-MM-dd"
           onChange={onDateChange}
           //calendar={YearCalendar}
         />
       ) : typeof value === "object" ? (
         dateformat2(convertDateToStr(value))
-      ) : typeof value === "string" ? (
+      ) : typeof value === "string" && value !== "" ? (
         dateformat2(value)
       ) : (
         ""
