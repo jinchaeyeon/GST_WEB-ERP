@@ -230,14 +230,6 @@ const SY_A0120: React.FC = () => {
     }
   };
 
-  //메인 그리드 데이터 변경 되었을 때
-  // useEffect(() => {
-  //   if (mainDataResult.total > 0) {
-  //     const firstRowData = mainDataResult.data[0];
-  //     setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-  //   }
-  // }, [mainDataResult]);
-
   useEffect(() => {
     if (bizComponentData !== null && customOptionData !== null) {
       fetchMainGrid();
@@ -323,71 +315,6 @@ const SY_A0120: React.FC = () => {
     }
   }, [filters]);
 
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl1: itemlvl1ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl1
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl1ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl2: itemlvl2ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl2
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl2ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl3: itemlvl3ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl3
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl3ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemgrade: itemgradeListData.find(
-  //         (item: any) => item.sub_code === row.itemgrade
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemgradeListData]);
-
   const onMainItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
       event,
@@ -405,7 +332,10 @@ const SY_A0120: React.FC = () => {
             rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
-        : { ...item, [EDIT_FIELD]: undefined }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
     );
 
     setMainDataResult((prev) => {
@@ -482,7 +412,7 @@ const SY_A0120: React.FC = () => {
     setMainDataResult((prev) => {
       return {
         data: [...prev.data, newDataItem],
-        total: prev.total,
+        total: prev.total + 1,
       };
     });
   };
@@ -654,8 +584,7 @@ const SY_A0120: React.FC = () => {
         };
 
         const result = fetchGridSaved(para);
-        console.log(result);
-        console.log(result instanceof Error);
+
         if (result instanceof Error) throw result;
       });
 
@@ -762,12 +691,7 @@ const SY_A0120: React.FC = () => {
     if (data.isSuccess !== true) {
       console.log("[오류 발생]");
       console.log(data);
-      return new Error(
-        "[" +
-          data.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.resultMessage
-      );
+      return new Error("[" + data.statusCode + "] " + data.resultMessage);
     }
   };
 
