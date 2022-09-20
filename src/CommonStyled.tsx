@@ -6,6 +6,7 @@ export const TitleContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 5px 0;
+  height: 40px;
   margin-top: 5px;
 `;
 
@@ -35,7 +36,8 @@ export const BottomContainer = styled(TitleContainer)`
 `;
 
 export const FilterBoxWrap = styled.div`
-  padding: 5px 0;
+  padding: 5px 0 10px;
+  width: 100%;
 `;
 
 export const FilterBox = styled.table`
@@ -154,8 +156,8 @@ export const GridTitleContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 5px;
-  height: 30px;
+  /* margin: 5 0px; */
+  min-height: 30px;
 `;
 
 export const ButtonInInput = styled.div`

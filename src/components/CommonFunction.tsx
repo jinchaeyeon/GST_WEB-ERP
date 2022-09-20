@@ -14,13 +14,34 @@ export const getToday = () => {
   return year + month + day;
 };
 
-//Date 타입 인수를 8자리 string로 날짜 변환하여 반환 (ex. => 20220101)
+//Date 타입 인수를 8자리 YYYYMMDD string로 날짜 변환하여 반환 (ex. => 20220101)
 export const convertDateToStr = (date: Date) => {
   const year = date.getFullYear();
   const month = ("0" + (1 + date.getMonth())).slice(-2);
   const day = ("0" + date.getDate()).slice(-2);
 
   return year + month + day;
+};
+
+//Date 타입 인수를 YYYYMMDD hh:mm string로 날짜 변환하여 반환 (ex. => 20220101 00:00)
+export const convertDateToStrWithTime = (date: Date) => {
+  //if (date.getFullYear || date.getMonth || date.getDate) {
+  const dateTime: string =
+    date.getFullYear() +
+    "" +
+    (date.getMonth() + 1 < 10
+      ? "0" + (date.getMonth() + 1)
+      : date.getMonth() + 1) +
+    "" +
+    (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) +
+    " " +
+    date.getHours() +
+    ":" +
+    date.getMinutes();
+  return dateTime;
+  // } else {
+  //   return date;
+  // }
 };
 
 //8자리 날짜 stirng에 구분자 추가

@@ -29,3 +29,18 @@ div.k-animation-container {
 .k-form-horizontal .k-form-field-wrap {
   max-width: calc(60% - 10px) !important;
 }
+
+/* 스케줄러 이벤트 팝업창 반복 여부 숨기기 */
+.k-form.k-scheduler-edit-form > .k-form-field:nth-child(5) {
+  display: none;
+}
+.k-form.k-scheduler-edit-form
+  > .k-form-field:nth-child(4)
+  > .k-form-field-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.k-form.k-scheduler-edit-form #k-event-description {
+  min-height: 150px;
+}

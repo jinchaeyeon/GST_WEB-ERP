@@ -66,6 +66,8 @@ const paths = [
   { path: "/SY_A0012", index: ".5.3" },
   { path: "/SY_A0013", index: ".5.4" },
   { path: "/SY_A0011", index: ".5.5" },
+  { index: ".6" },
+  { path: "/CM_A1600", index: ".6.0" },
 ];
 
 const PanelBarNavContainer = (props: any) => {
@@ -102,16 +104,16 @@ const PanelBarNavContainer = (props: any) => {
         <AppName>GST ERP</AppName>
         <PanelBar selected={selected} expandMode={"single"} onSelect={onSelect}>
           <PanelBarItem title={"Home"} href="/" route="/" />
-          <PanelBarItem title={"물류"}>
+          <PanelBarItem title={"물류관리"}>
             <PanelBarItem title={"재고조회"} route="/MA_B7000" />
           </PanelBarItem>
-          <PanelBarItem title={"생산"} icon={""}>
+          <PanelBarItem title={"생산관리"} icon={""}>
             <PanelBarItem title={"계획생산"} route="/PR_A1100" />
           </PanelBarItem>
-          <PanelBarItem title={"영업"}>
+          <PanelBarItem title={"영업관리"}>
             <PanelBarItem title={"수주처리"} route="/SA_B2000" />
           </PanelBarItem>
-          <PanelBarItem title={"품질"}>
+          <PanelBarItem title={"품질관리"}>
             <PanelBarItem title={"불량내역조회"} route="/QC_A0120" />
           </PanelBarItem>
           <PanelBarItem title={"시스템"}>
@@ -121,6 +123,10 @@ const PanelBarNavContainer = (props: any) => {
             <PanelBarItem title={"사용자 정보"} route="/SY_A0012" />
             <PanelBarItem title={"사용자 권한"} route="/SY_A0013" />
             <PanelBarItem title={"사용자 그룹"} route="/SY_A0011" />
+          </PanelBarItem>
+
+          <PanelBarItem title={"전사관리"}>
+            <PanelBarItem title={"Scheduler"} route="/CM_A1600" />
           </PanelBarItem>
         </PanelBar>
         <Button
