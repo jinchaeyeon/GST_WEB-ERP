@@ -42,7 +42,7 @@ const CommonComboBox = ({
     const queryStr = getQueryFromBizComponent(bizComponentData);
 
     let query = {
-      query: "query?query=" + queryStr,
+      query: "query?query=" + encodeURIComponent(queryStr),
     };
 
     try {
