@@ -58,13 +58,17 @@ const CustomOptionComboBox = ({
     (item: any) => item.id === name
   ).bizComponentItems;
 
-  let newColumns = columns.map((column: any) => ({
-    field: column.fieldName,
-    header: column.caption,
-    width: column.columnWidth,
-  }));
+  let newColumns = [];
 
-  newColumns = newColumns.filter((column: any) => column.width !== 0);
+  if (columns) {
+    newColumns = columns.map((column: any) => ({
+      field: column.fieldName,
+      header: column.caption,
+      width: column.columnWidth,
+    }));
+
+    newColumns = newColumns.filter((column: any) => column.width !== 0);
+  }
 
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value === null ? "" : e.target.value[valueField];
