@@ -451,7 +451,7 @@ const KendoWindow = ({
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "WEB_sys_sel_default_management",
+    procedureName: "web_sys_sel_default_management",
     pageNumber: 1,
     pageSize: 50,
     parameters: {
@@ -496,7 +496,7 @@ const KendoWindow = ({
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "WEB_sys_sav_default_management",
+    procedureName: "web_sys_sav_default_management",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
