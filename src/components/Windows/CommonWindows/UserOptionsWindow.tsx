@@ -20,6 +20,7 @@ import { useApi } from "../../../hooks/api";
 
 import {
   ButtonContainer,
+  ButtonInInput,
   GridContainer,
   GridContainerWrap,
   GridTitle,
@@ -32,13 +33,119 @@ import { Button } from "@progress/kendo-react-buttons";
 import ColumnWindow from "./UserOptionsColumnWindow";
 import DefaultWindow from "./UserOptionsDefaultWindow";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { EDIT_FIELD, pageSize, SELECTED_FIELD } from "../../CommonString";
+import {
+  EDIT_FIELD,
+  EXPANDED_FIELD,
+  pageSize,
+  SELECTED_FIELD,
+} from "../../CommonString";
 
 import { CellRender, RowRender } from "../../Renderers";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import {
+  createDataTree,
+  extendDataItem,
+  mapTree,
+  TreeList,
+  TreeListColumnProps,
+  TreeListDraggableRow,
+  TreeListExpandChangeEvent,
+  TreeListRowDragEvent,
+  TreeListTextEditor,
+  treeToFlat,
+} from "@progress/kendo-react-treelist";
+import UserEffect from "../../UserEffect";
+import { Input } from "@progress/kendo-react-inputs";
+import { userState } from "../../../store/atoms";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
+};
+
+const ControlColumns: TreeListColumnProps[] = [
+  {
+    field: "rowstatus",
+    title: " ",
+    width: "40px",
+  },
+  {
+    expandable: true,
+    field: "control_name",
+    title: "컨트롤명",
+    width: "150px",
+  },
+  {
+    field: "field_name",
+    title: "필드명",
+    width: "150px",
+  },
+  // {
+  //   field: "parent",
+  //   title: "부모 컨트롤 ",
+  //   width: "150px",
+  // },
+  {
+    field: "type",
+    title: "타입 ",
+    width: "150px",
+  },
+  {
+    field: "word_id",
+    title: "Word ID",
+    width: "150px",
+    editCell: TreeListTextEditor,
+  },
+  {
+    field: "word_text",
+    title: "텍스트",
+    width: "150px",
+  },
+];
+
+const subItemsField: string = "children";
+
+// const DraggableGridRowRender = (properties: any) => {
+//   const {
+//     row = "",
+//     props = "",
+//     onDrop = "",
+//     onDragStart = "",
+//   } = { ...properties };
+//   const additionalProps = {
+//     onDragStart: (e: any) => onDragStart(e, props.dataItem),
+//     onDragOver: (e: any) => {
+//       e.preventDefault();
+//     },
+//     // onDrop: (e: any) => onDrop(e),
+//     draggable: true,
+//   };
+//   return React.cloneElement(
+//     row,
+//     { ...row.props, ...additionalProps },
+//     row.props.children
+//   );
+// };
+
+const DraggableGridRowRender = (properties: any) => {
+  const {
+    row = "",
+    props = "",
+    onDrop = "",
+    onDragStart = "",
+  } = { ...properties };
+  const additionalProps = {
+    onDragStart: (e: any) => onDragStart(e, props.dataItem),
+    onDragOver: (e: any) => {
+      e.preventDefault();
+    },
+    onDrop: (e: any) => onDrop(e, props.dataItem),
+    draggable: true,
+  };
+  return React.cloneElement(
+    row,
+    { ...row.props, ...additionalProps },
+    row.props.children
+  );
 };
 
 const KendoWindow = ({ getVisible }: TKendoWindow) => {
@@ -55,17 +162,32 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const [defaultWindowVisible, setDefaultWindowVisible] =
     useState<boolean>(false);
 
+  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+  const filterInputChange = (e: any) => {
+    const { value, name } = e.target;
+    setWordFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const CONTROL_DATA_ITEM_KEY = "control_name";
+  const WORD_DATA_ITEM_KEY = "word_id";
   const MAIN_COLUMN_DATA_ITEM_KEY = "option_id";
   const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
   const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
   const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
 
+  const ControlIdGetter = getter(CONTROL_DATA_ITEM_KEY);
+  const wordIdGetter = getter(CONTROL_DATA_ITEM_KEY);
   const mainColumnIdGetter = getter(MAIN_COLUMN_DATA_ITEM_KEY);
   const detailColumnIdGetter = getter(DETAIL_COLUMN_DATA_ITEM_KEY);
   const mainDefaultIdGetter = getter(MAIN_DEFAULT_DATA_ITEM_KEY);
   const detailDefaultIdGetter = getter(DETAIL_DEFAULT_DATA_ITEM_KEY);
 
   const [mainColumnDataState, setMainColumnDataState] = useState<State>({});
+  const [wordDataState, setWordDataState] = useState<State>({});
+  const [ControlDataState, setControlDataState] = useState<State>({});
   const [detailColumnDataState, setDetailColumnDataState] = useState<State>({
     sort: [],
   });
@@ -74,6 +196,10 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     sort: [],
   });
 
+  const [controlDataResult, setcontrolDataResult] = useState<any>([]);
+  const [wordDataResult, setWordDataResult] = useState<DataResult>(
+    process([], mainColumnDataState)
+  );
   const [mainColumnDataResult, setMainColumnDataResult] = useState<DataResult>(
     process([], mainColumnDataState)
   );
@@ -85,6 +211,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const [detailDefaultDataResult, setDetailDefaultDataResult] =
     useState<DataResult>(process([], detailDefaultDataState));
 
+  const [ControlSelectedState, setControlSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [wordSelectedState, setWordSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
   const [mainColumnSelectedState, setMainColumnSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -100,6 +232,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     [id: string]: boolean | number[];
   }>({});
 
+  const [ControlPgNum, setControlPgNum] = useState(1);
+  const [wordPgNum, setWordPgNum] = useState(1);
   const [mainColumnPgNum, setMainColumnPgNum] = useState(1);
   const [detailColumnPgNum, setDetailColumnPgNum] = useState(1);
   const [mainDefaultPgNum, setMainDefaultPgNum] = useState(1);
@@ -134,18 +268,21 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setTabSelected(e.selected);
   };
   useEffect(() => {
-    if (tabSelected === 0) {
-      fetchMainDefault();
-    } else {
-      fetchMainColumn();
-    }
+    // if (tabSelected === 0) {
+    fetchControl();
+    fetchWord();
+    // } else if (tabSelected === 1) {
+    fetchMainDefault();
+    // } else {
+    fetchMainColumn();
+    // }
   }, [tabSelected]);
 
   const pathname: string = window.location.pathname.replace("/", "");
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "WEB_sys_sel_column_view_config",
+    procedureName: "web_sel_column_view_config",
     pageNumber: 1,
     pageSize: 20,
     parameters: {
@@ -157,8 +294,31 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_message": "",
     },
   };
+
+  //조회조건 초기값
+  const [wordFilters, setWordFilters] = useState({
+    pgSize: pageSize,
+    work_type: "LIST",
+    word_id: "",
+    word_text: "",
+  });
+
+  const wordParameters: Iparameters = {
+    procedureName: "sel_word_info",
+    pageNumber: wordPgNum,
+    pageSize: wordFilters.pgSize,
+    parameters: {
+      "@p_work_type": "default",
+      "@p_culture_name": "",
+      "@p_word_id": wordFilters.word_id,
+      "@p_word_text": wordFilters.word_text,
+      "@p_default_text": "",
+      "@p_remarks": "",
+      "@p_find_row_value": "",
+    },
+  };
   const defaultMainParameters: Iparameters = {
-    procedureName: "WEB_sys_sel_default_management",
+    procedureName: "web_sel_default_management",
     pageNumber: 1,
     pageSize: 20,
     parameters: {
@@ -179,7 +339,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   });
 
   const columnDetailParameters: Iparameters = {
-    procedureName: "WEB_sys_sel_column_view_config",
+    procedureName: "web_sel_column_view_config",
     pageNumber: 1,
     pageSize: 20,
     parameters: {
@@ -193,7 +353,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   };
 
   const defaultDetailParameters: Iparameters = {
-    procedureName: "WEB_sys_sel_default_management",
+    procedureName: "web_sel_default_management",
     pageNumber: 1,
     pageSize: 20,
     parameters: {
@@ -243,6 +403,96 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       }));
     }
   }, [mainDefaultDataResult]);
+
+  //요약정보 조회
+  const fetchControl = async () => {
+    let data: any;
+
+    const queryStr =
+      "SELECT form_id, control_name, field_name, parent, type, A.word_id, ISNULL(B.word_text,'') word_text " +
+      "FROM appDesignInfo A LEFT OUTER JOIN brpWordInfo B ON A.word_id = B.word_id AND culture_name = 'ko-KR' " +
+      "WHERE form_id = '" +
+      pathname +
+      "'";
+
+    const query = {
+      query: "query?query=" + encodeURIComponent(queryStr),
+    };
+
+    try {
+      data = await processApi<any>("platform-query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+
+      if (totalRowCnt > 0) {
+        const dataTree: any = createDataTree(
+          rows,
+          (i: any) => i.control_name,
+          (i: any) => i.parent,
+          subItemsField
+        );
+
+        setcontrolDataResult([...dataTree]);
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  };
+
+  //요약정보 조회
+  const fetchWord = async () => {
+    let data: any;
+    try {
+      data = await processApi<any>("platform-procedure", wordParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      if (totalRowCnt > 0)
+        setWordDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+
+      //setWordDataResult(process(rows, wordDataState));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  };
+
+  const fetchControlSaved = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("platform-procedure", wordControlSaved);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      alert("저장이 완료되었습니다.");
+      fetchControl();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
+
+    paraData.work_type = ""; //초기화
+  };
 
   //요약정보 조회
   const fetchMainColumn = async () => {
@@ -480,6 +730,41 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     },
   };
 
+  //프로시저 파라미터 초기값
+  const [wordControlData, setControlParaData] = useState({
+    work_type: "",
+    form_id: pathname,
+    control_name: "",
+    field_name: "",
+    parent: "",
+    type: "",
+    full_type: "",
+    bc_id: "",
+    word_id: "",
+    id: "",
+    pc: "",
+  });
+
+  //프로시저 파라미터
+  const wordControlSaved: Iparameters = {
+    procedureName: "sav_form_design_info",
+    pageNumber: 1,
+    pageSize: 10,
+    parameters: {
+      "@p_work_type": wordControlData.work_type,
+      "@p_form_id": wordControlData.form_id,
+      "@p_control_name": wordControlData.control_name,
+      "@p_field_name": wordControlData.field_name,
+      "@p_parent": wordControlData.parent,
+      "@p_type": wordControlData.type,
+      "@p_full_type": wordControlData.full_type,
+      "@p_bc_id": wordControlData.bc_id,
+      "@p_word_id": wordControlData.word_id,
+      "@p_id": wordControlData.id,
+      "@p_pc": wordControlData.pc,
+    },
+  };
+
   //그리드 리셋
   const resetAllGrid = () => {
     setMainColumnDataResult(process([], mainColumnDataState));
@@ -520,6 +805,23 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     if (paraData.work_type !== "") fetchGridSaved();
   }, [paraData]);
 
+  useEffect(() => {
+    if (wordControlData.work_type !== "") fetchControlSaved();
+  }, [wordControlData]);
+
+  const onControlScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, ControlPgNum, pageSize))
+      setControlPgNum((prev) => prev + 1);
+  };
+  const onWordScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, wordPgNum, pageSize))
+      setWordPgNum((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    fetchWord();
+  }, [wordPgNum]);
+
   const onMainColumnScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainColumnPgNum, pageSize))
       setMainColumnPgNum((prev) => prev + 1);
@@ -539,6 +841,13 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       setDetailDefaultPgNum((prev) => prev + 1);
   };
 
+  const onControlDataStateChange = (event: GridDataStateChangeEvent) => {
+    setControlDataState(event.dataState);
+  };
+  const onWordDataStateChange = (event: GridDataStateChangeEvent) => {
+    setWordDataState(event.dataState);
+  };
+
   const onMainColumnDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainColumnDataState(event.dataState);
   };
@@ -552,6 +861,13 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
   const onDetailDefaultDataStateChange = (event: GridDataStateChangeEvent) => {
     setDetailDefaultDataState(event.dataState);
+  };
+
+  const onControlSortChange = (e: any) => {
+    setControlDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onWordSortChange = (e: any) => {
+    setWordDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const onMainColumnSortChange = (e: any) => {
@@ -587,6 +903,22 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }));
   };
 
+  const onControlSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: ControlSelectedState,
+      dataItemKey: CONTROL_DATA_ITEM_KEY,
+    });
+    setDetailColumnSelectedState(newSelectedState);
+  };
+  const onWordSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: wordSelectedState,
+      dataItemKey: WORD_DATA_ITEM_KEY,
+    });
+    setDetailColumnSelectedState(newSelectedState);
+  };
   const onDetailColumnSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -754,6 +1086,67 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setDefaultWindowVisible(true);
   };
 
+  const onSaveControl = () => {
+    type TdataArr = {
+      control_name: string[];
+      field_name: string[];
+      parent: string[];
+      type: string[];
+      full_type: string[];
+      bc_id: string[];
+      word_id: string[];
+    };
+
+    let dataArr: TdataArr = {
+      control_name: [],
+      field_name: [],
+      parent: [],
+      type: [],
+      full_type: [],
+      bc_id: [],
+      word_id: [],
+    };
+
+    const flatData: any = treeToFlat(
+      controlDataResult,
+      "control_name",
+      subItemsField
+    );
+    flatData.forEach((item: any) => delete item[subItemsField]);
+
+    flatData.forEach((item: any) => {
+      const {
+        control_name,
+        field_name,
+        parent,
+        type,
+        full_type,
+        bc_id,
+        word_id,
+      } = item;
+
+      dataArr.control_name.push(control_name);
+      dataArr.field_name.push(field_name);
+      dataArr.parent.push(parent);
+      dataArr.type.push(type);
+      dataArr.full_type.push(full_type);
+      dataArr.bc_id.push(bc_id);
+      dataArr.word_id.push(word_id);
+    });
+
+    setControlParaData((prev) => ({
+      ...prev,
+      work_type: "save",
+      control_name: dataArr.control_name.join("|"),
+      field_name: dataArr.field_name.join("|"),
+      parent: dataArr.parent.join("|"),
+      type: dataArr.type.join("|"),
+      full_type: dataArr.full_type.join("|"),
+      bc_id: dataArr.bc_id.join("|"),
+      word_id: dataArr.word_id.join("|"),
+    }));
+  };
+
   type TDataInfo = {
     DATA_ITEM_KEY: string;
     selectedState: {
@@ -837,7 +1230,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
   //프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "WEB_sys_sav_column_view_config",
+    procedureName: "web_sav_column_view_config",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
@@ -861,7 +1254,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     },
   };
   const defaultParaDeleted: Iparameters = {
-    procedureName: "WEB_sys_sav_default_management",
+    procedureName: "web_sav_default_management",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
@@ -1056,6 +1449,284 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     fetchDetailDefault();
   };
 
+  type TcontrolObj = {
+    rowstatus: string;
+    form_id: string;
+    control_name: string;
+    field_name: string;
+    parent: string;
+    type: string;
+    word_id: string;
+    word_text: string;
+  };
+
+  const onGetControlClick = () => {
+    const root = document.getElementById("root");
+    if (root === null) {
+      alert("오류가 발생하였습니다. 새로고침 후 다시 시도해주세요.");
+      return false;
+    }
+
+    //let ControlList: Array<TcontrolObj>; //차이점?..
+    let ControlList: TcontrolObj[] = [];
+
+    // 1) 최상위 메뉴
+    const topElementObj: TcontrolObj = {
+      rowstatus: "N",
+      form_id: pathname,
+      control_name: pathname,
+      field_name: "",
+      parent: "",
+      type: "",
+      word_id: "",
+      word_text: "",
+    };
+    ControlList.push(topElementObj);
+
+    // 2) Text 그룹
+    const textGroupObj: TcontrolObj = {
+      rowstatus: "N",
+      form_id: pathname,
+      control_name: "Texts",
+      field_name: "",
+      parent: pathname,
+      type: "TextGroup",
+      word_id: "",
+      word_text: "",
+    };
+    ControlList.push(textGroupObj);
+
+    // 3) Text 그룹 하위 요소
+    // [data-control-name] 리스트 (Label, Title 등)
+    const controlNameObjArr = [...root.querySelectorAll("[data-control-name]")];
+    const controlNameList = controlNameObjArr.map(
+      (item: any) => item.dataset.controlName
+    );
+    controlNameList.forEach((item) => {
+      if (item === "") return;
+      const controlObj: TcontrolObj = {
+        rowstatus: "N",
+        form_id: pathname,
+        control_name: item,
+        field_name: "",
+        parent: "Texts",
+        type: item.includes("lbl")
+          ? "Label"
+          : item.includes("grt")
+          ? "GridTitle"
+          : "",
+        word_id: "",
+        word_text: "",
+      };
+      ControlList.push(controlObj);
+    });
+
+    // 2) Text 그룹
+    const gridGroupObj: TcontrolObj = {
+      rowstatus: "N",
+      form_id: pathname,
+      control_name: "Grids",
+      field_name: "",
+      parent: pathname,
+      type: "GridGroup",
+      word_id: "",
+      word_text: "",
+    };
+    ControlList.push(gridGroupObj);
+
+    // 2) Grid 그룹
+    const columnArr: any = [...root.querySelectorAll("[data-grid-name]")];
+    const gridNameArr: string[] = [];
+    columnArr.forEach((item: any) => {
+      if (!gridNameArr.includes(item.dataset.gridName)) {
+        gridNameArr.push(item.dataset.gridName);
+      }
+    });
+    gridNameArr.forEach((item: string) => {
+      const controlObj: TcontrolObj = {
+        rowstatus: "N",
+        form_id: pathname,
+        control_name: item,
+        field_name: "",
+        parent: "Grids",
+        type: "Grid",
+        word_id: "",
+        word_text: "",
+      };
+      ControlList.push(controlObj);
+    });
+
+    // 3) Grid 그룹 하위요소
+    // [data-grid-name] 리스트 (Column)
+    columnArr.forEach((item: any) => {
+      const controlObj: TcontrolObj = {
+        rowstatus: "N",
+        form_id: pathname,
+        control_name: item.id,
+        field_name: item.dataset.field,
+        parent: item.dataset.gridName,
+        type: "Column",
+        word_id: "",
+        word_text: "",
+      };
+      ControlList.push(controlObj);
+    });
+
+    // 기존소스의 word_id 참조
+    const flatData: any = treeToFlat(
+      controlDataResult,
+      "control_name",
+      subItemsField
+    );
+    flatData.forEach((item: any) => delete item[subItemsField]);
+
+    ControlList.forEach((item) => {
+      const sameControlData = flatData.find(
+        (orgItem: any) => item.control_name === orgItem.control_name
+      );
+
+      if (sameControlData) {
+        item.word_id = sameControlData.word_id;
+        item.word_id = sameControlData.word_text;
+      }
+    });
+
+    const dataTree: any = createDataTree(
+      ControlList,
+      (i: any) => i.control_name,
+      (i: any) => i.parent,
+      subItemsField
+    );
+
+    setcontrolDataResult([...dataTree]);
+  };
+
+  const [ControlExpanded, setControlExpanded] = React.useState<string[]>([
+    pathname,
+  ]);
+
+  const onControlExpandChange = (e: TreeListExpandChangeEvent) => {
+    setControlExpanded(
+      e.value
+        ? ControlExpanded.filter(
+            (id) => id !== e.dataItem[CONTROL_DATA_ITEM_KEY]
+          )
+        : [...ControlExpanded, e.dataItem[CONTROL_DATA_ITEM_KEY]]
+    );
+  };
+
+  const ControlCallback = (item: any) =>
+    ControlExpanded.includes(item[CONTROL_DATA_ITEM_KEY])
+      ? extendDataItem(item, subItemsField, { expanded: true })
+      : item;
+
+  const [wordDragDataItem, setWordDragDataItem] = useState<any>(null);
+  const [controlDragDataItem, setControlDragDataItem] = useState<any>(null);
+
+  const wordRowRender = (row: any, props: any) => {
+    return (
+      <DraggableGridRowRender
+        props={props}
+        row={row}
+        onDrop={handleWordDrop}
+        onDragStart={handleWordDragStart}
+      />
+    );
+  };
+
+  const controlRowRender = (tr: any, props: any) => (
+    <DraggableGridRowRender
+      props={props}
+      row={tr}
+      onDrop={handleControlDrop}
+      onDragStart={handleControlDragStart}
+    />
+  );
+
+  const handleWordDragStart = (e: any, dataItem: any) => {
+    setWordDragDataItem(dataItem);
+  };
+  const handleControlDragStart = (e: any, dataItem: any) => {
+    setWordDragDataItem(dataItem);
+    setControlDragDataItem(dataItem);
+  };
+
+  // 컨트롤 데이터 word_id 업데이트
+  const handleControlDrop = (e: any, dataItem: any) => {
+    if (wordDragDataItem === null) {
+      return false;
+    }
+
+    const { control_name = "" } = dataItem;
+
+    const flatData: any = treeToFlat(
+      controlDataResult,
+      "control_name",
+      subItemsField
+    );
+
+    flatData.forEach((item: any) => delete item[subItemsField]);
+
+    const newData = flatData.map((item: any) =>
+      item[CONTROL_DATA_ITEM_KEY] === control_name
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            word_id: wordDragDataItem.word_id,
+            word_text: wordDragDataItem.word_text,
+          }
+        : item
+    );
+
+    const dataTree: any = createDataTree(
+      newData,
+      (i: any) => i.control_name,
+      (i: any) => i.parent,
+      subItemsField
+    );
+
+    setcontrolDataResult([...dataTree]);
+    setWordDragDataItem(null);
+  };
+
+  // 컨트롤 데이터 word_id 삭제
+  const handleWordDrop = (e: any, dataItem: any) => {
+    if (controlDragDataItem === null) {
+      return false;
+    }
+
+    const control_name = controlDragDataItem[CONTROL_DATA_ITEM_KEY];
+
+    const flatData: any = treeToFlat(
+      controlDataResult,
+      "control_name",
+      subItemsField
+    );
+
+    flatData.forEach((item: any) => delete item[subItemsField]);
+
+    const newData = flatData.map((item: any) =>
+      item[CONTROL_DATA_ITEM_KEY] === control_name
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            word_id: "",
+            word_text: "",
+          }
+        : item
+    );
+
+    const dataTree: any = createDataTree(
+      newData,
+      (i: any) => i.control_name,
+      (i: any) => i.parent,
+      subItemsField
+    );
+
+    setcontrolDataResult([...dataTree]);
+    setWordDragDataItem(null);
+  };
+
   return (
     <Window
       title={"사용자 옵션 설정"}
@@ -1066,6 +1737,147 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       onClose={onClose}
     >
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+        <TabStripTab title="컨트롤정보">
+          <GridContainerWrap>
+            <GridContainer clientWidth={1330 - 415}>
+              <GridTitleContainer>
+                <GridTitle>컨트롤리스트</GridTitle>
+
+                <ButtonContainer>
+                  <Button
+                    onClick={onGetControlClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    가져오기
+                  </Button>
+                  <Button
+                    onClick={onSaveControl}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    저장
+                  </Button>
+                  {/* 
+                  <Button
+                    onClick={onDeleteDefaultClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                  >
+                    삭제
+                  </Button> */}
+                </ButtonContainer>
+              </GridTitleContainer>
+              <TreeList
+                style={{ height: "600px", overflow: "auto", width: "100%" }}
+                data={mapTree(
+                  controlDataResult,
+                  subItemsField,
+                  ControlCallback
+                )}
+                // {process(
+                //   controlDataResult.data.map((row) => ({
+                //     ...row,
+                //     [SELECTED_FIELD]:
+                //       ControlSelectedState[ControlIdGetter(row)],
+                //   })),
+                //   ControlDataState
+                // )}
+                //{...ControlDataState}
+                //onDataStateChange={onControlDataStateChange}
+
+                expandField={EXPANDED_FIELD}
+                subItemsField={subItemsField}
+                onExpandChange={onControlExpandChange}
+                //선택 기능
+                dataItemKey={CONTROL_DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                columns={ControlColumns}
+                rowRender={controlRowRender}
+
+                // row={TreeListDraggableRow}
+                // onRowDrop={onRowDrop}
+              ></TreeList>
+            </GridContainer>
+
+            <GridContainer maxWidth="400px" inTab={true}>
+              <GridTitleContainer>
+                <GridTitle>[참조] 용어정보</GridTitle>
+
+                <div style={{ gap: "2px", display: "flex" }}>
+                  <Input
+                    name="word_id"
+                    type="text"
+                    style={{ width: "110px" }}
+                    placeholder="Word ID"
+                    value={wordFilters.word_id}
+                    onChange={filterInputChange}
+                  />
+                  <Input
+                    name="word_text"
+                    type="text"
+                    style={{ width: "110px" }}
+                    placeholder="텍스트"
+                    value={wordFilters.word_text}
+                    onChange={filterInputChange}
+                  />
+
+                  <Button
+                    onClick={() => {
+                      setWordPgNum(1);
+                      setWordDataResult(process([], wordDataState));
+                      fetchWord();
+                    }}
+                    icon="search"
+                    // fillMode="flat"
+                  />
+                </div>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "600px" }}
+                data={process(
+                  wordDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: wordSelectedState[wordIdGetter(row)],
+                  })),
+                  wordDataState
+                )}
+                {...wordDataState}
+                onDataStateChange={onWordDataStateChange}
+                //선택 기능
+                dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "multiple",
+                }}
+                onSelectionChange={onWordSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={wordDataResult.total}
+                onScroll={onWordScrollHandler}
+                //정렬기능
+                sortable={true}
+                onSortChange={onWordSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                rowRender={wordRowRender}
+              >
+                <GridColumn field="word_id" title="Word ID" />
+                <GridColumn field="word_text" title="텍스트" />
+              </Grid>
+            </GridContainer>
+          </GridContainerWrap>
+        </TabStripTab>
         <TabStripTab title="기본값">
           <GridContainerWrap>
             <GridContainer maxWidth="300px">
