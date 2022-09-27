@@ -1461,7 +1461,7 @@ const SY_A0120: React.FC = () => {
             </GridTitleContainer>
 
             <TreeList
-              style={{ height: "650px" }}
+              style={{ height: "650px", overflow: "auto" }}
               data={mapTree(
                 userMenuDataResult,
                 subItemsField,
@@ -1578,7 +1578,7 @@ const SY_A0120: React.FC = () => {
               <GridTitle>[참조] 전체 메뉴</GridTitle>
             </GridTitleContainer>
             <TreeList
-              style={{ height: "650px" }}
+              style={{ height: "650px", overflow: "auto" }}
               data={mapTree(allMenuDataResult, subItemsField, allMenuCallback)}
               expandField={expandField}
               subItemsField={subItemsField}
