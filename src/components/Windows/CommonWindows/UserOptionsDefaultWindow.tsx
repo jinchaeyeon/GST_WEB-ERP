@@ -68,28 +68,20 @@ type TKendoWindow = {
 };
 
 type TDetailData = {
-  component: string[];
-  parent_component: string[];
-  field_name: string[];
+  row_status: string[];
+  default_id: string[];
+  caption: string[];
   word_id: string[];
-  biz_component_id: string[];
-  where_query: string[];
-  add_empty_row: string[];
-  repository_item: string[];
-  component_type: string[];
-  component_full_type: string[];
-  sort_seq: string[];
+  sort_order: string[];
   value_type: string[];
   value: string[];
-  value_name: string[];
+  bc_id: string[];
+  where_query: string[];
   add_year: string[];
   add_month: string[];
   add_day: string[];
-  user_edit_yn: string[];
-  use_session: string[];
-  caption: string[];
-  allow_session: string[];
   session_item: string[];
+  user_editable: string[];
 };
 
 // Create the Grid that will be used inside the Form
@@ -280,6 +272,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         <Grid
           data={dataWithIndexes.map((item: any) => ({
             ...item,
+            parentField: name,
             [SELECTED_FIELD]: selectedState[idGetter(item)],
           }))}
           total={dataWithIndexes.total}
@@ -466,67 +459,69 @@ const KendoWindow = ({
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    process_type: "",
     form_id: pathname,
-    component: "",
-    parent_component: "",
-    field_name: "",
-    word_id: "",
+    type: "Default",
+    company_code: "",
+    option_id: "",
+    option_name: "",
+    subject_word_id: "",
+    remarks: "",
+    row_status: "",
+    default_id: "",
     caption: "",
-    biz_component_id: "",
-    where_query: "",
-    add_empty_row: "",
-    repository_item: "",
-    component_type: "",
-    component_full_type: "",
-    sort_seq: "",
-    message_id: "",
+    word_id: "",
+    sort_order: "",
     value_type: "",
     value: "",
-    value_name: "",
+    bc_id: "",
+    where_query: "",
     add_year: "",
     add_month: "",
     add_day: "",
-    user_edit_yn: "",
-    use_session: "",
-    allow_session: "",
     session_item: "",
-    exec_pc: "",
+    user_editable: "",
+    column_id: "",
+    width: "",
+    fixed: "",
+    pc: "",
   });
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "web_sav_default_management",
+    procedureName: "sav_custom_option",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
       "@p_work_type": paraData.work_type,
-      "@p_process_type": paraData.process_type,
       "@p_form_id": paraData.form_id,
-      "@p_component": paraData.component,
-      "@p_parent_component": paraData.parent_component,
-      "@p_field_name": paraData.field_name,
-      "@p_word_id": paraData.word_id,
+      "@p_type": paraData.type,
+      "@p_company_code": paraData.company_code,
+      "@p_option_id": paraData.option_id,
+      "@p_option_name": paraData.option_name,
+      "@p_subject_word_id": paraData.subject_word_id,
+      "@p_remarks": paraData.remarks,
+      "@p_row_status": paraData.row_status,
+
+      /* sysCustomOptionDefault */
+      "@p_default_id": paraData.default_id,
       "@p_caption": paraData.caption,
-      "@p_biz_component_id": paraData.biz_component_id,
-      "@p_where_query": paraData.where_query,
-      "@p_add_empty_row": paraData.add_empty_row,
-      "@p_repository_item": paraData.repository_item,
-      "@p_component_type": paraData.component_type,
-      "@p_component_full_type": paraData.component_full_type,
-      "@p_sort_seq": paraData.sort_seq,
-      "@p_message_id": paraData.message_id,
+      "@p_word_id": paraData.word_id,
+      "@p_sort_order": paraData.sort_order,
       "@p_value_type": paraData.value_type,
       "@p_value": paraData.value,
-      "@p_value_name": paraData.value_name,
+      "@p_bc_id": paraData.bc_id,
+      "@p_where_query": paraData.where_query,
       "@p_add_year": paraData.add_year,
       "@p_add_month": paraData.add_month,
       "@p_add_day": paraData.add_day,
-      "@p_user_edit_yn": paraData.user_edit_yn,
-      "@p_use_session": paraData.use_session,
-      "@p_allow_session": paraData.allow_session,
       "@p_session_item": paraData.session_item,
-      "@p_exec_pc": paraData.exec_pc,
+      "@p_user_editable": paraData.user_editable,
+      /* sysCustomOptionColumn */
+      "@p_column_id": "", // paraData.column_id,
+      "@p_width": 0, // paraData.width,
+      "@p_fixed": "", // paraData.fixed,
+
+      "@p_pc": paraData.pc,
     },
   };
 
@@ -615,7 +610,7 @@ const KendoWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
   };
 
@@ -624,10 +619,12 @@ const KendoWindow = ({
 
     let valid = true;
 
+    console.log("dataItem");
+    console.log(dataItem);
     //검증
     try {
       dataItem.orderDetails.forEach((item: any) => {
-        if (!item.field_name) {
+        if (!item.default_id) {
           throw "필드명을 입력하세요.";
         }
         if (!item.value_type) {
@@ -641,94 +638,112 @@ const KendoWindow = ({
 
     if (!valid) return false;
 
-    const { process_type, message_id, orderDetails } = dataItem;
+    const { option_id, option_name, orderDetails } = dataItem;
 
     let detailArr: TDetailData = {
-      component: [],
-      parent_component: [],
-      field_name: [],
+      row_status: [],
+
+      default_id: [],
+      caption: [],
       word_id: [],
-      biz_component_id: [],
-      where_query: [],
-      add_empty_row: [],
-      repository_item: [],
-      component_type: [],
-      component_full_type: [],
-      sort_seq: [],
+      sort_order: [],
       value_type: [],
       value: [],
-      value_name: [],
+      bc_id: [],
+      where_query: [],
       add_year: [],
       add_month: [],
       add_day: [],
-      user_edit_yn: [],
-      use_session: [],
-      caption: [],
-      allow_session: [],
       session_item: [],
+      user_editable: [],
     };
+
     orderDetails.forEach((item: any, idx: number) => {
       const {
-        field_name,
-        value_type,
-        value,
-        add_year,
-        add_month,
-        add_day,
+        rowstatus,
+        default_id, // field_name
         caption,
+        word_id,
+        value_type, //
+        value, //
+        bc_id,
+        where_query,
+        add_year, //
+        add_month, //
+        add_day, //
+        session_item,
+        user_editable,
       } = item;
 
-      detailArr.component.push(field_name);
-      detailArr.parent_component.push("");
-      detailArr.field_name.push(field_name);
-      detailArr.word_id.push("");
-      detailArr.biz_component_id.push("");
-      detailArr.where_query.push("");
-      detailArr.add_empty_row.push("");
-      detailArr.repository_item.push("");
-      detailArr.component_type.push("");
-      detailArr.component_full_type.push("");
-      detailArr.sort_seq.push(String(idx));
+      detailArr.row_status.push(rowstatus);
+      detailArr.default_id.push(default_id);
+      detailArr.caption.push(caption);
+      detailArr.word_id.push(word_id);
+      detailArr.sort_order.push(String(idx));
       detailArr.value_type.push(value_type);
       detailArr.value.push(value);
-      detailArr.value_name.push("");
+      detailArr.bc_id.push(bc_id);
+      detailArr.where_query.push(where_query);
       detailArr.add_year.push(add_year);
       detailArr.add_month.push(add_month);
       detailArr.add_day.push(add_day);
-      detailArr.user_edit_yn.push("");
-      detailArr.use_session.push("N");
+      detailArr.session_item.push(session_item);
+      detailArr.user_editable.push(user_editable);
+    });
+
+    deletedRows.forEach((item: any, idx: number) => {
+      const {
+        default_id, // field_name
+        caption,
+        word_id,
+        value_type, //
+        value, //
+        bc_id,
+        where_query,
+        add_year, //
+        add_month, //
+        add_day, //
+        session_item,
+        user_editable,
+      } = item;
+
+      detailArr.row_status.push("D");
+      detailArr.default_id.push(default_id);
       detailArr.caption.push(caption);
-      detailArr.allow_session.push("N");
-      detailArr.session_item.push("");
+      detailArr.word_id.push(word_id);
+      detailArr.sort_order.push(String(idx));
+      detailArr.value_type.push(value_type);
+      detailArr.value.push(value);
+      detailArr.bc_id.push(bc_id);
+      detailArr.where_query.push(where_query);
+      detailArr.add_year.push(add_year);
+      detailArr.add_month.push(add_month);
+      detailArr.add_day.push(add_day);
+      detailArr.session_item.push(session_item);
+      detailArr.user_editable.push(user_editable);
     });
 
     setParaData((prev) => ({
       ...prev,
-      work_type: "SAVE",
-      process_type,
-      message_id,
-      component: detailArr.component.join("|"),
-      parent_component: detailArr.parent_component.join("|"),
-      field_name: detailArr.field_name.join("|"),
+      work_type: workType,
+
+      option_id,
+      option_name,
+
+      row_status: detailArr.row_status.join("|"),
+      default_id: detailArr.default_id.join("|"),
+      caption: detailArr.caption.join("|"),
       word_id: detailArr.word_id.join("|"),
-      biz_component_id: detailArr.biz_component_id.join("|"),
-      where_query: detailArr.where_query.join("|"),
-      add_empty_row: detailArr.add_empty_row.join("|"),
-      repository_item: detailArr.repository_item.join("|"),
-      component_type: detailArr.component_type.join("|"),
-      component_full_type: detailArr.component_full_type.join("|"),
-      sort_seq: detailArr.sort_seq.join("|"),
+      sort_order: detailArr.sort_order.join("|"),
       value_type: detailArr.value_type.join("|"),
       value: detailArr.value.join("|"),
-      value_name: detailArr.value_name.join("|"),
+      bc_id: detailArr.bc_id.join("|"),
+      where_query: detailArr.where_query.join("|"),
       add_year: detailArr.add_year.join("|"),
       add_month: detailArr.add_month.join("|"),
       add_day: detailArr.add_day.join("|"),
-      user_edit_yn: detailArr.user_edit_yn.join("|"),
-      use_session: detailArr.use_session.join("|"),
-      caption: detailArr.caption.join("|"),
-      allow_session: detailArr.allow_session.join("|"),
       session_item: detailArr.session_item.join("|"),
+      user_editable: detailArr.user_editable.join("|"),
     }));
   };
 

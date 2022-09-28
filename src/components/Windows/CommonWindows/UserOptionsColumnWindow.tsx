@@ -32,7 +32,7 @@ import {
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import { NumberCell, NameCell, FormInput } from "../../Editors";
-import { Iparameters } from "../../../store/types";
+import { Iparameters, TcontrolObj } from "../../../store/types";
 import {
   arrayLengthValidator,
   chkScrollHandler,
@@ -69,22 +69,59 @@ type TKendoWindow = {
 
 type TDetailData = {
   rowstatus: string[];
-  field_name: string[];
   caption: string[];
-  column_visible: string[];
-  column_width: string[];
-  user_edit_yn: string[];
-  user_required_yn: string[];
-  column_type: string[];
-  column_className: string[];
+  word_id: string[];
+  sort_order: string[];
+  user_editable: string[];
+  column_id: string[];
+  width: string[];
+  fixed: string[];
 };
 
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey } =
+  const { validationMessage, visited, name, dataItemKey, option_id } =
     fieldArrayRenderProps;
+
   const [editIndex, setEditIndex] = React.useState<number | undefined>();
   const [detailPgNum, setDetailPgNum] = useState(1);
+
+  const onGetColumnClick = React.useCallback(
+    (e: any) => {
+      e.preventDefault();
+
+      const root = document.getElementById("root");
+      if (root === null) {
+        alert("오류가 발생하였습니다. 새로고침 후 다시 시도해주세요.");
+        return false;
+      }
+
+      // 2) Grid 그룹
+      const columnArr: any = [...root.querySelectorAll("[data-grid-name]")];
+      let ifDataAdded = false;
+
+      columnArr.forEach((item: any) => {
+        if (item.dataset.gridName === option_id) {
+          fieldArrayRenderProps.onPush({
+            value: {
+              srcPgName: "USER_OPTIONS_COLUMN_WINDOW",
+              rowstatus: "N",
+              column_id: item.id,
+              caption: item.dataset.caption,
+              width: item.dataset.width,
+            },
+          });
+
+          ifDataAdded = true;
+        }
+      });
+
+      if (!ifDataAdded) {
+        alert("영역ID를 확인해주세요.");
+      }
+    },
+    [fieldArrayRenderProps]
+  );
 
   // Add a new item to the Form FieldArray that will be shown in the Grid
   const onAdd = React.useCallback(
@@ -94,11 +131,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         value: {
           srcPgName: "USER_OPTIONS_COLUMN_WINDOW",
           rowstatus: "N",
-          column_width: 120,
-          column_type: "TEXT",
-          user_edit_yn: "N",
-          user_required_yn: "N",
-          column_visible: "Y",
+          width: 120,
+          user_edit_yn: "Y",
         },
       });
 
@@ -271,6 +305,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         <Grid
           data={dataWithIndexes.map((item: any) => ({
             ...item,
+            parentField: name,
             [SELECTED_FIELD]: selectedState[idGetter(item)],
           }))}
           total={dataWithIndexes.total}
@@ -308,6 +343,15 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             >
               삭제
             </Button>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onGetColumnClick}
+              icon="file-add"
+            >
+              가져오기
+            </Button>
           </GridToolbar>
 
           <GridColumn
@@ -322,7 +366,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn field="rowstatus" title=" " width="40px" />
           <GridColumn
             field="column_id"
-            title="필드명"
+            title="컬럼ID"
             //width="160px"
             cell={NameCell}
             headerCell={RequiredHeader}
@@ -335,14 +379,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             cell={NameCell}
           />
           <GridColumn
-            field="sort_order"
-            title="컬럼 순서"
-            width="200px"
-            cell={NumberCell}
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn
             field="width"
             title="컬럼너비"
             width="180px"
@@ -351,6 +387,22 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="user_editable"
             title="사용자 수정가능여부"
+            width="180px"
+            cell={NameCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="hidden"
+            title="숨김여부"
+            width="180px"
+            cell={NameCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="fixed"
+            title="컬럼고정여부"
             width="180px"
             cell={NameCell}
             headerCell={RequiredHeader}
@@ -436,47 +488,69 @@ const KendoWindow = ({
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    dbname: "SYSTEM",
     form_id: pathname,
-    component: "",
-    parent_component: "",
-    message_id: "",
-    field_name: "",
-    word_id: "",
+    type: "Column",
+    company_code: "",
+    option_id: "",
+    option_name: "",
+    subject_word_id: "",
+    remarks: "",
+    row_status: "",
+    default_id: "",
     caption: "",
-    rowstatus_s: "",
-    column_visible: "",
-    column_width: "",
-    user_edit_yn: "",
-    user_required_yn: "",
-    column_type: "",
-    column_className: "",
-    exec_pc: "",
+    word_id: "",
+    sort_order: "",
+    value_type: "",
+    value: "",
+    bc_id: "",
+    where_query: "",
+    add_year: "",
+    add_month: "",
+    add_day: "",
+    session_item: "",
+    user_editable: "",
+    column_id: "",
+    width: "",
+    fixed: "",
+    pc: "",
   });
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "web_sav_column_view_config",
+    procedureName: "sav_custom_option",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
       "@p_work_type": paraData.work_type,
-      "@p_dbname": paraData.dbname,
       "@p_form_id": paraData.form_id,
-      "@p_component": paraData.component,
-      "@p_parent_component": paraData.parent_component,
-      "@p_message_id": paraData.message_id,
-      "@p_field_name": paraData.field_name,
-      "@p_word_id": paraData.word_id,
+      "@p_type": paraData.type,
+      "@p_company_code": paraData.company_code,
+      "@p_option_id": paraData.option_id,
+      "@p_option_name": paraData.option_name,
+      "@p_subject_word_id": paraData.subject_word_id,
+      "@p_remarks": paraData.remarks,
+      "@p_row_status": paraData.row_status,
+
+      /* sysCustomOptionDefault */
+      "@p_default_id": paraData.default_id,
       "@p_caption": paraData.caption,
-      "@p_rowstatus_s": paraData.rowstatus_s,
-      "@p_column_visible": paraData.column_visible,
-      "@p_column_width": paraData.column_width,
-      "@p_user_edit_yn": paraData.user_edit_yn,
-      "@p_user_required_yn": paraData.user_required_yn,
-      "@p_column_type": paraData.column_type,
-      "@p_column_className": paraData.column_className,
-      "@p_exec_pc": paraData.exec_pc,
+      "@p_word_id": paraData.word_id,
+      "@p_sort_order": paraData.sort_order,
+      "@p_value_type": paraData.value_type,
+      "@p_value": paraData.value,
+      "@p_bc_id": paraData.bc_id,
+      "@p_where_query": paraData.where_query,
+      "@p_add_year": paraData.add_year,
+      "@p_add_month": paraData.add_month,
+      "@p_add_day": paraData.add_day,
+      "@p_session_item": paraData.session_item,
+      "@p_user_editable": paraData.user_editable,
+      /* sysCustomOptionColumn */
+      "@p_column_id": paraData.column_id,
+      "@p_width": paraData.width,
+      "@p_fixed": paraData.fixed,
+
+      "@p_pc": paraData.pc,
     },
   };
 
@@ -489,7 +563,7 @@ const KendoWindow = ({
 
   //저장
   useEffect(() => {
-    if (paraData.parent_component !== "") fetchGridSaved();
+    if (paraData.work_type !== "") fetchGridSaved();
   }, [paraData]);
 
   //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
@@ -564,7 +638,7 @@ const KendoWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
   };
 
@@ -576,21 +650,21 @@ const KendoWindow = ({
     //검증
     try {
       dataItem.orderDetails.forEach((item: any) => {
-        if (!item.field_name) {
+        if (!item.column_id) {
           throw "필드명을 입력하세요.";
         }
-        if (!item.column_visible) {
-          throw "컬럼 보이기를 선택하세요.";
-        }
-        if (!item.user_edit_yn) {
-          throw "사용자 수정가능여부 선택하세요.";
-        }
-        if (!item.user_required_yn) {
-          throw "필수여부를 선택하세요.";
-        }
-        if (!item.column_type) {
-          throw "컬럼타입을 선택하세요.";
-        }
+        // if (!item.column_visible) {
+        //   throw "컬럼 보이기를 선택하세요.";
+        // }
+        // if (!item.user_edit_yn) {
+        //   throw "사용자 수정가능여부 선택하세요.";
+        // }
+        // if (!item.user_required_yn) {
+        //   throw "필수여부를 선택하세요.";
+        // }
+        // if (!item.column_type) {
+        //   throw "컬럼타입을 선택하세요.";
+        // }
       });
     } catch (e) {
       alert(e);
@@ -599,59 +673,45 @@ const KendoWindow = ({
 
     if (!valid) return false;
 
-    const { parent_component, message_id, orderDetails } = dataItem;
+    const { option_id, option_name, orderDetails } = dataItem;
 
     let detailArr: TDetailData = {
       rowstatus: [],
-      field_name: [],
       caption: [],
-      column_visible: [],
-      column_width: [],
-      user_edit_yn: [],
-      user_required_yn: [],
-      column_type: [],
-      column_className: [],
+      word_id: [],
+      sort_order: [],
+      user_editable: [],
+      column_id: [],
+      width: [],
+      fixed: [],
     };
-    orderDetails.forEach((item: any) => {
-      const {
-        rowstatus,
-        field_name,
-        caption,
-        column_visible,
-        column_width,
-        user_edit_yn,
-        user_required_yn,
-        column_type,
-        column_className,
-      } = item;
-
-      detailArr.rowstatus.push(rowstatus);
-      detailArr.field_name.push(field_name);
-      detailArr.caption.push(caption);
-      detailArr.column_visible.push(column_visible);
-      detailArr.column_width.push(column_width);
-      detailArr.user_edit_yn.push(user_edit_yn);
-      detailArr.user_required_yn.push(user_required_yn);
-      detailArr.column_type.push(column_type);
-      detailArr.column_className.push(column_className);
+    orderDetails.forEach((item: any, idx: number) => {
+      detailArr.rowstatus.push(item.rowstatus);
+      detailArr.caption.push(item.caption);
+      detailArr.word_id.push(item.word_id);
+      detailArr.sort_order.push(String(idx + 1));
+      detailArr.user_editable.push(item.user_editable);
+      detailArr.column_id.push(item.column_id);
+      detailArr.width.push(item.width);
+      detailArr.fixed.push(item.fixed);
     });
 
     setParaData((prev) => ({
       ...prev,
-      work_type: "SAVE",
-      parent_component,
-      message_id,
-      rowstatus_s: detailArr.rowstatus.join("|"),
-      component: detailArr.field_name.join("|"),
-      field_name: detailArr.field_name.join("|"),
-      word_id: detailArr.field_name.join("|"),
+      work_type: workType,
+      // parent_component,
+      // message_id,
+      option_id,
+      option_name,
+
+      row_status: detailArr.rowstatus.join("|"),
       caption: detailArr.caption.join("|"),
-      column_visible: detailArr.column_visible.join("|"),
-      column_width: detailArr.column_width.join("|"),
-      user_edit_yn: detailArr.user_edit_yn.join("|"),
-      user_required_yn: detailArr.user_required_yn.join("|"),
-      column_type: detailArr.column_type.join("|"),
-      column_className: detailArr.column_className.join("|"),
+      word_id: detailArr.word_id.join("|"),
+      sort_order: detailArr.sort_order.join("|"),
+      user_editable: detailArr.user_editable.join("|"),
+      column_id: detailArr.column_id.join("|"),
+      width: detailArr.width.join("|"),
+      fixed: detailArr.fixed.join("|"),
     }));
   };
 
@@ -705,6 +765,18 @@ const KendoWindow = ({
                   validator={validator}
                   className="required"
                 />
+
+                {/* <Button
+                  type={"button"}
+                  onClick={() => {
+                    onGetColumnClick(formRenderProps.valueGetter("option_id"));
+                  }}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="file-add"
+                >
+                  가져오기
+                </Button> */}
               </FieldWrap>
             </fieldset>
             <FieldArray
@@ -712,6 +784,7 @@ const KendoWindow = ({
               dataItemKey={DATA_ITEM_KEY}
               component={FormGrid}
               validator={arrayLengthValidator}
+              option_id={formRenderProps.valueGetter("option_id")}
             />
 
             <BottomContainer>

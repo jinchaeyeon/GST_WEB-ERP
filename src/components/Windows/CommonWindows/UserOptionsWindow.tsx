@@ -26,7 +26,7 @@ import {
   GridTitle,
   GridTitleContainer,
 } from "../../../CommonStyled";
-import { Iparameters } from "../../../store/types";
+import { Iparameters, TcontrolObj } from "../../../store/types";
 import { chkScrollHandler, getGridItemChangedData } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -315,6 +315,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_default_text": "",
       "@p_remarks": "",
       "@p_find_row_value": "",
+      "@p_is_match": "",
+      "@p_dc_code": "",
     },
   };
   const defaultMainParameters: Iparameters = {
@@ -1205,103 +1207,105 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   //프로시저 파라미터 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
-    dbname: "SYSTEM",
+    option_id: "",
     form_id: pathname,
-    component: "",
-    parent_component: "",
-    message_id: "",
-    field_name: "",
-    word_id: "",
-    caption: "",
-    rowstatus_s: "",
-    column_visible: "",
-    column_width: "",
-    user_edit_yn: "",
-    user_required_yn: "",
-    column_type: "",
-    column_className: "",
-    exec_pc: "",
   });
   const [defaultParaDataDeleted, setDefaultParaDataDeleted] = useState({
     work_type: "",
-    process_type: "",
+    option_id: "",
     form_id: pathname,
   });
 
   //프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "web_sav_column_view_config",
+    procedureName: "sav_custom_option",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_dbname": paraDataDeleted.dbname,
       "@p_form_id": paraDataDeleted.form_id,
-      "@p_component": paraDataDeleted.component,
-      "@p_parent_component": paraDataDeleted.parent_component,
-      "@p_message_id": paraDataDeleted.message_id,
-      "@p_field_name": paraDataDeleted.field_name,
-      "@p_word_id": paraDataDeleted.word_id,
-      "@p_caption": paraDataDeleted.caption,
-      "@p_rowstatus_s": paraDataDeleted.rowstatus_s,
-      "@p_column_visible": paraDataDeleted.column_visible,
-      "@p_column_width": paraDataDeleted.column_width,
-      "@p_user_edit_yn": paraDataDeleted.user_edit_yn,
-      "@p_user_required_yn": paraDataDeleted.user_required_yn,
-      "@p_column_type": paraDataDeleted.column_type,
-      "@p_column_className": paraDataDeleted.column_className,
-      "@p_exec_pc": paraDataDeleted.exec_pc,
+      "@p_type": "Column",
+      "@p_company_code": "",
+      "@p_option_id": paraDataDeleted.option_id,
+      "@p_option_name": "",
+      "@p_subject_word_id": "",
+      "@p_remarks": "",
+      "@p_row_status": "",
+
+      /* sysCustomOptionDefault */
+      "@p_default_id": "",
+      "@p_caption": "",
+      "@p_word_id": "",
+      "@p_sort_order": "",
+      "@p_value_type": "",
+      "@p_value": "",
+      "@p_bc_id": "",
+      "@p_where_query": "",
+      "@p_add_year": "",
+      "@p_add_month": "",
+      "@p_add_day": "",
+      "@p_session_item": "",
+      "@p_user_editable": "",
+      /* sysCustomOptionColumn */
+      "@p_column_id": "",
+      "@p_width": 0,
+      "@p_fixed": "",
+
+      "@p_pc": "",
     },
   };
   const defaultParaDeleted: Iparameters = {
-    procedureName: "web_sav_default_management",
+    procedureName: "sav_custom_option",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
       "@p_work_type": defaultParaDataDeleted.work_type,
-      "@p_process_type": defaultParaDataDeleted.process_type,
       "@p_form_id": defaultParaDataDeleted.form_id,
-      "@p_component": "",
-      "@p_parent_component": "",
-      "@p_field_name": "",
-      "@p_word_id": "",
+      "@p_type": "Default",
+      "@p_company_code": "",
+      "@p_option_id": defaultParaDataDeleted.option_id,
+      "@p_option_name": "",
+      "@p_subject_word_id": "",
+      "@p_remarks": "",
+      "@p_row_status": "",
+
+      /* sysCustomOptionDefault */
+      "@p_default_id": "",
       "@p_caption": "",
-      "@p_biz_component_id": "",
-      "@p_where_query": "",
-      "@p_add_empty_row": "",
-      "@p_repository_item": "",
-      "@p_component_type": "",
-      "@p_component_full_type": "",
-      "@p_sort_seq": "",
-      "@p_message_id": "",
+      "@p_word_id": "",
+      "@p_sort_order": "",
       "@p_value_type": "",
       "@p_value": "",
-      "@p_value_name": "",
+      "@p_bc_id": "",
+      "@p_where_query": "",
       "@p_add_year": "",
       "@p_add_month": "",
       "@p_add_day": "",
-      "@p_user_edit_yn": "",
-      "@p_use_session": "",
-      "@p_allow_session": "",
       "@p_session_item": "",
-      "@p_exec_pc": "",
+      "@p_user_editable": "",
+      /* sysCustomOptionColumn */
+      "@p_column_id": "",
+      "@p_width": 0,
+      "@p_fixed": "",
+
+      "@p_pc": "",
     },
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "DELETE") fetchToDelete(paraDeleted);
+    if (paraDataDeleted.work_type === "D") fetchToDelete(paraDeleted);
   }, [paraDataDeleted]);
 
   useEffect(() => {
-    if (defaultParaDataDeleted.work_type === "DELETE")
+    if (defaultParaDataDeleted.work_type === "D")
       fetchToDelete(defaultParaDeleted);
   }, [defaultParaDataDeleted]);
 
   const fetchToDelete = async (para: any) => {
     let data: any;
 
-    console.log("defaultParaDeleted");
-    console.log(defaultParaDeleted);
+    console.log("para");
+    console.log(para);
     try {
       data = await processApi<any>("platform-procedure", para);
     } catch (error) {
@@ -1315,13 +1319,13 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       fetchMainColumn();
       fetchMainDefault();
     } else {
-      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.parent_component = "";
+    paraDataDeleted.option_id = "";
     defaultParaDataDeleted.work_type = "";
-    defaultParaDataDeleted.process_type = "";
+    defaultParaDataDeleted.option_id = "";
   };
 
   const onDeleteColumnClick = () => {
@@ -1329,14 +1333,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       return false;
     }
 
-    const parent_component = Object.getOwnPropertyNames(
-      mainColumnSelectedState
-    )[0];
+    const option_id = Object.getOwnPropertyNames(mainColumnSelectedState)[0];
 
     setParaDataDeleted((prev) => ({
       ...prev,
-      work_type: "DELETE",
-      parent_component,
+      work_type: "D",
+      option_id,
     }));
   };
 
@@ -1345,14 +1347,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       return false;
     }
 
-    const process_type = Object.getOwnPropertyNames(
-      mainDefaultSelectedState
-    )[0];
+    const option_id = Object.getOwnPropertyNames(mainDefaultSelectedState)[0];
 
     setDefaultParaDataDeleted((prev) => ({
       ...prev,
-      work_type: "DELETE",
-      process_type,
+      work_type: "D",
+      option_id,
     }));
   };
 
@@ -1447,17 +1447,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     fetchMainDefault();
     fetchDetailColumn();
     fetchDetailDefault();
-  };
-
-  type TcontrolObj = {
-    rowstatus: string;
-    form_id: string;
-    control_name: string;
-    field_name: string;
-    parent: string;
-    type: string;
-    word_id: string;
-    word_text: string;
   };
 
   const onGetControlClick = () => {
