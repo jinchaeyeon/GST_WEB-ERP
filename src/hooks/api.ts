@@ -80,7 +80,7 @@ export const useApi = () => {
       if (name === "file-list")
         headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
 
-      if (name === "platform-procedure")
+      if (name === "platform-procedure" || name === "platform-query")
         headers = { ...headers, DBAlias: "Platform" };
 
       if (token) {
