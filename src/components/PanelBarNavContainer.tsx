@@ -68,6 +68,8 @@ const paths = [
   { path: "/SY_A0011", index: ".5.5" },
   { index: ".6" },
   { path: "/CM_A1600", index: ".6.0" },
+  { index: ".7" },
+  { path: "/EA_A2000W", index: ".7.0" },
 ];
 
 const PanelBarNavContainer = (props: any) => {
@@ -127,6 +129,9 @@ const PanelBarNavContainer = (props: any) => {
 
           <PanelBarItem title={"전사관리"}>
             <PanelBarItem title={"Scheduler"} route="/CM_A1600" />
+          </PanelBarItem>
+          <PanelBarItem title={"전자결재"}>
+            <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
           </PanelBarItem>
         </PanelBar>
         <Button

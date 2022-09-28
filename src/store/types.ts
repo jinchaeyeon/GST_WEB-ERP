@@ -65,3 +65,21 @@ export type User = {
   username: string;
   realName: string;
 };
+
+export type TColumnsList = {
+  id: string;
+  field: string;
+  caption: string;
+  width: number;
+};
+
+export type TcontrolObj = {
+  rowstatus: string;
+  form_id: string;
+  control_name: string;
+  field_name: string;
+  parent: string;
+  type: string;
+  word_id: string;
+  word_text: string;
+};

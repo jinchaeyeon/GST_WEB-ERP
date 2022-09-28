@@ -1,5 +1,6 @@
 export const SELECTED_FIELD = "selected";
 export const EDIT_FIELD = "inEdit";
+export const EXPANDED_FIELD: string = "expanded";
 
 //Client 너비값
 export const clientWidth = document.documentElement.clientWidth;
@@ -13,6 +14,8 @@ export const gnvWidth = 150;
 export const pageSize = 20;
 
 export const commonCodeDefaultValue = { sub_code: "", code_name: "" };
+
+export const radioGroupDefaultData = [{ value: "", label: "" }];
 
 export const finynRadioButtonData = [
   {
