@@ -33,6 +33,7 @@ export interface Iparameters {
 
 export type Token = {
   token: string;
+  langCode: string;
   userId: string;
   userName: string;
   role: string;

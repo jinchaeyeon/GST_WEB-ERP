@@ -12,7 +12,7 @@ import { useHistory } from "react-router-dom";
 import { tokenState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useRecoilState } from "recoil";
-import { FormInput } from "../components/Editors";
+import { FormDropDownList, FormInput } from "../components/Editors";
 import { LoginBox } from "../CommonStyled";
 import { sha256 } from "js-sha256";
 
@@ -35,6 +35,7 @@ const Login: React.FC = () => {
     async (formData: { [name: string]: any }) => {
       try {
         let para = Object.assign({}, formData);
+
         //const md5 = require("md5");
         //para.password = sha256(md5(para.password));
 
@@ -54,6 +55,7 @@ const Login: React.FC = () => {
 
         setToken({
           token,
+          langCode: formData.langCode,
           userId,
           userName,
           role,
@@ -84,6 +86,7 @@ const Login: React.FC = () => {
         onSubmit={handleSubmit}
         render={() => (
           <FormElement horizontal={true}>
+            <Field name={"langCode"} label={"언어설정"} component={FormInput} />
             <Field
               name={"companyCode"}
               label={"업체코드"}
