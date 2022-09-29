@@ -99,36 +99,36 @@ export const numberWithCommas = (num: number) => {
 };
 
 //비즈니스 컴포넌트 조회
-export const UseBizComponents = (bizComponentId: string, setListData: any) => {
-  const processApi = useApi();
+// export const UseBizComponents = (bizComponentId: string, setListData: any) => {
+//   const processApi = useApi();
 
-  useEffect(() => {
-    if (bizComponentId !== null) {
-      fetchData();
-    }
-  }, []);
+//   useEffect(() => {
+//     if (bizComponentId !== null) {
+//       fetchData();
+//     }
+//   }, []);
 
-  const fetchData = useCallback(async () => {
-    let data: any;
+//   const fetchData = useCallback(async () => {
+//     let data: any;
 
-    let id = {
-      id: "biz-components?id=" + bizComponentId,
-    };
+//     let id = {
+//       id: "biz-components?id=" + bizComponentId,
+//     };
 
-    console.log("id~!");
-    console.log(id);
+//     console.log("id~!");
+//     console.log(id);
 
-    try {
-      data = await processApi<any>("biz-components", id);
-    } catch (error) {
-      data = null;
-    }
+//     try {
+//       data = await processApi<any>("biz-components", id);
+//     } catch (error) {
+//       data = null;
+//     }
 
-    if (data.isSuccess === true) {
-      setListData(data);
-    }
-  }, []);
-};
+//     if (data.isSuccess === true) {
+//       setListData(data);
+//     }
+//   }, []);
+// };
 
 //쿼리 스트링을 받아서 조회 후 결과값을 반환
 export const UseCommonQuery = (queryStr: string, setListData: any) => {
@@ -235,6 +235,35 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
   }, []);
 };
 
+//현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
+export const UseDesignInfo = (pathname: string, setListData: any) => {
+  //const [bizComponentData, setBizComponentData] = React.useState(null);
+  const processApi = useApi();
+
+  React.useEffect(() => {
+    fetchCustomOptionData();
+  }, []);
+
+  //커스텀 옵션 조회
+  const fetchCustomOptionData = React.useCallback(async () => {
+    let data: any;
+    try {
+      data = await processApi<any>("design-info", {
+        formId: pathname.replace("/", ""),
+      });
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null && data.words) {
+      setListData(data.words);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  }, []);
+};
+
 //비즈니스 컴포넌트 조회
 export const UseBizComponent = (bizComponentId: string, setListData: any) => {
   //const [bizComponentData, setBizComponentData] = React.useState(null);
@@ -276,45 +305,45 @@ export const getQueryFromBizComponent = (bcItem: any) => {
 };
 
 //현재 경로를 받아서 컬럼 리스트 조회 후 결과값을 반환
-export const UseMenuColumns = (pathname: string, setListData: any) => {
-  const processApi = useApi();
+// export const UseMenuColumns = (pathname: string, setListData: any) => {
+//   const processApi = useApi();
 
-  React.useEffect(() => {
-    fetchData();
-  }, []);
+//   React.useEffect(() => {
+//     fetchData();
+//   }, []);
 
-  const parameters: Iparameters = {
-    procedureName: "WEB_sys_sel_column_view_config",
-    pageNumber: 1,
-    pageSize: 200,
-    parameters: {
-      "@p_work_type": "CustomDetail",
-      "@p_dbname": "SYSTEM",
-      "@p_form_id": pathname,
-      "@p_lang_id": "",
-      "@p_parent_component": "",
-      "@p_message": "",
-    },
-  };
+//   const parameters: Iparameters = {
+//     procedureName: "web_sel_column_view_config",
+//     pageNumber: 1,
+//     pageSize: 200,
+//     parameters: {
+//       "@p_work_type": "CustomDetail",
+//       "@p_dbname": "SYSTEM",
+//       "@p_form_id": pathname,
+//       "@p_lang_id": "",
+//       "@p_parent_component": "",
+//       "@p_message": "",
+//     },
+//   };
 
-  const fetchData = React.useCallback(async () => {
-    let data: any;
+//   const fetchData = React.useCallback(async () => {
+//     let data: any;
 
-    try {
-      data = await processApi<any>("platform-procedure", parameters);
-    } catch (error) {
-      data = null;
-    }
+//     try {
+//       data = await processApi<any>("platform-procedure", parameters);
+//     } catch (error) {
+//       data = null;
+//     }
 
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-  }, []);
-};
+//     if (data.isSuccess === true) {
+//       const rows = data.tables[0].Rows;
+//       setListData(rows);
+//     } else {
+//       console.log("[오류 발생]");
+//       console.log(data);
+//     }
+//   }, []);
+// };
 
 //그리드 스크롤을 맨 아래로 내렸을 때, 조회할 데이터가 남았으면 true 반환
 export const chkScrollHandler = (
@@ -461,3 +490,21 @@ export const DDLValidator = (value: object) =>
   checkIsDDLValid(value) ? "" : "*필수선택";
 
 export const minValidator = (value: any) => (value > 0 ? "" : "*필수입력");
+
+export const getQueryFromCustomOptionData = (
+  customOptionData: any,
+  name: string
+) => {
+  return customOptionData.menuCustomDefaultOptions.query.find(
+    (item: any) => item.id === name
+  ).query;
+};
+
+export const getBciFromCustomOptionData = (
+  customOptionData: any,
+  name: string
+) => {
+  return customOptionData.menuCustomDefaultOptions.query.find(
+    (item: any) => item.id === name
+  ).bizComponentItems;
+};
