@@ -66,7 +66,12 @@ export type User = {
   realName: string;
 };
 
-export type TColumnsList = {
+export type TGrid = {
+  gridName: string;
+  columns: Array<TColumn>;
+};
+
+export type TColumn = {
   id: string;
   field: string;
   caption: string;
