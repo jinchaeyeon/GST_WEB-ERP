@@ -40,7 +40,10 @@ const Login: React.FC = () => {
         //para.password = sha256(md5(para.password));
 
         //setShowLoading(true);
-        const response = await processApi<any>("login", para);
+        const response = await processApi<any>(
+          para.companyCode === "2207C612" ? "login-old" : "login",
+          para
+        );
         const {
           token,
           userId,

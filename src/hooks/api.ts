@@ -14,6 +14,7 @@ const domain: any = {
   "design-info": { action: "get", url: "api/data/:formId/design-info" },
   "biz-components": { action: "get", url: "api/data/:id" },
   login: { action: "post", url: "api/auth/login" },
+  "login-old": { action: "post", url: "api/auth/login-old" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },
   "file-upload": { action: "post", url: "api/files/:attached" },
   "file-download": {
