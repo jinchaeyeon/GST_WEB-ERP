@@ -25,6 +25,7 @@ import SY_A0012 from "./routes/SY_A0012";
 import SY_A0013 from "./routes/SY_A0013";
 import SY_A0011 from "./routes/SY_A0011";
 import CM_A1600 from "./routes/CM_A1600";
+import EA_A2000W from "./routes/EA_A2000W";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -120,6 +121,8 @@ class App extends Component {
               <AuthRoute path="/SY_A0011" component={SY_A0011} exact />
               {/* 전사관리 */}
               <AuthRoute path="/CM_A1600" component={CM_A1600} exact />
+              {/* 전자결재 */}
+              <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
             </PanelBarNavContainer>
           </Switch>
         </Router>
