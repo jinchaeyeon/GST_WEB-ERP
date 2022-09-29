@@ -1576,7 +1576,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
       if (sameControlData) {
         item.word_id = sameControlData.word_id;
-        item.word_id = sameControlData.word_text;
+        item.word_text = sameControlData.word_text;
       }
     });
 
