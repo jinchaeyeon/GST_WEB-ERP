@@ -50,7 +50,7 @@ export const USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT =
     parentField: string;
   }>({} as any);
 
-const deletedRows: object[] = [];
+let deletedRows: object[] = [];
 
 const FORM_DATA_INDEX = "formDataIndex";
 const DATA_ITEM_KEY = "column_id ";
@@ -685,7 +685,22 @@ const KendoWindow = ({
       width: [],
       fixed: [],
     };
+
+    deletedRows.forEach((item: any, idx: number) => {
+      detailArr.rowstatus.push("D");
+      detailArr.caption.push(item.caption);
+      detailArr.word_id.push(item.word_id);
+      detailArr.sort_order.push("0");
+      detailArr.user_editable.push(item.user_editable);
+      detailArr.column_id.push(item.column_id);
+      detailArr.width.push(item.width);
+      detailArr.fixed.push(item.fixed);
+    });
+
+    deletedRows = []; //초기화
+
     orderDetails.forEach((item: any, idx: number) => {
+      if (!item.rowstatus) return;
       detailArr.rowstatus.push(item.rowstatus);
       detailArr.caption.push(item.caption);
       detailArr.word_id.push(item.word_id);
