@@ -29,13 +29,7 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Input,
-  RadioButton,
-  RadioButtonChangeEvent,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 
 import {
   Chart,
@@ -45,7 +39,9 @@ import {
   ChartLegend,
   ChartSeries,
   ChartSeriesItem,
+  ChartSeriesLabels,
   ChartTitle,
+  ChartTooltip,
 } from "@progress/kendo-react-charts";
 
 import "hammerjs";
@@ -57,9 +53,9 @@ import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
+  numberWithCommas,
   setDefaultDate,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   UseDesignInfo,
 } from "../components/CommonFunction";
@@ -67,27 +63,16 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
 import {
   clientWidth,
-  commonCodeDefaultValue,
   gnvWidth,
   gridMargin,
-  itemgradeQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
   pageSize,
-  proccdQuery,
-  prodmacQuery,
-  usersQuery,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { LabelProps } from "@progress/kendo-react-progressbars";
 import CommonRadioGroup from "../components/CommonRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/SA_B3000W_C";
-import { filter } from "jszip";
-//import {useAuth} from "../../hooks/auth";
 
 const numberField: string[] = [
   "qty01",
@@ -107,10 +92,8 @@ const dateField = ["recdt", "time"];
 
 const SA_B3000W: React.FC = () => {
   const DATA_ITEM_KEY = "custcd";
-  const DETAIL_DATA_ITEM_KEY = "lotnum";
   const SELECTED_FIELD = "selected";
   const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
 
@@ -129,6 +112,7 @@ const SA_B3000W: React.FC = () => {
   );
 
   const [isInitSearch, setIsInitSearch] = useState(false);
+  const [yearTitle, setYearTitle] = useState([]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -148,53 +132,33 @@ const SA_B3000W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  const [allGridDataState, setAllGridDataState] = useState<State>({
+  const [gridDataState, setGridDataState] = useState<State>({
     sort: [],
   });
 
-  const [detail1DataState, setDetail1DataState] = useState<State>({
-    sort: [],
-  });
-
-  const [detail2DataState, setDetail2DataState] = useState<State>({
-    sort: [],
-  });
-
-  const [allGridDataResult, setAllGridDataResult] = useState<DataResult>(
-    process([], allGridDataState)
+  const [gridDataResult, setGridDataResult] = useState<DataResult>(
+    process([], gridDataState)
   );
-  const [allGraphDataResult, setAllGraphDataResult] = useState({
+  const [allChartDataResult, setAllChartDataResult] = useState({
     companies: [""],
     series: [0],
   });
-  const [monthGraphDataResult, setMonthGraphDataResult] = useState([]);
-
-  const [detail1DataResult, setDetail1DataResult] = useState<DataResult>(
-    process([], detail1DataState)
-  );
-
-  const [detail2DataResult, setDetail2DataResult] = useState<DataResult>(
-    process([], detail2DataState)
-  );
+  const [chartDataResult, setChartDataResult] = useState([]);
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  const [detailSelectedState, setDetailSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [allGridPgNum, setAllGridPgNum] = useState(1);
-  const [detail1PgNum, setDetail1PgNum] = useState(1);
-  const [detail2PgNum, setDetail2PgNum] = useState(1);
+  const [gridPgNum, setGridPgNum] = useState(1);
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
     onRefreshClick();
     setTabSelected(e.selected);
-    resetAllGrid();
-    console.log("e.selected");
+    resetGrid();
+
+    fetchGrid("TITLE");
+
     if (e.selected === 0) {
       fetchGrid("TOTAL");
       fetchGrid("GRID");
@@ -257,84 +221,9 @@ const SA_B3000W: React.FC = () => {
     doexdiv: "%",
   });
 
-  const [detailFilters1, setDetailFilters1] = useState({
-    pgSize: pageSize,
-
-    work_type: "DETAIL",
-    orgdiv: "01",
-    div: "0",
-    location: "01",
-    frdt: initFrdt,
-    todt: new Date(),
-    proccd: "",
-    fxcode: "",
-    badcd: "",
-    itemcd: "",
-    itemnm: "",
-    select_item: "all",
-    select_code: "%",
-    dptcd: "",
-  });
-
-  const [detailFilters2, setDetailFilters2] = useState({
-    pgSize: pageSize,
-    work_type: "DETAIL2",
-    orgdiv: "01",
-    itemcd: "",
-    itemnm: "",
-    insiz: "",
-    yyyymm: new Date(),
-    itemacnt: "",
-    zeroyn: "%",
-    lotnum: "",
-    load_place: "",
-    heatno: "",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
-    useyn: "Y",
-    service_id: "",
-  });
-
-  const detailParameters: Iparameters = {
-    procedureName: "P_SA_B3000W_Q",
-    pageNumber: detail1PgNum,
-    pageSize: detailFilters1.pgSize,
-    parameters: {
-      // "@p_work_type": "DETAIL",
-      // "@p_orgdiv": filters.orgdiv,
-      // "@p_div": tabSelected,
-      // "@p_location": filters.location,
-      // "@p_frdt": convertDateToStr(filters.frdt),
-      // "@p_todt": convertDateToStr(filters.todt),
-      // "@p_proccd": filters.proccd,
-      // "@p_fxcode": filters.fxcode,
-      // "@p_badcd": filters.badcd,
-      // "@p_itemcd": filters.itemcd,
-      // "@p_itemnm": filters.itemnm,
-      // "@p_select_item": filters.select_item,
-      // "@p_select_code": filters.select_code,
-      // "@p_dptcd": filters.dptcd,
-    },
-  };
-
   //그리드 데이터 조회
   const fetchGrid = async (workType: string, custcd?: string) => {
     let data: any;
-
-    const selectedRowKeyVal: number =
-      Number(Object.getOwnPropertyNames(selectedState)[0]) ?? null;
-
-    let selectedRowData;
-    if (selectedRowKeyVal) {
-      selectedRowData = allGridDataResult.data.find(
-        (item) => item[DATA_ITEM_KEY] === selectedRowKeyVal
-      );
-    }
-
-    console.log("selectedRowData");
-    console.log(selectedRowKeyVal);
-    console.log(selectedRowData);
 
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -366,14 +255,29 @@ const SA_B3000W: React.FC = () => {
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
 
-      if (
+      // 연도 타이틀 (5년)
+      if (workType === "TITLE") {
+        setYearTitle(Object.values(rows[0]));
+      }
+      // 공통 그리드
+      else if (
         workType === "GRID" ||
         workType === "MONTH" ||
         workType === "QUARTER" ||
         workType === "5year"
       ) {
-        setAllGridDataResult(process(rows, allGridDataState));
-      } else if (workType === "TOTAL") {
+        setGridDataResult(process(rows, gridDataState));
+      }
+      // 공통 차트
+      else if (
+        workType === "MCHART" ||
+        workType === "QCHART" ||
+        workType === "CHART"
+      ) {
+        setChartDataResult(rows);
+      }
+      // 전체 탭 그래프 (업체별 데이터로 가공)
+      else if (workType === "TOTAL") {
         let newRows = { companies: [""], series: [0] };
 
         rows.forEach((row: any) => {
@@ -383,20 +287,14 @@ const SA_B3000W: React.FC = () => {
           }
         });
 
-        setAllGraphDataResult({
+        setAllChartDataResult({
           companies: newRows.companies,
           series: newRows.series,
         });
-      } else if (
-        workType === "MCHART" ||
-        workType === "QCHART" ||
-        workType === "CHART"
-      ) {
-        setMonthGraphDataResult(rows);
       }
     }
 
-    setFilters((prev) => ({ ...prev, work_type: "", custcd: "" }));
+    setFilters((prev) => ({ ...prev, custcd: "" }));
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -404,91 +302,20 @@ const SA_B3000W: React.FC = () => {
     if (customOptionData !== null && isInitSearch === false) {
       fetchGrid("GRID");
       fetchGrid("TOTAL");
+      fetchGrid("TITLE");
+
       setIsInitSearch(true);
     }
   }, [filters]);
 
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    // if (allGridDataResult.total > 0) {
-    //   const firstRowData = allGridDataResult.data[0];
-    //   setSelectedState({ [firstRowData.itemcd]: true });
-    //   // setDetailFilters1((prev) => ({
-    //   //   ...prev,
-    //   //   itemacnt: firstRowData.itemacnt,
-    //   //   itemcd: firstRowData.itemcd,
-    //   //   work_type: "DETAIL1",
-    //   // }));
-    // }
-  }, [allGridDataResult]);
-
-  //디테일1 그리드 데이터 변경 되었을 때
-  // useEffect(() => {
-  //   if (detail1DataResult.total > 0) {
-  //     const firstRowData = detail1DataResult.data[0];
-  //     setDetailSelectedState({ [firstRowData.lotnum]: true });
-
-  //     setDetailFilters2((prev) => ({
-  //       ...prev,
-  //       lotnum: firstRowData.lotnum,
-  //       work_type: "DETAIL2",
-  //     }));
-  //   }
-  // }, [detail1DataResult]);
-
-  const fetchDetailGrid1 = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", detailParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-
-      if (totalRowCnt > 0)
-        setDetail1DataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
-    }
-  };
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchDetailGrid1();
-    }
-  }, [detail1PgNum]);
-
-  useEffect(() => {
-    resetAllGrid();
-    //fetchDetailGrid1();
-  }, [detailFilters1]);
-
   //그리드 리셋
-  const resetAllGrid = () => {
-    setAllGridPgNum(1);
-    setDetail1PgNum(1);
-    setDetail2PgNum(1);
-    setAllGridDataResult(process([], allGridDataState));
-    setDetail1DataResult(process([], detail1DataState));
-    setDetail2DataResult(process([], detail2DataState));
-  };
-
-  const resetAllDetailGrid = () => {
-    setDetail1PgNum(1);
-    setDetail2PgNum(1);
-    setDetail1DataResult(process([], detail1DataState));
-    setDetail2DataResult(process([], detail2DataState));
+  const resetGrid = () => {
+    setGridPgNum(1);
+    setGridDataResult(process([], gridDataState));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
-  const onAllGridSelectionChange = (event: GridSelectionChangeEvent) => {
+  const onGridSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
       selectedState: selectedState,
@@ -517,26 +344,13 @@ const SA_B3000W: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
     setSelectedState(newSelectedState);
-    fetchGrid("MCHRAT", selectedRowData.custcd);
-  };
-
-  //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
-  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: detailSelectedState,
-      dataItemKey: DETAIL_DATA_ITEM_KEY,
-    });
-    setDetailSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-
-    setDetailFilters2({
-      ...detailFilters2,
-      lotnum: selectedRowData.lotnum,
-      work_type: "DETAIL2",
-    });
+    if (tabSelected === 1) {
+      fetchGrid("MCHART", selectedRowData.custcd);
+    } else if (tabSelected === 2) {
+      fetchGrid("QCHART", selectedRowData.custcd);
+    } else if (tabSelected === 3) {
+      fetchGrid("CHART", selectedRowData.custcd);
+    }
   };
 
   //엑셀 내보내기
@@ -548,63 +362,33 @@ const SA_B3000W: React.FC = () => {
   };
 
   //스크롤 핸들러
-  const onAllGridScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, allGridPgNum, pageSize))
-      setAllGridPgNum((prev) => prev + 1);
-  };
-  const onDetail1ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail1PgNum, pageSize))
-      setDetail1PgNum((prev) => prev + 1);
-  };
-  const onDetail2ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail2PgNum, pageSize))
-      setDetail2PgNum((prev) => prev + 1);
+  const onGridScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, gridPgNum, pageSize))
+      setGridPgNum((prev) => prev + 1);
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
-  const onAllGridDataStateChange = (event: GridDataStateChangeEvent) => {
-    setAllGridDataState(event.dataState);
-  };
-  const onDetail1DataStateChange = (event: GridDataStateChangeEvent) => {
-    setDetail1DataState(event.dataState);
-  };
-  const onDetail2DataStateChange = (event: GridDataStateChangeEvent) => {
-    setDetail2DataState(event.dataState);
+  const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
+    setGridDataState(event.dataState);
   };
   //그리드 푸터
 
-  const allGridTotalFooterCell = (props: GridFooterCellProps) => {
+  const gridTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {allGridDataResult.total}건
+        총 {gridDataResult.total}건
       </td>
     );
   };
-  const allGridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
-    allGridDataResult.data.forEach((item) =>
+    gridDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum += item[props.field]) : ""
     );
 
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {sum}
-      </td>
-    );
-  };
-
-  const detail1TotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {detail1DataResult.total}건
-      </td>
-    );
-  };
-
-  const detail2TotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {detail2DataResult.total}건
       </td>
     );
   };
@@ -622,112 +406,9 @@ const SA_B3000W: React.FC = () => {
     }));
   };
 
-  const onAllGridSortChange = (e: any) => {
-    setAllGridDataState((prev) => ({ ...prev, sort: e.sort }));
+  const onGridSortChange = (e: any) => {
+    setGridDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  const onDetail1SortChange = (e: any) => {
-    setDetail1DataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-  const onDetail2SortChange = (e: any) => {
-    setDetail2DataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
-  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
-
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
-
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
-
-  const [itemgradeListData, setItemgradeListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemgradeQuery, setItemgradeListData);
-
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  useEffect(() => {
-    // setAllGridDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     itemlvl1: itemlvl1ListData.find(
-    //       (item: any) => item.sub_code === row.itemlvl1
-    //     )?.code_name,
-    //   }));
-    //   console.log(rows);
-    //   return {
-    //     data: [...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [itemlvl1ListData]);
-
-  useEffect(() => {
-    // setAllGridDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     itemlvl2: itemlvl2ListData.find(
-    //       (item: any) => item.sub_code === row.itemlvl2
-    //     )?.code_name,
-    //   }));
-    //   return {
-    //     data: [...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [itemlvl2ListData]);
-
-  useEffect(() => {
-    // setAllGridDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     itemlvl3: itemlvl3ListData.find(
-    //       (item: any) => item.sub_code === row.itemlvl3
-    //     )?.code_name,
-    //   }));
-    //   return {
-    //     data: [...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [itemlvl3ListData]);
-
-  useEffect(() => {
-    // setAllGridDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     itemgrade: itemgradeListData.find(
-    //       (item: any) => item.sub_code === row.itemgrade
-    //     )?.code_name,
-    //   }));
-    //   return {
-    //     data: [...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [itemgradeListData]);
-
-  const [proccdListData, setProccdListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [prodmacListData, setProdmacListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [prodempListData, setProdempListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-
-  UseCommonQuery(proccdQuery, setProccdListData);
-  UseCommonQuery(prodmacQuery, setProdmacListData);
-  UseCommonQuery(usersQuery, setProdempListData);
 
   const labelContent = (props: any) => {
     let formatedNumber = Number(props.percentage).toLocaleString(undefined, {
@@ -752,15 +433,15 @@ const SA_B3000W: React.FC = () => {
       argument,
     });
 
-    setDetail1DataState({
-      filter: {
-        logic: "and",
-        filters: [
-          { field: item /*"proccd"*/, operator: "eq", value: argument },
-          //{ field: "unitPrice", operator: "lt", value: 22 },
-        ],
-      },
-    });
+    // setDetail1DataState({
+    //   filter: {
+    //     logic: "and",
+    //     filters: [
+    //       { field: item /*"proccd"*/, operator: "eq", value: argument },
+    //       //{ field: "unitPrice", operator: "lt", value: 22 },
+    //     ],
+    //   },
+    // });
   };
 
   const onRefreshClick = () => {
@@ -769,7 +450,17 @@ const SA_B3000W: React.FC = () => {
       argument: "-",
     });
 
-    setDetail1DataState({});
+    // setDetail1DataState({});
+  };
+
+  const quarterDonutRenderTooltip = (context: any) => {
+    const { category, series, value } = context.point || context;
+
+    return (
+      <div>
+        {category} ({series.name}): {numberWithCommas(value)}
+      </div>
+    );
   };
 
   return (
@@ -780,8 +471,8 @@ const SA_B3000W: React.FC = () => {
         <ButtonContainer>
           <Button
             onClick={() => {
-              // resetAllGrid();
-              // fetchDetailGrid1();
+              // resetGrid();
+              fetchGrid("TITLE");
 
               if (tabSelected === 0) {
                 fetchGrid("TOTAL");
@@ -913,31 +604,11 @@ const SA_B3000W: React.FC = () => {
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
             <GridContainer>
-              {/* <Chart
-                  onSeriesClick={onChartSeriesClick}
-                  className={"SA_B3000W_TAB1"}
-                >
-                  <ChartTitle text="공정별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      //autoFit={true}
-                      type="pie"
-                      data={allGridDataResult.filter(
-                        (item: any) => item.gubun === "공정별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart> */}
-
               <Chart>
                 {/* <ChartTitle text="Units sold" /> */}
                 <ChartCategoryAxis>
                   <ChartCategoryAxisItem
-                    categories={allGraphDataResult.companies}
+                    categories={allChartDataResult.companies}
                   >
                     <ChartCategoryAxisTitle text="업체" />
                   </ChartCategoryAxisItem>
@@ -948,14 +619,8 @@ const SA_B3000W: React.FC = () => {
                     type="bar"
                     // gap={2}
                     // spacing={0.25}
-                    data={allGraphDataResult.series}
+                    data={allChartDataResult.series}
                   />
-                  {/* <ChartSeriesItem
-                      type="bar"
-                      data={allGraphDataResult.series}
-                    />
-                    <ChartSeriesItem type="bar" data={thirdSeries} />
-                    <ChartSeriesItem type="bar" data={fourthSeries} /> */}
                 </ChartSeries>
               </Chart>
             </GridContainer>
@@ -966,17 +631,17 @@ const SA_B3000W: React.FC = () => {
               <Grid
                 style={{ height: "280px" }}
                 data={process(
-                  allGridDataResult.data.map((row) => ({
+                  gridDataResult.data.map((row) => ({
                     ...row,
                     // person: personListData.find(
                     //   (item: any) => item.code === row.person
                     // )?.name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
-                  allGridDataState
+                  gridDataState
                 )}
-                {...allGridDataState}
-                onDataStateChange={onAllGridDataStateChange}
+                {...gridDataState}
+                onDataStateChange={onGridDataStateChange}
                 //선택 기능
                 dataItemKey={DATA_ITEM_KEY}
                 selectedField={SELECTED_FIELD}
@@ -984,14 +649,14 @@ const SA_B3000W: React.FC = () => {
                   enabled: true,
                   mode: "single",
                 }}
-                onSelectionChange={onAllGridSelectionChange}
+                onSelectionChange={onGridSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={allGridDataResult.total}
-                onScroll={onAllGridScrollHandler}
+                total={gridDataResult.total}
+                onScroll={onGridScrollHandler}
                 //정렬기능
                 sortable={true}
-                onSortChange={onAllGridSortChange}
+                onSortChange={onGridSortChange}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
@@ -1015,9 +680,9 @@ const SA_B3000W: React.FC = () => {
                           }
                           footerCell={
                             item.sortOrder === 1
-                              ? allGridTotalFooterCell
+                              ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
-                              ? allGridSumQtyFooterCell
+                              ? gridSumQtyFooterCell
                               : ""
                           }
                         />
@@ -1035,17 +700,17 @@ const SA_B3000W: React.FC = () => {
               <Grid
                 style={{ height: "280px" }}
                 data={process(
-                  allGridDataResult.data.map((row) => ({
+                  gridDataResult.data.map((row) => ({
                     ...row,
                     // person: personListData.find(
                     //   (item: any) => item.code === row.person
                     // )?.name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
-                  allGridDataState
+                  gridDataState
                 )}
-                {...allGridDataState}
-                onDataStateChange={onAllGridDataStateChange}
+                {...gridDataState}
+                onDataStateChange={onGridDataStateChange}
                 //선택 기능
                 dataItemKey={DATA_ITEM_KEY}
                 selectedField={SELECTED_FIELD}
@@ -1056,11 +721,11 @@ const SA_B3000W: React.FC = () => {
                 onSelectionChange={onMonthGridSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={allGridDataResult.total}
-                onScroll={onAllGridScrollHandler}
+                total={gridDataResult.total}
+                onScroll={onGridScrollHandler}
                 //정렬기능
                 sortable={true}
-                onSortChange={onAllGridSortChange}
+                onSortChange={onGridSortChange}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
@@ -1075,18 +740,11 @@ const SA_B3000W: React.FC = () => {
                           key={idx}
                           field={item.fieldName}
                           title={item.caption}
-                          // cell={
-                          //   numberField.includes(item.fieldName)
-                          //     ? NumberCell
-                          //     : dateField.includes(item.fieldName)
-                          //     ? DateCell
-                          //     : ""
-                          // }
                           footerCell={
                             item.sortOrder === 1
-                              ? allGridTotalFooterCell
+                              ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
-                              ? allGridSumQtyFooterCell
+                              ? gridSumQtyFooterCell
                               : ""
                           }
                         >
@@ -1107,18 +765,11 @@ const SA_B3000W: React.FC = () => {
                           key={idx}
                           field={item.fieldName}
                           title={item.caption}
-                          // cell={
-                          //   numberField.includes(item.fieldName)
-                          //     ? NumberCell
-                          //     : dateField.includes(item.fieldName)
-                          //     ? DateCell
-                          //     : ""
-                          // }
                           footerCell={
                             item.sortOrder === 1
-                              ? allGridTotalFooterCell
+                              ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
-                              ? allGridSumQtyFooterCell
+                              ? gridSumQtyFooterCell
                               : ""
                           }
                         />
@@ -1134,23 +785,21 @@ const SA_B3000W: React.FC = () => {
                   {/* <ChartTitle text="Units sold" /> */}
                   <ChartCategoryAxis>
                     <ChartCategoryAxisItem
-                      categories={monthGraphDataResult.map(
-                        (item: any) => item.mm
-                      )}
+                      categories={chartDataResult.map((item: any) => item.mm)}
                     ></ChartCategoryAxisItem>
                   </ChartCategoryAxis>
                   <ChartSeries>
                     <ChartSeriesItem
                       labels={{ visible: true }}
                       type="line"
-                      data={monthGraphDataResult.map((item: any) => item.qty)}
+                      data={chartDataResult.map((item: any) => item.qty)}
                     />
                     <ChartSeriesItem
                       labels={{ visible: true }}
                       type="bar"
                       // gap={2}
                       // spacing={0.25}
-                      data={monthGraphDataResult.map((item: any) => item.amt)}
+                      data={chartDataResult.map((item: any) => item.amt)}
                     />
                   </ChartSeries>
                 </Chart>
@@ -1162,7 +811,7 @@ const SA_B3000W: React.FC = () => {
                     <ChartSeriesItem
                       //autoFit={true}
                       type="pie"
-                      data={monthGraphDataResult}
+                      data={chartDataResult}
                       field="amt"
                       categoryField="mm"
                       labels={{ visible: true, content: labelContent }}
@@ -1181,17 +830,17 @@ const SA_B3000W: React.FC = () => {
               <Grid
                 style={{ height: "280px" }}
                 data={process(
-                  allGridDataResult.data.map((row) => ({
+                  gridDataResult.data.map((row) => ({
                     ...row,
                     // person: personListData.find(
                     //   (item: any) => item.code === row.person
                     // )?.name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
-                  allGridDataState
+                  gridDataState
                 )}
-                {...allGridDataState}
-                onDataStateChange={onAllGridDataStateChange}
+                {...gridDataState}
+                onDataStateChange={onGridDataStateChange}
                 //선택 기능
                 dataItemKey={DATA_ITEM_KEY}
                 selectedField={SELECTED_FIELD}
@@ -1202,11 +851,11 @@ const SA_B3000W: React.FC = () => {
                 onSelectionChange={onMonthGridSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={allGridDataResult.total}
-                onScroll={onAllGridScrollHandler}
+                total={gridDataResult.total}
+                onScroll={onGridScrollHandler}
                 //정렬기능
                 sortable={true}
-                onSortChange={onAllGridSortChange}
+                onSortChange={onGridSortChange}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
@@ -1224,18 +873,11 @@ const SA_B3000W: React.FC = () => {
                           key={idx}
                           field={item.fieldName}
                           title={item.caption}
-                          // cell={
-                          //   numberField.includes(item.fieldName)
-                          //     ? NumberCell
-                          //     : dateField.includes(item.fieldName)
-                          //     ? DateCell
-                          //     : ""
-                          // }
                           footerCell={
                             item.sortOrder === 1
-                              ? allGridTotalFooterCell
+                              ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
-                              ? allGridSumQtyFooterCell
+                              ? gridSumQtyFooterCell
                               : ""
                           }
                         >
@@ -1305,18 +947,11 @@ const SA_B3000W: React.FC = () => {
                           key={idx}
                           field={item.fieldName}
                           title={item.caption}
-                          // cell={
-                          //   numberField.includes(item.fieldName)
-                          //     ? NumberCell
-                          //     : dateField.includes(item.fieldName)
-                          //     ? DateCell
-                          //     : ""
-                          // }
                           footerCell={
                             item.sortOrder === 1
-                              ? allGridTotalFooterCell
+                              ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
-                              ? allGridSumQtyFooterCell
+                              ? gridSumQtyFooterCell
                               : ""
                           }
                         />
@@ -1332,7 +967,7 @@ const SA_B3000W: React.FC = () => {
                   {/* <ChartTitle text="Units sold" /> */}
                   <ChartCategoryAxis>
                     <ChartCategoryAxisItem
-                      categories={monthGraphDataResult
+                      categories={chartDataResult
                         .filter((item: any) => item.series === "당기")
                         .map((item: any) => item.mm)}
                     ></ChartCategoryAxisItem>
@@ -1344,7 +979,7 @@ const SA_B3000W: React.FC = () => {
                       name="당기수량"
                       labels={{ visible: true }}
                       type="line"
-                      data={monthGraphDataResult
+                      data={chartDataResult
                         .filter((item: any) => item.series === "당기")
                         .map((item: any) => item.qty)}
                     />
@@ -1352,7 +987,7 @@ const SA_B3000W: React.FC = () => {
                       name="전기수량"
                       labels={{ visible: true }}
                       type="line"
-                      data={monthGraphDataResult
+                      data={chartDataResult
                         .filter((item: any) => item.series === "전기")
                         .map((item: any) => item.qty)}
                     />
@@ -1362,7 +997,7 @@ const SA_B3000W: React.FC = () => {
                       type="bar"
                       // gap={2}
                       // spacing={0.25}
-                      data={monthGraphDataResult
+                      data={chartDataResult
                         .filter((item: any) => item.series === "당기")
                         .map((item: any) => item.amt)}
                     />
@@ -1372,7 +1007,7 @@ const SA_B3000W: React.FC = () => {
                       type="bar"
                       // gap={2}
                       // spacing={0.25}"
-                      data={monthGraphDataResult
+                      data={chartDataResult
                         .filter((item: any) => item.series === "전기")
                         .map((item: any) => item.amt)}
                     />
@@ -1381,16 +1016,41 @@ const SA_B3000W: React.FC = () => {
               </GridContainer>
               <GridContainer width="600px">
                 <Chart>
-                  <ChartLegend position="bottom" />
+                  <ChartTitle text="분기별 매출 금액 비율(%)" />
+
+                  <ChartTooltip render={quarterDonutRenderTooltip} />
+                  <ChartLegend visible={false} position="bottom" />
                   <ChartSeries>
-                    <ChartSeriesItem
-                      //autoFit={true}
-                      type="pie"
-                      data={monthGraphDataResult}
-                      field="amt"
-                      categoryField="mm"
-                      labels={{ visible: true, content: labelContent }}
-                    />
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        type="donut"
+                        startAngle={150}
+                        name={"전기"}
+                        data={chartDataResult
+                          .filter((item: any) => item.series === "전기")
+                          .map((item: any) => item)}
+                        field="amt"
+                        categoryField="mm"
+                        colorField="color"
+                      ></ChartSeriesItem>
+                      <ChartSeriesItem
+                        type="donut"
+                        startAngle={150}
+                        name={"당기"}
+                        data={chartDataResult
+                          .filter((item: any) => item.series === "당기")
+                          .map((item: any) => item)}
+                        field="amt"
+                        categoryField="mm"
+                        colorField="color"
+                      >
+                        <ChartSeriesLabels
+                          position="outsideEnd"
+                          background="none"
+                          content={labelContent}
+                        />
+                      </ChartSeriesItem>
+                    </ChartSeries>
                   </ChartSeries>
                 </Chart>
               </GridContainer>
@@ -1405,17 +1065,17 @@ const SA_B3000W: React.FC = () => {
               <Grid
                 style={{ height: "280px" }}
                 data={process(
-                  allGridDataResult.data.map((row) => ({
+                  gridDataResult.data.map((row) => ({
                     ...row,
                     // person: personListData.find(
                     //   (item: any) => item.code === row.person
                     // )?.name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
-                  allGridDataState
+                  gridDataState
                 )}
-                {...allGridDataState}
-                onDataStateChange={onAllGridDataStateChange}
+                {...gridDataState}
+                onDataStateChange={onGridDataStateChange}
                 //선택 기능
                 dataItemKey={DATA_ITEM_KEY}
                 selectedField={SELECTED_FIELD}
@@ -1426,11 +1086,11 @@ const SA_B3000W: React.FC = () => {
                 onSelectionChange={onMonthGridSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={allGridDataResult.total}
-                onScroll={onAllGridScrollHandler}
+                total={gridDataResult.total}
+                onScroll={onGridScrollHandler}
                 //정렬기능
                 sortable={true}
-                onSortChange={onAllGridSortChange}
+                onSortChange={onGridSortChange}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
@@ -1445,19 +1105,17 @@ const SA_B3000W: React.FC = () => {
                         <GridColumn
                           key={idx}
                           field={item.fieldName}
-                          title={item.caption}
-                          // cell={
-                          //   numberField.includes(item.fieldName)
-                          //     ? NumberCell
-                          //     : dateField.includes(item.fieldName)
-                          //     ? DateCell
-                          //     : ""
-                          // }
+                          //title={item.caption}
+                          title={
+                            yearTitle[
+                              Number(item.id.replace("col_5year", "")) - 1
+                            ]
+                          }
                           footerCell={
                             item.sortOrder === 1
-                              ? allGridTotalFooterCell
+                              ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
-                              ? allGridSumQtyFooterCell
+                              ? gridSumQtyFooterCell
                               : ""
                           }
                         >
@@ -1466,15 +1124,15 @@ const SA_B3000W: React.FC = () => {
                             cell={NumberCell}
                             field={
                               "amt" +
-                              (item.caption === "2022"
+                              (item.caption === yearTitle[0]
                                 ? "01"
-                                : item.caption === "2021"
+                                : item.caption === yearTitle[1]
                                 ? "21"
-                                : item.caption === "2010"
+                                : item.caption === yearTitle[2]
                                 ? "31"
-                                : item.caption === "2019"
+                                : item.caption === yearTitle[3]
                                 ? "41"
-                                : item.caption === "2018"
+                                : item.caption === yearTitle[4]
                                 ? "51"
                                 : "")
                             }
@@ -1484,15 +1142,15 @@ const SA_B3000W: React.FC = () => {
                             cell={NumberCell}
                             field={
                               "amt" +
-                              (item.caption === "2022"
+                              (item.caption === yearTitle[0]
                                 ? "02"
-                                : item.caption === "2021"
+                                : item.caption === yearTitle[1]
                                 ? "22"
-                                : item.caption === "2010"
+                                : item.caption === yearTitle[2]
                                 ? "32"
-                                : item.caption === "2019"
+                                : item.caption === yearTitle[3]
                                 ? "42"
-                                : item.caption === "2018"
+                                : item.caption === yearTitle[4]
                                 ? "52"
                                 : "")
                             }
@@ -1502,15 +1160,15 @@ const SA_B3000W: React.FC = () => {
                             title={"합계"}
                             cell={NumberCell}
                             field={
-                              "tamt" + item.caption === "2022"
+                              "tamt" + item.caption === yearTitle[0]
                                 ? "01"
-                                : item.caption === "2021"
+                                : item.caption === yearTitle[1]
                                 ? "02"
-                                : item.caption === "2010"
+                                : item.caption === yearTitle[2]
                                 ? "03"
-                                : item.caption === "2019"
+                                : item.caption === yearTitle[3]
                                 ? "04"
-                                : item.caption === "2018"
+                                : item.caption === yearTitle[4]
                                 ? "05"
                                 : ""
                             }
@@ -1521,18 +1179,11 @@ const SA_B3000W: React.FC = () => {
                           key={idx}
                           field={item.fieldName}
                           title={item.caption}
-                          // cell={
-                          //   numberField.includes(item.fieldName)
-                          //     ? NumberCell
-                          //     : dateField.includes(item.fieldName)
-                          //     ? DateCell
-                          //     : ""
-                          // }
                           footerCell={
                             item.sortOrder === 1
-                              ? allGridTotalFooterCell
+                              ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
-                              ? allGridSumQtyFooterCell
+                              ? gridSumQtyFooterCell
                               : ""
                           }
                         />
@@ -1548,7 +1199,9 @@ const SA_B3000W: React.FC = () => {
                   {/* <ChartTitle text="Units sold" /> */}
                   <ChartCategoryAxis>
                     <ChartCategoryAxisItem
-                      categories={["2022", "2021", "2020"]}
+                      categories={[
+                        ...new Set(chartDataResult.map((item: any) => item.mm)),
+                      ]}
                     ></ChartCategoryAxisItem>
                   </ChartCategoryAxis>
 
@@ -1558,17 +1211,21 @@ const SA_B3000W: React.FC = () => {
                       name="(1-6)분기"
                       labels={{ visible: true }}
                       type="bar"
-                      data={monthGraphDataResult
+                      data={chartDataResult
                         .filter((item: any) => item.series === "(1-6)분기")
-                        .map((item: any) => item.amt)}
+                        .map((item: any) => item)}
+                      field="amt"
+                      categoryField="mm"
                     />
                     <ChartSeriesItem
                       name="(7-12)분기"
                       labels={{ visible: true }}
                       type="bar"
-                      data={monthGraphDataResult
+                      data={chartDataResult
                         .filter((item: any) => item.series === "(7-12)분기")
-                        .map((item: any) => item.amt)}
+                        .map((item: any) => item)}
+                      field="amt"
+                      categoryField="mm"
                     />
                     <ChartSeriesItem
                       name="합계"
@@ -1576,25 +1233,56 @@ const SA_B3000W: React.FC = () => {
                       type="bar"
                       // gap={2}
                       // spacing={0.25}
-                      data={monthGraphDataResult
+                      data={chartDataResult
                         .filter((item: any) => item.series === "합계")
-                        .map((item: any) => item.amt)}
+                        .map((item: any) => item)}
+                      field="amt"
+                      categoryField="mm"
                     />
                   </ChartSeries>
                 </Chart>
               </GridContainer>
               <GridContainer width="600px">
                 <Chart>
-                  <ChartLegend position="bottom" />
+                  <ChartTitle text="연도별 매출 금액 비율(%)" />
+
+                  <ChartTooltip render={quarterDonutRenderTooltip} />
+                  <ChartLegend visible={false} position="bottom" />
                   <ChartSeries>
-                    <ChartSeriesItem
-                      //autoFit={true}
-                      type="pie"
-                      data={monthGraphDataResult}
-                      field="amt"
-                      categoryField="mm"
-                      labels={{ visible: true, content: labelContent }}
-                    />
+                    <ChartSeries>
+                      {yearTitle.map(
+                        (year, idx) =>
+                          [
+                            ...new Set(
+                              chartDataResult.map((item: any) => item.mm)
+                            ),
+                          ].includes(year) && (
+                            <ChartSeriesItem
+                              type="donut"
+                              startAngle={150}
+                              name={year}
+                              data={chartDataResult
+                                .filter((item: any) => item.mm === year)
+                                .map((item: any) => item)}
+                              field="amt"
+                              categoryField="series"
+                              colorField="color"
+                            >
+                              {[
+                                ...new Set(
+                                  chartDataResult.map((item: any) => item.mm)
+                                ),
+                              ].slice(-1)[0] === year && (
+                                <ChartSeriesLabels
+                                  position="outsideEnd"
+                                  background="none"
+                                  content={labelContent}
+                                />
+                              )}
+                            </ChartSeriesItem>
+                          )
+                      )}
+                    </ChartSeries>
                   </ChartSeries>
                 </Chart>
               </GridContainer>
