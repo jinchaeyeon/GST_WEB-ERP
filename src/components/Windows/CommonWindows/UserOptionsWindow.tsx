@@ -1306,8 +1306,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const fetchToDelete = async (para: any) => {
     let data: any;
 
-    console.log("para");
-    console.log(para);
     try {
       data = await processApi<any>("platform-procedure", para);
     } catch (error) {

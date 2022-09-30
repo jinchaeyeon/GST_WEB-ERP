@@ -553,7 +553,6 @@ const KendoWindow = ({
   const fetchMain = async () => {
     let data: any;
 
-    console.log(parameters);
     try {
       data = await processApi<any>("platform-procedure", parameters);
     } catch (error) {

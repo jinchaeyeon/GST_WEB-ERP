@@ -1063,9 +1063,6 @@ const KendoWindow = ({
   const fetchGridSaved = async (paraSaved: any) => {
     let data: any;
 
-    console.log("paraSaved");
-    console.log(paraSaved);
-
     try {
       data = await processApi<any>("procedure", paraSaved);
     } catch (error) {
