@@ -137,7 +137,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 // Create React.Context to pass props to the Form Field components from the main component
-export const PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT = React.createContext<{
+export const PR_A1100W_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT = React.createContext<{
   onRemove: (dataItem: any) => void;
   onEdit: (dataItem: any, isNew: boolean) => void;
   onCopy: (dataItem: any) => void;
@@ -148,7 +148,7 @@ export const PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT = React.createContext<{
   getItemcd: (itemcd: string) => void;
 }>({} as any);
 
-export const PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT = React.createContext<{
+export const PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT = React.createContext<{
   onRemove: (dataItem: any) => void;
   onEdit: (dataItem: any, isNew: boolean) => void;
   onCopy: (dataItem: any) => void;
@@ -228,7 +228,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
       fieldArrayRenderProps.onPush({
         value: {
-          srcPgName: "PR_A1100_WINDOW_PRC",
+          srcPgName: "PR_A1100W_WINDOW_PRC",
           proccd: commonCodeDefaultValue,
           procseq: procseq,
           outprocyn: commonCodeDefaultValue,
@@ -592,7 +592,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   return (
     <GridContainer>
       {/* //maxWidth="calc(50% - 7.5px)" */}
-      <PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT.Provider
+      <PR_A1100W_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT.Provider
         value={{
           onCancel,
           onEdit,
@@ -706,7 +706,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             para={undefined}
           />
         )}
-      </PR_A1100_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT.Provider>
+      </PR_A1100W_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT.Provider>
     </GridContainer>
   );
 };
@@ -724,7 +724,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const ItemBtnCell = (props: GridCellProps) => {
     const { editIndex } = React.useContext(
-      PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT
+      PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT
     );
     //const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
 
@@ -754,7 +754,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       e.preventDefault();
       fieldArrayRenderProps.onPush({
         value: {
-          srcPgName: "PR_A1100_WINDOW_MTL",
+          srcPgName: "PR_A1100W_WINDOW_MTL",
           proccd: commonCodeDefaultValue,
           unitqty: 0,
           procqty: 0,
@@ -1129,7 +1129,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   return (
     <GridContainer>
       {/* maxWidth="calc(50% - 7.5px)" */}
-      <PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT.Provider
+      <PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT.Provider
         value={{
           onCancel,
           onEdit,
@@ -1247,7 +1247,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             para={undefined}
           />
         )}
-      </PR_A1100_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT.Provider>
+      </PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT.Provider>
     </GridContainer>
   );
 };
@@ -1390,7 +1390,7 @@ const KendoWindow = ({
 
   //수주정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_PR_A1100_Q",
+    procedureName: "P_PR_A1100W_Q",
     pageNumber: 1,
     pageSize: 1,
     parameters: {
@@ -1422,7 +1422,7 @@ const KendoWindow = ({
   };
 
   const prcParameters: Iparameters = {
-    procedureName: "P_WEB_PR_A1100_Q",
+    procedureName: "P_PR_A1100W_Q",
     pageNumber: 1,
     pageSize: 50,
     parameters: {
@@ -1454,7 +1454,7 @@ const KendoWindow = ({
   };
 
   const mtrParameters: Iparameters = {
-    procedureName: "P_WEB_PR_A1100_Q",
+    procedureName: "P_PR_A1100W_Q",
     pageNumber: 1,
     pageSize: 50,
     parameters: {
@@ -1591,7 +1591,7 @@ const KendoWindow = ({
       const rows = data.tables[0].Rows.map((row: any, idx: number) => {
         return {
           ...row,
-          srcPgName: "PR_A1100_WINDOW_PRC",
+          srcPgName: "PR_A1100W_WINDOW_PRC",
           proccd: {
             sub_code: row.proccd,
             code_name: proccdListData.find(
@@ -1645,7 +1645,7 @@ const KendoWindow = ({
       const rows = data.tables[0].Rows.map((row: any, idx: number) => {
         return {
           ...row,
-          srcPgName: "PR_A1100_WINDOW_MTL",
+          srcPgName: "PR_A1100W_WINDOW_MTL",
           proccd: {
             sub_code: row.proccd,
             code_name: proccdListData.find(
@@ -1744,7 +1744,7 @@ const KendoWindow = ({
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "P_WEB_PR_A1100_S",
+    procedureName: "P_PR_A1100W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
@@ -2025,7 +2025,7 @@ const KendoWindow = ({
       purtype: "",
       urgencyyn: "",
       service_id: "20190218001",
-      form_id: "PR_A1100",
+      form_id: "PR_A1100W",
     }));
   };
 

@@ -54,7 +54,7 @@ const paths = [
   { index: ".1" },
   { path: "/MA_B7000", index: ".1.0" },
   { index: ".2" },
-  { path: "/PR_A1100", index: ".2.0" },
+  { path: "/PR_A1100W", index: ".2.0" },
   { index: ".3" },
   { path: "/SA_B2000", index: ".3.0" },
   { path: "/SA_B3000W", index: ".3.1" },
@@ -111,7 +111,7 @@ const PanelBarNavContainer = (props: any) => {
             <PanelBarItem title={"재고조회"} route="/MA_B7000" />
           </PanelBarItem>
           <PanelBarItem title={"생산관리"} icon={""}>
-            <PanelBarItem title={"계획생산"} route="/PR_A1100" />
+            <PanelBarItem title={"계획생산"} route="/PR_A1100W" />
           </PanelBarItem>
           <PanelBarItem title={"영업관리"}>
             <PanelBarItem title={"수주처리"} route="/SA_B2000" />

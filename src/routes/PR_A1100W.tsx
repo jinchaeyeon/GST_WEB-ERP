@@ -63,7 +63,7 @@ import {
   UseCommonQuery,
   UseCustomOption,
 } from "../components/CommonFunction";
-import PlanWindow from "../components/Windows/PR_A1100_Window";
+import PlanWindow from "../components/Windows/PR_A1100W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -94,6 +94,7 @@ import {
   usersQuery,
 } from "../components/CommonString";
 import { CellRender, RowRender } from "../components/GroupRenderers";
+import { gridList } from "../store/columns/PR_A1100W_C";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "ordkey";
@@ -101,53 +102,37 @@ const PLAN_DATA_ITEM_KEY = "idx";
 const MATERIAL_DATA_ITEM_KEY = "idx";
 
 const numberField = [
-  "col_safeqty",
-  "col_stockqty",
-  "col_stockqty1",
-  "col_stockwgt",
-  "col_unp",
-  "col_baseqty",
-  "col_basewgt",
-  "col_inqty",
-  "col_inwgt",
-  "col_outqty",
-  "col_outwgt",
-  "col_amt",
-  "col_amt2",
-  "col_unp2",
-  "col_bnatur_insiz",
-  "col_procqty",
-  "col_procqty1",
-  "col_procqty2",
-  "col_procqty3",
-  "col_qty",
-  "col_qty1",
-  "col_qty2",
-  "col_qty3",
-  "col_planqty",
-  "col_baseamt",
-  "col_wonchgrat",
-  "col_uschgrat",
-  "colunp",
-  "colwonamt",
-  "coltaxamt",
-  "colamt",
-  "coldlramt",
-  "col_procseq",
-  "col_procseq1",
-  "coldlramt",
-  "coldlramt",
+  "safeqty",
+  "stockqty",
+  "stockwgt",
+  "unp",
+  "baseqty",
+  "basewgt",
+  "inqty",
+  "inwgt",
+  "outqty",
+  "outwgt",
+  "amt",
+  "bnatur_insiz",
+  "procqty",
+  "qty",
+  "qty1",
+  "qty2",
+  "qty3",
+  "planqty",
+  "baseamt",
+  "wonchgrat",
+  "uschgrat",
+  "unp",
+  "wonamt",
+  "taxamt",
+  "amt",
+  "dlramt",
+  "procseq",
+  "dlramt",
+  "dlramt",
 ];
-const dateField = [
-  "col_finexpdt1",
-  "col_plandt1",
-  "col_plandt2",
-  "col_orddt",
-  "col_dlvdt",
-  "col_plandt",
-  "col_outdt",
-  "col_indt",
-];
+const dateField = ["finexpdt", "plandt", "orddt", "dlvdt", "outdt", "indt"];
 const editablePlanListField = [
   "col_finexpdt1",
   "col_plandt1",
@@ -158,7 +143,7 @@ const editablePlanListField = [
   "col_outdt",
   "col_indt",
 ];
-const lookupField = ["col_outprocyn1", "col_proccd2", "col_proccd3"];
+const lookupField = ["outprocyn", "proccd"];
 
 let deletedPlanRows: object[] = [];
 let deletedMaterialRows: object[] = [];
@@ -182,7 +167,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const PR_A1100: React.FC = () => {
+const PR_A1100W: React.FC = () => {
   const processApi = useApi();
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -356,7 +341,7 @@ const PR_A1100: React.FC = () => {
 
   //수주상세 조회 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_PR_A1100_Q",
+    procedureName: "P_PR_A1100W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -389,7 +374,7 @@ const PR_A1100: React.FC = () => {
 
   //생산계획 조회 파라미터
   const planParameters: Iparameters = {
-    procedureName: "P_WEB_PR_A1100_Q",
+    procedureName: "P_PR_A1100W_Q",
     pageNumber: planPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -422,7 +407,7 @@ const PR_A1100: React.FC = () => {
 
   //소요자재리스트 조회 파라미터
   const detailParameters: Iparameters = {
-    procedureName: "P_WEB_PR_A1100_Q",
+    procedureName: "P_PR_A1100W_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
@@ -598,12 +583,12 @@ const PR_A1100: React.FC = () => {
     purtype: "",
     urgencyyn: "",
     service_id: "",
-    form_id: "PR_A1100",
+    form_id: "PR_A1100W",
   });
 
   //계획 저장 파라미터
   const paraPlanSaved: Iparameters = {
-    procedureName: "P_WEB_PR_A1100_S",
+    procedureName: "P_PR_A1100W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
@@ -1168,7 +1153,7 @@ const PR_A1100: React.FC = () => {
       resetAllGrid();
       fetchPlanGrid();
     } else {
-      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화
@@ -1489,7 +1474,7 @@ const PR_A1100: React.FC = () => {
       deletedPlanRows = [];
       deletedMaterialRows = [];
     } else {
-      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화
@@ -2183,18 +2168,18 @@ const PR_A1100: React.FC = () => {
                 />
 
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["gvwOrdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdOrdList"].map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
                           key={idx}
-                          field={item.id.replace("col_", "")}
+                          field={item.fieldName}
                           title={item.caption}
                           width={item.width}
                           cell={
-                            numberField.includes(item.id)
+                            numberField.includes(item.fieldName)
                               ? NumberCell
-                              : dateField.includes(item.id)
+                              : dateField.includes(item.fieldName)
                               ? DateCell
                               : ""
                           }
@@ -2406,27 +2391,24 @@ const PR_A1100: React.FC = () => {
                   />
 
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["gvwPlanList"].map(
+                    customOptionData.menuCustomColumnOptions["grdPlanList"].map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
                             key={idx}
-                            field={item.id
-                              .replace("col_", "")
-                              .replace("1", "")
-                              .replace("2", "")}
+                            field={item.fieldName}
                             title={item.caption}
                             width={item.width}
                             cell={
-                              numberField.includes(item.id)
+                              numberField.includes(item.fieldName)
                                 ? NumberCell
-                                : dateField.includes(item.id)
+                                : dateField.includes(item.fieldName)
                                 ? DateCell
-                                : lookupField.includes(item.id)
+                                : lookupField.includes(item.fieldName)
                                 ? CustomComboBoxCell
                                 : ""
                             }
-                          ></GridColumn>
+                          />
                         )
                     )}
 
@@ -2760,8 +2742,23 @@ const PR_A1100: React.FC = () => {
           para={undefined}
         />
       )}
+
+      {/* 컨트롤 네임 불러오기 용 */}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };
 
-export default PR_A1100;
+export default PR_A1100W;
