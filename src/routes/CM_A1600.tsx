@@ -521,7 +521,7 @@ const CM_A1600: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.result.statusCode + "] " + data.result.resultMessage);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화

@@ -75,7 +75,7 @@ const Login: React.FC = () => {
       } catch (e: any) {
         console.log("login error", e);
         //setShowLoading(false);
-        alert("ID와 PASSWORD가 일치하지 않습니다.");
+        alert(e.message);
       }
     },
     []
