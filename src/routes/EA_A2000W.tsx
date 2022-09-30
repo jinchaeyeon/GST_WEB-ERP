@@ -10,6 +10,7 @@ import {
   GridFooterCellProps,
   GridItemChangeEvent,
   GridHeaderSelectionChangeEvent,
+  GridCellProps,
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -46,10 +47,15 @@ import {
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
+  UseDesignInfo,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { IItemData, TCommonCodeData } from "../hooks/interfaces";
+import {
+  IAttachmentData,
+  IItemData,
+  TCommonCodeData,
+} from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
   gnvWidth,
@@ -73,6 +79,7 @@ import CashDisbursementVoucher from "../components/Prints/CashDisbursementVouche
 import AbsenceRequest from "../components/Prints/AbsenceRequest";
 import { CellRender, RowRender } from "../components/Renderers";
 import { prevDayOfWeek } from "@progress/kendo-date-math";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
@@ -93,6 +100,9 @@ const EA_A2000: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
+  const [wordInfoData, setWordInfoData] = React.useState<any>(null);
+  UseDesignInfo(pathname, setWordInfoData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -272,6 +282,7 @@ const EA_A2000: React.FC = () => {
     orgdiv: "01",
     appnum: "",
     pgmgb: "",
+    attdatnum: "",
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
@@ -381,6 +392,7 @@ const EA_A2000: React.FC = () => {
         ...prev,
         [DATA_ITEM_KEY]: firstRowData[DATA_ITEM_KEY],
         pgmgb: firstRowData["pgmgb"],
+        attdatnum: firstRowData["attdatnum"],
       }));
     }
   }, [mainDataResult]);
@@ -506,6 +518,7 @@ const EA_A2000: React.FC = () => {
       ...prev,
       [DATA_ITEM_KEY]: selectedRowData[DATA_ITEM_KEY],
       pgmgb: selectedRowData["pgmgb"],
+      attdatnum: selectedRowData["attdatnum"],
     }));
   };
 
@@ -635,6 +648,9 @@ const EA_A2000: React.FC = () => {
     }));
   };
 
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
   //그리드 정렬 이벤트
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
@@ -654,30 +670,31 @@ const EA_A2000: React.FC = () => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
 
-      // setFilters((prev) => ({
-      //   ...prev,
-      //   ymdyyyy: setDefaultDate(customOptionData, "ymdyyyy"),
-      //   cboItemacnt: defaultOption.find(
-      //     (item: any) => item.id === "cboItemacnt"
-      //   ).value,
-      //   cboItemlvl1: defaultOption.find(
-      //     (item: any) => item.id === "cboItemlvl1"
-      //   ).value,
-      //   cboItemlvl2: defaultOption.find(
-      //     (item: any) => item.id === "cboItemlvl2"
-      //   ).value,
-      //   cboItemlvl3: defaultOption.find(
-      //     (item: any) => item.id === "cboItemlvl3"
-      //   ).value,
-      //   cboLocation: defaultOption.find(
-      //     (item: any) => item.id === "cboLocation"
-      //   ).value,
-      //   //radUseyn: defaultOption.find(
-      //   //  (item: any) => item.id === "ymdyyyy"
-      //   //  ).value,
-      //   radzeroyn: defaultOption.find((item: any) => item.id === "radzeroyn")
-      //     .value,
-      // }));
+      setFilters((prev) => ({
+        ...prev,
+        ymdStartDt: setDefaultDate(customOptionData, "ymdStartDt"),
+        ymdEndDt: setDefaultDate(customOptionData, "ymdEndDt"),
+        // cboItemacnt: defaultOption.find(
+        //   (item: any) => item.id === "cboItemacnt"
+        // ).value,
+        // cboItemlvl1: defaultOption.find(
+        //   (item: any) => item.id === "cboItemlvl1"
+        // ).value,
+        // cboItemlvl2: defaultOption.find(
+        //   (item: any) => item.id === "cboItemlvl2"
+        // ).value,
+        // cboItemlvl3: defaultOption.find(
+        //   (item: any) => item.id === "cboItemlvl3"
+        // ).value,
+        // cboLocation: defaultOption.find(
+        //   (item: any) => item.id === "cboLocation"
+        // ).value,
+        // //radUseyn: defaultOption.find(
+        // //  (item: any) => item.id === "ymdyyyy"
+        // //  ).value,
+        // radzeroyn: defaultOption.find((item: any) => item.id === "radzeroyn")
+        //   .value,
+      }));
     }
   }, [customOptionData]);
 
@@ -976,6 +993,54 @@ const EA_A2000: React.FC = () => {
     }));
   };
 
+  const getAttachmentsData = (data: IAttachmentData) => {
+    // setInitialVal((prev) => {
+    //   return {
+    //     ...prev,
+    //     attdatnum: data.attdatnum,
+    //     files:
+    //       data.original_name +
+    //       (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+    //   };
+    // });
+  };
+
+  const CommandCell = (props: GridCellProps) => {
+    const onEditClick = () => {
+      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+      const rowData = props.dataItem;
+      setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
+
+      console.log("rowData");
+      console.log(rowData);
+      setDetailFilters((prev) => ({
+        ...prev,
+        [DATA_ITEM_KEY]: rowData[DATA_ITEM_KEY],
+        pgmgb: rowData["pgmgb"],
+        attdatnum: rowData["attdatnum"],
+      }));
+
+      // setIsCopy(false);
+      // setWorkType("U");
+      setAttachmentsWindowVisible(true);
+    };
+
+    return (
+      <td className="k-command-cell">
+        {props.dataItem["attdatnum"] ? (
+          <Button
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onEditClick}
+            icon="file"
+          ></Button>
+        ) : (
+          ""
+        )}
+      </td>
+    );
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1008,24 +1073,36 @@ const EA_A2000: React.FC = () => {
         <FilterBox className="FilterBox">
           <tbody>
             <tr>
-              <th data-control-name="lblInsertdt">작성일자</th>
+              <th data-control-name="lblInsertdt">
+                {wordInfoData !== null
+                  ? wordInfoData.find(
+                      (item: any) => item.controlName === "lblInsertdt"
+                    ).wordText
+                  : "작성일자"}
+              </th>
               <td colSpan={3} className="item-box">
                 <DatePicker
                   name="ymdStartDt"
-                  defaultValue={filters.ymdStartDt}
+                  value={filters.ymdStartDt}
                   format="yyyy-MM-dd"
                   onChange={filterInputChange}
                 />
                 ~
                 <DatePicker
                   name="ymdEndDt"
-                  defaultValue={filters.ymdEndDt}
+                  value={filters.ymdEndDt}
                   format="yyyy-MM-dd"
                   onChange={filterInputChange}
                 />
               </td>
 
-              <th data-control-name="lblDptcd">부서</th>
+              <th data-control-name="lblDptcd">
+                {wordInfoData !== null
+                  ? wordInfoData.find(
+                      (item: any) => item.controlName === "lblDptcd"
+                    ).wordText
+                  : "부서"}
+              </th>
               <td>
                 {bizComponentData !== null && (
                   <BizComponentComboBox
@@ -1040,7 +1117,13 @@ const EA_A2000: React.FC = () => {
                 )}
               </td>
 
-              <th data-control-name="lblPerson">담당자</th>
+              <th data-control-name="lblPerson">
+                {wordInfoData !== null
+                  ? wordInfoData.find(
+                      (item: any) => item.controlName === "lblPerson"
+                    ).wordText
+                  : "담당자"}
+              </th>
               <td>
                 {bizComponentData !== null && (
                   <BizComponentComboBox
@@ -1055,7 +1138,13 @@ const EA_A2000: React.FC = () => {
                 )}
               </td>
 
-              <th data-control-name="lblPgmgb">결재문서</th>
+              <th data-control-name="lblPgmgb">
+                {wordInfoData !== null
+                  ? wordInfoData.find(
+                      (item: any) => item.controlName === "lblPgmgb"
+                    ).wordText
+                  : "결재문서"}
+              </th>
               <td>
                 {bizComponentData !== null && (
                   <BizComponentComboBox
@@ -1070,7 +1159,13 @@ const EA_A2000: React.FC = () => {
             </tr>
 
             <tr>
-              <th data-control-name="lblWorkType">표시형식</th>
+              <th data-control-name="lblWorkType">
+                {wordInfoData !== null
+                  ? wordInfoData.find(
+                      (item: any) => item.controlName === "lblWorkType"
+                    ).wordText
+                  : "표시형식"}
+              </th>
               <td colSpan={3} className="item-box">
                 {customOptionData !== null ? (
                   <CommonRadioGroup
@@ -1082,7 +1177,13 @@ const EA_A2000: React.FC = () => {
                   <RadioGroup name="radWorkType" data={radioGroupDefaultData} />
                 )}
               </td>
-              <th data-control-name="lblappnm">결재제목</th>
+              <th data-control-name="lblappnm">
+                {wordInfoData !== null
+                  ? wordInfoData.find(
+                      (item: any) => item.controlName === "lblappnm"
+                    ).wordText
+                  : "결재제목"}
+              </th>
               <td>
                 <Input
                   name="txtAppnm"
@@ -1092,7 +1193,13 @@ const EA_A2000: React.FC = () => {
                 />
               </td>
 
-              <th data-control-name="lblAppyn">결재유무</th>
+              <th data-control-name="lblAppyn">
+                {wordInfoData !== null
+                  ? wordInfoData.find(
+                      (item: any) => item.controlName === "lblAppyn"
+                    ).wordText
+                  : "결재유무"}
+              </th>
               <td>
                 {customOptionData !== null ? (
                   <CommonRadioGroup
@@ -1104,7 +1211,13 @@ const EA_A2000: React.FC = () => {
                   <RadioGroup name="radAppyn" data={radioGroupDefaultData} />
                 )}
               </td>
-              <th data-control-name="lblStddiv">근태구분</th>
+              <th data-control-name="lblStddiv">
+                {wordInfoData !== null
+                  ? wordInfoData.find(
+                      (item: any) => item.controlName === "lblStddiv"
+                    ).wordText
+                  : "근태구분"}
+              </th>
               <td>
                 {bizComponentData !== null && (
                   <BizComponentComboBox
@@ -1222,6 +1335,7 @@ const EA_A2000: React.FC = () => {
                             ))
                           : ""
                       )}
+                  <GridColumn title={"File"} cell={CommandCell} width="55px" />
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -1363,6 +1477,8 @@ const EA_A2000: React.FC = () => {
                             ))
                           : ""
                       )}
+
+                  <GridColumn title={"File"} cell={CommandCell} width="55px" />
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -1832,6 +1948,14 @@ const EA_A2000: React.FC = () => {
           workType={"FILTER"}
           getData={getItemData}
           para={undefined}
+        />
+      )}
+
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          getVisible={setAttachmentsWindowVisible}
+          getData={getAttachmentsData}
+          para={detailFilters.attdatnum}
         />
       )}
 
