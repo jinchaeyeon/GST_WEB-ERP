@@ -16,6 +16,7 @@ import Login from "./routes/Login";
 import Main from "./routes/Main";
 import MA_B7000 from "./routes/MA_B7000";
 import SA_B2000 from "./routes/SA_B2000";
+import SA_B3000W from "./routes/SA_B3000W";
 import PR_A1100 from "./routes/PR_A1100";
 import QC_A0120 from "./routes/QC_A0120";
 import SY_A0120 from "./routes/SY_A0120";
@@ -108,6 +109,7 @@ class App extends Component {
               <AuthRoute path="/MA_B7000" component={MA_B7000} exact />
               {/* 영업관리 */}
               <AuthRoute path="/SA_B2000" component={SA_B2000} exact />
+              <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
               {/* 생산관리 */}
               <AuthRoute path="/PR_A1100" component={PR_A1100} exact />
               {/* 품질관리 */}
