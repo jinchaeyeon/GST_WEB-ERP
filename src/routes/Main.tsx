@@ -142,7 +142,7 @@ const Main: React.FC = () => {
     work_type: "MyScheduler",
   });
   const noticeParameters: Iparameters = {
-    procedureName: "sys_sel_web_default_home",
+    procedureName: "web_sel_default_home",
     pageNumber: noticePgNum,
     pageSize: noticeFilter.pgSize,
     parameters: {
@@ -158,7 +158,7 @@ const Main: React.FC = () => {
   };
 
   const workOrderParameters: Iparameters = {
-    procedureName: "sys_sel_web_default_home",
+    procedureName: "web_sel_default_home",
     pageNumber: workOrderPgNum,
     pageSize: 50,
     parameters: {
@@ -174,7 +174,7 @@ const Main: React.FC = () => {
   };
 
   const approvalParameters: Iparameters = {
-    procedureName: "sys_sel_web_default_home",
+    procedureName: "web_sel_default_home",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
@@ -190,7 +190,7 @@ const Main: React.FC = () => {
   };
 
   const schedulerParameters: Iparameters = {
-    procedureName: "sys_sel_web_default_home",
+    procedureName: "web_sel_default_home",
     pageNumber: 1,
     pageSize: 10,
     parameters: {

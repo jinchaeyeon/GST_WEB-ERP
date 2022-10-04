@@ -291,9 +291,6 @@ const QC_A0120: React.FC = () => {
   const fetchMainGrid = async () => {
     let data: any;
 
-    console.log("parameters");
-    console.log(parameters);
-
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
