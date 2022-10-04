@@ -130,7 +130,7 @@ const SY_A0110: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_SY_A0110_Q",
+    procedureName: "P_SY_A0110W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {

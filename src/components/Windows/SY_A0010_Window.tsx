@@ -857,7 +857,7 @@ const KendoWindow = ({
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_SY_A0010_Q",
+    procedureName: "P_SY_A0010W_Q",
     pageNumber: 1,
     pageSize: 1,
     parameters: {
@@ -992,7 +992,7 @@ const KendoWindow = ({
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "P_WEB_SY_A0010_S",
+    procedureName: "P_SY_A0010W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
@@ -1136,7 +1136,7 @@ const KendoWindow = ({
       const { sub_code } = item;
 
       const paraSaved: Iparameters = {
-        procedureName: "P_WEB_SY_A0010_S1",
+        procedureName: "P_SY_A0010_S1",
         pageNumber: 1,
         pageSize: 10,
         parameters: {
@@ -1201,7 +1201,7 @@ const KendoWindow = ({
       } = item;
 
       const paraSaved: Iparameters = {
-        procedureName: "P_WEB_SY_A0010_S1",
+        procedureName: "P_SY_A0010_S1",
         pageNumber: 1,
         pageSize: 10,
         parameters: {

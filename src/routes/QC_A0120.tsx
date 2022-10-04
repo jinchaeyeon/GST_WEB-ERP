@@ -227,7 +227,7 @@ const QC_A0120: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_QC_A0120_Q",
+    procedureName: "P_QC_A0120W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -266,7 +266,7 @@ const QC_A0120: React.FC = () => {
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_WEB_QC_A0120_Q",
+    procedureName: "P_QC_A0120W_Q",
     pageNumber: detail1PgNum,
     pageSize: detailFilters1.pgSize,
     parameters: {

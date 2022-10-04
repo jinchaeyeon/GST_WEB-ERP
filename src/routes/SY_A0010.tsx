@@ -279,7 +279,7 @@ const Page: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_SY_A0010_Q",
+    procedureName: "P_SY_A0010W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -296,7 +296,7 @@ const Page: React.FC = () => {
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_WEB_SY_A0010_Q",
+    procedureName: "P_SY_A0010W_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
@@ -320,7 +320,7 @@ const Page: React.FC = () => {
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_WEB_SY_A0010_S",
+    procedureName: "P_SY_A0010W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {

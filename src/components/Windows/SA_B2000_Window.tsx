@@ -1011,7 +1011,7 @@ const KendoWindow = ({
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_SA_A2000_Q",
+    procedureName: "P_SA_A2000W_Q",
     pageNumber: 1,
     pageSize: 1,
     parameters: {
@@ -1218,7 +1218,7 @@ const KendoWindow = ({
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "P_WEB_SA_A2000_S",
+    procedureName: "P_SA_A2000W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {

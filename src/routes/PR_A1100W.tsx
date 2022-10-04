@@ -447,7 +447,7 @@ const PR_A1100W: React.FC = () => {
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_WEB_SA_A2000_S",
+    procedureName: "P_SA_A2000W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {

@@ -657,7 +657,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "P_WEB_SA_A2000_S",
+    procedureName: "P_SA_A2000W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {

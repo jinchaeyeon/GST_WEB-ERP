@@ -233,7 +233,7 @@ const MA_B7000: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_WEB_MA_B7000_Q",
+    procedureName: "P_MA_B7000W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -258,7 +258,7 @@ const MA_B7000: React.FC = () => {
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_WEB_MA_B7000_Q",
+    procedureName: "P_MA_B7000W_Q",
     pageNumber: detail1PgNum,
     pageSize: detailFilters1.pgSize,
     parameters: {
@@ -287,7 +287,7 @@ const MA_B7000: React.FC = () => {
   };
 
   const detail2Parameters: Iparameters = {
-    procedureName: "P_WEB_MA_B7000_Q",
+    procedureName: "P_MA_B7000W_Q",
     pageNumber: detail2PgNum,
     pageSize: detailFilters2.pgSize,
     parameters: {
