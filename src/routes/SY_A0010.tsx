@@ -113,7 +113,7 @@ const Page: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  //UseCustomOption(pathname, setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_menu_group,L_BA000", setBizComponentData);

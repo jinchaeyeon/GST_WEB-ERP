@@ -44,3 +44,379 @@ div.k-animation-container {
 .k-form.k-scheduler-edit-form #k-event-description {
   min-height: 150px;
 }
+
+@media print {
+  @page {
+    size: 21cm 29.7cm;
+    margin-top: 1cm;
+    margin-right: 1cm;
+    margin-bottom: 0cm;
+    margin-left: 1cm;
+  }
+  /* html, body { border:0; margin:0; padding:0; margin-top:0px; }
+	 */
+
+  .printable {
+    display: block;
+  }
+
+  #non-printable {
+    display: none;
+  }
+}
+
+.printable {
+  width: 19cm;
+  min-height: 27.7cm;
+  padding: 1cm;
+  background-color: #fff;
+}
+body {
+  -webkit-print-color-adjust: exact;
+}
+
+/**************** 근태허가신청 ****************/
+
+#AbsenceRequest table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#AbsenceRequest td,
+#AbsenceRequest th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#AbsenceRequest .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 2.5em;
+}
+
+#AbsenceRequest table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#AbsenceRequest table.tb_approval th {
+  height: 0.7cm;
+}
+
+#AbsenceRequest table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#AbsenceRequest table.tb_mid {
+  height: 6cm;
+  width: 100%;
+}
+
+#AbsenceRequest table.tb_mid td {
+  padding-left: 0.5cm;
+  line-height: 0.8cm;
+  height: 0.8cm;
+}
+
+#AbsenceRequest .right {
+  float: right;
+  clear: both;
+}
+
+#AbsenceRequest #reason {
+  padding: 4cm 0;
+  text-align: center;
+  font-size: 1.3em;
+}
+
+#AbsenceRequest td.tg-baqh.number {
+  text-align: right;
+  padding-right: 5px;
+}
+
+#AbsenceRequest td.tg-baqh.bottom_dot {
+  border-bottom: 2px dotted;
+}
+
+#AbsenceRequest td.tg-baqh.foot_1 {
+  text-align: right;
+}
+
+#AbsenceRequest .tg th {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  /*padding:10px 5px;*/
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+}
+#AbsenceRequest tr.contents .tg-baqh {
+  font-size: 0.95em;
+}
+
+#AbsenceRequest .page-break {
+  page-break-before: always;
+}
+
+#AbsenceRequest .tg .tg-baqh {
+  text-align: center;
+  vertical-align: middle;
+  height: 44px;
+  font-size: 0.95em;
+}
+
+#AbsenceRequest .tg .tg-qj3h {
+  font-size: 1.4em;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#AbsenceRequest /*.tg .tg-lqy6{text-align:right;vertical-align:top}*/
+#AbsenceRequest .tg .tg-13pz {
+  /*등록번호*/
+  font-size: 1.1em;
+  text-align: center;
+  vertical-align: middle;
+  height: 23.2px;
+}
+#AbsenceRequest .span1 {
+  letter-spacing: 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+#AbsenceRequest .span2 {
+  font-size: 0.65em;
+}
+
+#AbsenceRequest #btn_print {
+  width: 21cm;
+  height: 35px;
+  font-size: 1.1em;
+  top: 0;
+  margin-bottom: 10px;
+}
+#AbsenceRequest .qc {
+  background-color: #ffff73;
+}
+#AbsenceRequest caption {
+  caption-side: bottom;
+}
+#AbsenceRequest .qc caption {
+  background-color: #ffff73;
+}
+#AbsenceRequest span.cap1 {
+  float: left;
+  font-size: 0.8em;
+}
+#AbsenceRequest span.cap2 {
+  /*float:right;*/
+  font-size: 0.8em;
+  font-weight: bold;
+}
+/*loading화면*/
+#AbsenceRequest #mask {
+  z-index: 9998;
+  position: absolute;
+  background-color: black;
+  opacity: 0.4;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: -1px; /*없으면 인쇄버튼 들이 안가려짐*/
+}
+
+#AbsenceRequest .important-cell {
+  background-color: rgb(235, 235, 235);
+  font-weight: 600;
+}
+
+#AbsenceRequest .important-cell2 {
+  background-color: rgb(255, 247, 175);
+  font-weight: 600;
+}
+
+#AbsenceRequest .tb_at_bottom .tg-baqh {
+  height: 50px;
+}
+
+#AbsenceRequest #date {
+  margin-bottom: 1cm;
+}
+
+#AbsenceRequest #name {
+  display: inline-block;
+  width: 3.5cm;
+  text-align: center;
+}
+
+#AbsenceRequest .bottom {
+  font-size: 1.1em;
+}
+
+#AbsenceRequest #company {
+  margin-top: 5cm;
+  text-align: center;
+}
+
+#AbsenceRequest #button1 {
+  background-color: transparent;
+  color: #ff2015;
+  border: solid 2px #ff2015;
+  width: 2cm;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+#AbsenceRequest #button1:hover {
+  color: #820e08;
+  border: solid 2px #820e08;
+}
+
+#AbsenceRequest #button2 {
+  background-color: #1076ab;
+  color: white;
+  border: none;
+  width: 2cm;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+#AbsenceRequest #button2:hover {
+  background-color: #004c77;
+}
+
+#AbsenceRequest .button-head #button1,
+#AbsenceRequest .button-head #button2 {
+  font-family: "Noto Sans KR", "Myriad Pro", "dotum", sans-serif;
+  font-size: 18px;
+  font-weight: 100;
+}
+
+#AbsenceRequest .button_wrap {
+  width: 21cm;
+  text-align: right;
+}
+
+/**************** 지출결의서 ****************/
+
+#CashDisbursementVoucher .logo {
+  /* background-image: url(image/gst_logo2.png); */
+  background-repeat: no-repeat;
+  width: 60%;
+  height: 90%;
+  background-size: 100%;
+  display: inline-block;
+  background-position: center;
+}
+
+#CashDisbursementVoucher table {
+  border: 2px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 17cm;
+}
+
+#CashDisbursementVoucher table.top_tb {
+  height: 5cm;
+}
+
+#CashDisbursementVoucher table.top_tb td {
+  font-size: 0.8em;
+}
+
+#CashDisbursementVoucher table.top_tb tr:nth-child(2) th:first-child,
+#CashDisbursementVoucher table.top_tb tr:nth-child(4) td:first-child {
+  height: 0.7cm;
+}
+
+#CashDisbursementVoucher table.top_tb tr:nth-child(2) th:nth-child(5) {
+  width: 0.5cm;
+}
+
+#CashDisbursementVoucher table.title_tb tr,
+#CashDisbursementVoucher table.main_tb tr {
+  height: 0.8cm;
+}
+
+#CashDisbursementVoucher table.main_tb tr:last-child {
+  height: 2.5cm;
+}
+
+#CashDisbursementVoucher table.main_tb {
+  border-bottom: none;
+  border-top: none;
+}
+
+#CashDisbursementVoucher table.main_tb:last-child {
+  border-bottom: solid 2px;
+}
+
+#CashDisbursementVoucher table.title_tb {
+  border-top: none;
+  border-bottom: none;
+}
+
+#CashDisbursementVoucher table.title_tb tr:first-child th {
+  border-top: none;
+}
+
+#CashDisbursementVoucher table.title_tb tr:last-child th {
+  border-bottom: none;
+}
+
+#CashDisbursementVoucher td,
+#CashDisbursementVoucher th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#CashDisbursementVoucher table.main_tb tr:last-child td:last-child {
+  text-align: left;
+  padding-left: 0.2cm;
+}
+
+#CashDisbursementVoucher .title {
+  font-size: 1.7em;
+}
+
+#CashDisbursementVoucher td.number {
+  text-align: right;
+  padding-right: 0.2cm;
+}
+
+#CashDisbursementVoucher .tg th {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  /*padding:10px 5px;*/
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+}
+
+#CashDisbursementVoucher .page-break {
+  page-break-before: always;
+}
+
+#CashDisbursementVoucher .important-cell {
+  background-color: rgb(235, 235, 235);
+  font-weight: 600;
+}

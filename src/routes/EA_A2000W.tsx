@@ -208,6 +208,8 @@ const EA_A2000: React.FC = () => {
     process([], detail3DataState)
   );
 
+  const [selectedRowData, setSelectedRowData] = useState(null);
+
   //선택 상태
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -394,6 +396,8 @@ const EA_A2000: React.FC = () => {
         pgmgb: firstRowData["pgmgb"],
         attdatnum: firstRowData["attdatnum"],
       }));
+
+      setSelectedRowData(firstRowData);
     }
   }, [mainDataResult]);
 
@@ -520,6 +524,8 @@ const EA_A2000: React.FC = () => {
       pgmgb: selectedRowData["pgmgb"],
       attdatnum: selectedRowData["attdatnum"],
     }));
+
+    setSelectedRowData(selectedRowData);
   };
 
   const onMainHeaderSelectionChange = useCallback(
@@ -1020,6 +1026,7 @@ const EA_A2000: React.FC = () => {
         attdatnum: rowData["attdatnum"],
       }));
 
+      setSelectedRowData(rowData);
       // setIsCopy(false);
       // setWorkType("U");
       setAttachmentsWindowVisible(true);
@@ -1701,7 +1708,7 @@ const EA_A2000: React.FC = () => {
           )}
 
           <GridContainerWrap>
-            <GridContainer width={"600px"}>
+            <GridContainer width={"550px"}>
               <GridTitleContainer>
                 <GridTitle data-control-name="grtlLineList">결재자</GridTitle>
               </GridTitleContainer>
@@ -1820,7 +1827,7 @@ const EA_A2000: React.FC = () => {
             </GridContainer>
             <GridContainer
               width={
-                clientWidth - gnvWidth - gridMargin - 15 - 600 - 600 + "px"
+                clientWidth - gnvWidth - gridMargin - 15 - 600 - 650 + "px"
               }
             >
               <GridTitleContainer>
@@ -1925,20 +1932,32 @@ const EA_A2000: React.FC = () => {
             </GridContainer>
           </GridContainerWrap>
         </GridContainer>
-        <GridContainer style={{ width: "600px", border: "solid 1px #e6e6e6" }}>
-          <GridTitle data-control-name="grtlPreview">
-            결재문서 미리보기
-          </GridTitle>
-          {detailFilters.pgmgb === "지출결의서" ||
-          detailFilters.pgmgb === "X" ||
-          detailFilters.pgmgb === "Z" ? (
-            <CashDisbursementVoucher data="test" />
-          ) : detailFilters.pgmgb === "근태허가신청" ||
-            detailFilters.pgmgb === "W" ? (
-            <AbsenceRequest data="test" />
-          ) : (
-            ""
-          )}
+        <GridContainer>
+          <GridTitleContainer>
+            <GridTitle data-control-name="grtlPreview">
+              결재문서 미리보기
+            </GridTitle>
+          </GridTitleContainer>
+          <GridContainer
+            style={{
+              width: "650px",
+              height: "710px",
+              overflow: "scroll",
+              border: "solid 1px #e6e6e6",
+              margin: "5px 0",
+            }}
+          >
+            {detailFilters.pgmgb === "지출결의서" ||
+            detailFilters.pgmgb === "X" ||
+            detailFilters.pgmgb === "Z" ? (
+              <CashDisbursementVoucher data="test" />
+            ) : detailFilters.pgmgb === "근태허가신청" ||
+              detailFilters.pgmgb === "W" ? (
+              <AbsenceRequest data={selectedRowData} />
+            ) : (
+              ""
+            )}
+          </GridContainer>
         </GridContainer>
       </GridContainerWrap>
 
