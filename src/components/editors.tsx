@@ -9,7 +9,7 @@ import { Label, Error, Hint } from "@progress/kendo-react-labels";
 import { GridCellProps, GridFilterCellProps } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { BlurEvent } from "@progress/kendo-react-dropdowns/dist/npm/common/events";
-import { FormGridEditContext } from "./Windows/SA_B2000_Window";
+import { FormGridEditContext } from "./Windows/SA_B2000W_Window";
 import FieldDropDownList from "./DropDownLists/FieldDropDownList";
 import FieldComboBox from "./ComboBoxes/FieldComboBox";
 import FieldCheckBox from "./FieldCheckBox";

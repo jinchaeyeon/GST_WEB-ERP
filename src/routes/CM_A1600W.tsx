@@ -75,7 +75,7 @@ const CM_A1600: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  //UseCustomOption(pathname, setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
@@ -264,16 +264,18 @@ const CM_A1600: React.FC = () => {
   };
 
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
+    if (isInitSearch === false) {
+      //if (customOptionData !== null && isInitSearch === false) {
       fetchTodoGrid();
       setIsInitSearch(true);
     }
   }, [todoFilter]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchScheduler();
-    }
+    // if (customOptionData !== null) {
+    //   fetchScheduler();
+    // }
+    fetchScheduler();
   }, [schedulerFilter]);
 
   //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
@@ -636,8 +638,6 @@ const CM_A1600: React.FC = () => {
       (item) => item[DATA_ITEM_KEY] === idx
     );
 
-    console.log("seq");
-    console.log(seq);
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
       // planno: selectedRowData.planno,

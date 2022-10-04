@@ -78,7 +78,7 @@ import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { tokenState } from "../store/atoms";
 import { useRecoilState } from "recoil";
 import { flatVisibleChildren } from "@progress/kendo-react-layout";
-import DetailWindow from "../components/Windows/SY_A0011_Window";
+import DetailWindow from "../components/Windows/SY_A0011W_Window";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "user_group_id";
@@ -96,6 +96,17 @@ const RowRenderForDragging = (properties: any) => {
     onDragStart = "",
   } = { ...properties };
   const additionalProps = {
+    ...props,
+    onBlur: () => {
+      setTimeout(() => {
+        const activeElement = document.activeElement;
+
+        if (activeElement === null) return false;
+        if (activeElement.className.indexOf("k-calendar") < 0) {
+          props.exitEdit();
+        }
+      });
+    },
     onDragStart: (e: any) => onDragStart(e, props.dataItem),
     onDragOver: (e: any) => {
       e.preventDefault();
@@ -110,46 +121,6 @@ const RowRenderForDragging = (properties: any) => {
   );
 };
 
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
-  UseBizComponent(
-    "L_SYS005,L_BA002,L_BA028,L_dptcd_001,L_HU005,L_BA410",
-    setBizComponentData
-  );
-
-  const field = props.field ?? "";
-  const bizComponentIdVal =
-    field === "user_category"
-      ? "L_SYS005"
-      : field === "location"
-      ? "L_BA002"
-      : field === "position"
-      ? "L_BA028"
-      : field === "dptcd"
-      ? "L_dptcd_001"
-      : field === "postcd"
-      ? "L_HU005"
-      : field === "opengb"
-      ? "L_BA410"
-      : "";
-
-  const fieldName = field === "dptcd" ? "dptnm" : undefined;
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
-  );
-
-  return bizComponent ? (
-    <ComboBoxCell
-      bizComponent={bizComponent}
-      textField={fieldName}
-      {...props}
-    />
-  ) : (
-    <td></td>
-  );
-};
 let selectedRowIdx = 0;
 const SY_A0120: React.FC = () => {
   const [token] = useRecoilState(tokenState);
@@ -789,12 +760,7 @@ const SY_A0120: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(
-        "[" +
-          data.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.resultMessage
-      );
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화
@@ -887,6 +853,7 @@ const SY_A0120: React.FC = () => {
         if (result instanceof Error) throw result;
       });
 
+      console.log(dataItem);
       dataItem.forEach((item: any, idx: number) => {
         const {
           rowstatus,
@@ -981,8 +948,6 @@ const SY_A0120: React.FC = () => {
   const fetchGridSaved = async (para: any) => {
     let data: any;
 
-    console.log("paraSaved");
-    console.log(para);
     try {
       data = await processApi<any>("procedure", para);
     } catch (error) {
@@ -1001,7 +966,7 @@ const SY_A0120: React.FC = () => {
     //   alert(
     //     "[" +
     //       data.statusCode +
-    //       "] 처리 중 오류가 발생하였습니다. " +
+    //       "] " +
     //       data.resultMessage
     //   );
     // }
@@ -1009,12 +974,7 @@ const SY_A0120: React.FC = () => {
     if (data.isSuccess !== true) {
       console.log("[오류 발생]");
       console.log(data);
-      return new Error(
-        "[" +
-          data.statusCode +
-          "] 처리 중 오류가 발생하였습니다. " +
-          data.resultMessage
-      );
+      return new Error("[" + data.statusCode + "] " + data.resultMessage);
     }
   };
 
@@ -1032,16 +992,15 @@ const SY_A0120: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    // const dataTree: any = createDataTree(
-    //   rows,
-    //   (i: any) => i.KeyID,
-    //   (i: any) => i.ParentKeyID,
-    //   subItemsField
-    // );
+    const flatData: any = treeToFlat(
+      userMenuDataResult,
+      "menu_name",
+      subItemsField
+    );
 
-    //setAllMenuDataResult(dataTree);
+    flatData.forEach((item: any) => delete item[subItemsField]);
 
-    const newData = userMenuDataResult.map((item: any) =>
+    const newData = flatData.map((item: any) =>
       item[USER_MENU_DATA_ITEM_KEY] === dataItem[USER_MENU_DATA_ITEM_KEY]
         ? {
             ...item,
@@ -1051,26 +1010,38 @@ const SY_A0120: React.FC = () => {
         : { ...item, [EDIT_FIELD]: undefined }
     );
 
-    setUserMenuDataResult((prev: any) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    const dataTree: any = createDataTree(
+      newData,
+      (i: any) => i.KeyID,
+      (i: any) => i.ParentKeyID,
+      subItemsField
+    );
+
+    setUserMenuDataResult(dataTree);
   };
 
   const exitEdit = () => {
-    const newData = userMenuDataResult.map((item: any) => ({
+    const flatData: any = treeToFlat(
+      userMenuDataResult,
+      "menu_name",
+      subItemsField
+    );
+
+    flatData.forEach((item: any) => delete item[subItemsField]);
+
+    const newData = flatData.map((item: any) => ({
       ...item,
       [EDIT_FIELD]: undefined,
     }));
 
-    setUserMenuDataResult((prev: any) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    const dataTree: any = createDataTree(
+      newData,
+      (i: any) => i.KeyID,
+      (i: any) => i.ParentKeyID,
+      subItemsField
+    );
+
+    setUserMenuDataResult(dataTree);
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -1099,6 +1070,8 @@ const SY_A0120: React.FC = () => {
       row={tr}
       onDrop={handleAllMenuDrop}
       onDragStart={handleAllMenuDragStart}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
     />
   );
 
@@ -1108,6 +1081,8 @@ const SY_A0120: React.FC = () => {
       row={tr}
       onDrop={handleUserMenuDrop}
       onDragStart={handleUserMenuDragStart}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
     />
   );
 
@@ -1373,6 +1348,8 @@ const SY_A0120: React.FC = () => {
                     bizComponentId="L_COM013"
                     bizComponentData={bizComponentData}
                     changeData={filterComboBoxChange}
+                    textField="name"
+                    valueField="code"
                   />
                 )}
               </td>
@@ -1510,6 +1487,8 @@ const SY_A0120: React.FC = () => {
                 mode: "single",
               }}
               //드래그용 행
+              cellRender={customCellRender}
+              //rowRender={customRowRender}
               rowRender={userMenuRowRender}
               columns={userMenuColumns}
             ></TreeList>

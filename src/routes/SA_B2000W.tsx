@@ -61,7 +61,7 @@ import {
   convertDateToStr,
   UseCommonQuery,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_B2000_Window";
+import DetailWindow from "../components/Windows/SA_B2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";

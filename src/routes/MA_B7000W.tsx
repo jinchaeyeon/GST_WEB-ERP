@@ -37,6 +37,8 @@ import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
+  getBciFromCustomOptionData,
+  getQueryFromCustomOptionData,
   setDefaultDate,
   UseCommonQuery,
   UseCustomOption,
@@ -62,6 +64,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import CommonRadioGroup from "../components/CommonRadioGroup";
+import MultiColumnComboBox from "../components/ComboBoxes/MultiColumnComboBoxWithQuery";
 //import {useAuth} from "../../hooks/auth";
 
 const numberField = [
@@ -787,14 +790,21 @@ const MA_B7000: React.FC = () => {
 
               <th>품목계정</th>
               <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
+                {/* {customOptionData !== null && (
+                  <MultiColumnComboBox
                     name="cboItemacnt"
                     value={filters.cboItemacnt}
-                    customOptionData={customOptionData}
+                    queryStr={getQueryFromCustomOptionData(
+                      customOptionData,
+                      "cboItemacnt"
+                    )}
+                    columns={getBciFromCustomOptionData(
+                      customOptionData,
+                      "cboItemacnt"
+                    )}
                     changeData={filterComboBoxChange}
                   />
-                )}
+                )} */}
               </td>
 
               <th>대분류</th>
@@ -974,6 +984,7 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["gvwList"] &&
               customOptionData.menuCustomColumnOptions["gvwList"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
@@ -1029,6 +1040,7 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["gvwStockdetail"] &&
               customOptionData.menuCustomColumnOptions["gvwStockdetail"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
@@ -1070,6 +1082,7 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["gvwLotdetail"] &&
               customOptionData.menuCustomColumnOptions["gvwLotdetail"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (

@@ -14,18 +14,18 @@ import UserEffect from "./components/UserEffect";
 //import "./App.css";
 import Login from "./routes/Login";
 import Main from "./routes/Main";
-import MA_B7000 from "./routes/MA_B7000";
-import SA_B2000 from "./routes/SA_B2000";
+import MA_B7000W from "./routes/MA_B7000W";
+import SA_B2000W from "./routes/SA_B2000W";
 import SA_B3000W from "./routes/SA_B3000W";
 import PR_A1100W from "./routes/PR_A1100W";
-import QC_A0120 from "./routes/QC_A0120";
-import SY_A0120 from "./routes/SY_A0120";
-import SY_A0110 from "./routes/SY_A0110";
-import SY_A0010 from "./routes/SY_A0010";
-import SY_A0012 from "./routes/SY_A0012";
-import SY_A0013 from "./routes/SY_A0013";
-import SY_A0011 from "./routes/SY_A0011";
-import CM_A1600 from "./routes/CM_A1600";
+import QC_A0120W from "./routes/QC_A0120W";
+import SY_A0120W from "./routes/SY_A0120W";
+import SY_A0110W from "./routes/SY_A0110W";
+import SY_A0010W from "./routes/SY_A0010W";
+import SY_A0012W from "./routes/SY_A0012W";
+import SY_A0013W from "./routes/SY_A0013W";
+import SY_A0011W from "./routes/SY_A0011W";
+import CM_A1600W from "./routes/CM_A1600W";
 import EA_A2000W from "./routes/EA_A2000W";
 
 const GlobalStyle = createGlobalStyle`
@@ -106,23 +106,23 @@ class App extends Component {
               {/* 메인 홈 */}
               <AuthRoute path="/" component={Main} exact />
               {/* 물류관리 */}
-              <AuthRoute path="/MA_B7000" component={MA_B7000} exact />
+              <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
               {/* 영업관리 */}
-              <AuthRoute path="/SA_B2000" component={SA_B2000} exact />
+              <AuthRoute path="/SA_B2000W" component={SA_B2000W} exact />
               <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
               {/* 생산관리 */}
               <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
               {/* 품질관리 */}
-              <AuthRoute path="/QC_A0120" component={QC_A0120} exact />
+              <AuthRoute path="/QC_A0120W" component={QC_A0120W} exact />
               {/* 시스템 */}
-              <AuthRoute path="/SY_A0120" component={SY_A0120} exact />
-              <AuthRoute path="/SY_A0110" component={SY_A0110} exact />
-              <AuthRoute path="/SY_A0010" component={SY_A0010} exact />
-              <AuthRoute path="/SY_A0012" component={SY_A0012} exact />
-              <AuthRoute path="/SY_A0013" component={SY_A0013} exact />
-              <AuthRoute path="/SY_A0011" component={SY_A0011} exact />
+              <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
+              <AuthRoute path="/SY_A0110W" component={SY_A0110W} exact />
+              <AuthRoute path="/SY_A0010W" component={SY_A0010W} exact />
+              <AuthRoute path="/SY_A0012W" component={SY_A0012W} exact />
+              <AuthRoute path="/SY_A0013W" component={SY_A0013W} exact />
+              <AuthRoute path="/SY_A0011W" component={SY_A0011W} exact />
               {/* 전사관리 */}
-              <AuthRoute path="/CM_A1600" component={CM_A1600} exact />
+              <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
               {/* 전자결재 */}
               <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
             </PanelBarNavContainer>

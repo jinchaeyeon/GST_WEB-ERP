@@ -52,23 +52,23 @@ const paths = [
     parentMenuId: "",
   },
   { index: ".1" },
-  { path: "/MA_B7000", index: ".1.0" },
+  { path: "/MA_B7000W", index: ".1.0" },
   { index: ".2" },
   { path: "/PR_A1100W", index: ".2.0" },
   { index: ".3" },
-  { path: "/SA_B2000", index: ".3.0" },
+  { path: "/SA_B2000W", index: ".3.0" },
   { path: "/SA_B3000W", index: ".3.1" },
   { index: ".4" },
-  { path: "/QC_A0120", index: ".4.0" },
+  { path: "/QC_A0120W", index: ".4.0" },
   { index: ".5" },
-  { path: "/SY_A0120", index: ".5.0" },
-  { path: "/SY_A0110", index: ".5.1" },
-  { path: "/SY_A0010", index: ".5.2" },
-  { path: "/SY_A0012", index: ".5.3" },
-  { path: "/SY_A0013", index: ".5.4" },
-  { path: "/SY_A0011", index: ".5.5" },
+  { path: "/SY_A0120W", index: ".5.0" },
+  { path: "/SY_A0110W", index: ".5.1" },
+  { path: "/SY_A0010W", index: ".5.2" },
+  { path: "/SY_A0012W", index: ".5.3" },
+  { path: "/SY_A0013W", index: ".5.4" },
+  { path: "/SY_A0011W", index: ".5.5" },
   { index: ".6" },
-  { path: "/CM_A1600", index: ".6.0" },
+  { path: "/CM_A1600W", index: ".6.0" },
   { index: ".7" },
   { path: "/EA_A2000W", index: ".7.0" },
 ];
@@ -108,29 +108,29 @@ const PanelBarNavContainer = (props: any) => {
         <PanelBar selected={selected} expandMode={"single"} onSelect={onSelect}>
           <PanelBarItem title={"Home"} href="/" route="/" />
           <PanelBarItem title={"물류관리"}>
-            <PanelBarItem title={"재고조회"} route="/MA_B7000" />
+            <PanelBarItem title={"재고조회"} route="/MA_B7000W" />
           </PanelBarItem>
           <PanelBarItem title={"생산관리"} icon={""}>
             <PanelBarItem title={"계획생산"} route="/PR_A1100W" />
           </PanelBarItem>
           <PanelBarItem title={"영업관리"}>
-            <PanelBarItem title={"수주처리"} route="/SA_B2000" />
+            <PanelBarItem title={"수주처리"} route="/SA_B2000W" />
             <PanelBarItem title={"매출집계(업체)"} route="/SA_B3000W" />
           </PanelBarItem>
           <PanelBarItem title={"품질관리"}>
-            <PanelBarItem title={"불량내역조회"} route="/QC_A0120" />
+            <PanelBarItem title={"불량내역조회"} route="/QC_A0120W" />
           </PanelBarItem>
           <PanelBarItem title={"시스템"}>
-            <PanelBarItem title={"로그인 현황"} route="/SY_A0120" />
-            <PanelBarItem title={"사용자 이용 현황"} route="/SY_A0110" />
-            <PanelBarItem title={"공통코드 정보"} route="/SY_A0010" />
-            <PanelBarItem title={"사용자 정보"} route="/SY_A0012" />
-            <PanelBarItem title={"사용자 권한"} route="/SY_A0013" />
-            <PanelBarItem title={"사용자 그룹"} route="/SY_A0011" />
+            <PanelBarItem title={"로그인 현황"} route="/SY_A0120W" />
+            <PanelBarItem title={"사용자 이용 현황"} route="/SY_A0110W" />
+            <PanelBarItem title={"공통코드 정보"} route="/SY_A0010W" />
+            <PanelBarItem title={"사용자 정보"} route="/SY_A0012W" />
+            <PanelBarItem title={"사용자 권한"} route="/SY_A0013W" />
+            <PanelBarItem title={"사용자 그룹"} route="/SY_A0011W" />
           </PanelBarItem>
 
           <PanelBarItem title={"전사관리"}>
-            <PanelBarItem title={"Scheduler"} route="/CM_A1600" />
+            <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
           </PanelBarItem>
           <PanelBarItem title={"전자결재"}>
             <PanelBarItem title={"결재관리"} route="/EA_A2000W" />

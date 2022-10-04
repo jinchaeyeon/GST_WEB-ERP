@@ -53,7 +53,7 @@ import {
   UseCommonQuery,
   UseCustomOption,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SY_A0010_Window";
+import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
