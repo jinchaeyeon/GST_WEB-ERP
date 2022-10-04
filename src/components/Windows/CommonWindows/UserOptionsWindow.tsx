@@ -1252,6 +1252,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_width": 0,
       "@p_fixed": "",
 
+      "@p_id": "",
       "@p_pc": "",
     },
   };
@@ -1290,6 +1291,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_width": 0,
       "@p_fixed": "",
 
+      "@p_id": "",
       "@p_pc": "",
     },
   };

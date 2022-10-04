@@ -42,6 +42,8 @@ import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { pageSize } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
+import { useRecoilState } from "recoil";
+import { tokenState } from "../../../store/atoms";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =
@@ -74,6 +76,7 @@ type TDetailData = {
   word_id: string[];
   sort_order: string[];
   value_type: string[];
+  value_code: string[];
   value: string[];
   bc_id: string[];
   where_query: string[];
@@ -325,7 +328,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="default_id"
             title="필드명"
-            width="160px"
+            width="130px"
             cell={NameCell}
             headerCell={RequiredHeader}
             className="required"
@@ -333,7 +336,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="caption"
             title="캡션"
-            width="180px"
+            width="130px"
             cell={NameCell}
           />
           <GridColumn
@@ -345,40 +348,46 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             className="required"
           />
           <GridColumn
+            field="value_code"
+            title="VALUE 코드"
+            width="100px"
+            cell={NameCell}
+          />
+          <GridColumn
             field="value"
-            title="VALUE"
-            width="120px"
+            title="VALUE 이름"
+            width="100px"
             cell={NameCell}
           />
           <GridColumn
             field="bc_id"
             title="비즈니스 컴포넌트 ID"
-            width="180px"
+            width="170px"
             cell={NameCell}
+          />
+          <GridColumn
+            field="add_year"
+            title="연 추가"
+            width="90px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="add_month"
+            title="월 추가"
+            width="90px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="add_day"
+            title="일 추가"
+            width="90px"
+            cell={NumberCell}
           />
           <GridColumn
             field="user_editable"
             title="사용자 수정 가능 여부"
             width="180px"
             cell={NameCell}
-          />
-          <GridColumn
-            field="add_year"
-            title="연 추가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="add_month"
-            title="월 추가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="add_day"
-            title="일 추가"
-            width="120px"
-            cell={NumberCell}
           />
         </Grid>
       </USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider>
@@ -456,6 +465,9 @@ const KendoWindow = ({
     },
   };
 
+  const [token] = useRecoilState(tokenState);
+  const { userId } = token;
+
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -484,6 +496,7 @@ const KendoWindow = ({
     column_id: "",
     width: "",
     fixed: "",
+    id: userId,
     pc: "",
   });
 
@@ -523,6 +536,7 @@ const KendoWindow = ({
       "@p_width": 0, // paraData.width,
       "@p_fixed": "", // paraData.fixed,
 
+      "@p_id": paraData.id,
       "@p_pc": paraData.pc,
     },
   };
@@ -649,6 +663,7 @@ const KendoWindow = ({
       word_id: [],
       sort_order: [],
       value_type: [],
+      value_code: [],
       value: [],
       bc_id: [],
       where_query: [],
@@ -660,12 +675,14 @@ const KendoWindow = ({
     };
 
     orderDetails.forEach((item: any, idx: number) => {
+      if (!item.rowstatus) return;
       const {
         rowstatus,
         default_id, // field_name
         caption,
         word_id,
         value_type, //
+        value_code, //
         value, //
         bc_id,
         where_query,
@@ -682,6 +699,7 @@ const KendoWindow = ({
       detailArr.word_id.push(word_id);
       detailArr.sort_order.push(String(idx));
       detailArr.value_type.push(value_type);
+      detailArr.value_code.push(value_code);
       detailArr.value.push(value);
       detailArr.bc_id.push(bc_id);
       detailArr.where_query.push(where_query);
@@ -698,6 +716,7 @@ const KendoWindow = ({
         caption,
         word_id,
         value_type, //
+        value_code, //
         value, //
         bc_id,
         where_query,
@@ -714,6 +733,7 @@ const KendoWindow = ({
       detailArr.word_id.push(word_id);
       detailArr.sort_order.push(String(idx));
       detailArr.value_type.push(value_type);
+      detailArr.value_code.push(value_code);
       detailArr.value.push(value);
       detailArr.bc_id.push(bc_id);
       detailArr.where_query.push(where_query);
@@ -737,6 +757,7 @@ const KendoWindow = ({
       word_id: detailArr.word_id.join("|"),
       sort_order: detailArr.sort_order.join("|"),
       value_type: detailArr.value_type.join("|"),
+      value_code: detailArr.value_code.join("|"),
       value: detailArr.value.join("|"),
       bc_id: detailArr.bc_id.join("|"),
       where_query: detailArr.where_query.join("|"),

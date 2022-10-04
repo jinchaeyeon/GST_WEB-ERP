@@ -42,6 +42,8 @@ import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { pageSize } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
+import { tokenState } from "../../../store/atoms";
+import { useRecoilState } from "recoil";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT =
@@ -485,6 +487,9 @@ const KendoWindow = ({
     },
   };
 
+  const [token] = useRecoilState(tokenState);
+  const { userId } = token;
+
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -513,6 +518,7 @@ const KendoWindow = ({
     column_id: "",
     width: "",
     fixed: "",
+    id: userId,
     pc: "",
   });
 
@@ -552,6 +558,7 @@ const KendoWindow = ({
       "@p_width": paraData.width,
       "@p_fixed": paraData.fixed,
 
+      "@p_id": paraData.id,
       "@p_pc": paraData.pc,
     },
   };
@@ -702,7 +709,7 @@ const KendoWindow = ({
     deletedRows = []; //초기화
 
     orderDetails.forEach((item: any, idx: number) => {
-      if (!item.rowstatus) return;
+      // if (!item.rowstatus) return;
       detailArr.rowstatus.push(item.rowstatus);
       detailArr.caption.push(item.caption);
       detailArr.word_id.push(item.word_id);
