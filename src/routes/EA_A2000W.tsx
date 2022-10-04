@@ -1950,7 +1950,7 @@ const EA_A2000: React.FC = () => {
             {detailFilters.pgmgb === "지출결의서" ||
             detailFilters.pgmgb === "X" ||
             detailFilters.pgmgb === "Z" ? (
-              <CashDisbursementVoucher data="test" />
+              <CashDisbursementVoucher data={selectedRowData} />
             ) : detailFilters.pgmgb === "근태허가신청" ||
               detailFilters.pgmgb === "W" ? (
               <AbsenceRequest data={selectedRowData} />

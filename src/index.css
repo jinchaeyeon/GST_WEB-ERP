@@ -332,7 +332,8 @@ body {
   height: 5cm;
 }
 
-#CashDisbursementVoucher table.top_tb td {
+#CashDisbursementVoucher table td,
+#CashDisbursementVoucher table th {
   font-size: 0.8em;
 }
 
