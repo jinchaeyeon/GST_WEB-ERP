@@ -22,10 +22,10 @@ const AbsenceRequest = (data: any) => {
       pageNumber: 0,
       pageSize: 0,
       parameters: {
-        "@p_work_type": "A",
+        "@p_work_type": "W",
         "@p_orgdiv": "01",
-        "@p_recdt": para.recdt,
-        "@p_seq": para.ref_key.split("-")[1],
+        "@p_key1": para.recdt,
+        "@p_key2": para.ref_key.split("-")[1],
       },
     };
 
