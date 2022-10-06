@@ -46,7 +46,7 @@ export const FilterBox = styled.table`
   background-color: #fff;
   width: 100%;
   tr th + td {
-    height: 40px;
+    min-height: 40px;
   }
   tr th {
     background-color: #f5f5f8;
@@ -77,6 +77,21 @@ export const FilterBox = styled.table`
   .k-radio-list.k-list-horizontal {
     justify-content: center;
   }
+  @media (max-width: 768px) {
+    tr {
+      display: flex;
+      flex-direction: column;
+    }
+    tr th,
+    tr td {
+      width: 100%;
+      border: none;
+    }
+    tr th {
+      min-height: 35px;
+      line-height: 35px;
+    }
+  }
 `;
 
 type TGridContainerWrap = {
@@ -90,6 +105,10 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
   justify-content: space-between;
   flex-direction: ${(props) => props.flexDirection};
   max-width: ${(props) => props.maxWidth};
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 type TGridContainer = {
@@ -145,6 +164,10 @@ export const GridContainer = styled.div<TGridContainer>`
   /* .required {
     background-color: #fff0ef;
   } */
+
+  @media (max-width: 768px) {
+    width: auto;
+  }
 `;
 
 export const GridTitle = styled.h3`

@@ -8,23 +8,49 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
-import { tokenState } from "../store/atoms";
+import { isMenuOpendState, tokenState } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import { clientWidth, gnvWidth } from "../components/CommonString";
+import UserEffect from "./UserEffect";
 
-export const Wrapper = styled.div`
+type TWrapper = {
+  isMenuOpend: boolean;
+};
+
+export const Wrapper = styled.div<TWrapper>`
   display: flex;
   width: 100%;
+  //overflow: ${(props) => (props.isMenuOpend ? "hidden" : "auto")};
 `;
 
-export const Gnv = styled.div`
+type TGnv = TWrapper;
+export const Gnv = styled.div<TGnv>`
   min-width: ${gnvWidth}px;
   text-align: center;
+
+  min-height: 100vh;
+  background-color: #fff;
+
   .logout span {
     color: #656565;
   }
   .logout > .k-link {
     justify-content: center;
+  }
+
+  /*=========================================================================
+	미디어 쿼리
+	##Device = 모바일
+	##Screen = 768px 이하 해상도 모바일
+  =========================================================================*/
+  @media (max-width: 768px) {
+    display: ${(props) => (props.isMenuOpend ? "block" : "none")};
+    z-index: 10;
+    position: absolute;
+
+    h1 {
+      display: none;
+    }
   }
 `;
 
@@ -32,8 +58,20 @@ type ContentType = {
   clientWidth?: number;
 };
 export const Content = styled.div<ContentType>`
-  padding: 0 15px;
   width: calc(${(props) => props.clientWidth}px - ${gnvWidth}px);
+
+  /*=========================================================================
+  미디어 쿼리
+  ##Device = 모바일
+  ##Screen = 768px 이하 해상도 모바일
+  =========================================================================*/
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+export const PageWrap = styled.div`
+  padding: 0 15px;
 `;
 
 export const AppName = styled.h1`
@@ -41,6 +79,49 @@ export const AppName = styled.h1`
   font-weight: 600;
   padding: 10px 0;
   border-right: 1px solid #ebebeb;
+
+  /*=========================================================================
+  미디어 쿼리
+  ##Device = 모바일
+  ##Screen = 768px 이하 해상도 모바일
+  =========================================================================*/
+  @media (max-width: 768px) {
+    border: none;
+  }
+`;
+
+export const TopTitle = styled.div`
+  min-width: ${gnvWidth}px;
+  /* text-align: center; */
+  padding: 0 15px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+
+  button {
+    height: 30px;
+  }
+
+  /*=========================================================================
+  미디어 쿼리
+  ##Device = 모바일
+  ##Screen = 768px 이하 해상도 모바일
+  =========================================================================*/
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+type TModal = TGnv;
+export const Modal = styled.div<TModal>`
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: ${(props) => (props.isMenuOpend ? "block" : "none")};
+  background-color: rgba(0, 0, 0, 0.4);
 `;
 
 const paths = [
@@ -75,6 +156,11 @@ const paths = [
 
 const PanelBarNavContainer = (props: any) => {
   const [token, setToken] = useRecoilState(tokenState);
+  const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState); //상태
+
+  UserEffect(() => {
+    alert(isMenuOpend);
+  }, [isMenuOpend]);
 
   const [userOptionsWindowVisible, setUserOptionsWindowVisible] =
     useState<boolean>(false);
@@ -101,9 +187,14 @@ const PanelBarNavContainer = (props: any) => {
   const onClickUserOptions = () => {
     setUserOptionsWindowVisible(true);
   };
+
+  const onMenuBtnClick = () => {
+    setIsMenuOpend((prev: boolean) => !prev);
+  };
   return (
-    <Wrapper>
-      <Gnv>
+    <Wrapper isMenuOpend={isMenuOpend}>
+      <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
+      <Gnv isMenuOpend={isMenuOpend}>
         <AppName>GST ERP</AppName>
         <PanelBar selected={selected} expandMode={"single"} onSelect={onSelect}>
           <PanelBarItem title={"Home"} href="/" route="/" />
@@ -152,7 +243,19 @@ const PanelBarNavContainer = (props: any) => {
           사용자 옵션
         </Button>
       </Gnv>
-      <Content clientWidth={clientWidth}>{props.children}</Content>
+      <Content clientWidth={clientWidth}>
+        <TopTitle>
+          <div></div>
+          <AppName>GST ERP</AppName>
+          <Button
+            icon="menu"
+            themeColor={"inverse"}
+            fillMode={"flat"}
+            onClick={onMenuBtnClick}
+          />
+        </TopTitle>
+        <PageWrap>{props.children}</PageWrap>
+      </Content>
       {userOptionsWindowVisible && (
         <UserOptionsWindow getVisible={setUserOptionsWindowVisible} />
       )}

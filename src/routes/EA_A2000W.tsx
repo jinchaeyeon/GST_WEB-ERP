@@ -1932,7 +1932,7 @@ const EA_A2000: React.FC = () => {
             </GridContainer>
           </GridContainerWrap>
         </GridContainer>
-        <GridContainer>
+        <GridContainer className="preview-grid-container">
           <GridTitleContainer>
             <GridTitle data-control-name="grtlPreview">
               결재문서 미리보기

@@ -1,3 +1,5 @@
+/* 예외 처리는 해당 페이지에 작성 */
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -43,6 +45,13 @@ div.k-animation-container {
 
 .k-form.k-scheduler-edit-form #k-event-description {
   min-height: 150px;
+}
+
+/* 모바일 결재문서 숨김 처리 */
+@media (max-width: 768px) {
+  .preview-grid-container {
+    display: none;
+  }
 }
 
 @media print {

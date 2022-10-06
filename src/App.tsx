@@ -1,4 +1,4 @@
-import { RecoilRoot } from "recoil";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import {
   BrowserRouter as Router,
   Switch,
@@ -27,8 +27,12 @@ import SY_A0013W from "./routes/SY_A0013W";
 import SY_A0011W from "./routes/SY_A0011W";
 import CM_A1600W from "./routes/CM_A1600W";
 import EA_A2000W from "./routes/EA_A2000W";
+import { isMenuOpendState } from "./store/atoms";
 
-const GlobalStyle = createGlobalStyle`
+type TGlobalStyle = {
+  isMenuOpend: boolean;
+};
+const GlobalStyle = createGlobalStyle<TGlobalStyle>`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -60,7 +64,8 @@ footer, header, hgroup, main, menu, nav, section {
     display: none;
 }
 body {
-  line-height: 1;
+  line-height: 1;  
+  overflow: ${(props) => (props.isMenuOpend ? "hidden" : "auto")};
 }
 menu, ol, ul {
   list-style: none;
@@ -93,43 +98,50 @@ a {
 
 `;
 
-class App extends Component {
-  render() {
-    return (
-      <RecoilRoot>
-        <GlobalStyle />
-        <Router>
-          <Switch>
-            <Route path="/Login" component={Login} />
-            <PanelBarNavContainer>
-              <UserEffect />
-              {/* 메인 홈 */}
-              <AuthRoute path="/" component={Main} exact />
-              {/* 물류관리 */}
-              <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
-              {/* 영업관리 */}
-              <AuthRoute path="/SA_B2000W" component={SA_B2000W} exact />
-              <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
-              {/* 생산관리 */}
-              <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
-              {/* 품질관리 */}
-              <AuthRoute path="/QC_A0120W" component={QC_A0120W} exact />
-              {/* 시스템 */}
-              <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
-              <AuthRoute path="/SY_A0110W" component={SY_A0110W} exact />
-              <AuthRoute path="/SY_A0010W" component={SY_A0010W} exact />
-              <AuthRoute path="/SY_A0012W" component={SY_A0012W} exact />
-              <AuthRoute path="/SY_A0013W" component={SY_A0013W} exact />
-              <AuthRoute path="/SY_A0011W" component={SY_A0011W} exact />
-              {/* 전사관리 */}
-              <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
-              {/* 전자결재 */}
-              <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
-            </PanelBarNavContainer>
-          </Switch>
-        </Router>
-      </RecoilRoot>
-    );
-  }
-}
+//class App extends Component {
+
+const App: React.FC = () => {
+  //render() {
+  const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState); //상태
+
+  React.useEffect(() => {
+    alert(isMenuOpend);
+  }, [isMenuOpend]);
+  return (
+    <RecoilRoot>
+      <GlobalStyle isMenuOpend={isMenuOpend} />
+      <Router>
+        <Switch>
+          <Route path="/Login" component={Login} />
+          <PanelBarNavContainer>
+            <UserEffect />
+            {/* 메인 홈 */}
+            <AuthRoute path="/" component={Main} exact />
+            {/* 물류관리 */}
+            <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
+            {/* 영업관리 */}
+            <AuthRoute path="/SA_B2000W" component={SA_B2000W} exact />
+            <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
+            {/* 생산관리 */}
+            <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
+            {/* 품질관리 */}
+            <AuthRoute path="/QC_A0120W" component={QC_A0120W} exact />
+            {/* 시스템 */}
+            <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
+            <AuthRoute path="/SY_A0110W" component={SY_A0110W} exact />
+            <AuthRoute path="/SY_A0010W" component={SY_A0010W} exact />
+            <AuthRoute path="/SY_A0012W" component={SY_A0012W} exact />
+            <AuthRoute path="/SY_A0013W" component={SY_A0013W} exact />
+            <AuthRoute path="/SY_A0011W" component={SY_A0011W} exact />
+            {/* 전사관리 */}
+            <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
+            {/* 전자결재 */}
+            <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
+          </PanelBarNavContainer>
+        </Switch>
+      </Router>
+    </RecoilRoot>
+  );
+  //}
+};
 export default App;
