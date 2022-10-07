@@ -26,11 +26,7 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Input,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -38,25 +34,21 @@ import {
   chkScrollHandler,
   convertDateToStr,
   getBciFromCustomOptionData,
+  getQueryFromBizComponent,
   getQueryFromCustomOptionData,
   setDefaultDate,
+  UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { IItemData, TCommonCodeData } from "../hooks/interfaces";
+import { IItemData } from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
   gnvWidth,
   clientWidth,
   gridMargin,
-  itemgradeQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
-  useynRadioButtonData,
-  zeroynRadioButtonData,
   pageSize,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -64,28 +56,28 @@ import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { gridList } from "../store/columns/MA_B7000W_C";
 import MultiColumnComboBox from "../components/ComboBoxes/MultiColumnComboBoxWithQuery";
 //import {useAuth} from "../../hooks/auth";
 
 const numberField = [
-  "col_safeqty",
-  "col_stockqty",
-  "col_stockqty1",
-  "col_stockwgt",
-  "col_unp",
-  "col_baseqty",
-  "col_basewgt",
-  "col_inqty",
-  "col_inwgt",
-  "col_outqty",
-  "col_outwgt",
-  "col_amt",
-  "col_amt2",
-  "col_unp2",
-  "col_bnatur_insiz",
+  "safeqty",
+  "stockqty",
+  "stockwgt",
+  "unp",
+  "baseqty",
+  "basewgt",
+  "inqty",
+  "inwgt",
+  "outqty",
+  "outwgt",
+  "amt",
+  "amt2",
+  "unp2",
+  "bnatur_insiz",
 ];
 
-const dateField = ["col_indt"];
+const dateField = ["indt"];
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "itemcd";
@@ -100,6 +92,64 @@ const MA_B7000: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA171,L_BA172,L_BA173,L_BA042",
+    //대분류,중분류,소분류,품목등급
+    setBizComponentData
+  );
+
+  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [itemgradeListData, setItemgradeListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const itemlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+      );
+      const itemlvl2QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+      );
+      const itemlvl3QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+      );
+      const itemgradeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA042")
+      );
+
+      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
+      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
+      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      fetchQuery(itemgradeQueryStr, setItemgradeListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+    let query = {
+      query: "query?query=" + encodeURIComponent(queryStr),
+    };
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
@@ -183,14 +233,14 @@ const MA_B7000: React.FC = () => {
     insiz: "",
     ymdyyyy: new Date(),
     cboItemacnt: "", //filterData.find((item: any) => item.name === "itemacnt").value,
-    radzeroyn: "%",
+    radzeroyn: "",
     lotnum: "",
     load_place: "",
     heatno: "",
     cboItemlvl1: "",
     cboItemlvl2: "",
     cboItemlvl3: "",
-    radUseyn: "Y", //filterData.find((item: any) => item.name === "useyn").value,
+    radUseyn: "", //filterData.find((item: any) => item.name === "useyn").value,
     service_id: pathname,
   });
 
@@ -268,10 +318,6 @@ const MA_B7000: React.FC = () => {
       "@p_work_type": "DETAIL1",
       "@p_orgdiv": detailFilters1.orgdiv,
       "@p_location": filters.cboLocation,
-      // "@p_location":
-      //   (filters.cboLocation ? filters.cboLocation.sub_code : "") === ""
-      //     ? "01"
-      //     : filters.cboLocation.sub_code,
       "@p_yyyymm": convertDateToStr(filters.ymdyyyy),
       "@p_itemcd": detailFilters1.itemcd,
       "@p_itemnm": detailFilters1.itemnm,
@@ -593,27 +639,6 @@ const MA_B7000: React.FC = () => {
     setDetail2DataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
-  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
-
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
-
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
-
-  const [itemgradeListData, setItemgradeListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemgradeQuery, setItemgradeListData);
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -624,24 +649,23 @@ const MA_B7000: React.FC = () => {
         ymdyyyy: setDefaultDate(customOptionData, "ymdyyyy"),
         cboItemacnt: defaultOption.find(
           (item: any) => item.id === "cboItemacnt"
-        ).value,
+        ).valueCode,
         cboItemlvl1: defaultOption.find(
           (item: any) => item.id === "cboItemlvl1"
-        ).value,
+        ).valueCode,
         cboItemlvl2: defaultOption.find(
           (item: any) => item.id === "cboItemlvl2"
-        ).value,
+        ).valueCode,
         cboItemlvl3: defaultOption.find(
           (item: any) => item.id === "cboItemlvl3"
-        ).value,
+        ).valueCode,
         cboLocation: defaultOption.find(
           (item: any) => item.id === "cboLocation"
-        ).value,
-        //radUseyn: defaultOption.find(
-        //  (item: any) => item.id === "ymdyyyy"
-        //  ).value,
+        ).valueCode,
+        radUseyn: defaultOption.find((item: any) => item.id === "radUseyn")
+          .valueCode,
         radzeroyn: defaultOption.find((item: any) => item.id === "radzeroyn")
-          .value,
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -653,71 +677,6 @@ const MA_B7000: React.FC = () => {
       setIsInitSearch(true);
     }
   }, [filters]);
-
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  useEffect(() => {
-    setMainDataResult((prev) => {
-      const rows = prev.data.map((row: any) => ({
-        ...row,
-        itemlvl1: itemlvl1ListData.find(
-          (item: any) => item.sub_code === row.itemlvl1
-        )?.code_name,
-      }));
-
-      return {
-        data: [...rows],
-        total: prev.total,
-      };
-    });
-  }, [itemlvl1ListData]);
-
-  useEffect(() => {
-    setMainDataResult((prev) => {
-      const rows = prev.data.map((row: any) => ({
-        ...row,
-        itemlvl2: itemlvl2ListData.find(
-          (item: any) => item.sub_code === row.itemlvl2
-        )?.code_name,
-      }));
-
-      return {
-        data: [...rows],
-        total: prev.total,
-      };
-    });
-  }, [itemlvl2ListData]);
-
-  useEffect(() => {
-    setMainDataResult((prev) => {
-      const rows = prev.data.map((row: any) => ({
-        ...row,
-        itemlvl3: itemlvl3ListData.find(
-          (item: any) => item.sub_code === row.itemlvl3
-        )?.code_name,
-      }));
-
-      return {
-        data: [...rows],
-        total: prev.total,
-      };
-    });
-  }, [itemlvl3ListData]);
-
-  useEffect(() => {
-    setMainDataResult((prev) => {
-      const rows = prev.data.map((row: any) => ({
-        ...row,
-        itemgrade: itemgradeListData.find(
-          (item: any) => item.sub_code === row.itemgrade
-        )?.code_name,
-      }));
-
-      return {
-        data: [...rows],
-        total: prev.total,
-      };
-    });
-  }, [itemgradeListData]);
 
   return (
     <>
@@ -805,6 +764,15 @@ const MA_B7000: React.FC = () => {
                     changeData={filterComboBoxChange}
                   />
                 )} */}
+
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="cboItemacnt"
+                    value={filters.cboItemacnt}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
 
               <th>대분류</th>
@@ -846,20 +814,20 @@ const MA_B7000: React.FC = () => {
 
             <tr>
               <th>사용여부</th>
-              <td>
+              <td style={{ minWidth: "220px" }}>
                 {customOptionData !== null && (
-                  // <CommonRadioGroup
-                  //   name="radUseyn"
-                  //   customOptionData={customOptionData}
-                  //   changeData={filterRadioChange}
-                  // />
-                  <RadioGroup
-                    name="useyn"
-                    data={useynRadioButtonData}
-                    layout={"horizontal"}
-                    defaultValue={filters.radUseyn}
-                    onChange={filterRadioChange}
+                  <CommonRadioGroup
+                    name="radUseyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
                   />
+                  // <RadioGroup
+                  //   name="useyn"
+                  //   data={useynRadioButtonData}
+                  //   layout={"horizontal"}
+                  //   defaultValue={filters.radUseyn}
+                  //   onChange={filterRadioChange}
+                  // />
                 )}
               </td>
 
@@ -984,16 +952,21 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["gvwList"] &&
-              customOptionData.menuCustomColumnOptions["gvwList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
                       key={idx}
-                      field={item.id.replace("col_", "")}
+                      field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      cell={numberField.includes(item.id) ? NumberCell : ""}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : ""
+                      }
                       footerCell={
                         item.sortOrder === 1 ? mainTotalFooterCell : ""
                       }
@@ -1004,7 +977,7 @@ const MA_B7000: React.FC = () => {
         </ExcelExport>
       </GridContainer>
       <GridContainerWrap>
-        <GridContainer width={"500px"}>
+        <GridContainer width={"450px"}>
           <GridTitleContainer>
             <GridTitle>계정별LOT</GridTitle>
           </GridTitleContainer>
@@ -1040,26 +1013,31 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["gvwStockdetail"] &&
-              customOptionData.menuCustomColumnOptions["gvwStockdetail"].map(
+              customOptionData.menuCustomColumnOptions["grdStockDetail"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
                       key={idx}
-                      field={item.id.replace("col_", "")}
+                      field={item.fieldName}
                       title={item.caption}
-                      width={item.width + "px"}
-                      cell={numberField.includes(item.id) ? NumberCell : ""}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : ""
+                      }
                       footerCell={
                         item.sortOrder === 1 ? detail1TotalFooterCell : ""
                       }
-                    ></GridColumn>
+                    />
                   )
               )}
           </Grid>
         </GridContainer>
         <GridContainer
-          width={clientWidth - gnvWidth - gridMargin - 15 - 500 + "px"}
+          width={clientWidth - gnvWidth - gridMargin - 15 - 450 + "px"}
         >
           <GridTitleContainer>
             <GridTitle>LOT별 상세이력</GridTitle>
@@ -1082,19 +1060,18 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["gvwLotdetail"] &&
-              customOptionData.menuCustomColumnOptions["gvwLotdetail"].map(
+              customOptionData.menuCustomColumnOptions["grdLotDetail"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
                       key={idx}
-                      field={item.id.replace("col_", "")}
+                      field={item.fieldName}
                       title={item.caption}
-                      width={item.width ?? 120 + "px"}
+                      width={item.width}
                       cell={
-                        numberField.includes(item.id)
+                        numberField.includes(item.fieldName)
                           ? NumberCell
-                          : dateField.includes(item.id)
+                          : dateField.includes(item.fieldName)
                           ? DateCell
                           : ""
                       }
@@ -1114,6 +1091,21 @@ const MA_B7000: React.FC = () => {
           getData={getItemData}
           para={undefined}
         />
+      )}
+
+      {/* 컨트롤 네임 불러오기 용 */}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );
