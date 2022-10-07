@@ -1,11 +1,6 @@
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  withRouter,
-} from "react-router-dom";
-import React, { Component } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React, { Component, useEffect } from "react";
 import "@progress/kendo-theme-default/dist/all.css";
 import PanelBarNavContainer from "./components/PanelBarNavContainer";
 import styled, { createGlobalStyle } from "styled-components";
@@ -101,14 +96,18 @@ a {
 //class App extends Component {
 
 const App: React.FC = () => {
-  //render() {
-  const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState); //상태
-
-  React.useEffect(() => {
-    alert(isMenuOpend);
-  }, [isMenuOpend]);
   return (
     <RecoilRoot>
+      <AppInner></AppInner>
+    </RecoilRoot>
+  );
+  //}
+};
+const AppInner: React.FC = () => {
+  const isMenuOpend = useRecoilValue(isMenuOpendState); //상태
+
+  return (
+    <>
       <GlobalStyle isMenuOpend={isMenuOpend} />
       <Router>
         <Switch>
@@ -140,7 +139,7 @@ const App: React.FC = () => {
           </PanelBarNavContainer>
         </Switch>
       </Router>
-    </RecoilRoot>
+    </>
   );
   //}
 };

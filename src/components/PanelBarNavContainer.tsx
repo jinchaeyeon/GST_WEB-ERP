@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
   PanelBar,
   PanelBarItem,
@@ -7,8 +7,8 @@ import {
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState } from "recoil";
-import { isMenuOpendState, tokenState } from "../store/atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isMenuOpendState, tokenState, userState } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import { clientWidth, gnvWidth } from "../components/CommonString";
 import UserEffect from "./UserEffect";
@@ -158,16 +158,16 @@ const PanelBarNavContainer = (props: any) => {
   const [token, setToken] = useRecoilState(tokenState);
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState); //상태
 
-  UserEffect(() => {
-    alert(isMenuOpend);
-  }, [isMenuOpend]);
-
   const [userOptionsWindowVisible, setUserOptionsWindowVisible] =
     useState<boolean>(false);
 
   const onSelect = (event: PanelBarSelectEventArguments) => {
-    console.log(event.target.props.route);
-    props.history.push(event.target.props.route);
+    const route = event.target.props.route;
+    props.history.push(route);
+
+    if (route) {
+      setIsMenuOpend(false);
+    }
   };
 
   const setSelectedIndex = (pathName: any) => {
@@ -189,7 +189,7 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   const onMenuBtnClick = () => {
-    setIsMenuOpend((prev: boolean) => !prev);
+    setIsMenuOpend((prev) => !prev);
   };
   return (
     <Wrapper isMenuOpend={isMenuOpend}>

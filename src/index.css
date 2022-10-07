@@ -46,11 +46,19 @@ div.k-animation-container {
 .k-form.k-scheduler-edit-form #k-event-description {
   min-height: 150px;
 }
-
+.visible-mobile-only {
+  display: none;
+}
 /* 모바일 결재문서 숨김 처리 */
 @media (max-width: 768px) {
+  .visible-mobile-only {
+    display: block;
+  }
   .preview-grid-container {
     display: none;
+  }
+  .k-scheduler-edit-dialog .k-dialog {
+    min-width: 100% !important;
   }
 }
 

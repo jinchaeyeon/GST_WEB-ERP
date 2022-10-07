@@ -26,14 +26,9 @@ import {
   TitleContainer,
   ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Input,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
+import { Input, RadioGroup } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -51,11 +46,7 @@ import {
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import {
-  IAttachmentData,
-  IItemData,
-  TCommonCodeData,
-} from "../hooks/interfaces";
+import { IAttachmentData, IItemData } from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
   gnvWidth,
@@ -71,8 +62,8 @@ import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CommonRadioGroup from "../components/CommonRadioGroup";
-import { useRecoilState } from "recoil";
-import { tokenState } from "../store/atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isMenuOpendState, tokenState } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import CashDisbursementVoucher from "../components/Prints/CashDisbursementVoucher";
@@ -80,6 +71,7 @@ import AbsenceRequest from "../components/Prints/AbsenceRequest";
 import { CellRender, RowRender } from "../components/Renderers";
 import { prevDayOfWeek } from "@progress/kendo-date-math";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import { Window } from "@progress/kendo-react-dialogs";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
@@ -1017,8 +1009,6 @@ const EA_A2000: React.FC = () => {
       const rowData = props.dataItem;
       setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
 
-      console.log("rowData");
-      console.log(rowData);
       setDetailFilters((prev) => ({
         ...prev,
         [DATA_ITEM_KEY]: rowData[DATA_ITEM_KEY],
@@ -1027,8 +1017,6 @@ const EA_A2000: React.FC = () => {
       }));
 
       setSelectedRowData(rowData);
-      // setIsCopy(false);
-      // setWorkType("U");
       setAttachmentsWindowVisible(true);
     };
 
@@ -1047,6 +1035,40 @@ const EA_A2000: React.FC = () => {
       </td>
     );
   };
+  const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
+
+  const PreviewCell = (props: GridCellProps) => {
+    const onPreviewClick = () => {
+      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+      const rowData = props.dataItem;
+      setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
+
+      setDetailFilters((prev) => ({
+        ...prev,
+        [DATA_ITEM_KEY]: rowData[DATA_ITEM_KEY],
+        pgmgb: rowData["pgmgb"],
+        attdatnum: rowData["attdatnum"],
+      }));
+
+      setSelectedRowData(rowData);
+      window.scrollTo(0, 0);
+      setPreviewVisible((prev) => !prev);
+    };
+
+    return (
+      <td className="k-command-cell">
+        <Button
+          themeColor={"primary"}
+          fillMode="outline"
+          onClick={onPreviewClick}
+          icon="file"
+        ></Button>
+      </td>
+    );
+  };
+  let deviceHeight = window.innerHeight;
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
 
   return (
     <>
@@ -1295,6 +1317,13 @@ const EA_A2000: React.FC = () => {
                   //컬럼너비조정
                   resizable={true}
                 >
+                  {isMobile && (
+                    <GridColumn
+                      title={"미리보기"}
+                      cell={PreviewCell}
+                      width="55px"
+                    />
+                  )}
                   {customOptionData !== null
                     ? customOptionData.menuCustomColumnOptions["grdMyList"].map(
                         (item: any, idx: number) =>
@@ -1434,6 +1463,13 @@ const EA_A2000: React.FC = () => {
                       ) === -1
                     }
                   />
+                  {isMobile && (
+                    <GridColumn
+                      title={"미리보기"}
+                      cell={PreviewCell}
+                      width="55px"
+                    />
+                  )}
                   {customOptionData !== null
                     ? customOptionData.menuCustomColumnOptions[
                         "grdUndecideList"
@@ -1544,6 +1580,13 @@ const EA_A2000: React.FC = () => {
                   //컬럼너비조정
                   resizable={true}
                 >
+                  {isMobile && (
+                    <GridColumn
+                      title={"미리보기"}
+                      cell={PreviewCell}
+                      width="55px"
+                    />
+                  )}
                   {customOptionData !== null
                     ? customOptionData.menuCustomColumnOptions[
                         "grdAlreadyList"
@@ -1652,6 +1695,13 @@ const EA_A2000: React.FC = () => {
                   //컬럼너비조정
                   resizable={true}
                 >
+                  {isMobile && (
+                    <GridColumn
+                      title={"미리보기"}
+                      cell={PreviewCell}
+                      width="55px"
+                    />
+                  )}
                   {customOptionData !== null
                     ? customOptionData.menuCustomColumnOptions[
                         "grdRefList"
@@ -1991,6 +2041,52 @@ const EA_A2000: React.FC = () => {
             hidden
           />
         ))
+      )}
+
+      {previewVisible && (
+        <Window
+          title={"미리보기"}
+          onClose={() => {
+            setPreviewVisible((prev) => !prev);
+          }}
+          initialHeight={deviceHeight}
+          initialWidth={deviceWidth}
+          // style={{ width: deviceWidth + "px" }}
+        >
+          {detailFilters.pgmgb === "지출결의서" ||
+          detailFilters.pgmgb === "X" ||
+          detailFilters.pgmgb === "Z" ? (
+            <CashDisbursementVoucher data={selectedRowData} />
+          ) : detailFilters.pgmgb === "근태허가신청" ||
+            detailFilters.pgmgb === "W" ? (
+            <AbsenceRequest data={selectedRowData} />
+          ) : (
+            ""
+          )}
+          {/* {detailFilters && selectedRowData && (
+            <Preview
+              detailFilters={detailFilters}
+              selectedRowData={selectedRowData}
+            />
+          )} */}
+        </Window>
+      )}
+    </>
+  );
+};
+
+const Preview = (detailFilters: any, selectedRowData: any) => {
+  return (
+    <>
+      {detailFilters.pgmgb === "지출결의서" ||
+      detailFilters.pgmgb === "X" ||
+      detailFilters.pgmgb === "Z" ? (
+        <CashDisbursementVoucher data={selectedRowData} />
+      ) : detailFilters.pgmgb === "근태허가신청" ||
+        detailFilters.pgmgb === "W" ? (
+        <AbsenceRequest data={selectedRowData} />
+      ) : (
+        ""
       )}
     </>
   );
