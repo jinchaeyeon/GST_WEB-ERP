@@ -3,7 +3,7 @@ import {
   RadioGroup,
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { radioGroupDefaultData } from "./CommonString";
+import { radioGroupDefaultData } from "../CommonString";
 
 type TCommonRadioGroup = {
   name: string;
@@ -25,7 +25,7 @@ const CommonRadioGroup = ({
   let newRadioGroup = radioGroupDefaultData;
 
   if (dataList) {
-    defaultValue = dataList.find((item: any) => item.id === name).value;
+    defaultValue = dataList.find((item: any) => item.id === name).valueCode;
 
     const radioGroup = dataList.find(
       (item: any) => item.id === name

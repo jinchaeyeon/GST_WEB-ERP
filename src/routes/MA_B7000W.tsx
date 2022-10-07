@@ -63,7 +63,7 @@ import {
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import CommonRadioGroup from "../components/CommonRadioGroup";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import MultiColumnComboBox from "../components/ComboBoxes/MultiColumnComboBoxWithQuery";
 //import {useAuth} from "../../hooks/auth";
 

@@ -62,7 +62,7 @@ import {
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CommonRadioGroup from "../components/CommonRadioGroup";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
 //import {useAuth} from "../../hooks/auth";
 

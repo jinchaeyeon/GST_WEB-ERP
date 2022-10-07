@@ -30,7 +30,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, RadioGroup } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TColumn, TGrid } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
@@ -61,7 +61,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CommonRadioGroup from "../components/CommonRadioGroup";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { isMenuOpendState, tokenState } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A2000W_C";
@@ -72,9 +72,11 @@ import { CellRender, RowRender } from "../components/Renderers";
 import { prevDayOfWeek } from "@progress/kendo-date-math";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { Window } from "@progress/kendo-react-dialogs";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
+const oldCompany = ["2207C612"];
 let deletedCmtRows: object[] = [];
 
 //그리드 별 키 필드값
@@ -89,17 +91,21 @@ const EA_A2000: React.FC = () => {
   const detail3IdGetter = getter(DETAIL3_DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
 
+  const [token] = useRecoilState(tokenState);
+  const { userId, companyCode } = token;
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  if (!oldCompany.includes(companyCode))
+    UseCustomOption(pathname, setCustomOptionData);
 
   const [wordInfoData, setWordInfoData] = React.useState<any>(null);
   UseDesignInfo(pathname, setWordInfoData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_dptcd_001,L_sysUserMaster_001,L_EA002,L_HU089,L_appyn,L_USERS,L_HU005,L_EA004",
-    //부서,담당자,결재문서,근태구분,결재유무,사용자,직위,결재라인
+    "L_dptcd_001,L_sysUserMaster_001,L_EA002,L_HU089,L_appyn,L_USERS,L_HU005,L_EA004,R_APPGB,R_APPYN,L_EA001",
+    //부서,담당자,결재문서,근태구분,결재유무,사용자,직위,결재라인,결재관리구분,결재유무,결재구분
     setBizComponentData
   );
 
@@ -116,6 +122,9 @@ const EA_A2000: React.FC = () => {
     commonCodeDefaultValue,
   ]);
   const [applineListData, setApplineListData] = React.useState([
+    commonCodeDefaultValue,
+  ]);
+  const [appgbListData, setAppgbListData] = React.useState([
     commonCodeDefaultValue,
   ]);
 
@@ -138,12 +147,16 @@ const EA_A2000: React.FC = () => {
       const applineQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_EA004")
       );
+      const appgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_EA001")
+      );
 
       fetchQuery(userQueryStr, setPersonListData);
       fetchQuery(appynQueryStr, setAppynListData);
       fetchQuery(pgmgbQueryStr, setPgmgbListData);
       fetchQuery(postcdQueryStr, setPostcdListData);
       fetchQuery(applineQueryStr, setApplineListData);
+      fetchQuery(appgbQueryStr, setAppgbListData);
     }
   }, [bizComponentData]);
 
@@ -250,13 +263,10 @@ const EA_A2000: React.FC = () => {
     }));
   };
 
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
-
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: pageSize,
-    radWorkType: "",
+    radWorkType: "B",
     orgdiv: "01",
     user_id: userId,
     ymdStartDt: new Date(),
@@ -265,7 +275,7 @@ const EA_A2000: React.FC = () => {
     cboPerson: "",
     cboPgmgb: "",
     cboDptcd: "",
-    radAppyn: "",
+    radAppyn: "N",
     appnum: "",
     cboStddiv: "",
   });
@@ -320,7 +330,7 @@ const EA_A2000: React.FC = () => {
       "@p_start_dt": convertDateToStr(filters.ymdStartDt),
       "@p_end_dt": convertDateToStr(filters.ymdEndDt),
       "@p_appnm": filters.txtAppnm,
-      "@p_person": filters.cboPerson,
+      "@p_person": filters.radWorkType === "A" ? userId : filters.cboPerson,
       "@p_pgmgb": filters.cboPgmgb,
       "@p_dptcd": filters.cboDptcd,
       "@p_appyn": filters.radAppyn,
@@ -464,19 +474,19 @@ const EA_A2000: React.FC = () => {
   };
 
   useEffect(() => {
-    if (customOptionData !== null) {
+    if (customOptionData !== null || oldCompany.includes(companyCode)) {
       fetchMainGrid();
     }
   }, [mainPgNum]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
+    if (customOptionData !== null || oldCompany.includes(companyCode)) {
       fetchDetailGrid();
     }
   }, [detail1PgNum]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
+    if (customOptionData !== null || oldCompany.includes(companyCode)) {
       resetAllDetailGrid();
       fetchDetailGrid();
     }
@@ -675,21 +685,6 @@ const EA_A2000: React.FC = () => {
         // cboItemacnt: defaultOption.find(
         //   (item: any) => item.id === "cboItemacnt"
         // ).value,
-        // cboItemlvl1: defaultOption.find(
-        //   (item: any) => item.id === "cboItemlvl1"
-        // ).value,
-        // cboItemlvl2: defaultOption.find(
-        //   (item: any) => item.id === "cboItemlvl2"
-        // ).value,
-        // cboItemlvl3: defaultOption.find(
-        //   (item: any) => item.id === "cboItemlvl3"
-        // ).value,
-        // cboLocation: defaultOption.find(
-        //   (item: any) => item.id === "cboLocation"
-        // ).value,
-        // //radUseyn: defaultOption.find(
-        // //  (item: any) => item.id === "ymdyyyy"
-        // //  ).value,
         // radzeroyn: defaultOption.find((item: any) => item.id === "radzeroyn")
         //   .value,
       }));
@@ -698,7 +693,10 @@ const EA_A2000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
+    if (
+      (customOptionData !== null || oldCompany.includes(companyCode)) &&
+      isInitSearch === false
+    ) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
@@ -1196,14 +1194,23 @@ const EA_A2000: React.FC = () => {
                   : "표시형식"}
               </th>
               <td colSpan={3} className="item-box">
-                {customOptionData !== null ? (
+                {customOptionData !== null && (
                   <CommonRadioGroup
                     name="radWorkType"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
-                ) : (
-                  <RadioGroup name="radWorkType" data={radioGroupDefaultData} />
+                )}
+
+                {bizComponentData !== null && customOptionData === null && (
+                  <BizComponentRadioGroup
+                    name="radWorkType"
+                    value={filters.radWorkType}
+                    bizComponentId="R_APPGB"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
+                  />
+                  // <RadioGroup name="radWorkType" data={radioGroupDefaultData} />
                 )}
               </td>
               <th data-control-name="lblappnm">
@@ -1230,14 +1237,22 @@ const EA_A2000: React.FC = () => {
                   : "결재유무"}
               </th>
               <td>
-                {customOptionData !== null ? (
+                {customOptionData !== null && (
                   <CommonRadioGroup
                     name="radAppyn"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
-                ) : (
-                  <RadioGroup name="radAppyn" data={radioGroupDefaultData} />
+                )}
+
+                {bizComponentData !== null && customOptionData === null && (
+                  <BizComponentRadioGroup
+                    name="radAppyn"
+                    value={filters.radAppyn}
+                    bizComponentId="R_APPYN"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
+                  />
                 )}
               </td>
               <th data-control-name="lblStddiv">
@@ -1346,31 +1361,25 @@ const EA_A2000: React.FC = () => {
                             />
                           )
                       )
-                    : gridList.find((grid: any) =>
-                        grid.gridName === "grdMyList"
-                          ? grid.columns.map((item: any, idx: number) => (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.field}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : ""
-                                }
-                                footerCell={
-                                  item.sortOrder === 1
-                                    ? mainTotalFooterCell
-                                    : ""
-                                }
-                              />
-                            ))
-                          : ""
-                      )}
+                    : gridList
+                        .find((grid: TGrid) => grid.gridName === "grdMyList")
+                        ?.columns.map((item: TColumn, idx: number) => (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.field}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.field)
+                                ? NumberCell
+                                : dateField.includes(item.field)
+                                ? DateCell
+                                : ""
+                            }
+                            footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                          />
+                        ))}
                   <GridColumn title={"File"} cell={CommandCell} width="55px" />
                 </Grid>
               </ExcelExport>
@@ -1495,31 +1504,27 @@ const EA_A2000: React.FC = () => {
                             />
                           )
                       )
-                    : gridList.find((grid: any) =>
-                        grid.gridName === "grdUndecideList"
-                          ? grid.columns.map((item: any, idx: number) => (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.field}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : ""
-                                }
-                                footerCell={
-                                  item.sortOrder === 1
-                                    ? mainTotalFooterCell
-                                    : ""
-                                }
-                              />
-                            ))
-                          : ""
-                      )}
+                    : gridList
+                        .find(
+                          (grid: TGrid) => grid.gridName === "grdUndecideList"
+                        )
+                        ?.columns.map((item: TColumn, idx: number) => (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.field}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.field)
+                                ? NumberCell
+                                : dateField.includes(item.field)
+                                ? DateCell
+                                : ""
+                            }
+                            footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                          />
+                        ))}
 
                   <GridColumn title={"File"} cell={CommandCell} width="55px" />
                 </Grid>
@@ -1612,31 +1617,28 @@ const EA_A2000: React.FC = () => {
                             />
                           )
                       )
-                    : gridList.find((grid: any) =>
-                        grid.gridName === "grdAlreadyList"
-                          ? grid.columns.map((item: any, idx: number) => (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.field}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : ""
-                                }
-                                footerCell={
-                                  item.sortOrder === 1
-                                    ? mainTotalFooterCell
-                                    : ""
-                                }
-                              />
-                            ))
-                          : ""
-                      )}
+                    : gridList
+                        .find(
+                          (grid: TGrid) => grid.gridName === "grdAlreadyList"
+                        )
+                        ?.columns.map((item: TColumn, idx: number) => (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.field}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.field)
+                                ? NumberCell
+                                : dateField.includes(item.field)
+                                ? DateCell
+                                : ""
+                            }
+                            footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                          />
+                        ))}
+                  <GridColumn title={"File"} cell={CommandCell} width="55px" />
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -1704,7 +1706,7 @@ const EA_A2000: React.FC = () => {
                   )}
                   {customOptionData !== null
                     ? customOptionData.menuCustomColumnOptions[
-                        "grdRefList"
+                        "grdRefChkList"
                       ].map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
@@ -1727,31 +1729,28 @@ const EA_A2000: React.FC = () => {
                             />
                           )
                       )
-                    : gridList.find((grid: any) =>
-                        grid.gridName === "grdRefChkList"
-                          ? grid.columns.map((item: any, idx: number) => (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.field}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : ""
-                                }
-                                footerCell={
-                                  item.sortOrder === 1
-                                    ? mainTotalFooterCell
-                                    : ""
-                                }
-                              />
-                            ))
-                          : ""
-                      )}
+                    : gridList
+                        .find(
+                          (grid: TGrid) => grid.gridName === "grdRefChkList"
+                        )
+                        ?.columns.map((item: TColumn, idx: number) => (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.field}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.field)
+                                ? NumberCell
+                                : dateField.includes(item.field)
+                                ? DateCell
+                                : ""
+                            }
+                            footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                          />
+                        ))}
+                  <GridColumn title={"File"} cell={CommandCell} width="55px" />
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -1802,32 +1801,54 @@ const EA_A2000: React.FC = () => {
                 //컬럼너비조정
                 resizable={true}
               >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdLineList"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
+                {customOptionData !== null
+                  ? customOptionData.menuCustomColumnOptions["grdLineList"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : item.fieldName === "appyn" ||
+                                  item.fieldName === "arbitragb"
+                                ? CheckBoxReadOnlyCell
+                                : ""
+                            }
+                            footerCell={
+                              item.sortOrder === 1 ? detail1TotalFooterCell : ""
+                            }
+                          />
+                        )
+                    )
+                  : gridList
+                      .find((grid: TGrid) => grid.gridName === "grdLineList")
+                      ?.columns.map((item: TColumn, idx: number) => (
                         <GridColumn
                           key={idx}
                           id={item.id}
-                          field={item.fieldName}
+                          field={item.field}
                           title={item.caption}
                           width={item.width}
                           cell={
-                            numberField.includes(item.fieldName)
+                            numberField.includes(item.field)
                               ? NumberCell
-                              : dateField.includes(item.fieldName)
+                              : dateField.includes(item.field)
                               ? DateCell
-                              : item.fieldName === "appyn" ||
-                                item.fieldName === "arbitragb"
+                              : item.field === "appyn" ||
+                                item.field === "arbitragb"
                               ? CheckBoxReadOnlyCell
                               : ""
                           }
-                          footerCell={
-                            item.sortOrder === 1 ? detail1TotalFooterCell : ""
-                          }
+                          footerCell={idx === 0 ? detail1TotalFooterCell : ""}
                         />
-                      )
-                  )}
+                      ))}
               </Grid>
 
               <GridTitleContainer>
@@ -1835,7 +1856,22 @@ const EA_A2000: React.FC = () => {
               </GridTitleContainer>
               <Grid
                 style={{ height: "150px" }}
-                data={process(detail2DataResult.data, detail2DataState)}
+                data={process(
+                  detail2DataResult.data.map((row) => ({
+                    ...row,
+                    resno: personListData.find(
+                      (item: any) => item.code === row.resno
+                    )?.name,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code === row.postcd
+                    )?.code_name,
+                    appgb: appgbListData.find(
+                      (item: any) => item.sub_code === row.appgb
+                    )?.code_name,
+                    [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
+                  })),
+                  detail2DataState
+                )}
                 {...detail2DataState}
                 onDataStateChange={onDetail2DataStateChange}
                 //정렬기능
@@ -1850,29 +1886,48 @@ const EA_A2000: React.FC = () => {
                 //컬럼너비조정
                 resizable={true}
               >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdRefList"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
+                {customOptionData !== null
+                  ? customOptionData.menuCustomColumnOptions["grdRefList"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : ""
+                            }
+                            footerCell={
+                              item.sortOrder === 1 ? detail2TotalFooterCell : ""
+                            }
+                          />
+                        )
+                    )
+                  : gridList
+                      .find((grid: TGrid) => grid.gridName === "grdRefList")
+                      ?.columns.map((item: TColumn, idx: number) => (
                         <GridColumn
                           key={idx}
                           id={item.id}
-                          field={item.fieldName}
+                          field={item.field}
                           title={item.caption}
                           width={item.width}
                           cell={
-                            numberField.includes(item.fieldName)
+                            numberField.includes(item.field)
                               ? NumberCell
-                              : dateField.includes(item.fieldName)
+                              : dateField.includes(item.field)
                               ? DateCell
                               : ""
                           }
-                          footerCell={
-                            item.sortOrder === 1 ? detail2TotalFooterCell : ""
-                          }
+                          footerCell={idx === 0 ? detail2TotalFooterCell : ""}
                         />
-                      )
-                  )}
+                      ))}
               </Grid>
             </GridContainer>
             <GridContainer
@@ -1949,35 +2004,54 @@ const EA_A2000: React.FC = () => {
                   width="40px"
                   editable={false}
                 />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdCmtList"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
+                {customOptionData !== null
+                  ? customOptionData.menuCustomColumnOptions["grdCmtList"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : ""
+                            }
+                            editable={
+                              item.fieldName === "time" ||
+                              item.fieldName === "insert_user"
+                                ? false
+                                : true
+                            }
+                            footerCell={
+                              item.sortOrder === 1 ? detail3TotalFooterCell : ""
+                            }
+                          />
+                        )
+                    )
+                  : gridList
+                      .find((grid: TGrid) => grid.gridName === "grdCmtList")
+                      ?.columns.map((item: TColumn, idx: number) => (
                         <GridColumn
                           key={idx}
                           id={item.id}
-                          field={item.fieldName}
+                          field={item.field}
                           title={item.caption}
                           width={item.width}
                           cell={
-                            numberField.includes(item.fieldName)
+                            numberField.includes(item.field)
                               ? NumberCell
-                              : dateField.includes(item.fieldName)
+                              : dateField.includes(item.field)
                               ? DateCell
                               : ""
                           }
-                          editable={
-                            item.fieldName === "time" ||
-                            item.fieldName === "insert_user"
-                              ? false
-                              : true
-                          }
-                          footerCell={
-                            item.sortOrder === 1 ? detail3TotalFooterCell : ""
-                          }
+                          footerCell={idx === 0 ? detail3TotalFooterCell : ""}
                         />
-                      )
-                  )}
+                      ))}
               </Grid>
             </GridContainer>
           </GridContainerWrap>

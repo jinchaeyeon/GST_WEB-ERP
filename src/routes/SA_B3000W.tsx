@@ -70,7 +70,7 @@ import {
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import CommonRadioGroup from "../components/CommonRadioGroup";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/SA_B3000W_C";
 

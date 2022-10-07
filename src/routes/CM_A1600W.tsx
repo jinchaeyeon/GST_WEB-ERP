@@ -55,30 +55,34 @@ import {
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 
-import CommonRadioGroup from "../components/CommonRadioGroup";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers";
 import DateCell from "../components/Cells/DateCell";
 import { Button } from "@progress/kendo-react-buttons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 
 const DATA_ITEM_KEY = "idx";
 let deletedTodoRows: object[] = [];
+
+const oldCompany = ["2207C612"];
 
 const CM_A1600: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const { userId, companyCode } = token;
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  //UseCustomOption(pathname, setCustomOptionData);
+  if (!oldCompany.includes(companyCode))
+    UseCustomOption(pathname, setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_sysUserMaster_001", setBizComponentData);
+  UseBizComponent("L_sysUserMaster_001,R_YN", setBizComponentData);
 
   const [todoDataState, setTodoDataState] = useState<State>({
     sort: [],
@@ -149,7 +153,7 @@ const CM_A1600: React.FC = () => {
     work_type: "TODOLIST",
     orgdiv: "01",
     location: "01",
-    rdofinyn: "",
+    rdofinyn: "N",
     frdt: new Date(),
     todt: new Date(),
   });
@@ -988,6 +992,17 @@ const CM_A1600: React.FC = () => {
                           changeData={filterRadioChange}
                         />
                       )}
+
+                      {bizComponentData !== null &&
+                        customOptionData === null && (
+                          <BizComponentRadioGroup
+                            name="rdoplandiv"
+                            value={schedulerFilter.rdoplandiv}
+                            bizComponentId="R_YN"
+                            bizComponentData={bizComponentData}
+                            changeData={filterRadioChange}
+                          />
+                        )}
                     </td>
                   </tr>
                 </tbody>
@@ -1046,6 +1061,16 @@ const CM_A1600: React.FC = () => {
                               changeData={filterRadioChange}
                             />
                           )}
+                          {bizComponentData !== null &&
+                            customOptionData === null && (
+                              <BizComponentRadioGroup
+                                name="rdofinyn"
+                                value={todoFilter.rdofinyn}
+                                bizComponentId="R_YN"
+                                bizComponentData={bizComponentData}
+                                changeData={filterRadioChange}
+                              />
+                            )}
                         </td>
                       </tr>
                     </tbody>
