@@ -40,6 +40,7 @@ import {
   itemlvl2State,
   itemlvl3State,
   locationState,
+  tokenState,
 } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
@@ -55,16 +56,21 @@ import {
   itemlvl2Query,
   itemlvl3Query,
   pageSize,
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
 //import {useAuth} from "../../hooks/auth";
 
+const DATA_ITEM_KEY = "datnum";
+
 const Main: React.FC = () => {
-  const DATA_ITEM_KEY = "datnum";
-  const SELECTED_FIELD = "selected";
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
+
+  const [token] = useRecoilState(tokenState);
+  const { userId, companyCode } = token;
+
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],
   });
@@ -108,18 +114,12 @@ const Main: React.FC = () => {
   const [noticePgNum, setNoticePgNum] = useState(1);
   const [workOrderPgNum, setWorkOrderPgNum] = useState(1);
 
-  const itemacntVal = useRecoilValue(itemacntState);
-  const itemlvl1Val = useRecoilValue(itemlvl1State);
-  const itemlvl2Val = useRecoilValue(itemlvl2State);
-  const itemlvl3Val = useRecoilValue(itemlvl3State);
-  const [locationVal, setLocationVal] = useRecoilState(locationState);
-
   const [noticeFilter, setNoticeFilter] = useState({
     pgSize: pageSize,
     work_type: "Notice",
     orgdiv: "01",
     location: "01",
-    user_id: "admin",
+    user_id: userId,
     frdt: "",
     todt: "",
     ref_date: new Date(),
@@ -131,7 +131,7 @@ const Main: React.FC = () => {
     work_type: "WorkOrderRequest",
     orgdiv: "01",
     location: "01",
-    user_id: "admin",
+    user_id: userId,
     frdt: "",
     todt: "",
     ref_date: new Date(),
@@ -140,6 +140,7 @@ const Main: React.FC = () => {
 
   const [schedulerFilter, setSchedulerFilter] = useState({
     work_type: "MyScheduler",
+    user_id: userId,
   });
   const noticeParameters: Iparameters = {
     procedureName: "web_sel_default_home",
@@ -181,7 +182,7 @@ const Main: React.FC = () => {
       "@p_work_type": "Approval",
       "@p_orgdiv": "01",
       "@p_location": "01",
-      "@p_user_id": "admin",
+      "@p_user_id": userId,
       "@p_frdt": "",
       "@p_todt": "",
       "@p_ref_date": "",
@@ -197,7 +198,7 @@ const Main: React.FC = () => {
       "@p_work_type": schedulerFilter.work_type,
       "@p_orgdiv": "01",
       "@p_location": "01",
-      "@p_user_id": "admin",
+      "@p_user_id": schedulerFilter.user_id,
       "@p_frdt": "",
       "@p_todt": "",
       "@p_ref_date": "",
@@ -216,13 +217,16 @@ const Main: React.FC = () => {
 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].rowCount;
 
-      setApprovalValueState((prev) => ({
-        ...prev,
-        app: rows[0].cnt01,
-        ref: rows[0].cnt02,
-        rtr: rows[0].cnt03,
-      }));
+      if (rowCount > 0) {
+        setApprovalValueState((prev) => ({
+          ...prev,
+          app: rows[0].cnt01,
+          ref: rows[0].cnt02,
+          rtr: rows[0].cnt03,
+        }));
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -291,9 +295,6 @@ const Main: React.FC = () => {
         end: new Date(row.endtime),
       }));
 
-      console.log("rows");
-      console.log(rows);
-
       setSchedulerDataResult(rows);
     }
   };
@@ -305,7 +306,6 @@ const Main: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log(schedulerFilter);
     fetchScheduler();
   }, [schedulerFilter]);
 
