@@ -115,7 +115,7 @@ const AppInner: React.FC = () => {
           <PanelBarNavContainer>
             <UserEffect />
             {/* 메인 홈 */}
-            <AuthRoute path="/" component={Main} exact />
+            <AuthRoute path="/Home" component={Main} exact />
             {/* 물류관리 */}
             <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
             {/* 영업관리 */}

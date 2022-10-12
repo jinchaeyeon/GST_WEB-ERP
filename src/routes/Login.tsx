@@ -9,7 +9,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { tokenState } from "../store/atoms";
+import { menusState, tokenState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useRecoilState } from "recoil";
 import { FormDropDownList, FormInput } from "../components/Editors";
@@ -27,7 +27,7 @@ const Login: React.FC = () => {
   const history = useHistory();
   const processApi = useApi();
 
-  const handleSubmit = (data: { [name: string]: any }) => {
+  const handleSubmit = (data: { [name: string]: FormData }) => {
     processLogin(data);
   };
 
@@ -44,6 +44,7 @@ const Login: React.FC = () => {
           para.companyCode === "2207C612" ? "login-old" : "login",
           para
         );
+
         const {
           token,
           userId,
@@ -69,9 +70,10 @@ const Login: React.FC = () => {
           internalIp,
         });
 
+        history.replace("/Home");
+
         //setApi({ api: response.serviceUrl });
         //setShowLoading(false);
-        history.replace("/");
       } catch (e: any) {
         console.log("login error", e);
         //setShowLoading(false);
@@ -94,19 +96,21 @@ const Login: React.FC = () => {
               name={"companyCode"}
               label={"업체코드"}
               component={FormInput}
+              value="2207A046"
             />
             <Field
               name={"userId"}
               label={"ID"}
               component={FormInput}
               validator={emailValidator}
+              value="admin"
             />
             <Field
               name={"password"}
               label={"PASSWORD"}
               type={"password"}
               component={FormInput}
-              validator={emailValidator}
+              value="dwq@"
             />
             <Button themeColor={"primary"}>LOGIN</Button>
           </FormElement>

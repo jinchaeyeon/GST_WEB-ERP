@@ -8,10 +8,17 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { isMenuOpendState, tokenState, userState } from "../store/atoms";
+import {
+  isMenuOpendState,
+  menusState,
+  tokenState,
+  userState,
+} from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import { clientWidth, gnvWidth } from "../components/CommonString";
 import UserEffect from "./UserEffect";
+import { useApi } from "../hooks/api";
+import { Tmenu } from "../store/types";
 
 type TWrapper = {
   isMenuOpend: boolean;
@@ -124,39 +131,107 @@ export const Modal = styled.div<TModal>`
   background-color: rgba(0, 0, 0, 0.4);
 `;
 
-const paths = [
-  {
-    path: "/",
-    index: ".0",
-    menuName: "home",
-    menuCategory: "GROUP",
-    parentMenuId: "",
-  },
-  { index: ".1" },
-  { path: "/MA_B7000W", index: ".1.0" },
-  { index: ".2" },
-  { path: "/PR_A1100W", index: ".2.0" },
-  { index: ".3" },
-  { path: "/SA_B2000W", index: ".3.0" },
-  { path: "/SA_B3000W", index: ".3.1" },
-  { index: ".4" },
-  { path: "/QC_A0120W", index: ".4.0" },
-  { index: ".5" },
-  { path: "/SY_A0120W", index: ".5.0" },
-  { path: "/SY_A0110W", index: ".5.1" },
-  { path: "/SY_A0010W", index: ".5.2" },
-  { path: "/SY_A0012W", index: ".5.3" },
-  { path: "/SY_A0013W", index: ".5.4" },
-  { path: "/SY_A0011W", index: ".5.5" },
-  { index: ".6" },
-  { path: "/CM_A1600W", index: ".6.0" },
-  { index: ".7" },
-  { path: "/EA_A2000W", index: ".7.0" },
-];
+// const paths = [
+//   {
+//     path: "/",
+//     index: ".0",
+//     menuName: "home",
+//     menuCategory: "GROUP",
+//     parentMenuId: "",
+//   },
+//   { index: ".1" },
+//   { path: "/MA_B7000W", index: ".1.0" },
+//   { index: ".2" },
+//   { path: "/PR_A1100W", index: ".2.0" },
+//   { index: ".3" },
+//   { path: "/SA_B2000W", index: ".3.0" },
+//   { path: "/SA_B3000W", index: ".3.1" },
+//   { index: ".4" },
+//   { path: "/QC_A0120W", index: ".4.0" },
+//   { index: ".5" },
+//   { path: "/SY_A0120W", index: ".5.0" },
+//   { path: "/SY_A0110W", index: ".5.1" },
+//   { path: "/SY_A0010W", index: ".5.2" },
+//   { path: "/SY_A0012W", index: ".5.3" },
+//   { path: "/SY_A0013W", index: ".5.4" },
+//   { path: "/SY_A0011W", index: ".5.5" },
+//   { index: ".6" },
+//   { path: "/CM_A1600W", index: ".6.0" },
+//   { index: ".7" },
+//   { path: "/EA_A2000W", index: ".7.0" },
+// ];
 
 const PanelBarNavContainer = (props: any) => {
+  const processApi = useApi();
   const [token, setToken] = useRecoilState(tokenState);
+  const [menus, setMenus] = useRecoilState(menusState);
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState); //상태
+
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (menus === null) getMenus();
+  }, [menus]);
+
+  type Tpath = {
+    path?: string;
+    menuName: string;
+    index: string;
+    menuId: string;
+    parentMenuId: string;
+  };
+
+  const getMenus = useCallback(async () => {
+    try {
+      let menuPara = {
+        para: "menus?userId=" + token.userId,
+      };
+      const menuResponse = await processApi<any>("menus", menuPara);
+      setMenus(menuResponse.allMenu);
+    } catch (e: any) {
+      console.log("menus error", e);
+    }
+  }, []);
+
+  console.log("menus");
+  console.log(menus);
+  let paths: Array<Tpath> = [];
+  if (menus !== null) {
+    menus
+      .filter(
+        (menu: any) =>
+          (menu.menuCategory === "GROUP" && menu.parentMenuId !== "") ||
+          menu.menuName === "Home"
+      )
+      .forEach((menu: any, idx: number) => {
+        paths.push({
+          path: "/" + menu.formId,
+          menuName: menu.menuName,
+          index: "." + idx,
+          menuId: menu.menuId,
+          parentMenuId: menu.parentMenuId,
+        });
+      });
+
+    paths.forEach((path: Tpath) => {
+      menus
+        .filter(
+          (menu: any) =>
+            menu.menuCategory === "WEB" && path.menuId === menu.parentMenuId
+        )
+        .forEach((menu: any, idx: number) => {
+          paths.push({
+            path: "/" + menu.formId,
+            menuName: menu.menuName,
+            index: path.index + "." + idx,
+            menuId: menu.menuId,
+            parentMenuId: menu.parentMenuId,
+          });
+        });
+    });
+
+    console.log("paths");
+    console.log(paths);
+  }
 
   const [userOptionsWindowVisible, setUserOptionsWindowVisible] =
     useState<boolean>(false);
@@ -171,15 +246,18 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   const setSelectedIndex = (pathName: any) => {
-    let currentPath: any = paths.find((item) => item.path === pathName);
+    let currentPath: any = paths.find((item: any) => item.path === pathName);
 
-    return currentPath.index;
+    console.log("currentPath");
+    console.log(currentPath);
+    return currentPath ? currentPath.index : 0;
   };
 
   const selected = setSelectedIndex(props.location.pathname);
 
   const logout = useCallback(() => {
     setToken(null as any);
+    setMenus(null as any);
     // 전체 페이지 reload (cache 삭제)
     (window as any).location = "/Login";
   }, []);
@@ -196,37 +274,76 @@ const PanelBarNavContainer = (props: any) => {
       <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
       <Gnv isMenuOpend={isMenuOpend}>
         <AppName>GST ERP</AppName>
-        <PanelBar selected={selected} expandMode={"single"} onSelect={onSelect}>
-          <PanelBarItem title={"Home"} href="/" route="/" />
-          <PanelBarItem title={"물류관리"}>
-            <PanelBarItem title={"재고조회"} route="/MA_B7000W" />
-          </PanelBarItem>
-          <PanelBarItem title={"생산관리"} icon={""}>
-            <PanelBarItem title={"계획생산"} route="/PR_A1100W" />
-          </PanelBarItem>
-          <PanelBarItem title={"영업관리"}>
-            <PanelBarItem title={"수주처리"} route="/SA_B2000W" />
-            <PanelBarItem title={"매출집계(업체)"} route="/SA_B3000W" />
-          </PanelBarItem>
-          <PanelBarItem title={"품질관리"}>
-            <PanelBarItem title={"불량내역조회"} route="/QC_A0120W" />
-          </PanelBarItem>
-          <PanelBarItem title={"시스템"}>
-            <PanelBarItem title={"로그인 현황"} route="/SY_A0120W" />
-            <PanelBarItem title={"사용자 이용 현황"} route="/SY_A0110W" />
-            <PanelBarItem title={"공통코드 정보"} route="/SY_A0010W" />
-            <PanelBarItem title={"사용자 정보"} route="/SY_A0012W" />
-            <PanelBarItem title={"사용자 권한"} route="/SY_A0013W" />
-            <PanelBarItem title={"사용자 그룹"} route="/SY_A0011W" />
-          </PanelBarItem>
+        {menus !== null && (
+          <PanelBar
+            selected={selected}
+            expandMode={"single"}
+            onSelect={onSelect}
+          >
+            {menus
+              .filter(
+                (menu: any) =>
+                  (menu.menuCategory === "GROUP" && menu.parentMenuId !== "") ||
+                  menu.menuName === "Home"
+              )
+              .map((menu: any, idx: number) => {
+                return menu.menuName === "Home" ? (
+                  <PanelBarItem
+                    key={idx}
+                    title={menu.menuName}
+                    route={"/" + menu.formId}
+                  />
+                ) : (
+                  <PanelBarItem key={idx} title={menu.menuName}>
+                    {menus
+                      .filter(
+                        (childMenu: any) =>
+                          childMenu.menuCategory === "WEB" &&
+                          childMenu.parentMenuId === menu.menuId
+                      )
+                      .map((childMenu: any, childIdx: number) => (
+                        <PanelBarItem
+                          key={childIdx}
+                          title={childMenu.menuName}
+                          route={"/" + childMenu.formId}
+                        />
+                      ))}
+                  </PanelBarItem>
+                );
+              })}
+            {/*
+            <PanelBarItem title={"Home"} route="/"></PanelBarItem>
+            <PanelBarItem title={"물류관리"}>
+              <PanelBarItem title={"재고조회"} route="/MA_B7000W" />
+            </PanelBarItem>
+            <PanelBarItem title={"생산관리"} icon={""}>
+              <PanelBarItem title={"계획생산"} route="/PR_A1100W" />
+            </PanelBarItem>
+            <PanelBarItem title={"영업관리"}>
+              <PanelBarItem title={"수주처리"} route="/SA_B2000W" />
+              <PanelBarItem title={"매출집계(업체)"} route="/SA_B3000W" />
+            </PanelBarItem>
+            <PanelBarItem title={"품질관리"}>
+              <PanelBarItem title={"불량내역조회"} route="/QC_A0120W" />
+            </PanelBarItem>
+            <PanelBarItem title={"시스템"}>
+              <PanelBarItem title={"로그인 현황"} route="/SY_A0120W" />
+              <PanelBarItem title={"사용자 이용 현황"} route="/SY_A0110W" />
+              <PanelBarItem title={"공통코드 정보"} route="/SY_A0010W" />
+              <PanelBarItem title={"사용자 정보"} route="/SY_A0012W" />
+              <PanelBarItem title={"사용자 권한"} route="/SY_A0013W" />
+              <PanelBarItem title={"사용자 그룹"} route="/SY_A0011W" />
+            </PanelBarItem>
 
-          <PanelBarItem title={"전사관리"}>
-            <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
-          </PanelBarItem>
-          <PanelBarItem title={"전자결재"}>
-            <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
-          </PanelBarItem>
-        </PanelBar>
+            <PanelBarItem title={"전사관리"}>
+              <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
+            </PanelBarItem>
+            <PanelBarItem title={"전자결재"}>
+              <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
+            </PanelBarItem> */}
+          </PanelBar>
+        )}
+
         <Button
           onClick={logout}
           icon={"logout"}

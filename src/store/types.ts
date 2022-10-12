@@ -89,3 +89,17 @@ export type TcontrolObj = {
   word_id: string;
   word_text: string;
 };
+
+export type Tmenu = {
+  level: number;
+  menuId: string;
+  menuName: string;
+  parentMenuId: string;
+  formId: string;
+  assemblyFile: string;
+  fileFolder: string;
+  parameterInfo: string;
+  releaseStatus: string;
+  menuCategory: string;
+  sort: number;
+};

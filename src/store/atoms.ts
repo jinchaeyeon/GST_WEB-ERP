@@ -1,5 +1,5 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
-import { User, TCommonCode, Token } from "./types";
+import { User, TCommonCode, Token, Tmenu } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
@@ -31,6 +31,12 @@ export const tokenState = atom<Token>({
 export const userState = atom<User>({
   key: "userState",
   default: null as any,
+});
+
+export const menusState = atom<Array<Tmenu>>({
+  key: "menusState",
+  default: null as any,
+  effects_UNSTABLE: [localStorageEffect("menus")],
 });
 
 export const totalDataNumber = atom({

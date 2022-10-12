@@ -1,5 +1,5 @@
 import { useRecoilState } from "recoil";
-import { tokenState } from "../store/atoms";
+import { menusState, tokenState } from "../store/atoms";
 import axios from "axios";
 import cachios from "cachios";
 
@@ -13,6 +13,7 @@ const domain: any = {
   "custom-option": { action: "get", url: "api/data/:formId/custom-option" },
   "design-info": { action: "get", url: "api/data/:formId/design-info" },
   "biz-components": { action: "get", url: "api/data/:id" },
+  menus: { action: "get", url: "api/data/:para" },
   login: { action: "post", url: "api/auth/login" },
   "login-old": { action: "post", url: "api/auth/login-old" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },
@@ -61,6 +62,7 @@ const generateUrl = (url: string, params: any) => {
 
 export const useApi = () => {
   const [token, setToken] = useRecoilState(tokenState);
+  const [menus, setMenus] = useRecoilState(menusState);
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
@@ -129,6 +131,7 @@ export const useApi = () => {
           const res = err.response;
           if (res && res.status == 401) {
             setToken(null as any);
+            setMenus(null as any);
 
             // 전체 페이지 reload
             //(window as any).location = "/"; //로그인 실패시 새로고침돼서 일단 주석 처리 해둠
