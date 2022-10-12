@@ -4,18 +4,12 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridItemChangeEvent,
   GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-
 import {
   Title,
   FilterBoxWrap,
@@ -29,14 +23,7 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Input,
-  RadioButton,
-  RadioButtonChangeEvent,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
-
+import { Input } from "@progress/kendo-react-inputs";
 import {
   Chart,
   ChartLegend,
@@ -44,24 +31,13 @@ import {
   ChartSeriesItem,
   ChartTitle,
 } from "@progress/kendo-react-charts";
-
 import "hammerjs";
-
-import { useRecoilState, useRecoilValue } from "recoil";
 import { useApi } from "../hooks/api";
 import ItemacntDDL from "../components/DropDownLists/ItemacntDDL";
-import {
-  itemacntState,
-  itemlvl1State,
-  itemlvl2State,
-  itemlvl3State,
-  locationState,
-} from "../store/atoms";
 import { Iparameters } from "../store/types";
 import Itemlvl1DDL from "../components/DropDownLists/Itemlvl1DDL";
 import Itemlvl2DDL from "../components/DropDownLists/Itemlvl2DDL";
 import Itemlvl3DDL from "../components/DropDownLists/Itemlvl3DDL";
-import LocationDDL from "../components/DropDownLists/LocationDDL";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
@@ -72,50 +48,19 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
-  itemgradeQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
   pageSize,
   proccdQuery,
   prodmacQuery,
   usersQuery,
-  useynRadioButtonData,
-  zeroynRadioButtonData,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { LabelProps } from "@progress/kendo-react-progressbars";
-//import {useAuth} from "../../hooks/auth";
-
-const dummyData: any = [
-  {
-    name: "itemacnt",
-    value: "1",
-  },
-  {
-    name: "useyn",
-    value: "%",
-  },
-];
 
 const QC_A0120: React.FC = () => {
-  const DATA_ITEM_KEY = "itemcd";
-  const DETAIL_DATA_ITEM_KEY = "lotnum";
-  const SELECTED_FIELD = "selected";
-  const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
-  const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
-  });
 
   const [detail1DataState, setDetail1DataState] = useState<State>({
-    sort: [],
-  });
-
-  const [detail2DataState, setDetail2DataState] = useState<State>({
     sort: [],
   });
 
@@ -125,29 +70,8 @@ const QC_A0120: React.FC = () => {
     process([], detail1DataState)
   );
 
-  const [detail2DataResult, setDetail2DataResult] = useState<DataResult>(
-    process([], detail2DataState)
-  );
-
-  const [selectedState, setSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [detailSelectedState, setDetailSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [filterData, setFilterData] = useState(dummyData);
-
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detail1PgNum, setDetail1PgNum] = useState(1);
-  const [detail2PgNum, setDetail2PgNum] = useState(1);
-
-  const itemacntVal = useRecoilValue(itemacntState);
-  const itemlvl1Val = useRecoilValue(itemlvl1State);
-  const itemlvl2Val = useRecoilValue(itemlvl2State);
-  const itemlvl3Val = useRecoilValue(itemlvl3State);
-  const [locationVal, setLocationVal] = useRecoilState(locationState);
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
@@ -205,26 +129,6 @@ const QC_A0120: React.FC = () => {
     dptcd: "",
   });
 
-  const [detailFilters2, setDetailFilters2] = useState({
-    pgSize: pageSize,
-    work_type: "DETAIL2",
-    orgdiv: "01",
-    itemcd: "",
-    itemnm: "",
-    insiz: "",
-    yyyymm: new Date(),
-    itemacnt: "",
-    zeroyn: "%",
-    lotnum: "",
-    load_place: "",
-    heatno: "",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
-    useyn: "Y",
-    service_id: "",
-  });
-
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_QC_A0120W_Q",
@@ -232,23 +136,6 @@ const QC_A0120: React.FC = () => {
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "CHART",
-      // "@p_orgdiv": filters.orgdiv,
-      // "@p_location": locationVal.sub_code ? locationVal.sub_code : "01",
-      // "@p_yyyymm": convertDateToStr(filters.yyyymm),
-      // "@p_itemcd": filters.itemcd,
-      // "@p_itemnm": filters.itemnm,
-      // "@p_insiz": filters.insiz,
-      // "@p_itemacnt": itemacntVal.sub_code,
-      // "@p_zeroyn": filters.zeroyn,
-      // "@p_lotnum": filters.lotnum,
-      // "@p_load_place": filters.load_place,
-      // "@p_heatno": filters.heatno,
-      // "@p_itemlvl1": itemlvl1Val.sub_code,
-      // "@p_itemlvl2": itemlvl2Val.sub_code,
-      // "@p_itemlvl3": itemlvl3Val.sub_code,
-      // "@p_useyn": filters.useyn,
-      // "@p_service_id": filters.service_id,
-
       "@p_orgdiv": filters.orgdiv,
       "@p_div": tabSelected,
       "@p_location": filters.location,
@@ -304,34 +191,6 @@ const QC_A0120: React.FC = () => {
     }
   };
 
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    // if (mainDataResult.total > 0) {
-    //   const firstRowData = mainDataResult.data[0];
-    //   setSelectedState({ [firstRowData.itemcd]: true });
-    //   // setDetailFilters1((prev) => ({
-    //   //   ...prev,
-    //   //   itemacnt: firstRowData.itemacnt,
-    //   //   itemcd: firstRowData.itemcd,
-    //   //   work_type: "DETAIL1",
-    //   // }));
-    // }
-  }, [mainDataResult]);
-
-  //디테일1 그리드 데이터 변경 되었을 때
-  // useEffect(() => {
-  //   if (detail1DataResult.total > 0) {
-  //     const firstRowData = detail1DataResult.data[0];
-  //     setDetailSelectedState({ [firstRowData.lotnum]: true });
-
-  //     setDetailFilters2((prev) => ({
-  //       ...prev,
-  //       lotnum: firstRowData.lotnum,
-  //       work_type: "DETAIL2",
-  //     }));
-  //   }
-  // }, [detail1DataResult]);
-
   const fetchDetailGrid1 = async () => {
     let data: any;
 
@@ -356,7 +215,6 @@ const QC_A0120: React.FC = () => {
   };
 
   useEffect(() => {
-    setLocationVal({ sub_code: "01", code_name: "본사" });
     fetchMainGrid();
   }, [mainPgNum]);
 
@@ -366,64 +224,14 @@ const QC_A0120: React.FC = () => {
 
   useEffect(() => {
     resetAllGrid();
-    //fetchDetailGrid1();
   }, [detailFilters1]);
 
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
     setDetail1PgNum(1);
-    setDetail2PgNum(1);
     setMainDataResult([]);
     setDetail1DataResult(process([], detail1DataState));
-    setDetail2DataResult(process([], detail2DataState));
-  };
-
-  const resetAllDetailGrid = () => {
-    setDetail1PgNum(1);
-    setDetail2PgNum(1);
-    setDetail1DataResult(process([], detail1DataState));
-    setDetail2DataResult(process([], detail2DataState));
-  };
-
-  //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
-  const onMainSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: DATA_ITEM_KEY,
-    });
-
-    setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-
-    setDetailFilters1((prev) => ({
-      ...prev,
-      itemacnt: selectedRowData.itemacnt,
-      itemcd: selectedRowData.itemcd,
-      work_type: "DETAIL1",
-    }));
-  };
-
-  //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
-  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: detailSelectedState,
-      dataItemKey: DETAIL_DATA_ITEM_KEY,
-    });
-    setDetailSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-
-    setDetailFilters2({
-      ...detailFilters2,
-      lotnum: selectedRowData.lotnum,
-      work_type: "DETAIL2",
-    });
   };
 
   //엑셀 내보내기
@@ -435,43 +243,20 @@ const QC_A0120: React.FC = () => {
   };
 
   //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
-      setMainPgNum((prev) => prev + 1);
-  };
   const onDetail1ScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, detail1PgNum, pageSize))
       setDetail1PgNum((prev) => prev + 1);
   };
-  const onDetail2ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail2PgNum, pageSize))
-      setDetail2PgNum((prev) => prev + 1);
-  };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
-  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
-    setMainDataState(event.dataState);
-  };
   const onDetail1DataStateChange = (event: GridDataStateChangeEvent) => {
     setDetail1DataState(event.dataState);
   };
-  const onDetail2DataStateChange = (event: GridDataStateChangeEvent) => {
-    setDetail2DataState(event.dataState);
-  };
-  //그리드 푸터
 
   const detail1TotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총 {detail1DataResult.total}건
-      </td>
-    );
-  };
-
-  const detail2TotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {detail2DataResult.total}건
       </td>
     );
   };
@@ -489,99 +274,11 @@ const QC_A0120: React.FC = () => {
     }));
   };
 
-  const onMainSortChange = (e: any) => {
-    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
   const onDetail1SortChange = (e: any) => {
     setDetail1DataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  const onDetail2SortChange = (e: any) => {
-    setDetail2DataState((prev) => ({ ...prev, sort: e.sort }));
-  };
 
-  //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
-  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
-
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
-
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
-
-  const [itemgradeListData, setItemgradeListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemgradeQuery, setItemgradeListData);
-
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  useEffect(() => {
-    // setMainDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     itemlvl1: itemlvl1ListData.find(
-    //       (item: any) => item.sub_code === row.itemlvl1
-    //     )?.code_name,
-    //   }));
-    //   console.log(rows);
-    //   return {
-    //     data: [...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [itemlvl1ListData]);
-
-  useEffect(() => {
-    // setMainDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     itemlvl2: itemlvl2ListData.find(
-    //       (item: any) => item.sub_code === row.itemlvl2
-    //     )?.code_name,
-    //   }));
-    //   return {
-    //     data: [...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [itemlvl2ListData]);
-
-  useEffect(() => {
-    // setMainDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     itemlvl3: itemlvl3ListData.find(
-    //       (item: any) => item.sub_code === row.itemlvl3
-    //     )?.code_name,
-    //   }));
-    //   return {
-    //     data: [...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [itemlvl3ListData]);
-
-  useEffect(() => {
-    // setMainDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     itemgrade: itemgradeListData.find(
-    //       (item: any) => item.sub_code === row.itemgrade
-    //     )?.code_name,
-    //   }));
-    //   return {
-    //     data: [...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [itemgradeListData]);
-
+  //공통코드 리스트 조회
   const [proccdListData, setProccdListData] = useState([
     commonCodeDefaultValue,
   ]);
@@ -610,8 +307,6 @@ const QC_A0120: React.FC = () => {
   });
 
   const onChartSeriesClick = (props: any) => {
-    console.log("props");
-    console.log(props);
     const { item, argument, gubun } = props.dataItem;
 
     setSelectedChartData({
@@ -825,8 +520,6 @@ const QC_A0120: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th></th>
-              <td></td>
             </tr>
             <tr>
               <th>불량유형</th>
@@ -848,9 +541,6 @@ const QC_A0120: React.FC = () => {
               <td>
                 <Itemlvl3DDL />
               </td>
-
-              <th></th>
-              <td></td>
             </tr>
           </tbody>
         </FilterBox>
