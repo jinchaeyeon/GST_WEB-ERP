@@ -1,117 +1,26 @@
 import { useEffect, useState, useCallback } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import {
-  Grid,
-  GridColumn,
-  GridEvent,
-  GridFooterCellProps,
-  GridCellProps,
-  GridToolbar,
-  GridItemChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridHeaderSelectionChangeEvent,
-  GridHeaderCellProps,
-} from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
   ButtonContainer,
-  ButtonInField,
-  ButtonInFieldWrap,
   FieldWrap,
-  GridContainer,
 } from "../../CommonStyled";
 import {
   Form,
   Field,
   FormElement,
-  FieldArray,
-  FieldArrayRenderProps,
   FormRenderProps,
 } from "@progress/kendo-react-form";
-import { Error } from "@progress/kendo-react-labels";
-import { clone } from "@progress/kendo-react-common";
-
-import {
-  NumberCell,
-  NameCell,
-  FormInput,
-  FormDropDownList,
-  FormDatePicker,
-  FormReadOnly,
-  ReadOnlyNumberCell,
-  CellComboBox,
-  ReadOnlyNameCell,
-  FormComboBox,
-  FormCheckBox,
-  FormNumericTextBox,
-  CellCheckBox,
-  EditableNameCellInNew,
-} from "../Editors";
+import { FormInput, FormReadOnly, FormCheckBox } from "../Editors";
 import { Iparameters } from "../../store/types";
-import {
-  validator,
-  arrayLengthValidator,
-  chkScrollHandler,
-  getItemQuery,
-  getQueryFromBizComponent,
-  UseBizComponent,
-  UseCommonQuery,
-  UseCustomOption,
-} from "../CommonFunction";
+import { validator } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
-import {
-  IAttachmentData,
-  ICustData,
-  IItemData,
-  IWindowPosition,
-} from "../../hooks/interfaces";
-import {
-  amtunitQuery,
-  commonCodeDefaultValue,
-  departmentsQuery,
-  doexdivQuery,
-  itemacntQuery,
-  locationQuery,
-  ordstsQuery,
-  ordtypeQuery,
-  pageSize,
-  qtyunitQuery,
-  taxdivQuery,
-  usersQuery,
-} from "../CommonString";
-
-import { CellRender, RowRender } from "../Renderers";
-import CheckBoxCell from "../Cells/CheckBoxCell";
+import { IWindowPosition } from "../../hooks/interfaces";
 import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
-const requiredField = ["col_sub_code", "col_code_name"];
-const numberField = [
-  "col_sort_seq",
-  "col_code_length",
-  "col_numref1",
-  "col_numref2",
-  "col_numref3",
-  "col_numref4",
-  "col_numref5",
-];
-const checkBoxField = ["col_system_yn", "col_use_yn1"];
-const readOnlyField = [
-  "col_insert_userid1",
-  "col_insert_pc1",
-  "col_insert_time1",
-  "col_update_userid1",
-  "col_update_pc1",
-  "col_update_time1",
-];
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = React.createContext<{
@@ -127,14 +36,6 @@ export const FormGridEditContext = React.createContext<{
   calculateSpecialAmt: () => void;
 }>({} as any);
 
-let deletedRows: object[] = [];
-
-const FORM_DATA_INDEX = "formDataIndex";
-const DATA_ITEM_KEY = "sub_code";
-
-const idGetter = getter(FORM_DATA_INDEX);
-const SELECTED_FIELD: string = "selected";
-
 type TKendoWindow = {
   getVisible(t: boolean): void;
   reloadData(workType: string): void;
@@ -145,579 +46,6 @@ type TKendoWindow = {
   para?: Iparameters; //{};
 };
 
-type TDetail = {
-  rowstatus_s: string;
-  sub_code: string;
-  code_name: string;
-  system_yn: string;
-  extra_field1: string;
-  extra_field2: string;
-  extra_field3: string;
-  extra_field4: string;
-  extra_field5: string;
-  extra_field6: string;
-  extra_field7: string;
-  extra_field8: string;
-  extra_field9: string;
-  extra_field10: string;
-  numref1: number;
-  numref2: number;
-  numref3: number;
-  numref4: number;
-  numref5: number;
-  sort_seq: number;
-};
-
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_BA061,L_BA015", setBizComponentData);
-
-  const field = props.field ?? "";
-  const bizComponentIdVal =
-    field === "itemacnt" ? "L_BA061" : field === "qtyunit" ? "L_BA015" : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
-  );
-
-  return <CellComboBox bizComponent={bizComponent} {...props} />;
-};
-
-// Create the Grid that will be used inside the Form
-const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey, value } =
-    fieldArrayRenderProps;
-  const [editIndex, setEditIndex] = React.useState<number | undefined>();
-  const editItemCloneRef = React.useRef();
-
-  const [detailPgNum, setDetailPgNum] = useState(1);
-
-  const [editedRowIdx, setEditedRowIdx] = useState(-1);
-  const [editedRowData, setEditedRowData] = useState({});
-  const pathname: string = window.location.pathname.replace("/", "");
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
-
-  // Add a new item to the Form FieldArray that will be shown in the Grid
-  const onAdd = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      fieldArrayRenderProps.onPush({
-        value: {
-          rowstatus: "N",
-          sort_seq: 0,
-          use_yn: "Y",
-          numref1: 0,
-          numref2: 0,
-          numref3: 0,
-          numref4: 0,
-          numref5: 0,
-        },
-      });
-
-      setEditIndex(0);
-    },
-    [fieldArrayRenderProps]
-  );
-
-  const onRemove = React.useCallback(() => {
-    let newData: any[] = [];
-
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
-    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      if (!selectedState[index]) {
-        newData.push(item);
-      } else {
-        deletedRows.push(item);
-      }
-    });
-
-    //전체 데이터 삭제
-    fieldArrayRenderProps.value.forEach(() => {
-      fieldArrayRenderProps.onRemove({
-        index: 0,
-      });
-    });
-
-    //newData 생성
-    newData.forEach((item: any) => {
-      fieldArrayRenderProps.onPush({
-        value: item,
-      });
-    });
-
-    //선택 상태 초기화
-    setSelectedState({});
-
-    //수정 상태 초기화
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Update an item from the Grid and update the index of the edited item
-  const onEdit = React.useCallback((dataItem: any, isNewItem: any) => {
-    if (!isNewItem) {
-      editItemCloneRef.current = clone(dataItem);
-    }
-
-    fieldArrayRenderProps.onReplace({
-      index: dataItem[FORM_DATA_INDEX],
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-      },
-    });
-
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
-  }, []);
-
-  const onCopy = React.useCallback(() => {
-    let newData: any[] = [];
-    let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
-
-    //복사할 데이터 newData에 push
-    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      if (selectedState[index]) {
-        newData.push(item);
-      }
-      if (ordseq < item.ordseq) ordseq = item.ordseq;
-    });
-
-    //newData 생성
-    newData.forEach((item: any) => {
-      ordseq++;
-
-      fieldArrayRenderProps.onPush({
-        value: { ...item, rowstatus: "N", ordseq: ordseq },
-      });
-    });
-
-    //선택 상태 초기화
-    setSelectedState({});
-
-    //수정 상태 초기화
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Cancel the editing of an item and return its initial value
-  const onCancel = React.useCallback(() => {
-    if (editItemCloneRef.current) {
-      fieldArrayRenderProps.onReplace({
-        index: editItemCloneRef.current[FORM_DATA_INDEX],
-        value: editItemCloneRef.current,
-      });
-    }
-
-    editItemCloneRef.current = undefined;
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Save the changes
-  const onSave = React.useCallback(() => {
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  const dataWithIndexes = fieldArrayRenderProps.value.map(
-    (item: any, index: any) => {
-      return { ...item, [FORM_DATA_INDEX]: index };
-    }
-  );
-
-  //스크롤 핸들러
-  const scrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
-      setDetailPgNum((prev) => prev + 1);
-  };
-
-  //드롭다운리스트 데이터 조회 (품목계정)
-  const [itemacntListData, setItemacntListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
-
-  const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
-    if (rowIdx === -1) {
-      //신규생성
-      fieldArrayRenderProps.onPush({
-        value: {
-          rowstatus: "N",
-          itemcd: data.itemcd,
-          itemnm: data.itemnm,
-          insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
-          qtyunit: commonCodeDefaultValue,
-          qty: 0,
-          specialunp: 0,
-          specialamt: 0,
-          unp: 0,
-          amt: 0,
-          wonamt: 0,
-          taxamt: 0,
-          totamt: 0,
-          outqty: 0,
-          sale_qty: 0,
-          finyn: "N",
-          bf_qty: 0,
-          ordseq: 0,
-          poregseq: 0,
-          totwgt: 0,
-          len: 0,
-          totlen: 0,
-          thickness: 0,
-          width: 0,
-          length: 0,
-          dlramt: 0,
-          chk: "N",
-        },
-      });
-
-      setEditIndex(0);
-    } else {
-      //기존 행 업데이트
-      const dataItem = rowData;
-      fieldArrayRenderProps.onReplace({
-        index: dataItem[FORM_DATA_INDEX],
-        value: {
-          ...dataItem,
-          rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-          itemcd: data.itemcd,
-          itemnm: data.itemnm,
-          insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
-          qtyunit: commonCodeDefaultValue,
-        },
-      });
-    }
-  };
-
-  const itemChange = (event: GridItemChangeEvent) => {
-    // const inEditID = event.dataItem.ProductID;
-    // const field = event.field || "";
-    // const newData = data.map((item) =>
-    //   item.ProductID === inEditID ? { ...item, [field]: event.value } : item
-    // );
-    // setData(newData);
-  };
-
-  const EDIT_FIELD = "inEdit";
-
-  const enterEdit = (dataItem: any, field: string | undefined) => {
-    fieldArrayRenderProps.onReplace({
-      index: dataItem[FORM_DATA_INDEX],
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-        [EDIT_FIELD]: field,
-      },
-    });
-
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
-  };
-
-  const exitEdit = (item: any) => {
-    fieldArrayRenderProps.value.forEach((item: any, index: any) => {
-      fieldArrayRenderProps.onReplace({
-        index: index,
-        value: {
-          ...item,
-          [EDIT_FIELD]: undefined,
-        },
-      });
-    });
-  };
-
-  const customCellRender = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const [selectedState, setSelectedState] = React.useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const onSelectionChange = React.useCallback(
-    (event: GridSelectionChangeEvent) => {
-      const newSelectedState = getSelectedState({
-        event,
-        selectedState: selectedState,
-        dataItemKey: FORM_DATA_INDEX,
-      });
-
-      setSelectedState(newSelectedState);
-    },
-    [selectedState]
-  );
-
-  const onHeaderSelectionChange = React.useCallback(
-    (event: GridHeaderSelectionChangeEvent) => {
-      const checkboxElement: any = event.syntheticEvent.target;
-      const checked = checkboxElement.checked;
-      const newSelectedState: {
-        [id: string]: boolean | number[];
-      } = {};
-
-      event.dataItems.forEach((item) => {
-        newSelectedState[idGetter(item)] = checked;
-      });
-
-      setSelectedState(newSelectedState);
-
-      //선택된 상태로 리랜더링
-      event.dataItems.forEach((item: any, index: number) => {
-        fieldArrayRenderProps.onReplace({
-          index: index,
-          value: {
-            ...item,
-          },
-        });
-      });
-    },
-    []
-  );
-
-  interface ProductNameHeaderProps extends GridHeaderCellProps {
-    children: any;
-  }
-
-  const RequiredHeader = (props: ProductNameHeaderProps) => {
-    return (
-      <span className="k-cell-inner">
-        <a className="k-link" onClick={props.onClick}>
-          <span style={{ color: "#ff6358" }}>{props.title}</span>
-          {props.children}
-        </a>
-      </span>
-    );
-  };
-
-  const getItemcd = (itemcd: string) => {
-    const index = editIndex ?? 0;
-    const dataItem = value[index];
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData(queryStr, index, dataItem, itemacntListData);
-  };
-  const processApi = useApi();
-
-  const fetchData = React.useCallback(
-    async (
-      queryStr: string,
-      index: number,
-      dataItem: any,
-      itemacntListData: any
-    ) => {
-      let data: any;
-
-      let query = {
-        query: "query?query=" + encodeURIComponent(queryStr),
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        setRowItem(rows[0], index, dataItem, itemacntListData);
-      }
-    },
-    []
-  );
-
-  const setRowItem = (
-    row: any,
-    index: number,
-    dataItem: any,
-    itemacntListData: any //useState의 itemacntListData 바로 사용시 다시 조회되어 조회 전 빈값을 참조하는 현상 발생해, 일단 인수로 넘겨줌. 나중에 수정 필요할듯함..
-  ) => {
-    fieldArrayRenderProps.onReplace({
-      index: index,
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-        inEdit: undefined,
-        itemcd: row.itemcd,
-        itemnm: row.itemnm,
-        insiz: row.insiz,
-        itemacnt: {
-          sub_code: row.itemacnt,
-          code_name: itemacntListData.find(
-            (item: any) => item.sub_code === row.itemacnt
-          )?.code_name,
-        },
-        qtyunit: commonCodeDefaultValue,
-      },
-    });
-  };
-
-  const calculateAmt = () => {
-    const index = editIndex ?? 0;
-    const dataItem = value[index];
-
-    console.log("dataItem.qty");
-    console.log(dataItem.qty);
-    console.log(dataItem.unp);
-
-    fieldArrayRenderProps.onReplace({
-      index: index,
-      value: {
-        ...dataItem,
-        //inEdit: undefined,
-        wonamt: dataItem.qty * dataItem.unp,
-        taxamt: (dataItem.qty * dataItem.unp) / 10,
-        totamt:
-          dataItem.qty * dataItem.unp + (dataItem.qty * dataItem.unp) / 10,
-      },
-    });
-  };
-  const calculateSpecialAmt = () => {};
-
-  return (
-    <GridContainer margin={{ top: "30px" }}>
-      <FormGridEditContext.Provider
-        value={{
-          onCancel,
-          onEdit,
-          onCopy,
-          onRemove,
-          onSave,
-          editIndex,
-          parentField: name,
-          getItemcd,
-          calculateAmt,
-          calculateSpecialAmt,
-        }}
-      >
-        {visited && validationMessage && <Error>{validationMessage}</Error>}
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
-            ...item,
-            parentField: name,
-            [SELECTED_FIELD]: selectedState[idGetter(item)],
-          }))}
-          total={dataWithIndexes.total}
-          dataItemKey={dataItemKey}
-          style={{ height: "400px" }}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          onItemChange={itemChange}
-          onScroll={scrollHandler}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            drag: false,
-            cell: false,
-            mode: "multiple",
-          }}
-          onSelectionChange={onSelectionChange}
-          onHeaderSelectionChange={onHeaderSelectionChange}
-        >
-          <GridToolbar>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onAdd}
-              icon="add"
-            >
-              추가
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onRemove}
-              icon="minus"
-            >
-              삭제
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onCopy}
-              icon="copy"
-            >
-              복사
-            </Button>
-          </GridToolbar>
-
-          <GridColumn
-            field={SELECTED_FIELD}
-            width="45px"
-            headerSelectionValue={
-              dataWithIndexes.findIndex(
-                (item: any) => !selectedState[idGetter(item)]
-              ) === -1
-            }
-          />
-          <GridColumn field="rowstatus" title=" " width="40px" />
-
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["gvwDetail"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    field={item.id
-                      .replace("col_", "")
-                      .replace("use_yn1", "use_yn")}
-                    title={item.caption}
-                    width={item.width}
-                    cell={
-                      numberField.includes(item.id)
-                        ? NumberCell
-                        : checkBoxField.includes(item.id)
-                        ? CellCheckBox
-                        : readOnlyField.includes(item.id)
-                        ? ReadOnlyNameCell
-                        : item.id === "col_sub_code"
-                        ? EditableNameCellInNew
-                        : NameCell
-                    }
-                    headerCell={
-                      requiredField.includes(item.id) ? RequiredHeader : ""
-                    }
-                    className={
-                      requiredField.includes(item.id) ? "required" : ""
-                    }
-                    // footerCell={
-                    //   item.sortOrder === 2 ? detailTotalFooterCell : ""
-                    // }
-                  ></GridColumn>
-                )
-            )}
-        </Grid>
-      </FormGridEditContext.Provider>
-    </GridContainer>
-  );
-};
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -729,55 +57,6 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
-
-  // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent("L_BA000", setBizComponentData);
-
-  // 그룹 카테고리 리스트
-  const [groupCategoryListData, setGroupCategoryListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-
-  // 그룹 카테고리 조회 쿼리
-  const groupCategoryQuery =
-    bizComponentData.length > 0
-      ? getQueryFromBizComponent(
-          bizComponentData.find(
-            (item: any) => item.bizComponentId === "L_BA000"
-          )
-        )
-      : "";
-
-  // 그룹 카테고리 조회
-  useEffect(() => {
-    if (bizComponentData.length > 0) {
-      fetchQueryData(groupCategoryQuery, setGroupCategoryListData);
-    }
-  }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      let query = {
-        query: "query?query=" + encodeURIComponent(queryStr),
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
-
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -821,12 +100,6 @@ const KendoWindow = ({
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], dataState)
   );
-
-  const [detailSelectedState, setDetailSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [custType, setCustType] = useState("");
 
   useEffect(() => {
     if (workType === "U" || isCopy === true) {
@@ -890,16 +163,6 @@ const KendoWindow = ({
     resetForm();
   }, [detailDataResult]);
 
-  //itemacnt, qtyunit list가 조회된 후 상세그리드 조회
-  // useEffect(() => {
-  //   if (workType === "U" || isCopy === true) {
-  //     if (itemacntListData.length > 0 && qtyunitListData.length > 0) {
-  //       resetAllGrid();
-  //       fetchGrid();
-  //     }
-  //   }
-  // }, [itemacntListData, qtyunitListData]);
-
   //상세그리드 조회
   const fetchGrid = async () => {
     let data: any;
@@ -918,9 +181,6 @@ const KendoWindow = ({
           rowstatus: workType === "N" ? "N" : "",
         };
       });
-
-      console.log("rows");
-      console.log(rows);
 
       setDetailDataResult(() => {
         return {
@@ -1000,28 +260,6 @@ const KendoWindow = ({
     paraData.work_type = ""; //초기화
   };
 
-  const fetchGridSaved = async (paraSaved: any) => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", paraSaved);
-    } catch (error) {
-      data = null;
-    }
-
-    console.log("data");
-    console.log(data);
-
-    if (data.isSuccess === true) {
-      //
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-
-      alert("[" + data.statusCode + "] " + data.resultMessage);
-    }
-  };
-
   const handleSubmit = (dataItem: { [name: string]: any }) => {
     //alert(JSON.stringify(dataItem));
 
@@ -1041,62 +279,12 @@ const KendoWindow = ({
     if (paraData.work_type !== "") fetchMainSaved();
   }, [paraData]);
 
-  const onCustWndClick = () => {
-    setCustType("CUST");
-    setCustWindowVisible(true);
-  };
-  const onRcvcustWndClick = () => {
-    setCustType("RCVCUST");
-    setCustWindowVisible(true);
-  };
-  const onAttachmentsWndClick = () => {
-    setAttachmentsWindowVisible(true);
-  };
-
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-
-  const getCustData = (data: ICustData) => {
-    if (custType === "CUST") {
-      setInitialVal((prev) => {
-        return {
-          ...prev,
-          custcd: data.custcd,
-          custnm: data.custnm,
-        };
-      });
-    } else {
-      setInitialVal((prev) => {
-        return {
-          ...prev,
-          rcvcustnm: data.custnm,
-          rcvcustcd: data.custcd,
-        };
-      });
-    }
-  };
-
-  const getAttachmentsData = (data: IAttachmentData) => {
-    setInitialVal((prev) => {
-      return {
-        ...prev,
-        attdatnum: data.attdatnum,
-        files:
-          data.original_name +
-          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-      };
-    });
-  };
-
   useEffect(() => {
     if (workType === "U" || isCopy === true) {
-      if (bizComponentData.length) {
-        resetAllGrid();
-        fetchGrid();
-      }
+      resetAllGrid();
+      fetchGrid();
     }
-  }, [bizComponentData]);
+  }, []);
 
   return (
     <Window
@@ -1160,13 +348,6 @@ const KendoWindow = ({
                 />
               </FieldWrap>
             </fieldset>
-            {/* <FieldArray
-              name="orderDetails"
-              dataItemKey={DATA_ITEM_KEY}
-              component={FormGrid}
-              validator={arrayLengthValidator}
-            /> */}
-
             <BottomContainer>
               <ButtonContainer>
                 <Button type={"submit"} themeColor={"primary"} icon="save">

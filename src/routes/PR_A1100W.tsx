@@ -40,8 +40,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { locationState } from "../store/atoms";
 import { Iparameters } from "../store/types";
-import OrdstsDDL from "../components/DropDownLists/OrdstsDDL";
-import UsersDDL from "../components/DropDownLists/UsersDDL";
 import {
   checkIsDDLValid,
   chkScrollHandler,
