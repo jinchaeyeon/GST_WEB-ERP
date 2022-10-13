@@ -11,6 +11,7 @@ const domain: any = {
   "platform-query": { action: "get", url: "api/sql/:query" },
   "platform-procedure": { action: "post", url: "api/sql/procedure" },
   "custom-option": { action: "get", url: "api/data/:formId/custom-option" },
+  messages: { action: "get", url: "api/data/:formId/messages" },
   "design-info": { action: "get", url: "api/data/:formId/design-info" },
   "biz-components": { action: "get", url: "api/data/:id" },
   menus: { action: "get", url: "api/data/:para" },

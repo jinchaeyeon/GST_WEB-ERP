@@ -158,6 +158,39 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
   }, []);
 };
 
+//messages API 데이터에서 ID가 매칭되는 메시지를 찾아서 반환
+export const findMessage = (messagesData: any, id: string) => {
+  return messagesData.find((item: any) => item.messageId === id).message;
+};
+
+//현재 경로를 받아서 메시지 조회 후 결과값을 반환
+export const UseMessages = (pathname: string, setListData: any) => {
+  const processApi = useApi();
+
+  React.useEffect(() => {
+    fetchMessagesData();
+  }, []);
+
+  //커스텀 옵션 조회
+  const fetchMessagesData = React.useCallback(async () => {
+    let data: any;
+    try {
+      data = await processApi<any>("messages", {
+        formId: pathname.replace("/", ""),
+      });
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      setListData(data);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  }, []);
+};
+
 //현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
 export const UseCustomOption = (pathname: string, setListData: any) => {
   //const [bizComponentData, setBizComponentData] = React.useState(null);
