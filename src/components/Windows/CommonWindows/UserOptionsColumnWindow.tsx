@@ -60,8 +60,6 @@ const DATA_ITEM_KEY = "column_id ";
 const idGetter = getter(FORM_DATA_INDEX);
 const SELECTED_FIELD: string = "selected";
 
-const pathname: string = window.location.pathname.replace("/", "");
-
 type TKendoWindow = {
   getVisible(t: boolean): void;
   workType: string;
@@ -421,6 +419,7 @@ const KendoWindow = ({
   reloadData,
   parentComponent,
 }: TKendoWindow) => {
+  const pathname: string = window.location.pathname.replace("/", "");
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
