@@ -62,6 +62,8 @@ import {
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
+  UseMessages,
+  findMessage,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -965,6 +967,10 @@ const KendoWindow = ({
 
   const pathname: string = window.location.pathname.replace("/", "");
 
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
+
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -1036,7 +1042,7 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
+      alert(findMessage(messagesData, "SY_A0010W_002"));
       if (workType === "U") {
         resetAllGrid();
 
@@ -1090,18 +1096,18 @@ const KendoWindow = ({
       dataItem.orderDetails.forEach((item: any, idx: number) => {
         dataItem.orderDetails.forEach((chkItem: any, chkIdx: number) => {
           if (item.sub_code === chkItem.sub_code && idx !== chkIdx) {
-            throw "세부코드가 중복되었습니다.";
+            throw findMessage(messagesData, "SY_A0010W_003");
           }
         });
 
         if (!item.sub_code) {
-          throw "세부코드를 입력하세요.";
+          throw findMessage(messagesData, "SY_A0010W_004");
         }
         if (!item.code_name) {
-          throw "세부코드명을 입력하세요.";
+          throw findMessage(messagesData, "SY_A0010W_005");
         }
         if (isNaN(item.sort_seq)) {
-          throw "수주량을 1 이상 입력하세요.";
+          throw findMessage(messagesData, "SY_A0010W_006");
         }
       });
     } catch (e) {

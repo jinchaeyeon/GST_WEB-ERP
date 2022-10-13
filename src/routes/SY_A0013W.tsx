@@ -45,11 +45,13 @@ import {
   chkScrollHandler,
   convertDateToStr,
   dateformat,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
+  UseMessages,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -58,10 +60,6 @@ import {
   EDIT_FIELD,
   gnvWidth,
   gridMargin,
-  itemgradeQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
   pageSize,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -156,6 +154,10 @@ const SY_A0120: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -991,7 +993,7 @@ const SY_A0120: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
+      alert(findMessage(messagesData, "SY_A0013W_001"));
 
       resetAllGrid();
       fetchMainGrid();

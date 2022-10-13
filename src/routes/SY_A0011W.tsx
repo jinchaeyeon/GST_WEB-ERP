@@ -45,11 +45,13 @@ import {
   chkScrollHandler,
   convertDateToStr,
   dateformat,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
+  UseMessages,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -58,18 +60,11 @@ import {
   EDIT_FIELD,
   gnvWidth,
   gridMargin,
-  itemgradeQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
   pageSize,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import EncryptedCell from "../components/Cells/EncryptedCell";
@@ -128,6 +123,10 @@ const SY_A0120: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -633,71 +632,6 @@ const SY_A0120: React.FC = () => {
     }
   }, [filters]);
 
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl1: itemlvl1ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl1
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl1ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl2: itemlvl2ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl2
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl2ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl3: itemlvl3ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl3
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl3ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemgrade: itemgradeListData.find(
-  //         (item: any) => item.sub_code === row.itemgrade
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemgradeListData]);
-
   const onAddClick = () => {
     setWorkType("N");
     setDetailWindowVisible(true);
@@ -753,7 +687,7 @@ const SY_A0120: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert("삭제가 완료되었습니다.");
+      alert(findMessage(messagesData, "SY_A0011W_001"));
 
       resetAllGrid();
       fetchMainGrid();
@@ -889,7 +823,7 @@ const SY_A0120: React.FC = () => {
         if (result instanceof Error) throw result;
       });
 
-      alert("저장이 완료되었습니다.");
+      alert(findMessage(messagesData, "SY_A0011W_002"));
 
       resetAllGrid();
       fetchMainGrid();

@@ -48,10 +48,12 @@ import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
+  findMessage,
   getQueryFromBizComponent,
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
+  UseMessages,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import DateCell from "../components/Cells/DateCell";
@@ -110,6 +112,10 @@ const Page: React.FC = () => {
   });
 
   const pathname: string = window.location.pathname.replace("/", "");
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -519,7 +525,6 @@ const Page: React.FC = () => {
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
-    //alert(detailDataResult.total);
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총 {detailDataResult.total}건
@@ -599,7 +604,7 @@ const Page: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert("삭제가 완료되었습니다.");
+      alert(findMessage(messagesData, "SY_A0010W_001"));
 
       resetAllGrid();
       fetchMainGrid();
