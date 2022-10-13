@@ -11,6 +11,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   isMenuOpendState,
   menusState,
+  sessionItemState,
   tokenState,
   userState,
 } from "../store/atoms";
@@ -18,7 +19,7 @@ import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import { clientWidth, gnvWidth } from "../components/CommonString";
 import UserEffect from "./UserEffect";
 import { useApi } from "../hooks/api";
-import { Tmenu } from "../store/types";
+import { Iparameters, Tmenu, Tpath } from "../store/types";
 
 type TWrapper = {
   isMenuOpend: boolean;
@@ -165,21 +166,17 @@ const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const [token, setToken] = useRecoilState(tokenState);
   const [menus, setMenus] = useRecoilState(menusState);
-  const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState); //상태
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
   const companyCode = token ? token.companyCode : "";
 
-  //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (menus === null) fetchMenus();
   }, [menus]);
 
-  type Tpath = {
-    path?: string;
-    menuName: string;
-    index: string;
-    menuId: string;
-    parentMenuId: string;
-  };
+  useEffect(() => {
+    if (sessionItem === null) fetchSessionItem();
+  }, [sessionItem]);
 
   const fetchMenus = useCallback(async () => {
     try {
@@ -188,6 +185,36 @@ const PanelBarNavContainer = (props: any) => {
       };
       const menuResponse = await processApi<any>("menus", menuPara);
       setMenus(menuResponse.usableMenu);
+    } catch (e: any) {
+      console.log("menus error", e);
+    }
+  }, []);
+
+  const fetchSessionItem = useCallback(async () => {
+    let data;
+    try {
+      const para: Iparameters = {
+        procedureName: "sys_biz_configuration",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_user_id": token.userId,
+        },
+      };
+
+      data = await processApi<any>("procedure", para);
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setSessionItem(
+          rows
+            .filter((item: any) => item.class === "Session")
+            .map((item: any) => ({
+              code: item.code,
+              value: item.value,
+            }))
+        );
+      }
     } catch (e: any) {
       console.log("menus error", e);
     }

@@ -38,7 +38,6 @@ import {
 } from "@progress/kendo-react-inputs";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { locationState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
   checkIsDDLValid,
@@ -84,6 +83,7 @@ import {
 import { CellRender, RowRender } from "../components/GroupRenderers";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import { tokenState } from "../store/atoms";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "ordkey";
@@ -105,9 +105,6 @@ const numberField = [
   "bnatur_insiz",
   "procqty",
   "qty",
-  "qty1",
-  "qty2",
-  "qty3",
   "planqty",
   "baseamt",
   "wonchgrat",
@@ -161,6 +158,9 @@ const PR_A1100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const planIdGetter = getter(PLAN_DATA_ITEM_KEY);
   const materialIdGetter = getter(MATERIAL_DATA_ITEM_KEY);
+
+  const [token] = useRecoilState(tokenState);
+  const { userId, companyCode } = token;
 
   const pathname: string = window.location.pathname.replace("/", "");
 
@@ -272,8 +272,6 @@ const PR_A1100W: React.FC = () => {
   const [workType, setWorkType] = useState("");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [isCopy, setIsCopy] = useState(false);
-
-  const [locationVal, setLocationVal] = useRecoilState(locationState);
   const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -580,7 +578,7 @@ const PR_A1100W: React.FC = () => {
     outprocyn_s: "",
     lotnum_s: "",
     ordyn_s: "",
-    userid: "admin",
+    userid: userId,
     pc: "",
     purtype: "",
     urgencyyn: "",
@@ -738,12 +736,10 @@ const PR_A1100W: React.FC = () => {
   };
 
   useEffect(() => {
-    setLocationVal({ sub_code: "01", code_name: "본사" });
     fetchMainGrid();
   }, [mainPgNum]);
 
   useEffect(() => {
-    setLocationVal({ sub_code: "01", code_name: "본사" });
     fetchPlanGrid();
   }, [planPgNum]);
 

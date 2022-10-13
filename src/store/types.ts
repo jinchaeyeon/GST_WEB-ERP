@@ -60,6 +60,11 @@ export type TCommonCode = {
   code_name: string;
 };
 
+export type TSessionItem = {
+  code: string;
+  value: string;
+};
+
 export type User = {
   nick: string;
   route: string;
@@ -102,4 +107,12 @@ export type Tmenu = {
   releaseStatus: string;
   menuCategory: string;
   sort: number;
+};
+
+export type Tpath = {
+  path?: string;
+  menuName: string;
+  index: string;
+  menuId: string;
+  parentMenuId: string;
 };

@@ -1,5 +1,5 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
-import { User, TCommonCode, Token, Tmenu } from "./types";
+import { User, TCommonCode, Token, Tmenu, TSessionItem } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
@@ -39,59 +39,15 @@ export const menusState = atom<Array<Tmenu>>({
   effects_UNSTABLE: [localStorageEffect("menus")],
 });
 
+export const sessionItemState = atom<Array<TSessionItem>>({
+  key: "sessionItemState",
+  default: null as any,
+  effects_UNSTABLE: [localStorageEffect("sessionItem")],
+});
+
 export const totalDataNumber = atom({
   key: "totalDataNumber",
   default: 0,
-});
-
-export const itemacntState = atom<TCommonCode>({
-  key: "itemacntState",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const itemlvl1State = atom<TCommonCode>({
-  key: "itemlvl1State",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const itemlvl2State = atom<TCommonCode>({
-  key: "itemlvl2State",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const itemlvl3State = atom<TCommonCode>({
-  key: "itemlvl3State",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const locationState = atom<TCommonCode>({
-  key: "locationState",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const ordstsState = atom<TCommonCode>({
-  key: "ordstsState",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const ordtypeState = atom<TCommonCode>({
-  key: "ordtypeState",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const departmentsState = atom<TCommonCode>({
-  key: "departmentsState",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const usersState = atom<TCommonCode>({
-  key: "usersState",
-  default: { sub_code: "", code_name: "전체" },
-});
-
-export const doexdivState = atom<TCommonCode>({
-  key: "doexdivState",
-  default: { sub_code: "", code_name: "전체" },
 });
 
 export const deletedRowsState = atom<object[]>({

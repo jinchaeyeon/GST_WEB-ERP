@@ -34,14 +34,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useApi } from "../hooks/api";
-import {
-  itemacntState,
-  itemlvl1State,
-  itemlvl2State,
-  itemlvl3State,
-  locationState,
-  tokenState,
-} from "../store/atoms";
+import { tokenState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,

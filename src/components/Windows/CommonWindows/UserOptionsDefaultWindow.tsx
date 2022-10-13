@@ -52,7 +52,7 @@ export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =
     parentField: string;
   }>({} as any);
 
-const deletedRows: object[] = [];
+let deletedRows: object[] = [];
 
 const FORM_DATA_INDEX = "formDataIndex";
 const DATA_ITEM_KEY = "default_id ";
@@ -364,6 +364,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             cell={NameCell}
           />
           <GridColumn
+            field="session_item"
+            title="세션 아이템"
+            width="170px"
+            cell={NameCell}
+          />
+          <GridColumn
             field="add_year"
             title="연 추가"
             width="90px"
@@ -621,6 +627,8 @@ const KendoWindow = ({
         getVisible(false);
         reloadData();
       }
+
+      deletedRows = []; //초기화
     } else {
       console.log("[오류 발생]");
       console.log(data);
