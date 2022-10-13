@@ -67,11 +67,11 @@ export const FilterBox = styled.table`
     position: relative;
     vertical-align: middle;
   }
-  tr td.item-box {
+  tr td.expanded {
     min-width: 300px;
   }
-  tr td.item-box > input,
-  tr td.item-box > .k-input {
+  tr td.expanded > input,
+  tr td.expanded > .k-input {
     width: 48%;
   }
   .k-radio-list.k-list-horizontal {

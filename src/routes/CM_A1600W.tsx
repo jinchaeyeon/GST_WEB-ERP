@@ -1044,7 +1044,7 @@ const CM_A1600: React.FC = () => {
                     <tbody>
                       <tr>
                         <th>일자</th>
-                        <td colSpan={3} className="item-box">
+                        <td colSpan={3} className="expanded">
                           <DatePicker
                             name="frdt"
                             value={todoFilter.frdt}

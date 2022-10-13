@@ -1113,7 +1113,7 @@ const EA_A2000: React.FC = () => {
                     ).wordText
                   : "작성일자"}
               </th>
-              <td colSpan={3} className="item-box">
+              <td colSpan={3} className="expanded">
                 <DatePicker
                   name="ymdStartDt"
                   value={filters.ymdStartDt}
@@ -1199,7 +1199,7 @@ const EA_A2000: React.FC = () => {
                     ).wordText
                   : "표시형식"}
               </th>
-              <td colSpan={3} className="item-box">
+              <td colSpan={3} className="expanded">
                 {customOptionData !== null && (
                   <CommonRadioGroup
                     name="radWorkType"

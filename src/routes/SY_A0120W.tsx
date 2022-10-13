@@ -345,7 +345,7 @@ const SY_A0120: React.FC = () => {
           <tbody>
             <tr>
               <th>기간</th>
-              <td colSpan={3} className="item-box">
+              <td colSpan={3} className="expanded">
                 <DatePicker
                   name="frdt"
                   defaultValue={filters.frdt}

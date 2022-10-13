@@ -54,12 +54,12 @@
   padding: 5px;
 }
 
-#filterBox tr td.item-box input {
+#filterBox tr td.expanded input {
   width: 48%;
 }
 
 /* 품목코드+품목명 */
-#filterBox tr td.item-box {
+#filterBox tr td.expanded {
   min-width: 300px;
 }
 

@@ -360,7 +360,7 @@ const SY_A0110: React.FC = () => {
           <tbody>
             <tr>
               <th>기간</th>
-              <td className="item-box">
+              <td className="expanded">
                 <DatePicker
                   name="frdt"
                   value={filters.frdt}

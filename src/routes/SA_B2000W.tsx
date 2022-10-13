@@ -828,7 +828,7 @@ const SA_B2000: React.FC = () => {
           <tbody>
             <tr>
               <th>납기일자</th>
-              <td colSpan={3} className="item-box">
+              <td colSpan={3} className="expanded">
                 <DatePicker
                   name="ymdFrdt"
                   value={filters.ymdFrdt}

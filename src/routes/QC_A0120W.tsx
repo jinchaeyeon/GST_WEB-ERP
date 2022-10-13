@@ -555,7 +555,7 @@ const QC_A0120: React.FC = () => {
           <tbody>
             <tr>
               <th>불량일자</th>
-              <td colSpan={3} className="item-box">
+              <td colSpan={3} className="expanded">
                 <DatePicker
                   name="ymdFrdt"
                   value={filters.ymdFrdt}

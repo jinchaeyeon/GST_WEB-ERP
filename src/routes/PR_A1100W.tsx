@@ -12,14 +12,12 @@ import {
   GridCellProps,
   GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import calculateSize from "calculate-size";
-
 import {
   Title,
   FilterBoxWrap,
@@ -35,22 +33,12 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import {
   Input,
-  RadioButton,
-  RadioButtonChangeEvent,
   RadioGroup,
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
-
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import {
-  ordstsState,
-  ordtypeState,
-  departmentsState,
-  usersState,
-  doexdivState,
-  locationState,
-} from "../store/atoms";
+import { locationState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import OrdstsDDL from "../components/DropDownLists/OrdstsDDL";
 import UsersDDL from "../components/DropDownLists/UsersDDL";
@@ -136,14 +124,13 @@ const numberField = [
 ];
 const dateField = ["finexpdt", "plandt", "orddt", "dlvdt", "outdt", "indt"];
 const editablePlanListField = [
-  "col_finexpdt1",
-  "col_plandt1",
-  "col_plandt2",
-  "col_orddt",
-  "col_dlvdt",
-  "col_plandt",
-  "col_outdt",
-  "col_indt",
+  "finexpdt",
+  "plandt",
+  "orddt",
+  "dlvdt",
+  "plandt",
+  "outdt",
+  "indt",
 ];
 const lookupField = ["outprocyn", "proccd"];
 
@@ -1648,21 +1635,6 @@ const PR_A1100W: React.FC = () => {
   UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
   UseCommonQuery(outgbQuery, setOutgbListData);
 
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  useEffect(() => {
-    // setMainDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     ordsts: ordstsListData.find((item: any) => item.sub_code === row.ordsts)
-    //?.code_name,
-    //   }));
-    //   return {
-    //     data: [...prev.data, ...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [ordstsListData]);
-
   const onExpandChange = (event: any) => {
     const isExpanded =
       event.dataItem.expanded === undefined
@@ -1898,7 +1870,7 @@ const PR_A1100W: React.FC = () => {
           <tbody>
             <tr>
               <th>수주일자</th>
-              <td colSpan={3} className="item-box">
+              <td colSpan={3} className="expanded">
                 <DatePicker
                   name="frdt"
                   defaultValue={filters.frdt}
