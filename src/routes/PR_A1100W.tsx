@@ -59,9 +59,11 @@ import {
   chkScrollHandler,
   convertDateToStr,
   dateformat,
+  findMessage,
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
+  UseMessages,
 } from "../components/CommonFunction";
 import PlanWindow from "../components/Windows/PR_A1100W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -175,6 +177,10 @@ const PR_A1100W: React.FC = () => {
   const materialIdGetter = getter(MATERIAL_DATA_ITEM_KEY);
 
   const pathname: string = window.location.pathname.replace("/", "");
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -667,8 +673,6 @@ const PR_A1100W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      console.log("rows");
-      console.log(rows);
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
@@ -1148,7 +1152,7 @@ const PR_A1100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert("삭제가 완료되었습니다.");
+      alert(findMessage(messagesData, "PR_A1100W_001"));
 
       resetAllGrid();
       fetchPlanGrid();
@@ -1466,7 +1470,7 @@ const PR_A1100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
+      alert(findMessage(messagesData, "PR_A1100W_002"));
 
       resetAllGrid();
       fetchPlanGrid();

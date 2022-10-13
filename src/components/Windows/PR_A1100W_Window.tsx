@@ -65,6 +65,8 @@ import {
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
+  findMessage,
+  UseMessages,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -1263,6 +1265,10 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const pathname: string = window.location.pathname.replace("/", "");
 
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -1826,7 +1832,7 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
+      alert(findMessage(messagesData, "PR_A1100W_002"));
       if (workType === "U") {
         resetAllGrid();
 
@@ -1853,7 +1859,7 @@ const KendoWindow = ({
     //검증
     try {
       if (dataItem.planqty < 1) {
-        throw "계획수량을 입력하세요.";
+        throw findMessage(messagesData, "PR_A1100W_006");
       }
       dataItem.processList.forEach((item: any, idx: number) => {
         dataItem.processList.forEach((chkItem: any, chkIdx: number) => {
@@ -1862,16 +1868,16 @@ const KendoWindow = ({
               item.procseq === chkItem.procseq) &&
             idx !== chkIdx
           ) {
-            throw "공정과 공정순서를 확인하세요.";
+            throw findMessage(messagesData, "PR_A1100W_003");
           }
         });
 
         if (!checkIsDDLValid(item.proccd)) {
-          throw "공정을 입력하세요.";
+          throw findMessage(messagesData, "PR_A1100W_004");
         }
 
         if (item.procseq < 0) {
-          throw "공정순서를 입력하세요.";
+          throw findMessage(messagesData, "PR_A1100W_005");
         }
       });
     } catch (e) {

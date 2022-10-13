@@ -47,6 +47,8 @@ import {
   UseBizComponent,
   UseCustomOption,
   setDefaultDate,
+  UseMessages,
+  findMessage,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -75,6 +77,10 @@ const CM_A1600: React.FC = () => {
   const processApi = useApi();
   const [token] = useRecoilState(tokenState);
   const { userId, companyCode } = token;
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -323,7 +329,7 @@ const CM_A1600: React.FC = () => {
     deleted,
   }: SchedulerDataChangeEvent) => {
     if (schedulerFilter.person !== userId) {
-      alert("업무일지는 작성자 외 변경이 불가능합니다.");
+      alert(findMessage(messagesData, "CM_A1600W_001"));
       return false;
     }
     type TdataArr = {
@@ -522,7 +528,7 @@ const CM_A1600: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
+      alert(findMessage(messagesData, "CM_A1600W_002"));
       fetchScheduler();
     } else {
       console.log("[오류 발생]");
@@ -695,11 +701,11 @@ const CM_A1600: React.FC = () => {
     try {
       dataItem.forEach((item: any) => {
         if (!item.strtime) {
-          throw new Error("일자를 입력하세요.");
+          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
         }
 
         if (!item.contents) {
-          throw new Error("내용을 입력하세요.");
+          throw new Error(findMessage(messagesData, "CM_A1600W_004"));
         }
       });
     } catch (e) {
@@ -908,7 +914,7 @@ const CM_A1600: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
+      alert(findMessage(messagesData, "CM_A1600W_002"));
 
       setTodoPgNum(1);
       setTodoDataResult(process([], todoDataState));

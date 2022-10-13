@@ -62,6 +62,8 @@ import {
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
+  findMessage,
+  UseMessages,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -910,6 +912,12 @@ const KendoWindow = ({
   UseCommonQuery(itemacntQuery, setItemacntListData);
   UseCommonQuery(qtyunitQuery, setQtyunitListData);
 
+  const pathname: string = window.location.pathname.replace("/", "");
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
+
   //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
   useEffect(() => {
     resetAllGrid();
@@ -1309,7 +1317,7 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
+      alert(findMessage(messagesData, "SA_B2000W_003"));
       if (workType === "U") {
         resetAllGrid();
 

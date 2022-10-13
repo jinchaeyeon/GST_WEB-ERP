@@ -36,6 +36,7 @@ import {
   chkScrollHandler,
   convertDateToStr,
   dateformat,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   setDefaultDate,
@@ -43,6 +44,7 @@ import {
   UseCommonQuery,
   UseCustomOption,
   UseDesignInfo,
+  UseMessages,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -90,6 +92,10 @@ const EA_A2000: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const detail3IdGetter = getter(DETAIL3_DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   const [token] = useRecoilState(tokenState);
   const { userId, companyCode } = token;
@@ -869,7 +875,7 @@ const EA_A2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert("처리가 완료되었습니다.");
+      alert(findMessage(messagesData, "EA_A2000W_001"));
 
       if (detailParaDataSaved.work_type === "CMT") {
         setDetail1DataResult(process([], detail1DataState));
@@ -964,7 +970,7 @@ const EA_A2000: React.FC = () => {
       }
     );
     if (dataItem.length === 0) {
-      alert("처리할 데이터를 선택해주세요.");
+      alert(findMessage(messagesData, "EA_A2000W_002"));
       return false;
     }
 
