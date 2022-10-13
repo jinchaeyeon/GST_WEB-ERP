@@ -166,10 +166,11 @@ const PanelBarNavContainer = (props: any) => {
   const [token, setToken] = useRecoilState(tokenState);
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState); //상태
+  const companyCode = token ? token.companyCode : "";
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (menus === null) getMenus();
+    if (menus === null) fetchMenus();
   }, [menus]);
 
   type Tpath = {
@@ -180,20 +181,18 @@ const PanelBarNavContainer = (props: any) => {
     parentMenuId: string;
   };
 
-  const getMenus = useCallback(async () => {
+  const fetchMenus = useCallback(async () => {
     try {
       let menuPara = {
-        para: "menus?userId=" + token.userId,
+        para: "menus?userId=" + token.userId + "&category=WEB",
       };
       const menuResponse = await processApi<any>("menus", menuPara);
-      setMenus(menuResponse.allMenu);
+      setMenus(menuResponse.usableMenu);
     } catch (e: any) {
       console.log("menus error", e);
     }
   }, []);
 
-  console.log("menus");
-  console.log(menus);
   let paths: Array<Tpath> = [];
   if (menus !== null) {
     menus
@@ -228,9 +227,6 @@ const PanelBarNavContainer = (props: any) => {
           });
         });
     });
-
-    console.log("paths");
-    console.log(paths);
   }
 
   const [userOptionsWindowVisible, setUserOptionsWindowVisible] =
@@ -248,16 +244,14 @@ const PanelBarNavContainer = (props: any) => {
   const setSelectedIndex = (pathName: any) => {
     let currentPath: any = paths.find((item: any) => item.path === pathName);
 
-    console.log("currentPath");
-    console.log(currentPath);
     return currentPath ? currentPath.index : 0;
   };
 
   const selected = setSelectedIndex(props.location.pathname);
 
   const logout = useCallback(() => {
-    setToken(null as any);
-    setMenus(null as any);
+    // setToken(null as any);
+    // setMenus(null as any);
     // 전체 페이지 reload (cache 삭제)
     (window as any).location = "/Login";
   }, []);
@@ -341,6 +335,23 @@ const PanelBarNavContainer = (props: any) => {
             <PanelBarItem title={"전자결재"}>
               <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
             </PanelBarItem> */}
+          </PanelBar>
+        )}
+
+        {companyCode === "2207C612" && (
+          <PanelBar
+            selected={selected}
+            expandMode={"single"}
+            onSelect={onSelect}
+          >
+            <PanelBarItem title={"Home"} route="/"></PanelBarItem>
+
+            <PanelBarItem title={"전사관리"}>
+              <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
+            </PanelBarItem>
+            <PanelBarItem title={"전자결재"}>
+              <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
+            </PanelBarItem>
           </PanelBar>
         )}
 

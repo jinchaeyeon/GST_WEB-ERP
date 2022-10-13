@@ -69,7 +69,7 @@ const Main: React.FC = () => {
   const processApi = useApi();
 
   const [token] = useRecoilState(tokenState);
-  const { userId, companyCode } = token;
+  const userId = token ? token.userId : "";
 
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],

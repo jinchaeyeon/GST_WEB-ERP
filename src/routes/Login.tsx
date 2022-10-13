@@ -23,6 +23,7 @@ interface FormData {
 }
 const Login: React.FC = () => {
   const [token, setToken] = useRecoilState(tokenState);
+  const [menus, setMenus] = useRecoilState(menusState);
   //const [api, setApi] = useRecoilState(apiState);
   const history = useHistory();
   const processApi = useApi();
@@ -84,6 +85,11 @@ const Login: React.FC = () => {
   );
   const emailValidator = (value: string) =>
     value !== "" ? "" : "Please enter a valid email.";
+
+  useEffect(() => {
+    setToken(null as any);
+    setMenus(null as any);
+  }, []);
 
   return (
     <LoginBox>

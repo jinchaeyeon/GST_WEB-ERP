@@ -109,11 +109,11 @@ const AppInner: React.FC = () => {
   return (
     <>
       <GlobalStyle isMenuOpend={isMenuOpend} />
+      <UserEffect />
       <Router>
         <Switch>
           <Route path="/Login" component={Login} />
           <PanelBarNavContainer>
-            <UserEffect />
             {/* 메인 홈 */}
             <AuthRoute path="/Home" component={Main} exact />
             {/* 물류관리 */}
