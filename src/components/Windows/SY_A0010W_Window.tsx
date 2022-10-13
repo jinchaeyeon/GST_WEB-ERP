@@ -5,7 +5,6 @@ import {
   Grid,
   GridColumn,
   GridEvent,
-  GridFooterCellProps,
   GridCellProps,
   GridToolbar,
   GridItemChangeEvent,
@@ -35,15 +34,11 @@ import {
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import { clone } from "@progress/kendo-react-common";
-
 import {
   NumberCell,
   NameCell,
   FormInput,
-  FormDropDownList,
-  FormDatePicker,
   FormReadOnly,
-  ReadOnlyNumberCell,
   CellComboBox,
   ReadOnlyNameCell,
   FormComboBox,
@@ -66,10 +61,8 @@ import {
   findMessage,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
 import {
   IAttachmentData,
   ICustData,
@@ -77,42 +70,32 @@ import {
   IWindowPosition,
 } from "../../hooks/interfaces";
 import {
-  amtunitQuery,
   commonCodeDefaultValue,
-  departmentsQuery,
-  doexdivQuery,
   itemacntQuery,
-  locationQuery,
-  ordstsQuery,
-  ordtypeQuery,
   pageSize,
-  qtyunitQuery,
-  taxdivQuery,
-  usersQuery,
 } from "../CommonString";
-
 import { CellRender, RowRender } from "../Renderers";
-import CheckBoxCell from "../Cells/CheckBoxCell";
 import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
-const requiredField = ["col_sub_code", "col_code_name"];
+
+const requiredField = ["sub_code", "code_name"];
 const numberField = [
-  "col_sort_seq",
-  "col_code_length",
-  "col_numref1",
-  "col_numref2",
-  "col_numref3",
-  "col_numref4",
-  "col_numref5",
+  "sort_seq",
+  "code_length",
+  "numref1",
+  "numref2",
+  "numref3",
+  "numref4",
+  "numref5",
 ];
-const checkBoxField = ["col_system_yn", "col_use_yn1"];
+const checkBoxField = ["system_yn", "use_yn"];
 const readOnlyField = [
-  "col_insert_userid1",
-  "col_insert_pc1",
-  "col_insert_time1",
-  "col_update_userid1",
-  "col_update_pc1",
-  "col_update_time1",
+  "insert_userid",
+  "insert_pc",
+  "insert_time",
+  "update_userid",
+  "update_pc1",
+  "update_time1",
 ];
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -682,32 +665,32 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn field="rowstatus" title=" " width="40px" />
 
           {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["gvwDetail"].map(
+            customOptionData.menuCustomColumnOptions["grdDetailList"].map(
               (item: any, idx: number) =>
                 item.sortOrder !== -1 && (
                   <GridColumn
                     key={idx}
-                    field={item.id
-                      .replace("col_", "")
-                      .replace("use_yn1", "use_yn")}
+                    field={item.fieldName}
                     title={item.caption}
                     width={item.width}
                     cell={
-                      numberField.includes(item.id)
+                      numberField.includes(item.fieldName)
                         ? NumberCell
-                        : checkBoxField.includes(item.id)
+                        : checkBoxField.includes(item.fieldName)
                         ? CellCheckBox
-                        : readOnlyField.includes(item.id)
+                        : readOnlyField.includes(item.fieldName)
                         ? ReadOnlyNameCell
-                        : item.id === "col_sub_code"
+                        : item.fieldName === "sub_code"
                         ? EditableNameCellInNew
                         : NameCell
                     }
                     headerCell={
-                      requiredField.includes(item.id) ? RequiredHeader : ""
+                      requiredField.includes(item.fieldName)
+                        ? RequiredHeader
+                        : ""
                     }
                     className={
-                      requiredField.includes(item.id) ? "required" : ""
+                      requiredField.includes(item.fieldName) ? "required" : ""
                     }
                     // footerCell={
                     //   item.sortOrder === 2 ? detailTotalFooterCell : ""
@@ -1499,7 +1482,7 @@ const KendoWindow = ({
             </fieldset>
             <FieldArray
               name="orderDetails"
-              dataItemKey={DATA_ITEM_KEY}
+              dataItemKey={FORM_DATA_INDEX}
               component={FormGrid}
               validator={arrayLengthValidator}
             />

@@ -223,7 +223,8 @@ export const NameCell = (props: GridCellProps) => {
 //Grid Cell에서 사용되는 Name Feild (신규 행인 경우만 수정 가능한 셀)
 export const EditableNameCellInNew = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
-  const isInEdit = dataItem.rowstatus === "N" ? true : false;
+  const isInEdit =
+    dataItem.rowstatus === "N" ? field === dataItem.inEdit : false;
   const parentField = dataItem.parentField;
 
   let defaultRendering = (
@@ -278,16 +279,6 @@ export const CellDropDownList = (props: GridCellProps) => {
   const parentField = dataItem.parentField;
 
   const queryStr = dataItem[field ?? ""];
-
-  // "SELECT '' sub_code, '' code_name";
-
-  // if (field === "itemacnt") queryStr = itemacntQuery;
-  // else if (field === "qtyunit") queryStr = qtyunitQuery;
-  // else if (field === "proccd") queryStr = proccdQuery;
-  // else if (field === "outprocyn") queryStr = outprocynQuery;
-  // else if (field === "prodmac") queryStr = prodmacQuery;
-  // else if (field === "outgb") queryStr = outgbQuery;
-  // else if (field === "prodemp") queryStr = usersQuery;
 
   const required = className?.includes("required");
 
@@ -352,7 +343,7 @@ export const CellCheckBox = (props: GridCellProps) => {
   const required = className?.includes("required");
 
   let defaultRendering = (
-    <td>
+    <td className={className ?? ""} style={{ textAlign: "center" }}>
       <Field
         component={CheckBoxWithValidation}
         name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
