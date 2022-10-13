@@ -234,6 +234,14 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       )
     ).toString();
 
+    if (bizComponentId === "") {
+      console.log(
+        "비즈니스 컴포넌트 ID 등록이 안 된 사용자 옵션 기본값이 존재함"
+      );
+      setListData(customOptionData);
+      return false;
+    }
+
     let id = {
       id: "biz-components?id=" + bizComponentId,
     };
