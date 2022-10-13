@@ -85,6 +85,7 @@ import {
 } from "../components/CommonString";
 import { CellRender, RowRender } from "../components/GroupRenderers";
 import { gridList } from "../store/columns/PR_A1100W_C";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "ordkey";
@@ -296,6 +297,16 @@ const PR_A1100W: React.FC = () => {
     }));
   };
 
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const initFrdt = new Date();
   initFrdt.setMonth(initFrdt.getMonth() - 1);
 
@@ -319,11 +330,11 @@ const PR_A1100W: React.FC = () => {
     plankey: "",
     ordyn: "%",
     planyn: "N",
-    ordsts: "",
+    cboOrdsts: "",
     remark: "",
     lotno: "",
     dptcd: "",
-    person: "",
+    cboPerson: "",
   });
 
   const [detailFilters, setMaterialFilters] = useState({
@@ -356,12 +367,12 @@ const PR_A1100W: React.FC = () => {
       "@p_plankey": filters.plankey,
       "@p_ordyn ": filters.ordyn,
       "@p_planyn": filters.planyn,
-      "@p_ordsts": filters.ordsts,
+      "@p_ordsts": filters.cboOrdsts,
       "@p_remark": filters.remark,
       "@p_lotno": filters.lotno,
       "@p_service_id": "",
       "@p_dptcd": filters.dptcd,
-      "@p_person": filters.person,
+      "@p_person": filters.cboPerson,
     },
   };
 
@@ -389,12 +400,12 @@ const PR_A1100W: React.FC = () => {
       "@p_plankey": filters.plankey,
       "@p_ordyn": filters.ordyn,
       "@p_planyn": filters.planyn,
-      "@p_ordsts": filters.ordsts,
+      "@p_ordsts": filters.cboOrdsts,
       "@p_remark": filters.remark,
       "@p_lotno": filters.lotno,
       "@p_service_id": "",
       "@p_dptcd": filters.dptcd,
-      "@p_person": filters.person,
+      "@p_person": filters.cboPerson,
     },
   };
 
@@ -422,12 +433,12 @@ const PR_A1100W: React.FC = () => {
       "@p_plankey": detailFilters.plankey,
       "@p_ordyn ": filters.ordyn,
       "@p_planyn": filters.planyn,
-      "@p_ordsts": filters.ordsts,
+      "@p_ordsts": filters.cboOrdsts,
       "@p_remark": filters.remark,
       "@p_lotno": filters.lotno,
       "@p_service_id": "",
       "@p_dptcd": filters.dptcd,
-      "@p_person": filters.person,
+      "@p_person": filters.cboPerson,
     },
   };
 
@@ -1944,7 +1955,14 @@ const PR_A1100W: React.FC = () => {
 
               <th>수주상태</th>
               <td>
-                <OrdstsDDL />
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="cboOrdsts"
+                    value={filters.cboOrdsts}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
             </tr>
 
@@ -2017,7 +2035,16 @@ const PR_A1100W: React.FC = () => {
 
               <th>담당자</th>
               <td>
-                <UsersDDL />
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="cboPerson"
+                    value={filters.cboPerson}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="user_name"
+                    valueField="user_id"
+                  />
+                )}
               </td>
             </tr>
           </tbody>
