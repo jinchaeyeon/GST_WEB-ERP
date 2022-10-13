@@ -11,13 +11,10 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import calculateSize from "calculate-size";
-
 import {
   Title,
   FilterBoxWrap,
@@ -28,22 +25,13 @@ import {
   TitleContainer,
   ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, RadioGroupChangeEvent } from "@progress/kendo-react-inputs";
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import {
-  ordstsState,
-  ordtypeState,
-  departmentsState,
-  usersState,
-  doexdivState,
-  locationState,
-  tokenState,
-} from "../store/atoms";
+import { tokenState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
@@ -51,7 +39,6 @@ import {
   findMessage,
   getQueryFromBizComponent,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   UseMessages,
 } from "../components/CommonFunction";
@@ -61,32 +48,24 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   clientWidth,
   commonCodeDefaultValue,
-  departmentsQuery,
-  doexdivQuery,
-  finynRadioButtonData,
   gnvWidth,
   gridMargin,
-  itemacntQuery,
-  locationQuery,
-  ordstsQuery,
   pageSize,
-  qtyunitQuery,
-  taxdivQuery,
-  usersQuery,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
+import { gridList } from "../store/columns/SY_A0010W_C";
 
 const numberField = [
-  "col_sort_seq",
-  "col_code_length",
-  "col_numref1",
-  "col_numref2",
-  "col_numref3",
-  "col_numref4",
-  "col_numref5",
+  "sort_seq",
+  "code_length",
+  "numref1",
+  "numref2",
+  "numref3",
+  "numref4",
+  "numref5",
 ];
-const checkBoxField = ["col_system_yn", "col_use_yn1"];
+const checkBoxField = ["system_yn", "use_yn"];
 
 const Page: React.FC = () => {
   const [token] = useRecoilState(tokenState);
@@ -119,7 +98,7 @@ const Page: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  //UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(pathname, setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_menu_group,L_BA000", setBizComponentData);
@@ -219,8 +198,6 @@ const Page: React.FC = () => {
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -228,13 +205,6 @@ const Page: React.FC = () => {
   const [workType, setWorkType] = useState("");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [isCopy, setIsCopy] = useState(false);
-
-  const [locationVal, setLocationVal] = useRecoilState(locationState);
-  const ordstsVal = useRecoilValue(ordstsState);
-  const ordtypeVal = useRecoilValue(ordtypeState);
-  const departmentsVal = useRecoilValue(departmentsState);
-  const usersVal = useRecoilValue(usersState);
-  const doexdivVal = useRecoilValue(doexdivState);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -405,7 +375,6 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      setLocationVal({ sub_code: "01", code_name: "본사" });
       fetchMainGrid();
     }
   }, [mainPgNum]);
@@ -636,128 +605,12 @@ const Page: React.FC = () => {
     fetchDetailGrid();
   };
 
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
-
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const getCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const getItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
-  };
-
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
   const onDetailSortChange = (e: any) => {
     setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
-  //공통코드 리스트 조회 (수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서)
-  const [ordstsListData, setOrdstsListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [doexdivListData, setDoexdivListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [taxdivListData, setTaxdivListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [locationListData, setLocationListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [usersListData, setUsersListData] = useState([commonCodeDefaultValue]);
-
-  const [departmentsListData, setDepartmentsListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [itemacntListData, setItemacntListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [qtyunitListData, setQtyunitListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-
-  UseCommonQuery(ordstsQuery, setOrdstsListData);
-  UseCommonQuery(doexdivQuery, setDoexdivListData);
-  UseCommonQuery(taxdivQuery, setTaxdivListData);
-  UseCommonQuery(locationQuery, setLocationListData);
-  UseCommonQuery(usersQuery, setUsersListData);
-  UseCommonQuery(departmentsQuery, setDepartmentsListData);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
-  UseCommonQuery(qtyunitQuery, setQtyunitListData);
-
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  useEffect(() => {
-    // setMainDataResult((prev) => {
-    //   const rows = prev.data.map((row: any) => ({
-    //     ...row,
-    //     ordsts: ordstsListData.find((item: any) => item.sub_code === row.ordsts)
-    //       ?.code_name,
-    //   }));
-    //   return {
-    //     data: [...prev.data, ...rows],
-    //     total: prev.total,
-    //   };
-    // });
-  }, [ordstsListData]);
 
   const onExpandChange = (event: any) => {
     const isExpanded =
@@ -963,19 +816,22 @@ const Page: React.FC = () => {
               <GridColumn cell={CommandCell} width="55px" />
 
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["gvwList"].map(
+                customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
                         key={idx}
-                        field={item.id.replace("col_", "")}
+                        id={item.id}
+                        field={item.fieldName}
                         title={item.caption}
                         width={item.width}
-                        cell={numberField.includes(item.id) ? NumberCell : ""}
+                        cell={
+                          numberField.includes(item.fieldName) ? NumberCell : ""
+                        }
                         footerCell={
                           item.sortOrder === 1 ? mainTotalFooterCell : ""
                         }
-                      ></GridColumn>
+                      />
                     )
                 )}
             </Grid>
@@ -1011,29 +867,28 @@ const Page: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["gvwDetail"].map(
+              customOptionData.menuCustomColumnOptions["grdDetailList"].map(
                 (item: any, idx: number) => {
                   const caption = getCaption(item.id, item.caption);
                   return (
                     item.sortOrder !== -1 && (
                       <GridColumn
                         key={idx}
-                        field={item.id
-                          .replace("col_", "")
-                          .replace("use_yn1", "use_yn")}
+                        id={item.id}
+                        field={item.fieldName}
                         title={caption}
                         width={item.width}
                         cell={
-                          numberField.includes(item.id)
+                          numberField.includes(item.fieldName)
                             ? NumberCell
-                            : checkBoxField.includes(item.id)
+                            : checkBoxField.includes(item.fieldName)
                             ? CheckBoxReadOnlyCell
                             : ""
                         }
                         footerCell={
-                          item.sortOrder === 2 ? detailTotalFooterCell : ""
+                          item.sortOrder === 1 ? mainTotalFooterCell : ""
                         }
-                      ></GridColumn>
+                      />
                     )
                   );
                 }
@@ -1051,6 +906,21 @@ const Page: React.FC = () => {
           reloadData={reloadData}
           para={detailParameters}
         />
+      )}
+
+      {/* 컨트롤 네임 불러오기 용 */}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );
