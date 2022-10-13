@@ -33,32 +33,106 @@ import {
 } from "@progress/kendo-react-charts";
 import "hammerjs";
 import { useApi } from "../hooks/api";
-import ItemacntDDL from "../components/DropDownLists/ItemacntDDL";
 import { Iparameters } from "../store/types";
-import Itemlvl1DDL from "../components/DropDownLists/Itemlvl1DDL";
-import Itemlvl2DDL from "../components/DropDownLists/Itemlvl2DDL";
-import Itemlvl3DDL from "../components/DropDownLists/Itemlvl3DDL";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
-  UseCommonQuery,
+  getQueryFromBizComponent,
+  setDefaultDate,
+  UseBizComponent,
+  UseCustomOption,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
-import {
-  commonCodeDefaultValue,
-  pageSize,
-  proccdQuery,
-  prodmacQuery,
-  usersQuery,
-} from "../components/CommonString";
+import { commonCodeDefaultValue, pageSize } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 
 const QC_A0120: React.FC = () => {
   const processApi = useApi();
+  const pathname: string = window.location.pathname.replace("/", "");
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+
+      setFilters((prev) => ({
+        ...prev,
+        ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
+        ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
+        // cboLocation: defaultOption.find(
+        //   (item: any) => item.id === "cboLocation"
+        // ).valueCode,
+        // radFinyn: defaultOption.find((item: any) => item.id === "radFinyn")
+        //   .valueCode,
+      }));
+    }
+  }, [customOptionData]);
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_QC002,L_PR010,L_fxcode,L_dptcd_001,L_sysUserMaster_001",
+    //불량유형, 공정, 설비, 부서코드, 담당자
+    setBizComponentData
+  );
+
+  //공통코드 리스트 조회
+  const [proccdListData, setProccdListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [prodmacListData, setProdmacListData] = useState([
+    { fxfull: "", fxcode: "" },
+  ]);
+  const [prodempListData, setProdempListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
+      const prodmacQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+      );
+      const prodempQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
+      );
+
+      fetchQuery(proccdQueryStr, setProccdListData);
+      fetchQuery(prodmacQueryStr, setProdmacListData);
+      fetchQuery(prodempQueryStr, setProdempListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    let query = {
+      query: "query?query=" + encodeURIComponent(queryStr),
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const [detail1DataState, setDetail1DataState] = useState<State>({
     sort: [],
@@ -88,9 +162,15 @@ const QC_A0120: React.FC = () => {
       [name]: value,
     }));
   };
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
 
-  const initFrdt = new Date();
-  initFrdt.setMonth(initFrdt.getMonth() - 2);
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -99,16 +179,16 @@ const QC_A0120: React.FC = () => {
     orgdiv: "01",
     //div: "0",
     location: "01",
-    frdt: initFrdt,
-    todt: new Date(),
-    proccd: "",
-    fxcode: "",
-    badcd: "",
+    ymdFrdt: new Date(),
+    ymdTodt: new Date(),
+    cboProccd: "",
+    cboFxcode: "",
+    cboBadcd: "",
     itemcd: "",
     itemnm: "",
     select_item: "all",
     select_code: "%",
-    dptcd: "",
+    cboDptcd: "",
   });
 
   const [detailFilters1, setDetailFilters1] = useState({
@@ -117,7 +197,7 @@ const QC_A0120: React.FC = () => {
     orgdiv: "01",
     div: "0",
     location: "01",
-    frdt: initFrdt,
+    frdt: new Date(),
     todt: new Date(),
     proccd: "",
     fxcode: "",
@@ -139,16 +219,16 @@ const QC_A0120: React.FC = () => {
       "@p_orgdiv": filters.orgdiv,
       "@p_div": tabSelected,
       "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_proccd": filters.proccd,
-      "@p_fxcode": filters.fxcode,
-      "@p_badcd": filters.badcd,
+      "@p_frdt": convertDateToStr(filters.ymdFrdt),
+      "@p_todt": convertDateToStr(filters.ymdTodt),
+      "@p_proccd": filters.cboProccd,
+      "@p_fxcode": filters.cboFxcode,
+      "@p_badcd": filters.cboBadcd,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_select_item": filters.select_item,
       "@p_select_code": filters.select_code,
-      "@p_dptcd": filters.dptcd,
+      "@p_dptcd": filters.cboDptcd,
     },
   };
 
@@ -161,16 +241,16 @@ const QC_A0120: React.FC = () => {
       "@p_orgdiv": filters.orgdiv,
       "@p_div": tabSelected,
       "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_proccd": filters.proccd,
-      "@p_fxcode": filters.fxcode,
-      "@p_badcd": filters.badcd,
+      "@p_frdt": convertDateToStr(filters.ymdFrdt),
+      "@p_todt": convertDateToStr(filters.ymdTodt),
+      "@p_proccd": filters.cboProccd,
+      "@p_fxcode": filters.cboFxcode,
+      "@p_badcd": filters.cboBadcd,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_select_item": filters.select_item,
       "@p_select_code": filters.select_code,
-      "@p_dptcd": filters.dptcd,
+      "@p_dptcd": filters.cboDptcd,
     },
   };
 
@@ -278,21 +358,6 @@ const QC_A0120: React.FC = () => {
     setDetail1DataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  //공통코드 리스트 조회
-  const [proccdListData, setProccdListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [prodmacListData, setProdmacListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [prodempListData, setProdempListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-
-  UseCommonQuery(proccdQuery, setProccdListData);
-  UseCommonQuery(prodmacQuery, setProdmacListData);
-  UseCommonQuery(usersQuery, setProdempListData);
-
   const labelContent = (props: any) => {
     let formatedNumber = Number(props.percentage).toLocaleString(undefined, {
       style: "percent",
@@ -337,6 +402,17 @@ const QC_A0120: React.FC = () => {
   type TCusomizedGrid = {
     maxWidth: string;
   };
+
+  const [isInitSearch, setIsInitSearch] = useState(false);
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (customOptionData !== null && isInitSearch === false) {
+      fetchMainGrid();
+      setIsInitSearch(true);
+    }
+  }, [filters]);
+
   const CusomizedGrid = (props: TCusomizedGrid) => {
     const { maxWidth } = props;
     return (
@@ -373,11 +449,11 @@ const QC_A0120: React.FC = () => {
                 (item: any) => item.sub_code === row.proccd
               )?.code_name,
               prodmac: prodmacListData.find(
-                (item: any) => item.sub_code === row.prodmac
-              )?.code_name,
+                (item: any) => item.fxcode === row.prodmac
+              )?.fxfull,
               prodemp: prodempListData.find(
-                (item: any) => item.sub_code === row.prodemp
-              )?.code_name,
+                (item: any) => item.user_id === row.prodemp
+              )?.user_name,
               badpct: Math.round(row.badpct),
             })),
             detail1DataState
@@ -481,15 +557,15 @@ const QC_A0120: React.FC = () => {
               <th>불량일자</th>
               <td colSpan={3} className="item-box">
                 <DatePicker
-                  name="frdt"
-                  defaultValue={filters.frdt}
+                  name="ymdFrdt"
+                  value={filters.ymdFrdt}
                   format="yyyy-MM-dd"
                   onChange={filterInputChange}
                 />
                 ~
                 <DatePicker
-                  name="todt"
-                  defaultValue={filters.todt}
+                  name="ymdTodt"
+                  value={filters.ymdTodt}
                   format="yyyy-MM-dd"
                   onChange={filterInputChange}
                 />
@@ -524,22 +600,58 @@ const QC_A0120: React.FC = () => {
             <tr>
               <th>불량유형</th>
               <td>
-                <ItemacntDDL />
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="cboBadcd"
+                    value={filters.cboBadcd}
+                    bizComponentId="L_QC002"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
 
               <th>공정</th>
               <td>
-                <Itemlvl1DDL />
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="cboProccd"
+                    value={filters.cboProccd}
+                    bizComponentId="L_PR010"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
 
               <th>설비</th>
               <td>
-                <Itemlvl2DDL />
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="cboFxcode"
+                    value={filters.cboFxcode}
+                    bizComponentId="L_fxcode"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboBoxChange}
+                    textField="fxfull"
+                    valueField="fxcode"
+                  />
+                )}
               </td>
 
               <th>부서</th>
               <td>
-                <Itemlvl3DDL />
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="cboDptcd"
+                    value={filters.cboDptcd}
+                    bizComponentId="L_dptcd_001"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboBoxChange}
+                    textField="dptnm"
+                    valueField="dptcd"
+                  />
+                )}
               </td>
             </tr>
           </tbody>
