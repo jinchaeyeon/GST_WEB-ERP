@@ -26,14 +26,8 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Input,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters } from "../store/types";
-import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -43,27 +37,17 @@ import {
   UseCustomOption,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { IItemData, TCommonCodeData } from "../hooks/interfaces";
 import {
   commonCodeDefaultValue,
-  gnvWidth,
-  clientWidth,
-  gridMargin,
   itemgradeQuery,
   itemlvl1Query,
   itemlvl2Query,
   itemlvl3Query,
-  useynRadioButtonData,
-  zeroynRadioButtonData,
   pageSize,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import NumberCell from "../components/Cells/NumberCell";
-import DateCell from "../components/Cells/DateCell";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
+import { gridList } from "../store/columns/SY_A0110W_C";
+
 //import {useAuth} from "../../hooks/auth";
 
 //그리드 별 키 필드값
@@ -455,23 +439,38 @@ const SY_A0110: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["gvwTotal"].map(
+              customOptionData.menuCustomColumnOptions["grdAllList"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
                       key={idx}
-                      field={item.id.replace("col_", "")}
+                      id={item.id}
+                      field={item.fieldName}
                       title={item.caption}
                       width={item.width}
                       footerCell={
                         item.sortOrder === 1 ? mainTotalFooterCell : ""
                       }
-                    ></GridColumn>
+                    />
                   )
               )}
           </Grid>
         </ExcelExport>
       </GridContainer>
+      {/* 컨트롤 네임 불러오기 용 */}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };
