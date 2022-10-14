@@ -127,7 +127,10 @@ const SY_A0110: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[1].TotalRowCount;
-      const rows = data.tables[1].Rows;
+      const rows = data.tables[1].Rows.map((row: any, idx: number) => ({
+        ...row,
+        idx: idx,
+      }));
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
@@ -297,9 +300,8 @@ const SY_A0110: React.FC = () => {
           <Grid
             style={{ height: "650px" }}
             data={process(
-              mainDataResult.data.map((row, idx) => ({
+              mainDataResult.data.map((row) => ({
                 ...row,
-                idx,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

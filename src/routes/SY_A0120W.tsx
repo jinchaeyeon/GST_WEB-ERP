@@ -130,7 +130,10 @@ const SY_A0120: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+        ...row,
+        idx: idx,
+      }));
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
@@ -347,9 +350,8 @@ const SY_A0120: React.FC = () => {
           <Grid
             style={{ height: "650px" }}
             data={process(
-              mainDataResult.data.map((row, idx) => ({
+              mainDataResult.data.map((row) => ({
                 ...row,
-                idx,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -394,12 +396,12 @@ const SY_A0120: React.FC = () => {
               width={"200px"}
             ></GridColumn>
             <GridColumn
-              field={"log_pc"}
+              field={"login_pc"}
               title={"접속PC"}
               width={"200px"}
             ></GridColumn>
             <GridColumn
-              field={"log_ip"}
+              field={"login_ip"}
               title={"접속IP"}
               width={"200px"}
             ></GridColumn>
