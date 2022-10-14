@@ -57,8 +57,6 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import DropDownCell from "../components/Cells/DropDownCell";
-import NameCell from "../components/Cells/NameCell";
 import {
   commonCodeDefaultValue,
   departmentsQuery,
@@ -1590,19 +1588,6 @@ const PR_A1100W: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     commonCodeDefaultValue,
   ]);
-  const [proccdListData, setProccdListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-
-  const [outprocynListData, setOutprocynListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [prodmacListData, setProdmacListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  const [prodempListData, setProdempListData] = useState([
-    commonCodeDefaultValue,
-  ]);
   const [purtypeListData, setPurtypeListData] = useState([
     commonCodeDefaultValue,
   ]);
@@ -1615,7 +1600,6 @@ const PR_A1100W: React.FC = () => {
   const [itemlvl3ListData, setItemlvl3ListData] = useState([
     commonCodeDefaultValue,
   ]);
-  const [outgbListData, setOutgbListData] = useState([commonCodeDefaultValue]);
 
   UseCommonQuery(ordstsQuery, setOrdstsListData);
   UseCommonQuery(doexdivQuery, setDoexdivListData);
@@ -1625,16 +1609,11 @@ const PR_A1100W: React.FC = () => {
   UseCommonQuery(departmentsQuery, setDepartmentsListData);
   UseCommonQuery(itemacntQuery, setItemacntListData);
   UseCommonQuery(qtyunitQuery, setQtyunitListData);
-  UseCommonQuery(proccdQuery, setProccdListData);
 
-  UseCommonQuery(outprocynQuery, setOutprocynListData);
-  UseCommonQuery(prodmacQuery, setProdmacListData);
-  UseCommonQuery(usersQuery, setProdempListData);
   UseCommonQuery(purtypeQuery, setPurtypeListData);
   UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
   UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
   UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
-  UseCommonQuery(outgbQuery, setOutgbListData);
 
   const onExpandChange = (event: any) => {
     const isExpanded =

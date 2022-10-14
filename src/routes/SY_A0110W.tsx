@@ -19,11 +19,9 @@ import {
   FilterBox,
   GridContainer,
   GridTitle,
-  GridContainerWrap,
   TitleContainer,
   ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { useApi } from "../hooks/api";
@@ -32,20 +30,10 @@ import {
   chkScrollHandler,
   convertDateToStr,
   setDefaultDate,
-  UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
-import {
-  commonCodeDefaultValue,
-  itemgradeQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
-  pageSize,
-  SELECTED_FIELD,
-} from "../components/CommonString";
+import { pageSize, SELECTED_FIELD } from "../components/CommonString";
 import { gridList } from "../store/columns/SY_A0110W_C";
 
 //import {useAuth} from "../../hooks/auth";
@@ -218,34 +206,11 @@ const SY_A0110: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
-  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
-
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
-
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
-
-  const [itemgradeListData, setItemgradeListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemgradeQuery, setItemgradeListData);
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
 
-      console.log("setDefaultDate(customOptionData, )");
-      console.log(setDefaultDate(customOptionData, "ymdFrdt"));
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "ymdFrdt"),
@@ -261,71 +226,6 @@ const SY_A0110: React.FC = () => {
       setIsInitSearch(true);
     }
   }, [filters]);
-
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  useEffect(() => {
-    setMainDataResult((prev) => {
-      const rows = prev.data.map((row: any) => ({
-        ...row,
-        itemlvl1: itemlvl1ListData.find(
-          (item: any) => item.sub_code === row.itemlvl1
-        )?.code_name,
-      }));
-
-      return {
-        data: [...rows],
-        total: prev.total,
-      };
-    });
-  }, [itemlvl1ListData]);
-
-  useEffect(() => {
-    setMainDataResult((prev) => {
-      const rows = prev.data.map((row: any) => ({
-        ...row,
-        itemlvl2: itemlvl2ListData.find(
-          (item: any) => item.sub_code === row.itemlvl2
-        )?.code_name,
-      }));
-
-      return {
-        data: [...rows],
-        total: prev.total,
-      };
-    });
-  }, [itemlvl2ListData]);
-
-  useEffect(() => {
-    setMainDataResult((prev) => {
-      const rows = prev.data.map((row: any) => ({
-        ...row,
-        itemlvl3: itemlvl3ListData.find(
-          (item: any) => item.sub_code === row.itemlvl3
-        )?.code_name,
-      }));
-
-      return {
-        data: [...rows],
-        total: prev.total,
-      };
-    });
-  }, [itemlvl3ListData]);
-
-  useEffect(() => {
-    setMainDataResult((prev) => {
-      const rows = prev.data.map((row: any) => ({
-        ...row,
-        itemgrade: itemgradeListData.find(
-          (item: any) => item.sub_code === row.itemgrade
-        )?.code_name,
-      }));
-
-      return {
-        data: [...rows],
-        total: prev.total,
-      };
-    });
-  }, [itemgradeListData]);
 
   return (
     <>
@@ -400,18 +300,6 @@ const SY_A0110: React.FC = () => {
               mainDataResult.data.map((row, idx) => ({
                 ...row,
                 idx,
-                itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
-                )?.code_name,
-                itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
-                )?.code_name,
-                itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
-                )?.code_name,
-                itemgrade: itemgradeListData.find(
-                  (item: any) => item.sub_code === row.itemgrade
-                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

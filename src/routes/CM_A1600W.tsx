@@ -10,10 +10,8 @@ import {
   GridItemChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-
 // ES2015 module syntax
 import {
   Scheduler,
@@ -52,11 +50,11 @@ import {
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
+  oldCompany,
   pageSize,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers";
 import DateCell from "../components/Cells/DateCell";
@@ -68,8 +66,6 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 
 const DATA_ITEM_KEY = "idx";
 let deletedTodoRows: object[] = [];
-
-const oldCompany = ["2207C612"];
 
 const CM_A1600: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");

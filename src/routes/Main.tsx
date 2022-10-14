@@ -8,10 +8,8 @@ import {
   GridSelectionChangeEvent,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-
 // ES2015 module syntax
 import {
   Scheduler,
@@ -39,18 +37,9 @@ import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
-  UseCommonQuery,
 } from "../components/CommonFunction";
 import { TCommonCodeData } from "../hooks/interfaces";
-import {
-  commonCodeDefaultValue,
-  itemgradeQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
-  pageSize,
-  SELECTED_FIELD,
-} from "../components/CommonString";
+import { pageSize, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
 //import {useAuth} from "../../hooks/auth";
@@ -392,46 +381,6 @@ const Main: React.FC = () => {
   const onWorkOrderSortChange = (e: any) => {
     setWorkOrderDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
-  //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
-  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
-
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
-
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
-
-  const [itemgradeListData, setItemgradeListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemgradeQuery, setItemgradeListData);
-
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl1: itemlvl1ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl1
-  //       )?.code_name,
-  //     }));
-
-  //     console.log(rows);
-
-  //     return {
-  //       data: [...prev.data, ...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl1ListData]);
   const displayDate: Date = new Date();
 
   //스케줄러조회조건 DropDownList Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅

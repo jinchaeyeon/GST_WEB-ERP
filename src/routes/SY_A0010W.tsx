@@ -4,7 +4,6 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridItemChangeEvent,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
@@ -28,14 +27,12 @@ import {
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, RadioGroupChangeEvent } from "@progress/kendo-react-inputs";
-
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { tokenState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
-  convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
   UseBizComponent,
@@ -43,7 +40,6 @@ import {
   UseMessages,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
-import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   clientWidth,

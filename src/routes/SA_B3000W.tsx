@@ -4,33 +4,27 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridItemChangeEvent,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-
 import {
   Title,
   FilterBoxWrap,
   FilterBox,
   GridContainer,
-  GridTitle,
   GridContainerWrap,
   TitleContainer,
   ButtonContainer,
-  GridTitleContainer,
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
-
 import {
   Chart,
   ChartCategoryAxis,
@@ -43,11 +37,8 @@ import {
   ChartTitle,
   ChartTooltip,
 } from "@progress/kendo-react-charts";
-
 import "hammerjs";
-
 import { useApi } from "../hooks/api";
-
 import { Iparameters } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {

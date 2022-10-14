@@ -11,7 +11,6 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -30,25 +29,17 @@ import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters } from "../store/types";
 import {
-  checkIsDDLValid,
   chkScrollHandler,
   convertDateToStr,
   dateformat,
   findMessage,
   getGridItemChangedData,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   UseMessages,
-  //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
-  commonCodeDefaultValue,
   EDIT_FIELD,
-  itemgradeQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
   pageSize,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -291,27 +282,6 @@ const SY_A0120: React.FC = () => {
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
-  //공통코드 리스트 조회 (대분류, 중분류, 소분류, 품목등급)
-  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
-
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
-
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
-
-  const [itemgradeListData, setItemgradeListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemgradeQuery, setItemgradeListData);
 
   // 최초 한번만 실행
   useEffect(() => {
@@ -869,18 +839,6 @@ const SY_A0120: React.FC = () => {
             data={process(
               mainDataResult.data.map((row, idx) => ({
                 ...row,
-                itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
-                )?.code_name,
-                itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
-                )?.code_name,
-                itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
-                )?.code_name,
-                itemgrade: itemgradeListData.find(
-                  (item: any) => item.sub_code === row.itemgrade
-                )?.code_name,
                 birdt: row.birdt
                   ? new Date(dateformat(row.birdt))
                   : new Date(dateformat("19991231")),

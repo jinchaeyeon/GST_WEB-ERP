@@ -35,13 +35,11 @@ import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
-  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   setDefaultDate,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   UseDesignInfo,
   UseMessages,
@@ -56,8 +54,8 @@ import {
   gridMargin,
   pageSize,
   SELECTED_FIELD,
-  radioGroupDefaultData,
   EDIT_FIELD,
+  oldCompany,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
@@ -65,20 +63,18 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { isMenuOpendState, tokenState } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import CashDisbursementVoucher from "../components/Prints/CashDisbursementVoucher";
 import AbsenceRequest from "../components/Prints/AbsenceRequest";
 import { CellRender, RowRender } from "../components/Renderers";
-import { prevDayOfWeek } from "@progress/kendo-date-math";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { Window } from "@progress/kendo-react-dialogs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
+import { tokenState } from "../store/atoms";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
-const oldCompany = ["2207C612"];
 let deletedCmtRows: object[] = [];
 
 //그리드 별 키 필드값

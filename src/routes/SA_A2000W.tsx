@@ -4,7 +4,6 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridItemChangeEvent,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,

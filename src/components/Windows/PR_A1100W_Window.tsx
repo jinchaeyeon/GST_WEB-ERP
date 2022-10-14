@@ -17,7 +17,6 @@ import {
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
-
 import {
   BottomContainer,
   ButtonContainer,
@@ -64,8 +63,6 @@ import {
   getCodeFromValue,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import {
@@ -73,19 +70,12 @@ import {
   ICustData,
   IItemData,
   IWindowPosition,
-  TCommonCodeData,
 } from "../../hooks/interfaces";
 import {
   commonCodeDefaultValue,
   itemacntQuery,
-  outgbQuery,
-  outprocynQuery,
   pageSize,
-  proccdQuery,
-  prodmacQuery,
-  qtyunitQuery,
   SELECTED_FIELD,
-  usersQuery,
 } from "../CommonString";
 
 import { CellRender, RowRender } from "../Renderers";

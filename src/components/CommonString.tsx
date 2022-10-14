@@ -17,6 +17,8 @@ export const commonCodeDefaultValue = { sub_code: "", code_name: "" };
 
 export const radioGroupDefaultData = [{ value: "", label: "" }];
 
+export const oldCompany = ["2207C612"];
+
 export const finynRadioButtonData = [
   {
     value: "Y",
