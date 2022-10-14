@@ -83,9 +83,14 @@ export const PageWrap = styled.div`
 `;
 
 export const AppName = styled.h1`
-  font-size: 28px;
-  font-weight: 600;
-  padding: 10px 0;
+  font-size: 26px;
+  color: #ff6358;
+  font-weight: 400;
+  /* padding: 10px 0; */
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-right: 1px solid #ebebeb;
 
   /*=========================================================================
