@@ -41,14 +41,14 @@ export const gridList: Array<TGrid> = [
         width: 140,
       },
       {
-        id: "col_log_ip",
-        field: "log_ip",
+        id: "col_login_ip",
+        field: "login_ip",
         caption: "접속IP",
         width: 120,
       },
       {
-        id: "col_log_pc",
-        field: "log_pc",
+        id: "col_login_pc",
+        field: "login_pc",
         caption: "접속PC",
         width: 120,
       },

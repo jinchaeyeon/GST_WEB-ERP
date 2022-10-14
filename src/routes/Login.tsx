@@ -56,6 +56,7 @@ const Login: React.FC = () => {
           customerName,
           serviceUrl,
           internalIp,
+          loginKey,
         } = response;
 
         setToken({
@@ -69,6 +70,7 @@ const Login: React.FC = () => {
           customerName,
           serviceUrl,
           internalIp,
+          loginKey,
         });
 
         history.replace("/Home");

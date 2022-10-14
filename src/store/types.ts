@@ -42,6 +42,7 @@ export type Token = {
   customerName: string;
   serviceUrl: string;
   internalIp: string;
+  loginKey: string;
 };
 
 export type CategoryDto = {
@@ -120,4 +121,11 @@ export type Tpath = {
 // TypeScript에서 string key로 객체에 접근하기 위한 객체 타입
 export type ObjType = {
   [key: string]: string;
+};
+
+export type TLogParaVal = {
+  work_type: string;
+  form_id: string;
+  form_name: string;
+  form_login_key: string;
 };

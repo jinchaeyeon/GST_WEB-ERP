@@ -1,5 +1,10 @@
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useHistory,
+} from "react-router-dom";
 import React, { Component, useEffect } from "react";
 import "@progress/kendo-theme-default/dist/all.css";
 import PanelBarNavContainer from "./components/PanelBarNavContainer";
