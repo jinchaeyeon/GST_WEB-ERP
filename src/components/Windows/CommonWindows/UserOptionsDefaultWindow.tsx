@@ -82,6 +82,7 @@ type TDetailData = {
   add_month: string[];
   add_day: string[];
   session_item: string[];
+  use_session: string[];
   user_editable: string[];
 };
 
@@ -370,6 +371,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             cell={NameCell}
           />
           <GridColumn
+            field="use_session"
+            title="세션 사용유무"
+            width="170px"
+            cell={NameCell}
+          />
+          <GridColumn
             field="add_year"
             title="연 추가"
             width="90px"
@@ -497,6 +504,7 @@ const KendoWindow = ({
     add_month: "",
     add_day: "",
     session_item: "",
+    use_session: "",
     user_editable: "",
     column_id: "",
     width: "",
@@ -535,6 +543,7 @@ const KendoWindow = ({
       "@p_add_month": paraData.add_month,
       "@p_add_day": paraData.add_day,
       "@p_session_item": paraData.session_item,
+      "@p_use_session": paraData.use_session,
       "@p_user_editable": paraData.user_editable,
       /* sysCustomOptionColumn */
       "@p_column_id": "", // paraData.column_id,
@@ -678,6 +687,7 @@ const KendoWindow = ({
       add_month: [],
       add_day: [],
       session_item: [],
+      use_session: [],
       user_editable: [],
     };
 
@@ -697,6 +707,7 @@ const KendoWindow = ({
         add_month, //
         add_day, //
         session_item,
+        use_session,
         user_editable,
       } = item;
 
@@ -714,6 +725,7 @@ const KendoWindow = ({
       detailArr.add_month.push(add_month);
       detailArr.add_day.push(add_day);
       detailArr.session_item.push(session_item);
+      detailArr.use_session.push(use_session);
       detailArr.user_editable.push(user_editable);
     });
 
@@ -731,6 +743,7 @@ const KendoWindow = ({
         add_month, //
         add_day, //
         session_item,
+        use_session,
         user_editable,
       } = item;
 
@@ -748,6 +761,7 @@ const KendoWindow = ({
       detailArr.add_month.push(add_month);
       detailArr.add_day.push(add_day);
       detailArr.session_item.push(session_item);
+      detailArr.use_session.push(use_session);
       detailArr.user_editable.push(user_editable);
     });
 
@@ -772,6 +786,7 @@ const KendoWindow = ({
       add_month: detailArr.add_month.join("|"),
       add_day: detailArr.add_day.join("|"),
       session_item: detailArr.session_item.join("|"),
+      use_session: detailArr.use_session.join("|"),
       user_editable: detailArr.user_editable.join("|"),
     }));
   };

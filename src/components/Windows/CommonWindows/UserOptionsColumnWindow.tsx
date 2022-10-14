@@ -513,6 +513,7 @@ const KendoWindow = ({
     add_month: "",
     add_day: "",
     session_item: "",
+    use_session: "",
     user_editable: "",
     column_id: "",
     width: "",
@@ -551,6 +552,7 @@ const KendoWindow = ({
       "@p_add_month": paraData.add_month,
       "@p_add_day": paraData.add_day,
       "@p_session_item": paraData.session_item,
+      "@p_use_session": paraData.use_session,
       "@p_user_editable": paraData.user_editable,
       /* sysCustomOptionColumn */
       "@p_column_id": paraData.column_id,
