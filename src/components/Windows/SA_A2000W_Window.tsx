@@ -58,7 +58,6 @@ import {
   dateformat,
   getItemQuery,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   findMessage,
   UseMessages,
@@ -79,15 +78,8 @@ import {
 import {
   commonCodeDefaultValue,
   EDIT_FIELD,
-  itemacntQuery,
-  locationQuery,
-  ordstsQuery,
-  ordtypeQuery,
   pageSize,
-  qtyunitQuery,
   SELECTED_FIELD,
-  taxdivQuery,
-  usersQuery,
 } from "../CommonString";
 
 import { CellRender, RowRender } from "../Renderers";
@@ -190,8 +182,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const [editedRowIdx, setEditedRowIdx] = useState(-1);
   const [editedRowData, setEditedRowData] = useState({});
-
-  const pathname: string = window.location.pathname.replace("/", "");
 
   const ItemBtnCell = (props: GridCellProps) => {
     const { editIndex } = React.useContext(FormGridEditContext);

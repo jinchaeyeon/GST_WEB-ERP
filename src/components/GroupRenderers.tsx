@@ -80,7 +80,7 @@ export const RowRender = (props: any) => {
     onBlur: () => {
       setTimeout(() => {
         const activeElement = document.activeElement;
-        console.log(activeElement);
+
         if (activeElement === null) return false;
         if (activeElement.className.indexOf("k-calendar") < 0) {
           props.exitEdit();
