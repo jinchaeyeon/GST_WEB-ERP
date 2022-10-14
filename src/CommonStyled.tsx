@@ -15,7 +15,7 @@ export const MainTopContainer = styled(TitleContainer)`
 `;
 
 export const Title = styled.h3`
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
 `;
 export const ButtonContainer = styled.div`

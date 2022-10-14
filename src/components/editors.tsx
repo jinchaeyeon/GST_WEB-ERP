@@ -72,7 +72,7 @@ const TextInputWithValidation = (fieldRenderProps: FieldRenderProps) => {
   const { getItemcd } = React.useContext(FormGridEditContext);
 
   const onInputBlur = () => {
-    if (name?.includes("itemcd")) getItemcd(value);
+    //if (name?.includes("itemcd")) getItemcd(value);
   };
 
   const required = className?.includes("required");
