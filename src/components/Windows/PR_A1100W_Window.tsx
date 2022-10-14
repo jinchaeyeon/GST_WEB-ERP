@@ -1,10 +1,6 @@
 import { useEffect, useState, createContext } from "react";
 import * as React from "react";
-import {
-  Window,
-  WindowMoveEvent,
-  WindowProps,
-} from "@progress/kendo-react-dialogs";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -25,8 +21,6 @@ import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
   ButtonContainer,
-  ButtonInField,
-  ButtonInFieldWrap,
   FieldWrap,
   GridContainer,
   GridContainerWrap,
@@ -67,6 +61,7 @@ import {
   UseCustomOption,
   findMessage,
   UseMessages,
+  getCodeFromValue,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -89,6 +84,7 @@ import {
   proccdQuery,
   prodmacQuery,
   qtyunitQuery,
+  SELECTED_FIELD,
   usersQuery,
 } from "../CommonString";
 
@@ -129,12 +125,14 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
-  return (
+  return bizComponent ? (
     <CellComboBox
       bizComponent={bizComponent}
       textField={fieldName}
       {...props}
     />
+  ) : (
+    <td />
   );
 };
 
@@ -162,10 +160,7 @@ export const PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT = React.createContext<{
 }>({} as any);
 
 const FORM_DATA_INDEX = "formDataIndex";
-const DATA_ITEM_KEY = "idx";
-
 const idGetter = getter(FORM_DATA_INDEX);
-const SELECTED_FIELD: string = "selected";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -366,13 +361,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           chlditemcd: data.itemcd,
           chlditemnm: data.itemnm,
           insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
-          qtyunit: commonCodeDefaultValue,
+          itemacnt: data.itemacnt,
           qty: 0,
           specialunp: 0,
           specialamt: 0,
@@ -409,13 +398,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           chlditemcd: data.itemcd,
           chlditemnm: data.itemnm,
           insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
-          qtyunit: commonCodeDefaultValue,
+          itemacnt: data.itemacnt,
         },
       });
     }
@@ -524,26 +507,17 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     []
   );
 
-  interface ProductNameHeaderProps extends GridHeaderCellProps {
-    children: any;
-  }
-
   const getItemcd = (itemcd: string) => {
     const index = editIndex ?? 0;
     const dataItem = value[index];
     const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
 
-    fetchData(queryStr, index, dataItem, itemacntListData);
+    fetchData(queryStr, index, dataItem);
   };
   const processApi = useApi();
 
   const fetchData = React.useCallback(
-    async (
-      queryStr: string,
-      index: number,
-      dataItem: any,
-      itemacntListData: any
-    ) => {
+    async (queryStr: string, index: number, dataItem: any) => {
       let data: any;
 
       let query = {
@@ -559,18 +533,13 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       const rows = data.result.data.Rows;
 
       if (rows.length > 0) {
-        setRowItem(rows[0], index, dataItem, itemacntListData);
+        setRowItem(rows[0], index, dataItem);
       }
     },
     []
   );
 
-  const setRowItem = (
-    row: any,
-    index: number,
-    dataItem: any,
-    itemacntListData: any //useState의 itemacntListData 바로 사용시 다시 조회되어 조회 전 빈값을 참조하는 현상 발생해, 일단 인수로 넘겨줌. 나중에 수정 필요할듯함..
-  ) => {
+  const setRowItem = (row: any, index: number, dataItem: any) => {
     fieldArrayRenderProps.onReplace({
       index: index,
       value: {
@@ -580,13 +549,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         itemcd: row.itemcd,
         itemnm: row.itemnm,
         insiz: row.insiz,
-        itemacnt: {
-          sub_code: row.itemacnt,
-          code_name: itemacntListData.find(
-            (item: any) => item.sub_code === row.itemacnt
-          )?.code_name,
-        },
-        qtyunit: commonCodeDefaultValue,
       },
     });
   };
@@ -892,12 +854,6 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           chlditemcd: data.itemcd,
           chlditemnm: data.itemnm,
           insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
           qtyunit: commonCodeDefaultValue,
           qty: 0,
           specialunp: 0,
@@ -935,14 +891,6 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           ...dataItem,
           chlditemcd: data.itemcd,
           chlditemnm: data.itemnm,
-          // insiz: data.insiz,
-          // itemacnt: {
-          //   sub_code: data.itemacnt,
-          //   code_name: itemacntListData.find(
-          //     (item: any) => item.sub_code === data.itemacnt
-          //   )?.code_name,
-          // },
-          // qtyunit: commonCodeDefaultValue,
         },
       });
     }
@@ -1071,17 +1019,12 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     const dataItem = value[index];
     const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
 
-    fetchData(queryStr, index, dataItem, itemacntListData);
+    fetchData(queryStr, index, dataItem);
   };
   const processApi = useApi();
 
   const fetchData = React.useCallback(
-    async (
-      queryStr: string,
-      index: number,
-      dataItem: any,
-      itemacntListData: any
-    ) => {
+    async (queryStr: string, index: number, dataItem: any) => {
       let data: any;
 
       let query = {
@@ -1096,18 +1039,13 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
       if (data.isSuccess === true) {
         const rows = data.tables[0].Rows;
-        setRowItem(rows[0], index, dataItem, itemacntListData);
+        setRowItem(rows[0], index, dataItem);
       }
     },
     []
   );
 
-  const setRowItem = (
-    row: any,
-    index: number,
-    dataItem: any,
-    itemacntListData: any //useState의 itemacntListData 바로 사용시 다시 조회되어 조회 전 빈값을 참조하는 현상 발생해, 일단 인수로 넘겨줌. 나중에 수정 필요할듯함..
-  ) => {
+  const setRowItem = (row: any, index: number, dataItem: any) => {
     fieldArrayRenderProps.onReplace({
       index: index,
       value: {
@@ -1117,13 +1055,6 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         itemcd: row.itemcd,
         itemnm: row.itemnm,
         insiz: row.insiz,
-        itemacnt: {
-          sub_code: row.itemacnt,
-          code_name: itemacntListData.find(
-            (item: any) => item.sub_code === row.itemacnt
-          )?.code_name,
-        },
-        qtyunit: commonCodeDefaultValue,
       },
     });
   };
@@ -1273,51 +1204,9 @@ const KendoWindow = ({
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-  //드롭다운 리스트 데이터 조회 (공정, 외주구분, 작업자, 설비 / 자재사용구분, (품목계정,) 수량단위)
-  const [proccdListData, setProccdListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [outprocynListData, setOutprocynListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [prodempListData, setProdempListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [prodmacListData, setProdmacListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [usersListData, setUsersListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [outgbListData, setOutgbListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
+  // 리스트 데이터 조회 (품목계정)
   const [itemacntListData, setItemacntListData] = React.useState([
     commonCodeDefaultValue,
-  ]);
-  const [qtyunitListData, setQtyunitListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(proccdQuery, setProccdListData);
-  UseCommonQuery(outprocynQuery, setOutprocynListData);
-  UseCommonQuery(usersQuery, setProdempListData);
-  UseCommonQuery(prodmacQuery, setProdmacListData);
-  UseCommonQuery(usersQuery, setUsersListData);
-  UseCommonQuery(outgbQuery, setOutgbListData);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
-  UseCommonQuery(qtyunitQuery, setQtyunitListData);
-
-  //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
-  useEffect(() => {
-    resetAllGrid();
-    resetForm();
-  }, [
-    proccdListData,
-    outprocynListData,
-    prodmacListData,
-    usersListData,
-    outgbListData,
-    qtyunitListData,
   ]);
 
   const [position, setPosition] = useState<IWindowPosition>({
@@ -1343,9 +1232,6 @@ const KendoWindow = ({
     getVisible(false);
   };
 
-  const DETAIL_DATA_ITEM_KEY = "idx";
-  const SELECTED_FIELD = "selected";
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const [formKey, setFormKey] = React.useState(1);
   const resetForm = () => {
     setFormKey(formKey + 1);
@@ -1546,7 +1432,6 @@ const KendoWindow = ({
     resetForm();
   }, [detailDataResult]);
 
-  //itemacnt, qtyunit list가 조회된 후 상세그리드 조회
   useEffect(() => {
     if (itemacntListData.length > 0) {
       setInfoVal((prev) => {
@@ -1559,28 +1444,12 @@ const KendoWindow = ({
         };
       });
     }
-    if (
-      proccdListData.length > 0 &&
-      outprocynListData.length > 0 &&
-      prodmacListData.length > 0 &&
-      usersListData.length > 0 &&
-      outgbListData.length > 0 &&
-      itemacntListData.length > 0 &&
-      qtyunitListData.length > 0
-    ) {
-      resetAllGrid();
-      fetchPrcGrid();
-      fetchMtrGrid();
-    }
-  }, [
-    proccdListData,
-    outprocynListData,
-    prodmacListData,
-    usersListData,
-    outgbListData,
-    itemacntListData,
-    qtyunitListData,
-  ]);
+  }, [itemacntListData]);
+
+  useEffect(() => {
+    fetchPrcGrid();
+    fetchMtrGrid();
+  }, []);
 
   //공정 그리드 조회
   const fetchPrcGrid = async () => {
@@ -1597,31 +1466,6 @@ const KendoWindow = ({
       const rows = data.tables[0].Rows.map((row: any, idx: number) => {
         return {
           ...row,
-          srcPgName: "PR_A1100W_WINDOW_PRC",
-          proccd: {
-            sub_code: row.proccd,
-            code_name: proccdListData.find(
-              (item: any) => item.sub_code === row.proccd
-            )?.code_name,
-          },
-          outprocyn: {
-            sub_code: row.outprocyn,
-            code_name: outprocynListData.find(
-              (item: any) => item.sub_code === row.outprocyn
-            )?.code_name,
-          },
-          prodemp: {
-            sub_code: row.prodemp,
-            code_name: prodempListData.find(
-              (item: any) => item.sub_code === row.prodemp
-            )?.code_name,
-          },
-          prodmac: {
-            sub_code: row.prodmac,
-            code_name: prodmacListData.find(
-              (item: any) => item.sub_code === row.prodmac
-            )?.code_name,
-          },
           idx,
         };
       });
@@ -1651,25 +1495,6 @@ const KendoWindow = ({
       const rows = data.tables[0].Rows.map((row: any, idx: number) => {
         return {
           ...row,
-          srcPgName: "PR_A1100W_WINDOW_MTL",
-          proccd: {
-            sub_code: row.proccd,
-            code_name: proccdListData.find(
-              (item: any) => item.sub_code === row.proccd
-            )?.code_name,
-          },
-          outgb: {
-            sub_code: row.outgb,
-            code_name: outgbListData.find(
-              (item: any) => item.sub_code === row.outgb
-            )?.code_name,
-          },
-          qtyunit: {
-            sub_code: row.qtyunit,
-            code_name: qtyunitListData.find(
-              (item: any) => item.sub_code === row.qtyunit
-            )?.code_name,
-          },
           idx,
         };
       });
@@ -1932,7 +1757,7 @@ const KendoWindow = ({
         prodemp,
         prodmac,
       } = item;
-      processArr.proccd.push(typeof proccd === "object" ? proccd.sub_code : "");
+      processArr.proccd.push(getCodeFromValue(proccd));
       processArr.planno.push(planno);
       processArr.qtyunit.push(qtyunit);
       processArr.planseq.push("0");
@@ -1940,15 +1765,9 @@ const KendoWindow = ({
       processArr.procseq.push(String(idx + 1));
       processArr.plandt.push(convertDateToStr(new Date()));
       processArr.finexpdt.push(convertDateToStr(new Date()));
-      processArr.outprocyn.push(
-        typeof outprocyn === "object" ? outprocyn.sub_code : ""
-      );
-      processArr.prodemp.push(
-        typeof prodemp === "object" ? prodemp.sub_code : ""
-      );
-      processArr.prodmac.push(
-        typeof prodmac === "object" ? prodmac.sub_code : ""
-      );
+      processArr.outprocyn.push(getCodeFromValue(outprocyn));
+      processArr.prodemp.push(getCodeFromValue(prodemp));
+      processArr.prodmac.push(getCodeFromValue(prodmac));
     });
 
     console.log("materialList");
@@ -1957,14 +1776,10 @@ const KendoWindow = ({
       const { unitqty, outgb, chlditemcd, qtyunit, proccd } = item;
       materialArr.seq.push("0");
       materialArr.unitqty.push(unitqty);
-      materialArr.outgb.push(typeof outgb === "object" ? outgb.sub_code : "");
+      materialArr.outgb.push(getCodeFromValue(outgb));
       materialArr.chlditemcd.push(chlditemcd);
-      materialArr.qtyunit.push(
-        typeof qtyunit === "object" ? qtyunit.sub_code : ""
-      );
-      materialArr.proccd.push(
-        typeof proccd === "object" ? proccd.sub_code : ""
-      );
+      materialArr.qtyunit.push(getCodeFromValue(qtyunit));
+      materialArr.proccd.push(getCodeFromValue(proccd));
     });
 
     setParaData((prev) => ({
@@ -2109,14 +1924,6 @@ const KendoWindow = ({
             ordnum: initialVal.ordnum,
             ordseq: initialVal.ordseq,
             itemcd: initialVal.itemcd,
-            /* frdt: initialVal.frdt, //new Date(),
-          person: {
-            sub_code: initialVal.person,
-            code_name: usersListData.find(
-              (item: any) => item.sub_code === initialVal.person
-            )?.code_name,
-          },*/
-
             planqty: initialVal.planqty,
             processList: detailDataResult.data,
             materialList: mtrDataResult.data,
@@ -2213,14 +2020,14 @@ const KendoWindow = ({
                 <GridContainer clientWidth={position.width - 250}>
                   <FieldArray
                     name="processList"
-                    dataItemKey={DATA_ITEM_KEY}
+                    dataItemKey={FORM_DATA_INDEX}
                     component={FormGrid}
                     validator={arrayLengthValidator}
                   />
 
                   <FieldArray
                     name="materialList"
-                    dataItemKey={DATA_ITEM_KEY}
+                    dataItemKey={FORM_DATA_INDEX}
                     component={FormGridMtr}
                     //validator={arrayLengthValidator}
                   />

@@ -45,6 +45,7 @@ import {
   convertDateToStr,
   dateformat,
   findMessage,
+  getCodeFromValue,
   UseBizComponent,
   UseCommonQuery,
   UseCustomOption,
@@ -116,7 +117,7 @@ const numberField = [
   "dlramt",
   "procseq",
   "dlramt",
-  "dlramt",
+  "unitqty",
 ];
 const dateField = ["finexpdt", "plandt", "orddt", "dlvdt", "outdt", "indt"];
 const editablePlanListField = [
@@ -128,18 +129,27 @@ const editablePlanListField = [
   "outdt",
   "indt",
 ];
-const lookupField = ["outprocyn", "proccd"];
+const lookupField = ["outprocyn", "proccd", "qtyunit", "outgb"];
 
 let deletedPlanRows: object[] = [];
 let deletedMaterialRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_PR010,L_BA011", setBizComponentData);
+  UseBizComponent("L_PR010,L_BA011,L_BA015,L_BA041", setBizComponentData);
+  // 공정,외주구분,수량단위,자재사용구분
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "proccd" ? "L_PR010" : field === "outprocyn" ? "L_BA011" : "";
+    field === "proccd"
+      ? "L_PR010"
+      : field === "outprocyn"
+      ? "L_BA011"
+      : field === "qtyunit"
+      ? "L_BA015"
+      : field === "outgb"
+      ? "L_BA041"
+      : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
@@ -148,7 +158,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   return bizComponent ? (
     <ComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
-    <></>
+    <td />
   );
 };
 
@@ -1076,20 +1086,6 @@ const PR_A1100W: React.FC = () => {
     setPlanWindowVisible(true);
   };
 
-  const onDeleteClick = (e: any) => {
-    if (!window.confirm("삭제하시겠습니까?")) {
-      return false;
-    }
-
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
-
-    setParaDataDeleted((prev) => ({
-      ...prev,
-      work_type: "D",
-      ordnum: ordnum,
-    }));
-  };
-
   const onRemovePlanClick = () => {
     //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
     let newData: any[] = [];
@@ -1180,16 +1176,16 @@ const PR_A1100W: React.FC = () => {
             item[PLAN_DATA_ITEM_KEY] !== chkItem[PLAN_DATA_ITEM_KEY] &&
             item.planno === chkItem.planno
           ) {
-            throw "공정과 공정순서를 확인하세요.";
+            throw findMessage(messagesData, "PR_A1100W_003");
           }
         });
 
         if (!checkIsDDLValid(item.proccd)) {
-          throw "공정을 입력하세요.";
+          throw findMessage(messagesData, "PR_A1100W_004");
         }
 
         if (item.procseq < 0) {
-          throw "공정순서를 입력하세요.";
+          throw findMessage(messagesData, "PR_A1100W_005");
         }
       });
     } catch (e) {
@@ -1271,13 +1267,13 @@ const PR_A1100W: React.FC = () => {
       planArr.qty_s.push(qty);
       planArr.planno_s.push(planno);
       planArr.planseq_s.push(planseq);
-      planArr.qtyunit_s.push(qtyunit);
+      planArr.qtyunit_s.push(getCodeFromValue(qtyunit));
       planArr.procqty_s.push(procqty);
       planArr.plandt_s.push(plandt);
       planArr.finexpdt_s.push(finexpdt);
       planArr.prodmac_s.push(prodmac);
       planArr.prodemp_s.push(prodemp);
-      planArr.proccd_s.push(proccd);
+      planArr.proccd_s.push(getCodeFromValue(proccd));
       planArr.procseq_s.push(procseq);
       planArr.outprocyn_s.push(outprocyn);
       //planArr.lotnum_s.push(lotnum);
@@ -1403,11 +1399,11 @@ const PR_A1100W: React.FC = () => {
       materialArr.planseq_s.push(planseq);
       materialArr.seq_s.push(seq);
       materialArr.unitqty_s.push(unitqty);
-      materialArr.outgb_s.push(outgb);
+      materialArr.outgb_s.push(getCodeFromValue(outgb));
       materialArr.procqty_s.push(procqty);
       materialArr.chlditemcd_s.push(chlditemcd);
-      materialArr.qtyunit_s2.push(qtyunit);
-      materialArr.proccd_s2.push(proccd);
+      materialArr.qtyunit_s2.push(getCodeFromValue(qtyunit));
+      materialArr.proccd_s2.push(getCodeFromValue(proccd));
       //planArr.lotnum_s.push(lotnum);
     });
 
@@ -2163,7 +2159,7 @@ const PR_A1100W: React.FC = () => {
                   width="95px"
                   footerCell={mainTotalFooterCell}
                 />
-
+                <GridColumn field={"ordnum"} title={"수주번호"} />
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdOrdList"].map(
                     (item: any, idx: number) =>
@@ -2183,85 +2179,6 @@ const PR_A1100W: React.FC = () => {
                         ></GridColumn>
                       )
                   )}
-                {/*               
-                <GridColumn
-                  field="orddt"
-                  title="수주일자"
-                  cell={DateCell}
-                  footerCell={mainTotalFooterCell}
-                  width="100px"
-                />
-                <GridColumn
-                  field="dlvdt"
-                  title="납기일자"
-                  cell={DateCell}
-                  width="100px"
-                  //width={calculateWidth("dlvdt")}
-                />
-
-                <GridColumn field="custnm" title="업체명" width="170px" />
-                <GridColumn field="itemcd" title="품목코드" width="160px" />
-                <GridColumn field="itemnm" title="품목명" width="180px" />
-                <GridColumn field="insiz" title="규격" width="200px" />
-                <GridColumn field="itemacnt" title="품목계정" width="120px" />
-                <GridColumn
-                  field="qty"
-                  title="수량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn field="qtyunit" title="단위" width="120px" />
-
-                <GridColumn
-                  field="unp"
-                  title="단가"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="wonamt"
-                  title="금액"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="taxamt"
-                  title="세액"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="totamt"
-                  title="합계금액"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="planqty"
-                  title="잔량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn field="remark" title="비고" width="120px" />
-                <GridColumn field="purcustnm" title="발주처" width="120px" />
-                <GridColumn
-                  field="outqty"
-                  title="출하수량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn field="ordkey" title="수주번호" width="120px" />
-                <GridColumn field="ordsts" title="수주상태" width="100px" />
-                <GridColumn field="doexdiv" title="내수구분" width="100px" />
-                <GridColumn field="taxdiv" title="과세구분" width="100px" />
-                <GridColumn field="bf_qty" title="LOT수량" width="120px" />
-                <GridColumn field="lotnum" title="LOT NO" width="120px" />
-                <GridColumn field="location" title="사업장" width="120px" />
-                <GridColumn field="dptcd" title="부서" width="120px" />
-                <GridColumn field="person" title="담당자" width="120px" />
-                <GridColumn field="quokey" title="견적번호" width="120px" />
-                <GridColumn field="remark" title="비고" width="120px" />
-                <GridColumn field="finyn" title="완료여부" width="120px" /> */}
               </Grid>
             </ExcelExport>
           </GridContainer>
@@ -2308,18 +2225,6 @@ const PR_A1100W: React.FC = () => {
                       ...row,
                       plandt: new Date(dateformat(row.plandt)),
                       finexpdt: new Date(dateformat(row.finexpdt)),
-                      proccd: proccdListData.find(
-                        (item: any) => item.sub_code === row.proccd
-                      )?.sub_code,
-                      outprocyn: outprocynListData.find(
-                        (item: any) => item.sub_code === row.outprocyn
-                      )?.sub_code,
-                      prodmac: prodmacListData.find(
-                        (item: any) => item.sub_code === row.prodmac
-                      ),
-                      prodemp: prodempListData.find(
-                        (item: any) => item.sub_code === row.prodemp
-                      ),
                       qtyunit: qtyunitListData.find(
                         (item: any) => item.sub_code === row.qtyunit
                       )?.code_name,
@@ -2387,6 +2292,7 @@ const PR_A1100W: React.FC = () => {
                     editable={false}
                   />
 
+                  <GridColumn field={"planno"} title={"계획번호"} />
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdPlanList"].map(
                       (item: any, idx: number) =>
@@ -2408,143 +2314,6 @@ const PR_A1100W: React.FC = () => {
                           />
                         )
                     )}
-
-                  {/* <GridColumn
-                    field="plandt"
-                    title="계획일자"
-                    cell={DateCell}
-                    footerCell={planTotalFooterCell}
-                    width="145px"
-                  />
-                  <GridColumn
-                    field="finexpdt"
-                    title="완료예정일"
-                    cell={DateCell}
-                    width="145px"
-                  />
-
-                  <GridColumn
-                    field="proccd"
-                    title="공정"
-                    width="170px"
-                    cell={DropDownCell}
-                  />
-                  <GridColumn
-                    field="procseq"
-                    title="공정순서"
-                    width="160px"
-                    editor="numeric"
-                  />
-                  <GridColumn
-                    field="outprocyn"
-                    title="외주구분"
-                    width="180px"
-                    cell={DropDownCell}
-                  />
-                  <GridColumn
-                    field="itemcd"
-                    title="재공품코드"
-                    width="200px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="qty"
-                    title="수량"
-                    width="120px"
-                    editor="numeric"
-                  />
-                  <GridColumn
-                    field="procqty"
-                    title="재공생산량"
-                    width="120px"
-                    editor="numeric"
-                  />
-
-                  <GridColumn
-                    field="qtyunit"
-                    title="수량단위"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="insiz"
-                    title="규격"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="prodmac"
-                    title="설비"
-                    width="120px"
-                    cell={DropDownCell}
-                  />
-                  <GridColumn
-                    field="prodemp"
-                    title="작업자"
-                    width="120px"
-                    cell={DropDownCell}
-                  />
-                  <GridColumn
-                    field="plankey"
-                    title="생산계획번호"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="ordkey"
-                    title="수주번호"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="poregnum"
-                    title="PO번호"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="purtype"
-                    title="발주유형"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="itemnm"
-                    title="품목명"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="itemlvl1"
-                    title="대분류"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="itemlvl2"
-                    title="중분류"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="itemlvl3"
-                    title="소분류"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="urgencyyn"
-                    title="긴급여부"
-                    width="120px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="custnm"
-                    title="업체명"
-                    width="120px"
-                    editable={false}
-                  /> 
-                  <GridColumn field="remark" title="비고" width="120px" />*/}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -2579,18 +2348,6 @@ const PR_A1100W: React.FC = () => {
                 data={process(
                   materialDataResult.data.map((row) => ({
                     ...row,
-                    /* itemacnt: itemacntListData.find(
-                      (item: any) => item.sub_code === row.itemacnt
-                    )?.code_name,*/
-                    qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
-                    ), //?.code_name,
-                    proccd: proccdListData.find(
-                      (item: any) => item.sub_code === row.proccd
-                    ), //?.code_name,
-                    outgb: outgbListData.find(
-                      (item: any) => item.sub_code === row.outgb
-                    ), //?.code_name,
                     [SELECTED_FIELD]:
                       materialSelectedState[materialIdGetter(row)],
                   })),
@@ -2641,71 +2398,27 @@ const PR_A1100W: React.FC = () => {
                   editable={false}
                 />
 
-                {/* {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["gvwInList2"].map(
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdMtrList"].map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
                           key={idx}
-                          field={item.id
-                            .replace("col_", "")
-                            .replace("1", "")
-                            .replace("2", "")}
+                          field={item.fieldName}
                           title={item.caption}
                           width={item.width}
                           cell={
-                            lookupField.includes(item.id)
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : dateField.includes(item.fieldName)
+                              ? DateCell
+                              : lookupField.includes(item.fieldName)
                               ? CustomComboBoxCell
                               : ""
                           }
-                          editor={
-                            numberField.includes(item.id) ? NumberCell : ""
-                          }
-                        ></GridColumn>
+                        />
                       )
-                  )} */}
-
-                <GridColumn
-                  field="proccd"
-                  title="공정"
-                  width="160px"
-                  cell={DropDownCell}
-                  footerCell={detailTotalFooterCell}
-                />
-                <GridColumn
-                  field="chlditemcd"
-                  title="소요자재코드"
-                  width="180px"
-                />
-                <GridColumn
-                  field="chlditemnm"
-                  title="소요자재명"
-                  width="200px"
-                />
-                <GridColumn
-                  field="procqty"
-                  title="재공생산량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="unitqty"
-                  title="소요량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="qtyunit"
-                  title="수량단위"
-                  width="120px"
-                  cell={DropDownCell}
-                />
-                <GridColumn
-                  field="outgb"
-                  title="자재사용구분"
-                  width="120px"
-                  cell={DropDownCell}
-                />
+                  )}
               </Grid>
             </GridContainer>
           </GridContainerWrap>

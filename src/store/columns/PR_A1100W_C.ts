@@ -390,4 +390,51 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdMtrList",
+    columns: [
+      {
+        id: "col_proccd_m",
+        field: "proccd",
+        caption: "공정",
+        width: 120,
+      },
+      {
+        id: "col_chlditemcd_m",
+        field: "chlditemcd",
+        caption: "소요자재코드",
+        width: 120,
+      },
+      {
+        id: "col_chlditemnm_m",
+        field: "chlditemnm",
+        caption: "소요자재명",
+        width: 120,
+      },
+      {
+        id: "col_procqty_m",
+        field: "procqty",
+        caption: "재공생산량",
+        width: 120,
+      },
+      {
+        id: "col_unitqty_m",
+        field: "unitqty",
+        caption: "소요량",
+        width: 120,
+      },
+      {
+        id: "col_qtyunit_m",
+        field: "qtyunit",
+        caption: "수량단위",
+        width: 120,
+      },
+      {
+        id: "col_outgb_m",
+        field: "outgb",
+        caption: "자재사용구분",
+        width: 120,
+      },
+    ],
+  },
 ];
