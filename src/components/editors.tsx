@@ -1,5 +1,10 @@
-import * as React from "react";
-import { Checkbox, Input, NumericTextBox } from "@progress/kendo-react-inputs";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Checkbox,
+  Input,
+  NumericTextBox,
+  NumericTextBoxChangeEvent,
+} from "@progress/kendo-react-inputs";
 import {
   Field,
   FieldRenderProps,
@@ -9,17 +14,21 @@ import { Label, Error, Hint } from "@progress/kendo-react-labels";
 import { GridCellProps, GridFilterCellProps } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { BlurEvent } from "@progress/kendo-react-dropdowns/dist/npm/common/events";
-import { FormGridEditContext } from "./Windows/SA_B2000W_Window";
+import { FormGridEditContext } from "./Windows/SA_A2000W_Window";
 import FieldDropDownList from "./DropDownLists/FieldDropDownList";
 import FieldComboBox from "./ComboBoxes/FieldComboBox";
 import FieldCheckBox from "./FieldCheckBox";
 import {
   checkIsDDLValid,
+  checkIsObjValid,
   getItemQuery,
   getQueryFromBizComponent,
   requiredValidator,
 } from "./CommonFunction";
 import moment from "moment";
+import UserEffect from "./UserEffect";
+import { useApi } from "../hooks/api";
+import { userState } from "../store/atoms";
 
 const FORM_DATA_INDEX = "formDataIndex";
 
@@ -35,8 +44,17 @@ const DisplayDDLValue = (fieldRenderProps: FieldRenderProps) => {
 
 //Grid Cell에 표시되는 ComboBox Name Value
 const DisplayComboBoxValue = (fieldRenderProps: FieldRenderProps) => {
-  const { textField } = fieldRenderProps;
-  return <>{fieldRenderProps.value ? fieldRenderProps.value[textField] : ""}</>;
+  const { valueField, textField, listData, value } = fieldRenderProps;
+
+  return (
+    <>
+      {value && listData.length > 0
+        ? (typeof value === "string"
+            ? listData.find((item: any) => item[valueField] === value)
+            : value)[textField]
+        : ""}
+    </>
+  );
 };
 
 //Grid Cell 수정모드에서 사용되는 Text Input
@@ -82,6 +100,7 @@ const NumericTextBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
     value,
     name,
     className,
+    onChange,
     ...others
   } = fieldRenderProps;
   const { calculateAmt, calculateSpecialAmt } =
@@ -89,11 +108,14 @@ const NumericTextBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
   const anchor: any = React.useRef(null);
 
   const onInputBlur = () => {
-    console.log(name);
-
     if (name?.includes("qty") || name?.includes("unp")) calculateAmt();
     if (name?.includes("qty") || name?.includes("specialunp"))
       calculateSpecialAmt();
+  };
+
+  const onInputChange = (e: NumericTextBoxChangeEvent) => {
+    const { target, value } = e;
+    onChange({ target: target, value: value === null ? 0 : value });
   };
 
   const required = className?.includes("required");
@@ -101,6 +123,7 @@ const NumericTextBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
     <div>
       <NumericTextBox
         onBlur={onInputBlur}
+        onChange={onInputChange}
         value={value}
         valid={required && Number(value) < 1 ? false : true}
         className={className ?? ""}
@@ -129,13 +152,14 @@ const DDLWithValidation = (fieldRenderProps: FieldRenderProps) => {
 
 //Grid Cell 수정모드에서 사용되는 ComboBox
 const ComboBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
-  const { queryStr, textField } = fieldRenderProps;
+  const { listData, valueField, textField } = fieldRenderProps;
 
   return (
     <div>
       <FieldComboBox
         fieldRenderProps={fieldRenderProps}
-        queryStr={queryStr}
+        listData={listData}
+        valueField={valueField}
         textField={textField}
       />
       {/* {visited && validationMessage && <Error>{validationMessage}</Error>} */}
@@ -180,9 +204,6 @@ const CheckBoxReadOnly = (fieldRenderProps: FieldRenderProps) => {
 export const NumberCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
-
-  //const srcPgName = dataItem.srcPgName;
-  //const parentField = UseGetParentField(srcPgName);
   const parentField = dataItem.parentField;
 
   let defaultRendering = (
@@ -300,8 +321,10 @@ export const CellDropDownList = (props: GridCellProps) => {
 
 interface CustomCellProps extends GridCellProps {
   bizComponent: any;
+  valueField?: string;
   textField?: string;
 }
+
 export const CellComboBox = (props: CustomCellProps) => {
   const {
     field,
@@ -309,21 +332,50 @@ export const CellComboBox = (props: CustomCellProps) => {
     className,
     render,
     bizComponent,
+    valueField = "sub_code",
     textField = "code_name",
   } = props;
+
+  const processApi = useApi();
   const isInEdit = field === dataItem.inEdit;
   const parentField = dataItem.parentField;
 
-  const query = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
+  const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
   const bizComponentItems = bizComponent ? bizComponent.bizComponentItems : [];
+
+  const [listData, setListData] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    let data: any;
+
+    let query = {
+      query: "query?query=" + encodeURIComponent(queryStr),
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   let defaultRendering = (
     <td className={className}>
       <Field
         name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
         component={isInEdit ? ComboBoxWithValidation : DisplayComboBoxValue}
-        queryStr={query}
+        listData={listData}
         textField={textField}
+        valueField={valueField}
         columns={bizComponentItems}
         className={className ?? ""}
       />
@@ -448,21 +500,58 @@ export const FormDropDownList = (fieldRenderProps: FieldRenderProps) => {
 
 //Form Field에서 사용되는 콤보박스
 export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
-  const { value, label, id, valid, queryStr, className } = fieldRenderProps;
+  const {
+    value,
+    label,
+    id,
+    valid,
+    queryStr,
+    className,
+    valueField = "sub_code",
+    textField = "code_name",
+  } = fieldRenderProps;
+  const processApi = useApi();
+  const [listData, setListData] = useState([]);
 
   const required = className?.includes("required");
-  let DDLvalid = valid;
-  if (required) DDLvalid = checkIsDDLValid(value);
+  let isValid = valid;
+  if (required) {
+    const comparisonValue = { [valueField]: "", [textField]: "" };
+    isValid = checkIsObjValid(value, comparisonValue);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    let data: any;
+    const query = {
+      query: "query?query=" + encodeURIComponent(queryStr),
+    };
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   return (
     <FieldWrapper>
-      <Label editorId={id} editorValid={DDLvalid}>
+      <Label editorId={id} editorValid={isValid}>
         {label}
       </Label>
       <div className={"k-form-field-wrap"}>
         <FieldComboBox
           fieldRenderProps={fieldRenderProps}
-          queryStr={queryStr}
+          listData={listData}
+          valueField={valueField}
+          textField={textField}
         />
       </div>
     </FieldWrapper>

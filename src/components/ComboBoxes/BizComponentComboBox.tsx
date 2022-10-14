@@ -80,6 +80,7 @@ const CommonComboBox = ({
 
   return (
     <MultiColumnComboBox
+      id={name}
       data={listData}
       value={
         value ? listData.find((item: any) => item[valueField] === value) : ""

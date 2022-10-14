@@ -5,16 +5,16 @@ import {
 } from "@progress/kendo-react-inputs";
 import { radioGroupDefaultData } from "../CommonString";
 
-type TCommonRadioGroup = {
+type TCustomOptionRadioGroup = {
   name: string;
   customOptionData: any;
   changeData(e: any): void;
 };
-const CommonRadioGroup = ({
+const CustomOptionRadioGroup = ({
   name,
   customOptionData,
   changeData,
-}: TCommonRadioGroup) => {
+}: TCustomOptionRadioGroup) => {
   //커스텀 옵션에 저장된 값으로 디폴트 값
   const dataList =
     customOptionData !== null
@@ -84,4 +84,4 @@ const CommonRadioGroup = ({
   );
 };
 
-export default CommonRadioGroup;
+export default CustomOptionRadioGroup;

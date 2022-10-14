@@ -116,3 +116,8 @@ export type Tpath = {
   menuId: string;
   parentMenuId: string;
 };
+
+// TypeScript에서 string key로 객체에 접근하기 위한 객체 타입
+export type ObjType = {
+  [key: string]: string;
+};

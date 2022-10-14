@@ -145,7 +145,7 @@ export const Modal = styled.div<TModal>`
 //   { index: ".2" },
 //   { path: "/PR_A1100W", index: ".2.0" },
 //   { index: ".3" },
-//   { path: "/SA_B2000W", index: ".3.0" },
+//   { path: "/SA_A2000W", index: ".3.0" },
 //   { path: "/SA_B3000W", index: ".3.1" },
 //   { index: ".4" },
 //   { path: "/QC_A0120W", index: ".4.0" },
@@ -341,7 +341,7 @@ const PanelBarNavContainer = (props: any) => {
               <PanelBarItem title={"계획생산"} route="/PR_A1100W" />
             </PanelBarItem>
             <PanelBarItem title={"영업관리"}>
-              <PanelBarItem title={"수주처리"} route="/SA_B2000W" />
+              <PanelBarItem title={"수주처리"} route="/SA_A2000W" />
               <PanelBarItem title={"매출집계(업체)"} route="/SA_B3000W" />
             </PanelBarItem>
             <PanelBarItem title={"품질관리"}>

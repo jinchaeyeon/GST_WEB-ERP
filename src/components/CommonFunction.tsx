@@ -1,7 +1,9 @@
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
 import React, { useCallback, useEffect } from "react";
+import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { sessionItemState, tokenState } from "../store/atoms";
+import { Iparameters, ObjType } from "../store/types";
 import { commonCodeDefaultValue } from "./CommonString";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
@@ -98,38 +100,6 @@ export const numberWithCommas = (num: number) => {
   }
 };
 
-//비즈니스 컴포넌트 조회
-// export const UseBizComponents = (bizComponentId: string, setListData: any) => {
-//   const processApi = useApi();
-
-//   useEffect(() => {
-//     if (bizComponentId !== null) {
-//       fetchData();
-//     }
-//   }, []);
-
-//   const fetchData = useCallback(async () => {
-//     let data: any;
-
-//     let id = {
-//       id: "biz-components?id=" + bizComponentId,
-//     };
-
-//     console.log("id~!");
-//     console.log(id);
-
-//     try {
-//       data = await processApi<any>("biz-components", id);
-//     } catch (error) {
-//       data = null;
-//     }
-
-//     if (data.isSuccess === true) {
-//       setListData(data);
-//     }
-//   }, []);
-// };
-
 //쿼리 스트링을 받아서 조회 후 결과값을 반환
 export const UseCommonQuery = (queryStr: string, setListData: any) => {
   const processApi = useApi();
@@ -195,6 +165,7 @@ export const UseMessages = (pathname: string, setListData: any) => {
 export const UseCustomOption = (pathname: string, setListData: any) => {
   //const [bizComponentData, setBizComponentData] = React.useState(null);
   const processApi = useApi();
+  const [sessionItem] = useRecoilState(sessionItemState);
 
   React.useEffect(() => {
     fetchCustomOptionData();
@@ -211,7 +182,30 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       data = null;
     }
 
+    const queryOptionsData = data.menuCustomDefaultOptions.query;
+    const newOptionsData = data.menuCustomDefaultOptions.new;
+
     if (data !== null) {
+      // sessionItem 데이터 있고 지정된 value 값이 없는 경우, 세션 값 참조하여 value 업데이트
+      if (newOptionsData) {
+        newOptionsData.forEach((optionsItem: any) => {
+          if (optionsItem.sessionItem !== "" && optionsItem.valueCode === "") {
+            optionsItem.valueCode = sessionItem.find(
+              (sessionItem) => sessionItem.code === optionsItem.sessionItem
+            )?.value;
+          }
+        });
+      }
+      if (queryOptionsData) {
+        queryOptionsData.forEach((optionsItem: any) => {
+          if (optionsItem.sessionItem !== "" && optionsItem.valueCode === "") {
+            optionsItem.valueCode = sessionItem.find(
+              (sessionItem) => sessionItem.code === optionsItem.sessionItem
+            )?.value;
+          }
+        });
+      }
+
       fetchBizComponentData(data);
     } else {
       console.log("[오류 발생]");
@@ -228,11 +222,29 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       return false;
     }
 
-    const bizComponentId = Object.values(
-      customOptionData.menuCustomDefaultOptions.query.map(
-        (item: any) => item.bizComponentId
-      )
-    ).toString();
+    let bizComponentIdArr = [];
+    const queryOptionsData = customOptionData.menuCustomDefaultOptions.query;
+    const newOptionsData = customOptionData.menuCustomDefaultOptions.new;
+
+    if (queryOptionsData) {
+      bizComponentIdArr.push(
+        ...[
+          Object.values(
+            queryOptionsData.map((item: any) => item.bizComponentId)
+          ),
+        ]
+      );
+    }
+
+    if (newOptionsData) {
+      bizComponentIdArr.push(
+        ...[
+          Object.values(newOptionsData.map((item: any) => item.bizComponentId)),
+        ]
+      );
+    }
+
+    const bizComponentId = bizComponentIdArr.toString();
 
     if (bizComponentId === "") {
       console.log(
@@ -255,8 +267,8 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
     if (data !== null) {
       //비즈니스 컴포넌트 조회 반환문 참조하여 쿼리 및 컬럼정보 추가
       data.forEach((bcItem: any) => {
-        customOptionData.menuCustomDefaultOptions.query.forEach(
-          (defaultItem: any) => {
+        if (queryOptionsData) {
+          queryOptionsData.forEach((defaultItem: any) => {
             if (bcItem.bizComponentId === defaultItem.bizComponentId) {
               defaultItem["query"] = (
                 bcItem["querySelect"] +
@@ -267,8 +279,22 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
               ).replace(/\r\n/gi, " ");
               defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
             }
-          }
-        );
+          });
+        }
+        if (newOptionsData) {
+          newOptionsData.forEach((defaultItem: any) => {
+            if (bcItem.bizComponentId === defaultItem.bizComponentId) {
+              defaultItem["query"] = (
+                bcItem["querySelect"] +
+                " " +
+                bcItem["queryWhere"] +
+                " " +
+                bcItem["queryFooter"]
+              ).replace(/\r\n/gi, " ");
+              defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
+            }
+          });
+        }
       });
 
       setListData(customOptionData);
@@ -443,6 +469,14 @@ export const checkIsDDLValid = (value: object) => {
     : true;
 };
 
+// 선택된 콤보박스의 객체 값 (ex. {sub_code: "test", code_name:"test"} )와 비교 객체(ex. {sub_code: "", code_name: ""} ) 를 인자로 받아서 일치하는 값인지 체크
+//=> 빈 값인 경우 false 반환
+export const checkIsObjValid = (value: object, comparisonValue: object) => {
+  return JSON.stringify(value) === JSON.stringify(comparisonValue) || !value
+    ? false
+    : true;
+};
+
 export const getGridItemChangedData = (
   event: GridItemChangeEvent,
   dataResult: any,
@@ -548,4 +582,14 @@ export const getBciFromCustomOptionData = (
   return customOptionData.menuCustomDefaultOptions.query.find(
     (item: any) => item.id === name
   ).bizComponentItems;
+};
+
+// 인수 value로부터 code 값을 반환 ()
+export const getCodeFromValue = (value: any, valueField?: string) => {
+  const code = !value
+    ? ""
+    : typeof value === "string" || typeof value === "number"
+    ? value
+    : value[valueField ?? "sub_code"];
+  return code;
 };

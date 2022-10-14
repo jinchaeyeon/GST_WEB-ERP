@@ -41,7 +41,7 @@ import {
   UseCustomOption,
   UseMessages,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_B2000W_Window";
+import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -671,7 +671,7 @@ const SA_B2000: React.FC = () => {
   };
 
   const onDeleteClick = (e: any) => {
-    if (!window.confirm(findMessage(messagesData, "SA_B2000W_001"))) {
+    if (!window.confirm(findMessage(messagesData, "SA_A2000W_001"))) {
       return false;
     }
 
@@ -694,7 +694,7 @@ const SA_B2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "SA_B2000W_002"));
+      alert(findMessage(messagesData, "SA_A2000W_002"));
 
       resetAllGrid();
       fetchMainGrid();

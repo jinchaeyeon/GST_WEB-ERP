@@ -1,21 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
-import { useApi } from "../../hooks/api";
 import { FieldRenderProps } from "@progress/kendo-react-form";
-import { checkIsDDLValid } from "../CommonFunction";
-import { commonCodeDefaultValue } from "../CommonString";
+import { checkIsObjValid } from "../CommonFunction";
 
-type TCommonComboBox = {
+type TFieldComboBox = {
   fieldRenderProps: FieldRenderProps;
-  queryStr: string;
-  textField?: string;
+  listData: any;
+  valueField: string;
+  textField: string;
 };
-const CommonComboBox: React.FC<TCommonComboBox> = ({
+const FieldComboBox: React.FC<TFieldComboBox> = ({
   fieldRenderProps,
-  queryStr,
+  listData,
+  valueField,
   textField,
-}: TCommonComboBox) => {
-  const processApi = useApi();
+}: TFieldComboBox) => {
   const {
     validationMessage,
     visited,
@@ -27,31 +26,6 @@ const CommonComboBox: React.FC<TCommonComboBox> = ({
     columns,
     ...others
   } = fieldRenderProps;
-  const [listData, setListData] = useState([]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = useCallback(async () => {
-    let data: any;
-
-    let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-
-      setListData(rows);
-    }
-  }, []);
 
   let newColumns = columns.map((column: any) => ({
     field: column.fieldName,
@@ -61,21 +35,28 @@ const CommonComboBox: React.FC<TCommonComboBox> = ({
   newColumns = newColumns.filter((column: any) => column.width !== 0);
 
   const required = className?.includes("required");
-  let DDLvalid = valid;
-  if (required) DDLvalid = checkIsDDLValid(value);
+  let isValid = valid;
+  if (required) {
+    const comparisonValue = { [valueField]: "", [textField]: "" };
+    isValid = checkIsObjValid(value, comparisonValue);
+  }
 
   return (
     <MultiColumnComboBox
       data={listData}
       textField={textField}
-      value={value}
+      value={
+        typeof value === "string"
+          ? listData.find((item: any) => item[valueField] === value)
+          : value
+      }
       columns={newColumns}
       className={className}
-      valid={DDLvalid}
+      valid={isValid}
       id={id}
       {...others}
     />
   );
 };
 
-export default CommonComboBox;
+export default FieldComboBox;

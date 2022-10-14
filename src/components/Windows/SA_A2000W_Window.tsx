@@ -21,7 +21,6 @@ import {
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
-
 import {
   BottomContainer,
   ButtonContainer,
@@ -40,16 +39,15 @@ import {
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import { clone } from "@progress/kendo-react-common";
-
 import {
   NumberCell,
   NameCell,
   FormInput,
-  FormDropDownList,
   FormDatePicker,
   FormReadOnly,
   ReadOnlyNumberCell,
   CellComboBox,
+  FormComboBox,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
@@ -64,9 +62,11 @@ import {
   UseCustomOption,
   findMessage,
   UseMessages,
+  setDefaultDate,
+  getCodeFromValue,
+  arrayLengthValidator,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
@@ -75,30 +75,27 @@ import {
   ICustData,
   IItemData,
   IWindowPosition,
-  TCommonCodeData,
 } from "../../hooks/interfaces";
 import {
-  amtunitQuery,
   commonCodeDefaultValue,
-  departmentsQuery,
-  doexdivQuery,
+  EDIT_FIELD,
   itemacntQuery,
   locationQuery,
   ordstsQuery,
   ordtypeQuery,
   pageSize,
   qtyunitQuery,
+  SELECTED_FIELD,
   taxdivQuery,
   usersQuery,
 } from "../CommonString";
 
 import { CellRender, RowRender } from "../Renderers";
-import UserEffect from "../UserEffect";
-import { convertTypeAcquisitionFromJson } from "typescript";
+import { tokenState } from "../../store/atoms";
+import { useRecoilState } from "recoil";
 
-// Validate the entire Form
-const arrayLengthValidator = (value: any) =>
-  value && value.length ? "" : "최소 1개 행을 입력해주세요";
+const FORM_DATA_INDEX = "formDataIndex";
+const DATA_ITEM_KEY = "ordseq";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = React.createContext<{
@@ -114,13 +111,8 @@ export const FormGridEditContext = React.createContext<{
   calculateSpecialAmt: () => void;
 }>({} as any);
 
-const deletedRows: object[] = [];
-
-const FORM_DATA_INDEX = "formDataIndex";
-const DATA_ITEM_KEY = "ordseq";
-
+let deletedRows: object[] = [];
 const idGetter = getter(FORM_DATA_INDEX);
-const SELECTED_FIELD: string = "selected";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -180,7 +172,11 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
-  return <CellComboBox bizComponent={bizComponent} {...props} />;
+  return bizComponent ? (
+    <CellComboBox bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
 };
 
 // Create the Grid that will be used inside the Form
@@ -194,6 +190,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const [editedRowIdx, setEditedRowIdx] = useState(-1);
   const [editedRowData, setEditedRowData] = useState({});
+
   const pathname: string = window.location.pathname.replace("/", "");
 
   const ItemBtnCell = (props: GridCellProps) => {
@@ -220,10 +217,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       </td>
     );
   };
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   // Add a new item to the Form FieldArray that will be shown in the Grid
   const onAdd = React.useCallback(
@@ -377,12 +370,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setDetailPgNum((prev) => prev + 1);
   };
 
-  //드롭다운리스트 데이터 조회 (품목계정)
-  const [itemacntListData, setItemacntListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
-
   const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
     if (rowIdx === -1) {
       //신규생성
@@ -392,12 +379,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           itemcd: data.itemcd,
           itemnm: data.itemnm,
           insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
+          itemacnt: data.itemacnt,
           qtyunit: commonCodeDefaultValue,
           qty: 0,
           specialunp: 0,
@@ -436,12 +418,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           itemcd: data.itemcd,
           itemnm: data.itemnm,
           insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
+          itemacnt: data.itemacnt,
           qtyunit: commonCodeDefaultValue,
         },
       });
@@ -461,8 +438,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     // );
     // setData(newData);
   };
-
-  const EDIT_FIELD = "inEdit";
 
   const enterEdit = (dataItem: any, field: string | undefined) => {
     fieldArrayRenderProps.onReplace({
@@ -571,17 +546,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     const dataItem = value[index];
     const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
 
-    fetchData(queryStr, index, dataItem, itemacntListData);
+    fetchData(queryStr, index, dataItem);
   };
   const processApi = useApi();
 
   const fetchData = React.useCallback(
-    async (
-      queryStr: string,
-      index: number,
-      dataItem: any,
-      itemacntListData: any
-    ) => {
+    async (queryStr: string, index: number, dataItem: any) => {
       let data: any;
 
       let query = {
@@ -596,18 +566,13 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
       if (data.isSuccess === true) {
         const rows = data.tables[0].Rows;
-        setRowItem(rows[0], index, dataItem, itemacntListData);
+        setRowItem(rows[0], index, dataItem);
       }
     },
     []
   );
 
-  const setRowItem = (
-    row: any,
-    index: number,
-    dataItem: any,
-    itemacntListData: any //useState의 itemacntListData 바로 사용시 다시 조회되어 조회 전 빈값을 참조하는 현상 발생해, 일단 인수로 넘겨줌. 나중에 수정 필요할듯함..
-  ) => {
+  const setRowItem = (row: any, index: number, dataItem: any) => {
     fieldArrayRenderProps.onReplace({
       index: index,
       value: {
@@ -617,13 +582,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         itemcd: row.itemcd,
         itemnm: row.itemnm,
         insiz: row.insiz,
-        itemacnt: {
-          sub_code: row.itemacnt,
-          code_name: itemacntListData.find(
-            (item: any) => item.sub_code === row.itemacnt
-          )?.code_name,
-        },
-        qtyunit: commonCodeDefaultValue,
+        itemacnt: row.itemacnt,
       },
     });
   };
@@ -870,59 +829,18 @@ const KendoWindow = ({
   isCopy,
   para,
 }: TKendoWindow) => {
-  //드롭다운 리스트 데이터 조회 (품목계정,수량단위)
-  const [locationListData, setLocationListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [doexdivListData, setDoexdivListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [ordstsListData, setOrdstsListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [ordtypeListData, setOrdtypeListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [departmentsListData, setDepartmentsListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [usersListData, setUsersListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [taxdivListData, setTaxdivListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [amtunitListData, setAmtunitListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [itemacntListData, setItemacntListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  const [qtyunitListData, setQtyunitListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(locationQuery, setLocationListData);
-  UseCommonQuery(doexdivQuery, setDoexdivListData);
-  UseCommonQuery(ordstsQuery, setOrdstsListData);
-  UseCommonQuery(ordtypeQuery, setOrdtypeListData);
-  UseCommonQuery(departmentsQuery, setDepartmentsListData);
-  UseCommonQuery(usersQuery, setUsersListData);
-  UseCommonQuery(taxdivQuery, setTaxdivListData);
-  UseCommonQuery(amtunitQuery, setAmtunitListData);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
-  UseCommonQuery(qtyunitQuery, setQtyunitListData);
+  const [token] = useRecoilState(tokenState);
+  const { userId } = token;
 
   const pathname: string = window.location.pathname.replace("/", "");
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
-  //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
-  useEffect(() => {
-    resetAllGrid();
-    resetForm();
-  }, [qtyunitListData]);
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -947,9 +865,6 @@ const KendoWindow = ({
     getVisible(false);
   };
 
-  const DETAIL_DATA_ITEM_KEY = "ordseq";
-  const SELECTED_FIELD = "selected";
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const [formKey, setFormKey] = React.useState(1);
   const resetForm = () => {
     setFormKey(formKey + 1);
@@ -1002,7 +917,7 @@ const KendoWindow = ({
     rcvcustnm: "",
     rcvcustcd: "",
     project: "",
-    amtunit: "KRW",
+    amtunit: "", //"KRW",
     wonchgrat: 0,
     uschgrat: 0,
     quokey: "",
@@ -1016,6 +931,42 @@ const KendoWindow = ({
     files: "",
     remark: "",
   });
+
+  useEffect(() => {
+    if (customOptionData !== null && workType === "N") {
+      setInitialVal((prev) => {
+        return {
+          ...prev,
+          orddt: setDefaultDate(customOptionData, "orddt"),
+          dlvdt: setDefaultDate(customOptionData, "dlvdt"),
+          doexdiv: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "doexdiv"
+          ).valueCode,
+          taxdiv: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "taxdiv"
+          ).valueCode,
+          location: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "location"
+          ).valueCode,
+          ordtype: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "ordtype"
+          ).valueCode,
+          ordsts: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "ordsts"
+          ).valueCode,
+          dptcd: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "dptcd"
+          ).valueCode,
+          amtunit: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "amtunit"
+          ).valueCode,
+          person: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "person"
+          ).valueCode,
+        };
+      });
+    }
+  }, [customOptionData]);
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
@@ -1102,16 +1053,6 @@ const KendoWindow = ({
     resetForm();
   }, [detailDataResult]);
 
-  //itemacnt, qtyunit list가 조회된 후 상세그리드 조회
-  // useEffect(() => {
-  //   if (workType === "U" || isCopy === true) {
-  //     if (itemacntListData.length > 0 && qtyunitListData.length > 0) {
-  //       resetAllGrid();
-  //       fetchGrid();
-  //     }
-  //   }
-  // }, [itemacntListData, qtyunitListData]);
-
   //상세그리드 조회
   const fetchGrid = async () => {
     let data: any;
@@ -1124,27 +1065,11 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
-        return {
-          ...row,
-          itemacnt: {
-            sub_code: row.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === row.itemacnt
-            )?.code_name,
-          },
-          qtyunit: {
-            sub_code: row.qtyunit,
-            code_name: qtyunitListData.find(
-              (item: any) => item.sub_code === row.qtyunit
-            )?.code_name,
-          },
-        };
-      });
+      const rows = data.tables[0].Rows;
 
       setDetailDataResult(() => {
         return {
-          data: [...rows],
+          data: rows,
           total: totalRowCnt,
         };
       });
@@ -1182,7 +1107,7 @@ const KendoWindow = ({
     doexdiv: "",
     remark: "",
     attdatnum: "",
-    userid: "admin",
+    userid: userId,
     pc: "WEB TEST",
     ship_method: "",
     dlv_method: "",
@@ -1317,7 +1242,8 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "SA_B2000W_003"));
+      alert(findMessage(messagesData, "SA_A2000W_003"));
+      deletedRows = []; //초기화
       if (workType === "U") {
         resetAllGrid();
 
@@ -1346,16 +1272,16 @@ const KendoWindow = ({
     try {
       dataItem.orderDetails.forEach((item: any) => {
         if (!item.itemcd) {
-          throw "품목코드를 입력하세요.";
+          throw findMessage(messagesData, "SA_A2000W_004");
         }
         if (!item.itemnm) {
-          throw "품목명을 입력하세요.";
+          throw findMessage(messagesData, "SA_A2000W_005");
         }
         if (!checkIsDDLValid(item.itemacnt)) {
-          throw "품목계정을 선택하세요.";
+          throw findMessage(messagesData, "SA_A2000W_006");
         }
         if (item.qty < 1) {
-          throw "수주량을 1 이상 입력하세요.";
+          throw findMessage(messagesData, "SA_A2000W_007");
         }
       });
     } catch (e) {
@@ -1477,15 +1403,11 @@ const KendoWindow = ({
       detailArr.poregseq_s.push(poregseq);
       detailArr.itemcd_s.push(itemcd);
       detailArr.itemnm_s.push(itemnm);
-      detailArr.itemacnt_s.push(
-        typeof itemacnt === "object" ? itemacnt.sub_code : ""
-      );
+      detailArr.itemacnt_s.push(getCodeFromValue(itemacnt));
       detailArr.insiz_s.push(insiz);
       detailArr.bnatur_s.push(bnatur);
       detailArr.qty_s.push(qty);
-      detailArr.qtyunit_s.push(
-        typeof qtyunit === "object" ? qtyunit.sub_code : ""
-      );
+      detailArr.qtyunit_s.push(getCodeFromValue(qtyunit));
       detailArr.totwgt_s.push(totwgt);
       detailArr.wgtunit_s.push(wgtunit);
       detailArr.len_s.push(len);
@@ -1555,15 +1477,11 @@ const KendoWindow = ({
       detailArr.poregseq_s.push(poregseq);
       detailArr.itemcd_s.push(itemcd);
       detailArr.itemnm_s.push(itemnm);
-      detailArr.itemacnt_s.push(
-        typeof itemacnt === "object" ? itemacnt.sub_code : ""
-      );
+      detailArr.itemacnt_s.push(getCodeFromValue(itemacnt));
       detailArr.insiz_s.push(insiz);
       detailArr.bnatur_s.push(bnatur);
       detailArr.qty_s.push(qty);
-      detailArr.qtyunit_s.push(
-        typeof qtyunit === "object" ? qtyunit.sub_code : ""
-      );
+      detailArr.qtyunit_s.push(getCodeFromValue(qtyunit));
       detailArr.totwgt_s.push(totwgt);
       detailArr.wgtunit_s.push(wgtunit);
       detailArr.len_s.push(len);
@@ -1592,18 +1510,19 @@ const KendoWindow = ({
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-      location: location.sub_code,
+      location: getCodeFromValue(location),
+      //location: typeof location === "string" ? location : location.sub_code,
       ordnum,
       poregnum,
       project,
-      ordtype: ordtype.sub_code,
-      ordsts: ordsts.sub_code,
-      taxdiv: taxdiv.sub_code,
+      ordtype: getCodeFromValue(ordtype),
+      ordsts: getCodeFromValue(ordsts),
+      taxdiv: getCodeFromValue(taxdiv),
       orddt: convertDateToStr(orddt),
       dlvdt: convertDateToStr(dlvdt),
-      dptcd: dptcd.sub_code,
-      person: person.sub_code,
-      amtunit: amtunit.sub_code,
+      dptcd: getCodeFromValue(dptcd, "dptcd"),
+      person: getCodeFromValue(person, "user_id"),
+      amtunit: getCodeFromValue(amtunit),
       portnm,
       finaldes: "",
       paymeth,
@@ -1614,7 +1533,7 @@ const KendoWindow = ({
       rcvcustnm,
       wonchgrat,
       uschgrat,
-      doexdiv: doexdiv.sub_code,
+      doexdiv: getCodeFromValue(doexdiv),
       remark,
       attdatnum,
       ship_method,
@@ -1736,61 +1655,21 @@ const KendoWindow = ({
         initialValues={{
           rowstatus: "",
           ordnum: isCopy === true ? "" : initialVal.ordnum,
-          doexdiv: {
-            sub_code: initialVal.doexdiv,
-            code_name: doexdivListData.find(
-              (item: any) => item.sub_code === initialVal.doexdiv
-            )?.code_name,
-          },
-          taxdiv: {
-            sub_code: initialVal.taxdiv,
-            code_name: taxdivListData.find(
-              (item: any) => item.sub_code === initialVal.taxdiv
-            )?.code_name,
-          },
-          location: {
-            sub_code: initialVal.location,
-            code_name: locationListData.find(
-              (item: any) => item.sub_code === initialVal.location
-            )?.code_name,
-          },
+          doexdiv: initialVal.doexdiv,
+          taxdiv: initialVal.taxdiv,
+          location: initialVal.location,
           orddt: initialVal.orddt, //new Date(),
           dlvdt: initialVal.dlvdt,
           custnm: initialVal.custnm,
           custcd: initialVal.custcd,
-          dptcd: {
-            sub_code: initialVal.dptcd,
-            code_name: departmentsListData.find(
-              (item: any) => item.sub_code === initialVal.dptcd
-            )?.code_name,
-          },
-          person: {
-            sub_code: initialVal.person,
-            code_name: usersListData.find(
-              (item: any) => item.sub_code === initialVal.person
-            )?.code_name,
-          },
-          ordsts: {
-            sub_code: initialVal.ordsts,
-            code_name: ordstsListData.find(
-              (item: any) => item.sub_code === initialVal.ordsts
-            )?.code_name,
-          },
-          ordtype: {
-            sub_code: initialVal.ordtype,
-            code_name: ordtypeListData.find(
-              (item: any) => item.sub_code === initialVal.ordtype
-            )?.code_name,
-          },
+          dptcd: initialVal.dptcd,
+          person: initialVal.person,
+          ordsts: initialVal.ordsts,
+          ordtype: initialVal.ordtype,
           rcvcustnm: initialVal.rcvcustnm,
           rcvcustcd: initialVal.rcvcustcd,
           project: initialVal.project,
-          amtunit: {
-            sub_code: initialVal.amtunit,
-            code_name: amtunitListData.find(
-              (item: any) => item.sub_code === initialVal.amtunit
-            )?.code_name,
-          }, //"KRW",
+          amtunit: initialVal.amtunit, //"KRW",
           wonchgrat: initialVal.wonchgrat, //0,
           uschgrat: initialVal.uschgrat, //0,
           quokey: initialVal.quokey,
@@ -1825,26 +1704,59 @@ const KendoWindow = ({
                   component={FormReadOnly}
                   className="readonly"
                 />
-                <Field
-                  name={"doexdiv"}
-                  label={"내수구분"}
-                  component={FormDropDownList}
-                  queryStr={doexdivQuery}
-                  className="required"
-                />
-                <Field
-                  name={"taxdiv"}
-                  component={FormDropDownList}
-                  label={"과세구분"}
-                  queryStr={taxdivQuery}
-                  className="required"
-                />
-                <Field
-                  name={"location"}
-                  component={FormDropDownList}
-                  label={"사업장"}
-                  queryStr={locationQuery}
-                />
+                {customOptionData !== null && (
+                  <Field
+                    name={"doexdiv"}
+                    label={"내수구분"}
+                    component={FormComboBox}
+                    queryStr={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "doexdiv"
+                      ).query
+                    }
+                    columns={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "doexdiv"
+                      ).bizComponentItems
+                    }
+                    className="required"
+                  />
+                )}
+                {customOptionData !== null && (
+                  <Field
+                    name={"taxdiv"}
+                    label={"과세구분"}
+                    component={FormComboBox}
+                    queryStr={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "taxdiv"
+                      ).query
+                    }
+                    columns={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "taxdiv"
+                      ).bizComponentItems
+                    }
+                    className="required"
+                  />
+                )}
+                {customOptionData !== null && (
+                  <Field
+                    name={"location"}
+                    label={"사업장"}
+                    component={FormComboBox}
+                    queryStr={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "location"
+                      ).query
+                    }
+                    columns={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "location"
+                      ).bizComponentItems
+                    }
+                  />
+                )}
               </FieldWrap>
 
               <FieldWrap fieldWidth="25%">
@@ -1860,20 +1772,49 @@ const KendoWindow = ({
                   component={FormDatePicker}
                   className="required"
                 />
-                <Field
+                {/* <Field
                   label={"수주상태"}
                   name={"ordsts"}
                   component={FormDropDownList}
                   queryStr={ordstsQuery}
                   className="required"
-                />
-                <Field
-                  label={"수주형태"}
-                  name={"ordtype"}
-                  component={FormDropDownList}
-                  queryStr={ordtypeQuery}
-                  className="required"
-                />
+                /> */}
+
+                {customOptionData !== null && (
+                  <Field
+                    name={"ordsts"}
+                    label={"수주상태"}
+                    component={FormComboBox}
+                    queryStr={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "ordsts"
+                      ).query
+                    }
+                    columns={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "ordsts"
+                      ).bizComponentItems
+                    }
+                  />
+                )}
+
+                {customOptionData !== null && (
+                  <Field
+                    name={"ordtype"}
+                    label={"수주형태"}
+                    component={FormComboBox}
+                    queryStr={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "ordtype"
+                      ).query
+                    }
+                    columns={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "ordtype"
+                      ).bizComponentItems
+                    }
+                  />
+                )}
               </FieldWrap>
 
               <FieldWrap fieldWidth="25%">
@@ -1928,24 +1869,64 @@ const KendoWindow = ({
                   component={FormInput}
                   label={"프로젝트"}
                 />
-                <Field
-                  name={"dptcd"}
-                  component={FormDropDownList}
-                  queryStr={departmentsQuery}
-                  label={"부서"}
-                />
-                <Field
-                  name={"person"}
-                  component={FormDropDownList}
-                  queryStr={usersQuery}
-                  label={"담당자"}
-                />
-                <Field
-                  name={"amtunit"}
-                  component={FormDropDownList}
-                  queryStr={amtunitQuery}
-                  label={"화폐단위"}
-                />
+
+                {customOptionData !== null && (
+                  <Field
+                    name={"dptcd"}
+                    label={"부서"}
+                    component={FormComboBox}
+                    queryStr={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "dptcd"
+                      ).query
+                    }
+                    textField={"dptnm"}
+                    valueField={"dptcd"}
+                    columns={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "dptcd"
+                      ).bizComponentItems
+                    }
+                  />
+                )}
+
+                {customOptionData !== null && (
+                  <Field
+                    name={"person"}
+                    label={"담당자"}
+                    component={FormComboBox}
+                    queryStr={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "person"
+                      ).query
+                    }
+                    valueField={"user_id"}
+                    textField={"user_name"}
+                    columns={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "person"
+                      ).bizComponentItems
+                    }
+                  />
+                )}
+                {customOptionData !== null && (
+                  <Field
+                    name={"amtunit"}
+                    label={"화폐단위"}
+                    component={FormComboBox}
+                    queryStr={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "amtunit"
+                      ).query
+                    }
+                    textField={"code_name"}
+                    columns={
+                      customOptionData.menuCustomDefaultOptions.new.find(
+                        (item: any) => item.id === "amtunit"
+                      ).bizComponentItems
+                    }
+                  />
+                )}
                 {/* <Field
                   name={"wonchgrat"}
                   component={FormInput}

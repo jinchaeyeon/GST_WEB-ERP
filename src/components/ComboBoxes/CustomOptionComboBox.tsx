@@ -25,20 +25,21 @@ const CustomOptionComboBox = ({
   const processApi = useApi();
   const [listData, setListData] = useState([]);
 
+  const dataList = customOptionData.menuCustomDefaultOptions.query;
   useEffect(() => {
-    fetchData();
+    if (dataList) {
+      fetchData();
+    }
   }, []);
 
   //콤보박스 리스트 쿼리 조회
   const fetchData = useCallback(async () => {
     let data: any;
 
-    const queryStr = customOptionData.menuCustomDefaultOptions.query.find(
-      (item: any) => item.id === name
-    ).query;
+    const queryStr = dataList.find((item: any) => item.id === name).query;
 
     let query = {
-      query: "query?query=" + queryStr,
+      query: "query?query=" + encodeURIComponent(queryStr),
     };
 
     try {
@@ -54,22 +55,23 @@ const CustomOptionComboBox = ({
     }
   }, []);
 
-  const columns = customOptionData.menuCustomDefaultOptions.query.find(
-    (item: any) => item.id === name
-  ).bizComponentItems;
-
   let newColumns = [];
 
-  if (columns) {
-    newColumns = columns.map((column: any) => ({
-      field: column.fieldName,
-      header: column.caption,
-      width: column.columnWidth,
-    }));
+  if (dataList) {
+    const columns = dataList.find(
+      (item: any) => item.id === name
+    ).bizComponentItems;
 
-    newColumns = newColumns.filter((column: any) => column.width !== 0);
+    if (columns) {
+      newColumns = columns.map((column: any) => ({
+        field: column.fieldName,
+        header: column.caption,
+        width: column.columnWidth,
+      }));
+
+      newColumns = newColumns.filter((column: any) => column.width !== 0);
+    }
   }
-
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value === null ? "" : e.target.value[valueField];
     changeData({ name, value });
@@ -78,12 +80,13 @@ const CustomOptionComboBox = ({
   return (
     <MultiColumnComboBox
       data={listData}
+      textField={textField}
       value={
         value ? listData.find((item: any) => item[valueField] === value) : ""
       }
       columns={newColumns}
-      textField={textField}
       onChange={onChangeHandle}
+      id={name}
     />
   );
 };
