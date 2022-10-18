@@ -30,7 +30,7 @@ import { Input, RadioGroupChangeEvent } from "@progress/kendo-react-inputs";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { tokenState } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   findMessage,
@@ -38,6 +38,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseMessages,
+  UsePermissions,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
@@ -51,6 +52,7 @@ import {
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
+import TopButtons from "../components/TopButtons";
 
 const numberField = [
   "sort_seq",
@@ -65,6 +67,8 @@ const checkBoxField = ["system_yn", "use_yn"];
 
 const Page: React.FC = () => {
   const [token] = useRecoilState(tokenState);
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
   const { userId } = token;
   const DATA_ITEM_KEY = "group_code";
   const DETAIL_DATA_ITEM_KEY = "sub_code";
@@ -73,7 +77,7 @@ const Page: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
 
-  const [willSearch, setWillSearch] = useState(false);
+  const [isInitSearch, setIsInitSearch] = useState(false);
   const [mainDataState, setMainDataState] = useState<State>({
     group: [
       {
@@ -322,6 +326,7 @@ const Page: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
     try {
       data = await processApi<any>("procedure", parameters);
@@ -400,13 +405,6 @@ const Page: React.FC = () => {
       }
     }
   }, [mainDataResult]);
-
-  //customOptionData 조회 후 디폴트 값 세팅
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -585,7 +583,7 @@ const Page: React.FC = () => {
 
   const setGroupCode = (group_code: string) => {
     setFilters((prev) => ({ ...prev, group_code }));
-    setWillSearch(true);
+    setIsInitSearch(false);
   };
 
   const reloadData = (workType: string) => {
@@ -619,12 +617,17 @@ const Page: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (willSearch === true) {
+    if (!isInitSearch && permissions !== null) {
       resetAllGrid();
       fetchMainGrid();
-      setWillSearch(false);
+      setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
+
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  };
 
   return (
     <>
@@ -632,26 +635,13 @@ const Page: React.FC = () => {
         <Title>공통코드정보</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions !== null && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
@@ -745,31 +735,36 @@ const Page: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>요약정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="file-add"
-                >
-                  생성
-                </Button>
-                <Button
-                  onClick={onCopyClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="copy"
-                >
-                  복사
-                </Button>
-                <Button
-                  onClick={onDeleteClick}
-                  icon="delete"
-                  fillMode="outline"
-                  themeColor={"primary"}
-                >
-                  삭제
-                </Button>
-              </ButtonContainer>
+              {permissions !== null && (
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                    disabled={permissions.save ? false : true}
+                  >
+                    생성
+                  </Button>
+                  <Button
+                    onClick={onCopyClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="copy"
+                    disabled={permissions.save ? false : true}
+                  >
+                    복사
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    icon="delete"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    disabled={permissions.delete ? false : true}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
+              )}
             </GridTitleContainer>
             <Grid
               style={{ height: "700px" }}

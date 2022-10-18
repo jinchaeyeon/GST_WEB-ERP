@@ -27,7 +27,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -37,6 +37,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseMessages,
+  UsePermissions,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -52,6 +53,7 @@ import DateCell from "../components/Cells/DateCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import EncryptedCell from "../components/Cells/EncryptedCell";
 import { sha256 } from "js-sha256";
+import TopButtons from "../components/TopButtons";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -102,6 +104,8 @@ const SY_A0120: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -199,6 +203,7 @@ const SY_A0120: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -285,11 +290,11 @@ const SY_A0120: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false) {
+    if (isInitSearch === false && permissions !== null) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
@@ -671,32 +676,23 @@ const SY_A0120: React.FC = () => {
     }
   };
 
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  };
   return (
     <>
       <TitleContainer>
         <Title>사용자 정보</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
@@ -813,26 +809,32 @@ const SY_A0120: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>사용자 리스트</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="plus"
-              ></Button>
-              <Button
-                onClick={onRemoveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              ></Button>
-            </ButtonContainer>
+
+            {permissions && (
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="plus"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onRemoveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+              </ButtonContainer>
+            )}
           </GridTitleContainer>
           <Grid
             style={{ height: "650px" }}

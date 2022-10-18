@@ -29,7 +29,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -39,6 +39,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseMessages,
+  UsePermissions,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -52,6 +53,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import TopButtons from "../components/TopButtons";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
@@ -61,6 +63,8 @@ const SA_B2000: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -457,6 +461,7 @@ const SA_B2000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
     try {
       data = await processApi<any>("procedure", parameters);
@@ -506,11 +511,15 @@ const SA_B2000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
+    if (
+      customOptionData !== null &&
+      isInitSearch === false &&
+      permissions !== null
+    ) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -794,32 +803,23 @@ const SA_B2000: React.FC = () => {
     setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  };
   return (
     <>
       <TitleContainer>
         <Title>수주처리</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>

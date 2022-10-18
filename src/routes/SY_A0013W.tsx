@@ -37,7 +37,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -47,6 +47,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseMessages,
+  UsePermissions,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -63,7 +64,8 @@ import { CellRender, RowRender } from "../components/Renderers";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { tokenState } from "../store/atoms";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import TopButtons from "../components/TopButtons";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -139,6 +141,8 @@ let selectedRowIdx = 0;
 const SY_A0120: React.FC = () => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -350,6 +354,7 @@ const SY_A0120: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -666,12 +671,12 @@ const SY_A0120: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false) {
+    if (isInitSearch === false && permissions !== null) {
       fetchMainGrid();
       fetchAllMenuGrid();
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   //공통코드 리스트 조회 후 그리드 데이터 세팅
   // useEffect(() => {
@@ -1236,33 +1241,24 @@ const SY_A0120: React.FC = () => {
       ? extendDataItem(item, subItemsField, { [expandField]: true })
       : item;
 
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+    fetchAllMenuGrid();
+  };
   return (
     <>
       <TitleContainer>
         <Title>사용자 권한</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-              fetchAllMenuGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
@@ -1440,14 +1436,18 @@ const SY_A0120: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>사용자별 메뉴 권한</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                ></Button>
-              </ButtonContainer>
+
+              {permissions && (
+                <ButtonContainer>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                </ButtonContainer>
+              )}
             </GridTitleContainer>
 
             <TreeList

@@ -1,5 +1,12 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
-import { User, TCommonCode, Token, Tmenu, TSessionItem } from "./types";
+import {
+  User,
+  TCommonCode,
+  Token,
+  Tmenu,
+  TSessionItem,
+  TPermissions,
+} from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>

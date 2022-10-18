@@ -31,10 +31,10 @@ import {
   FilterBoxWrap,
   FilterBox,
 } from "../CommonStyled";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { tokenState } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStrWithTime,
@@ -47,6 +47,7 @@ import {
   setDefaultDate,
   UseMessages,
   findMessage,
+  UsePermissions,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -63,6 +64,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
+import TopButtons from "../components/TopButtons";
 
 const DATA_ITEM_KEY = "idx";
 let deletedTodoRows: object[] = [];
@@ -73,6 +75,8 @@ const CM_A1600: React.FC = () => {
   const processApi = useApi();
   const [token] = useRecoilState(tokenState);
   const { userId, companyCode } = token;
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -213,6 +217,7 @@ const CM_A1600: React.FC = () => {
   };
 
   const fetchTodoGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -240,6 +245,7 @@ const CM_A1600: React.FC = () => {
   };
 
   const fetchScheduler = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -270,19 +276,19 @@ const CM_A1600: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isInitSearch === false) {
+    if (isInitSearch === false && permissions !== null) {
       //if (customOptionData !== null && isInitSearch === false) {
       fetchTodoGrid();
       setIsInitSearch(true);
     }
-  }, [todoFilter]);
+  }, [todoFilter, permissions]);
 
   useEffect(() => {
     // if (customOptionData !== null) {
     //   fetchScheduler();
     // }
-    fetchScheduler();
-  }, [schedulerFilter]);
+    if (permissions !== null) fetchScheduler();
+  }, [schedulerFilter, permissions]);
 
   //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
   const onTodoSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -342,8 +348,6 @@ const CM_A1600: React.FC = () => {
       colorid_s: string[];
     };
 
-    console.log("created");
-    console.log(created);
     let dataArr: TdataArr = {
       rowstatus_s: [],
       datnum_s: [],
@@ -397,9 +401,6 @@ const CM_A1600: React.FC = () => {
       dataArr.title_s.push(title);
       dataArr.colorid_s.push("");
     });
-
-    console.log("dataArr");
-    console.log(dataArr);
 
     setParaData((prev) => ({
       ...prev,
@@ -935,33 +936,24 @@ const CM_A1600: React.FC = () => {
     }
   };
 
+  const search = () => {
+    setTodoPgNum(1);
+    setTodoDataResult(process([], todoDataState));
+    fetchTodoGrid();
+    fetchScheduler();
+  };
   return (
     <>
       <TitleContainer>
         <Title>Scheduler</Title>
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              setTodoPgNum(1);
-              setTodoDataResult(process([], todoDataState));
-              fetchTodoGrid();
-              fetchScheduler();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <GridContainerWrap>
@@ -1083,26 +1075,31 @@ const CM_A1600: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>To-do 리스트</GridTitle>
 
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="plus"
-                  ></Button>
-                  <Button
-                    onClick={onRemoveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  ></Button>
-                </ButtonContainer>
+                {permissions && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="plus"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onRemoveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  </ButtonContainer>
+                )}
               </GridTitleContainer>
 
               <Grid

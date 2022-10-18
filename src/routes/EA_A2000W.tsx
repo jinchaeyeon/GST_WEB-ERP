@@ -30,7 +30,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, RadioGroup } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
@@ -43,6 +43,7 @@ import {
   UseCustomOption,
   UseDesignInfo,
   UseMessages,
+  UsePermissions,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -72,6 +73,7 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import { Window } from "@progress/kendo-react-dialogs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { tokenState } from "../store/atoms";
+import TopButtons from "../components/TopButtons";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
@@ -110,6 +112,8 @@ const EA_A2000: React.FC = () => {
     //부서,담당자,결재문서,근태구분,결재유무,사용자,직위,결재라인,결재관리구분,결재유무,결재구분
     setBizComponentData
   );
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   const [appynListData, setAppynListData] = React.useState([
     { code: "", name: "" },
@@ -280,6 +284,7 @@ const EA_A2000: React.FC = () => {
     radAppyn: "N",
     appnum: "",
     cboStddiv: "",
+    isFilterSet: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -363,6 +368,7 @@ const EA_A2000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -684,6 +690,7 @@ const EA_A2000: React.FC = () => {
         ...prev,
         ymdStartDt: setDefaultDate(customOptionData, "ymdStartDt"),
         ymdEndDt: setDefaultDate(customOptionData, "ymdEndDt"),
+        isFilterSet: true,
         // cboItemacnt: defaultOption.find(
         //   (item: any) => item.id === "cboItemacnt"
         // ).value,
@@ -695,14 +702,18 @@ const EA_A2000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
+    if (oldCompany.includes(companyCode)) return;
+
     if (
-      (customOptionData !== null || oldCompany.includes(companyCode)) &&
-      isInitSearch === false
+      customOptionData !== null &&
+      isInitSearch === false &&
+      permissions !== null &&
+      filters.isFilterSet
     ) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   const onAddClick = () => {
     let seq = 1;
@@ -1070,32 +1081,24 @@ const EA_A2000: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 768;
 
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  };
+
   return (
     <>
       <TitleContainer>
         <Title>결재관리</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
@@ -1401,28 +1404,32 @@ const EA_A2000: React.FC = () => {
                     미결함
                   </GridTitle>
 
-                  <ButtonContainer>
-                    <Button
-                      onClick={() => {
-                        processApproval("APP");
-                      }}
-                      icon="check"
-                      //fillMode="outline"
-                      themeColor={"primary"}
-                    >
-                      승인
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        processApproval("RTR");
-                      }}
-                      icon="x"
-                      fillMode="outline"
-                      themeColor={"primary"}
-                    >
-                      반려
-                    </Button>
-                  </ButtonContainer>
+                  {permissions && (
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          processApproval("APP");
+                        }}
+                        icon="check"
+                        //fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        승인
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          processApproval("RTR");
+                        }}
+                        icon="x"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        반려
+                      </Button>
+                    </ButtonContainer>
+                  )}
                 </GridTitleContainer>
                 <Grid
                   style={{ height: "280px" }}
@@ -1939,26 +1946,32 @@ const EA_A2000: React.FC = () => {
             >
               <GridTitleContainer>
                 <GridTitle data-control-name="grtlCmtList">코멘트</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="plus"
-                  ></Button>
-                  <Button
-                    onClick={onRemoveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  ></Button>
-                </ButtonContainer>
+
+                {permissions && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="plus"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onRemoveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  </ButtonContainer>
+                )}
               </GridTitleContainer>
               <Grid
                 style={{ height: "390px" }}

@@ -23,18 +23,19 @@ import {
   ButtonContainer,
   GridTitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
   UseBizComponent,
+  UsePermissions,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import { pageSize, SELECTED_FIELD } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import TopButtons from "../components/TopButtons";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -42,6 +43,8 @@ const DATA_ITEM_KEY = "idx";
 const SY_A0120: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   //커스텀 옵션 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -120,6 +123,7 @@ const SY_A0120: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -214,11 +218,16 @@ const SY_A0120: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false) {
+    if (isInitSearch === false && permissions !== null) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
+
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  };
 
   return (
     <>
@@ -226,26 +235,13 @@ const SY_A0120: React.FC = () => {
         <Title>로그인 현황</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>

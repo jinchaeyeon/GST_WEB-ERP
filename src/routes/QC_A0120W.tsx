@@ -33,7 +33,7 @@ import {
 } from "@progress/kendo-react-charts";
 import "hammerjs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
@@ -42,6 +42,7 @@ import {
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
+  UsePermissions,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -50,10 +51,14 @@ import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import TopButtons from "../components/TopButtons";
 
 const QC_A0120: React.FC = () => {
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
+
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -256,6 +261,7 @@ const QC_A0120: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -295,15 +301,15 @@ const QC_A0120: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchMainGrid();
+    if (customOptionData !== null) fetchMainGrid();
   }, [mainPgNum]);
 
   useEffect(() => {
-    fetchDetailGrid1();
+    if (customOptionData !== null) fetchDetailGrid1();
   }, [detail1PgNum]);
 
   useEffect(() => {
-    resetAllGrid();
+    if (customOptionData !== null) resetAllGrid();
   }, [detailFilters1]);
 
   //그리드 리셋
@@ -407,11 +413,15 @@ const QC_A0120: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
+    if (
+      customOptionData !== null &&
+      isInitSearch === false &&
+      permissions !== null
+    ) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   const CusomizedGrid = (props: TCusomizedGrid) => {
     const { maxWidth } = props;
@@ -521,33 +531,26 @@ const QC_A0120: React.FC = () => {
       </GridContainer>
     );
   };
+
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+    fetchDetailGrid1();
+  };
+
   return (
     <>
       <TitleContainer>
         <Title>불량내역조회</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-              fetchDetailGrid1();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>

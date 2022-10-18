@@ -38,7 +38,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   findMessage,
@@ -47,6 +47,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseMessages,
+  UsePermissions,
 } from "../components/CommonFunction";
 import {
   clientWidth,
@@ -63,6 +64,7 @@ import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { tokenState } from "../store/atoms";
 import { useRecoilState } from "recoil";
 import DetailWindow from "../components/Windows/SY_A0011W_Window";
+import TopButtons from "../components/TopButtons";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "user_group_id";
@@ -109,6 +111,8 @@ let selectedRowIdx = 0;
 const SY_A0120: React.FC = () => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -299,6 +303,7 @@ const SY_A0120: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -614,12 +619,12 @@ const SY_A0120: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false) {
+    if (isInitSearch === false && permissions !== null) {
       fetchMainGrid();
       fetchAllMenuGrid();
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   const onAddClick = () => {
     setWorkType("N");
@@ -1211,33 +1216,24 @@ const SY_A0120: React.FC = () => {
     );
   };
 
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+    fetchAllMenuGrid();
+  };
   return (
     <>
       <TitleContainer>
         <Title>사용자 그룹</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-              fetchAllMenuGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
@@ -1291,24 +1287,28 @@ const SY_A0120: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>사용자그룹 정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="file-add"
-                >
-                  생성
-                </Button>
-                <Button
-                  onClick={onDeleteClick}
-                  icon="delete"
-                  fillMode="outline"
-                  themeColor={"primary"}
-                >
-                  삭제
-                </Button>
-              </ButtonContainer>
+              {permissions && (
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="file-add"
+                    disabled={permissions.save ? false : true}
+                  >
+                    생성
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    icon="delete"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    disabled={permissions.delete ? false : true}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
+              )}
             </GridTitleContainer>
             <Grid
               style={{ height: "650px" }}
@@ -1382,14 +1382,17 @@ const SY_A0120: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                ></Button>
-              </ButtonContainer>
+              {permissions !== null && (
+                <ButtonContainer>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                </ButtonContainer>
+              )}
             </GridTitleContainer>
 
             <TreeList

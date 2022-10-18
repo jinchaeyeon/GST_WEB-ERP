@@ -1,5 +1,5 @@
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, tokenState } from "../store/atoms";
@@ -132,6 +132,14 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
 export const findMessage = (messagesData: any, id: string) => {
   return messagesData.find((item: any) => item.messageId === id).message;
 };
+
+// export const UseGetAllData = (setListData: any) => {
+//   const [messages, setMessages] = useState(null);
+//   const [customOption, setCustomOption] = useState(null);
+
+//   UseMessages("", setMessages);
+//   UseCustomOption("", setCustomOption);
+// };
 
 //현재 경로를 받아서 메시지 조회 후 결과값을 반환
 export const UseMessages = (pathname: string, setListData: any) => {
@@ -324,6 +332,40 @@ export const UseDesignInfo = (pathname: string, setListData: any) => {
 
     if (data !== null && data.words) {
       setListData(data.words);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  }, []);
+};
+
+// 권한 조회 후 결과값을 반환
+export const UsePermissions = (setListData: any) => {
+  const processApi = useApi();
+
+  const pathname: string = window.location.pathname.replace("/", "");
+  const [token] = useRecoilState(tokenState);
+  const { userId } = token;
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  //커스텀 옵션 조회
+  const fetchData = React.useCallback(async () => {
+    let para = {
+      para: pathname + "/permissions?userId=" + userId,
+    };
+
+    let data: any;
+    try {
+      data = await processApi<any>("permissions", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      setListData(data);
     } else {
       console.log("[오류 발생]");
       console.log(data);

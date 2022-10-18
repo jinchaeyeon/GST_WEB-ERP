@@ -28,7 +28,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
@@ -38,8 +38,8 @@ import {
   getQueryFromCustomOptionData,
   setDefaultDate,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
+  UsePermissions,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -57,7 +57,7 @@ import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { gridList } from "../store/columns/MA_B7000W_C";
-import MultiColumnComboBox from "../components/ComboBoxes/MultiColumnComboBoxWithQuery";
+import TopButtons from "../components/TopButtons";
 //import {useAuth} from "../../hooks/auth";
 
 const numberField = [
@@ -88,6 +88,10 @@ const MA_B7000: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
+
+  // 권한
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -362,6 +366,7 @@ const MA_B7000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -672,11 +677,20 @@ const MA_B7000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
+    if (
+      customOptionData !== null &&
+      isInitSearch === false &&
+      permissions !== null
+    ) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
+
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  };
 
   return (
     <>
@@ -684,26 +698,13 @@ const MA_B7000: React.FC = () => {
         <Title>재고조회</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>

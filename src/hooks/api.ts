@@ -14,6 +14,7 @@ const domain: any = {
   messages: { action: "get", url: "api/data/:formId/messages" },
   "design-info": { action: "get", url: "api/data/:formId/design-info" },
   "biz-components": { action: "get", url: "api/data/:id" },
+  permissions: { action: "get", url: "api/data/:para" },
   menus: { action: "get", url: "api/data/:para" },
   login: { action: "post", url: "api/auth/login" },
   "login-old": { action: "post", url: "api/auth/login-old" },

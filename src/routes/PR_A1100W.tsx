@@ -38,7 +38,7 @@ import {
 } from "@progress/kendo-react-inputs";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import {
   checkIsDDLValid,
   chkScrollHandler,
@@ -50,6 +50,7 @@ import {
   UseCommonQuery,
   UseCustomOption,
   UseMessages,
+  UsePermissions,
 } from "../components/CommonFunction";
 import PlanWindow from "../components/Windows/PR_A1100W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -68,11 +69,7 @@ import {
   itemlvl3Query,
   locationQuery,
   ordstsQuery,
-  outgbQuery,
-  outprocynQuery,
   pageSize,
-  proccdQuery,
-  prodmacQuery,
   purtypeQuery,
   qtyunitQuery,
   SELECTED_FIELD,
@@ -83,6 +80,7 @@ import { CellRender, RowRender } from "../components/GroupRenderers";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { tokenState } from "../store/atoms";
+import TopButtons from "../components/TopButtons";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "ordkey";
@@ -162,6 +160,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
 const PR_A1100W: React.FC = () => {
   const processApi = useApi();
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const planIdGetter = getter(PLAN_DATA_ITEM_KEY);
@@ -664,7 +664,9 @@ const PR_A1100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -689,6 +691,7 @@ const PR_A1100W: React.FC = () => {
   };
 
   const fetchPlanGrid = async () => {
+    if (!permissions?.view) return;
     let data: any;
 
     try {
@@ -744,8 +747,8 @@ const PR_A1100W: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
+    if (permissions !== null) fetchMainGrid();
+  }, [mainPgNum, permissions]);
 
   useEffect(() => {
     fetchPlanGrid();
@@ -1816,33 +1819,24 @@ const PR_A1100W: React.FC = () => {
     // });
   };
 
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+    fetchPlanGrid();
+  };
   return (
     <>
       <TitleContainer>
         <Title>계획생산</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-              fetchPlanGrid();
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>

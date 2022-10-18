@@ -39,7 +39,7 @@ import {
 } from "@progress/kendo-react-charts";
 import "hammerjs";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
@@ -49,6 +49,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
+  UsePermissions,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -64,6 +65,7 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/SA_B3000W_C";
+import TopButtons from "../components/TopButtons";
 
 const numberField: string[] = [
   "qty01",
@@ -87,6 +89,8 @@ const SA_B3000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -148,21 +152,7 @@ const SA_B3000W: React.FC = () => {
     setTabSelected(e.selected);
     resetGrid();
 
-    fetchGrid("TITLE");
-
-    if (e.selected === 0) {
-      fetchGrid("TOTAL");
-      fetchGrid("GRID");
-    } else if (e.selected === 1) {
-      fetchGrid("MONTH");
-      fetchGrid("MCHART");
-    } else if (e.selected === 2) {
-      fetchGrid("QUARTER");
-      fetchGrid("QCHART");
-    } else if (e.selected === 3) {
-      fetchGrid("5year");
-      fetchGrid("CHART");
-    }
+    search();
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -214,6 +204,7 @@ const SA_B3000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchGrid = async (workType: string, custcd?: string) => {
+    if (!permissions?.view) return;
     let data: any;
 
     //조회조건 파라미터
@@ -290,14 +281,18 @@ const SA_B3000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
+    if (
+      customOptionData !== null &&
+      isInitSearch === false &&
+      permissions !== null
+    ) {
       fetchGrid("GRID");
       fetchGrid("TOTAL");
       fetchGrid("TITLE");
 
       setIsInitSearch(true);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   //그리드 리셋
   const resetGrid = () => {
@@ -454,46 +449,37 @@ const SA_B3000W: React.FC = () => {
     );
   };
 
+  const search = () => {
+    fetchGrid("TITLE");
+
+    if (tabSelected === 0) {
+      fetchGrid("TOTAL");
+      fetchGrid("GRID");
+    } else if (tabSelected === 1) {
+      fetchGrid("MONTH");
+      fetchGrid("MCHART");
+    } else if (tabSelected === 2) {
+      fetchGrid("QUARTER");
+      fetchGrid("QCHART");
+    } else if (tabSelected === 3) {
+      fetchGrid("5year");
+      fetchGrid("CHART");
+    }
+  };
+
   return (
     <>
       <TitleContainer>
         <Title>매출집계(업체)</Title>
 
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              // resetGrid();
-              fetchGrid("TITLE");
-
-              if (tabSelected === 0) {
-                fetchGrid("TOTAL");
-                fetchGrid("GRID");
-              } else if (tabSelected === 1) {
-                fetchGrid("MONTH");
-                fetchGrid("MCHART");
-              } else if (tabSelected === 2) {
-                fetchGrid("QUARTER");
-                fetchGrid("QCHART");
-              } else if (tabSelected === 3) {
-                fetchGrid("5year");
-                fetchGrid("CHART");
-              }
-            }}
-            icon="search"
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
-            조회
-          </Button>
-          <Button
-            title="Export Excel"
-            onClick={exportExcel}
-            icon="download"
-            fillMode="outline"
-            themeColor={"primary"}
-          >
-            Excel
-          </Button>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>

@@ -73,6 +73,13 @@ export type User = {
   realName: string;
 };
 
+export type TPermissions = {
+  view: boolean;
+  save: boolean;
+  delete: boolean;
+  print: boolean;
+};
+
 export type TGrid = {
   gridName: string;
   columns: Array<TColumn>;
