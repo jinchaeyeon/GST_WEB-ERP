@@ -47,8 +47,8 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
-  commonCodeDefaultValue,
-  pageSize,
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -111,16 +111,16 @@ const SA_B2000: React.FC = () => {
 
   //공통코드 리스트 조회 ()
   const [ordstsListData, setOrdstsListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [doexdivListData, setDoexdivListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [taxdivListData, setTaxdivListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [locationListData, setLocationListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
@@ -130,10 +130,10 @@ const SA_B2000: React.FC = () => {
     { dptcd: "", dptnm: "" },
   ]);
   const [itemacntListData, setItemacntListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [qtyunitListData, setQtyunitListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
@@ -299,7 +299,7 @@ const SA_B2000: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     orgdiv: "01",
     itemcd: "",
     itemnm: "",
@@ -319,7 +319,7 @@ const SA_B2000: React.FC = () => {
   });
 
   const [detailFilters, setDetailFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     ordnum: "",
   });
 
@@ -598,12 +598,12 @@ const SA_B2000: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setDetailPgNum((prev) => prev + 1);
   };
 

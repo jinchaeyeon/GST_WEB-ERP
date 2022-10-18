@@ -5,7 +5,7 @@ import {
 } from "@progress/kendo-react-dropdowns";
 
 import { useApi } from "../../hooks/api";
-import { commonCodeDefaultValue } from "../CommonString";
+import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
 import { TCommonCode } from "../../store/types";
 
 type TCommonDropDownList = {
@@ -18,7 +18,7 @@ const CommonDropDownList = ({
   name,
   queryStr,
   changeData,
-  defaultValue = commonCodeDefaultValue,
+  defaultValue = COM_CODE_DEFAULT_VALUE,
 }: TCommonDropDownList) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
@@ -64,7 +64,7 @@ const CommonDropDownList = ({
       dataItemKey="sub_code"
       textField="code_name"
       value={state}
-      defaultItem={commonCodeDefaultValue}
+      defaultItem={COM_CODE_DEFAULT_VALUE}
       onChange={onChangeHandle}
     />
   );

@@ -33,7 +33,7 @@ import {
   UsePermissions,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
-import { pageSize, SELECTED_FIELD } from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { gridList } from "../store/columns/SY_A0110W_C";
 import TopButtons from "../components/TopButtons";
 
@@ -92,7 +92,7 @@ const SY_A0110: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "list",
     orgdiv: "01",
     type: "pgm",
@@ -188,7 +188,7 @@ const SY_A0110: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 

@@ -31,8 +31,8 @@ import {
   UseBizComponent,
 } from "../../CommonFunction";
 import {
-  commonCodeDefaultValue,
-  pageSize,
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
@@ -63,9 +63,9 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
 
   //공통코드 리스트 조회
   const [custdivListData, setCustdivListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
-  const [useynListData, setUseynListData] = useState([commonCodeDefaultValue]);
+  const [useynListData, setUseynListData] = useState([COM_CODE_DEFAULT_VALUE]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -167,7 +167,7 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
   const parameters: Iparameters = {
     procedureName: "P_WEB_CUST_POPUP",
     pageNumber: mainPgNum,
-    pageSize: pageSize,
+    pageSize: PAGE_SIZE,
     parameters: {
       "@p_work_type": "LIST",
       "@p_custcd": filters.custcd,
@@ -214,7 +214,7 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
 
   //스크롤 핸들러 => 한번에 pageSize만큼 조회
   const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 

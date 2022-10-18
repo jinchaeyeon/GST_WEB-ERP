@@ -76,9 +76,9 @@ import {
   IWindowPosition,
 } from "../../hooks/interfaces";
 import {
-  commonCodeDefaultValue,
+  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
-  pageSize,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
 
@@ -240,8 +240,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           length: 0,
           dlramt: 0,
           chk: "N",
-          itemacnt: commonCodeDefaultValue,
-          qtyunit: commonCodeDefaultValue,
+          itemacnt: COM_CODE_DEFAULT_VALUE,
+          qtyunit: COM_CODE_DEFAULT_VALUE,
         },
       });
 
@@ -356,7 +356,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   //스크롤 핸들러
   const scrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setDetailPgNum((prev) => prev + 1);
   };
 
@@ -370,7 +370,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           itemnm: data.itemnm,
           insiz: data.insiz,
           itemacnt: data.itemacnt,
-          qtyunit: commonCodeDefaultValue,
+          qtyunit: COM_CODE_DEFAULT_VALUE,
           qty: 0,
           specialunp: 0,
           specialamt: 0,
@@ -409,7 +409,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           itemnm: data.itemnm,
           insiz: data.insiz,
           itemacnt: data.itemacnt,
-          qtyunit: commonCodeDefaultValue,
+          qtyunit: COM_CODE_DEFAULT_VALUE,
         },
       });
     }

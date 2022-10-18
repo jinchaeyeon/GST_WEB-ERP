@@ -40,7 +40,7 @@ import {
 } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { pageSize } from "../../CommonString";
+import { PAGE_SIZE } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../../../store/atoms";
@@ -154,7 +154,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   //스크롤 핸들러
   const scrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setDetailPgNum((prev) => prev + 1);
   };
 

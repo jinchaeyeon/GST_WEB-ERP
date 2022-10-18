@@ -4,7 +4,7 @@ import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, tokenState } from "../store/atoms";
 import { Iparameters, ObjType } from "../store/types";
-import { commonCodeDefaultValue } from "./CommonString";
+import { COM_CODE_DEFAULT_VALUE } from "./CommonString";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
@@ -505,7 +505,7 @@ export const getItemQuery = (para: any) => {
 //선택된 드롭다운리스트 값 (ex. {sub_code: "test", code_name:"test"} )을 인자로 받아서 빈 값(ex. {sub_code: "", code_name: ""} )인지 체크
 //=> 빈 값인 경우 false 반환
 export const checkIsDDLValid = (value: object) => {
-  return JSON.stringify(value) === JSON.stringify(commonCodeDefaultValue) ||
+  return JSON.stringify(value) === JSON.stringify(COM_CODE_DEFAULT_VALUE) ||
     !value
     ? false
     : true;

@@ -51,8 +51,8 @@ import {
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
-  oldCompany,
-  pageSize,
+  OLD_COMPANY,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -84,7 +84,7 @@ const CM_A1600: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  if (!oldCompany.includes(companyCode))
+  if (!OLD_COMPANY.includes(companyCode))
     UseCustomOption(pathname, setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -155,7 +155,7 @@ const CM_A1600: React.FC = () => {
   };
 
   const [todoFilter, setTodoFilter] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "TODOLIST",
     orgdiv: "01",
     location: "01",
@@ -302,7 +302,7 @@ const CM_A1600: React.FC = () => {
 
   //스크롤 핸들러
   const onTodoScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, todoPgNum, pageSize))
+    if (chkScrollHandler(event, todoPgNum, PAGE_SIZE))
       setTodoPgNum((prev) => prev + 1);
   };
 

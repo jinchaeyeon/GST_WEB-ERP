@@ -36,7 +36,7 @@ import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { pageSize, SELECTED_FIELD } from "../../CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 
 type IWindow = {
@@ -140,7 +140,7 @@ const ItemsWindow = ({
   const parameters: Iparameters = {
     procedureName: "P_WEB_ITEM_POPUP",
     pageNumber: mainPgNum,
-    pageSize: pageSize,
+    pageSize: PAGE_SIZE,
     parameters: {
       "@p_work_type": "LIST",
       "@p_itemcd": filters.itemcd,
@@ -193,7 +193,7 @@ const ItemsWindow = ({
 
   //스크롤 핸들러 => 한번에 pageSize만큼 조회
   const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 

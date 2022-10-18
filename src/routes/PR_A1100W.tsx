@@ -59,8 +59,9 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import {
-  commonCodeDefaultValue,
-  pageSize,
+  CLIENT_WIDTH,
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import { CellRender, RowRender } from "../components/GroupRenderers";
@@ -74,6 +75,7 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 const DATA_ITEM_KEY = "ordkey";
 const PLAN_DATA_ITEM_KEY = "idx";
 const MATERIAL_DATA_ITEM_KEY = "idx";
+const MTR_GRID_WIDTH = 500;
 
 const numberField = [
   "safeqty",
@@ -304,7 +306,7 @@ const PR_A1100W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     orgdiv: "01",
     location: "01",
     dtgb: "A",
@@ -888,17 +890,17 @@ const PR_A1100W: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 
   const onPlanScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, planPgNum, pageSize))
+    if (chkScrollHandler(event, planPgNum, PAGE_SIZE))
       setPlanPgNum((prev) => prev + 1);
   };
 
   const onMaterialScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setMaterialPgNum((prev) => prev + 1);
   };
 
@@ -995,7 +997,7 @@ const PR_A1100W: React.FC = () => {
       planno: selectedFirstRowData.planno,
       planseq: planseq,
       procseq: 0,
-      proccd: commonCodeDefaultValue,
+      proccd: COM_CODE_DEFAULT_VALUE,
       plankey: "",
       plandt: convertDateToStr(new Date()),
       finexpdt: convertDateToStr(new Date()),
@@ -1564,39 +1566,39 @@ const PR_A1100W: React.FC = () => {
 
   //공통코드 리스트 조회
   const [ordstsListData, setOrdstsListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [doexdivListData, setDoexdivListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [taxdivListData, setTaxdivListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [locationListData, setLocationListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
-  const [usersListData, setUsersListData] = useState([commonCodeDefaultValue]);
+  const [usersListData, setUsersListData] = useState([COM_CODE_DEFAULT_VALUE]);
 
   const [departmentsListData, setDepartmentsListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemacntListData, setItemacntListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [qtyunitListData, setQtyunitListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [purtypeListData, setPurtypeListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl1ListData, setItemlvl1ListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl2ListData, setItemlvl2ListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl3ListData, setItemlvl3ListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   useEffect(() => {
@@ -2077,10 +2079,7 @@ const PR_A1100W: React.FC = () => {
 
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="처리">
-          <GridContainer
-            clientWidth={document.documentElement.clientWidth}
-            inTab={true}
-          >
+          <GridContainer clientWidth={CLIENT_WIDTH} inTab={true}>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
@@ -2220,7 +2219,7 @@ const PR_A1100W: React.FC = () => {
         <TabStripTab title="리스트">
           <GridContainerWrap>
             <GridContainer
-              clientWidth={document.documentElement.clientWidth - 515} //= 소요자재리스트 500 + margin 15
+              clientWidth={CLIENT_WIDTH - MTR_GRID_WIDTH + 15} //= 소요자재리스트 500 + margin 15
               inTab={true}
             >
               <ExcelExport
@@ -2352,7 +2351,7 @@ const PR_A1100W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
 
-            <GridContainer maxWidth="500px">
+            <GridContainer maxWidth={MTR_GRID_WIDTH + "px"}>
               <GridTitleContainer>
                 <GridTitle>소요자재리스트</GridTitle>
 

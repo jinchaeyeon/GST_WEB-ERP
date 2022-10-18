@@ -36,7 +36,7 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   EDIT_FIELD,
   EXPANDED_FIELD,
-  pageSize,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
 
@@ -297,7 +297,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
   //조회조건 초기값
   const [wordFilters, setWordFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "LIST",
     word_id: "",
     word_text: "",
@@ -812,11 +812,11 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   }, [wordControlData]);
 
   const onControlScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, ControlPgNum, pageSize))
+    if (chkScrollHandler(event, ControlPgNum, PAGE_SIZE))
       setControlPgNum((prev) => prev + 1);
   };
   const onWordScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, wordPgNum, pageSize))
+    if (chkScrollHandler(event, wordPgNum, PAGE_SIZE))
       setWordPgNum((prev) => prev + 1);
   };
 
@@ -825,21 +825,21 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   }, [wordPgNum]);
 
   const onMainColumnScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainColumnPgNum, pageSize))
+    if (chkScrollHandler(event, mainColumnPgNum, PAGE_SIZE))
       setMainColumnPgNum((prev) => prev + 1);
   };
 
   const onDetailColumnScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailColumnPgNum, pageSize))
+    if (chkScrollHandler(event, detailColumnPgNum, PAGE_SIZE))
       setDetailColumnPgNum((prev) => prev + 1);
   };
   const onMainDefaultScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainDefaultPgNum, pageSize))
+    if (chkScrollHandler(event, mainDefaultPgNum, PAGE_SIZE))
       setMainDefaultPgNum((prev) => prev + 1);
   };
 
   const onDetailDefaultScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailDefaultPgNum, pageSize))
+    if (chkScrollHandler(event, detailDefaultPgNum, PAGE_SIZE))
       setDetailDefaultPgNum((prev) => prev + 1);
   };
 

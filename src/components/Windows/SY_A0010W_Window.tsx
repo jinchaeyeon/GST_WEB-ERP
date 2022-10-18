@@ -62,9 +62,9 @@ import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  commonCodeDefaultValue,
+  COM_CODE_DEFAULT_VALUE,
   FORM_DATA_INDEX,
-  pageSize,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
@@ -298,7 +298,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   //스크롤 핸들러
   const scrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setDetailPgNum((prev) => prev + 1);
   };
 
@@ -550,7 +550,7 @@ const KendoWindow = ({
 
   // 그룹 카테고리 리스트
   const [groupCategoryListData, setGroupCategoryListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   // 그룹 카테고리 조회 쿼리
@@ -1016,7 +1016,7 @@ const KendoWindow = ({
       } = item;
 
       const paraSaved: Iparameters = {
-        procedureName: "P_SY_A0010_S1",
+        procedureName: "P_SY_A0010W_S1",
         pageNumber: 1,
         pageSize: 10,
         parameters: {

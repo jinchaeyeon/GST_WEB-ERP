@@ -16,7 +16,7 @@ import {
   userState,
 } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
-import { clientWidth, gnvWidth } from "../components/CommonString";
+import { CLIENT_WIDTH, GNV_WIDTH } from "../components/CommonString";
 import UserEffect from "./UserEffect";
 import { useApi } from "../hooks/api";
 import { Iparameters, TLogParaVal, Tmenu, Tpath } from "../store/types";
@@ -33,7 +33,7 @@ export const Wrapper = styled.div<TWrapper>`
 
 type TGnv = TWrapper;
 export const Gnv = styled.div<TGnv>`
-  min-width: ${gnvWidth}px;
+  min-width: ${GNV_WIDTH}px;
   text-align: center;
 
   min-height: 100vh;
@@ -63,10 +63,10 @@ export const Gnv = styled.div<TGnv>`
 `;
 
 type ContentType = {
-  clientWidth?: number;
+  CLIENT_WIDTH?: number;
 };
 export const Content = styled.div<ContentType>`
-  width: calc(${(props) => props.clientWidth}px - ${gnvWidth}px);
+  width: calc(${(props) => props.CLIENT_WIDTH}px - ${GNV_WIDTH}px);
 
   /*=========================================================================
   미디어 쿼리
@@ -104,7 +104,7 @@ export const AppName = styled.h1`
 `;
 
 export const TopTitle = styled.div`
-  min-width: ${gnvWidth}px;
+  min-width: ${GNV_WIDTH}px;
   /* text-align: center; */
   padding: 0 15px;
   display: none;
@@ -475,7 +475,7 @@ const PanelBarNavContainer = (props: any) => {
           사용자 옵션
         </Button>
       </Gnv>
-      <Content clientWidth={clientWidth}>
+      <Content CLIENT_WIDTH={CLIENT_WIDTH}>
         <TopTitle>
           <div></div>
           <AppName>GST ERP</AppName>

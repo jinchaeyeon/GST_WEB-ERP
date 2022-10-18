@@ -51,12 +51,12 @@ import {
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
-  clientWidth,
-  commonCodeDefaultValue,
+  CLIENT_WIDTH,
+  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
-  gnvWidth,
-  gridMargin,
-  pageSize,
+  GNV_WIDTH,
+  GRID_MARGIN,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -271,7 +271,7 @@ const SY_A0120: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "LIST",
     cboOrgdiv: "01",
     cboLocation: "",
@@ -286,7 +286,7 @@ const SY_A0120: React.FC = () => {
   });
 
   const [userMenuFilters, setUserMenuFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "DETAIL",
     lang_id: "",
     user_id: "",
@@ -567,7 +567,7 @@ const SY_A0120: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 
@@ -619,11 +619,11 @@ const SY_A0120: React.FC = () => {
 
   //공통코드 리스트 조회 (사용자구분, 직위)
   const [postcdListData, setPostcdListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   const [userCategoryListData, setUserCategoryListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   const [pathListData, setPathListData] = React.useState<any>([]);
@@ -820,33 +820,6 @@ const SY_A0120: React.FC = () => {
     });
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
 
-    //검증
-    let valid = true;
-    try {
-      dataItem.forEach((item: any) => {
-        // mainDataResult.data.forEach((chkItem: any) => {
-        //   if (
-        //     (item.proccd === chkItem.proccd ||
-        //       item.procseq === chkItem.procseq) &&
-        //     item[PLAN_DATA_ITEM_KEY] !== chkItem[PLAN_DATA_ITEM_KEY] &&
-        //     item.planno === chkItem.planno
-        //   ) {
-        //     throw공정과 공정순서를 확인하세요."; //   }
-        // });
-        // if (!item.user_id) {
-        //   throw "사용자ID을 입력하세요.";
-        // }
-        // if (!item.user_name) {
-        //   throw "사용자명을 입력하세요.";
-        // }
-      });
-    } catch (e) {
-      alert(e);
-      valid = false;
-    }
-
-    if (!valid) return false;
-
     type TData = {
       row_state_s: string[];
       add_delete_type_s: string[];
@@ -867,6 +840,25 @@ const SY_A0120: React.FC = () => {
       form_delete_yn_s: [],
     };
 
+    deletedMainRows.forEach((item: any) => {
+      const {
+        add_delete_type_s,
+        KeyID,
+        form_view_yn,
+        form_print_yn,
+        form_save_yn,
+        form_delete_yn,
+      } = item;
+
+      dataArr.row_state_s.push("D");
+      dataArr.add_delete_type_s.push(add_delete_type_s);
+      dataArr.menu_id_s.push(KeyID);
+      dataArr.form_view_yn_s.push(form_view_yn);
+      dataArr.form_print_yn_s.push(form_print_yn);
+      dataArr.form_save_yn_s.push(form_save_yn);
+      dataArr.form_delete_yn_s.push(form_delete_yn);
+    });
+
     dataItem.forEach((item: any, idx: number) => {
       const {
         rowstatus,
@@ -879,25 +871,6 @@ const SY_A0120: React.FC = () => {
       } = item;
 
       dataArr.row_state_s.push(rowstatus);
-      dataArr.add_delete_type_s.push(add_delete_type_s);
-      dataArr.menu_id_s.push(KeyID);
-      dataArr.form_view_yn_s.push(form_view_yn);
-      dataArr.form_print_yn_s.push(form_print_yn);
-      dataArr.form_save_yn_s.push(form_save_yn);
-      dataArr.form_delete_yn_s.push(form_delete_yn);
-    });
-
-    deletedMainRows.forEach((item: any) => {
-      const {
-        add_delete_type_s,
-        KeyID,
-        form_view_yn,
-        form_print_yn,
-        form_save_yn,
-        form_delete_yn,
-      } = item;
-
-      dataArr.row_state_s.push("D");
       dataArr.add_delete_type_s.push(add_delete_type_s);
       dataArr.menu_id_s.push(KeyID);
       dataArr.form_view_yn_s.push(form_view_yn);
@@ -1426,7 +1399,7 @@ const SY_A0120: React.FC = () => {
           </ExcelExport>
         </GridContainer>
         <GridContainer
-          width={clientWidth - gnvWidth - gridMargin - 15 - 500 - 300 + "px"}
+          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 500 - 300 + "px"}
         >
           <ExcelExport
             data={mainDataResult.data}

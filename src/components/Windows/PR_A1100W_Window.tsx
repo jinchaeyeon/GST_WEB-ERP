@@ -73,9 +73,9 @@ import {
   IWindowPosition,
 } from "../../hooks/interfaces";
 import {
-  commonCodeDefaultValue,
+  COM_CODE_DEFAULT_VALUE,
   FORM_DATA_INDEX,
-  pageSize,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
 
@@ -216,11 +216,11 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       fieldArrayRenderProps.onPush({
         value: {
           srcPgName: "PR_A1100W_WINDOW_PRC",
-          proccd: commonCodeDefaultValue,
+          proccd: COM_CODE_DEFAULT_VALUE,
           procseq: procseq,
-          outprocyn: commonCodeDefaultValue,
-          prodemp: commonCodeDefaultValue,
-          prodmac: commonCodeDefaultValue,
+          outprocyn: COM_CODE_DEFAULT_VALUE,
+          prodemp: COM_CODE_DEFAULT_VALUE,
+          prodmac: COM_CODE_DEFAULT_VALUE,
         },
       });
 
@@ -333,7 +333,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   //스크롤 핸들러
   const scrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setDetailPgNum((prev) => prev + 1);
   };
 
@@ -703,11 +703,11 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       fieldArrayRenderProps.onPush({
         value: {
           srcPgName: "PR_A1100W_WINDOW_MTL",
-          proccd: commonCodeDefaultValue,
+          proccd: COM_CODE_DEFAULT_VALUE,
           unitqty: 0,
           procqty: 0,
-          outgb: commonCodeDefaultValue,
-          qtyunit: commonCodeDefaultValue,
+          outgb: COM_CODE_DEFAULT_VALUE,
+          qtyunit: COM_CODE_DEFAULT_VALUE,
         },
       });
 
@@ -820,7 +820,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   //스크롤 핸들러
   const scrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setDetailPgNum((prev) => prev + 1);
   };
 
@@ -833,7 +833,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   //드롭다운리스트 데이터 조회 (품목계정)
   const [itemacntListData, setItemacntListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   useEffect(() => {
@@ -870,7 +870,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           chlditemcd: data.itemcd,
           chlditemnm: data.itemnm,
           insiz: data.insiz,
-          qtyunit: commonCodeDefaultValue,
+          qtyunit: COM_CODE_DEFAULT_VALUE,
           qty: 0,
           specialunp: 0,
           specialamt: 0,
@@ -1222,7 +1222,7 @@ const KendoWindow = ({
 
   // 리스트 데이터 조회 (품목계정)
   const [itemacntListData, setItemacntListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   const [position, setPosition] = useState<IWindowPosition>({

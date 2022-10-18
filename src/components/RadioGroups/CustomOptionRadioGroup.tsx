@@ -3,7 +3,7 @@ import {
   RadioGroup,
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { radioGroupDefaultData } from "../CommonString";
+import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
 
 type TCustomOptionRadioGroup = {
   name: string;
@@ -22,7 +22,7 @@ const CustomOptionRadioGroup = ({
       : null;
 
   let defaultValue = "";
-  let newRadioGroup = radioGroupDefaultData;
+  let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
   if (dataList) {
     defaultValue = dataList.find((item: any) => item.id === name).valueCode;

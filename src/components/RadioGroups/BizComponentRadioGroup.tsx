@@ -3,7 +3,7 @@ import {
   RadioGroup,
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { radioGroupDefaultData } from "../CommonString";
+import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
 import { getQueryFromBizComponent } from "../CommonFunction";
 import { useApi } from "../../hooks/api";
 
@@ -32,7 +32,7 @@ const BizComponentRadioGroup = ({
   const dataList =
     bizComponentData !== null ? bizComponentData.bizComponentItems : null;
 
-  let newRadioGroup = radioGroupDefaultData;
+  let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
   if (dataList) {
     newRadioGroup = dataList

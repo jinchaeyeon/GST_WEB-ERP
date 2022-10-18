@@ -46,7 +46,7 @@ import {
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
-import { commonCodeDefaultValue, pageSize } from "../components/CommonString";
+import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -91,7 +91,7 @@ const QC_A0120: React.FC = () => {
 
   //공통코드 리스트 조회
   const [proccdListData, setProccdListData] = useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [prodmacListData, setProdmacListData] = useState([
     { fxfull: "", fxcode: "" },
@@ -197,7 +197,7 @@ const QC_A0120: React.FC = () => {
   });
 
   const [detailFilters1, setDetailFilters1] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "DETAIL",
     orgdiv: "01",
     div: "0",
@@ -330,7 +330,7 @@ const QC_A0120: React.FC = () => {
 
   //스크롤 핸들러
   const onDetail1ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail1PgNum, pageSize))
+    if (chkScrollHandler(event, detail1PgNum, PAGE_SIZE))
       setDetail1PgNum((prev) => prev + 1);
   };
 

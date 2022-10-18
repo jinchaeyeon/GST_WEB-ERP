@@ -3,7 +3,7 @@ import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { useApi } from "../../hooks/api";
 import { FieldRenderProps } from "@progress/kendo-react-form";
 import { checkIsDDLValid } from "../CommonFunction";
-import { commonCodeDefaultValue } from "../CommonString";
+import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
 
 type TDDL = {
   fieldRenderProps: FieldRenderProps;
@@ -58,7 +58,7 @@ const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr }: TDDL) => {
       textField="code_name"
       value={value}
       className={className}
-      defaultItem={commonCodeDefaultValue}
+      defaultItem={COM_CODE_DEFAULT_VALUE}
       valid={DDLvalid}
       id={id}
       {...others}

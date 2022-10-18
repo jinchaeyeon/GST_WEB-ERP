@@ -39,7 +39,7 @@ import {
   convertDateToStr,
 } from "../components/CommonFunction";
 import { TCommonCodeData } from "../hooks/interfaces";
-import { pageSize, SELECTED_FIELD } from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
 //import {useAuth} from "../../hooks/auth";
@@ -97,7 +97,7 @@ const Main: React.FC = () => {
   const [workOrderPgNum, setWorkOrderPgNum] = useState(1);
 
   const [noticeFilter, setNoticeFilter] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "Notice",
     orgdiv: "01",
     location: "01",
@@ -109,7 +109,7 @@ const Main: React.FC = () => {
   });
 
   const [workOrderFilter, setWorkOrderFilter] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "WorkOrderRequest",
     orgdiv: "01",
     location: "01",
@@ -336,11 +336,11 @@ const Main: React.FC = () => {
 
   //스크롤 핸들러
   const onNoticeScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, noticePgNum, pageSize))
+    if (chkScrollHandler(event, noticePgNum, PAGE_SIZE))
       setNoticePgNum((prev) => prev + 1);
   };
   const onWorkOrderScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, workOrderPgNum, pageSize))
+    if (chkScrollHandler(event, workOrderPgNum, PAGE_SIZE))
       setWorkOrderPgNum((prev) => prev + 1);
   };
 

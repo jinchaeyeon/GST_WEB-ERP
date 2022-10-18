@@ -41,7 +41,7 @@ import {
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
-  pageSize,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -169,7 +169,7 @@ const SY_A0120: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "LIST",
     cboOrgdiv: "01",
     cboLocation: "",
@@ -265,7 +265,7 @@ const SY_A0120: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 

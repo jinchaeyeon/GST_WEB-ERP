@@ -54,10 +54,10 @@ import {
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
 import {
-  clientWidth,
-  gnvWidth,
-  gridMargin,
-  pageSize,
+  CLIENT_WIDTH,
+  GNV_WIDTH,
+  GRID_MARGIN,
+  PAGE_SIZE,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
@@ -349,7 +349,7 @@ const SA_B3000W: React.FC = () => {
 
   //스크롤 핸들러
   const onGridScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, gridPgNum, pageSize))
+    if (chkScrollHandler(event, gridPgNum, PAGE_SIZE))
       setGridPgNum((prev) => prev + 1);
   };
 
@@ -603,7 +603,7 @@ const SA_B3000W: React.FC = () => {
             </GridContainer>
 
             <GridContainer
-              width={clientWidth - gnvWidth - gridMargin - 60 + "px"}
+              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
             >
               <Grid
                 style={{ height: "280px" }}
@@ -672,7 +672,7 @@ const SA_B3000W: React.FC = () => {
         <TabStripTab title="월별">
           <GridContainerWrap flexDirection="column">
             <GridContainer
-              width={clientWidth - gnvWidth - gridMargin - 60 + "px"}
+              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
             >
               <Grid
                 style={{ height: "280px" }}
@@ -756,7 +756,7 @@ const SA_B3000W: React.FC = () => {
             </GridContainer>
             <GridContainerWrap>
               <GridContainer
-                width={clientWidth - gnvWidth - gridMargin - 60 - 600 + "px"}
+                width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 - 600 + "px"}
               >
                 <Chart>
                   {/* <ChartTitle text="Units sold" /> */}
@@ -802,7 +802,7 @@ const SA_B3000W: React.FC = () => {
         <TabStripTab title="분기별">
           <GridContainerWrap flexDirection="column">
             <GridContainer
-              width={clientWidth - gnvWidth - gridMargin - 60 + "px"}
+              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
             >
               <Grid
                 style={{ height: "280px" }}
@@ -938,7 +938,7 @@ const SA_B3000W: React.FC = () => {
             </GridContainer>
             <GridContainerWrap>
               <GridContainer
-                width={clientWidth - gnvWidth - gridMargin - 60 - 600 + "px"}
+                width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 - 600 + "px"}
               >
                 <Chart>
                   {/* <ChartTitle text="Units sold" /> */}
@@ -1037,7 +1037,7 @@ const SA_B3000W: React.FC = () => {
         <TabStripTab title="5년분석">
           <GridContainerWrap flexDirection="column">
             <GridContainer
-              width={clientWidth - gnvWidth - gridMargin - 60 + "px"}
+              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
             >
               <Grid
                 style={{ height: "280px" }}
@@ -1170,7 +1170,7 @@ const SA_B3000W: React.FC = () => {
             </GridContainer>
             <GridContainerWrap>
               <GridContainer
-                width={clientWidth - gnvWidth - gridMargin - 60 - 600 + "px"}
+                width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 - 600 + "px"}
               >
                 <Chart>
                   {/* <ChartTitle text="Units sold" /> */}

@@ -3,19 +3,12 @@ export const EDIT_FIELD = "inEdit";
 export const EXPANDED_FIELD: string = "expanded";
 export const FORM_DATA_INDEX = "formDataIndex";
 
-//Client 너비값
-export const clientWidth = document.documentElement.clientWidth;
+export const CLIENT_WIDTH = document.documentElement.clientWidth; // Client 너비값
+export const GRID_MARGIN = 30; //그리드 양쪽 마진값
+export const GNV_WIDTH = 150; //gnv 너비값
+export const PAGE_SIZE = 20; //한번에 조회할 데이터 수 디폴트 값
 
-//그리드 양쪽 마진값
-export const gridMargin = 30;
+export const COM_CODE_DEFAULT_VALUE = { sub_code: "", code_name: "" };
+export const RADIO_GROUP_DEFAULT_DATA = [{ value: "", label: "" }];
 
-export const gnvWidth = 150;
-
-//한번에 조회할 데이터 수 디폴트 값
-export const pageSize = 20;
-
-export const commonCodeDefaultValue = { sub_code: "", code_name: "" };
-
-export const radioGroupDefaultData = [{ value: "", label: "" }];
-
-export const oldCompany = ["2207C612"];
+export const OLD_COMPANY = ["2207C612"];

@@ -43,11 +43,11 @@ import {
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
 import {
-  clientWidth,
-  commonCodeDefaultValue,
-  gnvWidth,
-  gridMargin,
-  pageSize,
+  CLIENT_WIDTH,
+  COM_CODE_DEFAULT_VALUE,
+  GNV_WIDTH,
+  GRID_MARGIN,
+  PAGE_SIZE,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
@@ -105,7 +105,7 @@ const Page: React.FC = () => {
 
   // 그룹 카테고리 리스트
   const [groupCategoryListData, setGroupCategoryListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   // 그룹 카테고리 조회 쿼리
@@ -237,7 +237,7 @@ const Page: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     group_category: "",
     group_code: "",
     group_name: "",
@@ -249,7 +249,7 @@ const Page: React.FC = () => {
   });
 
   const [detailFilters, setDetailFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     group_code: "",
   });
 
@@ -447,12 +447,12 @@ const Page: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, pageSize))
+    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setDetailPgNum((prev) => prev + 1);
   };
 
@@ -831,7 +831,7 @@ const Page: React.FC = () => {
         </GridContainer>
 
         <GridContainer
-          width={clientWidth - gnvWidth - gridMargin - 15 - 500 + "px"}
+          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 500 + "px"}
         >
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>

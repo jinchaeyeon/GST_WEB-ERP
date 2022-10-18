@@ -1,5 +1,9 @@
 import styled from "styled-components";
-import { clientWidth, gnvWidth, gridMargin } from "./components/CommonString";
+import {
+  CLIENT_WIDTH,
+  GNV_WIDTH,
+  GRID_MARGIN,
+} from "./components/CommonString";
 
 export const TitleContainer = styled.div`
   display: flex;

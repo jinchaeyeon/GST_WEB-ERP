@@ -50,12 +50,12 @@ import {
   UsePermissions,
 } from "../components/CommonFunction";
 import {
-  clientWidth,
-  commonCodeDefaultValue,
+  CLIENT_WIDTH,
+  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
-  gnvWidth,
-  gridMargin,
-  pageSize,
+  GNV_WIDTH,
+  GRID_MARGIN,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -248,7 +248,7 @@ const SY_A0120: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "LIST",
     user_group_id: "",
     user_group_name: "",
@@ -257,7 +257,7 @@ const SY_A0120: React.FC = () => {
   });
 
   const [userMenuFilters, setUserMenuFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     user_group_id: "",
   });
 
@@ -517,7 +517,7 @@ const SY_A0120: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
 
@@ -569,7 +569,7 @@ const SY_A0120: React.FC = () => {
 
   //공통코드 리스트 조회 (사용자구분, 직위)
   const [postcdListData, setPostcdListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   const [useYnListData, setUseYnListData] = React.useState<any>([]);
@@ -1372,7 +1372,7 @@ const SY_A0120: React.FC = () => {
           </ExcelExport>
         </GridContainer>
         <GridContainer
-          width={clientWidth - gnvWidth - gridMargin - 15 - 500 - 300 + "px"}
+          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 500 - 300 + "px"}
         >
           <ExcelExport
             data={mainDataResult.data}

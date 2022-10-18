@@ -49,14 +49,14 @@ import {
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IAttachmentData, IItemData } from "../hooks/interfaces";
 import {
-  commonCodeDefaultValue,
-  gnvWidth,
-  clientWidth,
-  gridMargin,
-  pageSize,
+  COM_CODE_DEFAULT_VALUE,
+  GNV_WIDTH,
+  CLIENT_WIDTH,
+  GRID_MARGIN,
+  PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
-  oldCompany,
+  OLD_COMPANY,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
@@ -100,7 +100,7 @@ const EA_A2000: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  if (!oldCompany.includes(companyCode))
+  if (!OLD_COMPANY.includes(companyCode))
     UseCustomOption(pathname, setCustomOptionData);
 
   const [wordInfoData, setWordInfoData] = React.useState<any>(null);
@@ -119,19 +119,19 @@ const EA_A2000: React.FC = () => {
     { code: "", name: "" },
   ]);
   const [pgmgbListData, setPgmgbListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [personListData, setPersonListData] = React.useState([
     { code: "", name: "" },
   ]);
   const [postcdListData, setPostcdListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [applineListData, setApplineListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [appgbListData, setAppgbListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   useEffect(() => {
@@ -271,7 +271,7 @@ const EA_A2000: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     radWorkType: "B",
     orgdiv: "01",
     user_id: userId,
@@ -288,7 +288,7 @@ const EA_A2000: React.FC = () => {
   });
 
   const [detailFilters, setDetailFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "LRC",
     orgdiv: "01",
     appnum: "",
@@ -297,7 +297,7 @@ const EA_A2000: React.FC = () => {
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "DETAIL2",
     orgdiv: "01",
     itemcd: "",
@@ -482,19 +482,19 @@ const EA_A2000: React.FC = () => {
   };
 
   useEffect(() => {
-    if (customOptionData !== null || oldCompany.includes(companyCode)) {
+    if (customOptionData !== null || OLD_COMPANY.includes(companyCode)) {
       fetchMainGrid();
     }
   }, [mainPgNum]);
 
   useEffect(() => {
-    if (customOptionData !== null || oldCompany.includes(companyCode)) {
+    if (customOptionData !== null || OLD_COMPANY.includes(companyCode)) {
       fetchDetailGrid();
     }
   }, [detail1PgNum]);
 
   useEffect(() => {
-    if (customOptionData !== null || oldCompany.includes(companyCode)) {
+    if (customOptionData !== null || OLD_COMPANY.includes(companyCode)) {
       resetAllDetailGrid();
       fetchDetailGrid();
     }
@@ -593,15 +593,15 @@ const EA_A2000: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
   const onDetail1ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail1PgNum, pageSize))
+    if (chkScrollHandler(event, detail1PgNum, PAGE_SIZE))
       setDetail1PgNum((prev) => prev + 1);
   };
   const onDetail2ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail2PgNum, pageSize))
+    if (chkScrollHandler(event, detail2PgNum, PAGE_SIZE))
       setDetail2PgNum((prev) => prev + 1);
   };
 
@@ -702,7 +702,7 @@ const EA_A2000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (oldCompany.includes(companyCode)) return;
+    if (OLD_COMPANY.includes(companyCode)) return;
 
     if (
       customOptionData !== null &&
@@ -1215,7 +1215,7 @@ const EA_A2000: React.FC = () => {
                     bizComponentData={bizComponentData}
                     changeData={filterRadioChange}
                   />
-                  // <RadioGroup name="radWorkType" data={radioGroupDefaultData} />
+                  // <RadioGroup name="radWorkType" data={RADIO_GROUP_DEFAULT_DATA} />
                 )}
               </td>
               <th data-control-name="lblappnm">
@@ -1941,7 +1941,7 @@ const EA_A2000: React.FC = () => {
             </GridContainer>
             <GridContainer
               width={
-                clientWidth - gnvWidth - gridMargin - 15 - 600 - 650 + "px"
+                CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 600 - 650 + "px"
               }
             >
               <GridTitleContainer>

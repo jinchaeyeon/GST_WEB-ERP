@@ -45,11 +45,11 @@ import {
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
 import {
-  commonCodeDefaultValue,
-  gnvWidth,
-  clientWidth,
-  gridMargin,
-  pageSize,
+  COM_CODE_DEFAULT_VALUE,
+  GNV_WIDTH,
+  CLIENT_WIDTH,
+  GRID_MARGIN,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
@@ -105,16 +105,16 @@ const MA_B7000: React.FC = () => {
   );
 
   const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemgradeListData, setItemgradeListData] = React.useState([
-    commonCodeDefaultValue,
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   useEffect(() => {
@@ -228,7 +228,7 @@ const MA_B7000: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "LIST",
     orgdiv: "01",
     cboLocation: "",
@@ -249,7 +249,7 @@ const MA_B7000: React.FC = () => {
   });
 
   const [detailFilters1, setDetailFilters1] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "DETAIL1",
     orgdiv: "01",
     itemcd: "",
@@ -269,7 +269,7 @@ const MA_B7000: React.FC = () => {
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
-    pgSize: pageSize,
+    pgSize: PAGE_SIZE,
     work_type: "DETAIL2",
     orgdiv: "01",
     itemcd: "",
@@ -572,15 +572,15 @@ const MA_B7000: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, pageSize))
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
   };
   const onDetail1ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail1PgNum, pageSize))
+    if (chkScrollHandler(event, detail1PgNum, PAGE_SIZE))
       setDetail1PgNum((prev) => prev + 1);
   };
   const onDetail2ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail2PgNum, pageSize))
+    if (chkScrollHandler(event, detail2PgNum, PAGE_SIZE))
       setDetail2PgNum((prev) => prev + 1);
   };
 
@@ -1031,7 +1031,7 @@ const MA_B7000: React.FC = () => {
           </Grid>
         </GridContainer>
         <GridContainer
-          width={clientWidth - gnvWidth - gridMargin - 15 - 450 + "px"}
+          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 450 + "px"}
         >
           <GridTitleContainer>
             <GridTitle>LOT별 상세이력</GridTitle>
