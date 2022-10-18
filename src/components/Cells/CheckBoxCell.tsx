@@ -1,10 +1,10 @@
 import { GridCellProps } from "@progress/kendo-react-grid";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
-import { useState } from "react";
 
 const CheckBoxCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange } =
     props;
+  const isInEdit = field === dataItem.inEdit;
   let value = dataItem[field ?? ""];
   if (value === "Y" || value === true) {
     value = true;
@@ -13,13 +13,21 @@ const CheckBoxCell = (props: GridCellProps) => {
   }
 
   const handleChange = (e: CheckboxChangeEvent) => {
-    if (props.onChange) {
-      props.onChange({
+    if (onChange) {
+      onChange({
         dataIndex: 0,
-        dataItem: props.dataItem,
-        field: props.field,
+        dataItem: dataItem,
+        field: field,
         syntheticEvent: e.syntheticEvent,
         value: e.target.value ?? "",
+      });
+
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: "rowstatus",
+        syntheticEvent: e.syntheticEvent,
+        value: dataItem["rowstatus"] === "N" ? "N" : "U",
       });
     }
   };
@@ -33,6 +41,7 @@ const CheckBoxCell = (props: GridCellProps) => {
       <Checkbox value={value} onChange={handleChange}></Checkbox>
     </td>
   );
+
   return render === undefined
     ? null
     : render?.call(undefined, defaultRendering, props);
