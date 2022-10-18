@@ -1,24 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  ComboBoxChangeEvent,
-  DropDownList,
-  DropDownListChangeEvent,
-  MultiColumnComboBox,
-  MultiColumnComboBoxChangeEvent,
-} from "@progress/kendo-react-dropdowns";
-import { useApi } from "../../hooks/api";
-import { commonCodeDefaultValue } from "../CommonString";
 import { GridCellProps } from "@progress/kendo-react-grid";
-import {
-  itemacntQuery,
-  outgbQuery,
-  outprocynQuery,
-  proccdQuery,
-  prodmacQuery,
-  qtyunitQuery,
-  usersQuery,
-} from "../CommonString";
-import { getQueryFromBizComponent } from "../CommonFunction";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 
 interface CustomCellProps extends GridCellProps {

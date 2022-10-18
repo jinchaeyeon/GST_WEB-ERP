@@ -40,7 +40,7 @@ import {
 } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { pageSize } from "../../CommonString";
+import { FORM_DATA_INDEX, pageSize, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
 import { tokenState } from "../../../store/atoms";
 import { useRecoilState } from "recoil";
@@ -54,11 +54,8 @@ export const USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT =
 
 let deletedRows: object[] = [];
 
-const FORM_DATA_INDEX = "formDataIndex";
 const DATA_ITEM_KEY = "column_id ";
-
 const idGetter = getter(FORM_DATA_INDEX);
-const SELECTED_FIELD: string = "selected";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;

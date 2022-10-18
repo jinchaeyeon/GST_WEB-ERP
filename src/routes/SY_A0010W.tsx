@@ -805,6 +805,7 @@ const Page: React.FC = () => {
               expandField="expanded"
             >
               <GridColumn cell={CommandCell} width="55px" />
+              <GridColumn field="group_category" title={"유형분류"} />
 
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdHeaderList"].map(

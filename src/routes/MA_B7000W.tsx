@@ -843,13 +843,6 @@ const MA_B7000: React.FC = () => {
                         changeData={filterRadioChange}
                       />
                     )}
-                    {/* <RadioGroup
-                      name="zeroyn"
-                      data={zeroynRadioButtonData}
-                      layout={"horizontal"}
-                      defaultValue={filters.zeroyn}
-                      onChange={filterRadioChange}
-                    /> */}
                   </div>
                 </div>
               </td>

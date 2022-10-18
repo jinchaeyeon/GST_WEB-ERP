@@ -1,27 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridCellProps,
-  GridFilterChangeEvent,
   GridEvent,
   GridDataStateChangeEvent,
   getSelectedState,
   GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import {
-  CompositeFilterDescriptor,
-  DataResult,
-  process,
-  State,
-  filterBy,
-  getter,
-} from "@progress/kendo-data-query";
+import { DataResult, process, State, getter } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
-
 import {
   BottomContainer,
   ButtonContainer,
@@ -31,21 +21,21 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-
-import {
-  Input,
-  RadioButton,
-  RadioButtonChangeEvent,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
-import CommonDropDownList from "../../DropDownLists/CommonDropDownList";
-
+import { Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
-import { chkScrollHandler } from "../../CommonFunction";
-import { custdivQuery, useynRadioButtonData } from "../../CommonString";
+import {
+  chkScrollHandler,
+  getQueryFromBizComponent,
+  UseBizComponent,
+} from "../../CommonFunction";
+import {
+  commonCodeDefaultValue,
+  pageSize,
+  SELECTED_FIELD,
+} from "../../CommonString";
+import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 
 type IKendoWindow = {
   getVisible(t: boolean): void;
@@ -54,7 +44,7 @@ type IKendoWindow = {
   para?: Iparameters;
 };
 
-const pageSize = 20;
+const DATA_ITEM_KEY = "custcd";
 
 const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -64,8 +54,48 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
     height: 800,
   });
 
-  const DATA_ITEM_KEY = "custcd";
-  const SELECTED_FIELD = "selected";
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA026,R_USEYN",
+    //업체구분, 사용여부,
+    setBizComponentData
+  );
+
+  //공통코드 리스트 조회
+  const [custdivListData, setCustdivListData] = useState([
+    commonCodeDefaultValue,
+  ]);
+  const [useynListData, setUseynListData] = useState([commonCodeDefaultValue]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const custdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
+      );
+      const useynQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "R_USEYN")
+      );
+
+      fetchQuery(custdivQueryStr, setCustdivListData);
+      fetchQuery(useynQueryStr, setUseynListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+    let query = {
+      query: "query?query=" + encodeURIComponent(queryStr),
+    };
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -82,9 +112,9 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioGroupChangeEvent) => {
-    const name = e.syntheticEvent.currentTarget.name;
-    const value = e.value;
+  const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -282,21 +312,27 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
               </td>
               <th>업체구분</th>
               <td>
-                <CommonDropDownList
-                  name="custdiv"
-                  queryStr={custdivQuery}
-                  changeData={filterDropDownListChange}
-                />
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="custdiv"
+                    value={filters.custdiv}
+                    bizComponentId="L_BA026"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
               <th>사용여부</th>
               <td>
-                <RadioGroup
-                  name="useyn"
-                  data={useynRadioButtonData}
-                  layout={"horizontal"}
-                  defaultValue={filters.useyn}
-                  onChange={filterRadioChange}
-                />
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="useyn"
+                    value={filters.useyn}
+                    bizComponentId="R_USEYN"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
             </tr>
           </tbody>

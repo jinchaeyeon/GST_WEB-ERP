@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext } from "react";
+import { useEffect, useState, useCallback, createContext } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -61,6 +61,7 @@ import {
   findMessage,
   UseMessages,
   getCodeFromValue,
+  getQueryFromBizComponent,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -73,7 +74,7 @@ import {
 } from "../../hooks/interfaces";
 import {
   commonCodeDefaultValue,
-  itemacntQuery,
+  FORM_DATA_INDEX,
   pageSize,
   SELECTED_FIELD,
 } from "../CommonString";
@@ -149,7 +150,6 @@ export const PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT = React.createContext<{
   getItemcd: (itemcd: string) => void;
 }>({} as any);
 
-const FORM_DATA_INDEX = "formDataIndex";
 const idGetter = getter(FORM_DATA_INDEX);
 
 type TKendoWindow = {
@@ -202,7 +202,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const [editedRowData, setEditedRowData] = useState({});
 
   // Add a new item to the Form FieldArray that will be shown in the Grid
-  const onAdd = React.useCallback(
+  const onAdd = useCallback(
     (e: any) => {
       e.preventDefault();
 
@@ -229,7 +229,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [fieldArrayRenderProps]
   );
 
-  const onRemove = React.useCallback(() => {
+  const onRemove = useCallback(() => {
     let newData: any[] = [];
 
     //삭제 안 할 데이터 newData에 push
@@ -261,7 +261,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   }, [fieldArrayRenderProps]);
 
   // Update an item from the Grid and update the index of the edited item
-  const onEdit = React.useCallback((dataItem: any, isNewItem: any) => {
+  const onEdit = useCallback((dataItem: any, isNewItem: any) => {
     if (!isNewItem) {
       editItemCloneRef.current = clone(dataItem);
     }
@@ -277,7 +277,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setEditIndex(dataItem[FORM_DATA_INDEX]);
   }, []);
 
-  const onCopy = React.useCallback(() => {
+  const onCopy = useCallback(() => {
     let newData: any[] = [];
     let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
 
@@ -306,7 +306,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   }, [fieldArrayRenderProps]);
 
   // Cancel the editing of an item and return its initial value
-  const onCancel = React.useCallback(() => {
+  const onCancel = useCallback(() => {
     if (editItemCloneRef.current) {
       fieldArrayRenderProps.onReplace({
         index: editItemCloneRef.current[FORM_DATA_INDEX],
@@ -319,7 +319,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   }, [fieldArrayRenderProps]);
 
   // Save the changes
-  const onSave = React.useCallback(() => {
+  const onSave = useCallback(() => {
     setEditIndex(undefined);
   }, [fieldArrayRenderProps]);
 
@@ -336,12 +336,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     if (chkScrollHandler(event, detailPgNum, pageSize))
       setDetailPgNum((prev) => prev + 1);
   };
-
-  //드롭다운리스트 데이터 조회 (품목계정)
-  const [itemacntListData, setItemacntListData] = React.useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
 
   const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
     if (rowIdx === -1) {
@@ -457,7 +451,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [id: string]: boolean | number[];
   }>({});
 
-  const onSelectionChange = React.useCallback(
+  const onSelectionChange = useCallback(
     (event: GridSelectionChangeEvent) => {
       const newSelectedState = getSelectedState({
         event,
@@ -470,7 +464,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [selectedState]
   );
 
-  const onHeaderSelectionChange = React.useCallback(
+  const onHeaderSelectionChange = useCallback(
     (event: GridHeaderSelectionChangeEvent) => {
       const checkboxElement: any = event.syntheticEvent.target;
       const checked = checkboxElement.checked;
@@ -506,7 +500,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   };
   const processApi = useApi();
 
-  const fetchData = React.useCallback(
+  const fetchData = useCallback(
     async (queryStr: string, index: number, dataItem: any) => {
       let data: any;
 
@@ -703,7 +697,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     );
   };
   // Add a new item to the Form FieldArray that will be shown in the Grid
-  const onAdd = React.useCallback(
+  const onAdd = useCallback(
     (e: any) => {
       e.preventDefault();
       fieldArrayRenderProps.onPush({
@@ -722,7 +716,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [fieldArrayRenderProps]
   );
 
-  const onRemove = React.useCallback(() => {
+  const onRemove = useCallback(() => {
     let newData: any[] = [];
 
     //삭제 안 할 데이터 newData에 push
@@ -754,7 +748,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   }, [fieldArrayRenderProps]);
 
   // Update an item from the Grid and update the index of the edited item
-  const onEdit = React.useCallback((dataItem: any, isNewItem: any) => {
+  const onEdit = useCallback((dataItem: any, isNewItem: any) => {
     if (!isNewItem) {
       editItemCloneRef.current = clone(dataItem);
     }
@@ -770,7 +764,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setEditIndex(dataItem[FORM_DATA_INDEX]);
   }, []);
 
-  const onCopy = React.useCallback(() => {
+  const onCopy = useCallback(() => {
     let newData: any[] = [];
     let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
 
@@ -799,7 +793,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   }, [fieldArrayRenderProps]);
 
   // Cancel the editing of an item and return its initial value
-  const onCancel = React.useCallback(() => {
+  const onCancel = useCallback(() => {
     if (editItemCloneRef.current) {
       fieldArrayRenderProps.onReplace({
         index: editItemCloneRef.current[FORM_DATA_INDEX],
@@ -812,7 +806,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   }, [fieldArrayRenderProps]);
 
   // Save the changes
-  const onSave = React.useCallback(() => {
+  const onSave = useCallback(() => {
     setEditIndex(undefined);
   }, [fieldArrayRenderProps]);
 
@@ -830,11 +824,43 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setDetailPgNum((prev) => prev + 1);
   };
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA061",
+    // 품목계정
+    setBizComponentData
+  );
+
   //드롭다운리스트 데이터 조회 (품목계정)
-  const [itemacntListData, setItemacntListData] = React.useState([
+  const [itemacntListData, setItemacntListData] = useState([
     commonCodeDefaultValue,
   ]);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const itemacntQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+      );
+
+      fetchQuery(itemacntQueryStr, setItemacntListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+    let query = {
+      query: "query?query=" + encodeURIComponent(queryStr),
+    };
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
     if (rowIdx === -1) {
@@ -949,7 +975,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [id: string]: boolean | number[];
   }>({});
 
-  const onSelectionChange = React.useCallback(
+  const onSelectionChange = useCallback(
     (event: GridSelectionChangeEvent) => {
       const newSelectedState = getSelectedState({
         event,
@@ -962,7 +988,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [selectedState]
   );
 
-  const onHeaderSelectionChange = React.useCallback(
+  const onHeaderSelectionChange = useCallback(
     (event: GridHeaderSelectionChangeEvent) => {
       const checkboxElement: any = event.syntheticEvent.target;
       const checked = checkboxElement.checked;
@@ -1013,7 +1039,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   };
   const processApi = useApi();
 
-  const fetchData = React.useCallback(
+  const fetchData = useCallback(
     async (queryStr: string, index: number, dataItem: any) => {
       let data: any;
 

@@ -46,8 +46,8 @@ import {
   dateformat,
   findMessage,
   getCodeFromValue,
+  getQueryFromBizComponent,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   UseMessages,
   UsePermissions,
@@ -60,27 +60,15 @@ import NumberCell from "../components/Cells/NumberCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import {
   commonCodeDefaultValue,
-  departmentsQuery,
-  doexdivQuery,
-  finynRadioButtonData,
-  itemacntQuery,
-  itemlvl1Query,
-  itemlvl2Query,
-  itemlvl3Query,
-  locationQuery,
-  ordstsQuery,
   pageSize,
-  purtypeQuery,
-  qtyunitQuery,
   SELECTED_FIELD,
-  taxdivQuery,
-  usersQuery,
 } from "../components/CommonString";
 import { CellRender, RowRender } from "../components/GroupRenderers";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { tokenState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "ordkey";
@@ -292,9 +280,9 @@ const PR_A1100W: React.FC = () => {
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioGroupChangeEvent) => {
-    const name = e.syntheticEvent.currentTarget.name;
-    const value = e.value;
+  const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -1567,7 +1555,14 @@ const PR_A1100W: React.FC = () => {
     setMaterialDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  //공통코드 리스트 조회 (수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서)
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_002,L_dptcd_001,L_BA061,L_BA015,L_BA002_426,L_BA171,L_BA172,L_BA173,R_FINYN",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 발주형태, 대분류,중분류,소분류,수주완료여부
+    setBizComponentData
+  );
+
+  //공통코드 리스트 조회
   const [ordstsListData, setOrdstsListData] = useState([
     commonCodeDefaultValue,
   ]);
@@ -1604,19 +1599,81 @@ const PR_A1100W: React.FC = () => {
     commonCodeDefaultValue,
   ]);
 
-  UseCommonQuery(ordstsQuery, setOrdstsListData);
-  UseCommonQuery(doexdivQuery, setDoexdivListData);
-  UseCommonQuery(taxdivQuery, setTaxdivListData);
-  UseCommonQuery(locationQuery, setLocationListData);
-  UseCommonQuery(usersQuery, setUsersListData);
-  UseCommonQuery(departmentsQuery, setDepartmentsListData);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
-  UseCommonQuery(qtyunitQuery, setQtyunitListData);
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const ordstsQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+      );
+      const doexdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+      );
+      const taxdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+      );
+      const locationQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+      );
+      const usersQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_002"
+        )
+      );
+      const departmentsQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      const itemacntQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+      );
+      const qtyunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+      );
+      const purtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_BA002_426"
+        )
+      );
+      const itemlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+      );
+      const itemlvl2QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+      );
+      const itemlvl3QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+      );
 
-  UseCommonQuery(purtypeQuery, setPurtypeListData);
-  UseCommonQuery(itemlvl1Query, setItemlvl1ListData);
-  UseCommonQuery(itemlvl2Query, setItemlvl2ListData);
-  UseCommonQuery(itemlvl3Query, setItemlvl3ListData);
+      fetchQuery(ordstsQueryStr, setOrdstsListData);
+      fetchQuery(doexdivQueryStr, setDoexdivListData);
+      fetchQuery(taxdivQueryStr, setTaxdivListData);
+      fetchQuery(locationQueryStr, setLocationListData);
+      fetchQuery(usersQueryStr, setUsersListData);
+      fetchQuery(departmentsQueryStr, setDepartmentsListData);
+      fetchQuery(itemacntQueryStr, setItemacntListData);
+      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      fetchQuery(purtypeQueryStr, setPurtypeListData);
+      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
+      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
+      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+    let query = {
+      query: "query?query=" + encodeURIComponent(queryStr),
+    };
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const onExpandChange = (event: any) => {
     const isExpanded =
@@ -1907,13 +1964,15 @@ const PR_A1100W: React.FC = () => {
 
               <th>수주완료여부</th>
               <td>
-                <RadioGroup
-                  name="ordyn"
-                  data={finynRadioButtonData}
-                  layout={"horizontal"}
-                  defaultValue={filters.ordyn}
-                  onChange={filterRadioChange}
-                />
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="ordyn"
+                    value={filters.ordyn}
+                    bizComponentId="R_FINYN"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
 
               <th>수주상태</th>
@@ -1987,13 +2046,15 @@ const PR_A1100W: React.FC = () => {
 
               <th>계획여부</th>
               <td>
-                <RadioGroup
-                  name="planyn"
-                  data={finynRadioButtonData}
-                  layout={"horizontal"}
-                  defaultValue={filters.planyn}
-                  onChange={filterRadioChange}
-                />
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="planyn"
+                    value={filters.planyn}
+                    bizComponentId="R_FINYN"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
 
               <th>담당자</th>

@@ -34,9 +34,10 @@ import {
 
 import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
-import { chkScrollHandler } from "../../CommonFunction";
+import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { useynRadioButtonData } from "../../CommonString";
+import { pageSize, SELECTED_FIELD } from "../../CommonString";
+import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 
 type IWindow = {
   workType: string; //구분자 "FILTER", "ROW"
@@ -46,8 +47,6 @@ type IWindow = {
   rowData?: object; // (그리드 인라인 품목참조시 사용) 참조버튼 클릭한 행 번호
   para?: Iparameters; //현재 미사용
 };
-
-const pageSize = 20;
 
 const ItemsWindow = ({
   workType,
@@ -64,12 +63,18 @@ const ItemsWindow = ({
     height: 800,
   });
   const DATA_ITEM_KEY = "itemcd";
-  const SELECTED_FIELD = "selected";
-
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "R_USEYN",
+    //사용여부,
+    setBizComponentData
+  );
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -80,9 +85,9 @@ const ItemsWindow = ({
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioGroupChangeEvent) => {
-    const name = e.syntheticEvent.currentTarget.name;
-    const value = e.value;
+  const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -319,13 +324,15 @@ const ItemsWindow = ({
               </td>
               <th>사용여부</th>
               <td>
-                <RadioGroup
-                  name="useyn"
-                  data={useynRadioButtonData}
-                  layout={"horizontal"}
-                  defaultValue={filters.useyn}
-                  onChange={filterRadioChange}
-                />
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="useyn"
+                    value={filters.useyn}
+                    bizComponentId="R_USEYN"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
             </tr>
             <tr>

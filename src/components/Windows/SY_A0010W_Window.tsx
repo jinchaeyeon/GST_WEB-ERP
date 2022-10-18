@@ -52,27 +52,20 @@ import {
   validator,
   arrayLengthValidator,
   chkScrollHandler,
-  getItemQuery,
   getQueryFromBizComponent,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   UseMessages,
   findMessage,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import {
-  IAttachmentData,
-  ICustData,
-  IItemData,
-  IWindowPosition,
-} from "../../hooks/interfaces";
+import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
   commonCodeDefaultValue,
-  itemacntQuery,
+  FORM_DATA_INDEX,
   pageSize,
+  SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
 import { tokenState } from "../../store/atoms";
@@ -107,18 +100,12 @@ export const FormGridEditContext = React.createContext<{
   onCancel: () => void;
   editIndex: number | undefined;
   parentField: string;
-  getItemcd: (itemcd: string) => void;
-  calculateAmt: () => void;
-  calculateSpecialAmt: () => void;
 }>({} as any);
 
 let deletedRows: object[] = [];
 
-const FORM_DATA_INDEX = "formDataIndex";
 const DATA_ITEM_KEY = "sub_code";
-
 const idGetter = getter(FORM_DATA_INDEX);
-const SELECTED_FIELD: string = "selected";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -315,77 +302,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setDetailPgNum((prev) => prev + 1);
   };
 
-  //드롭다운리스트 데이터 조회 (품목계정)
-  const [itemacntListData, setItemacntListData] = useState([
-    commonCodeDefaultValue,
-  ]);
-  UseCommonQuery(itemacntQuery, setItemacntListData);
-
-  const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
-    if (rowIdx === -1) {
-      //신규생성
-      fieldArrayRenderProps.onPush({
-        value: {
-          rowstatus: "N",
-          itemcd: data.itemcd,
-          itemnm: data.itemnm,
-          insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
-          qtyunit: commonCodeDefaultValue,
-          qty: 0,
-          specialunp: 0,
-          specialamt: 0,
-          unp: 0,
-          amt: 0,
-          wonamt: 0,
-          taxamt: 0,
-          totamt: 0,
-          outqty: 0,
-          sale_qty: 0,
-          finyn: "N",
-          bf_qty: 0,
-          ordseq: 0,
-          poregseq: 0,
-          totwgt: 0,
-          len: 0,
-          totlen: 0,
-          thickness: 0,
-          width: 0,
-          length: 0,
-          dlramt: 0,
-          chk: "N",
-        },
-      });
-
-      setEditIndex(0);
-    } else {
-      //기존 행 업데이트
-      const dataItem = rowData;
-      fieldArrayRenderProps.onReplace({
-        index: dataItem[FORM_DATA_INDEX],
-        value: {
-          ...dataItem,
-          rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-          itemcd: data.itemcd,
-          itemnm: data.itemnm,
-          insiz: data.insiz,
-          itemacnt: {
-            sub_code: data.itemacnt,
-            code_name: itemacntListData.find(
-              (item: any) => item.sub_code === data.itemacnt
-            )?.code_name,
-          },
-          qtyunit: commonCodeDefaultValue,
-        },
-      });
-    }
-  };
-
   const itemChange = (event: GridItemChangeEvent) => {
     // const inEditID = event.dataItem.ProductID;
     // const field = event.field || "";
@@ -499,90 +415,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     );
   };
 
-  const getItemcd = (itemcd: string) => {
-    const index = editIndex ?? 0;
-    const dataItem = value[index];
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData(queryStr, index, dataItem, itemacntListData);
-  };
-  const processApi = useApi();
-
-  const fetchData = React.useCallback(
-    async (
-      queryStr: string,
-      index: number,
-      dataItem: any,
-      itemacntListData: any
-    ) => {
-      let data: any;
-
-      let query = {
-        query: "query?query=" + encodeURIComponent(queryStr),
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        setRowItem(rows[0], index, dataItem, itemacntListData);
-      }
-    },
-    []
-  );
-
-  const setRowItem = (
-    row: any,
-    index: number,
-    dataItem: any,
-    itemacntListData: any //useState의 itemacntListData 바로 사용시 다시 조회되어 조회 전 빈값을 참조하는 현상 발생해, 일단 인수로 넘겨줌. 나중에 수정 필요할듯함..
-  ) => {
-    fieldArrayRenderProps.onReplace({
-      index: index,
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-        inEdit: undefined,
-        itemcd: row.itemcd,
-        itemnm: row.itemnm,
-        insiz: row.insiz,
-        itemacnt: {
-          sub_code: row.itemacnt,
-          code_name: itemacntListData.find(
-            (item: any) => item.sub_code === row.itemacnt
-          )?.code_name,
-        },
-        qtyunit: commonCodeDefaultValue,
-      },
-    });
-  };
-
-  const calculateAmt = () => {
-    const index = editIndex ?? 0;
-    const dataItem = value[index];
-
-    console.log("dataItem.qty");
-    console.log(dataItem.qty);
-    console.log(dataItem.unp);
-
-    fieldArrayRenderProps.onReplace({
-      index: index,
-      value: {
-        ...dataItem,
-        //inEdit: undefined,
-        wonamt: dataItem.qty * dataItem.unp,
-        taxamt: (dataItem.qty * dataItem.unp) / 10,
-        totamt:
-          dataItem.qty * dataItem.unp + (dataItem.qty * dataItem.unp) / 10,
-      },
-    });
-  };
-  const calculateSpecialAmt = () => {};
-
   return (
     <GridContainer margin={{ top: "30px" }}>
       <FormGridEditContext.Provider
@@ -594,9 +426,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           onSave,
           editIndex,
           parentField: name,
-          getItemcd,
-          calculateAmt,
-          calculateSpecialAmt,
         }}
       >
         {visited && validationMessage && <Error>{validationMessage}</Error>}
@@ -1056,9 +885,6 @@ const KendoWindow = ({
       data = null;
     }
 
-    console.log("data");
-    console.log(data);
-
     if (data.isSuccess === true) {
       //
     } else {
@@ -1229,7 +1055,6 @@ const KendoWindow = ({
 
     setParaData((prev) => ({
       ...prev,
-
       work_type: workType,
       group_code: group_code,
       group_name: group_name,
@@ -1254,41 +1079,12 @@ const KendoWindow = ({
     if (paraData.work_type !== "") fetchMainSaved();
   }, [paraData]);
 
-  const onCustWndClick = () => {
-    setCustType("CUST");
-    setCustWindowVisible(true);
-  };
-  const onRcvcustWndClick = () => {
-    setCustType("RCVCUST");
-    setCustWindowVisible(true);
-  };
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
-
-  const getCustData = (data: ICustData) => {
-    if (custType === "CUST") {
-      setInitialVal((prev) => {
-        return {
-          ...prev,
-          custcd: data.custcd,
-          custnm: data.custnm,
-        };
-      });
-    } else {
-      setInitialVal((prev) => {
-        return {
-          ...prev,
-          rcvcustnm: data.custnm,
-          rcvcustcd: data.custcd,
-        };
-      });
-    }
-  };
 
   const getAttachmentsData = (data: IAttachmentData) => {
     setInitialVal((prev) => {
@@ -1497,15 +1293,6 @@ const KendoWindow = ({
           </FormElement>
         )}
       />
-
-      {custWindowVisible && (
-        <CustomersWindow
-          getVisible={setCustWindowVisible}
-          workType={custType} //신규 : N, 수정 : U
-          getData={getCustData}
-          para={undefined}
-        />
-      )}
 
       {attachmentsWindowVisible && (
         <AttachmentsWindow
