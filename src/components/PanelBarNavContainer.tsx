@@ -4,7 +4,7 @@ import {
   PanelBarItem,
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
-import { withRouter } from "react-router-dom";
+import { useHistory, useLocation, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -19,7 +19,7 @@ import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import { clientWidth, gnvWidth } from "../components/CommonString";
 import UserEffect from "./UserEffect";
 import { useApi } from "../hooks/api";
-import { Iparameters, Tmenu, Tpath } from "../store/types";
+import { Iparameters, TLogParaVal, Tmenu, Tpath } from "../store/types";
 
 type TWrapper = {
   isMenuOpend: boolean;
@@ -169,11 +169,14 @@ export const Modal = styled.div<TModal>`
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
+  const location = useLocation();
   const [token, setToken] = useRecoilState(tokenState);
   const [menus, setMenus] = useRecoilState(menusState);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
   const companyCode = token ? token.companyCode : "";
+  const [previousRoute, setPreviousRoute] = useState("");
+  const [formKey, setFormKey] = useState("");
 
   useEffect(() => {
     if (menus === null) fetchMenus();
@@ -273,6 +276,74 @@ const PanelBarNavContainer = (props: any) => {
     }
   };
 
+  useEffect(() => {
+    const pathname = location.pathname.replace("/", "");
+
+    // 폼 로그 처리
+    if (previousRoute === "") {
+      //최초 오픈
+      fetchToLog({
+        work_type: "OPEN",
+        form_id: pathname,
+        form_name: "",
+        form_login_key: "",
+      });
+    } else if (pathname !== previousRoute) {
+      // 오픈, 클로즈
+      fetchToLog({
+        work_type: "CLOSE",
+        form_id: previousRoute,
+        form_name: "",
+        form_login_key: formKey,
+      });
+      fetchToLog({
+        work_type: "OPEN",
+        form_id: pathname,
+        form_name: "",
+        form_login_key: "",
+      });
+    }
+
+    // 이전 루트 저장
+    setPreviousRoute(pathname);
+  }, [location]);
+
+  const fetchToLog = async (logParaVal: TLogParaVal) => {
+    let data: any;
+
+    const logPara: Iparameters = {
+      procedureName: "sys_sav_form_access_log",
+      pageNumber: 1,
+      pageSize: 50,
+      parameters: {
+        "@p_work_type": logParaVal.work_type,
+        "@p_user_id": token.userId,
+        "@p_form_id": logParaVal.form_id,
+        "@p_form_name": logParaVal.form_name,
+        "@p_form_login_key": logParaVal.form_login_key,
+        "@p_browser_login_key": token.loginKey,
+        "@p_ip": "", //ip 추가 필요
+        "@p_client_pc": "", //브라우저 정보 추가 필요
+        "@p_mac_address": "",
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", logPara);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      if (logParaVal.work_type === "OPEN") {
+        const { form_login_key } = data.tables[0].Rows[0];
+        setFormKey(form_login_key);
+      }
+    } else {
+      console.log("[An error occured to log]");
+      console.log(data);
+    }
+  };
+
   const setSelectedIndex = (pathName: any) => {
     let currentPath: any = paths.find((item: any) => item.path === pathName);
 
@@ -295,6 +366,7 @@ const PanelBarNavContainer = (props: any) => {
   const onMenuBtnClick = () => {
     setIsMenuOpend((prev) => !prev);
   };
+
   return (
     <Wrapper isMenuOpend={isMenuOpend}>
       <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
