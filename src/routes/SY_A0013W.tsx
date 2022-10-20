@@ -1139,7 +1139,7 @@ const SY_A0120: React.FC = () => {
               themeColor={"primary"}
               fillMode="outline"
               onClick={onEditClick}
-              icon="edit"
+              icon="rows"
             ></Button>
           </td>
         )}
@@ -1308,7 +1308,6 @@ const SY_A0120: React.FC = () => {
               //컬럼너비조정
               resizable={true}
             >
-              <GridColumn cell={CommandCell} title="권한그룹" width="75px" />
               <GridColumn
                 field={"user_id"}
                 title={"사용자ID"}
@@ -1326,6 +1325,7 @@ const SY_A0120: React.FC = () => {
                 width={"110px"}
               />
               <GridColumn field={"postcd"} title={"직위"} width={"120px"} />
+              <GridColumn cell={CommandCell} title="권한그룹" width="75px" />
             </Grid>
           </ExcelExport>
         </GridContainer>

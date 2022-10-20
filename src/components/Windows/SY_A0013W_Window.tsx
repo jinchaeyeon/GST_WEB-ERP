@@ -433,7 +433,7 @@ const KendoWindow = ({
 
   return (
     <Window
-      title={"권한그룹 정보"}
+      title={"권한그룹 설정"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
