@@ -45,17 +45,6 @@ export type Token = {
   loginKey: string;
 };
 
-export type CategoryDto = {
-  id?: number;
-  name?: string;
-  key: string;
-};
-
-export type Category = {
-  sub_code: string;
-  code_name?: string;
-};
-
 export type TCommonCode = {
   sub_code: string;
   code_name: string;
@@ -126,7 +115,7 @@ export type Tpath = {
 };
 
 // TypeScript에서 string key로 객체에 접근하기 위한 객체 타입
-export type ObjType = {
+export type TObject = {
   [key: string]: string;
 };
 
