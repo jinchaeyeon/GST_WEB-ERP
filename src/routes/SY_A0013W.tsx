@@ -20,6 +20,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
+  GridCellProps,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -41,9 +42,9 @@ import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
-  convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
+  getSelectedFirstData,
   getYn,
   UseBizComponent,
   UseCustomOption,
@@ -68,6 +69,7 @@ import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { tokenState } from "../store/atoms";
 import { useRecoilState } from "recoil";
 import TopButtons from "../components/TopButtons";
+import GroupWindow from "../components/Windows/SY_A0013W_Window";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -549,25 +551,6 @@ const SY_A0120: React.FC = () => {
       ...prev,
       user_id: selectedRowData.user_id,
     }));
-  };
-  const onUserMenuSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: USER_MENU_DATA_ITEM_KEY,
-    });
-
-    setUserMenuSelectedState(newSelectedState);
-  };
-
-  const onAllMenuSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: ALL_MENU_DATA_ITEM_KEY,
-    });
-
-    setAllMenuSelectedState(newSelectedState);
   };
 
   useEffect(() => {
@@ -1131,6 +1114,49 @@ const SY_A0120: React.FC = () => {
   const { data, expanded, editItem, editItemField } = userMenuDataResult;
   const editItemId = editItem ? editItem[USER_MENU_DATA_ITEM_KEY] : null;
 
+  const [groupWindowVisible, setGroupWindowVisible] = useState<boolean>(false);
+
+  const CommandCell = (props: GridCellProps) => {
+    const onEditClick = () => {
+      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+      const rowData = props.dataItem;
+      setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
+
+      setFilters((prev) => ({
+        ...prev,
+        [DATA_ITEM_KEY]: rowData[DATA_ITEM_KEY],
+      }));
+
+      setGroupWindowVisible(true);
+    };
+
+    return (
+      <>
+        {props.rowType === "groupHeader" ? null : (
+          <td className="k-command-cell">
+            <Button
+              className="k-grid-edit-command"
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onEditClick}
+              icon="edit"
+            ></Button>
+          </td>
+        )}
+      </>
+    );
+  };
+
+  const reloadData = () => {
+    const key = Object.getOwnPropertyNames(selectedState)[0];
+    selectedRowIdx = mainDataResult.data.findIndex(
+      (item) => item["idx"] === Number(key)
+    );
+
+    resetAllGrid();
+    fetchMainGrid();
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1235,7 +1261,7 @@ const SY_A0120: React.FC = () => {
       </FilterBoxWrap>
 
       <GridContainerWrap>
-        <GridContainer width={"500px"}>
+        <GridContainer width={"580px"}>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
@@ -1282,18 +1308,11 @@ const SY_A0120: React.FC = () => {
               //컬럼너비조정
               resizable={true}
             >
-              <GridColumn
-                field="rowstatus"
-                title=" "
-                width="40px"
-                editable={false}
-              />
-
+              <GridColumn cell={CommandCell} title="권한그룹" width="75px" />
               <GridColumn
                 field={"user_id"}
                 title={"사용자ID"}
                 width={"100px"}
-                //cell={numberField.includes(item.id) ? NumberCell : ""}
                 footerCell={mainTotalFooterCell}
               />
               <GridColumn
@@ -1306,7 +1325,7 @@ const SY_A0120: React.FC = () => {
                 title={"사용자구분"}
                 width={"110px"}
               />
-              <GridColumn field={"postcd"} title={"직위"} width={"150px"} />
+              <GridColumn field={"postcd"} title={"직위"} width={"120px"} />
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1334,28 +1353,6 @@ const SY_A0120: React.FC = () => {
                 </ButtonContainer>
               )}
             </GridTitleContainer>
-
-            {/* <TreeList
-              style={{ height: "650px", overflow: "auto" }}
-              data={mapTree(
-                userMenuDataResult,
-                SUB_ITEMS_FIELD,
-                userMenuCallback
-              )}
-              EXPANDED_FIELD={EXPANDED_FIELD}
-              SUB_ITEMS_FIELD={SUB_ITEMS_FIELD}
-              onExpandChange={onUserMenuExpandChange}
-              //선택 기능
-              dataItemKey={USER_MENU_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              //드래그용 행
-              rowRender={userMenuRowRender}
-              columns={userMenuColumns}
-            ></TreeList> */}
 
             <TreeList
               style={{ height: "650px", overflow: "auto" }}
@@ -1418,6 +1415,18 @@ const SY_A0120: React.FC = () => {
           </ExcelExport>
         </GridContainer>
       </GridContainerWrap>
+
+      {groupWindowVisible && (
+        <GroupWindow
+          getVisible={setGroupWindowVisible}
+          para={getSelectedFirstData(
+            selectedState,
+            mainDataResult.data,
+            DATA_ITEM_KEY
+          )}
+          reloadData={reloadData}
+        />
+      )}
     </>
   );
 };

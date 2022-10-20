@@ -638,3 +638,20 @@ export const getCodeFromValue = (value: any, valueField?: string) => {
 export const getYn = (value: string | boolean) => {
   return value === "Y" || value === true ? "Y" : "N";
 };
+
+// 선택된 행 중 첫번째 행의 데이터를 반환
+export const getSelectedFirstData = (
+  selectedState: {
+    [id: string]: boolean | number[];
+  },
+  data: any[],
+  DATA_ITEM_KEY: string
+) => {
+  const selectedRowKeyVal: number =
+    Number(Object.getOwnPropertyNames(selectedState)[0]) ?? null;
+  if (selectedRowKeyVal === null) return false;
+  const selectedRowData = data.find(
+    (item) => item[DATA_ITEM_KEY] === selectedRowKeyVal
+  );
+  return selectedRowData;
+};

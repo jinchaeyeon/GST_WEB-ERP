@@ -153,6 +153,9 @@ export const GridContainer = styled.div<TGridContainer>`
   .k-scheduler {
     margin: 5px 0;
   }
+  .k-grid .k-command-cell {
+    text-align: center;
+  }
   .k-grid td {
     white-space: nowrap; //그리드 셀 말줄임표
   }
