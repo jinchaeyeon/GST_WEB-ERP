@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, tokenState } from "../store/atoms";
-import { Iparameters, ObjType } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE } from "./CommonString";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
@@ -634,4 +633,8 @@ export const getCodeFromValue = (value: any, valueField?: string) => {
     ? value
     : value[valueField ?? "sub_code"];
   return code;
+};
+
+export const getYn = (value: string | boolean) => {
+  return value === "Y" || value === true ? "Y" : "N";
 };

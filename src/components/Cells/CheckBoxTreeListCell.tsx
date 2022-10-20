@@ -1,36 +1,36 @@
-import { GridCellProps } from "@progress/kendo-react-grid";
+import React, { useEffect } from "react";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import { TreeListCellProps } from "@progress/kendo-react-treelist";
 
 const CheckBoxTreeListCell = (props: TreeListCellProps) => {
-  const { ariaColumnIndex, dataItem, field, render, onChange } = props;
-  let value = dataItem[field ?? ""];
-
-  if (value === "Y" || value === true) {
-    value = true;
-  } else {
-    value = false;
-  }
+  const { ariaColumnIndex, dataItem, field, render, level, onChange } = props;
+  const value = dataItem[field ?? ""];
 
   const handleChange = (e: CheckboxChangeEvent) => {
-    if (props.onChange) {
-      props.onChange({
-        dataItem: props.dataItem,
-        level: props.level,
-        field: props.field,
+    if (onChange) {
+      onChange({
+        dataItem: dataItem,
+        level: level,
+        field: field,
         syntheticEvent: e.syntheticEvent,
-        value: e.target.value ?? "",
+        value: e.value,
       });
     }
   };
 
   const defaultRendering = (
     <td style={{ textAlign: "center" }} aria-colindex={ariaColumnIndex}>
-      <Checkbox value={value} onChange={handleChange}></Checkbox>
+      <Checkbox
+        value={value === "Y" || value === true ? true : false}
+        name={field}
+        onChange={handleChange}
+      ></Checkbox>
     </td>
   );
 
-  return defaultRendering;
+  return render
+    ? render.call(undefined, defaultRendering, props)
+    : defaultRendering;
 
   // return render === undefined
   //   ? null

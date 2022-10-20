@@ -8,6 +8,9 @@ import {
   extendDataItem,
   TreeListExpandChangeEvent,
   TreeListColumnProps,
+  TreeListItemChangeEvent,
+  modifySubItems,
+  TreeListCellProps,
 } from "@progress/kendo-react-treelist";
 import {
   Grid,
@@ -17,8 +20,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
-  GridItemChangeEvent,
-  GridCellProps,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -42,8 +43,8 @@ import {
   chkScrollHandler,
   convertDateToStr,
   findMessage,
-  getGridItemChangedData,
   getQueryFromBizComponent,
+  getYn,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -54,26 +55,28 @@ import {
   CLIENT_WIDTH,
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
+  EXPANDED_FIELD,
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import { CellRender, RowRender } from "../components/Renderers";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import { Renderers } from "../components/TreeListRenderers";
+import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { tokenState } from "../store/atoms";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import TopButtons from "../components/TopButtons";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
 const USER_MENU_DATA_ITEM_KEY = "KeyID";
 const ALL_MENU_DATA_ITEM_KEY = "KeyID";
-const expandField: string = "expanded";
-const subItemsField: string = "menus";
+const SUB_ITEMS_FIELD: string = "menus";
+
 let deletedMainRows: object[] = [];
+let selectedRowIdx = 0;
 
 const RowRenderForDragging = (properties: any) => {
   const {
@@ -97,18 +100,18 @@ const RowRenderForDragging = (properties: any) => {
   );
 };
 
-const CustomComboBoxCell = (props: GridCellProps) => {
+const CustomComboBoxCell = (props: TreeListCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
   UseBizComponent(
-    "L_SYS005,L_BA002,L_BA028,L_dptcd_001,L_HU005,L_BA410",
+    "L_SYS1205_1,L_BA002,L_BA028,L_dptcd_001,L_HU005,L_BA410",
     setBizComponentData
   );
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "user_category"
-      ? "L_SYS005"
+    field === "path"
+      ? "L_SYS1205_1"
       : field === "location"
       ? "L_BA002"
       : field === "position"
@@ -121,7 +124,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_BA410"
       : "";
 
-  const fieldName = field === "dptcd" ? "dptnm" : undefined;
+  const fieldName =
+    field === "path"
+      ? { valueField: "code", textField: "name" }
+      : { valueField: undefined, textField: undefined };
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
@@ -130,14 +136,59 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   return bizComponent ? (
     <ComboBoxCell
       bizComponent={bizComponent}
-      textField={fieldName}
+      valueField={fieldName.valueField}
+      textField={fieldName.textField}
+      readOnly
       {...props}
     />
   ) : (
     <td></td>
   );
 };
-let selectedRowIdx = 0;
+
+const allMenuColumns: TreeListColumnProps[] = [
+  { field: "menu_name", title: "메뉴명", expandable: true },
+];
+
+const userMenuColumns: TreeListColumnProps[] = [
+  {
+    field: "rowstatus",
+    title: " ",
+    width: "40px",
+  },
+  {
+    field: "menu_name",
+    title: "메뉴명",
+    expandable: true,
+    width: "250px",
+  },
+  {
+    field: "form_view_yn",
+    title: "조회 권한",
+    width: "100px",
+    cell: CheckBoxTreeListCell,
+  },
+  {
+    field: "form_print_yn",
+    title: "출력 권한",
+    width: "100px",
+    cell: CheckBoxTreeListCell,
+  },
+  {
+    field: "form_save_yn",
+    title: "저장 권한",
+    width: "100px",
+    cell: CheckBoxTreeListCell,
+  },
+  {
+    field: "form_delete_yn",
+    title: "삭제 권한",
+    width: "100px",
+    cell: CheckBoxTreeListCell,
+  },
+  { field: "path", title: "경로", width: "100px", cell: CustomComboBoxCell },
+];
+
 const SY_A0120: React.FC = () => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
@@ -148,11 +199,11 @@ const SY_A0120: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
 
   //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
+  const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -160,49 +211,6 @@ const SY_A0120: React.FC = () => {
     "L_dptcd_001,L_SYS005,L_BA001,L_BA002,L_HU005,L_SYS1205_1",
     setBizComponentData
   );
-
-  const allMenuColumns: TreeListColumnProps[] = [
-    { field: "menu_name", title: "메뉴명", expandable: true },
-  ];
-
-  const userMenuColumns: TreeListColumnProps[] = [
-    {
-      field: "rowstatus",
-      title: " ",
-      width: "40px",
-    },
-    {
-      field: "menu_name",
-      title: "메뉴명",
-      expandable: true,
-      width: "250px",
-    },
-    {
-      field: "form_view_yn",
-      title: "조회 권한",
-      width: "100px",
-      cell: CheckBoxTreeListCell,
-    },
-    {
-      field: "form_print_yn",
-      title: "출력 권한",
-      width: "100px",
-      cell: CheckBoxTreeListCell,
-    },
-    {
-      field: "form_save_yn",
-      title: "저장 권한",
-      width: "100px",
-      cell: CheckBoxTreeListCell,
-    },
-    {
-      field: "form_delete_yn",
-      title: "삭제 권한",
-      width: "100px",
-      cell: CheckBoxTreeListCell,
-    },
-    { field: "path", title: "경로", width: "100px" },
-  ];
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
@@ -219,7 +227,14 @@ const SY_A0120: React.FC = () => {
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-  const [userMenuDataResult, setUserMenuDataResult] = useState<any>([]);
+
+  const [userMenuDataResult, setUserMenuDataResult] = useState<any>({
+    data: [],
+    expanded: ["M2022062210224011070"],
+    editItem: undefined,
+    editItemField: undefined,
+  });
+
   const [allMenuDataResult, setAllMenuDataResult] = useState<any>([]);
 
   //선택 상태
@@ -404,10 +419,15 @@ const SY_A0120: React.FC = () => {
           rows,
           (i: any) => i.KeyID,
           (i: any) => i.ParentKeyID,
-          subItemsField
+          SUB_ITEMS_FIELD
         );
 
-        setUserMenuDataResult(dataTree);
+        //setUserMenuDataResult(dataTree);
+
+        setUserMenuDataResult({
+          ...userMenuDataResult,
+          data: dataTree,
+        });
       }
     } else {
       console.log("[에러발생]");
@@ -438,7 +458,7 @@ const SY_A0120: React.FC = () => {
           rows,
           (i: any) => i.KeyID,
           (i: any) => i.ParentKeyID,
-          subItemsField
+          SUB_ITEMS_FIELD
         );
 
         setAllMenuDataResult(dataTree);
@@ -469,12 +489,12 @@ const SY_A0120: React.FC = () => {
           appMenuRow,
           (i: any) => i.KeyID,
           (i: any) => i.ParentKeyID,
-          subItemsField
+          SUB_ITEMS_FIELD
         );
 
         setUserMenuDataResult((prev: any) => {
           if (prev.length === 0) {
-            return appMenuDataTree;
+            return { ...prev, data: appMenuDataTree };
           } else {
             return prev;
           }
@@ -552,7 +572,7 @@ const SY_A0120: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      setUserMenuDataResult([]);
+      setUserMenuDataResult((prev: any) => ({ ...prev, data: [] }));
       fetchUserMenuGrid();
     }
   }, [userMenuFilters]);
@@ -678,139 +698,13 @@ const SY_A0120: React.FC = () => {
     }
   }, [filters, permissions]);
 
-  //공통코드 리스트 조회 후 그리드 데이터 세팅
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl1: itemlvl1ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl1
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl1ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl2: itemlvl2ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl2
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl2ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemlvl3: itemlvl3ListData.find(
-  //         (item: any) => item.sub_code === row.itemlvl3
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemlvl3ListData]);
-
-  // useEffect(() => {
-  //   setMainDataResult((prev) => {
-  //     const rows = prev.data.map((row: any) => ({
-  //       ...row,
-  //       itemgrade: itemgradeListData.find(
-  //         (item: any) => item.sub_code === row.itemgrade
-  //       )?.code_name,
-  //     }));
-
-  //     return {
-  //       data: [...rows],
-  //       total: prev.total,
-  //     };
-  //   });
-  // }, [itemgradeListData]);
-
-  const onAddClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    const idx: number =
-      Number(Object.getOwnPropertyNames(selectedState)[0]) ??
-      //Number(planDataResult.data[0].idx) ??
-      null;
-    if (idx === null) return false;
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item.idx === idx
-    );
-
-    const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
-      // planno: selectedRowData.planno,
-      // planseq: selectedRowData.planseq,
-      // proccd: selectedRowData.proccd,
-      apply_start_date: convertDateToStr(new Date()),
-      apply_end_date: "19991231",
-      birdt: "19991231",
-      rowstatus: "N",
-    };
-    setMainDataResult((prev) => {
-      return {
-        data: [...prev.data, newDataItem],
-        total: prev.total,
-      };
-    });
-  };
-
-  const onRemoveClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
-    let newData: any[] = [];
-
-    mainDataResult.data.forEach((item: any, index: number) => {
-      if (!selectedState[item[DATA_ITEM_KEY]]) {
-        newData.push(item);
-      } else {
-        deletedMainRows.push(item);
-      }
-    });
-
-    //newData 생성
-    setMainDataResult((prev) => ({
-      data: newData,
-      total: newData.length,
-    }));
-
-    //선택 상태 초기화
-    setSelectedState({});
-  };
-
   const onSaveClick = () => {
     const flatData: any = treeToFlat(
-      userMenuDataResult,
+      userMenuDataResult.data,
       "menu_name",
-      subItemsField
+      SUB_ITEMS_FIELD
     );
-    flatData.forEach((item: any) => delete item[subItemsField]);
+    flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
     const dataItem: { [name: string]: any } = flatData.filter((item: any) => {
       return (
@@ -853,10 +747,10 @@ const SY_A0120: React.FC = () => {
       dataArr.row_state_s.push("D");
       dataArr.add_delete_type_s.push(add_delete_type_s);
       dataArr.menu_id_s.push(KeyID);
-      dataArr.form_view_yn_s.push(form_view_yn);
-      dataArr.form_print_yn_s.push(form_print_yn);
-      dataArr.form_save_yn_s.push(form_save_yn);
-      dataArr.form_delete_yn_s.push(form_delete_yn);
+      dataArr.form_view_yn_s.push(getYn(form_view_yn));
+      dataArr.form_print_yn_s.push(getYn(form_print_yn));
+      dataArr.form_save_yn_s.push(getYn(form_save_yn));
+      dataArr.form_delete_yn_s.push(getYn(form_delete_yn));
     });
 
     dataItem.forEach((item: any, idx: number) => {
@@ -873,10 +767,10 @@ const SY_A0120: React.FC = () => {
       dataArr.row_state_s.push(rowstatus);
       dataArr.add_delete_type_s.push(add_delete_type_s);
       dataArr.menu_id_s.push(KeyID);
-      dataArr.form_view_yn_s.push(form_view_yn);
-      dataArr.form_print_yn_s.push(form_print_yn);
-      dataArr.form_save_yn_s.push(form_save_yn);
-      dataArr.form_delete_yn_s.push(form_delete_yn);
+      dataArr.form_view_yn_s.push(getYn(form_view_yn));
+      dataArr.form_print_yn_s.push(getYn(form_print_yn));
+      dataArr.form_save_yn_s.push(getYn(form_save_yn));
+      dataArr.form_delete_yn_s.push(getYn(form_delete_yn));
     });
 
     const key = Object.getOwnPropertyNames(selectedState)[0];
@@ -973,75 +867,6 @@ const SY_A0120: React.FC = () => {
     if (paraDataSaved.work_type !== "") fetchGridSaved();
   }, [paraDataSaved]);
 
-  const onUserMenuItemChange = (event: GridItemChangeEvent) => {
-    getGridItemChangedData(
-      event,
-      userMenuDataResult,
-      setUserMenuDataResult,
-      USER_MENU_DATA_ITEM_KEY
-    );
-  };
-
-  const enterEdit = (dataItem: any, field: string) => {
-    // const dataTree: any = createDataTree(
-    //   rows,
-    //   (i: any) => i.KeyID,
-    //   (i: any) => i.ParentKeyID,
-    //   subItemsField
-    // );
-
-    //setAllMenuDataResult(dataTree);
-
-    const newData = userMenuDataResult.map((item: any) =>
-      item[USER_MENU_DATA_ITEM_KEY] === dataItem[USER_MENU_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : { ...item, [EDIT_FIELD]: undefined }
-    );
-
-    setUserMenuDataResult((prev: any) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  };
-
-  const exitEdit = () => {
-    const newData = userMenuDataResult.map((item: any) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setUserMenuDataResult((prev: any) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  };
-
-  const customCellRender = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
   const [dragDataItem, setDragDataItem] = useState<any>(null);
 
   const allMenuRowRender = (tr: any, props: any) => (
@@ -1066,12 +891,12 @@ const SY_A0120: React.FC = () => {
   const handleAllMenuDrop = (e: any) => {
     if (dragDataItem !== null) {
       const flatData: any = treeToFlat(
-        userMenuDataResult,
+        userMenuDataResult.data,
         "menu_name",
-        subItemsField
+        SUB_ITEMS_FIELD
       );
 
-      flatData.forEach((item: any) => delete item[subItemsField]);
+      flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
       const newRowData =
         dragDataItem["ParentKeyID"] === "" // 최상위 항목 선택시 전체 메뉴 삭제
@@ -1093,10 +918,10 @@ const SY_A0120: React.FC = () => {
         newRowData,
         (i: any) => i.KeyID,
         (i: any) => i.ParentKeyID,
-        subItemsField
+        SUB_ITEMS_FIELD
       );
 
-      setUserMenuDataResult(dataTree);
+      setUserMenuDataResult((prev: any) => ({ ...prev, data: dataTree }));
     }
 
     setDragDataItem(null);
@@ -1114,10 +939,10 @@ const SY_A0120: React.FC = () => {
     const flatAllMenuData: any = treeToFlat(
       allMenuDataResult,
       "menu_name",
-      subItemsField
+      SUB_ITEMS_FIELD
     );
 
-    flatAllMenuData.forEach((item: any) => delete item[subItemsField]);
+    flatAllMenuData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
     let dragDataItemWithChildren: any[] =
       dragDataItem["ParentKeyID"] === "" // 최상위 항목 선택시 전체 메뉴 추가
@@ -1149,8 +974,12 @@ const SY_A0120: React.FC = () => {
       ];
 
       setUserMenuDataResult((prev: any) => {
-        const flatData: any = treeToFlat(prev, "menu_name", subItemsField);
-        flatData.forEach((item: any) => delete item[subItemsField]);
+        const flatData: any = treeToFlat(
+          prev.data,
+          "menu_name",
+          SUB_ITEMS_FIELD
+        );
+        flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
         const sameKeyData = flatData.find(
           (item: any) =>
@@ -1161,12 +990,15 @@ const SY_A0120: React.FC = () => {
         if (sameKeyData) {
           return prev;
         } else {
-          return createDataTree(
-            [...flatData, ...newRowData],
-            (i: any) => i.KeyID,
-            (i: any) => i.ParentKeyID,
-            subItemsField
-          );
+          return {
+            ...prev,
+            data: createDataTree(
+              [...flatData, ...newRowData],
+              (i: any) => i.KeyID,
+              (i: any) => i.ParentKeyID,
+              SUB_ITEMS_FIELD
+            ),
+          };
         }
       });
     });
@@ -1178,9 +1010,6 @@ const SY_A0120: React.FC = () => {
     setDragDataItem(dataItem);
   };
   const [allMenuExpanded, setAllMenuExpanded] = React.useState<string[]>([
-    "M2022062210224011070",
-  ]);
-  const [userMenuExpanded, setUserMenuExpanded] = React.useState<string[]>([
     "M2022062210224011070",
   ]);
 
@@ -1196,22 +1025,7 @@ const SY_A0120: React.FC = () => {
 
   const allMenuCallback = (item: any) =>
     allMenuExpanded.includes(item[ALL_MENU_DATA_ITEM_KEY])
-      ? extendDataItem(item, subItemsField, { [expandField]: true })
-      : item;
-
-  const onUserMenuExpandChange = (e: TreeListExpandChangeEvent) => {
-    setUserMenuExpanded(
-      e.value
-        ? userMenuExpanded.filter(
-            (id) => id !== e.dataItem[USER_MENU_DATA_ITEM_KEY]
-          )
-        : [...userMenuExpanded, e.dataItem[USER_MENU_DATA_ITEM_KEY]]
-    );
-  };
-
-  const userMenuCallback = (item: any) =>
-    userMenuExpanded.includes(item[USER_MENU_DATA_ITEM_KEY])
-      ? extendDataItem(item, subItemsField, { [expandField]: true })
+      ? extendDataItem(item, SUB_ITEMS_FIELD, { [EXPANDED_FIELD]: true })
       : item;
 
   const search = () => {
@@ -1219,6 +1033,104 @@ const SY_A0120: React.FC = () => {
     fetchMainGrid();
     fetchAllMenuGrid();
   };
+
+  let renderers;
+
+  const enterEdit = (dataItem: any, field: string) => {
+    setUserMenuDataResult({
+      ...userMenuDataResult,
+      editItem: { ...dataItem },
+      editItemField: field,
+    });
+  };
+
+  const exitEdit = () => {
+    setUserMenuDataResult({
+      ...userMenuDataResult,
+      editItem: undefined,
+      editItemField: undefined,
+    });
+  };
+  renderers = new Renderers(enterEdit, exitEdit, EDIT_FIELD);
+
+  const onUserMenuExpandChange = (event: TreeListExpandChangeEvent) => {
+    setUserMenuDataResult({
+      ...userMenuDataResult,
+      expanded: event.value
+        ? userMenuDataResult.expanded.filter(
+            (id: any) => id !== event.dataItem[USER_MENU_DATA_ITEM_KEY]
+          )
+        : [
+            ...userMenuDataResult.expanded,
+            event.dataItem[USER_MENU_DATA_ITEM_KEY],
+          ],
+    });
+  };
+
+  const onUserMenuItemChange = (event: TreeListItemChangeEvent) => {
+    const { field, dataItem, value, level } = event;
+
+    // flat data로 변환
+    const flatData: any = treeToFlat(
+      userMenuDataResult.data,
+      "menu_name",
+      SUB_ITEMS_FIELD
+    );
+    flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
+
+    // 데이터 업데이트
+    const updatedUserMenuData =
+      level.length === 1 // 최상위 요소 change 시, 전체 데이터의 rowstatus, field 업데이트
+        ? flatData.map((item: any) => ({
+            ...item,
+            rowstatus: item["rowstatus"] === "N" ? "N" : "U",
+            [field!]: value,
+          }))
+        : flatData.map(
+            (
+              item: any // 그 외, change 된 데이터의 rowstatus 업데이트
+            ) =>
+              item[USER_MENU_DATA_ITEM_KEY] ===
+              dataItem[USER_MENU_DATA_ITEM_KEY]
+                ? { ...item, rowstatus: item["rowstatus"] === "N" ? "N" : "U" }
+                : { ...item }
+          );
+
+    // tree data로 변환
+    const dataTree: any = createDataTree(
+      updatedUserMenuData,
+      (i: any) => i.KeyID,
+      (i: any) => i.ParentKeyID,
+      SUB_ITEMS_FIELD
+    );
+
+    // 자식 데이터 업데이트
+    const newData = modifySubItems(
+      dataTree,
+      SUB_ITEMS_FIELD,
+      (item) =>
+        item[USER_MENU_DATA_ITEM_KEY] === dataItem[USER_MENU_DATA_ITEM_KEY],
+      (subItems) =>
+        subItems.map((subItem) => ({
+          ...subItem,
+          rowstatus: "U",
+          [field!]: value,
+        }))
+    );
+
+    // 데이터 적용
+    setUserMenuDataResult({
+      ...userMenuDataResult,
+      data: mapTree(newData, SUB_ITEMS_FIELD, (item) =>
+        dataItem[USER_MENU_DATA_ITEM_KEY] === item[USER_MENU_DATA_ITEM_KEY]
+          ? extendDataItem(item, SUB_ITEMS_FIELD, { [field!]: value })
+          : item
+      ),
+    });
+  };
+  const { data, expanded, editItem, editItemField } = userMenuDataResult;
+  const editItemId = editItem ? editItem[USER_MENU_DATA_ITEM_KEY] : null;
+
   return (
     <>
       <TitleContainer>
@@ -1423,15 +1335,15 @@ const SY_A0120: React.FC = () => {
               )}
             </GridTitleContainer>
 
-            <TreeList
+            {/* <TreeList
               style={{ height: "650px", overflow: "auto" }}
               data={mapTree(
                 userMenuDataResult,
-                subItemsField,
+                SUB_ITEMS_FIELD,
                 userMenuCallback
               )}
-              expandField={expandField}
-              subItemsField={subItemsField}
+              EXPANDED_FIELD={EXPANDED_FIELD}
+              SUB_ITEMS_FIELD={SUB_ITEMS_FIELD}
               onExpandChange={onUserMenuExpandChange}
               //선택 기능
               dataItemKey={USER_MENU_DATA_ITEM_KEY}
@@ -1443,91 +1355,33 @@ const SY_A0120: React.FC = () => {
               //드래그용 행
               rowRender={userMenuRowRender}
               columns={userMenuColumns}
-            ></TreeList>
-            {/* <Grid
-              style={{ height: "650px" }}
-              data={process(
-                userMenuDataResult.data.map((row, idx) => ({
-                  ...row,
-                  path: pathListData.find((item: any) => item.code === row.path)
-                    ?.name,
-                  [SELECTED_FIELD]: userMenuSelectedState[idGetter(row)], //선택된 데이터
-                })),
-                userMenuDataState
-              )}
-              {...userMenuDataState}
-              onDataStateChange={onUserMenuDataStateChange}
-              //선택 기능
-              dataItemKey={USER_MENU_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onUserMenuSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={userMenuDataResult.total}
-              //onScroll={onMainScrollHandler}
-              //정렬기능
-              sortable={true}
-              onSortChange={onUserMenuSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //incell 수정 기능
-              onItemChange={onUserMenuItemChange}
-              cellRender={customCellRender}
-              //rowRender={customRowRender}
-              rowRender={userMenuRowRender}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn
-                field="rowstatus"
-                title=" "
-                width="40px"
-                editable={false}
-              />
+            ></TreeList> */}
 
-              <GridColumn
-                field={"menu_name"}
-                title={"메뉴명"}
-                width={"250px"}
-                footerCell={userMenuTotalFooterCell}
-                editable={false}
-              />
-              <GridColumn
-                field={"form_view_yn"}
-                title={"조회 권한"}
-                width={"100px"}
-                cell={CheckBoxCell}
-              />
-              <GridColumn
-                field={"form_print_yn"}
-                title={"출력 권한"}
-                width={"100px"}
-                cell={CheckBoxCell}
-              />
-              <GridColumn
-                field={"form_save_yn"}
-                title={"저장 권한"}
-                width={"100px"}
-                cell={CheckBoxCell}
-              />
-              <GridColumn
-                field={"form_delete_yn"}
-                title={"삭제 권한"}
-                width={"100px"}
-                cell={CheckBoxCell}
-              />
-              <GridColumn
-                field={"path"}
-                title={"경로"}
-                width={"100px"}
-                editable={false}
-              />
-            </Grid> */}
+            <TreeList
+              style={{ height: "650px", overflow: "auto" }}
+              data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
+                extendDataItem(item, SUB_ITEMS_FIELD, {
+                  [EXPANDED_FIELD]: expanded.includes(
+                    item[USER_MENU_DATA_ITEM_KEY]
+                  ),
+                  [EDIT_FIELD]:
+                    item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                      ? editItemField
+                      : undefined,
+                })
+              )}
+              subItemsField={SUB_ITEMS_FIELD}
+              expandField={EXPANDED_FIELD}
+              onExpandChange={onUserMenuExpandChange}
+              // 수정 기능
+              editField={EDIT_FIELD}
+              cellRender={renderers.cellRender}
+              onItemChange={onUserMenuItemChange}
+              // 행 드래그 앤 드롭 기능
+              rowRender={userMenuRowRender}
+              // 컬럼 리스트
+              columns={userMenuColumns}
+            />
           </ExcelExport>
         </GridContainer>
         <GridContainer width={"300px"}>
@@ -1542,9 +1396,13 @@ const SY_A0120: React.FC = () => {
             </GridTitleContainer>
             <TreeList
               style={{ height: "650px", overflow: "auto" }}
-              data={mapTree(allMenuDataResult, subItemsField, allMenuCallback)}
-              expandField={expandField}
-              subItemsField={subItemsField}
+              data={mapTree(
+                allMenuDataResult,
+                SUB_ITEMS_FIELD,
+                allMenuCallback
+              )}
+              expandField={EXPANDED_FIELD}
+              subItemsField={SUB_ITEMS_FIELD}
               onExpandChange={onAllMenuExpandChange}
               //선택 기능
               dataItemKey={ALL_MENU_DATA_ITEM_KEY}
@@ -1557,52 +1415,6 @@ const SY_A0120: React.FC = () => {
               rowRender={allMenuRowRender}
               columns={allMenuColumns}
             ></TreeList>
-            {/* <Grid
-              style={{ height: "650px" }}
-              data={process(
-                allMenuDataResult.data.map((row, idx) => ({
-                  ...row,
-                  user_category: userCategoryListData.find(
-                    (item: any) => item.sub_code === row.user_category
-                  )?.code_name,
-                  postcd: postcdListData.find(
-                    (item: any) => item.sub_code === row.postcd
-                  )?.code_name,
-                  [SELECTED_FIELD]: allMenuSelectedState[idGetter(row)], //선택된 데이터
-                })),
-                allMenuDataState
-              )}
-              {...allMenuDataState}
-              onDataStateChange={onAllMenuDataStateChange}
-              //선택 기능
-              dataItemKey={ALL_MENU_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onAllMenuSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={allMenuDataResult.total}
-              //nScroll={onAllMenuScrollHandler}
-              //정렬기능
-              sortable={true}
-              onSortChange={onAllMenuSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //드래그용 행
-              rowRender={allMenuRowRender}
-            >
-              <GridColumn
-                field={"menu_name"}
-                title={"메뉴명"}
-                // width={"150px"}
-                footerCell={allMenuTotalFooterCell}
-              />
-            </Grid> */}
           </ExcelExport>
         </GridContainer>
       </GridContainerWrap>
