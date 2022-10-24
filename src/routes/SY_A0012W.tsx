@@ -57,7 +57,7 @@ import TopButtons from "../components/TopButtons";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
-let deletedMainRows: object[] = [];
+let deletedMainRows: any[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -420,31 +420,19 @@ const SY_A0120: React.FC = () => {
     setSelectedState({});
   };
 
-  const onSaveClick = () => {
-    const dataItem: { [name: string]: any } = mainDataResult.data.filter(
-      (item: any) => {
-        return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
-          item.rowstatus !== undefined
-        );
-      }
-    );
+  const onSaveClick = async () => {
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
 
     //검증
     let valid = true;
     try {
       dataItem.forEach((item: any) => {
-        // mainDataResult.data.forEach((chkItem: any) => {
-        //   if (
-        //     (item.proccd === chkItem.proccd ||
-        //       item.procseq === chkItem.procseq) &&
-        //     item[PLAN_DATA_ITEM_KEY] !== chkItem[PLAN_DATA_ITEM_KEY] &&
-        //     item.planno === chkItem.planno
-        //   ) {
-        //     throw공정과 공정순서를 확인하세요."; //   }
-        // });
-
         if (!item.user_id) {
           throw findMessage(messagesData, "SY_A0012W_002");
         }
@@ -460,39 +448,76 @@ const SY_A0120: React.FC = () => {
 
     if (!valid) return false;
 
-    type TPlanData = {
-      rowstatus_s: string[];
-      ordnum_s: string[];
-      ordseq_s: string[];
-      remark_s: string[];
-      itemcd_s: string[];
-      qty_s: string[];
-      planno_s: string[];
-      planseq_s: string[];
-      qtyunit_s: string[];
-      procqty_s: string[];
-      plandt_s: string[];
-      finexpdt_s: string[];
-      prodmac_s: string[];
-      prodemp_s: string[];
-      proccd_s: string[];
-      procseq_s: string[];
-      outprocyn_s: string[];
-      //lotnum_s: string[];
-    };
-
     try {
-      dataItem.forEach((item: any, idx: number) => {
+      for (const item of deletedMainRows) {
+        const { user_id } = item;
+
+        const para: Iparameters = {
+          procedureName: "P_SY_A0012W_S",
+          pageNumber: 1,
+          pageSize: 10,
+          parameters: {
+            "@p_work_type": "D",
+            "@p_user_id": user_id,
+            "@p_user_name": "",
+            "@p_password": "",
+            "@p_password_confirm": "",
+            "@p_salt": "",
+            "@p_user_category": "",
+            "@p_email": "",
+            "@p_tel_no": "",
+            "@p_mobile_no": "",
+            "@p_apply_start_date": "",
+            "@p_apply_end_date": "",
+            "@p_hold_check_yn": "",
+            "@p_memo": "",
+            "@p_ip_check_yn": "",
+            "@p_orgdiv": "",
+            "@p_location": "",
+            "@p_dptcd": "",
+            "@p_postcd": "",
+            "@p_rtrchk": "",
+            "@p_usediv": "",
+            "@p_opengb": "",
+            "@p_profile_image": "",
+            "@p_user_ip": "",
+            "@p_birdt": "",
+            "@p_bircd": "",
+            "@p_mbouseyn": "",
+            "@p_position": "",
+            "@p_home_menu_id": "",
+            "@p_id": "",
+            "@p_pc": "",
+          },
+        };
+
+        let data: any;
+
+        try {
+          data = await processApi<any>("procedure", para);
+        } catch (error) {
+          data = null;
+        }
+
+        if (data.isSuccess !== true) {
+          console.log("[오류 발생]");
+          console.log(data);
+          throw data.resultMessage;
+        }
+      }
+
+      deletedMainRows = [];
+
+      for (const item of dataItem) {
         const {
           rowstatus,
           user_id,
           user_name,
           password = "",
           password_confirm = "",
+          salt = "",
           user_category = "",
-          password2 = "",
-          emp_code = "",
-          emp_email = "",
+          email = "",
           tel_no = "",
           mobile_no = "",
           apply_start_date,
@@ -520,22 +545,20 @@ const SY_A0120: React.FC = () => {
         if (password !== password_confirm) {
           throw new Error("비밀번호 확인이 틀립니다.");
         }
-        const md5 = require("md5");
 
         const para: Iparameters = {
           procedureName: "P_SY_A0012W_S",
           pageNumber: 1,
           pageSize: 10,
           parameters: {
-            "@p_work_type": "",
-            "@p_rowstatus": rowstatus,
+            "@p_work_type": rowstatus,
             "@p_user_id": user_id,
             "@p_user_name": user_name,
-            "@p_password": sha256(md5(password)),
+            "@p_password": password,
+            "@p_password_confirm": password_confirm,
+            "@p_salt": salt,
             "@p_user_category": user_category,
-            "@p_password2": password2,
-            "@p_emp_code": emp_code,
-            "@p_emp_email": emp_email,
+            "@p_email": email,
             "@p_tel_no": tel_no,
             "@p_mobile_no": mobile_no,
             "@p_apply_start_date": apply_start_date,
@@ -543,136 +566,48 @@ const SY_A0120: React.FC = () => {
             "@p_hold_check_yn":
               hold_check_yn === "Y" || hold_check_yn === true ? "Y" : "N",
             "@p_memo": memo,
-            "@p_orgdiv": "01",
-            "@p_location": location,
-            "@p_position": position,
-            "@p_dptcd": dptcd,
-            "@p_postcd": postcd,
-            "@p_home_menu_id": home_menu_id,
             "@p_ip_check_yn":
               ip_check_yn === "Y" || ip_check_yn === true ? "Y" : "N",
-            "@p_rtrchk": rtrchk === "Y" || rtrchk === true ? "Y" : "N",
-            "@p_usediv": usediv === "Y" || usediv === true ? "Y" : "N",
-            "@p_userid": userid,
-            "@p_pc": pc,
-            "@p_opengb": opengb,
-            "@p_attdatnum_img": attdatnum_img,
-            "@p_birdt": birdt,
-            "@p_bircd": bircd,
-            "@p_user_ip": user_ip,
-            "@p_mbouseyn": mbouseyn === "Y" || mbouseyn === true ? "Y" : "N",
-          },
-        };
-
-        const result = fetchGridSaved(para);
-
-        if (result instanceof Error) throw result;
-      });
-
-      deletedMainRows.forEach((item: any) => {
-        const {
-          user_id,
-          user_name,
-          password = "",
-          user_category = "",
-          password2 = "",
-          emp_code = "",
-          emp_email = "",
-          tel_no = "",
-          mobile_no = "",
-          apply_start_date = "",
-          apply_end_date = "",
-          hold_check_yn = "",
-          memo = "",
-          orgdiv = "",
-          location = "",
-          position = "",
-          dptcd = "",
-          postcd = "",
-          home_menu_id = "",
-          ip_check_yn = "",
-          rtrchk = "",
-          usediv = "",
-          userid = "",
-          pc = "",
-          opengb = "",
-          attdatnum_img = "",
-          birdt = "",
-          bircd = "",
-          user_ip = "",
-          mbouseyn = "",
-        } = item;
-
-        const para: Iparameters = {
-          procedureName: "P_SY_A0012W_S",
-          pageNumber: 1,
-          pageSize: 10,
-          parameters: {
-            "@p_work_type": "",
-            "@p_rowstatus": "D",
-            "@p_user_id": user_id,
-            "@p_user_name": user_name,
-            "@p_password": password,
-            "@p_user_category": user_category,
-            "@p_password2": password2,
-            "@p_emp_code": emp_code,
-            "@p_emp_email": emp_email,
-            "@p_tel_no": tel_no,
-            "@p_mobile_no": mobile_no,
-            "@p_apply_start_date": apply_start_date,
-            "@p_apply_end_date": apply_end_date,
-            "@p_hold_check_yn": hold_check_yn,
-            "@p_memo": memo,
             "@p_orgdiv": "01",
             "@p_location": location,
-            "@p_position": position,
             "@p_dptcd": dptcd,
             "@p_postcd": postcd,
-            "@p_home_menu_id": home_menu_id,
-            "@p_ip_check_yn": ip_check_yn,
-            "@p_rtrchk": rtrchk,
-            "@p_usediv": usediv,
-            "@p_userid": userid,
-            "@p_pc": pc,
+            "@p_rtrchk": rtrchk === "Y" || rtrchk === true ? "Y" : "N",
+            "@p_usediv": usediv === "Y" || usediv === true ? "Y" : "N",
             "@p_opengb": opengb,
-            "@p_attdatnum_img": attdatnum_img,
+            "@p_profile_image": attdatnum_img,
+            "@p_user_ip": user_ip,
             "@p_birdt": birdt,
             "@p_bircd": bircd,
-            "@p_user_ip": user_ip,
-            "@p_mbouseyn": mbouseyn,
+            "@p_mbouseyn": mbouseyn === "Y" || mbouseyn === true ? "Y" : "N",
+            "@p_position": position,
+            "@p_home_menu_id": home_menu_id,
+            "@p_id": userid,
+            "@p_pc": pc,
           },
         };
 
-        // fetchGridSaved(para);
+        let data: any;
 
-        const result = fetchGridSaved(para);
-        if (result instanceof Error) throw result;
-      });
+        try {
+          data = await processApi<any>("procedure", para);
+        } catch (error) {
+          data = null;
+        }
+
+        if (data.isSuccess !== true) {
+          console.log("[오류 발생]");
+          console.log(data);
+          throw data.resultMessage;
+        }
+      }
 
       alert(findMessage(messagesData, "SY_A0012W_001"));
 
       resetAllGrid();
       fetchMainGrid();
-      deletedMainRows = [];
     } catch (e) {
       alert(e);
-    }
-  };
-
-  // *** promise 확인 하여 에러 예외 처리 차후 진행 필요함 (현재는 중복 검증 에러 메시지 기능 안됨)
-  const fetchGridSaved = async (paraSaved: any) => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", paraSaved);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess !== true) {
-      console.log("[오류 발생]");
-      console.log(data);
-      return new Error("[" + data.statusCode + "] " + data.resultMessage);
     }
   };
 
