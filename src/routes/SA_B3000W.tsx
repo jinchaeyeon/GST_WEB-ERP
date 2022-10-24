@@ -384,7 +384,7 @@ const SA_B3000W: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-  const getItemData = (data: IItemData) => {
+  const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
       ...prev,
       itemcd: data.itemcd,
@@ -1270,10 +1270,9 @@ const SA_B3000W: React.FC = () => {
 
       {itemWindowVisible && (
         <ItemsWindow
-          getVisible={setItemWindowVisible}
+          setVisible={setItemWindowVisible}
           workType={"FILTER"}
-          getData={getItemData}
-          para={undefined}
+          setData={setItemData}
         />
       )}
       {/* 컨트롤 네임 불러오기 용 */}

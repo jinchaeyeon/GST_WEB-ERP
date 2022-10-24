@@ -656,7 +656,7 @@ const EA_A2000: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-  const getItemData = (data: IItemData) => {
+  const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
       ...prev,
       itemcd: data.itemcd,
@@ -2102,10 +2102,9 @@ const EA_A2000: React.FC = () => {
 
       {itemWindowVisible && (
         <ItemsWindow
-          getVisible={setItemWindowVisible}
+          setVisible={setItemWindowVisible}
           workType={"FILTER"}
-          getData={getItemData}
-          para={undefined}
+          setData={setItemData}
         />
       )}
 

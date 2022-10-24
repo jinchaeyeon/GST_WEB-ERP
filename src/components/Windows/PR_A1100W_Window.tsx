@@ -5,7 +5,6 @@ import {
   Grid,
   GridColumn,
   GridEvent,
-  GridFooterCellProps,
   GridCellProps,
   GridToolbar,
   GridItemChangeEvent,
@@ -56,7 +55,6 @@ import {
   dateformat,
   getItemQuery,
   UseBizComponent,
-  UseCommonQuery,
   UseCustomOption,
   findMessage,
   UseMessages,
@@ -74,6 +72,7 @@ import {
 } from "../../hooks/interfaces";
 import {
   COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
   FORM_DATA_INDEX,
   PAGE_SIZE,
   SELECTED_FIELD,
@@ -126,29 +125,6 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
-// Create React.Context to pass props to the Form Field components from the main component
-export const PR_A1100W_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT = React.createContext<{
-  onRemove: (dataItem: any) => void;
-  onEdit: (dataItem: any, isNew: boolean) => void;
-  onCopy: (dataItem: any) => void;
-  onSave: () => void;
-  onCancel: () => void;
-  editIndex: number | undefined;
-  parentField: string;
-  getItemcd: (itemcd: string) => void;
-}>({} as any);
-
-export const PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT = React.createContext<{
-  onRemove: (dataItem: any) => void;
-  onEdit: (dataItem: any, isNew: boolean) => void;
-  onCopy: (dataItem: any) => void;
-  onSave: () => void;
-  onCancel: () => void;
-  editIndex: number | undefined;
-  parentField: string;
-  getItemcd: (itemcd: string) => void;
-}>({} as any);
 
 const idGetter = getter(FORM_DATA_INDEX);
 
@@ -215,7 +191,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
       fieldArrayRenderProps.onPush({
         value: {
-          srcPgName: "PR_A1100W_WINDOW_PRC",
           proccd: COM_CODE_DEFAULT_VALUE,
           procseq: procseq,
           outprocyn: COM_CODE_DEFAULT_VALUE,
@@ -260,69 +235,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setEditIndex(undefined);
   }, [fieldArrayRenderProps]);
 
-  // Update an item from the Grid and update the index of the edited item
-  const onEdit = useCallback((dataItem: any, isNewItem: any) => {
-    if (!isNewItem) {
-      editItemCloneRef.current = clone(dataItem);
-    }
-
-    fieldArrayRenderProps.onReplace({
-      index: dataItem[FORM_DATA_INDEX],
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-      },
-    });
-
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
-  }, []);
-
-  const onCopy = useCallback(() => {
-    let newData: any[] = [];
-    let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
-
-    //복사할 데이터 newData에 push
-    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      if (selectedState[index]) {
-        newData.push(item);
-      }
-      if (ordseq < item.ordseq) ordseq = item.ordseq;
-    });
-
-    //newData 생성
-    newData.forEach((item: any) => {
-      ordseq++;
-
-      fieldArrayRenderProps.onPush({
-        value: { ...item, rowstatus: "N", ordseq: ordseq },
-      });
-    });
-
-    //선택 상태 초기화
-    setSelectedState({});
-
-    //수정 상태 초기화
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Cancel the editing of an item and return its initial value
-  const onCancel = useCallback(() => {
-    if (editItemCloneRef.current) {
-      fieldArrayRenderProps.onReplace({
-        index: editItemCloneRef.current[FORM_DATA_INDEX],
-        value: editItemCloneRef.current,
-      });
-    }
-
-    editItemCloneRef.current = undefined;
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Save the changes
-  const onSave = useCallback(() => {
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
       return { ...item, [FORM_DATA_INDEX]: index };
@@ -337,8 +249,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setDetailPgNum((prev) => prev + 1);
   };
 
-  const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
-    if (rowIdx === -1) {
+  const setItemData = (data: IItemData) => {
+    if (editIndex === undefined) {
       //신규생성
       fieldArrayRenderProps.onPush({
         value: {
@@ -374,9 +286,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setEditIndex(0);
     } else {
       //기존 행 업데이트
-      const dataItem = rowData;
+      const dataItem = editedRowData;
       fieldArrayRenderProps.onReplace({
-        index: dataItem[FORM_DATA_INDEX],
+        index: editIndex,
         value: {
           ...dataItem,
           chlditemcd: data.itemcd,
@@ -389,20 +301,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   };
 
   const onItemWndClick = () => {
-    setEditedRowIdx(-1);
+    setEditIndex(undefined);
     setItemWindowVisible(true);
   };
-
-  const itemChange = (event: GridItemChangeEvent) => {
-    // const inEditID = event.dataItem.ProductID;
-    // const field = event.field || "";
-    // const newData = data.map((item) =>
-    //   item.ProductID === inEditID ? { ...item, [field]: event.value } : item
-    // );
-    // setData(newData);
-  };
-
-  const EDIT_FIELD = "inEdit";
 
   const enterEdit = (dataItem: any, field: string | undefined) => {
     fieldArrayRenderProps.onReplace({
@@ -539,122 +440,104 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   return (
     <GridContainer>
-      {/* //maxWidth="calc(50% - 7.5px)" */}
-      <PR_A1100W_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT.Provider
-        value={{
-          onCancel,
-          onEdit,
-          onCopy,
-          onRemove,
-          onSave,
-          editIndex,
+      {visited && validationMessage && <Error>{validationMessage}</Error>}
+      <GridTitleContainer>공정</GridTitleContainer>
+      <Grid
+        data={dataWithIndexes.map((item: any) => ({
+          ...item,
           parentField: name,
-          getItemcd,
+          [SELECTED_FIELD]: selectedState[idGetter(item)],
+        }))}
+        total={dataWithIndexes.total}
+        dataItemKey={dataItemKey}
+        style={{ height: "290px" }}
+        cellRender={customCellRender}
+        rowRender={customRowRender}
+        onScroll={scrollHandler}
+        selectedField={SELECTED_FIELD}
+        selectable={{
+          enabled: true,
+          drag: false,
+          cell: false,
+          mode: "multiple",
         }}
+        onSelectionChange={onSelectionChange}
+        onHeaderSelectionChange={onHeaderSelectionChange}
       >
-        {visited && validationMessage && <Error>{validationMessage}</Error>}
-        <GridTitleContainer>공정</GridTitleContainer>
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
-            ...item,
-            parentField: name,
-            [SELECTED_FIELD]: selectedState[idGetter(item)],
-          }))}
-          total={dataWithIndexes.total}
-          dataItemKey={dataItemKey}
-          style={{ height: "290px" }}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          onItemChange={itemChange}
-          onScroll={scrollHandler}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            drag: false,
-            cell: false,
-            mode: "multiple",
-          }}
-          onSelectionChange={onSelectionChange}
-          onHeaderSelectionChange={onHeaderSelectionChange}
-        >
-          <GridToolbar>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onAdd}
-              icon="add"
-            ></Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onRemove}
-              icon="minus"
-            ></Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onItemWndClick}
-            >
-              패턴공정도
-            </Button>
-          </GridToolbar>
-          <GridColumn
-            field={SELECTED_FIELD}
-            width="45px"
-            headerSelectionValue={
-              dataWithIndexes.findIndex(
-                (item: any) => !selectedState[idGetter(item)]
-              ) === -1
-            }
-          />
-          <GridColumn field="rowstatus" title=" " width="40px" />
-          <GridColumn
-            field="proccd"
-            title="공정"
-            width="150px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="procseq"
-            title="공정순서"
-            width="100px"
-            cell={NumberCell}
-          />
+        <GridToolbar>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onAdd}
+            icon="add"
+          ></Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onRemove}
+            icon="minus"
+          ></Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onItemWndClick}
+          >
+            패턴공정도
+          </Button>
+        </GridToolbar>
+        <GridColumn
+          field={SELECTED_FIELD}
+          width="45px"
+          headerSelectionValue={
+            dataWithIndexes.findIndex(
+              (item: any) => !selectedState[idGetter(item)]
+            ) === -1
+          }
+        />
+        <GridColumn field="rowstatus" title=" " width="40px" />
+        <GridColumn
+          field="proccd"
+          title="공정"
+          width="150px"
+          cell={CustomComboBoxCell}
+        />
+        <GridColumn
+          field="procseq"
+          title="공정순서"
+          width="100px"
+          cell={NumberCell}
+        />
 
-          <GridColumn
-            field="outprocyn"
-            title="외주구분"
-            width="110px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="prodemp"
-            title="작업자"
-            width="120px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="prodmac"
-            title="설비"
-            width="200px"
-            cell={CustomComboBoxCell}
-          />
-        </Grid>
+        <GridColumn
+          field="outprocyn"
+          title="외주구분"
+          width="110px"
+          cell={CustomComboBoxCell}
+        />
+        <GridColumn
+          field="prodemp"
+          title="작업자"
+          width="120px"
+          cell={CustomComboBoxCell}
+        />
+        <GridColumn
+          field="prodmac"
+          title="설비"
+          width="200px"
+          cell={CustomComboBoxCell}
+        />
+      </Grid>
 
-        {itemWindowVisible && (
-          <ItemsWindow
-            workType={"ROW"} //인라인 : ROW, FORM : FILTER ..?
-            getVisible={setItemWindowVisible}
-            getData={setItemData}
-            rowIdx={editedRowIdx}
-            rowData={editedRowData}
-            para={undefined}
-          />
-        )}
-      </PR_A1100W_WINDOW_PRC_FORM_GRID_EDIT_CONTEXT.Provider>
+      {itemWindowVisible && (
+        <ItemsWindow
+          workType={editIndex === undefined ? "ROWS_ADD" : "ROW_ADD"}
+          setVisible={setItemWindowVisible}
+          setData={setItemData}
+        />
+      )}
     </GridContainer>
   );
 };
@@ -662,23 +545,16 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const { validationMessage, visited, name, dataItemKey, value } =
     fieldArrayRenderProps;
-  const [editIndex, setEditIndex] = React.useState<number | undefined>();
-  const editItemCloneRef = React.useRef();
-
   const [detailPgNum, setDetailPgNum] = useState(1);
-
-  const [editedRowIdx, setEditedRowIdx] = useState(-1);
+  const [editIndex, setEditIndex] = React.useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const [editedRowData, setEditedRowData] = useState({});
 
   const ItemBtnCell = (props: GridCellProps) => {
-    const { editIndex } = React.useContext(
-      PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT
-    );
-    //const isInEdit = props.dataItem[FORM_DATA_INDEX] === editIndex;
+    const { dataIndex } = props;
 
     const onRowItemWndClick = () => {
-      //if (editIndex !== undefined)
-      setEditedRowIdx(editIndex!);
+      setEditIndex(dataIndex);
       setEditedRowData(props.dataItem);
       setItemWindowVisible(true);
     };
@@ -688,7 +564,6 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         <Button
           type={"button"}
           className="k-grid-save-command"
-          //fillMode="flat"
           onClick={onRowItemWndClick}
           icon="more-horizontal"
           //disabled={isInEdit ? false : true}
@@ -702,7 +577,6 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       e.preventDefault();
       fieldArrayRenderProps.onPush({
         value: {
-          srcPgName: "PR_A1100W_WINDOW_MTL",
           proccd: COM_CODE_DEFAULT_VALUE,
           unitqty: 0,
           procqty: 0,
@@ -744,69 +618,6 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setSelectedState({});
 
     //수정 상태 초기화
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Update an item from the Grid and update the index of the edited item
-  const onEdit = useCallback((dataItem: any, isNewItem: any) => {
-    if (!isNewItem) {
-      editItemCloneRef.current = clone(dataItem);
-    }
-
-    fieldArrayRenderProps.onReplace({
-      index: dataItem[FORM_DATA_INDEX],
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-      },
-    });
-
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
-  }, []);
-
-  const onCopy = useCallback(() => {
-    let newData: any[] = [];
-    let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
-
-    //복사할 데이터 newData에 push
-    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      if (selectedState[index]) {
-        newData.push(item);
-      }
-      if (ordseq < item.ordseq) ordseq = item.ordseq;
-    });
-
-    //newData 생성
-    newData.forEach((item: any) => {
-      ordseq++;
-
-      fieldArrayRenderProps.onPush({
-        value: { ...item, rowstatus: "N", ordseq: ordseq },
-      });
-    });
-
-    //선택 상태 초기화
-    setSelectedState({});
-
-    //수정 상태 초기화
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Cancel the editing of an item and return its initial value
-  const onCancel = useCallback(() => {
-    if (editItemCloneRef.current) {
-      fieldArrayRenderProps.onReplace({
-        index: editItemCloneRef.current[FORM_DATA_INDEX],
-        value: editItemCloneRef.current,
-      });
-    }
-
-    editItemCloneRef.current = undefined;
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Save the changes
-  const onSave = useCallback(() => {
     setEditIndex(undefined);
   }, [fieldArrayRenderProps]);
 
@@ -862,8 +673,8 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     }
   }, []);
 
-  const setItemData = (data: IItemData, rowIdx: number, rowData: any) => {
-    if (rowIdx === -1) {
+  const setItemData = (data: IItemData) => {
+    if (editIndex === undefined) {
       //신규생성
       fieldArrayRenderProps.onPush({
         value: {
@@ -899,10 +710,10 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setEditIndex(0);
     } else {
       //기존 행 업데이트
-      const dataItem = rowData;
+      const dataItem = editedRowData;
 
       fieldArrayRenderProps.onReplace({
-        index: dataItem[FORM_DATA_INDEX],
+        index: editIndex,
         value: {
           ...dataItem,
           chlditemcd: data.itemcd,
@@ -911,22 +722,6 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       });
     }
   };
-
-  const onItemWndClick = () => {
-    setEditedRowIdx(-1);
-    setItemWindowVisible(true);
-  };
-
-  const itemChange = (event: GridItemChangeEvent) => {
-    // const inEditID = event.dataItem.ProductID;
-    // const field = event.field || "";
-    // const newData = data.map((item) =>
-    //   item.ProductID === inEditID ? { ...item, [field]: event.value } : item
-    // );
-    // setData(newData);
-  };
-
-  const EDIT_FIELD = "inEdit";
 
   const enterEdit = (dataItem: any, field: string | undefined) => {
     fieldArrayRenderProps.onReplace({
@@ -939,10 +734,12 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     });
 
     setEditIndex(dataItem[FORM_DATA_INDEX]);
+    if (field) setEditedField(field);
   };
 
-  const exitEdit = (item: any) => {
-    fieldArrayRenderProps.value.forEach((item: any, index: any) => {
+  const exitEdit = () => {
+    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
+      let { chlditemcd } = item;
       fieldArrayRenderProps.onReplace({
         index: index,
         value: {
@@ -950,6 +747,11 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           [EDIT_FIELD]: undefined,
         },
       });
+
+      if (editedField === "chlditemcd" && editIndex === index) {
+        console.log(editedField);
+        getItemcd(chlditemcd);
+      }
     });
   };
 
@@ -1068,135 +870,116 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         ...dataItem,
         rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
         inEdit: undefined,
-        itemcd: row.itemcd,
-        itemnm: row.itemnm,
-        insiz: row.insiz,
+        chlditemcd: row.itemcd,
+        chlditemnm: row.itemnm,
       },
     });
   };
 
   return (
     <GridContainer>
-      {/* maxWidth="calc(50% - 7.5px)" */}
-      <PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT.Provider
-        value={{
-          onCancel,
-          onEdit,
-          onCopy,
-          onRemove,
-          onSave,
-          editIndex,
+      {visited && validationMessage && <Error>{validationMessage}</Error>}
+      <GridTitleContainer>자재</GridTitleContainer>
+      <Grid
+        data={dataWithIndexes.map((item: any) => ({
+          ...item,
           parentField: name,
-          getItemcd,
+          [SELECTED_FIELD]: selectedState[idGetter(item)],
+        }))}
+        total={dataWithIndexes.total}
+        dataItemKey={dataItemKey}
+        style={{ height: "290px" }}
+        cellRender={customCellRender}
+        rowRender={customRowRender}
+        onScroll={scrollHandler}
+        selectedField={SELECTED_FIELD}
+        selectable={{
+          enabled: true,
+          drag: false,
+          cell: false,
+          mode: "multiple",
         }}
+        onSelectionChange={onSelectionChange}
+        onHeaderSelectionChange={onHeaderSelectionChange}
       >
-        {visited && validationMessage && <Error>{validationMessage}</Error>}
-        <GridTitleContainer>자재</GridTitleContainer>
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
-            ...item,
-            parentField: name,
-            [SELECTED_FIELD]: selectedState[idGetter(item)],
-          }))}
-          total={dataWithIndexes.total}
-          dataItemKey={dataItemKey}
-          style={{ height: "290px" }}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          onItemChange={itemChange}
-          onScroll={scrollHandler}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            drag: false,
-            cell: false,
-            mode: "multiple",
-          }}
-          onSelectionChange={onSelectionChange}
-          onHeaderSelectionChange={onHeaderSelectionChange}
-        >
-          <GridToolbar>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onAdd}
-              icon="add"
-            ></Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onRemove}
-              icon="minus"
-            ></Button>
-          </GridToolbar>
-          <GridColumn
-            field={SELECTED_FIELD}
-            width="45px"
-            headerSelectionValue={
-              dataWithIndexes.findIndex(
-                (item: any) => !selectedState[idGetter(item)]
-              ) === -1
-            }
-          />
-          <GridColumn field="rowstatus" title=" " width="40px" />
-          <GridColumn
-            field="proccd"
-            title="공정"
-            width="130px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="chlditemcd"
-            title="소요자재코드"
-            width="160px"
-            cell={NameCell}
-          />
-          <GridColumn cell={ItemBtnCell} width="55px" />
-          <GridColumn
-            field="chlditemnm"
-            title="소요자재명"
-            width="180px"
-            cell={NameCell}
-          />
-          <GridColumn
-            field="outgb"
-            title="자재사용구분"
-            width="120px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="unitqty"
-            title="소요량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="procqty"
-            title="재공생산량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="qtyunit"
-            title="수량단위"
-            width="100px"
-            cell={CustomComboBoxCell}
-          />
-        </Grid>
+        <GridToolbar>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onAdd}
+            icon="add"
+          ></Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onRemove}
+            icon="minus"
+          ></Button>
+        </GridToolbar>
+        <GridColumn
+          field={SELECTED_FIELD}
+          width="45px"
+          headerSelectionValue={
+            dataWithIndexes.findIndex(
+              (item: any) => !selectedState[idGetter(item)]
+            ) === -1
+          }
+        />
+        <GridColumn field="rowstatus" title=" " width="40px" />
+        <GridColumn
+          field="proccd"
+          title="공정"
+          width="130px"
+          cell={CustomComboBoxCell}
+        />
+        <GridColumn
+          field="chlditemcd"
+          title="소요자재코드"
+          width="160px"
+          cell={NameCell}
+        />
+        <GridColumn cell={ItemBtnCell} width="55px" />
+        <GridColumn
+          field="chlditemnm"
+          title="소요자재명"
+          width="180px"
+          cell={NameCell}
+        />
+        <GridColumn
+          field="outgb"
+          title="자재사용구분"
+          width="120px"
+          cell={CustomComboBoxCell}
+        />
+        <GridColumn
+          field="unitqty"
+          title="소요량"
+          width="120px"
+          cell={NumberCell}
+        />
+        <GridColumn
+          field="procqty"
+          title="재공생산량"
+          width="120px"
+          cell={NumberCell}
+        />
+        <GridColumn
+          field="qtyunit"
+          title="수량단위"
+          width="100px"
+          cell={CustomComboBoxCell}
+        />
+      </Grid>
 
-        {itemWindowVisible && (
-          <ItemsWindow
-            workType={"ROW"} //인라인 : ROW, FORM : FILTER ..?
-            getVisible={setItemWindowVisible}
-            getData={setItemData}
-            rowIdx={editedRowIdx}
-            rowData={editedRowData}
-            para={undefined}
-          />
-        )}
-      </PR_A1100W_WINDOW_MTR_FORM_GRID_EDIT_CONTEXT.Provider>
+      {itemWindowVisible && (
+        <ItemsWindow
+          workType={editIndex === undefined ? "ROWS_ADD" : "ROW_ADD"}
+          setVisible={setItemWindowVisible}
+          setData={setItemData}
+        />
+      )}
     </GridContainer>
   );
 };

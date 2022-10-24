@@ -788,7 +788,7 @@ const SA_B2000: React.FC = () => {
   };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const getItemData = (data: IItemData) => {
+  const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
       ...prev,
       itemcd: data.itemcd,
@@ -1289,10 +1289,9 @@ const SA_B2000: React.FC = () => {
       )}
       {itemWindowVisible && (
         <ItemsWindow
-          getVisible={setItemWindowVisible}
+          setVisible={setItemWindowVisible}
           workType={"FILTER"}
-          getData={getItemData}
-          para={undefined}
+          setData={setItemData}
         />
       )}
     </>

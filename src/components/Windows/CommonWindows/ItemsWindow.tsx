@@ -13,7 +13,6 @@ import {
 } from "@progress/kendo-react-grid";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
-
 import {
   BottomContainer,
   ButtonContainer,
@@ -23,15 +22,7 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-
-import {
-  Input,
-  RadioButton,
-  RadioButtonChangeEvent,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
-
+import { Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
@@ -40,22 +31,12 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 
 type IWindow = {
-  workType: string; //구분자 "FILTER", "ROW"
-  getVisible(t: boolean): void;
-  getData(data: object, rowIdx: number, rowData: object): void; //data : 품목참조팝업에서 선택한 데이터 // rowIdx, rowData : 그리드 인라인 품목참조시 사용
-  rowIdx?: number; // (그리드 인라인 품목참조시 사용) 참조버튼 클릭한 행 번호
-  rowData?: object; // (그리드 인라인 품목참조시 사용) 참조버튼 클릭한 행 번호
-  para?: Iparameters; //현재 미사용
+  workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
+  setVisible(t: boolean): void;
+  setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
-const ItemsWindow = ({
-  workType,
-  getVisible,
-  getData,
-  rowIdx,
-  rowData,
-  para,
-}: IWindow) => {
+const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -107,7 +88,7 @@ const ItemsWindow = ({
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
   const processApi = useApi();
@@ -208,10 +189,10 @@ const ItemsWindow = ({
 
   const CommandCell = (props: GridCellProps) => {
     const onSelectClick = () => {
-      // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
+      // 부모로 데이터 전달, 창 닫기
       const selectedData = props.dataItem;
-      getData(selectedData, rowIdx ?? -1, rowData ?? {});
-      if (rowIdx !== -1 || rowIdx === undefined) onClose();
+      setData(selectedData);
+      if (workType === "ROW_ADD") onClose();
     };
 
     return (
@@ -241,8 +222,8 @@ const ItemsWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
-    getData(selectedData, rowIdx ?? -1, rowData ?? {});
-    if (rowIdx !== -1 || rowIdx === undefined) onClose();
+    setData(selectedData);
+    if (workType === "ROW_ADD") onClose();
   };
 
   //메인 그리드 선택 이벤트
@@ -428,9 +409,9 @@ const ItemsWindow = ({
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
+          {/* <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인
-          </Button>
+          </Button> */}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

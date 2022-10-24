@@ -3,6 +3,7 @@ import {
   Checkbox,
   Input,
   NumericTextBox,
+  NumericTextBoxBlurEvent,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
 import {
@@ -13,27 +14,21 @@ import {
 import { Label, Error, Hint } from "@progress/kendo-react-labels";
 import { GridCellProps, GridFilterCellProps } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { BlurEvent } from "@progress/kendo-react-dropdowns/dist/npm/common/events";
-import { FormGridEditContext } from "./Windows/SA_A2000W_Window";
 import FieldDropDownList from "./DropDownLists/FieldDropDownList";
 import FieldComboBox from "./ComboBoxes/FieldComboBox";
 import FieldCheckBox from "./FieldCheckBox";
 import {
   checkIsDDLValid,
   checkIsObjValid,
-  getItemQuery,
   getQueryFromBizComponent,
   requiredValidator,
 } from "./CommonFunction";
 import moment from "moment";
-import UserEffect from "./UserEffect";
 import { useApi } from "../hooks/api";
-import { userState } from "../store/atoms";
-
-const FORM_DATA_INDEX = "formDataIndex";
+import { FORM_DATA_INDEX } from "./CommonString";
 
 //Grid Cell에 표시되는 Value
-const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
+export const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
   return <>{fieldRenderProps.value}</>;
 };
 
@@ -69,7 +64,7 @@ const TextInputWithValidation = (fieldRenderProps: FieldRenderProps) => {
     className,
     ...others
   } = fieldRenderProps;
-  const { getItemcd } = React.useContext(FormGridEditContext);
+  //const { getItemcd } = React.useContext(FormGridEditContext);
 
   const onInputBlur = () => {
     //if (name?.includes("itemcd")) getItemcd(value);
@@ -91,7 +86,9 @@ const TextInputWithValidation = (fieldRenderProps: FieldRenderProps) => {
 };
 
 //Grid Cell 수정모드에서 사용되는 Numeric Text Input
-const NumericTextBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
+export const NumericTextBoxWithValidation = (
+  fieldRenderProps: FieldRenderProps
+) => {
   const {
     onBlur,
     validationMessage,
@@ -101,17 +98,12 @@ const NumericTextBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
     name,
     className,
     onChange,
+    calculateAmt,
     ...others
   } = fieldRenderProps;
-  const { calculateAmt, calculateSpecialAmt } =
-    React.useContext(FormGridEditContext);
+  // const { calculateAmt, calculateSpecialAmt } =
+  //   React.useContext(FormGridEditContext);
   const anchor: any = React.useRef(null);
-
-  const onInputBlur = () => {
-    if (name?.includes("qty") || name?.includes("unp")) calculateAmt();
-    if (name?.includes("qty") || name?.includes("specialunp"))
-      calculateSpecialAmt();
-  };
 
   const onInputChange = (e: NumericTextBoxChangeEvent) => {
     const { target, value } = e;
@@ -122,7 +114,6 @@ const NumericTextBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
   return (
     <div>
       <NumericTextBox
-        onBlur={onInputBlur}
         onChange={onInputChange}
         value={value}
         valid={required && Number(value) < 1 ? false : true}
@@ -183,17 +174,24 @@ const CheckBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
 };
 
 const CheckBoxReadOnly = (fieldRenderProps: FieldRenderProps) => {
-  const { validationMessage, visited, value, label, id, valid, ...others } =
-    fieldRenderProps;
+  const {
+    validationMessage,
+    visited,
+    value,
+    label,
+    id,
+    valid,
+    onChange, // 사용자가 값 수정 못하도록 함
+    ...others
+  } = fieldRenderProps;
 
   return (
     <div>
       <Checkbox
-        defaultChecked={value === "Y" || value === true ? true : false}
+        value={value === "Y" || value === true ? true : false}
         valid={valid}
         id={id}
         {...others}
-        readOnly
       />
       {visited && validationMessage && <Error>{validationMessage}</Error>}
     </div>
@@ -411,11 +409,11 @@ export const CellCheckBox = (props: GridCellProps) => {
 
 //Grid Cell에서 사용되는 ReadOnly CheckBox Feild
 export const CellCheckBoxReadOnly = (props: GridCellProps) => {
-  const { parentField } = React.useContext(FormGridEditContext);
   const { field, dataItem, className, render } = props;
+  const parentField = dataItem.parentField;
 
   return (
-    <td>
+    <td className={className ?? ""} style={{ textAlign: "center" }}>
       <Field
         component={CheckBoxReadOnly}
         name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}

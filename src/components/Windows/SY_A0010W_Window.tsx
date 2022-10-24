@@ -763,9 +763,6 @@ const KendoWindow = ({
         };
       });
 
-      console.log("rows");
-      console.log(rows);
-
       setDetailDataResult(() => {
         return {
           data: [...rows],

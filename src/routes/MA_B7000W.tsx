@@ -625,7 +625,7 @@ const MA_B7000: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-  const getItemData = (data: IItemData) => {
+  const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
       ...prev,
       itemcd: data.itemcd,
@@ -1080,10 +1080,9 @@ const MA_B7000: React.FC = () => {
       </GridContainerWrap>
       {itemWindowVisible && (
         <ItemsWindow
-          getVisible={setItemWindowVisible}
+          setVisible={setItemWindowVisible}
           workType={"FILTER"}
-          getData={getItemData}
-          para={undefined}
+          setData={setItemData}
         />
       )}
 
