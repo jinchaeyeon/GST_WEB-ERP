@@ -582,21 +582,20 @@ const Page: React.FC = () => {
   };
 
   const setGroupCode = (group_code: string) => {
-    setFilters((prev) => ({ ...prev, group_code }));
     setIsInitSearch(false);
+    setFilters((prev) => ({ ...prev, group_code }));
   };
 
   const reloadData = (workType: string) => {
     //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
     if (workType === "U") {
       setIfSelectFirstRow(false);
+      resetAllGrid();
+      fetchMainGrid();
+      fetchDetailGrid();
     } else {
       setIfSelectFirstRow(true);
     }
-
-    resetAllGrid();
-    fetchMainGrid();
-    fetchDetailGrid();
   };
 
   const onMainSortChange = (e: any) => {
