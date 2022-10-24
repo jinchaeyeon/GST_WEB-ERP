@@ -45,6 +45,28 @@ export const convertDateToStrWithTime = (date: Date) => {
   // }
 };
 
+//Date 타입 인수를 YYYY-MM-DD hh:mm:ss string로 날짜 변환하여 반환 (ex. => 2022-01-01 00:00:00)
+export const convertDateToStrWithTime2 = (date: Date) => {
+  //if (date.getFullYear || date.getMonth || date.getDate) {
+
+  const dateTime: string =
+    date.getFullYear() +
+    "-" +
+    (date.getMonth() + 1 < 10
+      ? "0" + (date.getMonth() + 1)
+      : date.getMonth() + 1) +
+    "-" +
+    (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) +
+    " " +
+    (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+    ":" +
+    (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+    ":" +
+    (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds());
+
+  return dateTime;
+};
+
 //8자리 날짜 stirng에 구분자 추가
 export const dateformat = (str: string) => {
   if (!str) return "";

@@ -32,13 +32,13 @@ export const gridList: Array<TGrid> = [
         id: "col_login_time",
         field: "login_time",
         caption: "접속시간",
-        width: 140,
+        width: 160,
       },
       {
         id: "col_logout_time",
         field: "logout_time",
         caption: "종료시간",
-        width: 140,
+        width: 160,
       },
       {
         id: "col_login_ip",

@@ -28,6 +28,7 @@ import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
+  convertDateToStrWithTime2,
   setDefaultDate,
   UseCustomOption,
   UsePermissions,
@@ -296,6 +297,10 @@ const SY_A0110: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
+                login_time: convertDateToStrWithTime2(new Date(row.login_time)),
+                logout_time: convertDateToStrWithTime2(
+                  new Date(row.logout_time)
+                ),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
