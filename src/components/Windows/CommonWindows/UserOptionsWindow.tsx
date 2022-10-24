@@ -242,7 +242,10 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const [columnWindowWorkType, setColumnWindowWorkType] = useState("");
   const [defaultWindowWorkType, setDefaultWindowWorkType] = useState("");
 
-  const [parentComponent, setParentComponent] = useState("");
+  const [parentComponent, setParentComponent] = useState({
+    option_id: "",
+    option_name: "",
+  });
   const [processType, setProcessType] = useState("");
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -1079,6 +1082,10 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   );
 
   const onCreateColumnClick = () => {
+    setParentComponent({
+      option_id: "",
+      option_name: "",
+    });
     setColumnWindowWorkType("N");
     setColumnWindowVisible(true);
   };
@@ -1367,7 +1374,10 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       });
 
       // 컬럼 팝업 창 오픈 (수정용)
-      setParentComponent(rowData[MAIN_COLUMN_DATA_ITEM_KEY]);
+      setParentComponent({
+        option_id: rowData["option_id"],
+        option_name: rowData["option_name"],
+      });
       setColumnWindowWorkType("U");
       setColumnWindowVisible(true);
     };

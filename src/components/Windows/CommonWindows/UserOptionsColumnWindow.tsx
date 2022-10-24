@@ -31,7 +31,7 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-import { NumberCell, NameCell, FormInput } from "../../Editors";
+import { NumberCell, NameCell, FormInput, FormReadOnly } from "../../Editors";
 import { Iparameters, TcontrolObj } from "../../../store/types";
 import {
   arrayLengthValidator,
@@ -61,7 +61,7 @@ type TKendoWindow = {
   getVisible(t: boolean): void;
   workType: string;
   reloadData: () => void;
-  parentComponent?: string;
+  parentComponent: { option_id: string; option_name: string };
 };
 
 type TDetailData = {
@@ -417,6 +417,7 @@ const KendoWindow = ({
   parentComponent,
 }: TKendoWindow) => {
   const pathname: string = window.location.pathname.replace("/", "");
+  const { option_id = "", option_name = "" } = parentComponent;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -464,8 +465,8 @@ const KendoWindow = ({
   );
 
   const [initialVal, setInitialVal] = useState({
-    option_id: "",
-    option_name: "",
+    option_id: option_id,
+    option_name: option_name,
   });
 
   //요약정보 조회조건 파라미터
@@ -478,7 +479,7 @@ const KendoWindow = ({
       "@p_dbname": "SYSTEM",
       "@p_form_id": pathname,
       "@p_lang_id": "",
-      "@p_parent_component": workType === "U" ? parentComponent : "",
+      "@p_parent_component": option_id,
       "@p_message": "",
     },
   };
@@ -600,7 +601,6 @@ const KendoWindow = ({
       rows = rows.map((row: any) => {
         return {
           ...row,
-          srcPgName: "USER_OPTIONS_COLUMN_WINDOW",
         };
       });
 
@@ -608,17 +608,6 @@ const KendoWindow = ({
         return {
           data: [...rows],
           total: totalRowsCnt,
-        };
-      });
-
-      const row = data.tables[0].Rows[0];
-      const { option_id, option_name } = row;
-
-      setInitialVal((prev) => {
-        return {
-          ...prev,
-          option_id,
-          option_name,
         };
       });
     }
@@ -776,9 +765,9 @@ const KendoWindow = ({
                 <Field
                   label={"영역ID"}
                   name={"option_id"}
-                  component={FormInput}
+                  component={workType === "U" ? FormReadOnly : FormInput}
                   validator={validator}
-                  className="required"
+                  className={workType === "U" ? "readonly" : "required"}
                 />
                 <Field
                   label={"영역명"}
@@ -787,25 +776,13 @@ const KendoWindow = ({
                   validator={validator}
                   className="required"
                 />
-
-                {/* <Button
-                  type={"button"}
-                  onClick={() => {
-                    onGetColumnClick(formRenderProps.valueGetter("option_id"));
-                  }}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="file-add"
-                >
-                  가져오기
-                </Button> */}
               </FieldWrap>
             </fieldset>
             <FieldArray
               name="orderDetails"
               dataItemKey={DATA_ITEM_KEY}
               component={FormGrid}
-              validator={arrayLengthValidator}
+              //validator={arrayLengthValidator}
               option_id={formRenderProps.valueGetter("option_id")}
             />
 
