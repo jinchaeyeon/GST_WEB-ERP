@@ -54,6 +54,8 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import EncryptedCell from "../components/Cells/EncryptedCell";
 import { sha256 } from "js-sha256";
 import TopButtons from "../components/TopButtons";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
+import RadioGroupCell from "../components/Cells/RadioGroupCell";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -95,6 +97,25 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       textField={fieldName}
       {...props}
     />
+  ) : (
+    <td></td>
+  );
+};
+
+const CustomRadioCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
+  UseBizComponent("R_BIRCD", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal = field === "bircd" ? "R_BIRCD" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <RadioGroupCell bizComponentData={bizComponent} {...props} />
   ) : (
     <td></td>
   );
@@ -895,7 +916,12 @@ const SY_A0120: React.FC = () => {
               width={"150px"}
               cell={DateCell}
             />
-            <GridColumn field={"bircd"} title={"음양"} width={"150px"} />
+            <GridColumn
+              field={"bircd"}
+              title={"음양"}
+              width={"150px"}
+              cell={CustomRadioCell}
+            />
             <GridColumn
               field={"ip_check_yn"}
               title={"IP체크여부"}

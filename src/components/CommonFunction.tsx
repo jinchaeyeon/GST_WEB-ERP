@@ -284,7 +284,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
     }
 
     let id = {
-      id: "biz-components?id=" + bizComponentId,
+      id: "biz-components?id=" + bizComponentId + "&data=true",
     };
 
     try {
@@ -407,7 +407,7 @@ export const UseBizComponent = (bizComponentId: string, setListData: any) => {
     let data: any;
 
     let id = {
-      id: "biz-components?id=" + bizComponentId,
+      id: "biz-components?id=" + bizComponentId + "&data=true",
     };
 
     try {

@@ -168,6 +168,9 @@ export const GridContainer = styled.div<TGridContainer>`
   .k-chart.QC_A0120_TAB3 {
     width: 600px;
   }
+  .k-radio-list.k-list-horizontal {
+    justify-content: center;
+  }
   /* .required {
     background-color: #fff0ef;
   } */
