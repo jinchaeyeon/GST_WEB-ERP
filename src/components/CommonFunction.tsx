@@ -306,7 +306,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
                 " " +
                 bcItem["queryFooter"]
               ).replace(/\r\n/gi, " ");
-              defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
+              defaultItem["bizComponentItems"] = bcItem.data.Rows;
             }
           });
         }
@@ -320,7 +320,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
                 " " +
                 bcItem["queryFooter"]
               ).replace(/\r\n/gi, " ");
-              defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
+              defaultItem["bizComponentItems"] = bcItem.data.Rows;
             }
           });
         }

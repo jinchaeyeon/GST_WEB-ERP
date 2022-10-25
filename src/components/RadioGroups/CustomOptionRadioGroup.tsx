@@ -37,22 +37,22 @@ const CustomOptionRadioGroup = ({
         (item: any) =>
           !(
             name === "radWorkType" && //결재표시형식
-            (item.fieldName === "D" ||
-              item.fieldName === "E" ||
-              item.fieldName === "G" ||
-              item.fieldName === "H" ||
-              item.fieldName === "I")
+            (item.code === "D" ||
+              item.code === "E" ||
+              item.code === "G" ||
+              item.code === "H" ||
+              item.code === "I")
           )
       )
       .filter(
         (item: any) =>
           !(
             name === "radAppyn" && //결재유무
-            (item.fieldName === "B" || item.fieldName === "M")
+            (item.code === "B" || item.code === "M")
           )
       )
       .map((column: any) => ({
-        value: column.fieldName,
+        value: column.code,
         label: column.caption,
       }));
   }

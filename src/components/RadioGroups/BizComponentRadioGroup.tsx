@@ -4,8 +4,6 @@ import {
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
 import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
-import { getQueryFromBizComponent } from "../CommonFunction";
-import { useApi } from "../../hooks/api";
 
 type TBizComponentRadioGroup = {
   name: string;
@@ -30,7 +28,7 @@ const BizComponentRadioGroup = ({
 
   //커스텀 옵션에 저장된 값으로 디폴트 값
   const dataList =
-    bizComponentData !== null ? bizComponentData.bizComponentItems : null;
+    bizComponentData !== null ? bizComponentData.data.Rows : null;
 
   let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
@@ -41,22 +39,22 @@ const BizComponentRadioGroup = ({
         (item: any) =>
           !(
             name === "radWorkType" && //결재표시형식
-            (item.fieldName === "D" ||
-              item.fieldName === "E" ||
-              item.fieldName === "G" ||
-              item.fieldName === "H" ||
-              item.fieldName === "I")
+            (item.code === "D" ||
+              item.code === "E" ||
+              item.code === "G" ||
+              item.code === "H" ||
+              item.code === "I")
           )
       )
       .filter(
         (item: any) =>
           !(
             name === "radAppyn" && //결재유무
-            (item.fieldName === "B" || item.fieldName === "M")
+            (item.code === "B" || item.code === "M")
           )
       )
       .map((column: any) => ({
-        value: column.fieldName,
+        value: column.code,
         label: column.caption,
       }));
   }
@@ -74,8 +72,6 @@ const BizComponentRadioGroup = ({
     setState(value);
     changeData({ name, value });
   };
-
-  //changeData(newRadioGroup);
 
   return (
     <RadioGroup
