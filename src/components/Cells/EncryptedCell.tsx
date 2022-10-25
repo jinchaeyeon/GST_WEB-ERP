@@ -14,20 +14,17 @@ const EncryptedCell = (props: CustomCellProps) => {
     field = "",
     render,
     onChange,
-    bizComponent,
-    textField = "code_name",
-    ...others
   } = props;
 
   const isInEdit = field === dataItem.inEdit;
   const value = dataItem[field];
 
   const handleChange = (e: InputChangeEvent) => {
-    if (props.onChange) {
-      props.onChange({
+    if (onChange) {
+      onChange({
         dataIndex: 0,
-        dataItem: props.dataItem,
-        field: props.field,
+        dataItem: dataItem,
+        field: field,
         syntheticEvent: e.syntheticEvent,
         value: e.target.value ?? "",
       });

@@ -14,6 +14,7 @@ import {
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import cryptoRandomString from "crypto-random-string";
 import {
   Title,
   FilterBoxWrap,
@@ -56,6 +57,8 @@ import { sha256 } from "js-sha256";
 import TopButtons from "../components/TopButtons";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
+import { ReadOnlyNameCell } from "../components/Editors";
+import NameCell from "../components/Cells/NameCell";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -536,6 +539,7 @@ const SY_A0120: React.FC = () => {
           user_name,
           password = "",
           password_confirm = "",
+          temp = "",
           salt = "",
           user_category = "",
           email = "",
@@ -563,8 +567,8 @@ const SY_A0120: React.FC = () => {
           mbouseyn = "",
         } = item;
 
-        if (password !== password_confirm) {
-          throw new Error("비밀번호 확인이 틀립니다.");
+        if (password !== temp) {
+          throw findMessage(messagesData, "SY_A0012W_004");
         }
 
         const para: Iparameters = {
@@ -577,7 +581,8 @@ const SY_A0120: React.FC = () => {
             "@p_user_name": user_name,
             "@p_password": password,
             "@p_password_confirm": password_confirm,
-            "@p_salt": salt,
+            "@p_salt":
+              rowstatus === "N" ? cryptoRandomString({ length: 32 }) : salt,
             "@p_user_category": user_category,
             "@p_email": email,
             "@p_tel_no": tel_no,
@@ -848,7 +853,8 @@ const SY_A0120: React.FC = () => {
               field={"user_id"}
               title={"사용자ID"}
               width={"150px"}
-              //cell={numberField.includes(item.id) ? NumberCell : ""}
+              cell={NameCell}
+              className="editable-new-only"
               footerCell={mainTotalFooterCell}
             />
             <GridColumn
@@ -863,7 +869,7 @@ const SY_A0120: React.FC = () => {
               cell={EncryptedCell}
             />
             <GridColumn
-              field={"password_confirm"}
+              field={"temp"}
               title={"비밀번호 확인"}
               width={"120px"}
               cell={EncryptedCell}

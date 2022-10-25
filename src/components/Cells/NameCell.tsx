@@ -1,26 +1,49 @@
 import { GridCellProps } from "@progress/kendo-react-grid";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 
 const NameCell = (props: GridCellProps) => {
-  const { ariaColumnIndex, columnIndex, dataItem, field } = props;
-  const isInEdit = field === dataItem.inEdit;
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  let isInEdit = field === dataItem.inEdit;
+  if (className.includes("editable-new-only")) {
+    if (dataItem["rowstatus"] !== "N") {
+      isInEdit = false;
+    }
+  }
+  const value = dataItem[field];
 
-  return isInEdit ? (
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const defaultRendering = (
     <td
       style={{ textAlign: "left" }}
       aria-colindex={ariaColumnIndex}
       data-grid-col-index={columnIndex}
     >
-      {field ? dataItem[field] : ""}
-    </td>
-  ) : (
-    <td
-      style={{ textAlign: "left" }}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-    >
-      {field ? dataItem[field] : ""}
+      {isInEdit ? <Input value={value} onChange={handleChange} /> : value}
     </td>
   );
+
+  return render === undefined
+    ? null
+    : render?.call(undefined, defaultRendering, props);
 };
 
 export default NameCell;
