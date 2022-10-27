@@ -90,18 +90,31 @@ const EA_A2000: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const detail3IdGetter = getter(DETAIL3_DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
+  const [token] = useRecoilState(tokenState);
+  const { userId, companyCode } = token;
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
-  const [token] = useRecoilState(tokenState);
-  const { userId, companyCode } = token;
+  // 권한 조회
+  const [permissions, setPermissions] = useState<TPermissions | null>(
+    OLD_COMPANY.includes(companyCode)
+      ? {
+          view: true,
+          save: true,
+          delete: true,
+          print: true,
+        }
+      : null
+  );
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  if (!OLD_COMPANY.includes(companyCode))
+  if (!OLD_COMPANY.includes(companyCode)) {
+    UsePermissions(setPermissions);
     UseCustomOption(pathname, setCustomOptionData);
+  }
 
   const [wordInfoData, setWordInfoData] = React.useState<any>(null);
   UseDesignInfo(pathname, setWordInfoData);
@@ -112,8 +125,6 @@ const EA_A2000: React.FC = () => {
     //부서,담당자,결재문서,근태구분,결재유무,사용자,직위,결재라인,결재관리구분,결재유무,결재구분
     setBizComponentData
   );
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
-  UsePermissions(setPermissions);
 
   const [appynListData, setAppynListData] = React.useState([
     { code: "", name: "" },

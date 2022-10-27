@@ -75,8 +75,16 @@ const CM_A1600: React.FC = () => {
   const processApi = useApi();
   const [token] = useRecoilState(tokenState);
   const { userId, companyCode } = token;
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
-  UsePermissions(setPermissions);
+  const [permissions, setPermissions] = useState<TPermissions | null>(
+    OLD_COMPANY.includes(companyCode)
+      ? {
+          view: true,
+          save: true,
+          delete: true,
+          print: true,
+        }
+      : null
+  );
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -84,8 +92,10 @@ const CM_A1600: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  if (!OLD_COMPANY.includes(companyCode))
+  if (!OLD_COMPANY.includes(companyCode)) {
+    UsePermissions(setPermissions);
     UseCustomOption(pathname, setCustomOptionData);
+  }
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_sysUserMaster_001,R_YN", setBizComponentData);
@@ -548,7 +558,7 @@ const CM_A1600: React.FC = () => {
       setSchedulerFilter((prev) => ({
         ...prev,
         rdoplandiv: defaultOption.find((item: any) => item.id === "rdoplandiv")
-          .value,
+          .valueCode,
       }));
 
       setTodoFilter((prev) => ({
@@ -556,7 +566,7 @@ const CM_A1600: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         rdofinyn: defaultOption.find((item: any) => item.id === "rdofinyn")
-          .value,
+          .valueCode,
       }));
     }
   }, [customOptionData]);
