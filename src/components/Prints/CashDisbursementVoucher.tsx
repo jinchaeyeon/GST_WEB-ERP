@@ -25,7 +25,7 @@ const CashDisbursementVoucher = (data: any) => {
       parameters: {
         "@p_work_type": "Z",
         "@p_orgdiv": "01",
-        "@p_key1": para.recdt,
+        "@p_key1": para.ref_key.split("-")[0],
         "@p_key2": para.ref_key.split("-")[1],
       },
     };
