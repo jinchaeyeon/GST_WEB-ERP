@@ -202,8 +202,8 @@ const SY_A0120: React.FC = () => {
     user_category: "",
     user_id: "",
     user_name: "",
-    rtrchk: "%",
-    usediv: "%",
+    radRtrchk: "%",
+    radUsediv: "%",
   });
 
   //조회조건 파라미터
@@ -220,8 +220,8 @@ const SY_A0120: React.FC = () => {
       "@p_user_category": filters.user_category,
       "@p_user_id": filters.user_id,
       "@p_user_name": filters.user_name,
-      "@p_rtrchk": filters.rtrchk,
-      "@p_usediv": filters.usediv,
+      "@p_rtrchk": filters.radRtrchk === "T" ? "%" : filters.radRtrchk,
+      "@p_usediv": filters.radUsediv,
     },
   };
 
