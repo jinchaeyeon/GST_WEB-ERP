@@ -154,14 +154,6 @@ export const findMessage = (messagesData: any, id: string) => {
   return messagesData.find((item: any) => item.messageId === id).message;
 };
 
-// export const UseGetAllData = (setListData: any) => {
-//   const [messages, setMessages] = useState(null);
-//   const [customOption, setCustomOption] = useState(null);
-
-//   UseMessages("", setMessages);
-//   UseCustomOption("", setCustomOption);
-// };
-
 //현재 경로를 받아서 메시지 조회 후 결과값을 반환
 export const UseMessages = (pathname: string, setListData: any) => {
   const processApi = useApi();
@@ -306,7 +298,8 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
                 " " +
                 bcItem["queryFooter"]
               ).replace(/\r\n/gi, " ");
-              defaultItem["bizComponentItems"] = bcItem.data.Rows;
+              defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
+              defaultItem.Rows = bcItem.data.Rows;
             }
           });
         }
@@ -320,7 +313,8 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
                 " " +
                 bcItem["queryFooter"]
               ).replace(/\r\n/gi, " ");
-              defaultItem["bizComponentItems"] = bcItem.data.Rows;
+              defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
+              defaultItem.Rows = bcItem.data.Rows;
             }
           });
         }
@@ -676,4 +670,36 @@ export const getSelectedFirstData = (
     (item) => item[DATA_ITEM_KEY] === selectedRowKeyVal
   );
   return selectedRowData;
+};
+
+export const getUnpQuery = (custcd: string) => {
+  return `
+  SELECT * 
+  FROM (  SELECT	'1' as gb,
+                  BA025T.recdt,
+                  BA025T.itemcd,
+                  BA025T.itemacnt,
+                  BA025T.amtunit,
+                  BA025T.unp   
+          FROM BA025T JOIN BA020T 
+                      ON BA025T.unpitem = BA020T.unpitem
+                      AND BA020T.custcd =  '${custcd}'
+          UNION ALL
+  
+          SELECT	'2' as gb,
+                  A.recdt,
+                  A.itemcd,
+                  A.itemacnt,
+                  A.amtunit,
+                  A.unp 
+          FROM BA025T A
+          WHERE unpitem = 'SYS01'
+          AND itemcd NOT IN ( SELECT itemcd 
+                              FROM ba025t JOIN ba020t 
+                                          ON BA025T.unpitem = BA020T.unpitem 
+                                          AND BA020T.custcd =  '${custcd}'
+                              GROUP BY itemcd )
+      ) as A 
+      ORDER BY itemcd, recdt desc
+      `;
 };

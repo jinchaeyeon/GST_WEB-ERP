@@ -27,9 +27,7 @@ const CustomOptionRadioGroup = ({
   if (dataList) {
     defaultValue = dataList.find((item: any) => item.id === name).valueCode;
 
-    const radioGroup = dataList.find(
-      (item: any) => item.id === name
-    ).bizComponentItems;
+    const radioGroup = dataList.find((item: any) => item.id === name).Rows;
 
     newRadioGroup = radioGroup
       // 제외 처리 (filter)

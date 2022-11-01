@@ -4,8 +4,6 @@ import {
   ComboBoxChangeEvent,
 } from "@progress/kendo-react-dropdowns";
 
-import { useApi } from "../../hooks/api";
-
 type TCustomOptionComboBox = {
   name: string;
   value: string | number;
@@ -22,45 +20,14 @@ const CustomOptionComboBox = ({
   textField = "code_name",
   valueField = "sub_code",
 }: TCustomOptionComboBox) => {
-  const processApi = useApi();
-  const [listData, setListData] = useState([]);
-
   const dataList = customOptionData.menuCustomDefaultOptions.query;
-  useEffect(() => {
-    if (dataList) {
-      fetchData();
-    }
-  }, []);
-
-  //콤보박스 리스트 쿼리 조회
-  const fetchData = useCallback(async () => {
-    let data: any;
-
-    const queryStr = dataList.find((item: any) => item.id === name).query;
-
-    let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-
-      setListData(rows); //리스트 세팅
-    }
-  }, []);
+  const dataItem = dataList.find((item: any) => item.id === name);
+  const listData = dataItem.Rows;
 
   let newColumns = [];
 
   if (dataList) {
-    const columns = dataList.find(
-      (item: any) => item.id === name
-    ).bizComponentItems;
+    const columns = dataItem.bizComponentItems;
 
     if (columns) {
       newColumns = columns.map((column: any) => ({
