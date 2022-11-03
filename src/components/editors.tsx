@@ -27,6 +27,8 @@ import moment from "moment";
 import { useApi } from "../hooks/api";
 import { FORM_DATA_INDEX } from "./CommonString";
 
+/*  Form 내에서 사용되는 컴포넌트들을 저장하는 페이지   */
+
 //Grid Cell에 표시되는 Value
 export const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
   return <>{fieldRenderProps.value}</>;

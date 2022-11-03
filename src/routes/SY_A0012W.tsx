@@ -88,7 +88,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_BA410"
       : "";
 
-  const fieldName = field === "dptcd" ? "dptnm" : undefined;
+  const textField = field === "dptcd" ? "dptnm" : undefined;
+  const valueField = field === "dptcd" ? "dptcd" : undefined;
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
@@ -97,7 +98,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   return bizComponent ? (
     <ComboBoxCell
       bizComponent={bizComponent}
-      textField={fieldName}
+      textField={textField}
+      valueField={valueField}
       {...props}
     />
   ) : (

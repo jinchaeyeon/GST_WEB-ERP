@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ComboBoxChangeEvent,
   MultiColumnComboBox,
-  MultiColumnComboBoxChangeEvent,
 } from "@progress/kendo-react-dropdowns";
 import { useApi } from "../../hooks/api";
 import { GridCellProps } from "@progress/kendo-react-grid";
@@ -11,6 +10,7 @@ import { getQueryFromBizComponent } from "../CommonFunction";
 interface CustomCellProps extends GridCellProps {
   bizComponent: any;
   textField?: string;
+  valueField?: string;
 }
 const ComboBoxCell = (props: CustomCellProps) => {
   const {
@@ -21,6 +21,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
     render,
     onChange,
     bizComponent,
+    valueField = "sub_code",
     textField = "code_name",
     ...others
   } = props;
@@ -29,10 +30,20 @@ const ComboBoxCell = (props: CustomCellProps) => {
   const [listData, setListData]: any = useState([]);
   const isInEdit = field === dataItem.inEdit;
   const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
+  const dataValue = dataItem[field];
+  const value = listData.find((item: any) => item[valueField] === dataValue);
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  const columns = bizComponent ? bizComponent.bizComponentItems : [];
+  let newColumns = columns.map((column: any) => ({
+    field: column.fieldName,
+    header: column.caption,
+    width: column.columnWidth,
+  }));
+  newColumns = newColumns.filter((column: any) => column.width !== 0);
 
   const fetchData = useCallback(async () => {
     let data: any;
@@ -58,25 +69,19 @@ const ComboBoxCell = (props: CustomCellProps) => {
 
   const handleChange = (e: ComboBoxChangeEvent) => {
     if (onChange) {
+      console.log(field);
+      console.log(dataItem);
+      console.log(e.syntheticEvent);
+
       onChange({
         dataIndex: 0,
         dataItem: dataItem,
         field: field,
         syntheticEvent: e.syntheticEvent,
-        value: e.target.value ?? "",
+        value: e.target.value[valueField] ?? "",
       });
     }
   };
-  const columns = bizComponent ? bizComponent.bizComponentItems : [];
-  let newColumns = columns.map((column: any) => ({
-    field: column.fieldName,
-    header: column.caption,
-    width: column.columnWidth,
-  }));
-  newColumns = newColumns.filter((column: any) => column.width !== 0);
-
-  const dataValue = dataItem[field] === null ? "" : dataItem[field];
-  const value = listData.find((item: any) => item.sub_code === dataValue);
 
   const defaultRendering = (
     <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
