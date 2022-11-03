@@ -1,26 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import {
-  Grid,
-  GridColumn,
-  GridEvent,
-  GridCellProps,
-  GridToolbar,
-  GridItemChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridHeaderSelectionChangeEvent,
-  GridHeaderCellProps,
-} from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
+import { Grid, GridColumn } from "@progress/kendo-react-grid";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
   ButtonContainer,
-  ButtonInField,
-  ButtonInFieldWrap,
   FieldWrap,
   GridContainer,
 } from "../../CommonStyled";
@@ -39,23 +25,14 @@ import { Iparameters } from "../../store/types";
 import {
   validator,
   arrayLengthValidator,
-  chkScrollHandler,
-  getQueryFromBizComponent,
   UseBizComponent,
-  UseCustomOption,
   UseMessages,
   findMessage,
   getYn,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  EDIT_FIELD,
-  FORM_DATA_INDEX,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../CommonString";
+import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
 import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
