@@ -46,7 +46,9 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     height: 850,
   });
   const DATA_ITEM_KEY = "itemcd";
+  const KEEPING_DATA_ITEM_KEY = "idx";
   const idGetter = getter(DATA_ITEM_KEY);
+  const keepingIdGetter = getter(KEEPING_DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -210,7 +212,10 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
 
     setKeepingDataResult((prev) => {
       return {
-        data: [...prev.data, ...[selectedData]],
+        data: [
+          ...prev.data,
+          ...[{ ...selectedData, idx: keepingDataResult.data.length + 1 }],
+        ],
         total: prev.total + 1,
       };
     });
@@ -221,7 +226,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     let newData: any[] = [];
 
     keepingDataResult.data.forEach((item: any) => {
-      if (!keepingSelectedState[item[DATA_ITEM_KEY]]) {
+      if (!keepingSelectedState[item[KEEPING_DATA_ITEM_KEY]]) {
         newData.push(item);
       }
     });
@@ -253,7 +258,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     const newSelectedState = getSelectedState({
       event,
       selectedState: keepingSelectedState,
-      dataItemKey: DATA_ITEM_KEY,
+      dataItemKey: KEEPING_DATA_ITEM_KEY,
     });
 
     setKeepingSelectedState(newSelectedState);
@@ -450,14 +455,14 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
           data={process(
             keepingDataResult.data.map((row) => ({
               ...row,
-              [SELECTED_FIELD]: keepingSelectedState[idGetter(row)], //선택된 데이터
+              [SELECTED_FIELD]: keepingSelectedState[keepingIdGetter(row)], //선택된 데이터
             })),
             keepingDataState
           )}
           onDataStateChange={onKeepingDataStateChange}
           {...keepingDataState}
           //선택 기능
-          dataItemKey={DATA_ITEM_KEY}
+          dataItemKey={KEEPING_DATA_ITEM_KEY}
           selectedField={SELECTED_FIELD}
           selectable={{
             enabled: true,
