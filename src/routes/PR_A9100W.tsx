@@ -56,6 +56,7 @@ import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import TopButtons from "../components/TopButtons";
 import { gridList } from "../store/columns/PR_A9100W_C";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 import { IItemData } from "../hooks/interfaces";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -185,10 +186,17 @@ const PR_A9100W: React.FC = () => {
 
   const [isInitSearch, setIsInitSearch] = useState(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [itemMultiWindowVisible, setItemMultiWindowVisible] =
+    useState<boolean>(false);
 
   const onItemWndClick = () => {
     setEditIndex(undefined);
     setItemWindowVisible(true);
+  };
+
+  const onItemMultiWndClick = () => {
+    setEditIndex(undefined);
+    setItemMultiWindowVisible(true);
   };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
@@ -228,6 +236,22 @@ const PR_A9100W: React.FC = () => {
         };
       });
     }
+  };
+  const addItemData = (data: IItemData[]) => {
+    const newData = data.map((item, idx) => ({
+      ...item,
+      idx: mainDataResult.data.length + idx + 1,
+      rowstatus: "N",
+      qty: 0,
+      totwgt: 0,
+    }));
+
+    setMainDataResult((prev) => {
+      return {
+        data: [...prev.data, ...newData],
+        total: prev.total + data.length,
+      };
+    });
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -872,6 +896,14 @@ const PR_A9100W: React.FC = () => {
             {permissions && (
               <ButtonContainer>
                 <Button
+                  onClick={onItemMultiWndClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  disabled={permissions.save ? false : true}
+                >
+                  품목참조
+                </Button>
+                <Button
                   onClick={onAddClick}
                   fillMode="outline"
                   themeColor={"primary"}
@@ -983,6 +1015,13 @@ const PR_A9100W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={editIndex === undefined ? "FILTER" : "ROW_ADD"}
           setData={setItemData}
+        />
+      )}
+
+      {itemMultiWindowVisible && (
+        <ItemsMultiWindow
+          setVisible={setItemMultiWindowVisible}
+          setData={addItemData}
         />
       )}
 
