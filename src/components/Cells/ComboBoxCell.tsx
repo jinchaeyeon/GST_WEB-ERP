@@ -21,14 +21,17 @@ const ComboBoxCell = (props: CustomCellProps) => {
     render,
     onChange,
     bizComponent,
+    className = "",
     valueField = "sub_code",
     textField = "code_name",
-    ...others
   } = props;
 
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
-  const isInEdit = field === dataItem.inEdit;
+  let isInEdit = field === dataItem.inEdit;
+  if (className.includes("read-only")) {
+    isInEdit = false;
+  }
   const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
   const dataValue = dataItem[field];
   const value = listData.find((item: any) => item[valueField] === dataValue);
@@ -69,10 +72,6 @@ const ComboBoxCell = (props: CustomCellProps) => {
 
   const handleChange = (e: ComboBoxChangeEvent) => {
     if (onChange) {
-      console.log(field);
-      console.log(dataItem);
-      console.log(e.syntheticEvent);
-
       onChange({
         dataIndex: 0,
         dataItem: dataItem,

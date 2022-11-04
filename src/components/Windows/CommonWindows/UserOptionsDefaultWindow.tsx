@@ -6,7 +6,6 @@ import {
   GridColumn,
   GridEvent,
   GridToolbar,
-  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridHeaderSelectionChangeEvent,

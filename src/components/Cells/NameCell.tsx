@@ -12,11 +12,14 @@ const NameCell = (props: GridCellProps) => {
     className = "",
   } = props;
   let isInEdit = field === dataItem.inEdit;
-  if (className.includes("editable-new-only")) {
+  if (className.includes("read-only")) {
+    isInEdit = false;
+  } else if (className.includes("editable-new-only")) {
     if (dataItem["rowstatus"] !== "N") {
       isInEdit = false;
     }
   }
+
   const value = dataItem[field];
 
   const handleChange = (e: InputChangeEvent) => {

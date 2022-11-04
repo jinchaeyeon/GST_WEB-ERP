@@ -7,7 +7,6 @@ import {
   GridEvent,
   GridCellProps,
   GridToolbar,
-  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridHeaderSelectionChangeEvent,
@@ -38,7 +37,6 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-import { clone } from "@progress/kendo-react-common";
 import {
   NumberCell,
   NameCell,
