@@ -13,10 +13,13 @@ const NumberCell = (props: GridCellProps) => {
     render,
     onChange,
     field = "",
+    className = "",
   } = props;
   let isInEdit = field === dataItem.inEdit;
   const value = dataItem[field];
-
+  if (className.includes("read-only")) {
+    isInEdit = false;
+  }
   const handleChange = (e: NumericTextBoxChangeEvent) => {
     if (onChange) {
       onChange({

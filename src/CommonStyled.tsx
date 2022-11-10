@@ -185,6 +185,53 @@ export const GridTitle = styled.h3`
   font-weight: 600;
 `;
 
+export const PrimaryP = styled.p`
+  color: #ff6358;
+`;
+
+export const PortraitPrint = styled.div`
+  @media print {
+    @page {
+      size: 29.7cm 21cm;
+      margin-top: 1cm;
+      margin-right: 1cm;
+      margin-bottom: 0cm;
+      margin-left: 1cm;
+    }
+    /* html, body { border:0; margin:0; padding:0; margin-top:0px; }
+	 */
+
+    .printable {
+      display: block;
+    }
+
+    #non-printable {
+      display: none;
+    }
+  }
+`;
+export const LandscapePrint = styled.div`
+  @media print {
+    @page {
+      size: 29.7cm 21cm;
+      margin-top: 1cm;
+      margin-right: 1cm;
+      margin-bottom: 0cm;
+      margin-left: 1cm;
+    }
+    /* html, body { border:0; margin:0; padding:0; margin-top:0px; }
+	 */
+
+    .printable {
+      display: block;
+    }
+
+    #non-printable {
+      display: none;
+    }
+  }
+`;
+
 export const GridTitleContainer = styled.div`
   display: flex;
   justify-content: space-between;

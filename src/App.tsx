@@ -28,6 +28,7 @@ import SY_A0011W from "./routes/SY_A0011W";
 import CM_A1600W from "./routes/CM_A1600W";
 import EA_A2000W from "./routes/EA_A2000W";
 import PR_A9100W from "./routes/PR_A9100W";
+import PR_B3000W from "./routes/PR_B3000W";
 import { isMenuOpendState } from "./store/atoms";
 
 type TGlobalStyle = {
@@ -130,6 +131,7 @@ const AppInner: React.FC = () => {
             {/* 생산관리 */}
             <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
             <AuthRoute path="/PR_A9100W" component={PR_A9100W} exact />
+            <AuthRoute path="/PR_B3000W" component={PR_B3000W} exact />
             {/* 품질관리 */}
             <AuthRoute path="/QC_A0120W" component={QC_A0120W} exact />
             {/* 시스템 */}

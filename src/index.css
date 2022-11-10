@@ -62,7 +62,7 @@ div.k-animation-container {
   }
 }
 
-@media print {
+/* @media print {
   @page {
     size: 21cm 29.7cm;
     margin-top: 1cm;
@@ -70,8 +70,6 @@ div.k-animation-container {
     margin-bottom: 0cm;
     margin-left: 1cm;
   }
-  /* html, body { border:0; margin:0; padding:0; margin-top:0px; }
-	 */
 
   .printable {
     display: block;
@@ -80,7 +78,7 @@ div.k-animation-container {
   #non-printable {
     display: none;
   }
-}
+} */
 
 .printable {
   width: 19cm;
@@ -88,8 +86,78 @@ div.k-animation-container {
   padding: 1cm;
   background-color: #fff;
 }
+.printable.landscape {
+  min-height: 19cm;
+  width: 27.7cm;
+}
 body {
   -webkit-print-color-adjust: exact;
+}
+
+/**************** 작업일보 ****************/
+
+#WorkDailyReport table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#WorkDailyReport td,
+#WorkDailyReport th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#WorkDailyReport .title_container {
+  display: flex;
+  justify-content: space-between;
+}
+#WorkDailyReport .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 3em;
+  width: 100%;
+}
+#WorkDailyReport table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#WorkDailyReport table.tb_approval th {
+  height: 0.7cm;
+}
+
+#WorkDailyReport table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#WorkDailyReport table.main_tb .center {
+  text-align: center;
+}
+#WorkDailyReport table.main_tb .number {
+  text-align: right;
+}
+
+#WorkDailyReport table.main_tb th,
+#WorkDailyReport table.main_tb td {
+  padding: 0 0.1cm;
+  line-height: 0.6cm;
+  height: 1.2cm;
+  word-wrap: break-word;
+  font-size: 0.85em;
+}
+
+#WorkDailyReport .right {
+  float: right;
+  clear: both;
 }
 
 /**************** 근태허가신청 ****************/
