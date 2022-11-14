@@ -12,6 +12,10 @@ export const TitleContainer = styled.div`
   padding: 5px 0;
   height: 40px;
   margin-top: 5px;
+
+  .iot-title {
+    font-size: 26px;
+  }
 `;
 
 export const MainTopContainer = styled(TitleContainer)`
@@ -28,6 +32,32 @@ export const ButtonContainer = styled.div`
   input,
   button {
     margin-left: 5px;
+  }
+
+  .iot-btn {
+    margin-top: 5px;
+    margin-right: 10px;
+    max-width: 250px;
+    width: 100%;
+    height: 120px;
+    font-size: 32px;
+    font-weight: 600;
+    box-shadow: none;
+  }
+  .iot-btn.green {
+    background-color: #6fab41;
+    border-color: #6fab41;
+  }
+  .iot-btn.red {
+    background-color: #ff4949;
+    border-color: #ff4949;
+  }
+  .iot-btn.gray {
+    background-color: gray;
+    border-color: gray;
+  }
+  .iot-btn .k-icon {
+    font-size: 32px;
   }
 `;
 
@@ -81,6 +111,25 @@ export const FilterBox = styled.table`
   .k-radio-list.k-list-horizontal {
     justify-content: center;
   }
+
+  .PR_A3000W tr th,
+  .PR_A3000W tr td {
+    height: 80px;
+    font-size: 26px;
+    font-weight: 600;
+  }
+  .PR_A3000W tr th {
+    font-size: 22px;
+  }
+
+  .PR_A3000W tr td .k-input-md,
+  .PR_A3000W tr td .k-picker-md {
+    height: 65px;
+    font-size: 26px;
+    font-weight: 600;
+    padding-left: 10px;
+  }
+
   @media (max-width: 768px) {
     tr {
       display: flex;

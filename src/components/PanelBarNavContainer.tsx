@@ -409,36 +409,6 @@ const PanelBarNavContainer = (props: any) => {
                   </PanelBarItem>
                 );
               })}
-            {/*
-            <PanelBarItem title={"Home"} route="/"></PanelBarItem>
-            <PanelBarItem title={"물류관리"}>
-              <PanelBarItem title={"재고조회"} route="/MA_B7000W" />
-            </PanelBarItem>
-            <PanelBarItem title={"생산관리"} icon={""}>
-              <PanelBarItem title={"계획생산"} route="/PR_A1100W" />
-            </PanelBarItem>
-            <PanelBarItem title={"영업관리"}>
-              <PanelBarItem title={"수주처리"} route="/SA_A2000W" />
-              <PanelBarItem title={"매출집계(업체)"} route="/SA_B3000W" />
-            </PanelBarItem>
-            <PanelBarItem title={"품질관리"}>
-              <PanelBarItem title={"불량내역조회"} route="/QC_A0120W" />
-            </PanelBarItem>
-            <PanelBarItem title={"시스템"}>
-              <PanelBarItem title={"로그인 현황"} route="/SY_A0120W" />
-              <PanelBarItem title={"사용자 이용 현황"} route="/SY_A0110W" />
-              <PanelBarItem title={"공통코드 정보"} route="/SY_A0010W" />
-              <PanelBarItem title={"사용자 정보"} route="/SY_A0012W" />
-              <PanelBarItem title={"사용자 권한"} route="/SY_A0013W" />
-              <PanelBarItem title={"사용자 그룹"} route="/SY_A0011W" />
-            </PanelBarItem>
-
-            <PanelBarItem title={"전사관리"}>
-              <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
-            </PanelBarItem>
-            <PanelBarItem title={"전자결재"}>
-              <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
-            </PanelBarItem> */}
           </PanelBar>
         )}
 

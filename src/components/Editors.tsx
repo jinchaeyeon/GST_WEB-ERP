@@ -505,10 +505,11 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
     label,
     id,
     valid,
-    queryStr,
+    queryStr = "",
     className,
     valueField = "sub_code",
     textField = "code_name",
+    data,
   } = fieldRenderProps;
   const processApi = useApi();
   const [listData, setListData] = useState([]);
@@ -549,7 +550,7 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
       <div className={"k-form-field-wrap"}>
         <FieldComboBox
           fieldRenderProps={fieldRenderProps}
-          listData={listData}
+          listData={data ? data : listData}
           valueField={valueField}
           textField={textField}
         />

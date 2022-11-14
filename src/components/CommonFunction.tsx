@@ -107,6 +107,21 @@ export const dateformat4 = (str: string) => {
   return date_str;
 };
 
+// 밀리세컨트 인수를 hh:mm:ss string로 변환하여 반환 (ex. => 08:05:25)
+export const convertMilliSecondsToTimeStr = (secs: number) => {
+  let seconds = Math.floor((secs / 1000) % 60);
+  let minutes = Math.floor((secs / (1000 * 60)) % 60);
+  let hours = Math.floor((secs / (1000 * 60 * 60)) % 24);
+
+  return (
+    (hours < 10 ? "0" + hours : hours) +
+    ":" +
+    (minutes < 10 ? "0" + minutes : minutes) +
+    ":" +
+    (seconds < 10 ? "0" + seconds : seconds)
+  );
+};
+
 export const numberWithCommas = (num: number) => {
   if (typeof num === "string") {
     return num;
