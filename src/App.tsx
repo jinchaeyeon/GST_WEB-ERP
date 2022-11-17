@@ -30,6 +30,7 @@ import EA_A2000W from "./routes/EA_A2000W";
 import PR_A9100W from "./routes/PR_A9100W";
 import PR_B3000W from "./routes/PR_B3000W";
 import PR_A3000W from "./routes/PR_A3000W";
+import CT_A0111W from "./routes/CT_A0111W";
 import { isMenuOpendState } from "./store/atoms";
 
 type TGlobalStyle = {
@@ -147,6 +148,8 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
             {/* 전자결재 */}
             <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
+            {/* 원가관리 */}
+            <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
           </PanelBarNavContainer>
         </Switch>
       </Router>

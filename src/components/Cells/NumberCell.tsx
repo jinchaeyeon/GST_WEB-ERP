@@ -46,9 +46,10 @@ const NumberCell = (props: GridCellProps) => {
     </td>
   );
 
-  return render === undefined
-    ? null
-    : render?.call(undefined, defaultRendering, props);
+  // return render === undefined
+  //   ? null
+  //   : render?.call(undefined, defaultRendering, props);
+  return defaultRendering;
 };
 
 export default NumberCell;

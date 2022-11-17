@@ -96,6 +96,81 @@ body {
 
 /**************** 작업일보 ****************/
 
+#ItemCostSheet {
+  width: 100%;
+}
+#ItemCostSheet table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#ItemCostSheet td,
+#ItemCostSheet th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#ItemCostSheet .title_container {
+  display: flex;
+  justify-content: space-between;
+}
+#ItemCostSheet .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 3em;
+  width: 100%;
+}
+#ItemCostSheet table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#ItemCostSheet table.tb_approval th {
+  height: 0.7cm;
+}
+
+#ItemCostSheet table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#ItemCostSheet table.main_tb .center {
+  text-align: center;
+}
+#ItemCostSheet table.main_tb .number {
+  text-align: right;
+}
+
+#ItemCostSheet table.main_tb th,
+#ItemCostSheet table.main_tb td {
+  padding: 0 0.1cm;
+  line-height: 0.6cm;
+  height: 1.2cm;
+  word-wrap: break-word;
+  font-size: 0.85em;
+}
+
+#ItemCostSheet .right {
+  float: right;
+  clear: both;
+}
+#ItemCostSheet .red {
+  background-color: rgb(253, 242, 242);
+}
+#ItemCostSheet .orange {
+  background-color: rgb(255, 233, 220);
+}
+
+/**************** 작업일보 ****************/
+
 #WorkDailyReport table {
   border: 1px solid;
   table-layout: fixed;
