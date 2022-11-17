@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, tokenState } from "../store/atoms";
 import { COM_CODE_DEFAULT_VALUE } from "./CommonString";
+import { detect } from "detect-browser";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
@@ -717,4 +718,55 @@ export const getUnpQuery = (custcd: string) => {
       ) as A 
       ORDER BY itemcd, recdt desc
       `;
+};
+
+type TSessionItemCode =
+  | "user_id"
+  | "user_name"
+  | "orgdiv"
+  | "location"
+  | "position"
+  | "dptcd";
+
+// code값을 인수로 받아 sessionItem value 반환
+export const UseGetValueFromSessionItem = (code: TSessionItemCode) => {
+  const [sessionItem] = useRecoilState(sessionItemState);
+
+  if (sessionItem) {
+    return sessionItem.find((sessionItem) => sessionItem.code === code)!.value;
+  } else {
+    console.log("sessionItem 오류");
+    return "";
+  }
+};
+
+// ip를 세팅 (hook방식)
+export const UseGetIp = (setListData: any) => {
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    let locationIp: any;
+    try {
+      const ipData = await fetch("https://geolocation-db.com/json/");
+      locationIp = await ipData.json();
+    } catch (error) {
+      locationIp = "";
+    }
+
+    setListData(locationIp.IPv4);
+  }, []);
+};
+
+// 클라이언트 정보를 반환 (OS,브라우저명,브라우저정보)
+export const getBrowser = () => {
+  const browser = detect();
+
+  if (browser) {
+    return browser.os + "|" + browser.name + "|" + browser.version;
+  } else {
+    console.log("브라우저 정보 조회 오류");
+    return "";
+  }
 };

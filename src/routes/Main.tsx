@@ -28,6 +28,7 @@ import {
   ApprovalInner,
   ApprovalBox,
   MainTopContainer,
+  TextContainer,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -37,6 +38,9 @@ import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
+  getBrowser,
+  UseGetIp,
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import { TCommonCodeData } from "../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -50,8 +54,14 @@ const Main: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
 
-  const [token] = useRecoilState(tokenState);
-  const userId = token ? token.userId : "";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
+
+  const [ip, setIp] = useState("");
+  const browser = getBrowser();
+  UseGetIp(setIp);
+  const pc = `${ip}|${browser}`;
 
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],
@@ -69,15 +79,15 @@ const Main: React.FC = () => {
     process([], workOrderDataState)
   );
 
-  const defaultData: any[] = [
-    {
-      id: 0,
-      title: "Default Data",
-      start: new Date("2021-01-01T08:30:00.000Z"),
-      end: new Date("2021-01-01T09:00:00.000Z"),
-    },
-  ];
-  const [schedulerDataResult, setSchedulerDataResult] = useState(defaultData);
+  type TSchedulerDataResult = {
+    id: number;
+    title: string;
+    start: Date;
+    end: Date;
+  };
+  const [schedulerDataResult, setSchedulerDataResult] = useState<
+    TSchedulerDataResult[]
+  >([]);
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -93,15 +103,20 @@ const Main: React.FC = () => {
     rtr: 0,
   });
 
+  const [workTimeDataResult, setWorkTimeDataResult] = useState({
+    strtime: "",
+    endtime: "",
+  });
+
   const [noticePgNum, setNoticePgNum] = useState(1);
   const [workOrderPgNum, setWorkOrderPgNum] = useState(1);
 
   const [noticeFilter, setNoticeFilter] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Notice",
-    orgdiv: "01",
-    location: "01",
-    user_id: userId,
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
+    user_id: sessionUserId,
     frdt: "",
     todt: "",
     ref_date: new Date(),
@@ -111,9 +126,9 @@ const Main: React.FC = () => {
   const [workOrderFilter, setWorkOrderFilter] = useState({
     pgSize: PAGE_SIZE,
     work_type: "WorkOrderRequest",
-    orgdiv: "01",
-    location: "01",
-    user_id: userId,
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
+    user_id: sessionUserId,
     frdt: "",
     todt: "",
     ref_date: new Date(),
@@ -122,7 +137,7 @@ const Main: React.FC = () => {
 
   const [schedulerFilter, setSchedulerFilter] = useState({
     work_type: "MyScheduler",
-    user_id: userId,
+    user_id: sessionUserId,
   });
   const noticeParameters: Iparameters = {
     procedureName: "web_sel_default_home",
@@ -162,9 +177,9 @@ const Main: React.FC = () => {
     pageSize: 10,
     parameters: {
       "@p_work_type": "Approval",
-      "@p_orgdiv": "01",
-      "@p_location": "01",
-      "@p_user_id": userId,
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
+      "@p_user_id": sessionUserId,
       "@p_frdt": "",
       "@p_todt": "",
       "@p_ref_date": "",
@@ -178,14 +193,89 @@ const Main: React.FC = () => {
     pageSize: 10,
     parameters: {
       "@p_work_type": schedulerFilter.work_type,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_user_id": schedulerFilter.user_id,
       "@p_frdt": "",
       "@p_todt": "",
       "@p_ref_date": "",
       "@p_ref_key": "N",
     },
+  };
+
+  const workTimeParameters: Iparameters = {
+    procedureName: "P_HM_A1000W_Q",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": "time_card",
+      "@p_service_id": "",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
+      "@p_user_id": sessionUserId,
+      "@p_frdt": "",
+      "@p_todt": "",
+      "@p_dutydt": convertDateToStr(new Date()),
+    },
+  };
+
+  const fetchWorkTime = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", workTimeParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const row = data.tables[0].Rows[0];
+      const rowCount = data.tables[0].RowCount;
+
+      if (rowCount > 0) {
+        setWorkTimeDataResult({
+          strtime: row.start_time,
+          endtime: row.end_time,
+        });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  };
+
+  const fetchWorkTimeSaved = async (workType: "start" | "end") => {
+    let data: any;
+
+    const workTimeParaSaved: Iparameters = {
+      procedureName: "P_HM_A1000W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": workType,
+        "@p_service_id": "",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
+        "@p_user_id": sessionUserId,
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_dutydt": convertDateToStr(new Date()),
+        "@p_id": sessionUserId,
+        "@p_pc": pc,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", workTimeParaSaved);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      fetchWorkTime();
+    } else {
+      alert(data.resultMessage);
+    }
   };
 
   const fetchApproaval = async () => {
@@ -199,7 +289,7 @@ const Main: React.FC = () => {
 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].rowCount;
+      const rowCount = data.tables[0].RowCount;
 
       if (rowCount > 0) {
         setApprovalValueState((prev) => ({
@@ -228,12 +318,13 @@ const Main: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      setNoticeDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0)
+        setNoticeDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
     }
   };
 
@@ -250,12 +341,13 @@ const Main: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      setWorkOrderDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0)
+        setWorkOrderDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
     }
   };
 
@@ -282,6 +374,7 @@ const Main: React.FC = () => {
   };
 
   useEffect(() => {
+    fetchWorkTime();
     fetchApproaval();
     fetchNoticeGrid();
     fetchWorkOrderGrid();
@@ -369,12 +462,6 @@ const Main: React.FC = () => {
     );
   };
 
-  //품목마스터 팝업
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
-  };
-
   const onNoticeSortChange = (e: any) => {
     setNoticeDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -395,37 +482,49 @@ const Main: React.FC = () => {
     <>
       <MainTopContainer>
         <ButtonContainer>
-          <Button
-            icon={"home"}
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
+          <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
             HOMEPAGE
           </Button>
-          <Button
-            icon={"email"}
-            //fillMode="outline"
-            themeColor={"primary"}
-          >
+          <Button icon={"email"} fillMode={"flat"} themeColor={"primary"}>
             E-MAIL
           </Button>
         </ButtonContainer>
-        <>
-          <ApprovalBox>
-            <ApprovalInner>
-              <div>미결</div>
-              <div>{approvalValueState.app}</div>
-            </ApprovalInner>
-            <ApprovalInner>
-              <div>참조</div>
-              <div>{approvalValueState.ref}</div>
-            </ApprovalInner>
-            <ApprovalInner>
-              <div>반려</div>
-              <div>{approvalValueState.rtr}</div>
-            </ApprovalInner>
-          </ApprovalBox>
-        </>
+
+        <ButtonContainer style={{ marginLeft: "auto" }}>
+          <TextContainer>
+            {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
+          </TextContainer>
+          <Button
+            themeColor={"primary"}
+            onClick={() => {
+              fetchWorkTimeSaved("start");
+            }}
+          >
+            출근
+          </Button>
+          <Button
+            themeColor={"primary"}
+            onClick={() => {
+              fetchWorkTimeSaved("end");
+            }}
+          >
+            퇴근
+          </Button>
+        </ButtonContainer>
+        <ApprovalBox>
+          <ApprovalInner>
+            <div>미결</div>
+            <div>{approvalValueState.app}</div>
+          </ApprovalInner>
+          <ApprovalInner>
+            <div>참조</div>
+            <div>{approvalValueState.ref}</div>
+          </ApprovalInner>
+          <ApprovalInner>
+            <div>반려</div>
+            <div>{approvalValueState.rtr}</div>
+          </ApprovalInner>
+        </ApprovalBox>
       </MainTopContainer>
 
       <GridContainerWrap>

@@ -1,9 +1,4 @@
 import styled from "styled-components";
-import {
-  CLIENT_WIDTH,
-  GNV_WIDTH,
-  GRID_MARGIN,
-} from "./components/CommonString";
 
 export const TitleContainer = styled.div`
   display: flex;
@@ -19,7 +14,19 @@ export const TitleContainer = styled.div`
 `;
 
 export const MainTopContainer = styled(TitleContainer)`
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
+  margin-top: 30px;
+`;
+
+export const TextContainer = styled.div`
+  display: flex;
+  border: solid 1px #ff6358;
+  color: #ff6358;
+  border-radius: 50px;
+  width: 180px;
+  line-height: 30px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const Title = styled.h3`
