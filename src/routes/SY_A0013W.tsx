@@ -70,6 +70,7 @@ import { tokenState } from "../store/atoms";
 import { useRecoilState } from "recoil";
 import TopButtons from "../components/TopButtons";
 import GroupWindow from "../components/Windows/SY_A0013W_Window";
+import { bytesToBase64 } from "byte-base64";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -687,8 +688,11 @@ const SY_A0120: React.FC = () => {
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {

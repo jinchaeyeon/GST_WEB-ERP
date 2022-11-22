@@ -5,6 +5,7 @@ import {
 } from "@progress/kendo-react-dropdowns";
 
 import { useApi } from "../../hooks/api";
+import { bytesToBase64 } from "byte-base64";
 
 type TComboBox = {
   name: string;
@@ -39,8 +40,11 @@ const MultiColumnComboBoxWithQuery = ({
     //   (item: any) => item.id === name
     // ).query;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + queryStr,
+      query: convertedQueryStr,
     };
 
     try {

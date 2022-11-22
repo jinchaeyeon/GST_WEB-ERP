@@ -26,6 +26,7 @@ import {
 import moment from "moment";
 import { useApi } from "../hooks/api";
 import { FORM_DATA_INDEX } from "./CommonString";
+import { bytesToBase64 } from "byte-base64";
 
 /*  Form 내에서 사용되는 컴포넌트들을 저장하는 페이지   */
 
@@ -352,8 +353,11 @@ export const CellComboBox = (props: CustomCellProps) => {
   const fetchData = useCallback(async () => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {
@@ -528,7 +532,7 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
   const fetchData = useCallback(async () => {
     let data: any;
     const query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: "sql-query?query=" + encodeURIComponent(queryStr),
     };
     try {
       data = await processApi<any>("query", query);

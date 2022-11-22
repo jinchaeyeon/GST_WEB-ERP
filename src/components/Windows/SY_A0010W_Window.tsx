@@ -70,6 +70,7 @@ import {
 import { CellRender, RowRender } from "../Renderers";
 import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
+import { bytesToBase64 } from "byte-base64";
 
 const requiredField = ["sub_code", "code_name"];
 const numberField = [
@@ -574,8 +575,11 @@ const KendoWindow = ({
     async (queryStr: string, setListData: any) => {
       let data: any;
 
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
       let query = {
-        query: "query?query=" + encodeURIComponent(queryStr),
+        query: convertedQueryStr,
       };
 
       try {

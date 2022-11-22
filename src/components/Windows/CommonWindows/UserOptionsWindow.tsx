@@ -57,6 +57,7 @@ import {
 import UserEffect from "../../UserEffect";
 import { Input } from "@progress/kendo-react-inputs";
 import { userState } from "../../../store/atoms";
+import { bytesToBase64 } from "byte-base64";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -420,8 +421,11 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       pathname +
       "'";
 
-    const query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
     };
 
     try {

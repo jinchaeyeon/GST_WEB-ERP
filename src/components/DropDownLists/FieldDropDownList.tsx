@@ -4,6 +4,7 @@ import { useApi } from "../../hooks/api";
 import { FieldRenderProps } from "@progress/kendo-react-form";
 import { checkIsDDLValid } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
+import { bytesToBase64 } from "byte-base64";
 
 type TDDL = {
   fieldRenderProps: FieldRenderProps;
@@ -30,8 +31,11 @@ const DDL: React.FC<TDDL> = ({ fieldRenderProps, queryStr }: TDDL) => {
   const fetchData = useCallback(async () => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {

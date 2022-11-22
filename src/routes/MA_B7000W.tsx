@@ -58,6 +58,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { gridList } from "../store/columns/MA_B7000W_C";
 import TopButtons from "../components/TopButtons";
+import { bytesToBase64 } from "byte-base64";
 //import {useAuth} from "../../hooks/auth";
 
 const numberField = [
@@ -141,8 +142,12 @@ const MA_B7000: React.FC = () => {
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
     try {
       data = await processApi<any>("query", query);

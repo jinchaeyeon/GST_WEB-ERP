@@ -52,6 +52,7 @@ import DateCell from "../components/Cells/DateCell";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import TopButtons from "../components/TopButtons";
+import { bytesToBase64 } from "byte-base64";
 
 const QC_A0120: React.FC = () => {
   const processApi = useApi();
@@ -123,8 +124,11 @@ const QC_A0120: React.FC = () => {
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {

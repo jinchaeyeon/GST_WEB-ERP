@@ -66,6 +66,7 @@ import { sessionItemState, tokenState } from "../store/atoms";
 import CenterCell from "../components/Cells/CenterCell";
 import { Window } from "@progress/kendo-react-dialogs";
 import WorkDailyReport from "../components/Prints/WorkDailyReport";
+import { bytesToBase64 } from "byte-base64";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -441,8 +442,11 @@ const PR_B3000W: React.FC = () => {
   const fetchItemData = async (queryStr: string) => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {

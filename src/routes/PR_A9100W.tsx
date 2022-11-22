@@ -64,6 +64,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import RequiredHeader from "../components/RequiredHeader";
 import { useRecoilState } from "recoil";
 import { sessionItemState, tokenState } from "../store/atoms";
+import { bytesToBase64 } from "byte-base64";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -471,8 +472,11 @@ const PR_A9100W: React.FC = () => {
   const fetchItemData = async (queryStr: string) => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {

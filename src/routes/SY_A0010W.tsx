@@ -53,6 +53,7 @@ import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox"
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import TopButtons from "../components/TopButtons";
+import { bytesToBase64 } from "byte-base64";
 
 const numberField = [
   "sort_seq",
@@ -129,8 +130,11 @@ const Page: React.FC = () => {
     async (queryStr: string, setListData: any) => {
       let data: any;
 
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
       let query = {
-        query: "query?query=" + encodeURIComponent(queryStr),
+        query: convertedQueryStr,
       };
 
       try {

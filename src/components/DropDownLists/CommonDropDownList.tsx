@@ -7,6 +7,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
 import { TCommonCode } from "../../store/types";
+import { bytesToBase64 } from "byte-base64";
 
 type TCommonDropDownList = {
   name: string;
@@ -31,10 +32,12 @@ const CommonDropDownList = ({
   const fetchData = useCallback(async () => {
     let data: any;
 
-    let query = {
-      query: "query?query=" + queryStr,
-    };
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
+    let query = {
+      query: convertedQueryStr,
+    };
     try {
       data = await processApi<any>("query", query);
     } catch (error) {

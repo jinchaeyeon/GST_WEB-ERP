@@ -5,6 +5,7 @@ import { useApi } from "../hooks/api";
 import { sessionItemState, tokenState } from "../store/atoms";
 import { COM_CODE_DEFAULT_VALUE } from "./CommonString";
 import { detect } from "detect-browser";
+import { bytesToBase64 } from "byte-base64";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
@@ -148,8 +149,11 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
   const fetchData = useCallback(async () => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {

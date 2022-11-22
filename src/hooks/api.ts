@@ -6,10 +6,10 @@ import cachios from "cachios";
 let BASE_URL = process.env.REACT_APP_API_URL;
 
 const domain: any = {
-  query: { action: "get", url: "api/sql/:query" },
-  procedure: { action: "post", url: "api/sql/procedure" },
-  "platform-query": { action: "get", url: "api/sql/:query" },
-  "platform-procedure": { action: "post", url: "api/sql/procedure" },
+  query: { action: "post", url: "api/data/sql-query" },
+  procedure: { action: "post", url: "api/data/sql-procedure" },
+  "platform-query": { action: "post", url: "api/data/sql-query" },
+  "platform-procedure": { action: "post", url: "api/data/sql-procedure" },
   "custom-option": { action: "get", url: "api/data/:formId/custom-option" },
   messages: { action: "get", url: "api/data/:formId/messages" },
   "design-info": { action: "get", url: "api/data/:formId/design-info" },
@@ -82,6 +82,7 @@ export const useApi = () => {
         headers = {
           "Content-Type": "multipart/form-data",
           responseType: "stream",
+          accept: "*/*",
         };
       if (name === "file-list")
         headers = { "Content-Type": "multipart/form-data", accept: "*/*" };

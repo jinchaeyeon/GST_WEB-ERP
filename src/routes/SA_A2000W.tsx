@@ -54,6 +54,7 @@ import {
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
+import { bytesToBase64 } from "byte-base64";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
@@ -186,8 +187,11 @@ const SA_B2000: React.FC = () => {
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {
@@ -264,7 +268,7 @@ const SA_B2000: React.FC = () => {
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
 
-  const [workType, setWorkType] = useState("");
+  const [workType, setWorkType] = useState<"N" | "U">("N");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [isCopy, setIsCopy] = useState(false);
 

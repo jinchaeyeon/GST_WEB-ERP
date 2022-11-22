@@ -74,6 +74,7 @@ import { Window } from "@progress/kendo-react-dialogs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { tokenState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
+import { bytesToBase64 } from "byte-base64";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
@@ -180,8 +181,11 @@ const EA_A2000: React.FC = () => {
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
 
     try {

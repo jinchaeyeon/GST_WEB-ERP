@@ -70,6 +70,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import { tokenState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
+import { bytesToBase64 } from "byte-base64";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "ordkey";
@@ -1663,8 +1664,12 @@ const PR_A1100W: React.FC = () => {
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
     let query = {
-      query: "query?query=" + encodeURIComponent(queryStr),
+      query: convertedQueryStr,
     };
     try {
       data = await processApi<any>("query", query);
