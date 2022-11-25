@@ -39,15 +39,15 @@ import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import { bytesToBase64 } from "byte-base64";
 
 type IKendoWindow = {
-  getVisible(t: boolean): void;
-  getData(data: object): void;
+  setVisible(t: boolean): void;
+  setData(data: object): void;
   workType: string;
   para?: Iparameters;
 };
 
 const DATA_ITEM_KEY = "custcd";
 
-const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
+const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -147,7 +147,7 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
   const processApi = useApi();
@@ -235,7 +235,7 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
   const onRowDoubleClick = (props: any) => {
     // 부모로 데이터 전달, 창 닫기
     const rowData = props.dataItem;
-    getData(rowData);
+    setData(rowData);
     onClose();
   };
 
@@ -245,7 +245,7 @@ const KendoWindow = ({ getVisible, workType, getData, para }: IKendoWindow) => {
     );
 
     // 부모로 데이터 전달, 창 닫기
-    getData(rowData);
+    setData(rowData);
     onClose();
   };
 

@@ -783,7 +783,7 @@ const SA_B2000: React.FC = () => {
   }
 
   //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const getCustData = (data: ICustData) => {
+  const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
       ...prev,
       custcd: data.custcd,
@@ -1285,10 +1285,9 @@ const SA_B2000: React.FC = () => {
       )}
       {custWindowVisible && (
         <CustomersWindow
-          getVisible={setCustWindowVisible}
+          setVisible={setCustWindowVisible}
           workType={workType}
-          getData={getCustData}
-          para={undefined}
+          setData={setCustData}
         />
       )}
       {itemWindowVisible && (

@@ -36,6 +36,8 @@ import {
   ChartSeriesLabels,
   ChartTitle,
   ChartTooltip,
+  ChartValueAxis,
+  ChartValueAxisItem,
 } from "@progress/kendo-react-charts";
 import "hammerjs";
 import { useApi } from "../hooks/api";
@@ -51,13 +53,14 @@ import {
   UseDesignInfo,
   UsePermissions,
 } from "../components/CommonFunction";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { IItemData } from "../hooks/interfaces";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import { ICustData } from "../hooks/interfaces";
 import {
   CLIENT_WIDTH,
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
@@ -82,10 +85,9 @@ const numberField: string[] = [
   "qty12",
 ];
 const dateField = ["recdt", "time"];
+const DATA_ITEM_KEY = "custcd";
 
 const SA_B3000W: React.FC = () => {
-  const DATA_ITEM_KEY = "custcd";
-  const SELECTED_FIELD = "selected";
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
@@ -151,9 +153,19 @@ const SA_B3000W: React.FC = () => {
     onRefreshClick();
     setTabSelected(e.selected);
     resetGrid();
-
-    search();
   };
+
+  //그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (gridDataResult.total > 0) {
+      const firstRowData = gridDataResult.data[0];
+      setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+    }
+  }, [gridDataResult]);
+
+  useEffect(() => {
+    search();
+  }, [tabSelected]);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -379,16 +391,16 @@ const SA_B3000W: React.FC = () => {
     );
   };
 
-  //품목마스터 팝업
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
+  //업체마스터 팝업
+  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const onCustWndClick = () => {
+    setCustWindowVisible(true);
   };
-  const setItemData = (data: IItemData) => {
+  const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
       ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
+      custcd: data.custcd,
+      custnm: data.custnm,
     }));
   };
 
@@ -399,7 +411,7 @@ const SA_B3000W: React.FC = () => {
   const labelContent = (props: any) => {
     let formatedNumber = Number(props.percentage).toLocaleString(undefined, {
       style: "percent",
-      //minimumFractionDigits: 2, //소수점
+      minimumFractionDigits: 3, //소수점
     });
     return `${props.dataItem.mm} : ${formatedNumber}`;
   };
@@ -410,8 +422,6 @@ const SA_B3000W: React.FC = () => {
   });
 
   const onChartSeriesClick = (props: any) => {
-    console.log("props");
-    console.log(props);
     const { item, argument, gubun } = props.dataItem;
 
     setSelectedChartData({
@@ -520,7 +530,7 @@ const SA_B3000W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onItemWndClick}
+                    onClick={onCustWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -582,6 +592,14 @@ const SA_B3000W: React.FC = () => {
           <GridContainerWrap flexDirection="column">
             <GridContainer>
               <Chart>
+                <ChartValueAxis>
+                  <ChartValueAxisItem
+                    labels={{
+                      visible: true,
+                      content: (e) => numberWithCommas(e.value) + "",
+                    }}
+                  />
+                </ChartValueAxis>
                 {/* <ChartTitle text="Units sold" /> */}
                 <ChartCategoryAxis>
                   <ChartCategoryAxisItem
@@ -592,7 +610,10 @@ const SA_B3000W: React.FC = () => {
                 </ChartCategoryAxis>
                 <ChartSeries>
                   <ChartSeriesItem
-                    labels={{ visible: true }}
+                    labels={{
+                      visible: true,
+                      content: (e) => numberWithCommas(e.value) + "",
+                    }}
                     type="bar"
                     // gap={2}
                     // spacing={0.25}
@@ -760,6 +781,14 @@ const SA_B3000W: React.FC = () => {
               >
                 <Chart>
                   {/* <ChartTitle text="Units sold" /> */}
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
                   <ChartCategoryAxis>
                     <ChartCategoryAxisItem
                       categories={chartDataResult.map((item: any) => item.mm)}
@@ -767,12 +796,18 @@ const SA_B3000W: React.FC = () => {
                   </ChartCategoryAxis>
                   <ChartSeries>
                     <ChartSeriesItem
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
                       type="line"
                       data={chartDataResult.map((item: any) => item.qty)}
                     />
                     <ChartSeriesItem
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
                       type="bar"
                       // gap={2}
                       // spacing={0.25}
@@ -791,7 +826,11 @@ const SA_B3000W: React.FC = () => {
                       data={chartDataResult}
                       field="amt"
                       categoryField="mm"
-                      labels={{ visible: true, content: labelContent }}
+                      labels={{
+                        visible: true,
+                        content: (e) =>
+                          e.percentage !== 0 ? labelContent(e) : "",
+                      }}
                     />
                   </ChartSeries>
                 </Chart>
@@ -942,6 +981,14 @@ const SA_B3000W: React.FC = () => {
               >
                 <Chart>
                   {/* <ChartTitle text="Units sold" /> */}
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
                   <ChartCategoryAxis>
                     <ChartCategoryAxisItem
                       categories={chartDataResult
@@ -954,7 +1001,10 @@ const SA_B3000W: React.FC = () => {
                   <ChartSeries>
                     <ChartSeriesItem
                       name="당기수량"
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
                       type="line"
                       data={chartDataResult
                         .filter((item: any) => item.series === "당기")
@@ -962,7 +1012,10 @@ const SA_B3000W: React.FC = () => {
                     />
                     <ChartSeriesItem
                       name="전기수량"
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
                       type="line"
                       data={chartDataResult
                         .filter((item: any) => item.series === "전기")
@@ -970,7 +1023,10 @@ const SA_B3000W: React.FC = () => {
                     />
                     <ChartSeriesItem
                       name="당기"
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
                       type="bar"
                       // gap={2}
                       // spacing={0.25}
@@ -980,7 +1036,10 @@ const SA_B3000W: React.FC = () => {
                     />
                     <ChartSeriesItem
                       name="전기"
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
                       type="bar"
                       // gap={2}
                       // spacing={0.25}"
@@ -1174,6 +1233,14 @@ const SA_B3000W: React.FC = () => {
               >
                 <Chart>
                   {/* <ChartTitle text="Units sold" /> */}
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
                   <ChartCategoryAxis>
                     <ChartCategoryAxisItem
                       categories={[
@@ -1186,7 +1253,13 @@ const SA_B3000W: React.FC = () => {
                   <ChartSeries>
                     <ChartSeriesItem
                       name="(1-6)분기"
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) =>
+                          typeof e.value === "number"
+                            ? numberWithCommas(e.value) + ""
+                            : e.value,
+                      }}
                       type="bar"
                       data={chartDataResult
                         .filter((item: any) => item.series === "(1-6)분기")
@@ -1196,7 +1269,13 @@ const SA_B3000W: React.FC = () => {
                     />
                     <ChartSeriesItem
                       name="(7-12)분기"
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) =>
+                          typeof e.value === "number"
+                            ? numberWithCommas(e.value) + ""
+                            : e.value,
+                      }}
                       type="bar"
                       data={chartDataResult
                         .filter((item: any) => item.series === "(7-12)분기")
@@ -1206,7 +1285,13 @@ const SA_B3000W: React.FC = () => {
                     />
                     <ChartSeriesItem
                       name="합계"
-                      labels={{ visible: true }}
+                      labels={{
+                        visible: true,
+                        content: (e) =>
+                          typeof e.value === "number"
+                            ? numberWithCommas(e.value) + ""
+                            : e.value,
+                      }}
                       type="bar"
                       // gap={2}
                       // spacing={0.25}
@@ -1268,11 +1353,11 @@ const SA_B3000W: React.FC = () => {
         </TabStripTab>
       </TabStrip>
 
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
+      {custWindowVisible && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible}
           workType={"FILTER"}
-          setData={setItemData}
+          setData={setCustData}
         />
       )}
       {/* 컨트롤 네임 불러오기 용 */}

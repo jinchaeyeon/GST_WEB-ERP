@@ -1670,7 +1670,7 @@ const KendoWindow = ({
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
 
-  const getCustData = (data: ICustData) => {
+  const setCustData = (data: ICustData) => {
     if (custType === "CUST") {
       setInitialVal((prev) => {
         return {
@@ -1848,10 +1848,9 @@ const KendoWindow = ({
 
         {custWindowVisible && (
           <CustomersWindow
-            getVisible={setCustWindowVisible}
+            setVisible={setCustWindowVisible}
             workType={custType} //신규 : N, 수정 : U
-            getData={getCustData}
-            para={undefined}
+            setData={setCustData}
           />
         )}
       </Window>
