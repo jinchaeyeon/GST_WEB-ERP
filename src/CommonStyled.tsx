@@ -5,7 +5,7 @@ export const TitleContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 5px 0;
-  height: 40px;
+  min-height: 40px;
   margin-top: 5px;
 
   .iot-title {
@@ -14,8 +14,27 @@ export const TitleContainer = styled.div`
 `;
 
 export const MainTopContainer = styled(TitleContainer)`
-  /* justify-content: flex-end; */
-  margin-top: 30px;
+  margin-top: 10px;
+
+  @media (max-width: 768px) {
+    margin-top: 0;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+export const MainWorkStartEndContainer = styled.div`
+  display: flex;
+  margin-left: auto;
+
+  input,
+  button {
+    margin-left: 5px;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 export const TextContainer = styled.div`
@@ -385,6 +404,12 @@ export const ApprovalBox = styled.div`
   }
   > div:nth-child(3) > div:last-child {
     background-color: #ff8549;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 10px;
+    margin-left: 0;
+    width: 100%;
   }
 `;
 

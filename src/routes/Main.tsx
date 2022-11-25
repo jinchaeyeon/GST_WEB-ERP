@@ -29,6 +29,7 @@ import {
   ApprovalBox,
   MainTopContainer,
   TextContainer,
+  MainWorkStartEndContainer,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -490,7 +491,7 @@ const Main: React.FC = () => {
           </Button>
         </ButtonContainer>
 
-        <ButtonContainer style={{ marginLeft: "auto" }}>
+        <MainWorkStartEndContainer>
           <TextContainer>
             {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
           </TextContainer>
@@ -510,7 +511,7 @@ const Main: React.FC = () => {
           >
             퇴근
           </Button>
-        </ButtonContainer>
+        </MainWorkStartEndContainer>
         <ApprovalBox>
           <ApprovalInner>
             <div>미결</div>
