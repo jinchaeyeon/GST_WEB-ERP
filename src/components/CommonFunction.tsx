@@ -207,7 +207,13 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
   //const [bizComponentData, setBizComponentData] = React.useState(null);
   const processApi = useApi();
   const [sessionItem] = useRecoilState(sessionItemState);
-
+  let userId = "";
+  const userIdObj = sessionItem.find(
+    (sessionItem) => sessionItem.code === "user_id"
+  );
+  if (userIdObj) {
+    userId = userIdObj.value;
+  }
   React.useEffect(() => {
     fetchCustomOptionData();
   }, []);
@@ -218,6 +224,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
     try {
       data = await processApi<any>("custom-option", {
         formId: pathname.replace("/", ""),
+        para: "custom-option?userId=" + userId,
       });
     } catch (error) {
       data = null;
