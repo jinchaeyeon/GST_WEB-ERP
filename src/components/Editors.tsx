@@ -44,12 +44,17 @@ const DisplayDDLValue = (fieldRenderProps: FieldRenderProps) => {
 const DisplayComboBoxValue = (fieldRenderProps: FieldRenderProps) => {
   const { valueField, textField, listData, value } = fieldRenderProps;
 
+  const valueObj =
+    typeof value === "string"
+      ? listData.find((item: any) => item[valueField] === value)
+      : value;
+
   return (
     <>
       {value && listData.length > 0
-        ? (typeof value === "string"
-            ? listData.find((item: any) => item[valueField] === value)
-            : value)[textField]
+        ? valueObj
+          ? valueObj[textField]
+          : ""
         : ""}
     </>
   );
@@ -67,23 +72,16 @@ const TextInputWithValidation = (fieldRenderProps: FieldRenderProps) => {
     className,
     ...others
   } = fieldRenderProps;
-  //const { getItemcd } = React.useContext(FormGridEditContext);
-
-  const onInputBlur = () => {
-    //if (name?.includes("itemcd")) getItemcd(value);
-  };
 
   const required = className?.includes("required");
   return (
     <div>
       <Input
-        onBlur={onInputBlur}
         value={value}
         valid={required && !value ? false : true}
         className={className ?? ""}
         {...others}
       />
-      {/* {visited && validationMessage && <Error>{validationMessage}</Error>} */}
     </div>
   );
 };
@@ -224,8 +222,15 @@ export const NumberCell = (props: GridCellProps) => {
 
 //Grid Cell에서 사용되는 Name Feild
 export const NameCell = (props: GridCellProps) => {
-  const { field, dataItem, className, render } = props;
-  const isInEdit = field === dataItem.inEdit;
+  const { field, dataItem, className = "", render } = props;
+  let isInEdit = field === dataItem.inEdit;
+  if (className.includes("read-only")) {
+    isInEdit = false;
+  } else if (className.includes("editable-new-only")) {
+    if (dataItem["rowstatus"] !== "N") {
+      isInEdit = false;
+    }
+  }
   const parentField = dataItem.parentField;
 
   let defaultRendering = (
@@ -321,9 +326,11 @@ export const CellDropDownList = (props: GridCellProps) => {
 };
 
 interface CustomCellProps extends GridCellProps {
-  bizComponent: any;
+  bizComponent?: any;
   valueField?: string;
   textField?: string;
+  data?: any[];
+  columns?: any[];
 }
 
 export const CellComboBox = (props: CustomCellProps) => {
@@ -335,6 +342,8 @@ export const CellComboBox = (props: CustomCellProps) => {
     bizComponent,
     valueField = "sub_code",
     textField = "code_name",
+    data,
+    columns,
   } = props;
 
   const processApi = useApi();
@@ -351,6 +360,7 @@ export const CellComboBox = (props: CustomCellProps) => {
   }, []);
 
   const fetchData = useCallback(async () => {
+    if (queryStr === "") return false;
     let data: any;
 
     const bytes = require("utf8-bytes");
@@ -377,10 +387,10 @@ export const CellComboBox = (props: CustomCellProps) => {
       <Field
         name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
         component={isInEdit ? ComboBoxWithValidation : DisplayComboBoxValue}
-        listData={listData}
+        listData={data ? data : listData}
         textField={textField}
         valueField={valueField}
-        columns={bizComponentItems}
+        columns={columns ? columns : bizComponentItems}
         className={className ?? ""}
       />
     </td>
@@ -531,9 +541,14 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
 
   const fetchData = useCallback(async () => {
     let data: any;
-    const query = {
-      query: "sql-query?query=" + encodeURIComponent(queryStr),
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
     };
+
     try {
       data = await processApi<any>("query", query);
     } catch (error) {

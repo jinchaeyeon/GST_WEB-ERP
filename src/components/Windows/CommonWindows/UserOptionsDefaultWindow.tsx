@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -10,11 +10,11 @@ import {
   getSelectedState,
   GridHeaderSelectionChangeEvent,
   GridHeaderCellProps,
+  GridCellProps,
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
-
 import {
   BottomContainer,
   ButtonContainer,
@@ -30,40 +30,58 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-import { NumberCell, NameCell, FormInput } from "../../Editors";
+import {
+  NumberCell,
+  NameCell,
+  FormComboBox,
+  CellComboBox,
+  CellCheckBox,
+} from "../../Editors";
 import { Iparameters } from "../../../store/types";
 import {
   arrayLengthValidator,
   chkScrollHandler,
+  getBrowser,
+  getCodeFromValue,
+  getYn,
+  UseGetIp,
   validator,
 } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { PAGE_SIZE } from "../../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  FORM_DATA_INDEX,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../../../store/atoms";
+import CheckBoxCell from "../../Cells/CheckBoxCell";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =
-  React.createContext<{
+  createContext<{
     editIndex: number | undefined;
     parentField: string;
   }>({} as any);
 
 let deletedRows: object[] = [];
 
-const FORM_DATA_INDEX = "formDataIndex";
 const DATA_ITEM_KEY = "default_id ";
-
 const idGetter = getter(FORM_DATA_INDEX);
-const SELECTED_FIELD: string = "selected";
 
+type TPara = {
+  option_id: string;
+  option_name: string;
+};
 type TKendoWindow = {
-  getVisible(t: boolean): void;
-  workType: string;
+  setVisible(t: boolean): void;
+  workType: "N" | "U";
+  para: TPara;
   reloadData: () => void;
-  option_id?: string;
 };
 
 type TDetailData = {
@@ -85,6 +103,94 @@ type TDetailData = {
   user_editable: string[];
 };
 
+const valueTypeData = [
+  { sub_code: "Text", code_name: "Text" },
+  { sub_code: "Radio", code_name: "Radio" },
+  { sub_code: "Datetime", code_name: "Datetime" },
+  { sub_code: "Lookup", code_name: "Lookup" },
+];
+
+const valueTypeColumn = [
+  {
+    sortOrder: 1,
+    fieldName: "sub_code",
+    caption: "코드",
+    columnWidth: 0,
+    dataAlignment: "LEFT",
+  },
+  {
+    sortOrder: 1,
+    fieldName: "code_name",
+    caption: "코드",
+    columnWidth: 100,
+    dataAlignment: "LEFT",
+  },
+];
+
+const sessionItemData = [
+  { sub_code: "UserId", code_name: "사용자ID" },
+  { sub_code: "UserName", code_name: "사용자이름" },
+  { sub_code: "orgdiv", code_name: "회사구분" },
+  { sub_code: "location", code_name: "사업장" },
+  { sub_code: "position", code_name: "사업부" },
+  { sub_code: "dptcd", code_name: "부서코드" },
+  { sub_code: "postcd", code_name: "직급코드" },
+];
+
+const sessionItemTypeColumn = [
+  {
+    sortOrder: 1,
+    fieldName: "sub_code",
+    caption: "코드",
+    columnWidth: 100,
+    dataAlignment: "LEFT",
+  },
+  {
+    sortOrder: 2,
+    fieldName: "code_name",
+    caption: "코드명",
+    columnWidth: 100,
+    dataAlignment: "LEFT",
+  },
+];
+
+const typeData = [
+  { sub_code: "QUERY", code_name: "조회조건" },
+  { sub_code: "NEW", code_name: "신규" },
+];
+
+const typeColumn = [
+  {
+    sortOrder: 1,
+    fieldName: "sub_code",
+    caption: "타입ID",
+    columnWidth: 100,
+    dataAlignment: "LEFT",
+  },
+  {
+    sortOrder: 2,
+    fieldName: "code_name",
+    caption: "설명",
+    columnWidth: 100,
+    dataAlignment: "LEFT",
+  },
+];
+
+const valueTypeComboBoxCell = (props: GridCellProps) => {
+  return (
+    <CellComboBox data={valueTypeData} columns={valueTypeColumn} {...props} />
+  );
+};
+const sessionItemComboBoxCell = (props: GridCellProps) => {
+  return (
+    <CellComboBox
+      data={sessionItemData}
+      columns={sessionItemTypeColumn}
+      {...props}
+    />
+  );
+};
+
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const { validationMessage, visited, name, dataItemKey } =
@@ -100,7 +206,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         value: {
           srcPgName: "USER_OPTIONS_DEFAULT_WINDOW",
           rowstatus: "N",
-          value_type: "Datetime",
+          value_type: COM_CODE_DEFAULT_VALUE,
+          use_session: "N",
+          user_editable: "Y",
           add_year: 0,
           add_month: 0,
           add_day: 0,
@@ -156,8 +264,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
       setDetailPgNum((prev) => prev + 1);
   };
-
-  const EDIT_FIELD = "inEdit";
 
   const enterEdit = (dataItem: any, field: string | undefined) => {
     fieldArrayRenderProps.onReplace({
@@ -313,7 +419,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             </Button>
           </GridToolbar>
 
-          <GridColumn
+          {/* <GridColumn
             field={SELECTED_FIELD}
             width="45px"
             headerSelectionValue={
@@ -321,7 +427,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
                 (item: any) => !selectedState[idGetter(item)]
               ) === -1
             }
-          />
+          /> */}
           <GridColumn field="rowstatus" title=" " width="40px" />
           <GridColumn
             field="default_id"
@@ -329,7 +435,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             width="130px"
             cell={NameCell}
             headerCell={RequiredHeader}
-            className="required"
+            className="required editable-new-only"
           />
           <GridColumn
             field="caption"
@@ -341,7 +447,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="value_type"
             title="VALUE타입"
             width="120px"
-            cell={NameCell} //CellDropDownList
+            cell={valueTypeComboBoxCell}
             headerCell={RequiredHeader}
             className="required"
           />
@@ -367,13 +473,13 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="session_item"
             title="세션 아이템"
             width="170px"
-            cell={NameCell}
+            cell={sessionItemComboBoxCell}
           />
           <GridColumn
             field="use_session"
             title="세션 사용유무"
-            width="170px"
-            cell={NameCell}
+            width="120px"
+            cell={CellCheckBox}
           />
           <GridColumn
             field="add_year"
@@ -397,7 +503,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="user_editable"
             title="사용자 수정 가능 여부"
             width="180px"
-            cell={NameCell}
+            cell={CellCheckBox}
           />
         </Grid>
       </USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider>
@@ -405,11 +511,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 };
 const KendoWindow = ({
-  getVisible,
+  setVisible,
   workType,
+  para,
   reloadData,
-  option_id,
 }: TKendoWindow) => {
+  const { option_id, option_name } = para;
   const pathname: string = window.location.pathname.replace("/", "");
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -431,7 +538,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
   //수정 없이 submit 가능하도록 임의 value를 change 시켜줌
@@ -464,20 +571,27 @@ const KendoWindow = ({
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "web_sel_default_management",
-    pageNumber: 1,
-    pageSize: 50,
+    procedureName: "sel_custom_option",
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
-      "@p_work_type": "DETAIL",
+      "@p_work_type": "detail",
       "@p_form_id": pathname,
-      "@p_lang_id": "",
-      "@p_process_type": workType === "U" ? option_id : "",
-      "@p_message": "",
+      "@p_type": "Default",
+      "@p_option_id": workType === "U" ? option_id : "",
+      "@p_option_name": "",
+      "@p_remarks": "",
+      "@p_company_code": "",
     },
   };
 
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
+
+  const [ip, setIp] = useState("");
+  const browser = getBrowser();
+  UseGetIp(setIp);
+  const pc = `${ip}|${browser}`;
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
@@ -509,14 +623,14 @@ const KendoWindow = ({
     width: "",
     fixed: "",
     id: userId,
-    pc: "",
+    pc: pc,
   });
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
     procedureName: "sav_custom_option",
-    pageNumber: 1,
-    pageSize: 10,
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
       "@p_work_type": paraData.work_type,
       "@p_form_id": paraData.form_id,
@@ -632,7 +746,7 @@ const KendoWindow = ({
         fetchMain();
         reloadData();
       } else {
-        getVisible(false);
+        setVisible(false);
         reloadData();
       }
 
@@ -645,12 +759,8 @@ const KendoWindow = ({
   };
 
   const handleSubmit = (dataItem: { [name: string]: any }) => {
-    //alert(JSON.stringify(dataItem));
-
     let valid = true;
 
-    console.log("dataItem");
-    console.log(dataItem);
     //검증
     try {
       dataItem.orderDetails.forEach((item: any) => {
@@ -660,6 +770,12 @@ const KendoWindow = ({
         if (!item.value_type) {
           throw "VALUE타입을 선택하세요.";
         }
+        if (
+          (item.value_type === "Radio" || item.value_type === "Lookup") &&
+          (item.bc_id === "" || item.bc_id === null || item.bc_id === undefined)
+        ) {
+          throw "비즈니스 컴포넌트 ID를 입력해주세요";
+        }
       });
     } catch (e) {
       alert(e);
@@ -668,11 +784,10 @@ const KendoWindow = ({
 
     if (!valid) return false;
 
-    const { option_id, option_name, orderDetails } = dataItem;
+    const { option_id, orderDetails } = dataItem;
 
     let detailArr: TDetailData = {
       row_status: [],
-
       default_id: [],
       caption: [],
       word_id: [],
@@ -694,17 +809,17 @@ const KendoWindow = ({
       if (!item.rowstatus) return;
       const {
         rowstatus,
-        default_id, // field_name
+        default_id,
         caption,
         word_id,
-        value_type, //
-        value_code, //
-        value, //
+        value_type,
+        value_code,
+        value,
         bc_id,
         where_query,
-        add_year, //
-        add_month, //
-        add_day, //
+        add_year,
+        add_month,
+        add_day,
         session_item,
         use_session,
         user_editable,
@@ -715,7 +830,7 @@ const KendoWindow = ({
       detailArr.caption.push(caption);
       detailArr.word_id.push(word_id);
       detailArr.sort_order.push(String(idx));
-      detailArr.value_type.push(value_type);
+      detailArr.value_type.push(getCodeFromValue(value_type));
       detailArr.value_code.push(value_code);
       detailArr.value.push(value);
       detailArr.bc_id.push(bc_id);
@@ -723,24 +838,24 @@ const KendoWindow = ({
       detailArr.add_year.push(add_year);
       detailArr.add_month.push(add_month);
       detailArr.add_day.push(add_day);
-      detailArr.session_item.push(session_item);
-      detailArr.use_session.push(use_session);
-      detailArr.user_editable.push(user_editable);
+      detailArr.session_item.push(getCodeFromValue(session_item));
+      detailArr.use_session.push(getYn(use_session));
+      detailArr.user_editable.push(getYn(user_editable));
     });
 
     deletedRows.forEach((item: any, idx: number) => {
       const {
-        default_id, // field_name
+        default_id,
         caption,
         word_id,
-        value_type, //
-        value_code, //
-        value, //
+        value_type,
+        value_code,
+        value,
         bc_id,
         where_query,
-        add_year, //
-        add_month, //
-        add_day, //
+        add_year,
+        add_month,
+        add_day,
         session_item,
         use_session,
         user_editable,
@@ -751,7 +866,7 @@ const KendoWindow = ({
       detailArr.caption.push(caption);
       detailArr.word_id.push(word_id);
       detailArr.sort_order.push(String(idx));
-      detailArr.value_type.push(value_type);
+      detailArr.value_type.push(getCodeFromValue(value_type));
       detailArr.value_code.push(value_code);
       detailArr.value.push(value);
       detailArr.bc_id.push(bc_id);
@@ -759,18 +874,15 @@ const KendoWindow = ({
       detailArr.add_year.push(add_year);
       detailArr.add_month.push(add_month);
       detailArr.add_day.push(add_day);
-      detailArr.session_item.push(session_item);
-      detailArr.use_session.push(use_session);
-      detailArr.user_editable.push(user_editable);
+      detailArr.session_item.push(getCodeFromValue(session_item));
+      detailArr.use_session.push(getYn(use_session));
+      detailArr.user_editable.push(getYn(user_editable));
     });
-
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-
-      option_id,
-      option_name,
-
+      option_id: getCodeFromValue(option_id),
+      option_name: getCodeFromValue(option_id, "code_name"),
       row_status: detailArr.row_status.join("|"),
       default_id: detailArr.default_id.join("|"),
       caption: detailArr.caption.join("|"),
@@ -808,9 +920,9 @@ const KendoWindow = ({
         key={formKey}
         initialValues={{
           rowstatus: "",
-          option_id: initialVal.option_id,
-          option_name: initialVal.option_name,
-          orderDetails: detailDataResult.data, //detailDataResult.data,
+          option_id: workType === "N" ? "" : option_id,
+          option_name: workType === "N" ? "" : option_name,
+          orderDetails: detailDataResult.data,
         }}
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
@@ -819,7 +931,7 @@ const KendoWindow = ({
                 id="valueChanged"
                 style={{ display: "none" }}
                 onClick={(e) => {
-                  e.preventDefault(); // Changing desired field value
+                  e.preventDefault();
                   formRenderProps.onChange("valueChanged", {
                     value: "1",
                   });
@@ -827,19 +939,21 @@ const KendoWindow = ({
               ></button>
               <FieldWrap fieldWidth="25%">
                 <Field
-                  label={"타입ID"}
+                  label={"타입"}
                   name={"option_id"}
-                  component={FormInput}
+                  component={FormComboBox}
                   validator={validator}
-                  className="required"
+                  className={workType === "U" ? "readonly" : "required"}
+                  data={typeData}
+                  columns={typeColumn}
                 />
-                <Field
+                {/* <Field
                   label={"설명"}
                   name={"option_name"}
                   component={FormInput}
                   validator={validator}
                   className="required"
-                />
+                /> */}
               </FieldWrap>
             </fieldset>
             <FieldArray
@@ -854,17 +968,6 @@ const KendoWindow = ({
                 <Button type={"submit"} themeColor={"primary"} icon="save">
                   저장
                 </Button>
-
-                {/* <Button
-                  onClick={() => (workType = "DELETE")}
-                  type={"submit"}
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  icon="delete"
-                  //disabled={!formRenderProps.allowSubmit}
-                >
-                  삭제
-                </Button> */}
               </ButtonContainer>
             </BottomContainer>
           </FormElement>

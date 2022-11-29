@@ -24,6 +24,7 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
     id,
     valid,
     columns,
+    onChange,
     ...others
   } = fieldRenderProps;
 
@@ -35,6 +36,7 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
   newColumns = newColumns.filter((column: any) => column.width !== 0);
 
   const required = className?.includes("required");
+  const readonly = className?.includes("readonly");
   let isValid = valid;
   if (required) {
     const comparisonValue = { [valueField]: "", [textField]: "" };
@@ -54,6 +56,7 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
       className={className}
       valid={isValid}
       id={id}
+      onChange={readonly ? undefined : onChange}
       {...others}
     />
   );

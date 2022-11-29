@@ -27,7 +27,12 @@ import {
   GridTitleContainer,
 } from "../../../CommonStyled";
 import { Iparameters, TcontrolObj } from "../../../store/types";
-import { chkScrollHandler, getGridItemChangedData } from "../../CommonFunction";
+import {
+  chkScrollHandler,
+  getGridItemChangedData,
+  getYn,
+  UseGetValueFromSessionItem,
+} from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 
 import ColumnWindow from "./UserOptionsColumnWindow";
@@ -55,9 +60,17 @@ import {
   treeToFlat,
 } from "@progress/kendo-react-treelist";
 import UserEffect from "../../UserEffect";
-import { Input } from "@progress/kendo-react-inputs";
-import { userState } from "../../../store/atoms";
+import {
+  Checkbox,
+  CheckboxChangeEvent,
+  Input,
+  InputChangeEvent,
+  NumericTextBox,
+  NumericTextBoxChangeEvent,
+} from "@progress/kendo-react-inputs";
+import { tokenState, userState } from "../../../store/atoms";
 import { bytesToBase64 } from "byte-base64";
+import { useRecoilValue } from "recoil";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -105,27 +118,167 @@ const ControlColumns: TreeListColumnProps[] = [
 
 const subItemsField: string = "children";
 
-// const DraggableGridRowRender = (properties: any) => {
-//   const {
-//     row = "",
-//     props = "",
-//     onDrop = "",
-//     onDragStart = "",
-//   } = { ...properties };
-//   const additionalProps = {
-//     onDragStart: (e: any) => onDragStart(e, props.dataItem),
-//     onDragOver: (e: any) => {
-//       e.preventDefault();
-//     },
-//     // onDrop: (e: any) => onDrop(e),
-//     draggable: true,
-//   };
-//   return React.cloneElement(
-//     row,
-//     { ...row.props, ...additionalProps },
-//     row.props.children
-//   );
-// };
+// 디폴트 디테일 그리드 - 세션사용우무 필드 셀
+const DefaultUseSessioneCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+  } = props;
+
+  const valueType = dataItem["value_type"];
+  const orgUseSession = dataItem["org_use_session"];
+
+  let value = dataItem[field ?? ""];
+  if (value === "Y" || value === true) {
+    value = true;
+  } else {
+    value = false;
+  }
+
+  const handleChange = (e: CheckboxChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const defaultRendering =
+    valueType !== "Datetime" && orgUseSession === "Y" ? (
+      <td
+        style={
+          value === true
+            ? {
+                textAlign: "center",
+                color: "rgba(255 ,99 ,88, 1)",
+              }
+            : { textAlign: "center" }
+        }
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+      >
+        <Checkbox value={value} onChange={handleChange} />
+      </td>
+    ) : (
+      <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex} />
+    );
+
+  return render === undefined
+    ? null
+    : render?.call(undefined, defaultRendering, props);
+};
+
+// 디폴트 디테일 그리드 - 기본값 필드 셀
+const DefaultValueCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+  } = props;
+
+  let isInEdit = field === dataItem.inEdit;
+  const valueType = dataItem["value_type"];
+  const useSession = getYn(dataItem["use_session"]);
+
+  const value = dataItem[field];
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const defaultRendering = (
+    <td
+      style={{ textAlign: "left" }}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+    >
+      {isInEdit ? (
+        valueType === "Lookup" ? (
+          <Input value={value} onChange={handleChange} />
+        ) : valueType === "Text" || valueType === "Radio" ? (
+          <Input value={value} onChange={handleChange} />
+        ) : (
+          value
+        )
+      ) : (
+        value
+      )}
+    </td>
+  );
+
+  return render === undefined
+    ? null
+    : render?.call(undefined, defaultRendering, props);
+};
+
+// 디폴트 디테일 그리드 - 연,월,일 추가 필드 셀
+const DefaultDateCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+  } = props;
+
+  let isInEdit = field === dataItem.inEdit;
+  const valueType = dataItem["value_type"];
+  const value = dataItem[field];
+
+  const handleChange = (e: NumericTextBoxChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const defaultRendering = (
+    <td
+      style={{ textAlign: "right" }}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+    >
+      {valueType === "Datetime" ? (
+        isInEdit ? (
+          <NumericTextBox value={value} onChange={handleChange} />
+        ) : (
+          value
+        )
+      ) : (
+        ""
+      )}
+    </td>
+  );
+
+  return render === undefined
+    ? null
+    : render?.call(undefined, defaultRendering, props);
+};
 
 const DraggableGridRowRender = (properties: any) => {
   const {
@@ -149,6 +302,16 @@ const DraggableGridRowRender = (properties: any) => {
   );
 };
 
+// 컨트롤 정보 키
+const CONTROL_DATA_ITEM_KEY = "control_name";
+const WORD_DATA_ITEM_KEY = "word_id";
+// 컬럼 정보 키
+const MAIN_COLUMN_DATA_ITEM_KEY = "option_id";
+const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
+// 디폴트 정보 키
+const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
+const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
+
 const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -156,6 +319,11 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     width: 1200,
     height: 800,
   });
+
+  const token = useRecoilValue(tokenState);
+  const role = token ? token.role : "";
+  const isAdmin = role === "ADMIN" || role === "DEVELOPER" ? true : false;
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
 
   const [columnWindowVisible, setColumnWindowVisible] =
     useState<boolean>(false);
@@ -171,13 +339,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       [name]: value,
     }));
   };
-
-  const CONTROL_DATA_ITEM_KEY = "control_name";
-  const WORD_DATA_ITEM_KEY = "word_id";
-  const MAIN_COLUMN_DATA_ITEM_KEY = "option_id";
-  const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
-  const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
-  const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
 
   const ControlIdGetter = getter(CONTROL_DATA_ITEM_KEY);
   const wordIdGetter = getter(CONTROL_DATA_ITEM_KEY);
@@ -240,8 +401,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const [mainDefaultPgNum, setMainDefaultPgNum] = useState(1);
   const [detailDefaultPgNum, setDetailDefaultPgNum] = useState(1);
 
-  const [columnWindowWorkType, setColumnWindowWorkType] = useState("");
-  const [defaultWindowWorkType, setDefaultWindowWorkType] = useState("");
+  const [columnWindowWorkType, setColumnWindowWorkType] = useState<"N" | "U">(
+    "N"
+  );
+  const [defaultWindowWorkType, setDefaultWindowWorkType] = useState<"N" | "U">(
+    "N"
+  );
 
   const [parentComponent, setParentComponent] = useState({
     option_id: "",
@@ -272,30 +437,27 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setTabSelected(e.selected);
   };
   useEffect(() => {
-    // if (tabSelected === 0) {
     fetchControl();
     fetchWord();
-    // } else if (tabSelected === 1) {
     fetchMainDefault();
-    // } else {
     fetchMainColumn();
-    // }
   }, [tabSelected]);
 
   const pathname: string = window.location.pathname.replace("/", "");
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "web_sel_column_view_config",
-    pageNumber: 1,
-    pageSize: 20,
+    procedureName: "sel_custom_option",
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
-      "@p_work_type": "LIST",
-      "@p_dbname": "",
+      "@p_work_type": "column-list",
       "@p_form_id": pathname,
-      "@p_lang_id": "",
-      "@p_parent_component": "",
-      "@p_message": "",
+      "@p_type": "",
+      "@p_option_id": "",
+      "@p_option_name": "",
+      "@p_remarks": "",
+      "@p_company_code": "",
     },
   };
 
@@ -324,93 +486,103 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     },
   };
   const defaultMainParameters: Iparameters = {
-    procedureName: "web_sel_default_management",
-    pageNumber: 1,
-    pageSize: 20,
+    procedureName: "sel_custom_option",
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
-      "@p_work_type": "LIST",
+      "@p_work_type": "default-list",
       "@p_form_id": pathname,
-      "@p_lang_id": "",
-      "@p_process_type": "",
-      "@p_message": "",
+      "@p_type": "",
+      "@p_option_id": "",
+      "@p_option_name": "",
+      "@p_remarks": "",
+      "@p_company_code": "",
     },
   };
 
   const [columnDetailInitialVal, setColumnDetailInitialVal] = useState({
-    dbname: "",
-    parent_component: "",
+    option_id: "",
+    option_name: "",
   });
+
   const [defaultDetailInitialVal, setDefaultDetailInitialVal] = useState({
-    process_type: "",
+    option_id: "",
+    option_name: "",
   });
 
   const columnDetailParameters: Iparameters = {
-    procedureName: "web_sel_column_view_config",
-    pageNumber: 1,
-    pageSize: 20,
+    procedureName: "sel_custom_option",
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_dbname": columnDetailInitialVal.dbname,
-      "@p_form_id": pathname.replace("/", ""),
-      "@p_lang_id": "",
-      "@p_parent_component": columnDetailInitialVal.parent_component,
-      "@p_message": "",
+      "@p_work_type": "detail",
+      "@p_form_id": pathname,
+      "@p_type": "Column",
+      "@p_option_id": columnDetailInitialVal.option_id,
+      "@p_option_name": "",
+      "@p_remarks": "",
+      "@p_company_code": "",
     },
   };
 
   const defaultDetailParameters: Iparameters = {
-    procedureName: "web_sel_default_management",
-    pageNumber: 1,
-    pageSize: 20,
+    procedureName: "sel_custom_option",
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
-      "@p_work_type": "DETAIL",
+      "@p_work_type": "detail",
       "@p_form_id": pathname,
-      "@p_lang_id": "",
-      "@p_process_type": defaultDetailInitialVal.process_type,
-      "@p_message": "",
+      "@p_type": "Default",
+      "@p_option_id": defaultDetailInitialVal.option_id,
+      "@p_option_name": "",
+      "@p_remarks": "",
+      "@p_company_code": "",
     },
   };
 
-  //메인 컬럼 그리드 선택시 디테일 그리드 조회
+  //columnDetailInitialVal 변경 될 시 컬럼 디테일 그리드 조회
   useEffect(() => {
     fetchDetailColumn();
   }, [columnDetailInitialVal]);
 
+  //defaultDetailInitialVal 변경 될 시 기본값 디테일 그리드 조회
   useEffect(() => {
     fetchDetailDefault();
   }, [defaultDetailInitialVal]);
 
-  //첫번째 행 선택
   useEffect(() => {
     if (mainColumnDataResult.total > 0) {
+      //첫번째 행 선택
       const firstRowData = mainColumnDataResult.data[0];
       setMainColumnSelectedState({
         [firstRowData[MAIN_COLUMN_DATA_ITEM_KEY]]: true,
       });
 
+      //첫번째 행 기준으로 디테일값 세팅
       setColumnDetailInitialVal((prev) => ({
         ...prev,
-        dbname: "SYSTEM",
-        parent_component: firstRowData.option_id,
+        [MAIN_COLUMN_DATA_ITEM_KEY]: firstRowData[MAIN_COLUMN_DATA_ITEM_KEY],
       }));
     }
   }, [mainColumnDataResult]);
 
   useEffect(() => {
     if (mainDefaultDataResult.total > 0) {
+      //첫번째 행 선택
       const firstRowData = mainDefaultDataResult.data[0];
       setMainDefaultSelectedState({
         [firstRowData[MAIN_DEFAULT_DATA_ITEM_KEY]]: true,
       });
 
-      setDefaultDetailInitialVal((prev) => ({
-        ...prev,
-        process_type: firstRowData.option_id,
-      }));
+      //첫번째 행 기준으로 디테일값 세팅
+      setDefaultDetailInitialVal({
+        option_id: firstRowData.option_id,
+        option_name: firstRowData.option_name,
+      });
     }
   }, [mainDefaultDataResult]);
 
-  //요약정보 조회
+  //컨트롤 요약정보 조회
   const fetchControl = async () => {
     let data: any;
 
@@ -454,7 +626,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }
   };
 
-  //요약정보 조회
+  //용어사전 조회
   const fetchWord = async () => {
     let data: any;
     try {
@@ -474,19 +646,18 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
             total: totalRowCnt,
           };
         });
-
-      //setWordDataResult(process(rows, wordDataState));
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
   };
 
+  // 컨트롤 정보 저장
   const fetchControlSaved = async () => {
     let data: any;
 
     try {
-      data = await processApi<any>("platform-procedure", wordControlSaved);
+      data = await processApi<any>("platform-procedure", controlSaved);
     } catch (error) {
       data = null;
     }
@@ -500,10 +671,10 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
-    paraData.work_type = ""; //초기화
+    controlData.work_type = ""; //초기화
   };
 
-  //요약정보 조회
+  //컬럼 요약정보 조회
   const fetchMainColumn = async () => {
     let data: any;
     try {
@@ -522,6 +693,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }
   };
 
+  //기본값 요약정보 조회
   const fetchMainDefault = async () => {
     let data: any;
     try {
@@ -532,7 +704,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
-
       setMainDefaultDataResult(process(rows, mainDefaultDataState));
     } else {
       console.log("[오류 발생]");
@@ -540,7 +711,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }
   };
 
-  //상세그리드 조회
+  //컬럼 상세그리드 조회
   const fetchDetailColumn = async () => {
     let data: any;
 
@@ -565,21 +736,49 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       });
     }
   };
+
+  //기본값 상세그리드 조회
   const fetchDetailDefault = async () => {
+    if (defaultDetailInitialVal.option_id === "") {
+      return false;
+    }
+
     let data: any;
 
+    const para = {
+      formId: pathname,
+      para:
+        "default-detail?optionId=" +
+        defaultDetailInitialVal.option_id +
+        "&userId=" +
+        sessionUserId,
+    };
+
     try {
-      data = await processApi<any>(
-        "platform-procedure",
-        defaultDetailParameters
-      );
+      data = await processApi<any>("default-detail", para);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowsCnt = data.tables[0].Rows.length;
-      const rows = data.tables[0].Rows;
+    if (data !== null) {
+      // 커스텀 데이터 있으면 커스템 데이터 표시, 없으면 시스템 데이터 표시
+      const rows = data.Rows.map((row: any) =>
+        row.custom_value_registered
+          ? {
+              ...row,
+              org_use_session: row.custom_use_session,
+              use_session: row.custom_use_session,
+              value_code: row.custom_value_code,
+              value: row.custom_value,
+              add_year: row.custom_add_year,
+              add_month: row.custom_add_month,
+              add_day: row.custom_add_day,
+              value_lookup: row.custom_value_lookup,
+            }
+          : { ...row, org_use_session: row.use_session }
+      );
+
+      const totalRowsCnt = data.RowCount;
 
       setDetailDefaultDataResult(() => {
         return {
@@ -587,160 +786,65 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
           total: totalRowsCnt,
         };
       });
+    } else {
+      console.log("fetchDetailDefault 에러 발생");
     }
   };
 
-  //프로시저 파라미터 초기값
-  const [paraData, setParaData] = useState({
+  //커스텀 옵션 저장 프로시저 파라미터 State
+  const [customOptionParaData, setCustomOptionParaData] = useState({
     work_type: "",
-    service_id: "20190218001",
-    orgdiv: "01",
-    location: "01",
-    ordnum: "",
-    poregnum: "",
-    project: "",
-    ordtype: "",
-    ordsts: "",
-    taxdiv: "",
-    orddt: "",
-    dlvdt: "",
-    dptcd: "",
-    person: "",
-    amtunit: "",
-    portnm: "",
-    finaldes: "",
-    paymeth: "",
-    prcterms: "",
-    custcd: "",
-    custnm: "",
-    rcvcustcd: "",
-    rcvcustnm: "",
-    wonchgrat: 0,
-    uschgrat: 0,
-    doexdiv: "",
-    remark: "",
-    attdatnum: "",
-    userid: "admin",
-    pc: "WEB TEST",
-    ship_method: "",
-    dlv_method: "",
-    hullno: "",
-    rowstatus_s: "",
-    chk_s: "",
-    ordseq_s: "",
-    poregseq_s: "",
-    itemcd_s: "",
-    itemnm_s: "",
-    itemacnt_s: "",
-    insiz_s: "",
-    bnatur_s: "",
-    qty_s: "",
-    qtyunit_s: "",
-    totwgt_s: "",
-    wgtunit_s: "",
-    len_s: "",
-    totlen_s: "",
-    lenunit_s: "",
-    thickness_s: "",
-    width_s: "",
-    length_s: "",
-    unpcalmeth_s: "",
-    unp_s: "",
-    amt_s: "",
-    taxamt_s: "",
-    dlramt_s: "",
-    wonamt_s: "",
-    remark_s: "",
-    pac_s: "",
-    finyn_s: "",
-    specialunp_s: "",
-    lotnum_s: "",
-    dlvdt_s: "",
-    specialamt_s: "",
-    heatno_s: "",
-    bf_qty_s: "",
-    form_id: "",
+    form_id: pathname,
+    type: "",
+    option_id: "",
+    default_id: "",
+    use_session: "",
+    value_code: "",
+    value: "",
+    add_year: "",
+    add_month: "",
+    add_day: "",
+    column_id: "",
+    sort_order: "",
+    width: "",
+    fixed: "",
+    id: sessionUserId,
+    pc: "",
   });
 
-  //프로시저 파라미터
-  const paraSaved: Iparameters = {
-    procedureName: "P_SA_A2000W_S",
-    pageNumber: 1,
-    pageSize: 10,
+  //커스텀 디폴트 저장 프로시저 파라미터
+  const customDefaultParaSaved: Iparameters = {
+    procedureName: "sys_sav_custom_option",
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
-      "@p_work_type": paraData.work_type,
-      "@p_service_id": paraData.service_id,
-      "@p_orgdiv": paraData.orgdiv,
-      "@p_location": paraData.location,
-      "@p_ordnum": paraData.ordnum,
-      "@p_poregnum": paraData.poregnum,
-      "@p_project": paraData.project,
-      "@p_ordtype": paraData.ordtype,
-      "@p_ordsts": paraData.ordsts,
-      "@p_taxdiv": paraData.taxdiv,
-      "@p_orddt": paraData.orddt,
-      "@p_dlvdt": paraData.dlvdt,
-      "@p_dptcd": paraData.dptcd,
-      "@p_person": paraData.person,
-      "@p_amtunit": paraData.amtunit,
-      "@p_portnm": paraData.portnm,
-      "@p_finaldes": paraData.finaldes,
-      "@p_paymeth": paraData.paymeth,
-      "@p_prcterms": paraData.prcterms,
-      "@p_custcd": paraData.custcd,
-      "@p_custnm": paraData.custnm,
-      "@p_rcvcustcd": paraData.rcvcustcd,
-      "@p_rcvcustnm": paraData.rcvcustnm,
-      "@p_wonchgrat": paraData.wonchgrat,
-      "@p_uschgrat": paraData.uschgrat,
-      "@p_doexdiv": paraData.doexdiv,
-      "@p_remark": paraData.remark,
-      "@p_attdatnum": paraData.attdatnum,
-      "@p_userid": paraData.userid,
-      "@p_pc": paraData.pc,
-      "@p_ship_method": paraData.ship_method,
-      "@p_dlv_method": paraData.dlv_method,
-      "@p_hullno": paraData.hullno,
-      "@p_rowstatus_s": paraData.rowstatus_s,
-      "@p_chk_s": paraData.chk_s,
-      "@p_ordseq_s": paraData.ordseq_s,
-      "@p_poregseq_s": paraData.poregseq_s,
-      "@p_itemcd_s": paraData.itemcd_s,
-      "@p_itemnm_s": paraData.itemnm_s,
-      "@p_itemacnt_s": paraData.itemacnt_s,
-      "@p_insiz_s": paraData.insiz_s,
-      "@p_bnatur_s": paraData.bnatur_s,
-      "@p_qty_s": paraData.qty_s,
-      "@p_qtyunit_s": paraData.qtyunit_s,
-      "@p_totwgt_s": paraData.totwgt_s,
-      "@p_wgtunit_s": paraData.wgtunit_s,
-      "@p_len_s": paraData.len_s,
-      "@p_totlen_s": paraData.totlen_s,
-      "@p_lenunit_s": paraData.lenunit_s,
-      "@p_thickness_s": paraData.thickness_s,
-      "@p_width_s": paraData.width_s,
-      "@p_length_s": paraData.length_s,
-      "@p_unpcalmeth_s": paraData.unpcalmeth_s,
-      "@p_unp_s": paraData.unp_s,
-      "@p_amt_s": paraData.amt_s,
-      "@p_taxamt_s": paraData.taxamt_s,
-      "@p_dlramt_s": paraData.dlramt_s,
-      "@p_wonamt_s": paraData.wonamt_s,
-      "@p_remark_s": paraData.remark_s,
-      "@p_pac_s": paraData.pac_s,
-      "@p_finyn_s": paraData.finyn_s,
-      "@p_specialunp_s": paraData.specialunp_s,
-      "@p_lotnum_s": paraData.lotnum_s,
-      "@p_dlvdt_s": paraData.dlvdt_s,
-      "@p_specialamt_s": paraData.specialamt_s,
-      "@p_heatno_s": paraData.heatno_s,
-      "@p_bf_qty_s": paraData.bf_qty_s,
-      "@p_form_id": paraData.form_id,
+      "@p_work_type": customOptionParaData.work_type,
+      "@p_form_id": customOptionParaData.form_id,
+      "@p_type": customOptionParaData.type,
+      "@p_option_id": customOptionParaData.option_id,
+
+      /* sysCustomOptionDefault */
+      "@p_default_id": customOptionParaData.default_id,
+      "@p_use_session": customOptionParaData.use_session,
+      "@p_value_code": customOptionParaData.value_code,
+      "@p_value": customOptionParaData.value,
+      "@p_add_year": customOptionParaData.add_year,
+      "@p_add_month": customOptionParaData.add_month,
+      "@p_add_day": customOptionParaData.add_day,
+
+      /* sysCustomOptionColumn */
+      "@p_column_id": customOptionParaData.column_id,
+      "@p_sort_order": customOptionParaData.sort_order,
+      "@p_width": customOptionParaData.width,
+      "@p_fixed": customOptionParaData.fixed,
+
+      "@p_id": customOptionParaData.id,
+      "@p_pc": customOptionParaData.pc,
     },
   };
 
-  //프로시저 파라미터 초기값
-  const [wordControlData, setControlParaData] = useState({
+  //컨트롤 정보 저장 프로시저 파라미터 State
+  const [controlData, setControlParaData] = useState({
     work_type: "",
     form_id: pathname,
     control_name: "",
@@ -754,23 +858,23 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     pc: "",
   });
 
-  //프로시저 파라미터
-  const wordControlSaved: Iparameters = {
+  //컨트롤 정보 저장 프로시저 파라미터
+  const controlSaved: Iparameters = {
     procedureName: "sav_form_design_info",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
-      "@p_work_type": wordControlData.work_type,
-      "@p_form_id": wordControlData.form_id,
-      "@p_control_name": wordControlData.control_name,
-      "@p_field_name": wordControlData.field_name,
-      "@p_parent": wordControlData.parent,
-      "@p_type": wordControlData.type,
-      "@p_full_type": wordControlData.full_type,
-      "@p_bc_id": wordControlData.bc_id,
-      "@p_word_id": wordControlData.word_id,
-      "@p_id": wordControlData.id,
-      "@p_pc": wordControlData.pc,
+      "@p_work_type": controlData.work_type,
+      "@p_form_id": controlData.form_id,
+      "@p_control_name": controlData.control_name,
+      "@p_field_name": controlData.field_name,
+      "@p_parent": controlData.parent,
+      "@p_type": controlData.type,
+      "@p_full_type": controlData.full_type,
+      "@p_bc_id": controlData.bc_id,
+      "@p_word_id": controlData.word_id,
+      "@p_id": controlData.id,
+      "@p_pc": controlData.pc,
     },
   };
 
@@ -780,43 +884,39 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setDetailColumnDataResult(process([], detailColumnDataState));
   };
 
-  const fetchGridSaved = async () => {
+  //커스텀 디폴트 값 저장
+  const fetchCustomDefaultSaved = async () => {
     let data: any;
 
     try {
-      data = await processApi<any>("procedure", paraSaved);
+      data = await processApi<any>("procedure", customDefaultParaSaved);
     } catch (error) {
       data = null;
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
-      if ("U" === "U") {
-        resetAllGrid();
-
-        // reloadData("U");
-        fetchMainColumn();
-        fetchDetailColumn();
+      if (customOptionParaData.work_type === "init") {
+        alert("초기화가 완료되었습니다.");
       } else {
-        getVisible(false);
-        //   reloadData("N");
+        alert("저장이 완료되었습니다.");
       }
+      fetchDetailDefault();
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
-    paraData.work_type = ""; //초기화
+    customOptionParaData.work_type = ""; //초기화
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchGridSaved();
-  }, [paraData]);
+    if (customOptionParaData.work_type !== "") fetchCustomDefaultSaved();
+  }, [customOptionParaData]);
 
   useEffect(() => {
-    if (wordControlData.work_type !== "") fetchControlSaved();
-  }, [wordControlData]);
+    if (controlData.work_type !== "") fetchControlSaved();
+  }, [controlData]);
 
   const onControlScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, ControlPgNum, PAGE_SIZE))
@@ -907,7 +1007,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
     setColumnDetailInitialVal((prev) => ({
       ...prev,
-      dbname: "SYSTEM", //selectedRowData.dbname,
       parent_component: selectedRowData.option_id,
     }));
   };
@@ -947,17 +1046,17 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    setDefaultDetailInitialVal((prev) => ({
-      ...prev,
-      process_type: selectedRowData.option_id,
-    }));
+    setDefaultDetailInitialVal({
+      option_id: selectedRowData.option_id,
+      option_name: selectedRowData.option_name,
+    });
   };
 
   const onDetailDefaultSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
       selectedState: detailDefaultSelectedState,
-      dataItemKey: DETAIL_COLUMN_DATA_ITEM_KEY,
+      dataItemKey: DETAIL_DEFAULT_DATA_ITEM_KEY,
     });
     setDetailDefaultSelectedState(newSelectedState);
   };
@@ -979,7 +1078,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       event,
       detailDefaultDataResult,
       setDetailDefaultDataResult,
-      DETAIL_COLUMN_DATA_ITEM_KEY
+      DETAIL_DEFAULT_DATA_ITEM_KEY
     );
   };
 
@@ -1018,8 +1117,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   };
   const detailDefaultEnterEdit = (dataItem: any, field: string) => {
     const newData = detailDefaultDataResult.data.map((item) =>
-      item[DETAIL_COLUMN_DATA_ITEM_KEY] ===
-      dataItem[DETAIL_COLUMN_DATA_ITEM_KEY]
+      item[DETAIL_DEFAULT_DATA_ITEM_KEY] ===
+      dataItem[DETAIL_DEFAULT_DATA_ITEM_KEY]
         ? {
             ...item,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
@@ -1160,6 +1259,90 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }));
   };
 
+  // 커스텀 디폴트 저장
+  const onSaveCustomDefault = () => {
+    type TdataArr = {
+      default_id: string[];
+      use_session: string[];
+      value_code: string[];
+      value: string[];
+      add_year: number[];
+      add_month: number[];
+      add_day: number[];
+    };
+
+    let dataArr: TdataArr = {
+      default_id: [],
+      use_session: [],
+      value_code: [],
+      value: [],
+      add_year: [],
+      add_month: [],
+      add_day: [],
+    };
+
+    detailDefaultDataResult.data.forEach((item: any) => {
+      const {
+        default_id,
+        use_session,
+        value_code,
+        value,
+        add_year,
+        add_month,
+        add_day,
+      } = item;
+
+      dataArr.default_id.push(default_id);
+      dataArr.use_session.push(use_session);
+      dataArr.value_code.push(value_code);
+      dataArr.value.push(value);
+      dataArr.add_year.push(add_year);
+      dataArr.add_month.push(add_month);
+      dataArr.add_day.push(add_day);
+    });
+
+    const option_id = Object.getOwnPropertyNames(mainDefaultSelectedState)[0];
+
+    setCustomOptionParaData((prev) => ({
+      ...prev,
+      work_type: "save",
+      type: "default",
+      option_id: option_id,
+      default_id: dataArr.default_id.join("|"),
+      use_session: dataArr.use_session.join("|"),
+      value_code: dataArr.value_code.join("|"),
+      value: dataArr.value.join("|"),
+      add_year: dataArr.add_year.join("|"),
+      add_month: dataArr.add_month.join("|"),
+      add_day: dataArr.add_day.join("|"),
+    }));
+  };
+
+  // 디폴트 데이터 초기화 (커스텀 데이터 삭제)
+  const onInitDefault = () => {
+    const default_id = Object.getOwnPropertyNames(
+      detailDefaultSelectedState
+    )[0];
+    if (!detailDefaultSelectedState[default_id]) {
+      alert("초기화 할 항목을 선택해주세요.");
+      return false;
+    }
+    if (
+      !window.confirm("선택한 항목을 시스템 기본 값으로 초기화하시겠습니까?")
+    ) {
+      return false;
+    }
+    const option_id = Object.getOwnPropertyNames(mainDefaultSelectedState)[0];
+
+    setCustomOptionParaData((prev) => ({
+      ...prev,
+      work_type: "init",
+      type: "default",
+      option_id,
+      default_id,
+    }));
+  };
+
   type TDataInfo = {
     DATA_ITEM_KEY: string;
     selectedState: {
@@ -1230,8 +1413,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   //프로시저 파라미터
   const paraDeleted: Iparameters = {
     procedureName: "sav_custom_option",
-    pageNumber: 1,
-    pageSize: 10,
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
       "@p_form_id": paraDataDeleted.form_id,
@@ -1257,6 +1440,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_add_month": "",
       "@p_add_day": "",
       "@p_session_item": "",
+      "@p_use_session": "",
       "@p_user_editable": "",
       /* sysCustomOptionColumn */
       "@p_column_id": "",
@@ -1269,8 +1453,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   };
   const defaultParaDeleted: Iparameters = {
     procedureName: "sav_custom_option",
-    pageNumber: 1,
-    pageSize: 10,
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
       "@p_work_type": defaultParaDataDeleted.work_type,
       "@p_form_id": defaultParaDataDeleted.form_id,
@@ -1296,6 +1480,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_add_month": "",
       "@p_add_day": "",
       "@p_session_item": "",
+      "@p_use_session": "",
       "@p_user_editable": "",
       /* sysCustomOptionColumn */
       "@p_column_id": "",
@@ -1742,30 +1927,31 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       onClose={onClose}
     >
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
-        <TabStripTab title="컨트롤정보">
-          <GridContainerWrap>
-            <GridContainer clientWidth={1330 - 415}>
-              <GridTitleContainer>
-                <GridTitle>컨트롤리스트</GridTitle>
+        {isAdmin && (
+          <TabStripTab title="컨트롤정보">
+            <GridContainerWrap>
+              <GridContainer clientWidth={1330 - 415}>
+                <GridTitleContainer>
+                  <GridTitle>컨트롤리스트</GridTitle>
 
-                <ButtonContainer>
-                  <Button
-                    onClick={onGetControlClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    가져오기
-                  </Button>
-                  <Button
-                    onClick={onSaveControl}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    저장
-                  </Button>
-                  {/* 
+                  <ButtonContainer>
+                    <Button
+                      onClick={onGetControlClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      가져오기
+                    </Button>
+                    <Button
+                      onClick={onSaveControl}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    >
+                      저장
+                    </Button>
+                    {/* 
                   <Button
                     onClick={onDeleteDefaultClick}
                     fillMode="outline"
@@ -1774,138 +1960,128 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                   >
                     삭제
                   </Button> */}
-                </ButtonContainer>
-              </GridTitleContainer>
-              <TreeList
-                style={{ height: "600px", overflow: "auto", width: "100%" }}
-                data={mapTree(
-                  controlDataResult,
-                  subItemsField,
-                  ControlCallback
-                )}
-                // {process(
-                //   controlDataResult.data.map((row) => ({
-                //     ...row,
-                //     [SELECTED_FIELD]:
-                //       ControlSelectedState[ControlIdGetter(row)],
-                //   })),
-                //   ControlDataState
-                // )}
-                //{...ControlDataState}
-                //onDataStateChange={onControlDataStateChange}
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <TreeList
+                  style={{ height: "600px", overflow: "auto", width: "100%" }}
+                  data={mapTree(
+                    controlDataResult,
+                    subItemsField,
+                    ControlCallback
+                  )}
+                  expandField={EXPANDED_FIELD}
+                  subItemsField={subItemsField}
+                  onExpandChange={onControlExpandChange}
+                  //선택 기능
+                  dataItemKey={CONTROL_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  columns={ControlColumns}
+                  rowRender={controlRowRender}
+                ></TreeList>
+              </GridContainer>
 
-                expandField={EXPANDED_FIELD}
-                subItemsField={subItemsField}
-                onExpandChange={onControlExpandChange}
-                //선택 기능
-                dataItemKey={CONTROL_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                columns={ControlColumns}
-                rowRender={controlRowRender}
+              <GridContainer maxWidth="400px" inTab={true}>
+                <GridTitleContainer>
+                  <GridTitle>[참조] 용어정보</GridTitle>
 
-                // row={TreeListDraggableRow}
-                // onRowDrop={onRowDrop}
-              ></TreeList>
-            </GridContainer>
+                  <div style={{ gap: "2px", display: "flex" }}>
+                    <Input
+                      name="word_id"
+                      type="text"
+                      style={{ width: "110px" }}
+                      placeholder="Word ID"
+                      value={wordFilters.word_id}
+                      onChange={filterInputChange}
+                    />
+                    <Input
+                      name="word_text"
+                      type="text"
+                      style={{ width: "110px" }}
+                      placeholder="텍스트"
+                      value={wordFilters.word_text}
+                      onChange={filterInputChange}
+                    />
 
-            <GridContainer maxWidth="400px" inTab={true}>
-              <GridTitleContainer>
-                <GridTitle>[참조] 용어정보</GridTitle>
+                    <Button
+                      onClick={() => {
+                        setWordPgNum(1);
+                        setWordDataResult(process([], wordDataState));
+                        fetchWord();
+                      }}
+                      icon="search"
+                      // fillMode="flat"
+                    />
+                  </div>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "600px" }}
+                  data={process(
+                    wordDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: wordSelectedState[wordIdGetter(row)],
+                    })),
+                    wordDataState
+                  )}
+                  {...wordDataState}
+                  onDataStateChange={onWordDataStateChange}
+                  //선택 기능
+                  dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "multiple",
+                  }}
+                  onSelectionChange={onWordSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={wordDataResult.total}
+                  onScroll={onWordScrollHandler}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onWordSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  rowRender={wordRowRender}
+                >
+                  <GridColumn field="word_id" title="Word ID" />
+                  <GridColumn field="word_text" title="텍스트" />
+                </Grid>
+              </GridContainer>
+            </GridContainerWrap>
+          </TabStripTab>
+        )}
 
-                <div style={{ gap: "2px", display: "flex" }}>
-                  <Input
-                    name="word_id"
-                    type="text"
-                    style={{ width: "110px" }}
-                    placeholder="Word ID"
-                    value={wordFilters.word_id}
-                    onChange={filterInputChange}
-                  />
-                  <Input
-                    name="word_text"
-                    type="text"
-                    style={{ width: "110px" }}
-                    placeholder="텍스트"
-                    value={wordFilters.word_text}
-                    onChange={filterInputChange}
-                  />
-
-                  <Button
-                    onClick={() => {
-                      setWordPgNum(1);
-                      setWordDataResult(process([], wordDataState));
-                      fetchWord();
-                    }}
-                    icon="search"
-                    // fillMode="flat"
-                  />
-                </div>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "600px" }}
-                data={process(
-                  wordDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: wordSelectedState[wordIdGetter(row)],
-                  })),
-                  wordDataState
-                )}
-                {...wordDataState}
-                onDataStateChange={onWordDataStateChange}
-                //선택 기능
-                dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "multiple",
-                }}
-                onSelectionChange={onWordSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={wordDataResult.total}
-                onScroll={onWordScrollHandler}
-                //정렬기능
-                sortable={true}
-                onSortChange={onWordSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                rowRender={wordRowRender}
-              >
-                <GridColumn field="word_id" title="Word ID" />
-                <GridColumn field="word_text" title="텍스트" />
-              </Grid>
-            </GridContainer>
-          </GridContainerWrap>
-        </TabStripTab>
         <TabStripTab title="기본값">
           <GridContainerWrap>
             <GridContainer maxWidth="300px">
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onCreateDefaultClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onDeleteDefaultClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button>
-                </ButtonContainer>
+                {isAdmin && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onCreateDefaultClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteDefaultClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                )}
               </GridTitleContainer>
               <Grid
                 style={{ height: "600px" }}
@@ -1939,7 +2115,13 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 //컬럼너비조정
                 resizable={true}
               >
-                <GridColumn cell={DefaultCommandCell} width="55px" />
+                {isAdmin && (
+                  <GridColumn
+                    title="수정(시스템)"
+                    cell={DefaultCommandCell}
+                    width="110px"
+                  />
+                )}
                 <GridColumn field="option_id" title="타입ID" />
                 <GridColumn field="option_name" title="설명" />
               </Grid>
@@ -1951,14 +2133,22 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
             >
               <GridTitleContainer>
                 <GridTitle>상세정보</GridTitle>
-
                 <ButtonContainer>
                   <Button
-                    //onClick={onSaveMtrClick}
+                    onClick={onInitDefault}
                     fillMode="outline"
                     themeColor={"primary"}
+                    icon="refresh"
+                  >
+                    초기화
+                  </Button>
+                  <Button
+                    onClick={onSaveCustomDefault}
+                    themeColor={"primary"}
                     icon="save"
-                  ></Button>
+                  >
+                    저장
+                  </Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
@@ -2010,23 +2200,37 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                   width=""
                   editable={false}
                 />
-                <GridColumn field="value" title="기본값" width="" />
+                <GridColumn
+                  field="use_session"
+                  title="세션사용"
+                  width=""
+                  cell={DefaultUseSessioneCell}
+                />
+                <GridColumn
+                  field="value"
+                  title="기본값"
+                  width=""
+                  cell={DefaultValueCell}
+                />
                 <GridColumn
                   field="add_year"
                   title="연 추가"
                   width=""
+                  cell={DefaultDateCell}
                   editor={"numeric"}
                 />
                 <GridColumn
                   field="add_month"
                   title="월 추가"
                   width=""
+                  cell={DefaultDateCell}
                   editor={"numeric"}
                 />
                 <GridColumn
                   field="add_day"
                   title="일 추가"
                   width=""
+                  cell={DefaultDateCell}
                   editor={"numeric"}
                 />
               </Grid>
@@ -2038,25 +2242,26 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
             <GridContainer maxWidth="300px">
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
-
-                <ButtonContainer>
-                  <Button
-                    onClick={onCreateColumnClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onDeleteColumnClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button>
-                </ButtonContainer>
+                {isAdmin && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onCreateColumnClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteColumnClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                )}
               </GridTitleContainer>
               <Grid
                 style={{ height: "600px" }}
@@ -2090,7 +2295,9 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 //컬럼너비조정
                 resizable={true}
               >
-                <GridColumn cell={ColumnCommandCell} width="55px" />
+                {isAdmin && (
+                  <GridColumn cell={ColumnCommandCell} width="55px" />
+                )}
                 <GridColumn field="option_name" title="영역" />
               </Grid>
             </GridContainer>
@@ -2200,9 +2407,9 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
       {defaultWindowVisible && (
         <DefaultWindow
-          getVisible={setDefaultWindowVisible}
+          setVisible={setDefaultWindowVisible}
           workType={defaultWindowWorkType}
-          option_id={processType}
+          para={defaultDetailInitialVal}
           reloadData={reloadData}
         />
       )}
