@@ -121,10 +121,11 @@ const SA_B3000W: React.FC = () => {
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         cboLocation: defaultOption.find(
           (item: any) => item.id === "cboLocation"
-        ).value,
-        cboDiv: defaultOption.find((item: any) => item.id === "cboDiv").value,
+        ).valueCode,
+        cboDiv: defaultOption.find((item: any) => item.id === "cboDiv")
+          .valueCode,
         rdoAmtdiv: defaultOption.find((item: any) => item.id === "rdoAmtdiv")
-          .value,
+          .valueCode,
       }));
     }
   }, [customOptionData]);
