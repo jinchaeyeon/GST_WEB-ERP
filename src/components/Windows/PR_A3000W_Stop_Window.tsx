@@ -91,7 +91,6 @@ const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      console.log(bizComponentData);
       setInitialVal((prev) => {
         return {
           ...prev,
