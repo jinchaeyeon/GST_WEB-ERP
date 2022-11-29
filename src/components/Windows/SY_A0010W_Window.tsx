@@ -517,7 +517,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
                     headerCell={
                       requiredField.includes(item.fieldName)
                         ? RequiredHeader
-                        : ""
+                        : undefined
                     }
                     className={
                       requiredField.includes(item.fieldName) ? "required" : ""

@@ -821,10 +821,12 @@ const Page: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         cell={
-                          numberField.includes(item.fieldName) ? NumberCell : ""
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : ""
+                          item.sortOrder === 1 ? mainTotalFooterCell : undefined
                         }
                       />
                     )
@@ -878,10 +880,10 @@ const Page: React.FC = () => {
                             ? NumberCell
                             : checkBoxField.includes(item.fieldName)
                             ? CheckBoxReadOnlyCell
-                            : ""
+                            : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : ""
+                          item.sortOrder === 1 ? mainTotalFooterCell : undefined
                         }
                       />
                     )

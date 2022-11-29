@@ -964,10 +964,10 @@ const MA_B7000: React.FC = () => {
                           ? NumberCell
                           : dateField.includes(item.fieldName)
                           ? DateCell
-                          : ""
+                          : undefined
                       }
                       footerCell={
-                        item.sortOrder === 1 ? mainTotalFooterCell : ""
+                        item.sortOrder === 1 ? mainTotalFooterCell : undefined
                       }
                     ></GridColumn>
                   )
@@ -1025,10 +1025,12 @@ const MA_B7000: React.FC = () => {
                           ? NumberCell
                           : dateField.includes(item.fieldName)
                           ? DateCell
-                          : ""
+                          : undefined
                       }
                       footerCell={
-                        item.sortOrder === 1 ? detail1TotalFooterCell : ""
+                        item.sortOrder === 1
+                          ? detail1TotalFooterCell
+                          : undefined
                       }
                     />
                   )
@@ -1072,10 +1074,12 @@ const MA_B7000: React.FC = () => {
                           ? NumberCell
                           : dateField.includes(item.fieldName)
                           ? DateCell
-                          : ""
+                          : undefined
                       }
                       footerCell={
-                        item.sortOrder === 1 ? detail2TotalFooterCell : ""
+                        item.sortOrder === 1
+                          ? detail2TotalFooterCell
+                          : undefined
                       }
                     ></GridColumn>
                   )

@@ -2212,7 +2212,7 @@ const PR_A1100W: React.FC = () => {
                               ? NumberCell
                               : dateField.includes(item.fieldName)
                               ? DateCell
-                              : ""
+                              : undefined
                           }
                         ></GridColumn>
                       )
@@ -2347,7 +2347,7 @@ const PR_A1100W: React.FC = () => {
                                 ? DateCell
                                 : lookupField.includes(item.fieldName)
                                 ? CustomComboBoxCell
-                                : ""
+                                : undefined
                             }
                           />
                         )
@@ -2452,7 +2452,7 @@ const PR_A1100W: React.FC = () => {
                               ? DateCell
                               : lookupField.includes(item.fieldName)
                               ? CustomComboBoxCell
-                              : ""
+                              : undefined
                           }
                         />
                       )

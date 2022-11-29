@@ -675,14 +675,14 @@ const SA_B3000W: React.FC = () => {
                               ? NumberCell
                               : dateField.includes(item.fieldName)
                               ? DateCell
-                              : ""
+                              : undefined
                           }
                           footerCell={
                             item.sortOrder === 1
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
-                              : ""
+                              : undefined
                           }
                         />
                       )
@@ -744,7 +744,7 @@ const SA_B3000W: React.FC = () => {
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
-                              : ""
+                              : undefined
                           }
                         >
                           <GridColumn
@@ -769,7 +769,7 @@ const SA_B3000W: React.FC = () => {
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
-                              : ""
+                              : undefined
                           }
                         />
                       ))
@@ -895,7 +895,7 @@ const SA_B3000W: React.FC = () => {
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
-                              : ""
+                              : undefined
                           }
                         >
                           <GridColumn title={"1/4분기"}>
@@ -969,7 +969,7 @@ const SA_B3000W: React.FC = () => {
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
-                              : ""
+                              : undefined
                           }
                         />
                       ))
@@ -1153,7 +1153,7 @@ const SA_B3000W: React.FC = () => {
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
-                              : ""
+                              : undefined
                           }
                         >
                           <GridColumn
@@ -1221,7 +1221,7 @@ const SA_B3000W: React.FC = () => {
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
-                              : ""
+                              : undefined
                           }
                         />
                       ))

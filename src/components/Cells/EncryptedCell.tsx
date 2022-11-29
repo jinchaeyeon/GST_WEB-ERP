@@ -1,12 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { GridCellProps } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 
-interface CustomCellProps extends GridCellProps {
-  bizComponent: any;
-  textField?: string;
-}
-const EncryptedCell = (props: CustomCellProps) => {
+const EncryptedCell = (props: GridCellProps) => {
   const {
     ariaColumnIndex,
     columnIndex,

@@ -916,11 +916,11 @@ const PR_B3000W: React.FC = () => {
                           ? CustomComboBoxCell
                           : centerField.includes(item.fieldName)
                           ? CenterCell
-                          : ""
+                          : undefined
                       }
                       className="read-only"
                       footerCell={
-                        item.sortOrder === 1 ? mainTotalFooterCell : ""
+                        item.sortOrder === 1 ? mainTotalFooterCell : undefined
                       }
                       editable={false}
                     />

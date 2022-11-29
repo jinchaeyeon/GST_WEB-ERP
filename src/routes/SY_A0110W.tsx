@@ -338,7 +338,7 @@ const SY_A0110: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       footerCell={
-                        item.sortOrder === 1 ? mainTotalFooterCell : ""
+                        item.sortOrder === 1 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

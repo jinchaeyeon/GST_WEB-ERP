@@ -1373,10 +1373,12 @@ const EA_A2000: React.FC = () => {
                                   ? NumberCell
                                   : dateField.includes(item.fieldName)
                                   ? DateCell
-                                  : ""
+                                  : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1 ? mainTotalFooterCell : ""
+                                item.sortOrder === 1
+                                  ? mainTotalFooterCell
+                                  : undefined
                               }
                             />
                           )
@@ -1395,9 +1397,11 @@ const EA_A2000: React.FC = () => {
                                 ? NumberCell
                                 : dateField.includes(item.field)
                                 ? DateCell
-                                : ""
+                                : undefined
                             }
-                            footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                            footerCell={
+                              idx === 0 ? mainTotalFooterCell : undefined
+                            }
                           />
                         ))}
                   <GridColumn title={"File"} cell={CommandCell} width="55px" />
@@ -1520,10 +1524,12 @@ const EA_A2000: React.FC = () => {
                                   ? NumberCell
                                   : dateField.includes(item.fieldName)
                                   ? DateCell
-                                  : ""
+                                  : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1 ? mainTotalFooterCell : ""
+                                item.sortOrder === 1
+                                  ? mainTotalFooterCell
+                                  : undefined
                               }
                             />
                           )
@@ -1544,9 +1550,11 @@ const EA_A2000: React.FC = () => {
                                 ? NumberCell
                                 : dateField.includes(item.field)
                                 ? DateCell
-                                : ""
+                                : undefined
                             }
-                            footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                            footerCell={
+                              idx === 0 ? mainTotalFooterCell : undefined
+                            }
                           />
                         ))}
 
@@ -1633,10 +1641,12 @@ const EA_A2000: React.FC = () => {
                                   ? NumberCell
                                   : dateField.includes(item.fieldName)
                                   ? DateCell
-                                  : ""
+                                  : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1 ? mainTotalFooterCell : ""
+                                item.sortOrder === 1
+                                  ? mainTotalFooterCell
+                                  : undefined
                               }
                             />
                           )
@@ -1657,9 +1667,11 @@ const EA_A2000: React.FC = () => {
                                 ? NumberCell
                                 : dateField.includes(item.field)
                                 ? DateCell
-                                : ""
+                                : undefined
                             }
-                            footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                            footerCell={
+                              idx === 0 ? mainTotalFooterCell : undefined
+                            }
                           />
                         ))}
                   <GridColumn title={"File"} cell={CommandCell} width="55px" />
@@ -1745,10 +1757,12 @@ const EA_A2000: React.FC = () => {
                                   ? NumberCell
                                   : dateField.includes(item.fieldName)
                                   ? DateCell
-                                  : ""
+                                  : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1 ? mainTotalFooterCell : ""
+                                item.sortOrder === 1
+                                  ? mainTotalFooterCell
+                                  : undefined
                               }
                             />
                           )
@@ -1769,9 +1783,11 @@ const EA_A2000: React.FC = () => {
                                 ? NumberCell
                                 : dateField.includes(item.field)
                                 ? DateCell
-                                : ""
+                                : undefined
                             }
-                            footerCell={idx === 0 ? mainTotalFooterCell : ""}
+                            footerCell={
+                              idx === 0 ? mainTotalFooterCell : undefined
+                            }
                           />
                         ))}
                   <GridColumn title={"File"} cell={CommandCell} width="55px" />
@@ -1843,10 +1859,12 @@ const EA_A2000: React.FC = () => {
                                 : item.fieldName === "appyn" ||
                                   item.fieldName === "arbitragb"
                                 ? CheckBoxReadOnlyCell
-                                : ""
+                                : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1 ? detail1TotalFooterCell : ""
+                              item.sortOrder === 1
+                                ? detail1TotalFooterCell
+                                : undefined
                             }
                           />
                         )
@@ -1868,9 +1886,11 @@ const EA_A2000: React.FC = () => {
                               : item.field === "appyn" ||
                                 item.field === "arbitragb"
                               ? CheckBoxReadOnlyCell
-                              : ""
+                              : undefined
                           }
-                          footerCell={idx === 0 ? detail1TotalFooterCell : ""}
+                          footerCell={
+                            idx === 0 ? detail1TotalFooterCell : undefined
+                          }
                         />
                       ))}
               </Grid>
@@ -1925,10 +1945,12 @@ const EA_A2000: React.FC = () => {
                                 ? NumberCell
                                 : dateField.includes(item.fieldName)
                                 ? DateCell
-                                : ""
+                                : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1 ? detail2TotalFooterCell : ""
+                              item.sortOrder === 1
+                                ? detail2TotalFooterCell
+                                : undefined
                             }
                           />
                         )
@@ -1947,9 +1969,11 @@ const EA_A2000: React.FC = () => {
                               ? NumberCell
                               : dateField.includes(item.field)
                               ? DateCell
-                              : ""
+                              : undefined
                           }
-                          footerCell={idx === 0 ? detail2TotalFooterCell : ""}
+                          footerCell={
+                            idx === 0 ? detail2TotalFooterCell : undefined
+                          }
                         />
                       ))}
               </Grid>
@@ -2049,7 +2073,7 @@ const EA_A2000: React.FC = () => {
                                 ? NumberCell
                                 : dateField.includes(item.fieldName)
                                 ? DateCell
-                                : ""
+                                : undefined
                             }
                             editable={
                               item.fieldName === "time" ||
@@ -2058,7 +2082,9 @@ const EA_A2000: React.FC = () => {
                                 : true
                             }
                             footerCell={
-                              item.sortOrder === 1 ? detail3TotalFooterCell : ""
+                              item.sortOrder === 1
+                                ? detail3TotalFooterCell
+                                : undefined
                             }
                           />
                         )
@@ -2077,9 +2103,11 @@ const EA_A2000: React.FC = () => {
                               ? NumberCell
                               : dateField.includes(item.field)
                               ? DateCell
-                              : ""
+                              : undefined
                           }
-                          footerCell={idx === 0 ? detail3TotalFooterCell : ""}
+                          footerCell={
+                            idx === 0 ? detail3TotalFooterCell : undefined
+                          }
                         />
                       ))}
               </Grid>

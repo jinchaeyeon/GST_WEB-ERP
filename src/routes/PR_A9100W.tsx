@@ -982,7 +982,7 @@ const PR_A9100W: React.FC = () => {
                       headerCell={
                         requiredField.includes(item.fieldName)
                           ? RequiredHeader
-                          : ""
+                          : undefined
                       }
                       field={item.fieldName}
                       title={item.caption === "" ? " " : item.caption}
@@ -994,7 +994,7 @@ const PR_A9100W: React.FC = () => {
                           ? CustomComboBoxCell
                           : item.fieldName === "item_btn"
                           ? ItemBtnCell
-                          : ""
+                          : undefined
                       }
                       editable={
                         readOnlyField.includes(item.fieldName) ? false : true
@@ -1002,10 +1002,10 @@ const PR_A9100W: React.FC = () => {
                       className={
                         readOnlyField.includes(item.fieldName)
                           ? "read-only"
-                          : ""
+                          : undefined
                       }
                       footerCell={
-                        item.sortOrder === 1 ? mainTotalFooterCell : ""
+                        item.sortOrder === 1 ? mainTotalFooterCell : undefined
                       }
                     />
                   )
