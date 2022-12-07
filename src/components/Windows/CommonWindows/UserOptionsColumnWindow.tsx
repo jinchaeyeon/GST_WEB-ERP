@@ -32,7 +32,7 @@ import {
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import { NumberCell, NameCell, FormInput, FormReadOnly } from "../../Editors";
-import { Iparameters, TcontrolObj } from "../../../store/types";
+import { Iparameters, TControlObj } from "../../../store/types";
 import {
   arrayLengthValidator,
   chkScrollHandler,

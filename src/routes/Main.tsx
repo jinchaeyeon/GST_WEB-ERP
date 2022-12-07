@@ -34,7 +34,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useApi } from "../hooks/api";
-import { tokenState } from "../store/atoms";
+import { sessionItemState, tokenState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
@@ -47,22 +47,36 @@ import { TCommonCodeData } from "../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
-//import {useAuth} from "../../hooks/auth";
 
 const DATA_ITEM_KEY = "datnum";
 
 const Main: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
+  const [token, setToken] = useRecoilState(tokenState);
+  const userId = token ? token.userId : "";
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  useEffect(() => {
+    if (token) fetchSessionItem();
+  }, [sessionItem]);
 
-  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const sessionLocation = UseGetValueFromSessionItem("location");
-  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  let sessionOrgdiv = sessionItem.find(
+    (sessionItem) => sessionItem.code === "orgdiv"
+  )!.value;
+  let sessionLocation = sessionItem.find(
+    (sessionItem) => sessionItem.code === "location"
+  )!.value;
+
+  if (sessionOrgdiv === "") sessionOrgdiv = "01";
+  if (sessionLocation === "") sessionLocation = "01";
+
+  console.log("sessionLocation");
+  console.log(sessionLocation);
 
   const [ip, setIp] = useState("");
   const browser = getBrowser();
   UseGetIp(setIp);
-  const pc = `${ip}|${browser}`;
+  const pc = `${ip}/${browser}`;
 
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],
@@ -117,7 +131,7 @@ const Main: React.FC = () => {
     work_type: "Notice",
     orgdiv: sessionOrgdiv,
     location: sessionLocation,
-    user_id: sessionUserId,
+    user_id: userId,
     frdt: "",
     todt: "",
     ref_date: new Date(),
@@ -129,7 +143,7 @@ const Main: React.FC = () => {
     work_type: "WorkOrderRequest",
     orgdiv: sessionOrgdiv,
     location: sessionLocation,
-    user_id: sessionUserId,
+    user_id: userId,
     frdt: "",
     todt: "",
     ref_date: new Date(),
@@ -138,7 +152,7 @@ const Main: React.FC = () => {
 
   const [schedulerFilter, setSchedulerFilter] = useState({
     work_type: "MyScheduler",
-    user_id: sessionUserId,
+    user_id: userId,
   });
   const noticeParameters: Iparameters = {
     procedureName: "web_sel_default_home",
@@ -180,7 +194,7 @@ const Main: React.FC = () => {
       "@p_work_type": "Approval",
       "@p_orgdiv": sessionOrgdiv,
       "@p_location": sessionLocation,
-      "@p_user_id": sessionUserId,
+      "@p_user_id": userId,
       "@p_frdt": "",
       "@p_todt": "",
       "@p_ref_date": "",
@@ -213,7 +227,7 @@ const Main: React.FC = () => {
       "@p_service_id": "",
       "@p_orgdiv": sessionOrgdiv,
       "@p_location": sessionLocation,
-      "@p_user_id": sessionUserId,
+      "@p_user_id": userId,
       "@p_frdt": "",
       "@p_todt": "",
       "@p_dutydt": convertDateToStr(new Date()),
@@ -257,11 +271,11 @@ const Main: React.FC = () => {
         "@p_service_id": "",
         "@p_orgdiv": sessionOrgdiv,
         "@p_location": sessionLocation,
-        "@p_user_id": sessionUserId,
+        "@p_user_id": userId,
         "@p_frdt": "",
         "@p_todt": "",
         "@p_dutydt": convertDateToStr(new Date()),
-        "@p_id": sessionUserId,
+        "@p_id": userId,
         "@p_pc": pc,
       },
     };
@@ -375,10 +389,12 @@ const Main: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchWorkTime();
-    fetchApproaval();
-    fetchNoticeGrid();
-    fetchWorkOrderGrid();
+    if (sessionItem) {
+      fetchWorkTime();
+      fetchApproaval();
+      fetchNoticeGrid();
+      fetchWorkOrderGrid();
+    }
   }, []);
 
   useEffect(() => {
@@ -478,6 +494,36 @@ const Main: React.FC = () => {
       [name]: data.sub_code,
     }));
   };
+
+  const fetchSessionItem = useCallback(async () => {
+    let data;
+    try {
+      const para: Iparameters = {
+        procedureName: "sys_biz_configuration",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_user_id": userId,
+        },
+      };
+
+      data = await processApi<any>("procedure", para);
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setSessionItem(
+          rows
+            .filter((item: any) => item.class === "Session")
+            .map((item: any) => ({
+              code: item.code,
+              value: item.value,
+            }))
+        );
+      }
+    } catch (e: any) {
+      console.log("menus error", e);
+    }
+  }, []);
 
   return (
     <>

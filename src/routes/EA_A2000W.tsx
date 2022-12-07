@@ -92,7 +92,8 @@ const EA_A2000: React.FC = () => {
   const detail3IdGetter = getter(DETAIL3_DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
   const [token] = useRecoilState(tokenState);
-  const { userId, companyCode } = token;
+  const userId = token ? token.userId : "";
+  const companyCode = token ? token.companyCode : "";
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);

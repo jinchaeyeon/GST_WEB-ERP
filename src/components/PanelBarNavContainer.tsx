@@ -4,22 +4,21 @@ import {
   PanelBarItem,
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
-import { useHistory, useLocation, withRouter } from "react-router-dom";
+import { useLocation, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   isMenuOpendState,
   menusState,
   sessionItemState,
   tokenState,
-  userState,
 } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import { CLIENT_WIDTH, GNV_WIDTH } from "../components/CommonString";
-import UserEffect from "./UserEffect";
 import { useApi } from "../hooks/api";
-import { Iparameters, TLogParaVal, Tmenu, Tpath } from "../store/types";
+import { Iparameters, TLogParaVal, Tpath } from "../store/types";
+import { UseGetValueFromSessionItem } from "./CommonFunction";
 
 type TWrapper = {
   isMenuOpend: boolean;
@@ -137,92 +136,30 @@ export const Modal = styled.div<TModal>`
   background-color: rgba(0, 0, 0, 0.4);
 `;
 
-// const paths = [
-//   {
-//     path: "/",
-//     index: ".0",
-//     menuName: "home",
-//     menuCategory: "GROUP",
-//     parentMenuId: "",
-//   },
-//   { index: ".1" },
-//   { path: "/MA_B7000W", index: ".1.0" },
-//   { index: ".2" },
-//   { path: "/PR_A1100W", index: ".2.0" },
-//   { index: ".3" },
-//   { path: "/SA_A2000W", index: ".3.0" },
-//   { path: "/SA_B3000W", index: ".3.1" },
-//   { index: ".4" },
-//   { path: "/QC_A0120W", index: ".4.0" },
-//   { index: ".5" },
-//   { path: "/SY_A0120W", index: ".5.0" },
-//   { path: "/SY_A0110W", index: ".5.1" },
-//   { path: "/SY_A0010W", index: ".5.2" },
-//   { path: "/SY_A0012W", index: ".5.3" },
-//   { path: "/SY_A0013W", index: ".5.4" },
-//   { path: "/SY_A0011W", index: ".5.5" },
-//   { index: ".6" },
-//   { path: "/CM_A1600W", index: ".6.0" },
-//   { index: ".7" },
-//   { path: "/EA_A2000W", index: ".7.0" },
-// ];
-
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
   const [token, setToken] = useRecoilState(tokenState);
   const [menus, setMenus] = useRecoilState(menusState);
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
   const companyCode = token ? token.companyCode : "";
+  const userId = token ? token.userId : "";
+  const loginKey = token ? token.loginKey : "";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
 
   useEffect(() => {
-    if (menus === null) fetchMenus();
+    if (token && menus === null) fetchMenus();
   }, [menus]);
-
-  useEffect(() => {
-    if (sessionItem === null) fetchSessionItem();
-  }, [sessionItem]);
 
   const fetchMenus = useCallback(async () => {
     try {
       let menuPara = {
-        para: "menus?userId=" + token.userId + "&category=WEB",
+        para: "menus?userId=" + userId + "&category=WEB",
       };
       const menuResponse = await processApi<any>("menus", menuPara);
       setMenus(menuResponse.usableMenu);
-    } catch (e: any) {
-      console.log("menus error", e);
-    }
-  }, []);
-
-  const fetchSessionItem = useCallback(async () => {
-    let data;
-    try {
-      const para: Iparameters = {
-        procedureName: "sys_biz_configuration",
-        pageNumber: 0,
-        pageSize: 0,
-        parameters: {
-          "@p_user_id": token.userId,
-        },
-      };
-
-      data = await processApi<any>("procedure", para);
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        setSessionItem(
-          rows
-            .filter((item: any) => item.class === "Session")
-            .map((item: any) => ({
-              code: item.code,
-              value: item.value,
-            }))
-        );
-      }
     } catch (e: any) {
       console.log("menus error", e);
     }
@@ -277,35 +214,37 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   useEffect(() => {
-    const pathname = location.pathname.replace("/", "");
+    if (token) {
+      const pathname = location.pathname.replace("/", "");
 
-    // 폼 로그 처리
-    if (previousRoute === "") {
-      //최초 오픈
-      fetchToLog({
-        work_type: "OPEN",
-        form_id: pathname,
-        form_name: "",
-        form_login_key: "",
-      });
-    } else if (pathname !== previousRoute) {
-      // 오픈, 클로즈
-      fetchToLog({
-        work_type: "CLOSE",
-        form_id: previousRoute,
-        form_name: "",
-        form_login_key: formKey,
-      });
-      fetchToLog({
-        work_type: "OPEN",
-        form_id: pathname,
-        form_name: "",
-        form_login_key: "",
-      });
+      // 폼 로그 처리
+      if (previousRoute === "") {
+        //최초 오픈
+        fetchToLog({
+          work_type: "OPEN",
+          form_id: pathname,
+          form_name: "",
+          form_login_key: "",
+        });
+      } else if (pathname !== previousRoute) {
+        // 오픈, 클로즈
+        fetchToLog({
+          work_type: "CLOSE",
+          form_id: previousRoute,
+          form_name: "",
+          form_login_key: formKey,
+        });
+        fetchToLog({
+          work_type: "OPEN",
+          form_id: pathname,
+          form_name: "",
+          form_login_key: "",
+        });
+      }
+
+      // 이전 루트 저장
+      setPreviousRoute(pathname);
     }
-
-    // 이전 루트 저장
-    setPreviousRoute(pathname);
   }, [location]);
 
   const fetchToLog = async (logParaVal: TLogParaVal) => {
@@ -317,11 +256,11 @@ const PanelBarNavContainer = (props: any) => {
       pageSize: 50,
       parameters: {
         "@p_work_type": logParaVal.work_type,
-        "@p_user_id": token.userId,
+        "@p_user_id": userId,
         "@p_form_id": logParaVal.form_id,
         "@p_form_name": logParaVal.form_name,
         "@p_form_login_key": logParaVal.form_login_key,
-        "@p_browser_login_key": token.loginKey,
+        "@p_browser_login_key": loginKey,
         "@p_ip": "", //ip 추가 필요
         "@p_client_pc": "", //브라우저 정보 추가 필요
         "@p_mac_address": "",
@@ -333,7 +272,7 @@ const PanelBarNavContainer = (props: any) => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data && data.isSuccess === true) {
       if (logParaVal.work_type === "OPEN") {
         const { form_login_key } = data.tables[0].Rows[0];
         setFormKey(form_login_key);
@@ -353,10 +292,11 @@ const PanelBarNavContainer = (props: any) => {
   const selected = setSelectedIndex(props.location.pathname);
 
   const logout = useCallback(() => {
-    // setToken(null as any);
-    // setMenus(null as any);
+    setToken(null as any);
+    setMenus(null as any);
+    setSessionItem(null as any);
     // 전체 페이지 reload (cache 삭제)
-    (window as any).location = "/Login";
+    (window as any).location = "/";
   }, []);
 
   const onClickUserOptions = () => {
@@ -421,7 +361,7 @@ const PanelBarNavContainer = (props: any) => {
             expandMode={"single"}
             onSelect={onSelect}
           >
-            <PanelBarItem title={"Home"} route="/"></PanelBarItem>
+            <PanelBarItem title={"Home"} route="/Home"></PanelBarItem>
 
             <PanelBarItem title={"전사관리"}>
               <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
@@ -450,11 +390,11 @@ const PanelBarNavContainer = (props: any) => {
       </Gnv>
       <Content CLIENT_WIDTH={CLIENT_WIDTH}>
         <TopTitle>
-          <div></div>
+          <div style={{ width: "30px" }}></div>
           <AppName>GST ERP</AppName>
           <Button
             icon="menu"
-            themeColor={"inverse"}
+            themeColor={"primary"}
             fillMode={"flat"}
             onClick={onMenuBtnClick}
           />

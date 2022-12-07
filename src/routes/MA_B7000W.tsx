@@ -59,7 +59,6 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { gridList } from "../store/columns/MA_B7000W_C";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-//import {useAuth} from "../../hooks/auth";
 
 const numberField = [
   "safeqty",

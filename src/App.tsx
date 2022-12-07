@@ -1,16 +1,10 @@
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useHistory,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import React, { Component, useEffect } from "react";
 import "@progress/kendo-theme-default/dist/all.css";
 import PanelBarNavContainer from "./components/PanelBarNavContainer";
-import styled, { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
-import UserEffect from "./components/UserEffect";
 //import "./App.css";
 import Login from "./routes/Login";
 import Main from "./routes/Main";
@@ -120,10 +114,9 @@ const AppInner: React.FC = () => {
   return (
     <>
       <GlobalStyle isMenuOpend={isMenuOpend} />
-      <UserEffect />
       <Router>
         <Switch>
-          <Route path="/Login" component={Login} />
+          <Route path="/" component={Login} exact />
           <PanelBarNavContainer>
             {/* 메인 홈 */}
             <AuthRoute path="/Home" component={Main} exact />

@@ -6,6 +6,7 @@ import { sessionItemState, tokenState } from "../store/atoms";
 import { COM_CODE_DEFAULT_VALUE } from "./CommonString";
 import { detect } from "detect-browser";
 import { bytesToBase64 } from "byte-base64";
+import { TSessionItemCode } from "../store/types";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
@@ -125,9 +126,6 @@ export const convertMilliSecondsToTimeStr = (secs: number) => {
 };
 
 export const numberWithCommas = (num: number) => {
-  if (typeof num === "string") {
-    return num;
-  }
   if (typeof num === "number") {
     //소수점 제외
     let numWithCommas = num.toString().split(".");
@@ -135,6 +133,8 @@ export const numberWithCommas = (num: number) => {
       numWithCommas[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
       (numWithCommas[1] ? "." + numWithCommas[1] : "")
     );
+  } else {
+    return num;
   }
 };
 
@@ -204,23 +204,26 @@ export const UseMessages = (pathname: string, setListData: any) => {
 
 //현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
 export const UseCustomOption = (pathname: string, setListData: any) => {
-  //const [bizComponentData, setBizComponentData] = React.useState(null);
   const processApi = useApi();
   const [sessionItem] = useRecoilState(sessionItemState);
-  let userId = "";
-  const userIdObj = sessionItem.find(
-    (sessionItem) => sessionItem.code === "user_id"
-  );
-  if (userIdObj) {
-    userId = userIdObj.value;
-  }
-  React.useEffect(() => {
-    fetchCustomOptionData();
+  const [token] = useRecoilState(tokenState);
+  useEffect(() => {
+    if (token) {
+      fetchCustomOptionData();
+    }
   }, []);
 
   //커스텀 옵션 조회
   const fetchCustomOptionData = React.useCallback(async () => {
     let data: any;
+
+    let userId = "";
+    const userIdObj = sessionItem.find(
+      (sessionItem) => sessionItem.code === "user_id"
+    );
+    if (userIdObj) {
+      userId = userIdObj.value;
+    }
     try {
       data = await processApi<any>("custom-option", {
         formId: pathname.replace("/", ""),
@@ -352,17 +355,19 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
   }, []);
 };
 
-//현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
+//현재 경로를 받아서 디자인 정보 조회 후 결과값을 반환
 export const UseDesignInfo = (pathname: string, setListData: any) => {
-  //const [bizComponentData, setBizComponentData] = React.useState(null);
   const processApi = useApi();
+  const [token] = useRecoilState(tokenState);
 
-  React.useEffect(() => {
-    fetchCustomOptionData();
+  useEffect(() => {
+    if (token) {
+      fetchDesignInfoData();
+    }
   }, []);
 
-  //커스텀 옵션 조회
-  const fetchCustomOptionData = React.useCallback(async () => {
+  //디자인 정보 조회
+  const fetchDesignInfoData = React.useCallback(async () => {
     let data: any;
     try {
       data = await processApi<any>("design-info", {
@@ -384,17 +389,18 @@ export const UseDesignInfo = (pathname: string, setListData: any) => {
 // 권한 조회 후 결과값을 반환
 export const UsePermissions = (setListData: any) => {
   const processApi = useApi();
-
-  const pathname: string = window.location.pathname.replace("/", "");
+  const pathname = window.location.pathname.replace("/", "");
   const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = token ? token.userId : "";
 
-  React.useEffect(() => {
-    fetchData();
+  useEffect(() => {
+    if (token) {
+      fetchData();
+    }
   }, []);
 
   //커스텀 옵션 조회
-  const fetchData = React.useCallback(async () => {
+  const fetchData = useCallback(async () => {
     let para = {
       para: pathname + "/permissions?userId=" + userId,
     };
@@ -417,11 +423,13 @@ export const UsePermissions = (setListData: any) => {
 
 //비즈니스 컴포넌트 조회
 export const UseBizComponent = (bizComponentId: string, setListData: any) => {
-  //const [bizComponentData, setBizComponentData] = React.useState(null);
   const processApi = useApi();
+  const [token] = useRecoilState(tokenState);
 
-  React.useEffect(() => {
-    fetchBizComponentData();
+  useEffect(() => {
+    if (token) {
+      fetchBizComponentData();
+    }
   }, []);
 
   const fetchBizComponentData = useCallback(async () => {
@@ -454,47 +462,6 @@ export const getQueryFromBizComponent = (bcItem: any) => {
     bcItem["queryFooter"]
   ).replace(/\r\n/gi, " ");
 };
-
-//현재 경로를 받아서 컬럼 리스트 조회 후 결과값을 반환
-// export const UseMenuColumns = (pathname: string, setListData: any) => {
-//   const processApi = useApi();
-
-//   React.useEffect(() => {
-//     fetchData();
-//   }, []);
-
-//   const parameters: Iparameters = {
-//     procedureName: "web_sel_column_view_config",
-//     pageNumber: 1,
-//     pageSize: 200,
-//     parameters: {
-//       "@p_work_type": "CustomDetail",
-//       "@p_dbname": "SYSTEM",
-//       "@p_form_id": pathname,
-//       "@p_lang_id": "",
-//       "@p_parent_component": "",
-//       "@p_message": "",
-//     },
-//   };
-
-//   const fetchData = React.useCallback(async () => {
-//     let data: any;
-
-//     try {
-//       data = await processApi<any>("platform-procedure", parameters);
-//     } catch (error) {
-//       data = null;
-//     }
-
-//     if (data.isSuccess === true) {
-//       const rows = data.tables[0].Rows;
-//       setListData(rows);
-//     } else {
-//       console.log("[오류 발생]");
-//       console.log(data);
-//     }
-//   }, []);
-// };
 
 //그리드 스크롤을 맨 아래로 내렸을 때, 조회할 데이터가 남았으면 true 반환
 export const chkScrollHandler = (
@@ -731,14 +698,6 @@ export const getUnpQuery = (custcd: string) => {
       `;
 };
 
-type TSessionItemCode =
-  | "user_id"
-  | "user_name"
-  | "orgdiv"
-  | "location"
-  | "position"
-  | "dptcd";
-
 // code값을 인수로 받아 sessionItem value 반환
 export const UseGetValueFromSessionItem = (code: TSessionItemCode) => {
   const [sessionItem] = useRecoilState(sessionItemState);
@@ -775,7 +734,7 @@ export const getBrowser = () => {
   const browser = detect();
 
   if (browser) {
-    return browser.os + "|" + browser.name + "|" + browser.version;
+    return browser.os + "/" + browser.name + "/" + browser.version;
   } else {
     console.log("브라우저 정보 조회 오류");
     return "";

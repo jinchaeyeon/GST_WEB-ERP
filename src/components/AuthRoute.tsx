@@ -1,18 +1,14 @@
-import { useEffect } from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-import { useAuth } from "../hooks/auth";
+import { useRecoilState } from "recoil";
+import { tokenState } from "../store/atoms";
 
 function AuthRoute({ component, ...rest }: RouteProps) {
-  const { isLoggedIn } = useAuth();
-  useEffect(() => {
-    // if (!isLoggedIn) {
-    //   alert("로그인 후 이용해주세요.");
-    // }
-  }, [isLoggedIn]);
+  const [token] = useRecoilState(tokenState);
+  const isLoggedIn = !!token;
   return (
     <>
       <Route {...rest} component={component} />
-      {!isLoggedIn && <Redirect to="/Login" />}
+      {!isLoggedIn && <Redirect to="/" />}
     </>
   );
 }

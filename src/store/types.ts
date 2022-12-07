@@ -49,16 +49,17 @@ export type TCommonCode = {
 };
 
 export type TSessionItem = {
-  code: string;
+  code: TSessionItemCode;
   value: string;
 };
 
-export type User = {
-  nick: string;
-  route: string;
-  username: string;
-  realName: string;
-};
+export type TSessionItemCode =
+  | "user_id"
+  | "user_name"
+  | "orgdiv"
+  | "location"
+  | "position"
+  | "dptcd";
 
 export type TPermissions = {
   view: boolean;
@@ -79,7 +80,7 @@ export type TColumn = {
   width: number;
 };
 
-export type TcontrolObj = {
+export type TControlObj = {
   rowstatus: string;
   form_id: string;
   control_name: string;
@@ -90,7 +91,7 @@ export type TcontrolObj = {
   word_text: string;
 };
 
-export type Tmenu = {
+export type TMenu = {
   level: number;
   menuId: string;
   menuName: string;

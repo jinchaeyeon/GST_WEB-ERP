@@ -17,7 +17,6 @@ import {
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
-
 import {
   ButtonContainer,
   ButtonInInput,
@@ -26,7 +25,7 @@ import {
   GridTitle,
   GridTitleContainer,
 } from "../../../CommonStyled";
-import { Iparameters, TcontrolObj } from "../../../store/types";
+import { Iparameters, TControlObj } from "../../../store/types";
 import {
   chkScrollHandler,
   getGridItemChangedData,
@@ -34,7 +33,6 @@ import {
   UseGetValueFromSessionItem,
 } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-
 import ColumnWindow from "./UserOptionsColumnWindow";
 import DefaultWindow from "./UserOptionsDefaultWindow";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -44,7 +42,6 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
-
 import { CellRender, RowRender } from "../../Renderers";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
@@ -59,7 +56,6 @@ import {
   TreeListTextEditor,
   treeToFlat,
 } from "@progress/kendo-react-treelist";
-import UserEffect from "../../UserEffect";
 import {
   Checkbox,
   CheckboxChangeEvent,
@@ -68,7 +64,7 @@ import {
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { tokenState, userState } from "../../../store/atoms";
+import { tokenState } from "../../../store/atoms";
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilValue } from "recoil";
 
@@ -189,7 +185,10 @@ const DefaultValueCell = (props: GridCellProps) => {
 
   let isInEdit = field === dataItem.inEdit;
   const valueType = dataItem["value_type"];
+  const bcId = dataItem["bc_id"];
   const useSession = getYn(dataItem["use_session"]);
+
+  console.log(dataItem);
 
   const value = dataItem[field];
 
@@ -1657,11 +1656,11 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       return false;
     }
 
-    //let ControlList: Array<TcontrolObj>; //차이점?..
-    let ControlList: TcontrolObj[] = [];
+    //let ControlList: Array<TControlObj>; //차이점?..
+    let ControlList: TControlObj[] = [];
 
     // 1) 최상위 메뉴
-    const topElementObj: TcontrolObj = {
+    const topElementObj: TControlObj = {
       rowstatus: "N",
       form_id: pathname,
       control_name: pathname,
@@ -1674,7 +1673,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     ControlList.push(topElementObj);
 
     // 2) Text 그룹
-    const textGroupObj: TcontrolObj = {
+    const textGroupObj: TControlObj = {
       rowstatus: "N",
       form_id: pathname,
       control_name: "Texts",
@@ -1694,7 +1693,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     );
     controlNameList.forEach((item) => {
       if (item === "") return;
-      const controlObj: TcontrolObj = {
+      const controlObj: TControlObj = {
         rowstatus: "N",
         form_id: pathname,
         control_name: item,
@@ -1712,7 +1711,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     });
 
     // 2) Text 그룹
-    const gridGroupObj: TcontrolObj = {
+    const gridGroupObj: TControlObj = {
       rowstatus: "N",
       form_id: pathname,
       control_name: "Grids",
@@ -1733,7 +1732,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       }
     });
     gridNameArr.forEach((item: string) => {
-      const controlObj: TcontrolObj = {
+      const controlObj: TControlObj = {
         rowstatus: "N",
         form_id: pathname,
         control_name: item,
@@ -1749,7 +1748,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     // 3) Grid 그룹 하위요소
     // [data-grid-name] 리스트 (Column)
     columnArr.forEach((item: any) => {
-      const controlObj: TcontrolObj = {
+      const controlObj: TControlObj = {
         rowstatus: "N",
         form_id: pathname,
         control_name: item.id,

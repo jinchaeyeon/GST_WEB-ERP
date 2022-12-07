@@ -74,7 +74,9 @@ const CM_A1600: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [token] = useRecoilState(tokenState);
-  const { userId, companyCode } = token;
+  const userId = token ? token.userId : "";
+  const companyCode = token ? token.companyCode : "";
+
   const [permissions, setPermissions] = useState<TPermissions | null>(
     OLD_COMPANY.includes(companyCode)
       ? {
