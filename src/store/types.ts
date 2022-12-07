@@ -31,17 +31,15 @@ export interface Iparameters {
   parameters: {};
 }
 
-export type Token = {
+export type TToken = {
   token: string;
-  langCode: string;
   userId: string;
+  langCode: string;
   userName: string;
   role: string;
   companyCode: string;
   serviceName: string;
   customerName: string;
-  serviceUrl: string;
-  internalIp: string;
   loginKey: string;
 };
 

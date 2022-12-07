@@ -48,8 +48,6 @@ const Login: React.FC = () => {
           companyCode,
           serviceName,
           customerName,
-          serviceUrl,
-          internalIp,
           loginKey,
         } = response;
 
@@ -62,14 +60,11 @@ const Login: React.FC = () => {
           companyCode,
           serviceName,
           customerName,
-          serviceUrl,
-          internalIp,
           loginKey,
         });
 
         history.replace("/Home");
 
-        //setApi({ api: response.serviceUrl });
         //setShowLoading(false);
       } catch (e: any) {
         console.log("login error", e);
