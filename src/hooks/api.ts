@@ -84,9 +84,10 @@ export const useApi = () => {
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
-      if (token) {
-        BASE_URL = token.serviceUrl + "/";
-      }
+      // 로그인 시 반환된 url로 api 호출하도록 함 (22.12.02 서버에서 처리 되도록 방식 변경)
+      // if (token) {
+      //   BASE_URL = token.serviceUrl + "/";
+      // }
       let info: any = domain[name];
       let url = null;
       let p = null;
