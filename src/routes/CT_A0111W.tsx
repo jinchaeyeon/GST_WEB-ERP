@@ -23,6 +23,7 @@ import {
   ButtonContainer,
   GridTitleContainer,
   LandscapePrint,
+  ButtonInInput,
 } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
@@ -43,6 +44,9 @@ import NumberCell from "../components/Cells/NumberCell";
 import CenterCell from "../components/Cells/CenterCell";
 import ReactToPrint from "react-to-print";
 import { Button } from "@progress/kendo-react-buttons";
+import { Input } from "@progress/kendo-react-inputs";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { IItemData } from "../hooks/interfaces";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -93,15 +97,20 @@ const CT_A0111W: React.FC = () => {
     }));
   };
 
+  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
+  const setItemData = (data: IItemData) => {
+    setFilters((prev) => ({
+      ...prev,
+      itemcd: data.itemcd,
+      itemnm: data.itemnm,
+    }));
+  };
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: PAGE_SIZE,
-    work_type: "list",
     orgdiv: "01",
-    type: "pgm",
-    ref_code: "",
-    frdt: new Date(),
-    todt: new Date(),
+    itemcd: "",
+    itemnm: "",
   });
 
   //조회조건 파라미터
@@ -111,7 +120,9 @@ const CT_A0111W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": "LIST",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
     },
   };
 
@@ -220,6 +231,11 @@ const CT_A0111W: React.FC = () => {
     resetAllGrid();
     fetchMainGrid();
   };
+  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+
+  const onItemWndClick = () => {
+    setItemWindowVisible(true);
+  };
 
   const componentRef = useRef(null);
   return (
@@ -254,6 +270,43 @@ const CT_A0111W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
 
+      <FilterBoxWrap>
+        <FilterBox>
+          <tbody>
+            <tr>
+              <th>품목코드</th>
+              <td>
+                <Input
+                  name="itemcd"
+                  type="text"
+                  value={filters.itemcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onItemWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>품목명</th>
+              <td>
+                <Input
+                  name="itemnm"
+                  type="text"
+                  value={filters.itemnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th></th>
+              <td></td>
+              <th></th>
+              <td></td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </FilterBoxWrap>
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -458,6 +511,14 @@ const CT_A0111W: React.FC = () => {
           </table>
         </div>
       </LandscapePrint>
+
+      {itemWindowVisible && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible}
+          workType={"FILTER"}
+          setData={setItemData}
+        />
+      )}
     </>
   );
 };
