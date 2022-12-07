@@ -409,8 +409,9 @@ const PanelBarNavContainer = (props: any) => {
                   </PanelBarItem>
                 );
               })}
-
-            <PanelBarItem title={"CHAT BOT"} route="/CHAT_BOT" />
+            {companyCode !== "2207C612" && (
+              <PanelBarItem title={"CHAT BOT"} route="/CHAT_BOT" />
+            )}
           </PanelBar>
         )}
 

@@ -32,6 +32,7 @@ import PR_B3000W from "./routes/PR_B3000W";
 import PR_A3000W from "./routes/PR_A3000W";
 import CT_A0111W from "./routes/CT_A0111W";
 import CHAT_BOT from "./routes/CHAT_BOT";
+import CHAT_BOT_TRAVEL from "./routes/CHAT_BOT_TRAVEL";
 import { isMenuOpendState } from "./store/atoms";
 
 type TGlobalStyle = {
@@ -152,6 +153,11 @@ const AppInner: React.FC = () => {
             {/* 원가관리 */}
             <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
             <AuthRoute path="/CHAT_BOT" component={CHAT_BOT} exact />
+            <AuthRoute
+              path="/CHAT_BOT_TRAVEL"
+              component={CHAT_BOT_TRAVEL}
+              exact
+            />
           </PanelBarNavContainer>
         </Switch>
       </Router>
