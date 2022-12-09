@@ -81,6 +81,7 @@ const PR_A3000W: React.FC = () => {
   const [stopStartOrEnd, setStopStartOrEnd] = useState<"start" | "end">(
     "start"
   );
+  const [stopStartTime, setStopStartTime] = useState(null);
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -290,7 +291,7 @@ const PR_A3000W: React.FC = () => {
     let data: any;
 
     const queryStr =
-      "SELECT COUNT(1) as cnt FROM PR230T WHERE orgdiv = '" +
+      "SELECT COUNT(1) as cnt, max(strtime) strtime FROM PR230T WHERE orgdiv = '" +
       sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")?.value +
       "' AND prodmac = '" +
       filtersSaved.prodmac +
@@ -311,9 +312,14 @@ const PR_A3000W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const cnt = data.tables[0].Rows[0].cnt;
+      const strtime = data.tables[0].Rows[0].strtime;
 
       if (cnt > 0) {
         setStopStartOrEnd("end");
+        setStopStartTime(strtime);
+      } else {
+        setStopStartOrEnd("start");
+        setStopStartTime(null);
       }
     } else {
       console.log("[오류발생]");
@@ -410,6 +416,7 @@ const PR_A3000W: React.FC = () => {
         if (startOrEnd === "start") {
           // 시작 => 시작 정보 조회
           fetchMaster();
+          fetchStopData();
         } else {
           // 종료 => 초기화
           setStartOrEnd("start");
@@ -610,7 +617,6 @@ const PR_A3000W: React.FC = () => {
                   : "00:00:00"}
               </td>
             </tr>
-
             <tr>
               <th>수량</th>
               <td>
@@ -629,6 +635,16 @@ const PR_A3000W: React.FC = () => {
                 />
               </td>
             </tr>
+            {stopStartOrEnd === "end" && stopStartTime ? (
+              <tr>
+                <th>비가동시작시간</th>
+                <td colSpan={3}>
+                  {convertDateToStrWithTime2(new Date(stopStartTime))}
+                </td>
+              </tr>
+            ) : (
+              ""
+            )}
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
@@ -640,7 +656,9 @@ const PR_A3000W: React.FC = () => {
               onClick={onClickWork}
               icon={startOrEnd === "start" ? "play-sm" : "stop-sm"}
               themeColor={"primary"}
-              disabled={permissions.save ? false : true}
+              disabled={
+                permissions.save && stopStartOrEnd === "start" ? false : true
+              }
               className="iot-btn green"
             >
               {startOrEnd === "start" ? "시작" : "종료"}
@@ -649,7 +667,13 @@ const PR_A3000W: React.FC = () => {
               onClick={onClickDefect}
               icon="exclamation-circle"
               themeColor={"primary"}
-              disabled={permissions.save && startOrEnd === "end" ? false : true}
+              disabled={
+                permissions.save &&
+                startOrEnd === "end" &&
+                stopStartOrEnd === "start"
+                  ? false
+                  : true
+              }
               className="iot-btn red"
             >
               불량입력
@@ -674,7 +698,10 @@ const PR_A3000W: React.FC = () => {
             prodmac: filtersSaved.prodmac,
             prodemp: filtersSaved.prodemp,
           }}
-          setData={() => setStopStartOrEnd("end")}
+          setData={() => {
+            setStopStartOrEnd("end");
+            fetchStopData();
+          }}
         />
       )}
       {defectWindowVisible && (

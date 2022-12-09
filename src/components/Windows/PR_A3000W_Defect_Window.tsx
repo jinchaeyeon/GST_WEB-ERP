@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, createContext, useRef } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -17,6 +17,9 @@ import {
   ButtonContainer,
   FieldWrap,
   GridContainer,
+  NumberKeypad,
+  NumberKeypadCell,
+  NumberKeypadRow,
 } from "../../CommonStyled";
 import {
   Form,
@@ -58,8 +61,7 @@ import { sessionItemState, tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
 
 // Create React.Context to pass props to the Form Field components from the main component
-export const FormGridEditContext = React.createContext<{
-  onSave: () => void;
+export const FormGridEditContext = createContext<{
   editIndex: number | undefined;
   parentField: string;
 }>({} as any);
@@ -102,13 +104,8 @@ type TDetailData = {
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const { validationMessage, visited, name, dataItemKey } =
     fieldArrayRenderProps;
-  const [editIndex, setEditIndex] = React.useState<number | undefined>();
-  const editItemCloneRef = React.useRef();
-
-  // Save the changes
-  const onSave = React.useCallback(() => {
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const editItemCloneRef = useRef();
 
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
@@ -127,6 +124,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     });
 
     setEditIndex(dataItem[FORM_DATA_INDEX]);
+
+    // input 클릭하여 edit 시 onSelectionChange 동작 안하여서 강제로 setSelectedState 처리
+    setSelectedState({ [dataItem[FORM_DATA_INDEX]]: true });
   };
 
   const exitEdit = (item: any) => {
@@ -162,6 +162,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
+  useEffect(() => {
+    setSelectedState({ [0]: true });
+  }, []);
 
   const onSelectionChange = useCallback(
     (event: GridSelectionChangeEvent) => {
@@ -203,8 +207,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     []
   );
 
-  // Add a new item to the Form FieldArray that will be shown in the Grid
-  const onAdd = React.useCallback(
+  const onAdd = useCallback(
     (e: any) => {
       e.preventDefault();
       fieldArrayRenderProps.onPush({
@@ -220,7 +223,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [fieldArrayRenderProps]
   );
 
-  const onRemove = React.useCallback(() => {
+  const onRemove = useCallback(() => {
     let newData: any[] = [];
 
     //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
@@ -253,11 +256,55 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setEditIndex(undefined);
   }, [fieldArrayRenderProps]);
 
+  // 키패드 숫자 입력
+  const enterNumber = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const selectedDataKey = Object.getOwnPropertyNames(selectedState)[0];
+    if (!selectedDataKey) {
+      // 그리드 선택 행 없을 시 리턴
+      return false;
+    }
+    const selectedData = dataWithIndexes[selectedDataKey];
+    const selectedIdx = dataWithIndexes[selectedDataKey][FORM_DATA_INDEX];
+    const value = e.currentTarget.innerText;
+
+    // 소수점 한개 초과 입력 시 리턴
+    if (value === "." && String(selectedData["badqty"]).includes(".")) {
+      return false;
+    }
+
+    if (value !== "") {
+      //숫자, 소수점 입력
+      fieldArrayRenderProps.onReplace({
+        index: selectedIdx,
+        value: {
+          ...selectedData,
+          rowstatus: "U",
+          badqty:
+            value === "."
+              ? selectedData["badqty"] + value // 소수점 입력시 스트링으로 처리
+              : Number(String(selectedData["badqty"]) + value),
+        },
+      });
+    } else {
+      //삭제
+      fieldArrayRenderProps.onReplace({
+        index: selectedIdx,
+        value: {
+          ...selectedData,
+          rowstatus: "U",
+          badqty: Number(String(selectedData["badqty"]).slice(0, -1)),
+        },
+      });
+    }
+  };
+
   return (
-    <GridContainer margin={{ top: "30px" }}>
+    <GridContainer
+      margin={{ top: "30px" }}
+      style={{ display: "flex", flexDirection: "row" }}
+    >
       <FormGridEditContext.Provider
         value={{
-          onSave,
           editIndex,
           parentField: name,
         }}
@@ -270,9 +317,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             [SELECTED_FIELD]: selectedState[idGetter(item)],
           }))}
           total={dataWithIndexes.total}
-          dataItemKey={dataItemKey}
           style={{ height: "400px" }}
           cellRender={customCellRender}
+          //선택기능
+          dataItemKey={FORM_DATA_INDEX}
           rowRender={customRowRender}
           selectedField={SELECTED_FIELD}
           selectable={{
@@ -282,9 +330,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             mode: "multiple",
           }}
           onSelectionChange={onSelectionChange}
-          onHeaderSelectionChange={onHeaderSelectionChange}
+          //onHeaderSelectionChange={onHeaderSelectionChange}
         >
-          <GridToolbar>
+          {/* <GridToolbar>
             <Button
               type={"button"}
               themeColor={"primary"}
@@ -303,9 +351,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             >
               삭제
             </Button>
-          </GridToolbar>
+          </GridToolbar> */}
 
-          <GridColumn
+          {/* <GridColumn
             field={SELECTED_FIELD}
             width="45px"
             headerSelectionValue={
@@ -313,7 +361,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
                 (item: any) => !selectedState[idGetter(item)]
               ) === -1
             }
-          />
+          /> */}
           <GridColumn field="rowstatus" title=" " width="40px" />
 
           <GridColumn
@@ -329,6 +377,31 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             width="240px"
           />
         </Grid>
+
+        <NumberKeypad>
+          <NumberKeypadRow>
+            <NumberKeypadCell onClick={enterNumber}>1</NumberKeypadCell>
+            <NumberKeypadCell onClick={enterNumber}>2</NumberKeypadCell>
+            <NumberKeypadCell onClick={enterNumber}>3</NumberKeypadCell>
+          </NumberKeypadRow>
+          <NumberKeypadRow>
+            <NumberKeypadCell onClick={enterNumber}>4</NumberKeypadCell>
+            <NumberKeypadCell onClick={enterNumber}>5</NumberKeypadCell>
+            <NumberKeypadCell onClick={enterNumber}>6</NumberKeypadCell>
+          </NumberKeypadRow>
+          <NumberKeypadRow>
+            <NumberKeypadCell onClick={enterNumber}>7</NumberKeypadCell>
+            <NumberKeypadCell onClick={enterNumber}>8</NumberKeypadCell>
+            <NumberKeypadCell onClick={enterNumber}>9</NumberKeypadCell>
+          </NumberKeypadRow>
+          <NumberKeypadRow>
+            <NumberKeypadCell onClick={enterNumber}>.</NumberKeypadCell>
+            <NumberKeypadCell onClick={enterNumber}>0</NumberKeypadCell>
+            <NumberKeypadCell onClick={enterNumber}>
+              <span className={"k-icon k-i-x"}></span>
+            </NumberKeypadCell>
+          </NumberKeypadRow>
+        </NumberKeypad>
       </FormGridEditContext.Provider>
     </GridContainer>
   );
@@ -364,7 +437,7 @@ const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
     setVisible(false);
   };
 
-  const [formKey, setFormKey] = React.useState(1);
+  const [formKey, setFormKey] = useState(1);
   const resetForm = () => {
     setFormKey(formKey + 1);
   };
@@ -439,7 +512,7 @@ const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
   const pathname: string = window.location.pathname.replace("/", "");
 
   //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
+  const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
   //프로시저 파라미터 초기값
@@ -527,6 +600,7 @@ const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
     dataDetails.forEach((item: any, i: number) => {
       const { rowstatus, badcd, badqty } = item;
       //if (rowstatus !== "U") return;
+      if (badqty <= 0) return;
 
       detailArr.badcd_s.push(getCodeFromValue(badcd));
       detailArr.badqty_s.push(badqty);

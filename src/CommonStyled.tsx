@@ -487,3 +487,42 @@ export const InfoLabel = styled.span``;
 export const InfoValue = styled.span`
   font-weight: 600;
 `;
+
+export const NumberKeypad = styled.div`
+  width: 100%;
+  padding: 1%;
+  border: solid 1px #f0f0f0;
+  display: inline-block;
+  margin: 5px 0;
+  margin-left: 5px;
+`;
+export const NumberKeypadRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+export const NumberKeypadCell = styled.div`
+  border: solid 1px #ff6358;
+  color: #ff6358;
+  font-size: 20px;
+  text-align: center;
+  border-radius: 5px;
+  width: 100%;
+  margin: 1%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  :hover {
+    background-color: #ff6358;
+    color: #ffffff;
+  }
+  :focus {
+    background-color: #ff6358;
+    color: #ffffff;
+  }
+  :active {
+    background-color: #ff6358;
+    color: #ffffff;
+  }
+`;
