@@ -19,6 +19,7 @@ import { CLIENT_WIDTH, GNV_WIDTH } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { Iparameters, TLogParaVal, Tpath } from "../store/types";
 import { UseGetValueFromSessionItem } from "./CommonFunction";
+import Loading from "./Loading";
 
 type TWrapper = {
   isMenuOpend: boolean;
@@ -404,6 +405,8 @@ const PanelBarNavContainer = (props: any) => {
       {userOptionsWindowVisible && (
         <UserOptionsWindow getVisible={setUserOptionsWindowVisible} />
       )}
+
+      <Loading />
     </Wrapper>
   );
 };

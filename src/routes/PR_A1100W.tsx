@@ -67,7 +67,7 @@ import {
 import { CellRender, RowRender } from "../components/GroupRenderers";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { tokenState } from "../store/atoms";
+import { isLoading, tokenState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { bytesToBase64 } from "byte-base64";
@@ -150,6 +150,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const PR_A1100W: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -658,6 +659,7 @@ const PR_A1100W: React.FC = () => {
     if (!permissions?.view) return;
     let data: any;
 
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -679,12 +681,13 @@ const PR_A1100W: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   const fetchPlanGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", planParameters);
     } catch (error) {
@@ -709,6 +712,7 @@ const PR_A1100W: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   const fetchMaterialGrid = async () => {

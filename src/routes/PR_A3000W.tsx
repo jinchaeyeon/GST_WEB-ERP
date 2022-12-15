@@ -50,8 +50,8 @@ import {
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { sessionItemState, tokenState } from "../store/atoms";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { isLoading, sessionItemState, tokenState } from "../store/atoms";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
 import DefectWindow from "../components/Windows/PR_A3000W_Defect_Window";
@@ -65,6 +65,7 @@ const PR_A3000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
   const token = useRecoilValue(tokenState);
+  const setLoading = useSetRecoilState(isLoading);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -290,6 +291,7 @@ const PR_A3000W: React.FC = () => {
   const fetchStopData = async () => {
     let data: any;
 
+    setLoading(true);
     const queryStr =
       "SELECT COUNT(1) as cnt, max(strtime) strtime FROM PR230T WHERE orgdiv = '" +
       sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")?.value +
@@ -325,6 +327,7 @@ const PR_A3000W: React.FC = () => {
       console.log("[오류발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   // 데이터 조회
@@ -332,7 +335,7 @@ const PR_A3000W: React.FC = () => {
     if (!permissions?.view) return;
     if (filters.plankey === "") return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -354,12 +357,14 @@ const PR_A3000W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   // 시작정보 조회
   const fetchMaster = async () => {
     if (!permissions?.view) return;
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", parametersMaster);
@@ -392,6 +397,7 @@ const PR_A3000W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   const fetchMainSaved = async () => {

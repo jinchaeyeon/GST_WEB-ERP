@@ -66,8 +66,8 @@ import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox"
 import { Renderers } from "../components/TreeListRenderers";
 import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
-import { tokenState } from "../store/atoms";
-import { useRecoilState } from "recoil";
+import { isLoading, tokenState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import TopButtons from "../components/TopButtons";
 import GroupWindow from "../components/Windows/SY_A0013W_Window";
 import { bytesToBase64 } from "byte-base64";
@@ -193,6 +193,7 @@ const userMenuColumns: TreeListColumnProps[] = [
 ];
 
 const SY_A0120: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -375,6 +376,7 @@ const SY_A0120: React.FC = () => {
     if (!permissions?.view) return;
     let data: any;
 
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -399,11 +401,12 @@ const SY_A0120: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   const fetchUserMenuGrid = async () => {
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", userMenuParameters);
     } catch (error) {
@@ -467,13 +470,13 @@ const SY_A0120: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
-
+    setLoading(false);
     fetchAllMenuGrid();
   };
 
   const fetchAllMenuGrid = async () => {
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", allMenuParameters);
     } catch (error) {
@@ -538,6 +541,7 @@ const SY_A0120: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   //메인 그리드 데이터 변경 되었을 때

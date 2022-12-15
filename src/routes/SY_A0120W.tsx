@@ -37,11 +37,14 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import TopButtons from "../components/TopButtons";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
 
 const SY_A0120: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -126,7 +129,7 @@ const SY_A0120: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -151,6 +154,7 @@ const SY_A0120: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   //메인 그리드 데이터 변경 되었을 때

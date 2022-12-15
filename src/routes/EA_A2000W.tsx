@@ -63,7 +63,7 @@ import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import CashDisbursementVoucher from "../components/Prints/CashDisbursementVoucher";
@@ -72,7 +72,7 @@ import { CellRender, RowRender } from "../components/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { Window } from "@progress/kendo-react-dialogs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
-import { tokenState } from "../store/atoms";
+import { isLoading, tokenState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 
@@ -86,6 +86,7 @@ const DETAIL_DATA_ITEM_KEY = "resno";
 const DETAIL3_DATA_ITEM_KEY = "commseq";
 
 const EA_A2000: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
@@ -386,7 +387,7 @@ const EA_A2000: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -408,6 +409,7 @@ const EA_A2000: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   //메인 그리드 데이터 변경 되었을 때
@@ -430,6 +432,7 @@ const EA_A2000: React.FC = () => {
   //그리드 데이터 조회
   const fetchDetailGrid = async () => {
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", detailParameters);
@@ -495,6 +498,7 @@ const EA_A2000: React.FC = () => {
         });
       }
     }
+    setLoading(false);
   };
 
   useEffect(() => {

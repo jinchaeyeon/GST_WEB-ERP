@@ -31,9 +31,9 @@ import {
   FilterBoxWrap,
   FilterBox,
 } from "../CommonStyled";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { tokenState } from "../store/atoms";
+import { isLoading, tokenState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
@@ -70,6 +70,7 @@ const DATA_ITEM_KEY = "idx";
 let deletedTodoRows: object[] = [];
 
 const CM_A1600: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -231,6 +232,7 @@ const CM_A1600: React.FC = () => {
   const fetchTodoGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", todoParameters);
@@ -254,12 +256,13 @@ const CM_A1600: React.FC = () => {
           };
         });
     }
+    setLoading(false);
   };
 
   const fetchScheduler = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", schedulerParameters);
     } catch (error) {
@@ -285,6 +288,7 @@ const CM_A1600: React.FC = () => {
 
       setSchedulerDataResult(rows);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

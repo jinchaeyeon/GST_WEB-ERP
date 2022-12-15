@@ -55,11 +55,14 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
 
 const SA_B2000: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
@@ -467,6 +470,7 @@ const SA_B2000: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -488,11 +492,12 @@ const SA_B2000: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   const fetchDetailGrid = async () => {
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
@@ -511,6 +516,7 @@ const SA_B2000: React.FC = () => {
           };
         });
     }
+    setLoading(false);
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행

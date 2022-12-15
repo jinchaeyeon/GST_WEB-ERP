@@ -66,8 +66,8 @@ import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox"
 import { CellRender, RowRender } from "../components/Renderers";
 import { Renderers } from "../components/TreeListRenderers";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
-import { tokenState } from "../store/atoms";
-import { useRecoilState } from "recoil";
+import { isLoading, tokenState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import DetailWindow from "../components/Windows/SY_A0011W_Window";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
@@ -114,6 +114,7 @@ const RowRenderForDragging = (properties: any) => {
 
 let selectedRowIdx = 0;
 const SY_A0120: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -312,7 +313,7 @@ const SY_A0120: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -338,10 +339,12 @@ const SY_A0120: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   const fetchUserMenuGrid = async () => {
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", userMenuParameters);
@@ -406,10 +409,12 @@ const SY_A0120: React.FC = () => {
     }
 
     fetchAllMenuGrid();
+    setLoading(false);
   };
 
   const fetchAllMenuGrid = async () => {
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", allMenuParameters);
@@ -475,6 +480,7 @@ const SY_A0120: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   //메인 그리드 데이터 변경 되었을 때

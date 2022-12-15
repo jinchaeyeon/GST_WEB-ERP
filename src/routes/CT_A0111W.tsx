@@ -47,6 +47,8 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -57,6 +59,7 @@ const CT_A0111W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const setLoading = useSetRecoilState(isLoading);
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
@@ -131,6 +134,7 @@ const CT_A0111W: React.FC = () => {
     if (!permissions?.view) return;
     let data: any;
 
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -155,6 +159,7 @@ const CT_A0111W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   //메인 그리드 데이터 변경 되었을 때

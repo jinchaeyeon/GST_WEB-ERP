@@ -59,6 +59,8 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { gridList } from "../store/columns/MA_B7000W_C";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
+import { isLoading } from "../store/atoms";
+import { useSetRecoilState } from "recoil";
 
 const numberField = [
   "safeqty",
@@ -84,6 +86,7 @@ const DATA_ITEM_KEY = "itemcd";
 const DETAIL_DATA_ITEM_KEY = "lotnum";
 
 const MA_B7000: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
@@ -372,7 +375,7 @@ const MA_B7000: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -394,6 +397,7 @@ const MA_B7000: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   //메인 그리드 데이터 변경 되었을 때
@@ -428,7 +432,7 @@ const MA_B7000: React.FC = () => {
   //그리드 데이터 조회
   const fetchDetailGrid1 = async () => {
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
@@ -447,11 +451,12 @@ const MA_B7000: React.FC = () => {
           };
         });
     }
+    setLoading(false);
   };
 
   const fetchDetailGrid2 = async () => {
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", detail2Parameters);
     } catch (error) {
@@ -470,6 +475,7 @@ const MA_B7000: React.FC = () => {
           };
         });
     }
+    setLoading(false);
   };
 
   useEffect(() => {

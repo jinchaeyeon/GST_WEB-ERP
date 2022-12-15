@@ -62,8 +62,8 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import NumberCell from "../components/Cells/NumberCell";
 import RequiredHeader from "../components/RequiredHeader";
-import { useRecoilState } from "recoil";
-import { sessionItemState, tokenState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, sessionItemState, tokenState } from "../store/atoms";
 import { bytesToBase64 } from "byte-base64";
 
 //그리드 별 키 필드값
@@ -133,6 +133,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const PR_A9100W: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -314,7 +315,7 @@ const PR_A9100W: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -339,6 +340,8 @@ const PR_A9100W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+
+    setLoading(false);
   };
 
   useEffect(() => {

@@ -61,8 +61,8 @@ import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWind
 import { IItemData } from "../hooks/interfaces";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import NumberCell from "../components/Cells/NumberCell";
-import { useRecoilState } from "recoil";
-import { sessionItemState, tokenState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, sessionItemState, tokenState } from "../store/atoms";
 import CenterCell from "../components/Cells/CenterCell";
 import { Window } from "@progress/kendo-react-dialogs";
 import WorkDailyReport from "../components/Prints/WorkDailyReport";
@@ -172,6 +172,7 @@ const PR_B3000W: React.FC = () => {
   UseBizComponent("L_PR010,L_fxcode,L_sysUserMaster_001", setBizComponentData);
 
   const [sessionItem] = useRecoilState(sessionItemState);
+  const setLoading = useSetRecoilState(isLoading);
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
@@ -281,6 +282,7 @@ const PR_B3000W: React.FC = () => {
     if (!permissions?.view) return;
     let data: any;
 
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -305,6 +307,8 @@ const PR_B3000W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+
+    setLoading(false);
   };
 
   useEffect(() => {

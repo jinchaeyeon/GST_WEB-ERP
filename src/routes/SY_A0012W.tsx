@@ -59,6 +59,8 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import { ReadOnlyNameCell } from "../components/Editors";
 import NameCell from "../components/Cells/NameCell";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -127,6 +129,7 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const SY_A0120: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -231,7 +234,7 @@ const SY_A0120: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -256,6 +259,7 @@ const SY_A0120: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

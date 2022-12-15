@@ -69,6 +69,8 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/SA_B3000W_C";
 import TopButtons from "../components/TopButtons";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
 
 const numberField: string[] = [
   "qty01",
@@ -93,6 +95,7 @@ const SA_B3000W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const setLoading = useSetRecoilState(isLoading);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -219,7 +222,7 @@ const SA_B3000W: React.FC = () => {
   const fetchGrid = async (workType: string, custcd?: string) => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_SA_B3000W_Q",
@@ -290,6 +293,7 @@ const SA_B3000W: React.FC = () => {
     }
 
     setFilters((prev) => ({ ...prev, custcd: "" }));
+    setLoading(false);
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행

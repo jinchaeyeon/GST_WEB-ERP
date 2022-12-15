@@ -53,8 +53,11 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
 
 const QC_A0120: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
 
@@ -267,7 +270,7 @@ const QC_A0120: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -279,11 +282,12 @@ const QC_A0120: React.FC = () => {
 
       setMainDataResult(rows);
     }
+    setLoading(false);
   };
 
   const fetchDetailGrid1 = async () => {
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
@@ -302,6 +306,7 @@ const QC_A0120: React.FC = () => {
           };
         });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
