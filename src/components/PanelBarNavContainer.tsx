@@ -333,7 +333,7 @@ const PanelBarNavContainer = (props: any) => {
       <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
       <Gnv isMenuOpend={isMenuOpend}>
         <AppName>GST ERP</AppName>
-        {menus !== null && paths.length > 0 && (
+        {paths.length > 0 && (
           <PanelBar
             selected={selected}
             expandMode={"single"}
