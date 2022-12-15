@@ -17,9 +17,10 @@ import {
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import { CLIENT_WIDTH, GNV_WIDTH } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { Iparameters, TLogParaVal, Tpath } from "../store/types";
+import { Iparameters, TLogParaVal, TPath } from "../store/types";
 import { UseGetValueFromSessionItem } from "./CommonFunction";
 import Loading from "./Loading";
+import path from "path";
 
 type TWrapper = {
   isMenuOpend: boolean;
@@ -166,14 +167,11 @@ const PanelBarNavContainer = (props: any) => {
     }
   }, []);
 
-  let paths: Array<Tpath> = [];
+  let paths: Array<TPath> = [];
   if (menus !== null) {
+    // Home push
     menus
-      .filter(
-        (menu: any) =>
-          (menu.menuCategory === "GROUP" && menu.parentMenuId !== "") ||
-          menu.menuName === "Home"
-      )
+      .filter((menu: any) => menu.formId === "Home")
       .forEach((menu: any, idx: number) => {
         paths.push({
           path: "/" + menu.formId,
@@ -181,10 +179,31 @@ const PanelBarNavContainer = (props: any) => {
           index: "." + idx,
           menuId: menu.menuId,
           parentMenuId: menu.parentMenuId,
+          menuCategory: menu.menuCategory,
         });
       });
 
-    paths.forEach((path: Tpath) => {
+    // Group push (Home, PlusWin6 Group 제외)
+    menus
+      .filter(
+        (menu: any) =>
+          menu.menuCategory === "GROUP" &&
+          menu.menuName !== "Home" &&
+          menu.menuName !== "PlusWin6"
+      )
+      .forEach((menu: any, idx: number) => {
+        paths.push({
+          path: "/" + menu.formId,
+          menuName: menu.menuName,
+          index: "." + (idx + 1),
+          menuId: menu.menuId,
+          parentMenuId: menu.parentMenuId,
+          menuCategory: menu.menuCategory,
+        });
+      });
+
+    // Group별 Menu push
+    paths.forEach((path: TPath) => {
       menus
         .filter(
           (menu: any) =>
@@ -197,6 +216,7 @@ const PanelBarNavContainer = (props: any) => {
             index: path.index + "." + idx,
             menuId: menu.menuId,
             parentMenuId: menu.parentMenuId,
+            menuCategory: menu.menuCategory,
           });
         });
     });
@@ -313,38 +333,40 @@ const PanelBarNavContainer = (props: any) => {
       <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
       <Gnv isMenuOpend={isMenuOpend}>
         <AppName>GST ERP</AppName>
-        {menus !== null && (
+        {menus !== null && paths.length > 0 && (
           <PanelBar
             selected={selected}
             expandMode={"single"}
             onSelect={onSelect}
           >
-            {menus
-              .filter(
-                (menu: any) =>
-                  (menu.menuCategory === "GROUP" && menu.parentMenuId !== "") ||
-                  menu.menuName === "Home"
-              )
-              .map((menu: any, idx: number) => {
-                return menu.menuName === "Home" ? (
+            {paths
+              .filter((path: TPath) => path.path === "/Home")
+              .map((path: TPath, idx: number) => {
+                return (
                   <PanelBarItem
                     key={idx}
-                    title={menu.menuName}
-                    route={"/" + menu.formId}
+                    title={path.menuName}
+                    route={path.path}
                   />
-                ) : (
-                  <PanelBarItem key={idx} title={menu.menuName}>
-                    {menus
+                );
+              })}
+
+            {paths
+              .filter((path: TPath) => path.menuCategory === "GROUP")
+              .map((path: TPath, idx: number) => {
+                return (
+                  <PanelBarItem key={idx} title={path.menuName}>
+                    {paths
                       .filter(
-                        (childMenu: any) =>
-                          childMenu.menuCategory === "WEB" &&
-                          childMenu.parentMenuId === menu.menuId
+                        (childPath: TPath) =>
+                          childPath.menuCategory === "WEB" &&
+                          childPath.parentMenuId === path.menuId
                       )
-                      .map((childMenu: any, childIdx: number) => (
+                      .map((childPath: any, childIdx: number) => (
                         <PanelBarItem
                           key={childIdx}
-                          title={childMenu.menuName}
-                          route={"/" + childMenu.formId}
+                          title={childPath.menuName}
+                          route={childPath.path}
                         />
                       ))}
                   </PanelBarItem>
@@ -356,6 +378,7 @@ const PanelBarNavContainer = (props: any) => {
           </PanelBar>
         )}
 
+        {/* GST */}
         {companyCode === "2207C612" && (
           <PanelBar
             selected={selected}

@@ -70,9 +70,6 @@ const Main: React.FC = () => {
   if (sessionOrgdiv === "") sessionOrgdiv = "01";
   if (sessionLocation === "") sessionLocation = "01";
 
-  console.log("sessionLocation");
-  console.log(sessionLocation);
-
   const [ip, setIp] = useState("");
   const browser = getBrowser();
   UseGetIp(setIp);

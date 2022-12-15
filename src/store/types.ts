@@ -105,12 +105,13 @@ export type TMenu = {
   sort: number;
 };
 
-export type Tpath = {
+export type TPath = {
   path?: string;
   menuName: string;
   index: string;
   menuId: string;
   parentMenuId: string;
+  menuCategory: string;
 };
 
 // TypeScript에서 string key로 객체에 접근하기 위한 객체 타입
