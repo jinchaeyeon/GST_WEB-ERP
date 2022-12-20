@@ -35,17 +35,17 @@ import {
 import { Error } from "@progress/kendo-react-labels";
 import { clone } from "@progress/kendo-react-common";
 import {
-  NumberCell,
-  NameCell,
+  FormNumberCell,
+  FormNameCell,
   FormInput,
   FormReadOnly,
-  CellComboBox,
-  ReadOnlyNameCell,
+  FormComboBoxCell,
+  FormReadOnlyNameCell,
   FormComboBox,
   FormCheckBox,
   FormNumericTextBox,
-  CellCheckBox,
-  EditableNameCellInNew,
+  FormCheckBoxCell,
+  FormEditableNameCellInNew,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
@@ -153,7 +153,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
-  return <CellComboBox bizComponent={bizComponent} {...props} />;
+  return <FormComboBoxCell bizComponent={bizComponent} {...props} />;
 };
 
 // Create the Grid that will be used inside the Form
@@ -505,14 +505,14 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
                     width={item.width}
                     cell={
                       numberField.includes(item.fieldName)
-                        ? NumberCell
+                        ? FormNumberCell
                         : checkBoxField.includes(item.fieldName)
-                        ? CellCheckBox
+                        ? FormCheckBoxCell
                         : readOnlyField.includes(item.fieldName)
-                        ? ReadOnlyNameCell
+                        ? FormReadOnlyNameCell
                         : item.fieldName === "sub_code"
-                        ? EditableNameCellInNew
-                        : NameCell
+                        ? FormEditableNameCellInNew
+                        : FormNameCell
                     }
                     headerCell={
                       requiredField.includes(item.fieldName)

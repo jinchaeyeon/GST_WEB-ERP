@@ -200,7 +200,7 @@ const CheckBoxReadOnly = (fieldRenderProps: FieldRenderProps) => {
 };
 
 //Grid Cell에서 사용되는 Number Feild
-export const NumberCell = (props: GridCellProps) => {
+export const FormNumberCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
   const parentField = dataItem.parentField;
@@ -221,7 +221,7 @@ export const NumberCell = (props: GridCellProps) => {
 };
 
 //Grid Cell에서 사용되는 Name Feild
-export const NameCell = (props: GridCellProps) => {
+export const FormNameCell = (props: GridCellProps) => {
   const { field, dataItem, className = "", render } = props;
   let isInEdit = field === dataItem.inEdit;
   if (className.includes("read-only")) {
@@ -248,7 +248,7 @@ export const NameCell = (props: GridCellProps) => {
 };
 
 //Grid Cell에서 사용되는 Name Feild (신규 행인 경우만 수정 가능한 셀)
-export const EditableNameCellInNew = (props: GridCellProps) => {
+export const FormEditableNameCellInNew = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const isInEdit =
     dataItem.rowstatus === "N" ? field === dataItem.inEdit : false;
@@ -269,7 +269,7 @@ export const EditableNameCellInNew = (props: GridCellProps) => {
 };
 
 //Grid Cell에서 사용되는 ReadOnly Cell
-export const ReadOnlyNameCell = (props: GridCellProps) => {
+export const FormReadOnlyNameCell = (props: GridCellProps) => {
   //  const { parentField } = React.useContext(FormGridEditContext);
   const { field, dataItem, className } = props;
   const parentField = dataItem.parentField;
@@ -285,7 +285,7 @@ export const ReadOnlyNameCell = (props: GridCellProps) => {
 };
 
 //Grid Cell에서 사용되는 ReadOnly NumberCell
-export const ReadOnlyNumberCell = (props: GridCellProps) => {
+export const FormReadOnlyNumberCell = (props: GridCellProps) => {
   const { field, dataItem, className } = props;
   const parentField = dataItem.parentField;
 
@@ -300,7 +300,7 @@ export const ReadOnlyNumberCell = (props: GridCellProps) => {
 };
 
 //Grid Cell에서 사용되는 DropDownList Feild
-export const CellDropDownList = (props: GridCellProps) => {
+export const FormDropDownListCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const isInEdit = field === dataItem.inEdit;
   const parentField = dataItem.parentField;
@@ -333,7 +333,7 @@ interface CustomCellProps extends GridCellProps {
   columns?: any[];
 }
 
-export const CellComboBox = (props: CustomCellProps) => {
+export const FormComboBoxCell = (props: CustomCellProps) => {
   const {
     field,
     dataItem,
@@ -402,7 +402,7 @@ export const CellComboBox = (props: CustomCellProps) => {
 };
 
 //Grid Cell에서 사용되는 CheckBox Feild
-export const CellCheckBox = (props: GridCellProps) => {
+export const FormCheckBoxCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const parentField = dataItem.parentField;
 
@@ -424,7 +424,7 @@ export const CellCheckBox = (props: GridCellProps) => {
 };
 
 //Grid Cell에서 사용되는 ReadOnly CheckBox Feild
-export const CellCheckBoxReadOnly = (props: GridCellProps) => {
+export const FormCheckBoxReadOnlyCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
   const parentField = dataItem.parentField;
 

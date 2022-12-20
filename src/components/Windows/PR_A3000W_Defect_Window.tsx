@@ -33,9 +33,9 @@ import { Error } from "@progress/kendo-react-labels";
 import { clone } from "@progress/kendo-react-common";
 import {
   FormReadOnly,
-  CellComboBox,
-  CellCheckBox,
-  NumberCell,
+  FormComboBoxCell,
+  FormCheckBoxCell,
+  FormNumberCell,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
@@ -88,7 +88,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <CellComboBox bizComponent={bizComponent} {...props} />
+    <FormComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
     <td />
   );
@@ -373,7 +373,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           <GridColumn
             field="badqty"
             title="불량수량"
-            cell={NumberCell}
+            cell={FormNumberCell}
             width="240px"
           />
         </Grid>

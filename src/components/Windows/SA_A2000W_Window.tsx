@@ -1,18 +1,18 @@
-import { useEffect, useState, useContext } from "react";
-import * as React from "react";
 import {
-  Window,
-  WindowMoveEvent,
-  WindowProps,
-} from "@progress/kendo-react-dialogs";
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+  createContext,
+} from "react";
+import * as React from "react";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
   GridEvent,
-  GridFooterCellProps,
   GridCellProps,
   GridToolbar,
-  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridHeaderSelectionChangeEvent,
@@ -36,22 +36,20 @@ import {
   FieldArray,
   FieldArrayRenderProps,
   FormRenderProps,
+  FieldWrapper,
+  FieldRenderProps,
 } from "@progress/kendo-react-form";
-import { Error } from "@progress/kendo-react-labels";
-import { clone } from "@progress/kendo-react-common";
+import { Error, Label } from "@progress/kendo-react-labels";
 import {
-  NumberCell,
-  NameCell,
+  FormNumberCell,
+  FormNameCell,
   FormInput,
   FormDatePicker,
   FormReadOnly,
-  ReadOnlyNumberCell,
-  CellComboBox,
+  FormReadOnlyNumberCell,
+  FormComboBoxCell,
   FormComboBox,
-  NumericTextBoxWithValidation,
-  DisplayValue,
-  CellCheckBox,
-  CellCheckBoxReadOnly,
+  FormCheckBoxReadOnlyCell,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
@@ -68,6 +66,7 @@ import {
   setDefaultDate,
   getCodeFromValue,
   arrayLengthValidator,
+  getUnpQuery,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -77,6 +76,7 @@ import {
   IAttachmentData,
   ICustData,
   IItemData,
+  IUnpList,
   IWindowPosition,
 } from "../../hooks/interfaces";
 import {
@@ -89,6 +89,9 @@ import {
 import { CellRender, RowRender } from "../Renderers";
 import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
+import { Input } from "@progress/kendo-react-inputs";
+import RequiredHeader from "../RequiredHeader";
+import { bytesToBase64 } from "byte-base64";
 
 let deletedRows: object[] = [];
 const idGetter = getter(FORM_DATA_INDEX);
@@ -96,7 +99,7 @@ const idGetter = getter(FORM_DATA_INDEX);
 type TKendoWindow = {
   getVisible(t: boolean): void;
   reloadData(workType: string): void;
-  workType: string;
+  workType: "U" | "N";
   ordnum?: string;
   isCopy: boolean;
   para?: Iparameters; //{};
@@ -139,6 +142,47 @@ type TDetailData = {
   bf_qty_s: string[];
 };
 
+export const unpContext = createContext<{
+  orddt: string;
+  setOrddt: (orddt: string) => void;
+  unpList: [];
+  getUnpList: (custcd: string) => void;
+  changeUnpData: () => void;
+}>({} as any);
+
+export const gridContext = createContext<{
+  changeGridData: () => void;
+}>({} as any);
+
+export const FormCustcdInput = (fieldRenderProps: FieldRenderProps) => {
+  const { validationMessage, visited, label, id, valid, onBlur, ...others } =
+    fieldRenderProps;
+
+  const { getUnpList, setOrddt, changeUnpData } = useContext(unpContext);
+
+  const onHandleBlur = (e: any) => {
+    const { value, name } = e.target;
+    if (name === "custcd") {
+      getUnpList(value);
+      changeUnpData();
+    } else if (name === "orddt") {
+      setOrddt(value);
+      changeUnpData();
+    }
+  };
+
+  return (
+    <FieldWrapper>
+      <Label editorId={id} editorValid={valid}>
+        {label}
+      </Label>
+      <div className={"k-form-field-wrap"}>
+        <Input valid={valid} id={id} onBlur={onHandleBlur} {...others} />
+      </div>
+    </FieldWrapper>
+  );
+};
+
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_BA061,L_BA015", setBizComponentData);
@@ -152,7 +196,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <CellComboBox bizComponent={bizComponent} {...props} />
+    <FormComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
     <td />
   );
@@ -166,6 +210,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [editedRowData, setEditedRowData] = useState<any>({});
+  const { unpList, orddt } = useContext(unpContext);
 
   const ItemBtnCell = (props: GridCellProps) => {
     const { dataIndex } = props;
@@ -306,21 +351,31 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setDetailPgNum((prev) => prev + 1);
   };
 
-  const setItemData = (data: IItemData) => {
-    if (editIndex === undefined) {
+  const setItemData = (
+    itemData: IItemData,
+    orgIndex?: number,
+    orgDataItem?: any
+  ) => {
+    //단가정보
+    const index = orgIndex !== undefined ? orgIndex : editIndex;
+    const unpData: any = unpList.filter(
+      (item: any) => item.recdt <= orddt && item.itemcd === itemData.itemcd
+    );
+
+    if (index === undefined) {
       //신규생성
       fieldArrayRenderProps.onPush({
         value: {
           rowstatus: "N",
-          itemcd: data.itemcd,
-          itemnm: data.itemnm,
-          insiz: data.insiz,
-          itemacnt: data.itemacnt,
+          itemcd: itemData.itemcd,
+          itemnm: itemData.itemnm,
+          insiz: itemData.insiz,
+          itemacnt: itemData.itemacnt,
           qtyunit: COM_CODE_DEFAULT_VALUE,
           qty: 0,
           specialunp: 0,
           specialamt: 0,
-          unp: 0,
+          unp: unpData.length > 0 ? unpData[0].unp : 0,
           amt: 0,
           wonamt: 0,
           taxamt: 0,
@@ -343,18 +398,31 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       });
     } else {
       //기존 행 업데이트
-      const dataItem = editedRowData;
+      const dataItem = orgDataItem ? orgDataItem : editedRowData;
+
+      let { unp, wonamt, taxamt, totamt, qty } = dataItem;
+
+      if (unpData.length > 0) {
+        unp = unpData[0].unp;
+        wonamt = unp * qty;
+        taxamt = wonamt / 10;
+        totamt = wonamt + taxamt;
+      }
 
       fieldArrayRenderProps.onReplace({
-        index: editIndex,
+        index: index,
         value: {
           ...dataItem,
           rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-          itemcd: data.itemcd,
-          itemnm: data.itemnm,
-          insiz: data.insiz,
-          itemacnt: data.itemacnt,
+          itemcd: itemData.itemcd,
+          itemnm: itemData.itemnm,
+          insiz: itemData.insiz,
+          itemacnt: itemData.itemacnt,
           qtyunit: COM_CODE_DEFAULT_VALUE,
+          unp,
+          wonamt,
+          taxamt,
+          totamt,
         },
       });
     }
@@ -409,7 +477,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       });
 
       if (editedField === "itemcd" && editIndex === index) {
-        getItemcd(itemcd);
+        getItemData(itemcd);
       }
     });
   };
@@ -476,22 +544,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     []
   );
 
-  interface ProductNameHeaderProps extends GridHeaderCellProps {
-    children: any;
-  }
-
-  const RequiredHeader = (props: ProductNameHeaderProps) => {
-    return (
-      <span className="k-cell-inner">
-        <a className="k-link" onClick={props.onClick}>
-          <span style={{ color: "#ff6358" }}>{props.title}</span>
-          {props.children}
-        </a>
-      </span>
-    );
-  };
-
-  const getItemcd = (itemcd: string) => {
+  const getItemData = (itemcd: string) => {
     const index = editIndex ?? 0;
     const dataItem = value[index];
     const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
@@ -504,8 +557,11 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     async (queryStr: string, index: number, dataItem: any) => {
       let data: any;
 
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
       let query = {
-        query: "query?query=" + encodeURIComponent(queryStr),
+        query: convertedQueryStr,
       };
 
       try {
@@ -516,218 +572,252 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
       if (data.isSuccess === true) {
         const rows = data.tables[0].Rows;
-        setRowItem(rows[0], index, dataItem);
+        const rowCount = data.tables[0].RowCount;
+        if (rowCount > 0) {
+          setItemData(rows[0], index, dataItem);
+        }
       }
     },
     []
   );
 
-  const setRowItem = (row: any, index: number, dataItem: any) => {
-    fieldArrayRenderProps.onReplace({
-      index: index,
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-        inEdit: undefined,
-        itemcd: row.itemcd,
-        itemnm: row.itemnm,
-        insiz: row.insiz,
-        itemacnt: row.itemacnt,
-      },
+  // 모든 행 단가 관련 필드 업데이트 (업체코드, 수주일자 변경시 호출)
+  const changeGridData = () => {
+    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
+      let { qty, unp, wonamt, taxamt, totamt, itemcd } = item;
+
+      //단가정보
+      const unpData: any = unpList.filter(
+        (unpItem: any) => unpItem.recdt <= orddt && unpItem.itemcd === itemcd
+      );
+
+      if (unpData.length > 0) {
+        unp = unpData[0].unp;
+        wonamt = unp * qty;
+        taxamt = wonamt / 10;
+        totamt = wonamt + taxamt;
+      }
+
+      fieldArrayRenderProps.onReplace({
+        index: index,
+        value: {
+          ...item,
+          wonamt,
+          taxamt,
+          totamt,
+          [EDIT_FIELD]: undefined,
+        },
+      });
     });
   };
-
   return (
-    <GridContainer margin={{ top: "30px" }}>
-      {visited && validationMessage && <Error>{validationMessage}</Error>}
-      <Grid
-        data={dataWithIndexes.map((item: any) => ({
-          ...item,
-          parentField: name,
-          [SELECTED_FIELD]: selectedState[idGetter(item)],
-        }))}
-        total={dataWithIndexes.length}
-        dataItemKey={dataItemKey}
-        style={{ height: "300px" }}
-        cellRender={customCellRender}
-        rowRender={customRowRender}
-        onScroll={scrollHandler}
-        selectedField={SELECTED_FIELD}
-        selectable={{
-          enabled: true,
-          drag: false,
-          cell: false,
-          mode: "multiple",
-        }}
-        onSelectionChange={onSelectionChange}
-        onHeaderSelectionChange={onHeaderSelectionChange}
-      >
-        <GridToolbar>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onAdd}
-            icon="add"
-          >
-            추가
-          </Button>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onRemove}
-            icon="minus"
-          >
-            삭제
-          </Button>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onCopy}
-            icon="copy"
-          >
-            복사
-          </Button>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onItemWndClick}
-          >
-            품목참조
-          </Button>
-        </GridToolbar>
+    <gridContext.Provider value={{ changeGridData }}>
+      <GridContainer margin={{ top: "30px" }}>
+        {visited && validationMessage && <Error>{validationMessage}</Error>}
+        <Grid
+          data={dataWithIndexes.map((item: any) => ({
+            ...item,
+            parentField: name,
+            [SELECTED_FIELD]: selectedState[idGetter(item)],
+          }))}
+          total={dataWithIndexes.length}
+          dataItemKey={dataItemKey}
+          style={{ height: "300px" }}
+          cellRender={customCellRender}
+          rowRender={customRowRender}
+          onScroll={scrollHandler}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            drag: false,
+            cell: false,
+            mode: "multiple",
+          }}
+          onSelectionChange={onSelectionChange}
+          onHeaderSelectionChange={onHeaderSelectionChange}
+        >
+          <GridToolbar>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onAdd}
+              icon="add"
+            >
+              추가
+            </Button>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onRemove}
+              icon="minus"
+            >
+              삭제
+            </Button>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onCopy}
+              icon="copy"
+            >
+              복사
+            </Button>
+            <Button
+              type={"button"}
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onItemWndClick}
+            >
+              품목참조
+            </Button>
+          </GridToolbar>
 
-        <GridColumn
-          field={SELECTED_FIELD}
-          width="45px"
-          headerSelectionValue={
-            dataWithIndexes.findIndex(
-              (item: any) => !selectedState[idGetter(item)]
-            ) === -1
-          }
-        />
-        <GridColumn field="rowstatus" title=" " width="40px" />
-        <GridColumn
-          field="itemcd"
-          title="품목코드"
-          width="160px"
-          cell={NameCell}
-          headerCell={RequiredHeader}
-          className="required"
-        />
-        <GridColumn cell={ItemBtnCell} width="55px" />
-        <GridColumn
-          field="itemnm"
-          title="품목명"
-          width="180px"
-          cell={NameCell}
-          headerCell={RequiredHeader}
-          className="required"
-        />
-        <GridColumn field="insiz" title="규격" width="200px" cell={NameCell} />
-        <GridColumn
-          field="itemacnt"
-          title="품목계정"
-          width="120px"
-          cell={CustomComboBoxCell}
-          headerCell={RequiredHeader}
-          className="required"
-        />
-        <GridColumn
-          field="qty"
-          title="수주량"
-          width="120px"
-          cell={NumberCell}
-          headerCell={RequiredHeader}
-          className="required"
-        />
-        <GridColumn
-          field="qtyunit"
-          title="단위"
-          width="120px"
-          cell={CustomComboBoxCell}
-        />
-        <GridColumn
-          field="specialunp"
-          title="발주단가"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="specialamt"
-          title="발주금액"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn field="unp" title="단가" width="120px" cell={NumberCell} />
-        <GridColumn
-          field="wonamt"
-          title="금액"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="taxamt"
-          title="세액"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="totamt"
-          title="합계금액"
-          width="120px"
-          cell={ReadOnlyNumberCell}
-        />
-        <GridColumn field="remark" title="비고" width="120px" cell={NameCell} />
-        <GridColumn
-          field="purcustnm"
-          title="발주처"
-          width="120px"
-          cell={NameCell}
-        />
-        <GridColumn
-          field="outqty"
-          title="출하수량"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="sale_qty"
-          title="판매수량"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="finyn"
-          title="완료여부"
-          width="120px"
-          cell={CellCheckBoxReadOnly}
-        />
-        <GridColumn
-          field="bf_qty"
-          title="LOT수량"
-          width="120px"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="lotnum"
-          title="LOT NO"
-          width="120px"
-          cell={NameCell}
-        />
-      </Grid>
+          <GridColumn
+            field={SELECTED_FIELD}
+            width="45px"
+            headerSelectionValue={
+              dataWithIndexes.findIndex(
+                (item: any) => !selectedState[idGetter(item)]
+              ) === -1
+            }
+          />
+          <GridColumn field="rowstatus" title=" " width="40px" />
+          <GridColumn
+            field="itemcd"
+            title="품목코드"
+            width="160px"
+            cell={FormNameCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn cell={ItemBtnCell} width="55px" />
+          <GridColumn
+            field="itemnm"
+            title="품목명"
+            width="180px"
+            cell={FormNameCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="insiz"
+            title="규격"
+            width="200px"
+            cell={FormNameCell}
+          />
+          <GridColumn
+            field="itemacnt"
+            title="품목계정"
+            width="120px"
+            cell={CustomComboBoxCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="qty"
+            title="수주량"
+            width="120px"
+            cell={FormNumberCell}
+            headerCell={RequiredHeader}
+            className="required"
+          />
+          <GridColumn
+            field="qtyunit"
+            title="단위"
+            width="120px"
+            cell={CustomComboBoxCell}
+          />
+          <GridColumn
+            field="specialunp"
+            title="발주단가"
+            width="120px"
+            cell={FormNumberCell}
+          />
+          <GridColumn
+            field="specialamt"
+            title="발주금액"
+            width="120px"
+            cell={FormNumberCell}
+          />
+          <GridColumn
+            field="unp"
+            title="단가"
+            width="120px"
+            cell={FormNumberCell}
+          />
+          <GridColumn
+            field="wonamt"
+            title="금액"
+            width="120px"
+            cell={FormNumberCell}
+          />
+          <GridColumn
+            field="taxamt"
+            title="세액"
+            width="120px"
+            cell={FormNumberCell}
+          />
+          <GridColumn
+            field="totamt"
+            title="합계금액"
+            width="120px"
+            cell={FormReadOnlyNumberCell}
+          />
+          <GridColumn
+            field="remark"
+            title="비고"
+            width="120px"
+            cell={FormNameCell}
+          />
+          <GridColumn
+            field="purcustnm"
+            title="발주처"
+            width="120px"
+            cell={FormNameCell}
+          />
+          <GridColumn
+            field="outqty"
+            title="출하수량"
+            width="120px"
+            cell={FormNumberCell}
+          />
+          <GridColumn
+            field="sale_qty"
+            title="판매수량"
+            width="120px"
+            cell={FormNumberCell}
+          />
+          <GridColumn
+            field="finyn"
+            title="완료여부"
+            width="120px"
+            cell={FormCheckBoxReadOnlyCell}
+          />
+          <GridColumn
+            field="bf_qty"
+            title="LOT수량"
+            width="120px"
+            cell={FormNumberCell}
+          />
+          <GridColumn
+            field="lotnum"
+            title="LOT NO"
+            width="120px"
+            cell={FormNameCell}
+          />
+        </Grid>
 
-      {itemWindowVisible && (
-        <ItemsWindow
-          workType={editIndex === undefined ? "ROWS_ADD" : "ROW_ADD"}
-          setVisible={setItemWindowVisible}
-          setData={setItemData}
-        />
-      )}
-    </GridContainer>
+        {itemWindowVisible && (
+          <ItemsWindow
+            workType={editIndex === undefined ? "ROWS_ADD" : "ROW_ADD"}
+            setVisible={setItemWindowVisible}
+            setData={setItemData}
+          />
+        )}
+      </GridContainer>
+    </gridContext.Provider>
   );
 };
 const KendoWindow = ({
@@ -757,6 +847,9 @@ const KendoWindow = ({
     width: 1200,
     height: 800,
   });
+
+  const [unpList, setUnpList] = useState<any>([]);
+  const [orddt, setOrddt] = useState("");
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -952,9 +1045,14 @@ const KendoWindow = ({
     }
   };
 
-  //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
   useEffect(() => {
+    //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
     resetForm();
+
+    if (workType === "U" || isCopy === true) {
+      fetchUnp(initialVal.custcd);
+    }
+    setOrddt(convertDateToStr(initialVal.orddt));
   }, [initialVal]);
 
   //fetch된 그리드 데이터가 그리드 폼에 세팅되도록 하기 위해 적용
@@ -1153,7 +1251,7 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       alert(findMessage(messagesData, "SA_A2000W_003"));
       deletedRows = []; //초기화
-      if (workType === "U") {
+      if (workType === "U" || isCopy === true) {
         resetAllGrid();
 
         reloadData("U");
@@ -1505,7 +1603,7 @@ const KendoWindow = ({
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
 
-  const getCustData = (data: ICustData) => {
+  const setCustData = (data: ICustData) => {
     if (custType === "CUST") {
       setInitialVal((prev) => {
         return {
@@ -1549,6 +1647,41 @@ const KendoWindow = ({
     }
   }, [bizComponentData]);
 
+  const fetchUnp = useCallback(async (custcd: string) => {
+    if (custcd === "") return;
+    let data: any;
+
+    const queryStr = getUnpQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setUnpList(rows);
+    }
+  }, []);
+
+  const getUnpList = (custcd: string) => {
+    fetchUnp(custcd);
+  };
+
+  const { changeGridData } = useContext(gridContext);
+
+  const changeUnpData = () => {
+    console.log("양");
+    changeGridData();
+  };
+
   return (
     <Window
       title={workType === "N" ? "수주생성" : "수주정보"}
@@ -1558,130 +1691,133 @@ const KendoWindow = ({
       onResize={handleResize}
       onClose={onClose}
     >
-      <Form
-        onSubmit={handleSubmit}
-        key={formKey}
-        initialValues={{
-          rowstatus: "",
-          ordnum: isCopy === true ? "" : initialVal.ordnum,
-          doexdiv: initialVal.doexdiv,
-          taxdiv: initialVal.taxdiv,
-          location: initialVal.location,
-          orddt: initialVal.orddt, //new Date(),
-          dlvdt: initialVal.dlvdt,
-          custnm: initialVal.custnm,
-          custcd: initialVal.custcd,
-          dptcd: initialVal.dptcd,
-          person: initialVal.person,
-          ordsts: initialVal.ordsts,
-          ordtype: initialVal.ordtype,
-          rcvcustnm: initialVal.rcvcustnm,
-          rcvcustcd: initialVal.rcvcustcd,
-          project: initialVal.project,
-          amtunit: initialVal.amtunit, //"KRW",
-          wonchgrat: initialVal.wonchgrat, //0,
-          uschgrat: initialVal.uschgrat, //0,
-          quokey: initialVal.quokey,
-          prcterms: initialVal.prcterms,
-          paymeth: initialVal.paymeth,
-          dlv_method: initialVal.dlv_method,
-          portnm: initialVal.portnm,
-          ship_method: initialVal.ship_method,
-          poregnum: initialVal.poregnum,
-          attdatnum: initialVal.attdatnum,
-          files: initialVal.files,
-          remark: initialVal.remark,
-          orderDetails: detailDataResult.data, //detailDataResult.data,
-        }}
-        render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true}>
-            <fieldset className={"k-form-fieldset"}>
-              <button
-                id="valueChanged"
-                style={{ display: "none" }}
-                onClick={(e) => {
-                  e.preventDefault(); // Changing desired field value
-                  formRenderProps.onChange("valueChanged", {
-                    value: "1",
-                  });
-                }}
-              ></button>
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  name={"ordnum"}
-                  label={"수주번호"}
-                  component={FormReadOnly}
-                  className="readonly"
-                />
-                {customOptionData !== null && (
+      <unpContext.Provider
+        value={{ orddt, setOrddt, unpList, getUnpList, changeUnpData }}
+      >
+        <Form
+          onSubmit={handleSubmit}
+          key={formKey}
+          initialValues={{
+            rowstatus: "",
+            ordnum: isCopy === true ? "" : initialVal.ordnum,
+            doexdiv: initialVal.doexdiv,
+            taxdiv: initialVal.taxdiv,
+            location: initialVal.location,
+            orddt: initialVal.orddt, //new Date(),
+            dlvdt: initialVal.dlvdt,
+            custnm: initialVal.custnm,
+            custcd: initialVal.custcd,
+            dptcd: initialVal.dptcd,
+            person: initialVal.person,
+            ordsts: initialVal.ordsts,
+            ordtype: initialVal.ordtype,
+            rcvcustnm: initialVal.rcvcustnm,
+            rcvcustcd: initialVal.rcvcustcd,
+            project: initialVal.project,
+            amtunit: initialVal.amtunit, //"KRW",
+            wonchgrat: initialVal.wonchgrat, //0,
+            uschgrat: initialVal.uschgrat, //0,
+            quokey: initialVal.quokey,
+            prcterms: initialVal.prcterms,
+            paymeth: initialVal.paymeth,
+            dlv_method: initialVal.dlv_method,
+            portnm: initialVal.portnm,
+            ship_method: initialVal.ship_method,
+            poregnum: initialVal.poregnum,
+            attdatnum: initialVal.attdatnum,
+            files: initialVal.files,
+            remark: initialVal.remark,
+            orderDetails: detailDataResult.data, //detailDataResult.data,
+          }}
+          render={(formRenderProps: FormRenderProps) => (
+            <FormElement horizontal={true}>
+              <fieldset className={"k-form-fieldset"}>
+                <button
+                  id="valueChanged"
+                  style={{ display: "none" }}
+                  onClick={(e) => {
+                    e.preventDefault(); // Changing desired field value
+                    formRenderProps.onChange("valueChanged", {
+                      value: "1",
+                    });
+                  }}
+                ></button>
+                <FieldWrap fieldWidth="25%">
                   <Field
-                    name={"doexdiv"}
-                    label={"내수구분"}
-                    component={FormComboBox}
-                    queryStr={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "doexdiv"
-                      ).query
-                    }
-                    columns={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "doexdiv"
-                      ).bizComponentItems
-                    }
-                    className="required"
+                    name={"ordnum"}
+                    label={"수주번호"}
+                    component={FormReadOnly}
+                    className="readonly"
                   />
-                )}
-                {customOptionData !== null && (
-                  <Field
-                    name={"taxdiv"}
-                    label={"과세구분"}
-                    component={FormComboBox}
-                    queryStr={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "taxdiv"
-                      ).query
-                    }
-                    columns={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "taxdiv"
-                      ).bizComponentItems
-                    }
-                    className="required"
-                  />
-                )}
-                {customOptionData !== null && (
-                  <Field
-                    name={"location"}
-                    label={"사업장"}
-                    component={FormComboBox}
-                    queryStr={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "location"
-                      ).query
-                    }
-                    columns={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "location"
-                      ).bizComponentItems
-                    }
-                  />
-                )}
-              </FieldWrap>
+                  {customOptionData !== null && (
+                    <Field
+                      name={"doexdiv"}
+                      label={"내수구분"}
+                      component={FormComboBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "doexdiv"
+                        ).query
+                      }
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "doexdiv"
+                        ).bizComponentItems
+                      }
+                      className="required"
+                    />
+                  )}
+                  {customOptionData !== null && (
+                    <Field
+                      name={"taxdiv"}
+                      label={"과세구분"}
+                      component={FormComboBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "taxdiv"
+                        ).query
+                      }
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "taxdiv"
+                        ).bizComponentItems
+                      }
+                      className="required"
+                    />
+                  )}
+                  {customOptionData !== null && (
+                    <Field
+                      name={"location"}
+                      label={"사업장"}
+                      component={FormComboBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "location"
+                        ).query
+                      }
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "location"
+                        ).bizComponentItems
+                      }
+                    />
+                  )}
+                </FieldWrap>
 
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  label={"수주일자"}
-                  name={"orddt"}
-                  component={FormDatePicker}
-                  className="required"
-                />
-                <Field
-                  label={"납기일자"}
-                  name={"dlvdt"}
-                  component={FormDatePicker}
-                  className="required"
-                />
-                {/* <Field
+                <FieldWrap fieldWidth="25%">
+                  <Field
+                    label={"수주일자"}
+                    name={"orddt"}
+                    component={FormDatePicker}
+                    className="required"
+                  />
+                  <Field
+                    label={"납기일자"}
+                    name={"dlvdt"}
+                    component={FormDatePicker}
+                    className="required"
+                  />
+                  {/* <Field
                   label={"수주상태"}
                   name={"ordsts"}
                   component={FormDropDownList}
@@ -1689,154 +1825,154 @@ const KendoWindow = ({
                   className="required"
                 /> */}
 
-                {customOptionData !== null && (
-                  <Field
-                    name={"ordsts"}
-                    label={"수주상태"}
-                    component={FormComboBox}
-                    queryStr={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "ordsts"
-                      ).query
-                    }
-                    columns={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "ordsts"
-                      ).bizComponentItems
-                    }
-                  />
-                )}
-
-                {customOptionData !== null && (
-                  <Field
-                    name={"ordtype"}
-                    label={"수주형태"}
-                    component={FormComboBox}
-                    queryStr={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "ordtype"
-                      ).query
-                    }
-                    columns={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "ordtype"
-                      ).bizComponentItems
-                    }
-                  />
-                )}
-              </FieldWrap>
-
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  label={"업체코드"}
-                  name={"custcd"}
-                  component={FormInput}
-                  validator={validator}
-                  className="required"
-                />
-                <ButtonInFieldWrap>
-                  <ButtonInField>
-                    <Button
-                      type={"button"}
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
+                  {customOptionData !== null && (
+                    <Field
+                      name={"ordsts"}
+                      label={"수주상태"}
+                      component={FormComboBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "ordsts"
+                        ).query
+                      }
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "ordsts"
+                        ).bizComponentItems
+                      }
                     />
-                  </ButtonInField>
-                </ButtonInFieldWrap>
-                <Field
-                  label={"업체명"}
-                  name={"custnm"}
-                  component={FormInput}
-                  validator={validator}
-                  className="required"
-                />
-                <Field
-                  name={"rcvcustcd"}
-                  component={FormInput}
-                  label={"인수처코드"}
-                />
-                <ButtonInFieldWrap>
-                  <ButtonInField>
-                    <Button
-                      type={"button"}
-                      onClick={onRcvcustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
+                  )}
+
+                  {customOptionData !== null && (
+                    <Field
+                      name={"ordtype"}
+                      label={"수주형태"}
+                      component={FormComboBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "ordtype"
+                        ).query
+                      }
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "ordtype"
+                        ).bizComponentItems
+                      }
                     />
-                  </ButtonInField>
-                </ButtonInFieldWrap>
-                <Field
-                  name={"rcvcustnm"}
-                  component={FormInput}
-                  label={"인수처"}
-                />
-              </FieldWrap>
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  name={"project"}
-                  component={FormInput}
-                  label={"프로젝트"}
-                />
+                  )}
+                </FieldWrap>
 
-                {customOptionData !== null && (
+                <FieldWrap fieldWidth="25%">
                   <Field
-                    name={"dptcd"}
-                    label={"부서"}
-                    component={FormComboBox}
-                    queryStr={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "dptcd"
-                      ).query
-                    }
-                    textField={"dptnm"}
-                    valueField={"dptcd"}
-                    columns={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "dptcd"
-                      ).bizComponentItems
-                    }
+                    label={"업체코드"}
+                    name={"custcd"}
+                    component={FormCustcdInput}
+                    validator={validator}
+                    className="required"
                   />
-                )}
+                  <ButtonInFieldWrap>
+                    <ButtonInField>
+                      <Button
+                        type={"button"}
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInField>
+                  </ButtonInFieldWrap>
+                  <Field
+                    label={"업체명"}
+                    name={"custnm"}
+                    component={FormInput}
+                    validator={validator}
+                    className="required"
+                  />
+                  <Field
+                    name={"rcvcustcd"}
+                    component={FormInput}
+                    label={"인수처코드"}
+                  />
+                  <ButtonInFieldWrap>
+                    <ButtonInField>
+                      <Button
+                        type={"button"}
+                        onClick={onRcvcustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInField>
+                  </ButtonInFieldWrap>
+                  <Field
+                    name={"rcvcustnm"}
+                    component={FormInput}
+                    label={"인수처"}
+                  />
+                </FieldWrap>
+                <FieldWrap fieldWidth="25%">
+                  <Field
+                    name={"project"}
+                    component={FormInput}
+                    label={"프로젝트"}
+                  />
 
-                {customOptionData !== null && (
-                  <Field
-                    name={"person"}
-                    label={"담당자"}
-                    component={FormComboBox}
-                    queryStr={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "person"
-                      ).query
-                    }
-                    valueField={"user_id"}
-                    textField={"user_name"}
-                    columns={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "person"
-                      ).bizComponentItems
-                    }
-                  />
-                )}
-                {customOptionData !== null && (
-                  <Field
-                    name={"amtunit"}
-                    label={"화폐단위"}
-                    component={FormComboBox}
-                    queryStr={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "amtunit"
-                      ).query
-                    }
-                    textField={"code_name"}
-                    columns={
-                      customOptionData.menuCustomDefaultOptions.new.find(
-                        (item: any) => item.id === "amtunit"
-                      ).bizComponentItems
-                    }
-                  />
-                )}
-                {/* <Field
+                  {customOptionData !== null && (
+                    <Field
+                      name={"dptcd"}
+                      label={"부서"}
+                      component={FormComboBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "dptcd"
+                        ).query
+                      }
+                      textField={"dptnm"}
+                      valueField={"dptcd"}
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "dptcd"
+                        ).bizComponentItems
+                      }
+                    />
+                  )}
+
+                  {customOptionData !== null && (
+                    <Field
+                      name={"person"}
+                      label={"담당자"}
+                      component={FormComboBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "person"
+                        ).query
+                      }
+                      valueField={"user_id"}
+                      textField={"user_name"}
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "person"
+                        ).bizComponentItems
+                      }
+                    />
+                  )}
+                  {customOptionData !== null && (
+                    <Field
+                      name={"amtunit"}
+                      label={"화폐단위"}
+                      component={FormComboBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "amtunit"
+                        ).query
+                      }
+                      textField={"code_name"}
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "amtunit"
+                        ).bizComponentItems
+                      }
+                    />
+                  )}
+                  {/* <Field
                   name={"wonchgrat"}
                   component={FormInput}
                   label={"원화환율"}
@@ -1846,85 +1982,88 @@ const KendoWindow = ({
                   component={FormInput}
                   label={"대미환율"}
                 /> */}
-              </FieldWrap>
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  name={"quokey"}
-                  component={FormReadOnly}
-                  label={"견적번호"}
-                />
-                <Field
-                  name={"prcterms"}
-                  component={FormInput}
-                  label={"인도조건"}
-                />
-                <Field
-                  name={"paymeth"}
-                  component={FormInput}
-                  label={"지불조건"}
-                />
-                <Field
-                  name={"dlv_method"}
-                  component={FormInput}
-                  label={"납기조건"}
-                />
-              </FieldWrap>
-              <FieldWrap fieldWidth="25%">
-                <Field name={"portnm"} component={FormInput} label={"선적지"} />
-                <Field
-                  name={"ship_method"}
-                  component={FormInput}
-                  label={"선적방법"}
-                />
-                <Field
-                  name={"poregnum"}
-                  component={FormInput}
-                  label={"PO번호"}
-                />
-                <Field
-                  name={"files"}
-                  component={FormReadOnly}
-                  label={"첨부파일"}
-                />
-                <ButtonInFieldWrap>
-                  <ButtonInField>
-                    <Button
-                      type={"button"}
-                      onClick={onAttachmentsWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInField>
-                </ButtonInFieldWrap>
-              </FieldWrap>
-              <FieldWrap fieldWidth="25%">
-                <Field name={"remark"} component={FormInput} label={"비고"} />
-              </FieldWrap>
-            </fieldset>
-            <FieldArray
-              name="orderDetails"
-              dataItemKey={FORM_DATA_INDEX}
-              component={FormGrid}
-              validator={arrayLengthValidator}
-            />
+                </FieldWrap>
+                <FieldWrap fieldWidth="25%">
+                  <Field
+                    name={"quokey"}
+                    component={FormReadOnly}
+                    label={"견적번호"}
+                  />
+                  <Field
+                    name={"prcterms"}
+                    component={FormInput}
+                    label={"인도조건"}
+                  />
+                  <Field
+                    name={"paymeth"}
+                    component={FormInput}
+                    label={"지불조건"}
+                  />
+                  <Field
+                    name={"dlv_method"}
+                    component={FormInput}
+                    label={"납기조건"}
+                  />
+                </FieldWrap>
+                <FieldWrap fieldWidth="25%">
+                  <Field
+                    name={"portnm"}
+                    component={FormInput}
+                    label={"선적지"}
+                  />
+                  <Field
+                    name={"ship_method"}
+                    component={FormInput}
+                    label={"선적방법"}
+                  />
+                  <Field
+                    name={"poregnum"}
+                    component={FormInput}
+                    label={"PO번호"}
+                  />
+                  <Field
+                    name={"files"}
+                    component={FormReadOnly}
+                    label={"첨부파일"}
+                  />
+                  <ButtonInFieldWrap>
+                    <ButtonInField>
+                      <Button
+                        type={"button"}
+                        onClick={onAttachmentsWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInField>
+                  </ButtonInFieldWrap>
+                </FieldWrap>
+                <FieldWrap fieldWidth="25%">
+                  <Field name={"remark"} component={FormInput} label={"비고"} />
+                </FieldWrap>
+              </fieldset>
+              <FieldArray
+                name="orderDetails"
+                dataItemKey={FORM_DATA_INDEX}
+                component={FormGrid}
+                validator={arrayLengthValidator}
+              />
 
-            <BottomContainer>
-              <ButtonContainer>
-                <Button type={"submit"} themeColor={"primary"} icon="save">
-                  저장
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </FormElement>
-        )}
-      />
-
+              <BottomContainer>
+                <ButtonContainer>
+                  <Button type={"submit"} themeColor={"primary"} icon="save">
+                    저장
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </FormElement>
+          )}
+        />
+      </unpContext.Provider>
       {custWindowVisible && (
         <CustomersWindow
-          getVisible={setCustWindowVisible}
+          setVisible={setCustWindowVisible}
           workType={custType} //신규 : N, 수정 : U
-          getData={getCustData}
-          para={undefined}
+          setData={setCustData}
         />
       )}
 

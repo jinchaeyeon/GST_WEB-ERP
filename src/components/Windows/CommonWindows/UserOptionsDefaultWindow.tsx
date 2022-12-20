@@ -31,11 +31,11 @@ import {
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import {
-  NumberCell,
-  NameCell,
+  FormNumberCell,
+  FormNameCell,
   FormComboBox,
-  CellComboBox,
-  CellCheckBox,
+  FormComboBoxCell,
+  FormCheckBoxCell,
 } from "../../Editors";
 import { Iparameters } from "../../../store/types";
 import {
@@ -178,12 +178,16 @@ const typeColumn = [
 
 const valueTypeComboBoxCell = (props: GridCellProps) => {
   return (
-    <CellComboBox data={valueTypeData} columns={valueTypeColumn} {...props} />
+    <FormComboBoxCell
+      data={valueTypeData}
+      columns={valueTypeColumn}
+      {...props}
+    />
   );
 };
 const sessionItemComboBoxCell = (props: GridCellProps) => {
   return (
-    <CellComboBox
+    <FormComboBoxCell
       data={sessionItemData}
       columns={sessionItemTypeColumn}
       {...props}
@@ -433,7 +437,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="default_id"
             title="필드명"
             width="130px"
-            cell={NameCell}
+            cell={FormNameCell}
             headerCell={RequiredHeader}
             className="required editable-new-only"
           />
@@ -441,7 +445,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="caption"
             title="캡션"
             width="130px"
-            cell={NameCell}
+            cell={FormNameCell}
           />
           <GridColumn
             field="value_type"
@@ -455,19 +459,19 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="value_code"
             title="VALUE 코드"
             width="100px"
-            cell={NameCell}
+            cell={FormNameCell}
           />
           <GridColumn
             field="value"
             title="VALUE 이름"
             width="100px"
-            cell={NameCell}
+            cell={FormNameCell}
           />
           <GridColumn
             field="bc_id"
             title="비즈니스 컴포넌트 ID"
             width="170px"
-            cell={NameCell}
+            cell={FormNameCell}
           />
           <GridColumn
             field="session_item"
@@ -479,31 +483,31 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="use_session"
             title="세션 사용유무"
             width="120px"
-            cell={CellCheckBox}
+            cell={FormCheckBoxCell}
           />
           <GridColumn
             field="add_year"
             title="연 추가"
             width="90px"
-            cell={NumberCell}
+            cell={FormNumberCell}
           />
           <GridColumn
             field="add_month"
             title="월 추가"
             width="90px"
-            cell={NumberCell}
+            cell={FormNumberCell}
           />
           <GridColumn
             field="add_day"
             title="일 추가"
             width="90px"
-            cell={NumberCell}
+            cell={FormNumberCell}
           />
           <GridColumn
             field="user_editable"
             title="사용자 수정 가능 여부"
             width="180px"
-            cell={CellCheckBox}
+            cell={FormCheckBoxCell}
           />
         </Grid>
       </USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider>

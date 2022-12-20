@@ -38,10 +38,10 @@ import {
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import {
-  NumberCell,
-  NameCell,
+  FormNumberCell,
+  FormNameCell,
   FormNumericTextBox,
-  CellComboBox,
+  FormComboBoxCell,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
@@ -115,7 +115,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <CellComboBox
+    <FormComboBoxCell
       bizComponent={bizComponent}
       textField={fieldName}
       {...props}
@@ -510,7 +510,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           field="procseq"
           title="공정순서"
           width="100px"
-          cell={NumberCell}
+          cell={FormNumberCell}
         />
 
         <GridColumn
@@ -947,14 +947,14 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           field="chlditemcd"
           title="소요자재코드"
           width="160px"
-          cell={NameCell}
+          cell={FormNameCell}
         />
         <GridColumn cell={ItemBtnCell} width="55px" />
         <GridColumn
           field="chlditemnm"
           title="소요자재명"
           width="180px"
-          cell={NameCell}
+          cell={FormNameCell}
         />
         <GridColumn
           field="outgb"
@@ -966,13 +966,13 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           field="unitqty"
           title="소요량"
           width="120px"
-          cell={NumberCell}
+          cell={FormNumberCell}
         />
         <GridColumn
           field="procqty"
           title="재공생산량"
           width="120px"
-          cell={NumberCell}
+          cell={FormNumberCell}
         />
         <GridColumn
           field="qtyunit"

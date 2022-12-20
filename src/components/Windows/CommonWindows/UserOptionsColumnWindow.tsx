@@ -31,7 +31,12 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-import { NumberCell, NameCell, FormInput, FormReadOnly } from "../../Editors";
+import {
+  FormNumberCell,
+  FormNameCell,
+  FormInput,
+  FormReadOnly,
+} from "../../Editors";
 import { Iparameters, TControlObj } from "../../../store/types";
 import {
   arrayLengthValidator,
@@ -365,7 +370,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="column_id"
             title="컬럼ID"
             //width="160px"
-            cell={NameCell}
+            cell={FormNameCell}
             headerCell={RequiredHeader}
             className="required"
           />
@@ -373,19 +378,19 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="caption"
             title="캡션"
             //width="180px"
-            cell={NameCell}
+            cell={FormNameCell}
           />
           <GridColumn
             field="width"
             title="컬럼너비"
             width="180px"
-            cell={NumberCell}
+            cell={FormNumberCell}
           />
           <GridColumn
             field="user_editable"
             title="사용자 수정가능여부"
             width="180px"
-            cell={NameCell}
+            cell={FormNameCell}
             headerCell={RequiredHeader}
             className="required"
           />
@@ -393,7 +398,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="hidden"
             title="숨김여부"
             width="180px"
-            cell={NameCell}
+            cell={FormNameCell}
             headerCell={RequiredHeader}
             className="required"
           />
@@ -401,7 +406,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="fixed"
             title="컬럼고정여부"
             width="180px"
-            cell={NameCell}
+            cell={FormNameCell}
             headerCell={RequiredHeader}
             className="required"
           />

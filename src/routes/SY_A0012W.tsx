@@ -57,7 +57,6 @@ import { sha256 } from "js-sha256";
 import TopButtons from "../components/TopButtons";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
-import { ReadOnlyNameCell } from "../components/Editors";
 import NameCell from "../components/Cells/NameCell";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";

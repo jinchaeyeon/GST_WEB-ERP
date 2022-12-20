@@ -20,7 +20,7 @@ import {
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import { clone } from "@progress/kendo-react-common";
-import { FormReadOnly, CellComboBox, CellCheckBox } from "../Editors";
+import { FormReadOnly, FormComboBoxCell, FormCheckBoxCell } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
   validator,
@@ -165,7 +165,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="chk_yn"
             title=" "
             width="50px"
-            cell={CellCheckBox}
+            cell={FormCheckBoxCell}
           />
           <GridColumn field="user_group_id" title="그룹ID" width="240px" />
           <GridColumn field="user_group_name" title="그룹명" width="240px" />
