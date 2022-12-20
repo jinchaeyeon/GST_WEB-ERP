@@ -2139,7 +2139,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                     themeColor={"primary"}
                     icon="refresh"
                   >
-                    초기화
+                    기본값 초기화
                   </Button>
                   <Button
                     onClick={onSaveCustomDefault}
