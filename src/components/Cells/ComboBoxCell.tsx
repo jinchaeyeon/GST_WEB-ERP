@@ -81,7 +81,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
         dataItem: dataItem,
         field: field,
         syntheticEvent: e.syntheticEvent,
-        value: e.target.value[valueField] ?? "",
+        value: e.target.value ? e.target.value[valueField] : "",
       });
     }
   };
