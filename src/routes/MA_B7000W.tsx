@@ -39,6 +39,7 @@ import {
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
@@ -59,8 +60,8 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { gridList } from "../store/columns/MA_B7000W_C";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { isLoading } from "../store/atoms";
-import { useSetRecoilState } from "recoil";
+import { isLoading, sessionItemState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 const numberField = [
   "safeqty",
@@ -659,28 +660,28 @@ const MA_B7000: React.FC = () => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
 
+      const ids = [
+        "cboItemacnt",
+        "cboItemlvl1",
+        "cboItemlvl2",
+        "cboItemlvl3",
+        "cboLocation",
+        "radUseyn",
+        "radzeroyn",
+      ];
+
+      // Combo, Radio
+      ids.forEach((id) =>
+        setFilters((prev) => ({
+          ...prev,
+          [id]: defaultOption.find((item: any) => item.id === id).valueCode,
+        }))
+      );
+
+      // Date
       setFilters((prev) => ({
         ...prev,
         ymdyyyy: setDefaultDate(customOptionData, "ymdyyyy"),
-        cboItemacnt: defaultOption.find(
-          (item: any) => item.id === "cboItemacnt"
-        ).valueCode,
-        cboItemlvl1: defaultOption.find(
-          (item: any) => item.id === "cboItemlvl1"
-        ).valueCode,
-        cboItemlvl2: defaultOption.find(
-          (item: any) => item.id === "cboItemlvl2"
-        ).valueCode,
-        cboItemlvl3: defaultOption.find(
-          (item: any) => item.id === "cboItemlvl3"
-        ).valueCode,
-        cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
-        ).valueCode,
-        radUseyn: defaultOption.find((item: any) => item.id === "radUseyn")
-          .valueCode,
-        radzeroyn: defaultOption.find((item: any) => item.id === "radzeroyn")
-          .valueCode,
       }));
     }
   }, [customOptionData]);
