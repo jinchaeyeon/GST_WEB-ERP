@@ -40,6 +40,7 @@ import {
   chkScrollHandler,
   convertDateToStr,
   getBrowser,
+  UseCustomOption,
   UseGetIp,
   UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
@@ -47,6 +48,7 @@ import { TCommonCodeData } from "../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 
 const DATA_ITEM_KEY = "datnum";
 
@@ -56,8 +58,9 @@ const Main: React.FC = () => {
   const [token, setToken] = useRecoilState(tokenState);
   const userId = token ? token.userId : "";
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
   useEffect(() => {
-    if (token) fetchSessionItem();
+    if (token && sessionUserId === "") fetchSessionItem();
   }, [sessionItem]);
 
   let sessionOrgdiv = sessionItem.find(
@@ -74,6 +77,11 @@ const Main: React.FC = () => {
   const browser = getBrowser();
   UseGetIp(setIp);
   const pc = `${ip}/${browser}`;
+  const pathname: string = window.location.pathname.replace("/", "");
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],
@@ -148,7 +156,7 @@ const Main: React.FC = () => {
   });
 
   const [schedulerFilter, setSchedulerFilter] = useState({
-    work_type: "MyScheduler",
+    cboSchedulerType: "",
     user_id: userId,
   });
   const noticeParameters: Iparameters = {
@@ -204,7 +212,7 @@ const Main: React.FC = () => {
     pageNumber: 1,
     pageSize: 10,
     parameters: {
-      "@p_work_type": schedulerFilter.work_type,
+      "@p_work_type": schedulerFilter.cboSchedulerType,
       "@p_orgdiv": sessionOrgdiv,
       "@p_location": sessionLocation,
       "@p_user_id": schedulerFilter.user_id,
@@ -372,7 +380,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess === true && data.tables[0]) {
       let rows = data.tables[0].Rows.map((row: any) => ({
         //...row,
         id: row.datnum,
@@ -484,11 +492,13 @@ const Main: React.FC = () => {
   };
   const displayDate: Date = new Date();
 
-  //스케줄러조회조건 DropDownList Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅
-  const filterDropDownListChange = (name: string, data: TCommonCodeData) => {
+  //스케줄러조회조건 Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅
+  const schedulerFilterChange = (e: any) => {
+    const { name, value } = e;
+
     setSchedulerFilter((prev) => ({
       ...prev,
-      [name]: data.sub_code,
+      [name]: value,
     }));
   };
 
@@ -521,6 +531,20 @@ const Main: React.FC = () => {
       console.log("menus error", e);
     }
   }, []);
+
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        cboSchedulerType: defaultOption.find(
+          (item: any) => item.id === "cboSchedulerType"
+        ).valueCode,
+      }));
+    }
+  }, [customOptionData]);
 
   return (
     <>
@@ -575,20 +599,16 @@ const Main: React.FC = () => {
         <GridContainer>
           <GridTitleContainer>
             <GridTitle>Work Calendar</GridTitle>
-            <div>
-              <CommonDropDownList
-                name="work_type"
-                queryStr={
-                  "SELECT sub_code, code_name FROM comCodeMaster WHERE group_code='TO001'"
-                }
-                changeData={filterDropDownListChange}
-                defaultValue={{ sub_code: "MyScheduler", code_name: "개인" }}
-              />
-            </div>
-            {/* <ButtonContainer>
-              <Button fillMode="outline">개인일정</Button>
-              <Button fillMode="outline">생산계획</Button>
-            </ButtonContainer> */}
+            {customOptionData !== null && (
+              <div>
+                <CustomOptionComboBox
+                  name="cboSchedulerType"
+                  value={schedulerFilter.cboSchedulerType}
+                  customOptionData={customOptionData}
+                  changeData={schedulerFilterChange}
+                />
+              </div>
+            )}
           </GridTitleContainer>
           <Scheduler
             height={"718px"}
