@@ -117,8 +117,8 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
     };
 
     if (data !== null) {
-      const totalRowCnt = data.result.rowCount;
-      const rows = data.result.data.Rows;
+      const totalRowCnt = data.tables[0].rowCount;
+      const rows = data.tables[0].Rows;
 
       setMainDataResult((prev) => {
         return {
@@ -145,39 +145,74 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
   };
 
   const downloadFiles = async () => {
-    let data: any;
+    // value 가 false인 속성 삭제
+    for (var prop in selectedState) {
+      if (!selectedState[prop]) {
+        delete selectedState[prop];
+      }
+    }
     const parameters = Object.keys(selectedState);
+    const parameter = parameters[0];
 
-    parameters.forEach(async (parameter) => {
-      try {
-        data = await processApi<any>("file-download", { attached: parameter });
-      } catch (error) {
-        data = null;
-      }
+    //for (const parameter of parameters) {
+    let response: any;
+    //parameters.forEach(async (parameter) => {
+    console.log(parameter);
+    try {
+      response = await processApi<any>("file-download", {
+        attached: parameter,
+      });
+    } catch (error) {
+      response = null;
+    }
 
-      return false;
-      if (data !== null) {
-        //console.log("data");
-        //console.log(data);
+    if (response !== null) {
+      const blob = new Blob([response.data]);
+      // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
+      // const blob = new Blob([this.content], {type: 'text/plain'})
 
-        const original_name = mainDataResult.data.find((row: any) => {
-          return row["saved_name"] === parameter;
-        }).original_name;
+      // blob을 사용해 객체 URL을 생성합니다.
+      const fileObjectUrl = window.URL.createObjectURL(blob);
 
-        const url = window.URL.createObjectURL(new Blob([data]));
-        const link = document.createElement("a");
+      // blob 객체 URL을 설정할 링크를 만듭니다.
+      const link = document.createElement("a");
+      link.href = fileObjectUrl;
+      link.style.display = "none";
 
-        console.log("url");
-        console.log(url);
+      // 다운로드 파일 이름을 추출하는 함수
+      const extractDownloadFilename = (response: any) => {
+        console.log(response);
+        if (response.headers) {
+          const disposition = response.headers["content-disposition"];
+          let filename = "";
+          if (disposition) {
+            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            var matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) {
+              filename = matches[1].replace(/['"]/g, "");
+            }
+          }
+          return filename;
+        } else {
+          return "";
+        }
+      };
 
-        link.href = url;
-        link.setAttribute("download", "");
-        link.style.cssText = "display:none";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      }
-    });
+      // 다운로드 파일 이름을 지정 할 수 있습니다.
+      // 일반적으로 서버에서 전달해준 파일 이름은 응답 Header의 Content-Disposition에 설정됩니다.
+      link.download = extractDownloadFilename(response);
+
+      // 다운로드 파일의 이름은 직접 지정 할 수 있습니다.
+      // link.download = "sample-file.xlsx";
+
+      // 링크를 body에 추가하고 강제로 click 이벤트를 발생시켜 파일 다운로드를 실행시킵니다.
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      // 다운로드가 끝난 리소스(객체 URL)를 해제합니다
+    }
+    //}
   };
 
   const deleteFiles = () => {

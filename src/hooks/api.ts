@@ -101,6 +101,7 @@ export const useApi = () => {
           responseType: "stream",
           accept: "*/*",
         };
+
       if (name === "file-list")
         headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
 
@@ -115,13 +116,18 @@ export const useApi = () => {
       if (info.action != "get") {
         initCache();
       }
+      const getHeader: any = {
+        params: params,
+        headers: headers,
+      };
+
+      if (name === "file-download") {
+        getHeader.responseType = "blob";
+      }
 
       switch (info.action) {
         case "get":
-          p = cachedHttp.get(url, {
-            params: params,
-            headers: headers,
-          });
+          p = cachedHttp.get(url, getHeader);
           break;
         case "post":
           p = axiosInstance.post(url, params, { headers: headers });
@@ -141,23 +147,26 @@ export const useApi = () => {
           console.error(message);
           throw message;
       }
-      return p
-        .then((response: any) => {
-          return name === "file-download"
-            ? resolve(response)
-            : resolve(response.data);
-        })
-        .catch((err: any) => {
-          const res = err.response;
-          if (res && res.status == 401) {
-            setToken(null as any);
-            setMenus(null as any);
+      return (
+        p
+          //.then((response: any) => resolve(response.data))
+          .then((response: any) => {
+            return name === "file-download"
+              ? resolve(response)
+              : resolve(response.data);
+          })
+          .catch((err: any) => {
+            const res = err.response;
+            if (res && res.status == 401) {
+              setToken(null as any);
+              setMenus(null as any);
 
-            // 전체 페이지 reload
-            //(window as any).location = "/"; //로그인 실패시 새로고침돼서 일단 주석 처리 해둠
-          }
-          reject(res.data);
-        });
+              // 전체 페이지 reload
+              //(window as any).location = "/"; //로그인 실패시 새로고침돼서 일단 주석 처리 해둠
+            }
+            reject(res.data);
+          })
+      );
     });
   };
 
