@@ -381,6 +381,9 @@ const PanelBarNavContainer = (props: any) => {
             {companyCode !== "2207C612" && (
               <PanelBarItem title={"EDITOR"} route="/WORD_EDITOR" />
             )}
+            {companyCode !== "2207C612" && (
+              <PanelBarItem title={"GANTT"} route="/GANTT" />
+            )}
           </PanelBar>
         )}
 

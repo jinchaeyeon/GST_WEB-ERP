@@ -29,6 +29,7 @@ import CHAT_BOT from "./routes/CHAT_BOT";
 import CHAT_BOT_TRAVEL from "./routes/CHAT_BOT_TRAVEL";
 import CHAT_BOT_MNG from "./routes/CHAT_BOT_MNG";
 import WORD_EDITOR from "./routes/WORD_EDITOR";
+import GANTT from "./routes/GANTT";
 import { isMenuOpendState } from "./store/atoms";
 
 type TGlobalStyle = {
@@ -150,6 +151,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
             <AuthRoute path="/CHAT_BOT" component={CHAT_BOT} exact />
             <AuthRoute path="/CHAT_BOT_MNG" component={CHAT_BOT_MNG} exact />
+            <AuthRoute path="/GANTT" component={GANTT} exact />
             <AuthRoute
               path="/CHAT_BOT_TRAVEL"
               component={CHAT_BOT_TRAVEL}
