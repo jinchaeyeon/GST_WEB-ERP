@@ -70,7 +70,6 @@ export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =
 
 let deletedRows: object[] = [];
 
-const DATA_ITEM_KEY = "default_id ";
 const idGetter = getter(FORM_DATA_INDEX);
 
 type TPara = {
@@ -769,16 +768,20 @@ const KendoWindow = ({
     try {
       dataItem.orderDetails.forEach((item: any) => {
         if (!item.default_id) {
-          throw "필드명을 입력하세요.";
+          const errText = "필드명을 입력하세요.";
+          throw errText;
         }
         if (!item.value_type) {
-          throw "VALUE타입을 선택하세요.";
+          const errText = "VALUE타입을 선택하세요.";
+          throw errText;
         }
         if (
           (item.value_type === "Radio" || item.value_type === "Lookup") &&
           (item.bc_id === "" || item.bc_id === null || item.bc_id === undefined)
         ) {
-          throw "비즈니스 컴포넌트 ID를 입력해주세요";
+          const errText =
+            "Lookup 타입 행의 비즈니스 컴포넌트 ID를 입력해주세요";
+          throw errText;
         }
       });
     } catch (e) {
@@ -962,7 +965,7 @@ const KendoWindow = ({
             </fieldset>
             <FieldArray
               name="orderDetails"
-              dataItemKey={DATA_ITEM_KEY}
+              dataItemKey={FORM_DATA_INDEX}
               component={FormGrid}
               validator={arrayLengthValidator}
             />
