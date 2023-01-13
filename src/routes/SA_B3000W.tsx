@@ -1260,10 +1260,10 @@ const SA_B3000W: React.FC = () => {
                       name="(1-6)분기"
                       labels={{
                         visible: true,
-                        content: (e) =>
-                          typeof e.value === "number"
-                            ? numberWithCommas(e.value) + ""
-                            : e.value,
+                        // content: (e) =>
+                        //   typeof e.value === "number"
+                        //     ? numberWithCommas(e.value) + ""
+                        //     : e.value,
                       }}
                       type="bar"
                       data={chartDataResult
@@ -1276,10 +1276,10 @@ const SA_B3000W: React.FC = () => {
                       name="(7-12)분기"
                       labels={{
                         visible: true,
-                        content: (e) =>
-                          typeof e.value === "number"
-                            ? numberWithCommas(e.value) + ""
-                            : e.value,
+                        // content: (e) =>
+                        //   typeof e.value === "number"
+                        //     ? numberWithCommas(e.value) + ""
+                        //     : e.value,
                       }}
                       type="bar"
                       data={chartDataResult
@@ -1292,10 +1292,10 @@ const SA_B3000W: React.FC = () => {
                       name="합계"
                       labels={{
                         visible: true,
-                        content: (e) =>
-                          typeof e.value === "number"
-                            ? numberWithCommas(e.value) + ""
-                            : e.value,
+                        // content: (e) =>
+                        //   typeof e.value === "number"
+                        //     ? numberWithCommas(e.value) + ""
+                        //     : e.value,
                       }}
                       type="bar"
                       // gap={2}
