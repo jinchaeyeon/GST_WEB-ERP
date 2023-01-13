@@ -16,12 +16,14 @@
     "@progress/kendo-react-dateinputs": "^5.9.0",
     "@progress/kendo-react-dialogs": "^5.9.0",
     "@progress/kendo-react-dropdowns": "^5.9.0",
+    "@progress/kendo-react-editor": "^5.9.0",
     "@progress/kendo-react-excel-export": "^5.9.0",
     "@progress/kendo-react-form": "^5.9.0",
     "@progress/kendo-react-grid": "^5.9.0",
     "@progress/kendo-react-inputs": "^5.9.0",
     "@progress/kendo-react-intl": "^5.9.0",
     "@progress/kendo-react-layout": "^5.9.0",
+    "@progress/kendo-react-pdf": "^5.9.0",
     "@progress/kendo-react-popup": "^5.9.0",
     "@progress/kendo-react-progressbars": "^5.9.0",
     "@progress/kendo-react-scheduler": "^5.9.0",
@@ -63,7 +65,8 @@
     "swiper": "^6.8.4",
     "typescript": "^4.6.4",
     "utf8-bytes": "0.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "word-extractor": "^1.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -28,6 +28,7 @@ import CT_A0111W from "./routes/CT_A0111W";
 import CHAT_BOT from "./routes/CHAT_BOT";
 import CHAT_BOT_TRAVEL from "./routes/CHAT_BOT_TRAVEL";
 import CHAT_BOT_MNG from "./routes/CHAT_BOT_MNG";
+import WORD_EDITOR from "./routes/WORD_EDITOR";
 import { isMenuOpendState } from "./store/atoms";
 
 type TGlobalStyle = {
@@ -146,6 +147,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
             {/* 원가관리 */}
             <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
+            <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
             <AuthRoute path="/CHAT_BOT" component={CHAT_BOT} exact />
             <AuthRoute path="/CHAT_BOT_MNG" component={CHAT_BOT_MNG} exact />
             <AuthRoute
