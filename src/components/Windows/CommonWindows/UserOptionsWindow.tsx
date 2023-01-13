@@ -30,6 +30,7 @@ import {
   chkScrollHandler,
   getGridItemChangedData,
   getYn,
+  UseBizComponent,
   UseGetValueFromSessionItem,
 } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
@@ -67,6 +68,9 @@ import {
 import { tokenState } from "../../../store/atoms";
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilValue } from "recoil";
+import ComboBoxCell from "../../Cells/ComboBoxCell";
+import RadioGroupCell from "../../Cells/RadioGroupCell";
+import NameCell from "../../Cells/NameCell";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -126,7 +130,7 @@ const DefaultUseSessioneCell = (props: GridCellProps) => {
   } = props;
 
   const valueType = dataItem["value_type"];
-  const orgUseSession = dataItem["org_use_session"];
+  const orgUseSession = dataItem["sys_use_session"];
 
   let value = dataItem[field ?? ""];
   if (value === "Y" || value === true) {
@@ -174,54 +178,32 @@ const DefaultUseSessioneCell = (props: GridCellProps) => {
 
 // 디폴트 디테일 그리드 - 기본값 필드 셀
 const DefaultValueCell = (props: GridCellProps) => {
-  const {
-    ariaColumnIndex,
-    columnIndex,
-    dataItem,
-    field = "",
-    render,
-    onChange,
-  } = props;
-
-  let isInEdit = field === dataItem.inEdit;
+  const { ariaColumnIndex, columnIndex, dataItem, field = "", render } = props;
   const valueType = dataItem["value_type"];
   const bcId = dataItem["bc_id"];
-  const useSession = getYn(dataItem["use_session"]);
-
-  console.log(dataItem);
-
-  const value = dataItem[field];
-
-  const handleChange = (e: InputChangeEvent) => {
-    if (onChange) {
-      onChange({
-        dataIndex: 0,
-        dataItem: dataItem,
-        field: field,
-        syntheticEvent: e.syntheticEvent,
-        value: e.target.value ?? "",
-      });
-    }
-  };
+  //const useSession = getYn(dataItem["use_session"]);
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent(bcId, setBizComponentData);
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bcId
+  );
 
   const defaultRendering = (
-    <td
-      style={{ textAlign: "left" }}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-    >
-      {isInEdit ? (
-        valueType === "Lookup" ? (
-          <Input value={value} onChange={handleChange} />
-        ) : valueType === "Text" || valueType === "Radio" ? (
-          <Input value={value} onChange={handleChange} />
-        ) : (
-          value
-        )
+    <>
+      {bizComponent && valueType === "Lookup" ? (
+        <ComboBoxCell bizComponent={bizComponent} {...props} />
+      ) : bizComponent && valueType === "Radio" ? (
+        <RadioGroupCell bizComponentData={bizComponent} {...props} />
+      ) : valueType === "Text" ? (
+        <NameCell {...props} />
       ) : (
-        value
+        <td
+          style={{ textAlign: "left" }}
+          aria-colindex={ariaColumnIndex}
+          data-grid-col-index={columnIndex}
+        ></td>
       )}
-    </td>
+    </>
   );
 
   return render === undefined
@@ -765,7 +747,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
         row.custom_value_registered
           ? {
               ...row,
-              org_use_session: row.custom_use_session,
+              sys_use_session: row.use_session,
               use_session: row.custom_use_session,
               value_code: row.custom_value_code,
               value: row.custom_value,
@@ -774,7 +756,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
               add_day: row.custom_add_day,
               value_lookup: row.custom_value_lookup,
             }
-          : { ...row, org_use_session: row.use_session }
+          : { ...row, sys_use_session: row.use_session }
       );
 
       const totalRowsCnt = data.RowCount;
@@ -1285,16 +1267,15 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
         default_id,
         use_session,
         value_code,
-        value,
         add_year,
         add_month,
         add_day,
       } = item;
 
       dataArr.default_id.push(default_id);
-      dataArr.use_session.push(use_session);
+      dataArr.use_session.push(getYn(use_session));
       dataArr.value_code.push(value_code);
-      dataArr.value.push(value);
+      dataArr.value.push("");
       dataArr.add_year.push(add_year);
       dataArr.add_month.push(add_month);
       dataArr.add_day.push(add_day);
@@ -2058,7 +2039,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
         <TabStripTab title="기본값">
           <GridContainerWrap>
-            <GridContainer maxWidth="300px">
+            <GridContainer maxWidth="280px">
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
                 {isAdmin && (
@@ -2127,7 +2108,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
             </GridContainer>
 
             <GridContainer
-              clientWidth={1330 - 315} //= 요약정보 200 + margin 15
+              clientWidth={1330 - 275} //= 요약정보 200 + margin 15
               inTab={true}
             >
               <GridTitleContainer>
@@ -2196,7 +2177,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 <GridColumn
                   field="caption"
                   title="항목"
-                  width=""
+                  width="100px"
                   editable={false}
                 />
                 <GridColumn
@@ -2206,9 +2187,9 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                   cell={DefaultUseSessioneCell}
                 />
                 <GridColumn
-                  field="value"
+                  field="value_code"
                   title="기본값"
-                  width=""
+                  width="350px"
                   cell={DefaultValueCell}
                 />
                 <GridColumn
