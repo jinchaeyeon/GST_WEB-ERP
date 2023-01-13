@@ -101,8 +101,6 @@ a {
 
 `;
 
-//class App extends Component {
-
 const App: React.FC = () => {
   return (
     <RecoilRoot>
@@ -112,7 +110,7 @@ const App: React.FC = () => {
   //}
 };
 const AppInner: React.FC = () => {
-  const isMenuOpend = useRecoilValue(isMenuOpendState); //상태
+  const isMenuOpend = useRecoilValue(isMenuOpendState);
 
   return (
     <>
@@ -148,6 +146,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
             {/* 원가관리 */}
             <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
+            {/* 연구개발 */}
             <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
             <AuthRoute path="/CHAT_BOT" component={CHAT_BOT} exact />
             <AuthRoute path="/CHAT_BOT_MNG" component={CHAT_BOT_MNG} exact />
