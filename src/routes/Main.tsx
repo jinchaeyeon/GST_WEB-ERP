@@ -44,11 +44,10 @@ import {
   UseGetIp,
   UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
-import { TCommonCodeData } from "../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
-import CommonDropDownList from "../components/DropDownLists/CommonDropDownList";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import useGeoLocation from "../hooks/useGeoLocation";
 
 const DATA_ITEM_KEY = "datnum";
 
@@ -59,6 +58,8 @@ const Main: React.FC = () => {
   const userId = token ? token.userId : "";
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionUserId = UseGetValueFromSessionItem("user_id");
+  const geoLocation = useGeoLocation();
+
   useEffect(() => {
     if (token && sessionUserId === "") fetchSessionItem();
   }, [sessionItem]);
@@ -156,7 +157,7 @@ const Main: React.FC = () => {
   });
 
   const [schedulerFilter, setSchedulerFilter] = useState({
-    cboSchedulerType: "",
+    cboSchedulerType: "MY",
     user_id: userId,
   });
   const noticeParameters: Iparameters = {
@@ -266,6 +267,15 @@ const Main: React.FC = () => {
 
   const fetchWorkTimeSaved = async (workType: "start" | "end") => {
     let data: any;
+    let lat = 0;
+    let lng = 0;
+
+    if (geoLocation.loaded && geoLocation?.coordinates) {
+      lat = geoLocation.coordinates?.lat;
+      lng = geoLocation.coordinates?.lng;
+    }
+
+    console.log(lat, lng);
 
     const workTimeParaSaved: Iparameters = {
       procedureName: "P_HM_A1000W_S",
@@ -280,6 +290,8 @@ const Main: React.FC = () => {
         "@p_frdt": "",
         "@p_todt": "",
         "@p_dutydt": convertDateToStr(new Date()),
+        "@p_lat": lat,
+        "@p_lng": lng,
         "@p_id": userId,
         "@p_pc": pc,
       },
