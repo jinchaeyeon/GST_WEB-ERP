@@ -59,7 +59,6 @@ import {
 import { CellRender, RowRender } from "../../Renderers";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../../../store/atoms";
-import CheckBoxCell from "../../Cells/CheckBoxCell";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =

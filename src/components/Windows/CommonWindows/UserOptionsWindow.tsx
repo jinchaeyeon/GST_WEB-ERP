@@ -71,6 +71,8 @@ import { useRecoilValue } from "recoil";
 import ComboBoxCell from "../../Cells/ComboBoxCell";
 import RadioGroupCell from "../../Cells/RadioGroupCell";
 import NameCell from "../../Cells/NameCell";
+import CheckBoxCell from "../../Cells/CheckBoxCell";
+import NumberCell from "../../Cells/NumberCell";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -455,7 +457,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     pageNumber: wordPgNum,
     pageSize: wordFilters.pgSize,
     parameters: {
-      "@p_work_type": "default",
+      "@p_work_type": "Default",
       "@p_culture_name": "",
       "@p_word_id": wordFilters.word_id,
       "@p_word_text": wordFilters.word_text,
@@ -692,22 +694,75 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }
   };
 
+  const companyCode = token ? token.companyCode : "";
+
   //컬럼 상세그리드 조회
   const fetchDetailColumn = async () => {
     let data: any;
+    const selectedRowKeyVal =
+      Object.getOwnPropertyNames(mainColumnSelectedState)[0] ?? null;
+
+    if (selectedRowKeyVal === null) return false;
+
+    const selectedRowData = mainColumnDataResult.data.find(
+      (item) => item[MAIN_COLUMN_DATA_ITEM_KEY] === selectedRowKeyVal
+    );
+
+    const para = {
+      formId: pathname,
+      para:
+        "column-detail?optionId=" +
+        columnDetailInitialVal.option_id +
+        "&companyCode=" +
+        selectedRowData.company_code,
+    };
 
     try {
-      data = await processApi<any>(
-        "platform-procedure",
-        columnDetailParameters
-      );
+      data = await processApi<any>("column-detail", para);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowsCnt = data.tables[0].Rows.length;
-      const rows = data.tables[0].Rows;
+    if (data !== null) {
+      let totalRowsCnt = 0;
+      let rows: any = [];
+      if (data[1].RowCount > 0) {
+        // Custom 설정
+        totalRowsCnt = data[1].RowCount;
+        rows = data[1].Rows.map((row: any) => ({
+          ...row,
+          fixed: row.fixed === "None" ? "N" : "Y",
+          hidden: row.sort_order < 0 ? "Y" : "N",
+        }));
+      } else {
+        // System 설정
+        totalRowsCnt = data[0].RowCount;
+        rows = data[0].Rows.map((row: any) => ({
+          ...row,
+          fixed: row.fixed === "None" ? "N" : "Y",
+          hidden: row.sort_order < 0 ? "Y" : "N",
+        }));
+      }
+
+      //   const rows = data.Rows.map((row: any) =>
+      //   row.custom_value_registered
+      //     ? {
+      //         ...row,
+      //         sys_use_session: row.use_session,
+      //         use_session: row.custom_use_session,
+      //         value_code: row.custom_value_code,
+      //         value: row.custom_value,
+      //         add_year: row.custom_add_year,
+      //         add_month: row.custom_add_month,
+      //         add_day: row.custom_add_day,
+      //         value_lookup: row.custom_value_lookup,
+      //         fixed: row.fixed === "None" ? "N" : "Y",
+      //         hidden: row.sort_order < 0 ? "Y" : "N",
+      //       }
+      //     : { ...row, sys_use_session: row.use_session,
+      //       fixed: row.fixed === "None" ? "N" : "Y",
+      //       hidden: row.sort_order < 0 ? "Y" : "N", }
+      // );
 
       setDetailColumnDataResult(() => {
         return {
@@ -793,8 +848,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     pc: "",
   });
 
-  //커스텀 디폴트 저장 프로시저 파라미터
-  const customDefaultParaSaved: Iparameters = {
+  //커스텀 저장 프로시저 파라미터
+  const customParaSaved: Iparameters = {
     procedureName: "sys_sav_custom_option",
     pageNumber: 0,
     pageSize: 0,
@@ -865,12 +920,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setDetailColumnDataResult(process([], detailColumnDataState));
   };
 
-  //커스텀 디폴트 값 저장
-  const fetchCustomDefaultSaved = async () => {
+  //커스텀 디폴트/컬럼 값 저장
+  const fetchCustomSaved = async () => {
     let data: any;
 
     try {
-      data = await processApi<any>("procedure", customDefaultParaSaved);
+      data = await processApi<any>("procedure", customParaSaved);
     } catch (error) {
       data = null;
     }
@@ -881,7 +936,12 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       } else {
         alert("저장이 완료되었습니다.");
       }
-      fetchDetailDefault();
+
+      if (customOptionParaData.type === "Column") {
+        fetchDetailColumn();
+      } else if (customOptionParaData.type === "Default") {
+        fetchDetailDefault();
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -892,7 +952,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   };
 
   useEffect(() => {
-    if (customOptionParaData.work_type !== "") fetchCustomDefaultSaved();
+    if (customOptionParaData.work_type !== "") fetchCustomSaved();
   }, [customOptionParaData]);
 
   useEffect(() => {
@@ -988,7 +1048,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
     setColumnDetailInitialVal((prev) => ({
       ...prev,
-      parent_component: selectedRowData.option_id,
+      option_id: selectedRowData.option_id,
     }));
   };
 
@@ -1286,7 +1346,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setCustomOptionParaData((prev) => ({
       ...prev,
       work_type: "save",
-      type: "default",
+      type: "Default",
       option_id: option_id,
       default_id: dataArr.default_id.join("|"),
       use_session: dataArr.use_session.join("|"),
@@ -1295,6 +1355,45 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       add_year: dataArr.add_year.join("|"),
       add_month: dataArr.add_month.join("|"),
       add_day: dataArr.add_day.join("|"),
+    }));
+  };
+
+  // 커스텀 컬럼 저장
+  const onSaveCustomColumn = () => {
+    type TdataArr = {
+      column_id: string[];
+      sort_order: string[];
+      width: string[];
+      fixed: string[];
+    };
+
+    let dataArr: TdataArr = {
+      column_id: [],
+      sort_order: [],
+      width: [],
+      fixed: [],
+    };
+
+    detailColumnDataResult.data.forEach((item: any, idx: number) => {
+      const { column_id, width, fixed, hidden } = item;
+
+      dataArr.column_id.push(column_id);
+      dataArr.sort_order.push(getYn(hidden) === "Y" ? "-1" : String(idx + 1));
+      dataArr.width.push(width);
+      dataArr.fixed.push(getYn(fixed) === "Y" ? "Left" : "None");
+    });
+
+    const option_id = Object.getOwnPropertyNames(mainColumnSelectedState)[0];
+
+    setCustomOptionParaData((prev) => ({
+      ...prev,
+      work_type: "save",
+      type: "Column",
+      option_id: option_id,
+      column_id: dataArr.column_id.join("|"),
+      sort_order: dataArr.sort_order.join("|"),
+      width: dataArr.width.join("|"),
+      fixed: dataArr.fixed.join("|"),
     }));
   };
 
@@ -1317,9 +1416,31 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     setCustomOptionParaData((prev) => ({
       ...prev,
       work_type: "init",
-      type: "default",
+      type: "Default",
       option_id,
       default_id,
+    }));
+  };
+  // 컬럼 데이터 초기화 (커스텀 데이터 삭제)
+  const onInitColumn = () => {
+    const column_id = Object.getOwnPropertyNames(detailColumnSelectedState)[0];
+    if (!detailColumnSelectedState[column_id]) {
+      alert("초기화 할 항목을 선택해주세요.");
+      return false;
+    }
+    if (
+      !window.confirm("선택한 항목을 시스템 기본 값으로 초기화하시겠습니까?")
+    ) {
+      return false;
+    }
+    const option_id = Object.getOwnPropertyNames(mainColumnSelectedState)[0];
+
+    setCustomOptionParaData((prev) => ({
+      ...prev,
+      work_type: "init",
+      type: "Column",
+      option_id,
+      column_id,
     }));
   };
 
@@ -2291,6 +2412,14 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
                 <ButtonContainer>
                   <Button
+                    onClick={onInitColumn}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="refresh"
+                  >
+                    컬럼정보 초기화
+                  </Button>
+                  <Button
                     onClick={() =>
                       onArrowsBtnClick({
                         direction: "UP",
@@ -2314,7 +2443,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                   ></Button>
 
                   <Button
-                    //onClick={onSaveMtrClick}
+                    onClick={onSaveCustomColumn}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
@@ -2326,7 +2455,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 data={process(
                   detailColumnDataResult.data.map((row) => ({
                     ...row,
-                    sort_order: row.sort_order === -1 ? "N" : "Y",
                     [SELECTED_FIELD]:
                       detailColumnSelectedState[detailColumnIdGetter(row)],
                   })),
@@ -2359,17 +2487,24 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                 rowRender={detailColumnRowRender}
                 editField={EDIT_FIELD}
               >
-                {/* <GridColumn cell={ArrowsCell} width="55px" /> */}
-
                 <GridColumn
                   field="rowstatus"
                   title=" "
                   width="40px"
                   editable={false}
                 />
-                <GridColumn field="caption" title="컬럼" editable={false} />
-                <GridColumn field="sort_order" title="컬럼 보이기" />
-                <GridColumn field="width" title="너비" editor={"numeric"} />
+                <GridColumn field="caption" title="컬럼명" editable={false} />
+                <GridColumn field="width" title="컬럼 너비" cell={NumberCell} />
+                <GridColumn
+                  field="hidden"
+                  title="컬럼 숨김"
+                  cell={CheckBoxCell}
+                />
+                <GridColumn
+                  field="fixed"
+                  title="컬럼 고정"
+                  cell={CheckBoxCell}
+                />
               </Grid>
             </GridContainer>
           </GridContainerWrap>
