@@ -384,7 +384,7 @@ const MA_B7000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -441,7 +441,7 @@ const MA_B7000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -957,27 +957,30 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 1 ? mainTotalFooterCell : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                .map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                        }
+                        locked={item.fixed === "None" ? false : true}
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1018,29 +1021,31 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdStockDetail"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 1
-                          ? detail1TotalFooterCell
-                          : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdStockDetail"]
+                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                .map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 1
+                            ? detail1TotalFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </GridContainer>
         <GridContainer
@@ -1067,29 +1072,31 @@ const MA_B7000: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdLotDetail"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 1
-                          ? detail2TotalFooterCell
-                          : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdLotDetail"]
+                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                .map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 1
+                            ? detail2TotalFooterCell
+                            : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </GridContainer>
       </GridContainerWrap>
