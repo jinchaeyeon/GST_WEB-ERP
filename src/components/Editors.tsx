@@ -325,12 +325,19 @@ export const FormDropDownListCell = (props: GridCellProps) => {
     : defaultRendering;
 };
 
+interface IComboBoxColumns {
+  sortOrder: number;
+  fieldName: string;
+  caption: string;
+  columnWidth: number;
+  dataAlignment: string;
+}
 interface CustomCellProps extends GridCellProps {
   bizComponent?: any;
   valueField?: string;
   textField?: string;
   data?: any[];
-  columns?: any[];
+  columns?: IComboBoxColumns[];
 }
 
 export const FormComboBoxCell = (props: CustomCellProps) => {

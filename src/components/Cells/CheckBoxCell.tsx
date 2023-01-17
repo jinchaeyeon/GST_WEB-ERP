@@ -4,7 +4,6 @@ import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 const CheckBoxCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange } =
     props;
-  const isInEdit = field === dataItem.inEdit;
   let value = dataItem[field ?? ""];
   if (value === "Y" || value === true) {
     value = true;
@@ -43,7 +42,7 @@ const CheckBoxCell = (props: GridCellProps) => {
   );
 
   return render === undefined
-    ? null
+    ? defaultRendering
     : render?.call(undefined, defaultRendering, props);
 };
 

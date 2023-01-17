@@ -6,7 +6,6 @@ import {
   GridColumn,
   GridEvent,
   GridToolbar,
-  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridHeaderSelectionChangeEvent,
@@ -15,7 +14,6 @@ import {
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
-
 import {
   BottomContainer,
   ButtonContainer,
@@ -36,16 +34,18 @@ import {
   FormNameCell,
   FormInput,
   FormReadOnly,
+  FormCheckBoxCell,
 } from "../../Editors";
-import { Iparameters, TControlObj } from "../../../store/types";
-import {
-  arrayLengthValidator,
-  chkScrollHandler,
-  validator,
-} from "../../CommonFunction";
+import { Iparameters } from "../../../store/types";
+import { chkScrollHandler, getYn, validator } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { FORM_DATA_INDEX, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import {
+  EDIT_FIELD,
+  FORM_DATA_INDEX,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
 import { tokenState } from "../../../store/atoms";
 import { useRecoilState } from "recoil";
@@ -59,8 +59,8 @@ export const USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT =
 
 let deletedRows: object[] = [];
 
-const DATA_ITEM_KEY = "column_id ";
-const idGetter = getter(FORM_DATA_INDEX);
+const DATA_ITEM_KEY = "column_id";
+const idGetter = getter(DATA_ITEM_KEY);
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -111,6 +111,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
               column_id: item.id,
               caption: item.dataset.caption,
               width: item.dataset.width,
+              user_editable: "Y",
             },
           });
 
@@ -134,7 +135,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           srcPgName: "USER_OPTIONS_COLUMN_WINDOW",
           rowstatus: "N",
           width: 120,
-          user_edit_yn: "Y",
+          user_editable: "Y",
         },
       });
 
@@ -191,8 +192,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setDetailPgNum((prev) => prev + 1);
   };
 
-  const EDIT_FIELD = "inEdit";
-
   const enterEdit = (dataItem: any, field: string | undefined) => {
     fieldArrayRenderProps.onReplace({
       index: dataItem[FORM_DATA_INDEX],
@@ -245,7 +244,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState,
-        dataItemKey: FORM_DATA_INDEX,
+        dataItemKey: DATA_ITEM_KEY,
       });
 
       setSelectedState(newSelectedState);
@@ -295,6 +294,87 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     );
   };
 
+  // 예외처리 결과 및 선택행 index 반환
+  const checkValidMove = (): ICheckValidMoveResult => {
+    let selectedIdx = -1;
+    let msg = "";
+    let isValid = true;
+    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
+      if (selectedState[item[DATA_ITEM_KEY]]) {
+        if (selectedIdx !== -1) {
+          isValid = false;
+          msg = "하나의 행만 선택해주세요.";
+          return false;
+        }
+
+        selectedIdx = index;
+      }
+    });
+    if (selectedIdx === -1) {
+      msg = "행을 선택해주세요.";
+      isValid = false;
+    }
+
+    const result = {
+      msg,
+      isValid,
+      selectedIdx,
+    };
+    return result;
+  };
+
+  interface ICheckValidMoveResult {
+    msg: string;
+    isValid: boolean;
+    selectedIdx: number;
+  }
+  const onArrowsUpBtnClick = React.useCallback(
+    (e: any) => {
+      e.preventDefault();
+
+      let { msg, isValid, selectedIdx } = checkValidMove();
+
+      // 첫번째 행 up하려는 경우 예외처리
+      if (selectedIdx === 0) {
+        isValid = false;
+      }
+
+      if (!isValid) {
+        if (msg !== "") alert(msg);
+        return false;
+      }
+
+      fieldArrayRenderProps.onMove({
+        nextIndex: selectedIdx,
+        prevIndex: selectedIdx - 1,
+      });
+    },
+    [fieldArrayRenderProps]
+  );
+  const onArrowsDownBtnClick = React.useCallback(
+    (e: any) => {
+      e.preventDefault();
+
+      let { msg, isValid, selectedIdx } = checkValidMove();
+
+      // 마지막 행 down하려는 경우 예외처리
+      if (fieldArrayRenderProps.value.length - 1 === selectedIdx) {
+        isValid = false;
+      }
+
+      if (!isValid) {
+        if (msg !== "") alert(msg);
+        return false;
+      }
+
+      fieldArrayRenderProps.onMove({
+        nextIndex: selectedIdx,
+        prevIndex: selectedIdx + 1,
+      });
+    },
+    [fieldArrayRenderProps]
+  );
+
   return (
     <GridContainer margin={{ top: "30px" }}>
       <USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider
@@ -327,6 +407,18 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           onHeaderSelectionChange={onHeaderSelectionChange}
         >
           <GridToolbar>
+            <Button
+              onClick={onArrowsUpBtnClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="chevron-up"
+            ></Button>
+            <Button
+              onClick={onArrowsDownBtnClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="chevron-down"
+            ></Button>
             <Button
               type={"button"}
               themeColor={"primary"}
@@ -390,25 +482,20 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             field="user_editable"
             title="사용자 수정가능여부"
             width="180px"
-            cell={FormNameCell}
-            headerCell={RequiredHeader}
-            className="required"
+            cell={FormCheckBoxCell}
           />
           <GridColumn
             field="hidden"
             title="숨김여부"
             width="180px"
-            cell={FormNameCell}
-            headerCell={RequiredHeader}
-            className="required"
+            cell={FormCheckBoxCell}
           />
           <GridColumn
             field="fixed"
-            title="컬럼고정여부"
+            title="컬럼고정"
             width="180px"
-            cell={FormNameCell}
-            headerCell={RequiredHeader}
-            className="required"
+            cell={FormCheckBoxCell}
+            // cell={FixedComboBoxCell}
           />
         </Grid>
       </USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider>
@@ -476,16 +563,17 @@ const KendoWindow = ({
 
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "web_sel_column_view_config",
-    pageNumber: 1,
-    pageSize: 50,
+    procedureName: "sel_custom_option",
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_dbname": "SYSTEM",
+      "@p_work_type": "detail",
       "@p_form_id": pathname,
-      "@p_lang_id": "",
-      "@p_parent_component": option_id,
-      "@p_message": "",
+      "@p_type": "Column",
+      "@p_option_id": workType === "U" ? option_id : "",
+      "@p_option_name": "",
+      "@p_remarks": "",
+      "@p_company_code": "",
     },
   };
 
@@ -528,8 +616,8 @@ const KendoWindow = ({
   //프로시저 파라미터
   const paraSaved: Iparameters = {
     procedureName: "sav_custom_option",
-    pageNumber: 1,
-    pageSize: 10,
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
       "@p_work_type": paraData.work_type,
       "@p_form_id": paraData.form_id,
@@ -606,6 +694,8 @@ const KendoWindow = ({
       rows = rows.map((row: any) => {
         return {
           ...row,
+          fixed: row.fixed === "None" ? "N" : "Y",
+          hidden: row.sort_order < 0 ? "Y" : "N",
         };
       });
 
@@ -652,20 +742,9 @@ const KendoWindow = ({
     try {
       dataItem.orderDetails.forEach((item: any) => {
         if (!item.column_id) {
-          throw "필드명을 입력하세요.";
+          const msg = "필드명을 입력하세요.";
+          throw msg;
         }
-        // if (!item.column_visible) {
-        //   throw "컬럼 보이기를 선택하세요.";
-        // }
-        // if (!item.user_edit_yn) {
-        //   throw "사용자 수정가능여부 선택하세요.";
-        // }
-        // if (!item.user_required_yn) {
-        //   throw "필수여부를 선택하세요.";
-        // }
-        // if (!item.column_type) {
-        //   throw "컬럼타입을 선택하세요.";
-        // }
       });
     } catch (e) {
       alert(e);
@@ -692,10 +771,10 @@ const KendoWindow = ({
       detailArr.caption.push(item.caption);
       detailArr.word_id.push(item.word_id);
       detailArr.sort_order.push("0");
-      detailArr.user_editable.push(item.user_editable);
+      detailArr.user_editable.push("");
       detailArr.column_id.push(item.column_id);
       detailArr.width.push(item.width);
-      detailArr.fixed.push(item.fixed);
+      detailArr.fixed.push("");
     });
 
     deletedRows = []; //초기화
@@ -705,11 +784,13 @@ const KendoWindow = ({
       detailArr.rowstatus.push(item.rowstatus);
       detailArr.caption.push(item.caption);
       detailArr.word_id.push(item.word_id);
-      detailArr.sort_order.push(String(idx + 1));
-      detailArr.user_editable.push(item.user_editable);
+      detailArr.sort_order.push(
+        getYn(item.hidden) === "Y" ? "-1" : String(idx + 1)
+      );
+      detailArr.user_editable.push(getYn(item.user_editable));
       detailArr.column_id.push(item.column_id);
       detailArr.width.push(item.width);
-      detailArr.fixed.push(item.fixed);
+      detailArr.fixed.push(getYn(item.fixed) === "Y" ? "Left" : "None");
     });
 
     setParaData((prev) => ({
