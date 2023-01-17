@@ -53,8 +53,21 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/SA_B2205W_C";
 
+const dateField = ["orddt"];
 const DATA_ITEM_KEY = "ordnum";
+const numberField = [
+  "qty",
+  "outqty",
+  "reqty",
+  "saleqty",
+  "unp",
+  "amt",
+  "wonamt",
+  "taxamt",
+  "dlramt"
+];
 
 const SA_B2205: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -76,10 +89,6 @@ const SA_B2205: React.FC = () => {
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
-
-      console.log("defaultOption")
-      console.log(defaultOption)
-      console.log("defaultOption __")
       setFilters((prev) => ({
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
@@ -224,7 +233,6 @@ const SA_B2205: React.FC = () => {
 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
-      console.log(rows);
       setListData(rows);
     }
   }, []);
@@ -362,7 +370,7 @@ const SA_B2205: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -372,7 +380,7 @@ const SA_B2205: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -382,9 +390,6 @@ const SA_B2205: React.FC = () => {
             total: totalRowCnt,
           };
         });
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
     }
     setLoading(false);
   };
@@ -883,94 +888,31 @@ const SA_B2205: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              field="dlvdt"
-              title="납기일자"
-              cell={DateCell}
-              width="100px"
-            />
-            <GridColumn
-              field="orddt"
-              title="수주일자"
-              cell={DateCell}
-              footerCell={mainTotalFooterCell}
-              width="100px"
-            />
-            <GridColumn field="dptcd" title="담당부서" width="100px" />
-            <GridColumn field="person" title="수주담당자" width="100px" />
-            <GridColumn field="custnm" title="업체명" width="170px" />
-            <GridColumn field="itemcd" title="품목코드" width="250px" />
-            <GridColumn field="itemnm" title="품목명" width="170px" />
-            <GridColumn field="insiz" title="규격" width="170px" />
-            <GridColumn field="itemlvl1" title="대분류" width="100px" />
-            <GridColumn field="itemlvl2" title="중분류" width="100px" />
-            <GridColumn field="itemlvl3" title="소분류" width="100px" />
-            <GridColumn
-              field="qty"
-              title="수주수량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="outqty"
-              title="출하량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="reqty"
-              title="수주잔량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="saleqty"
-              title="판매수량"
-              width="120px"
-              cell={NumberCell}
-            />
-
-            <GridColumn field="qtyunit" title="단위" width="120px" />
-            <GridColumn
-              field="unp"
-              title="단가"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn field="amtunit" title="화폐단위" width="120px" />
-            <GridColumn
-              field="amt"
-              title="원화금액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="wonamt"
-              title="원화금액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="taxamt"
-              title="세액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="dlramt"
-              title="외화단가"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn field="ordnum" title="수주번호" width="170px" />
-            <GridColumn field="lotnum" title="LOT NO" width="120px" />
-            <GridColumn field="remark" title="비고" width="120px" />
-            <GridColumn field="ordsts" title="수주상태" width="120px" />
-            <GridColumn field="finyn" title="수주완료여부" width="120px" />
-            <GridColumn field="poregnum" title="PO번호" width="120px" />
-            <GridColumn field="project" title="프로젝트" width="120px" />
-            <GridColumn field="rcvcustnm" title="인수처명" width="170px" />
-            <GridColumn field="playn" title="계획" width="120px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"]
+                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                .map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                        }
+                        locked={item.fixed === "None" ? false : true}
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -987,6 +929,20 @@ const SA_B2205: React.FC = () => {
           workType={"FILTER"}
           setData={setItemData}
         />
+      )}
+      
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );
