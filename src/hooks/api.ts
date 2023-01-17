@@ -1,10 +1,9 @@
 import { useRecoilState } from "recoil";
 import { menusState, tokenState } from "../store/atoms";
 import axios from "axios";
-import cachios from "cachios";
 
 let BASE_URL = process.env.REACT_APP_API_URL;
-
+const cachios = require('cachios');
 const domain: any = {
   query: { action: "post", url: "api/data/sql-query" },
   procedure: { action: "post", url: "api/data/sql-procedure" },
