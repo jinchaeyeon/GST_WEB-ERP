@@ -55,7 +55,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2205W_C";
 
-const dateField = ["orddt"];
+const dateField = ["orddt", "dlvdt"];
 const DATA_ITEM_KEY = "ordnum";
 const numberField = [
   "qty",
