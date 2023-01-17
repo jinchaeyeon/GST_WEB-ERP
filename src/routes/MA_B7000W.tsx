@@ -384,7 +384,7 @@ const MA_B7000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -441,7 +441,7 @@ const MA_B7000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -465,7 +465,7 @@ const MA_B7000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].Rows.length;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -1043,6 +1043,7 @@ const MA_B7000: React.FC = () => {
                             ? detail1TotalFooterCell
                             : undefined
                         }
+                        locked={item.fixed === "None" ? false : true}
                       />
                     )
                 )}
@@ -1094,6 +1095,7 @@ const MA_B7000: React.FC = () => {
                             ? detail2TotalFooterCell
                             : undefined
                         }
+                        locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
                     )
                 )}
