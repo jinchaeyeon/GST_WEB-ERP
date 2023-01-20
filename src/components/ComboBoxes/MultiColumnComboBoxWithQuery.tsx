@@ -36,10 +36,6 @@ const MultiColumnComboBoxWithQuery = ({
   const fetchData = useCallback(async () => {
     let data: any;
 
-    // const queryStr = customOptionData.menuCustomDefaultOptions.query.find(
-    //   (item: any) => item.id === name
-    // ).query;
-
     const bytes = require("utf8-bytes");
     const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -59,7 +55,6 @@ const MultiColumnComboBoxWithQuery = ({
       setListData(rows); //리스트 세팅
     }
   }, []);
-
   // const columns = customOptionData.menuCustomDefaultOptions.query.find(
   //   (item: any) => item.id === name
   // ).bizComponentItems;
