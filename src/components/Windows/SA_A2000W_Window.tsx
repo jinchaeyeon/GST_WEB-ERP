@@ -999,6 +999,7 @@ const KendoWindow = ({
   //요약정보 조회
   const fetchMain = async () => {
     let data: any;
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
