@@ -97,6 +97,7 @@ import { useRecoilState } from "recoil";
 import { Input } from "@progress/kendo-react-inputs";
 import RequiredHeader from "../RequiredHeader";
 import { bytesToBase64 } from "byte-base64";
+import CheckBoxCell from "../Cells/CheckBoxCell";
 const DATA_ITEM_KEY = "user_id";
 let deletedRows: object[] = [];
 const idGetter = getter(FORM_DATA_INDEX);
@@ -233,6 +234,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
+ 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
@@ -316,6 +318,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             postcd: postcdListData.find(
               (item: any) => item.sub_code === row.postcd
             )?.code_name,
+            readok: row.readok == null ? "Y" : null,
             [SELECTED_FIELD]: selectedState[idGetter(row)],
           })),
           mainDataState
@@ -349,7 +352,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           field="loadok"
           title="확인"
           width="60px"
-          cell={CheckBoxReadOnlyCell}
+          cell={CheckBoxCell}
         />
         <GridColumn field="readok" title="열람" width="60px" />
       </Grid>
