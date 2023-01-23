@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
-import { Chat } from "@progress/kendo-react-conversational-ui";
+import {
+  Chat,
+  ChatMessageSendEvent,
+} from "@progress/kendo-react-conversational-ui";
 import { bytesToBase64 } from "byte-base64";
 import { useApi } from "../hooks/api";
 
@@ -46,7 +48,7 @@ const initialMessages = [
     author: bot,
     timestamp: new Date(),
     suggestedActions: [],
-    text: "안녕하세요. GST ERP 챗봇입니다.",
+    text: "안녕하세요. GST ERP 챗봇입니다. 무엇이든 물어보세요.",
   },
 ];
 
@@ -55,22 +57,48 @@ const CHAT_BOT: React.FC = () => {
   const [messages, setMessages] = useState(initialMessages);
   const [qnaData, setQnaData] = useState<IQnaData[]>([]);
 
-  const addNewMessage = (event: any) => {
+  const addNewMessage = (event: ChatMessageSendEvent) => {
+    const backToInit = "처음으로";
+    const welcomeAnswer = "무엇이든 물어보세요.";
+    const ifAskBackToInit = event.message.text === backToInit;
+
     let botResponse = Object.assign({}, event.message);
-    botResponse.text = firstAnswer(event.message.text);
+
+    // 응답 내용
+    botResponse.text = ifAskBackToInit
+      ? welcomeAnswer
+      : answer(event.message.text);
+
     botResponse.author = bot;
 
-    const suggestedActions = qnaData.filter(
+    // 제안 질문
+    let suggestedActions = qnaData.filter(
       (item) => item.parent === event.message.text
     );
+
+    // '첫질문으로' 제안 질문에 추가
+    suggestedActions.push({
+      value: backToInit,
+      parent: "",
+      type: "reply",
+      content: welcomeAnswer,
+    });
+
+    // '첫질문으로' 질문한 경우 첫번째 제안 질문 제시
+    if (ifAskBackToInit) {
+      suggestedActions = qnaData.filter((item) => item.parent === "");
+    }
+
     botResponse.suggestedActions = suggestedActions;
 
-    setMessages([...messages, event.message]);
+    setMessages((prev: any) => [...prev, event.message]);
     setTimeout(() => {
-      setMessages((oldMessages) => [...oldMessages, botResponse]);
+      setMessages((oldMessages: any) => [...oldMessages, botResponse]);
     }, 1000);
   };
-  const firstAnswer = (question: any) => {
+
+  // 질문에 맞는 답변 찾기
+  const answer = (question: any) => {
     const content: IQnaData = qnaData.find(
       (solution) => question === solution.value
     )!;
@@ -85,7 +113,7 @@ const CHAT_BOT: React.FC = () => {
     let data: any;
 
     const queryStr =
-      "SELECT question, parent_question, answer FROM TEST_QNA_CHAT_BOT";
+      "SELECT question, parent_question, answer FROM chatBotManager";
     const bytes = require("utf8-bytes");
     const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
