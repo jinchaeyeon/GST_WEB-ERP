@@ -168,7 +168,7 @@ const CHAT_BOT_MNG: React.FC = () => {
     setLoading(true);
 
     const queryStr =
-      "SELECT question, parent_question, answer FROM TEST_QNA_CHAT_BOT";
+      "SELECT question, parent_question, answer FROM chatBotManager";
     const bytes = require("utf8-bytes");
     const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
