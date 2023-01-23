@@ -78,6 +78,7 @@ export type TColumn = {
   field: string;
   caption: string;
   width: number;
+  fixed?: "None" | "Left" | "Right";
 };
 
 export type TControlObj = {
