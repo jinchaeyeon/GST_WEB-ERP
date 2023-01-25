@@ -34,7 +34,7 @@ import CT_A0111W from "./routes/CT_A0111W";
 import CM_A0000W from "./routes/CM_A0000W";
 import CHAT_A0001 from "./routes/CHAT_A0001";
 import CHAT_A0002 from "./routes/CHAT_A0002";
-import CHAT_BOT_TRAVEL from "./routes/CHAT_BOT_TRAVEL";
+import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
 import WORD_EDITOR from "./routes/WORD_EDITOR";
 import GANTT from "./routes/GANTT";
 import SY_A0100W from "./routes/SY_A0100W";
@@ -162,16 +162,17 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
             {/* 원가관리 */}
             <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
-            {/* 연구개발 */}
-            <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
+            {/* CHAT BOT */}
             <AuthRoute path="/CHAT_A0001" component={CHAT_A0001} exact />
             <AuthRoute path="/CHAT_A0002" component={CHAT_A0002} exact />
-            <AuthRoute path="/GANTT" component={GANTT} exact />
             <AuthRoute
-              path="/CHAT_BOT_TRAVEL"
-              component={CHAT_BOT_TRAVEL}
+              path="/CHAT_TEST_TRAVEL_BOT"
+              component={CHAT_TEST_TRAVEL_BOT}
               exact
             />
+            {/* 연구개발 */}
+            <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
+            <AuthRoute path="/GANTT" component={GANTT} exact />
           </PanelBarNavContainer>
         </Switch>
       </Router>
