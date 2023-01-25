@@ -32,9 +32,9 @@ import PR_B3000W from "./routes/PR_B3000W";
 import PR_A3000W from "./routes/PR_A3000W";
 import CT_A0111W from "./routes/CT_A0111W";
 import CM_A0000W from "./routes/CM_A0000W";
-import CHAT_BOT from "./routes/CHAT_BOT";
+import CHAT_A0001 from "./routes/CHAT_A0001";
+import CHAT_A0002 from "./routes/CHAT_A0002";
 import CHAT_BOT_TRAVEL from "./routes/CHAT_BOT_TRAVEL";
-import CHAT_BOT_MNG from "./routes/CHAT_BOT_MNG";
 import WORD_EDITOR from "./routes/WORD_EDITOR";
 import GANTT from "./routes/GANTT";
 import SY_A0100W from "./routes/SY_A0100W";
@@ -164,8 +164,8 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
             {/* 연구개발 */}
             <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
-            <AuthRoute path="/CHAT_BOT" component={CHAT_BOT} exact />
-            <AuthRoute path="/CHAT_BOT_MNG" component={CHAT_BOT_MNG} exact />
+            <AuthRoute path="/CHAT_A0001" component={CHAT_A0001} exact />
+            <AuthRoute path="/CHAT_A0002" component={CHAT_A0002} exact />
             <AuthRoute path="/GANTT" component={GANTT} exact />
             <AuthRoute
               path="/CHAT_BOT_TRAVEL"

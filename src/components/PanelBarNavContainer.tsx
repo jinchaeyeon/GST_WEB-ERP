@@ -373,12 +373,6 @@ const PanelBarNavContainer = (props: any) => {
                 );
               })}
             {companyCode !== "2207C612" && (
-              <PanelBarItem title={"CHAT BOT"} route="/CHAT_BOT" />
-            )}
-            {companyCode !== "2207C612" && (
-              <PanelBarItem title={"CHAT BOT 관리"} route="/CHAT_BOT_MNG" />
-            )}
-            {companyCode !== "2207C612" && (
               <PanelBarItem title={"EDITOR"} route="/WORD_EDITOR" />
             )}
             {companyCode !== "2207C612" && (
