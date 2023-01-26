@@ -180,7 +180,7 @@ export const UseMessages = (pathname: string, setListData: any) => {
   React.useEffect(() => {
     fetchMessagesData();
   }, []);
- 
+
   //커스텀 옵션 조회
   const fetchMessagesData = React.useCallback(async () => {
     let data: any;
@@ -188,7 +188,6 @@ export const UseMessages = (pathname: string, setListData: any) => {
       data = await processApi<any>("messages", {
         formId: pathname.replace("/", ""),
       });
-      
     } catch (error) {
       data = null;
     }
@@ -729,14 +728,43 @@ export const UseGetIp = (setListData: any) => {
   }, []);
 };
 
-// 클라이언트 정보를 반환 (OS,브라우저명,브라우저정보)
+// 클라이언트 정보를 반환 (OS,브라우저명-브라우저버전)
 export const getBrowser = () => {
   const browser = detect();
 
   if (browser) {
-    return browser.os + "/" + browser.name + "/" + browser.version;
+    return browser.os + "/" + browser.name + "-" + browser.version;
   } else {
-    console.log("브라우저 정보 조회 오류");
+    console.log("getBrowser 브라우저 정보 조회 오류");
     return "";
   }
+};
+
+// 데이터 저장할 때 파라미터 'pc'에 입력할 값 (IP/OS/브라우저명-브라우저버전)
+export const UseParaPc = (setData: any) => {
+  const browserInfo = detect();
+  let browser = "";
+
+  if (browserInfo) {
+    browser =
+      browserInfo.os + "/" + browserInfo.name + "-" + browserInfo.version;
+  } else {
+    console.log("UsePcPara 브라우저 정보 조회 오류");
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    let locationIp: any;
+    try {
+      const ipData = await fetch("https://geolocation-db.com/json/");
+      locationIp = await ipData.json();
+    } catch (error) {
+      locationIp = "";
+    }
+
+    setData(locationIp.IPv4 + "/" + browser);
+  }, []);
 };
