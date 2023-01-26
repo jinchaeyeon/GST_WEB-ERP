@@ -5,15 +5,15 @@ export const gridList: Array<TGrid> = [
     gridName: "grdAllList",
     columns: [
       {
-        id: "col_itemcd",
-        field: "itemcd",
-        caption: "품목코드",
+        id: "col_custcd",
+        field: "custcd",
+        caption: "업체코드",
         width: 120,
       },
       {
-        id: "col_itemnm",
-        field: "itemnm",
-        caption: "품목명",
+        id: "col_custnm",
+        field: "custnm",
+        caption: "업체명",
         width: 190,
       },
       {
@@ -94,16 +94,16 @@ export const gridList: Array<TGrid> = [
     gridName: "grdMonthList",
     columns: [
       {
-        id: "col_itemcd_month",
-        field: "itemcd",
-        caption: "품목코드",
+        id: "col_custcd_month",
+        field: "custcd",
+        caption: "업체코드",
         width: 120,
       },
       {
-        id: "col_itemnm_month",
-        field: "itemnm",
-        caption: "품목명",
-        width: 280,
+        id: "col_custnm_month",
+        field: "custnm",
+        caption: "업체명",
+        width: 190,
       },
       {
         id: "col_qty01_month",
@@ -183,15 +183,15 @@ export const gridList: Array<TGrid> = [
     gridName: "grdQuarterList",
     columns: [
       {
-        id: "col_itemcd_quarter",
-        field: "itemcd",
-        caption: "품목코드",
+        id: "col_custcd_quarter",
+        field: "custcd",
+        caption: "업체코드",
         width: 120,
       },
       {
-        id: "col_itemnm_quarter",
-        field: "itemnm",
-        caption: "품목명",
+        id: "col_custnm_quarter",
+        field: "custnm",
+        caption: "업체명",
         width: 280,
       },
       {
@@ -204,53 +204,6 @@ export const gridList: Array<TGrid> = [
         id: "col_lastYear",
         field: "",
         caption: "전기",
-        width: 280,
-      },
-    ],
-  },
-  {
-    gridName: "grd5YearList",
-    columns: [
-      {
-        id: "col_itemcd_5",
-        field: "itemcd",
-        caption: "품목코드",
-        width: 120,
-      },
-      {
-        id: "col_itemnm_5",
-        field: "itemnm",
-        caption: "품목명",
-        width: 280,
-      },
-      {
-        id: "col_5year1",
-        field: "",
-        caption: "2023",
-        width: 280,
-      },
-      {
-        id: "col_5year2",
-        field: "",
-        caption: "2022",
-        width: 280,
-      },
-      {
-        id: "col_5year3",
-        field: "",
-        caption: "2021",
-        width: 280,
-      },
-      {
-        id: "col_5year4",
-        field: "",
-        caption: "2020",
-        width: 280,
-      },
-      {
-        id: "col_5year5",
-        field: "",
-        caption: "2019",
         width: 280,
       },
     ],
