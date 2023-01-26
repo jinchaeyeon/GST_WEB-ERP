@@ -5,14 +5,21 @@ import {
 } from "@progress/kendo-react-conversational-ui";
 import { bytesToBase64 } from "byte-base64";
 import { useApi } from "../hooks/api";
+import { Iparameters } from "../store/types";
+import {
+  UseGetValueFromSessionItem,
+  UseParaPc,
+} from "../components/CommonFunction";
 
 interface IData {
+  id: string;
   question: string;
   parent_question: string;
   answer: string;
 }
 
 interface IQnaData {
+  id: string;
   value: string;
   parent: string;
   type: string;
@@ -56,6 +63,9 @@ const CHAT_BOT: React.FC = () => {
   const processApi = useApi();
   const [messages, setMessages] = useState(initialMessages);
   const [qnaData, setQnaData] = useState<IQnaData[]>([]);
+  const userid = UseGetValueFromSessionItem("user_id");
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
 
   const addNewMessage = (event: ChatMessageSendEvent) => {
     const backToInit = "처음으로";
@@ -63,6 +73,12 @@ const CHAT_BOT: React.FC = () => {
     const ifAskBackToInit = event.message.text === backToInit;
 
     let botResponse = Object.assign({}, event.message);
+
+    //id 구하기
+    const id =
+      qnaData.find((item) => item.value === event.message.text)?.id ?? "";
+    //id 로그처리
+    fetchLogSaved(id);
 
     // 응답 내용
     botResponse.text = ifAskBackToInit
@@ -78,6 +94,7 @@ const CHAT_BOT: React.FC = () => {
 
     // '첫질문으로' 제안 질문에 추가
     suggestedActions.push({
+      id,
       value: backToInit,
       parent: "",
       type: "reply",
@@ -108,12 +125,11 @@ const CHAT_BOT: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMain = async () => {
     // if (!permissions?.view) return;
     let data: any;
 
-    const queryStr =
-      "SELECT question, parent_question, answer FROM chatBotManager";
+    const queryStr = "SELECT * FROM chatBotManager";
     const bytes = require("utf8-bytes");
     const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -136,6 +152,7 @@ const CHAT_BOT: React.FC = () => {
           parent: row.parent_question,
           value: row.question,
           content: row.answer,
+          id: row.id,
           idx: idx,
         })
       );
@@ -158,8 +175,37 @@ const CHAT_BOT: React.FC = () => {
     }
   };
 
+  // 로그 저장 처리
+  const fetchLogSaved = async (id: string) => {
+    // if (!permissions?.view) return;
+    let data: any;
+
+    //파라미터
+    const paraSaved: Iparameters = {
+      procedureName: "P_CHAT_A0001_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "N",
+        "@p_id": id,
+        "@p_userid": userid,
+        "@p_pc": pc,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", paraSaved);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess !== true) {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+  };
   useEffect(() => {
-    fetchMainGrid();
+    fetchMain();
   }, []);
 
   return (
