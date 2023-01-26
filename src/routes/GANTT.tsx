@@ -28,6 +28,7 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
 } from "../components/CommonFunction";
+import { Title, TitleContainer } from "../CommonStyled";
 
 type TSavedPara = {
   work_type: "N" | "U" | "D";
@@ -1723,44 +1724,49 @@ function App() {
     }
   };
   return (
-    <Gantt
-      taskListWidth={500}
-      scaleType="weeks"
-      height={700}
-      onDependencyInserted={onDependencyInserted}
-      onDependencyDeleted={onDependencyDeleted}
-      onTaskInserted={onTaskInserted}
-      onTaskDeleted={onTaskDeleted}
-      onTaskUpdated={onTaskUpdated}
-      onResourceAssigned={onResourceAssigned}
-      onResourceUnassigned={onResourceUnassigned}
-    >
-      <Tasks dataSource={task} />
-      <Dependencies dataSource={dependency} />
-      <Resources dataSource={resource} />
-      <ResourceAssignments dataSource={assignment} />
+    <>
+      <TitleContainer>
+        <Title>GANTT</Title>
+      </TitleContainer>
+      <Gantt
+        taskListWidth={500}
+        scaleType="weeks"
+        height={700}
+        onDependencyInserted={onDependencyInserted}
+        onDependencyDeleted={onDependencyDeleted}
+        onTaskInserted={onTaskInserted}
+        onTaskDeleted={onTaskDeleted}
+        onTaskUpdated={onTaskUpdated}
+        onResourceAssigned={onResourceAssigned}
+        onResourceUnassigned={onResourceUnassigned}
+      >
+        <Tasks dataSource={task} />
+        <Dependencies dataSource={dependency} />
+        <Resources dataSource={resource} />
+        <ResourceAssignments dataSource={assignment} />
 
-      <Toolbar>
-        <Item name="undo" />
-        <Item name="redo" />
-        <Item name="separator" />
-        <Item name="collapseAll" />
-        <Item name="expandAll" />
-        <Item name="separator" />
-        <Item name="addTask" />
-        <Item name="deleteTask" />
-        <Item name="separator" />
-        <Item name="zoomIn" />
-        <Item name="zoomOut" />
-      </Toolbar>
+        <Toolbar>
+          <Item name="undo" />
+          <Item name="redo" />
+          <Item name="separator" />
+          <Item name="collapseAll" />
+          <Item name="expandAll" />
+          <Item name="separator" />
+          <Item name="addTask" />
+          <Item name="deleteTask" />
+          <Item name="separator" />
+          <Item name="zoomIn" />
+          <Item name="zoomOut" />
+        </Toolbar>
 
-      <Column dataField="title" caption="Subject" width={300} />
-      <Column dataField="start" caption="Start Date" />
-      <Column dataField="end" caption="End Date" />
+        <Column dataField="title" caption="Subject" width={300} />
+        <Column dataField="start" caption="Start Date" />
+        <Column dataField="end" caption="End Date" />
 
-      <Validation autoUpdateParentTasks />
-      <Editing enabled />
-    </Gantt>
+        <Validation autoUpdateParentTasks />
+        <Editing enabled />
+      </Gantt>
+    </>
   );
 }
 
