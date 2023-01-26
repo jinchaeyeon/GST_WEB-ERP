@@ -10,9 +10,13 @@ import Login from "./routes/Login";
 import Main from "./routes/Main";
 import MA_B2000W from "./routes/MA_B2000W";
 import MA_B2100W from "./routes/MA_B2100W";
+import MA_B3000W from "./routes/MA_B3000W";
+import MA_B3100W from "./routes/MA_B3100W";
 import MA_B7000W from "./routes/MA_B7000W";
 import SA_A2000W from "./routes/SA_A2000W";
 import SA_B2205W from "./routes/SA_B2205W";
+import SA_B2211W from "./routes/SA_B2211W";
+import SA_B2221W from "./routes/SA_B2221W";
 import SA_B2410W from "./routes/SA_B2410W";
 import SA_B2410_290W from "./routes/SA_B2410_290W";
 import SA_B3000W from "./routes/SA_B3000W";
@@ -131,10 +135,14 @@ const AppInner: React.FC = () => {
             {/* 물류관리 */}
             <AuthRoute path="/MA_B2000W" component={MA_B2000W} exact />
             <AuthRoute path="/MA_B2100W" component={MA_B2100W} exact />
+            <AuthRoute path="/MA_B3000W" component={MA_B3000W} exact />
+            <AuthRoute path="/MA_B3100W" component={MA_B3100W} exact />
             <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
             {/* 영업관리 */}
             <AuthRoute path="/SA_A2000W" component={SA_A2000W} exact />
             <AuthRoute path="/SA_B2205W" component={SA_B2205W} exact />
+            <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
+            <AuthRoute path="/SA_B2221W" component={SA_B2221W} exact />
             <AuthRoute path="/SA_B2410W" component={SA_B2410W} exact />
             <AuthRoute path="/SA_B2410_290W" component={SA_B2410_290W} exact />
             <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />

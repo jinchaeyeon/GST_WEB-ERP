@@ -676,6 +676,8 @@ const MA_B2000W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
+              <th></th>
+              <td></td>
             </tr>
           </tbody>
         </FilterBox>

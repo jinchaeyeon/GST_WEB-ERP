@@ -722,6 +722,8 @@ const MA_B2100W: React.FC = () => {
                   />
                 )}
               </td>
+              <th></th>
+              <td></td>
             </tr>
           </tbody>
         </FilterBox>
