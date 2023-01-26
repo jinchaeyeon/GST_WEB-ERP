@@ -4,18 +4,12 @@ import {
   extendDataItem,
   getSelectedState,
   mapTree,
-  moveTreeItem,
-  removeItems,
   TreeList,
-  TreeListColumnProps,
   TreeListDraggableRow,
   TreeListExpandChangeEvent,
-  TreeListHeaderSelectionCell,
   TreeListItemChangeEvent,
   TreeListRowDragEvent,
-  TreeListSelectionCell,
   TreeListSelectionChangeEvent,
-  TreeListTextEditor,
   treeToFlat,
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
@@ -27,14 +21,17 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import NameTreeListCell from "../components/Cells/NameTreeListCell";
-import { UsePermissions } from "../components/CommonFunction";
+import {
+  UseParaPc,
+  UseGetValueFromSessionItem,
+  UsePermissions,
+} from "../components/CommonFunction";
+import { columns } from "../store/columns/CHAT_A0002_C";
 import {
   EDIT_FIELD,
   EXPANDED_FIELD,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
 import { Renderers } from "../components/TreeListRenderers";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
@@ -43,6 +40,7 @@ import { getter } from "@progress/kendo-data-query";
 
 interface IQnaData {
   idx: number;
+  id?: string;
   rowstatus: string;
   question: string;
   parent_question: string;
@@ -65,7 +63,6 @@ const idGetter = getter(DATA_ITEM_KEY);
 const headerSelectionValue = (dataState: any, selectedState: any) => {
   let allSelected = true;
 
-  console.log(dataState);
   mapTree(dataState, SUB_ITEMS_FIELD, (item) => {
     allSelected = allSelected && selectedState[idGetter(item)];
     return item;
@@ -78,11 +75,9 @@ let deletedMainRows: IQnaData[] = [];
 
 const CHAT_BOT_MNG: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
-  // const [permissions, setPermissions] = useState<TPermissions | null>(null);
-  // UsePermissions(setPermissions);
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
   const processApi = useApi();
-  const [detailWindowVisible, setDetailWindowVisible] =
-    useState<boolean>(false);
 
   const [state, setState] = React.useState<IAppState>({
     data: [],
@@ -158,17 +153,18 @@ const CHAT_BOT_MNG: React.FC = () => {
   const editItemId = editItem ? editItem[DATA_ITEM_KEY] : null;
 
   useEffect(() => {
-    fetchMainGrid();
-  }, []);
+    if (permissions !== null) {
+      fetchMainGrid();
+    }
+  }, [permissions]);
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    // if (!permissions?.view) return;
+    if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
-    const queryStr =
-      "SELECT question, parent_question, answer FROM chatBotManager";
+    const queryStr = "SELECT * FROM chatBotManager";
     const bytes = require("utf8-bytes");
     const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -210,6 +206,10 @@ const CHAT_BOT_MNG: React.FC = () => {
     setLoading(false);
   };
 
+  const userid = UseGetValueFromSessionItem("user_id");
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+
   const onSaveClick = async () => {
     const flatData: any = treeToFlat(state.data, "question", SUB_ITEMS_FIELD);
     // flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
@@ -226,18 +226,21 @@ const CHAT_BOT_MNG: React.FC = () => {
     try {
       let msg = "";
       for (const item of deletedMainRows) {
-        const { question, parent_question = "", answer } = item;
+        const { id = "", question, parent_question = "", answer } = item;
 
         //파라미터
         const paraSaved: Iparameters = {
-          procedureName: "P_TEST_QNA_CHAT_BOT_S",
+          procedureName: "P_CHAT_A0002_S",
           pageNumber: 0,
           pageSize: 0,
           parameters: {
             "@p_work_type": "D",
+            "@p_id": id,
             "@p_question": question,
             "@p_parent_question": parent_question,
             "@p_answer": answer,
+            "@p_userid": userid,
+            "@p_pc": pc,
           },
         };
         let data: any;
@@ -257,18 +260,27 @@ const CHAT_BOT_MNG: React.FC = () => {
         }
       }
       for (const item of flatData) {
-        const { rowstatus, question, parent_question = "", answer } = item;
+        const {
+          id = "",
+          rowstatus,
+          question,
+          parent_question = "",
+          answer,
+        } = item;
 
         //파라미터
         const paraSaved: Iparameters = {
-          procedureName: "P_TEST_QNA_CHAT_BOT_S",
+          procedureName: "P_CHAT_A0002_S",
           pageNumber: 0,
           pageSize: 0,
           parameters: {
             "@p_work_type": rowstatus === "N" ? "N" : "U",
+            "@p_id": id,
             "@p_question": question,
             "@p_parent_question": parent_question,
             "@p_answer": answer,
+            "@p_userid": userid,
+            "@p_pc": pc,
           },
         };
         let data: any;
@@ -314,10 +326,6 @@ const CHAT_BOT_MNG: React.FC = () => {
     });
   };
 
-  const reloadData = () => {
-    fetchMainGrid();
-  };
-
   const onRemoveClick = () => {
     // value 가 false인 속성 삭제
     for (var prop in selectedState) {
@@ -335,17 +343,12 @@ const CHAT_BOT_MNG: React.FC = () => {
     const newData: any = [];
 
     flatData.forEach((item: any) => {
-      console.log("parameters");
-      console.log(parameters);
-      console.log(item[DATA_ITEM_KEY]);
-
       if (parameters.includes(item[DATA_ITEM_KEY] + "")) {
         deletedMainRows.push(item);
       } else {
         newData.push(item);
       }
     });
-    console.log(newData);
 
     // flat to tree
     const dataTree: any = createDataTree(
@@ -376,39 +379,6 @@ const CHAT_BOT_MNG: React.FC = () => {
     },
     [selectedState]
   );
-
-  const columns: TreeListColumnProps[] = [
-    {
-      title: " ",
-      field: "selected",
-      width: "1px",
-      // headerSelectionValue: headerSelectionValue(
-      //   state.data.slice(),
-      //   selectedState
-      // ),
-      cell: TreeListSelectionCell,
-      //headerCell: TreeListHeaderSelectionCell, // 헤더 체크박스 버그 있음
-    },
-    {
-      field: "rowstatus",
-      title: " ",
-      width: "1px",
-      expandable: true,
-    },
-    {
-      field: "question",
-      title: "질문",
-      width: "350px",
-      cell: NameTreeListCell,
-      className: "editable-new-only",
-    },
-    {
-      field: "answer",
-      title: "답변",
-      width: "350px",
-      editCell: TreeListTextEditor,
-    },
-  ];
 
   const onRowDrop = (event: TreeListRowDragEvent) => {
     // 드래그 데이터의 parent_question를 드롭 대상 데이터의 question 값으로 업데이트
@@ -476,31 +446,33 @@ const CHAT_BOT_MNG: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>CHAT BOT 관리</Title>
+        <Title>Chat Bot 관리</Title>
 
-        <ButtonContainer>
-          <Button
-            onClick={onAddClick}
-            fillMode="outline"
-            themeColor={"primary"}
-            icon="plus"
-            //disabled={permissions.save ? false : true}
-          ></Button>
-          <Button
-            onClick={onRemoveClick}
-            fillMode="outline"
-            themeColor={"primary"}
-            icon="minus"
-            // disabled={permissions.save ? false : true}
-          ></Button>
-          <Button
-            onClick={onSaveClick}
-            fillMode="outline"
-            themeColor={"primary"}
-            icon="save"
-            // disabled={permissions.save ? false : true}
-          ></Button>
-        </ButtonContainer>
+        {permissions && (
+          <ButtonContainer>
+            <Button
+              onClick={onAddClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="plus"
+              disabled={permissions.save ? false : true}
+            ></Button>
+            <Button
+              onClick={onRemoveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              disabled={permissions.save ? false : true}
+            ></Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              disabled={permissions.save ? false : true}
+            ></Button>
+          </ButtonContainer>
+        )}
       </TitleContainer>
 
       <GridContainer>
