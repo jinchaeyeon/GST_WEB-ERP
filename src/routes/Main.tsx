@@ -43,6 +43,7 @@ import {
   UseCustomOption,
   UseGetIp,
   UseGetValueFromSessionItem,
+  UseParaPc,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
@@ -74,10 +75,9 @@ const Main: React.FC = () => {
   if (sessionOrgdiv === "") sessionOrgdiv = "01";
   if (sessionLocation === "") sessionLocation = "01";
 
-  const [ip, setIp] = useState("");
-  const browser = getBrowser();
-  UseGetIp(setIp);
-  const pc = `${ip}/${browser}`;
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+
   const pathname: string = window.location.pathname.replace("/", "");
 
   //커스텀 옵션 조회

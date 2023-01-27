@@ -5,13 +5,10 @@ import {
   Grid,
   GridColumn,
   GridEvent,
-  GridFooterCellProps,
   GridCellProps,
   GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridHeaderSelectionChangeEvent,
-  GridHeaderCellProps,
   GridDataStateChangeEvent,
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
@@ -19,7 +16,6 @@ import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
 import {
   ButtonContainer,
-  ButtonInInput,
   GridContainer,
   GridContainerWrap,
   GridTitle,
@@ -32,6 +28,7 @@ import {
   getYn,
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UseParaPc,
 } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import ColumnWindow from "./UserOptionsColumnWindow";
@@ -51,9 +48,7 @@ import {
   mapTree,
   TreeList,
   TreeListColumnProps,
-  TreeListDraggableRow,
   TreeListExpandChangeEvent,
-  TreeListRowDragEvent,
   TreeListTextEditor,
   treeToFlat,
 } from "@progress/kendo-react-treelist";
@@ -61,7 +56,6 @@ import {
   Checkbox,
   CheckboxChangeEvent,
   Input,
-  InputChangeEvent,
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
@@ -307,6 +301,9 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const role = token ? token.role : "";
   const isAdmin = role === "ADMIN" || role === "DEVELOPER" ? true : false;
   const sessionUserId = UseGetValueFromSessionItem("user_id");
+
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
 
   const [columnWindowVisible, setColumnWindowVisible] =
     useState<boolean>(false);
@@ -845,7 +842,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     width: "",
     fixed: "",
     id: sessionUserId,
-    pc: "",
+    pc: pc,
   });
 
   //커스텀 저장 프로시저 파라미터
@@ -890,8 +887,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     full_type: "",
     bc_id: "",
     word_id: "",
-    id: "",
-    pc: "",
+    id: sessionUserId,
+    pc: pc,
   });
 
   //컨트롤 정보 저장 프로시저 파라미터
@@ -1548,8 +1545,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_width": 0,
       "@p_fixed": "",
 
-      "@p_id": "",
-      "@p_pc": "",
+      "@p_id": sessionUserId,
+      "@p_pc": pc,
     },
   };
   const defaultParaDeleted: Iparameters = {
@@ -1588,8 +1585,8 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       "@p_width": 0,
       "@p_fixed": "",
 
-      "@p_id": "",
-      "@p_pc": "",
+      "@p_id": sessionUserId,
+      "@p_pc": pc,
     },
   };
 

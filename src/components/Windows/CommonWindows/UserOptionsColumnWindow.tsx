@@ -37,7 +37,13 @@ import {
   FormCheckBoxCell,
 } from "../../Editors";
 import { Iparameters } from "../../../store/types";
-import { chkScrollHandler, getYn, validator } from "../../CommonFunction";
+import {
+  chkScrollHandler,
+  getYn,
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  validator,
+} from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import {
@@ -577,8 +583,9 @@ const KendoWindow = ({
     },
   };
 
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
@@ -609,8 +616,8 @@ const KendoWindow = ({
     column_id: "",
     width: "",
     fixed: "",
-    id: userId,
-    pc: "",
+    id: sessionUserId,
+    pc: pc,
   });
 
   //프로시저 파라미터
