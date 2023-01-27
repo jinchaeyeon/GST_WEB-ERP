@@ -446,7 +446,7 @@ const CHAT_BOT_MNG: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>Chat Bot 관리</Title>
+        <Title>Chatbot 관리</Title>
 
         {permissions && (
           <ButtonContainer>
