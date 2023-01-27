@@ -53,8 +53,15 @@ export const Title = styled.h3`
   font-size: 22px;
   font-weight: 600;
 `;
-export const ButtonContainer = styled.div`
+type TButtonContainer = {
+  flexDirection?: "column" | "row";
+};
+export const ButtonContainer = styled.div<TButtonContainer>`
   display: flex;
+
+  flex-direction: ${(props) =>
+    props.flexDirection ? props.flexDirection : "row"};
+  align-items: center;
 
   input,
   button {
@@ -549,7 +556,6 @@ export const Gnv = styled.div<TGnv>`
 
   min-height: 100vh;
   background-color: #fff;
-  flex-direction: column;
 
   .logout span {
     color: #656565;

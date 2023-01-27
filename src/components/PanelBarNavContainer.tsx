@@ -5,7 +5,6 @@ import {
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
 import { useLocation, withRouter } from "react-router-dom";
-import styled from "styled-components";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
 import {
@@ -15,14 +14,13 @@ import {
   tokenState,
 } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
-import { CLIENT_WIDTH, GNV_WIDTH } from "../components/CommonString";
+import { CLIENT_WIDTH } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { Iparameters, TLogParaVal, TPath } from "../store/types";
-import { UseGetValueFromSessionItem } from "./CommonFunction";
 import Loading from "./Loading";
-import path from "path";
 import {
   AppName,
+  ButtonContainer,
   Content,
   Gnv,
   Modal,
@@ -221,6 +219,10 @@ const PanelBarNavContainer = (props: any) => {
     setIsMenuOpend((prev) => !prev);
   };
 
+  const onClickChatbot = () => {
+    window.open("/CHAT_A0001W", "_blank");
+  };
+
   return (
     <Wrapper isMenuOpend={isMenuOpend}>
       <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
@@ -292,21 +294,34 @@ const PanelBarNavContainer = (props: any) => {
           </PanelBar>
         )}
 
-        <Button
-          onClick={logout}
-          icon={"logout"}
-          fillMode={"flat"}
-          themeColor={"secondary"}
-        >
-          로그아웃
-        </Button>
-        <Button
-          onClick={onClickUserOptions}
-          fillMode={"flat"}
-          themeColor={"secondary"}
-        >
-          사용자 옵션
-        </Button>
+        <ButtonContainer flexDirection={"column"}>
+          <Button
+            onClick={logout}
+            icon={"logout"}
+            fillMode={"flat"}
+            themeColor={"secondary"}
+          >
+            로그아웃
+          </Button>
+          <Button
+            onClick={onClickUserOptions}
+            fillMode={"flat"}
+            themeColor={"secondary"}
+          >
+            사용자 옵션
+          </Button>
+          <Button
+            onClick={onClickChatbot}
+            icon={"hyperlink-open-sm"}
+            fillMode={"solid"}
+            shape={"rectangle"}
+            themeColor={"secondary"}
+            rounded={"full"}
+            size="small"
+          >
+            Chatbot
+          </Button>
+        </ButtonContainer>
       </Gnv>
       <Content CLIENT_WIDTH={CLIENT_WIDTH}>
         <TopTitle>

@@ -209,7 +209,7 @@ const CHAT_BOT: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ height: "80vh", display: "flex" }}>
       <Chat
         user={user}
         messages={messages}
