@@ -530,6 +530,7 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
     className,
     valueField = "sub_code",
     textField = "code_name",
+    ifGetCompanyCode = false,
     data,
   } = fieldRenderProps;
   const processApi = useApi();
@@ -543,7 +544,11 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
   }
 
   useEffect(() => {
-    fetchData();
+    if (ifGetCompanyCode) {
+      fetchCompanyCode();
+    } else {
+      fetchData();
+    }
   }, []);
 
   const fetchData = useCallback(async () => {
@@ -564,6 +569,21 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
+
+  const fetchCompanyCode = useCallback(async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("company-code");
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      const rows = data.Rows;
       setListData(rows);
     }
   }, []);

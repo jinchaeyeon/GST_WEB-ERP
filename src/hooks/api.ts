@@ -1,9 +1,11 @@
 import { useRecoilState } from "recoil";
 import { menusState, tokenState } from "../store/atoms";
 import axios from "axios";
+import { useState } from "react";
+import { UseGetIp } from "../components/CommonFunction";
 
 let BASE_URL = process.env.REACT_APP_API_URL;
-const cachios = require('cachios');
+const cachios = require("cachios");
 const domain: any = {
   query: { action: "post", url: "api/data/sql-query" },
   procedure: { action: "post", url: "api/data/sql-procedure" },
@@ -33,6 +35,7 @@ const domain: any = {
   },
   login: { action: "post", url: "api/auth/login" },
   "login-old": { action: "post", url: "api/auth/login-old" },
+  "company-code": { action: "get", url: "api/auth/company-codes" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },
   "file-upload": { action: "post", url: "api/files/:attached" },
   "file-download": {
@@ -94,6 +97,7 @@ export const useApi = () => {
       url = `${BASE_URL}${url}`;
 
       let headers = {};
+
       if (name === "file-upload" || name === "file-download")
         headers = {
           "Content-Type": "multipart/form-data",
