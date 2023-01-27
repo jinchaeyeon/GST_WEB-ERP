@@ -768,3 +768,9 @@ export const UseParaPc = (setData: any) => {
     setData(locationIp.IPv4 + "/" + browser);
   }, []);
 };
+
+export const handleKeyPressSearch = (e: any, search: any) => {
+  if (e.key === "Enter") {
+    search();
+  }
+};
