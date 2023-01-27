@@ -43,6 +43,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -563,7 +564,7 @@ const QC_A0120: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>불량일자</th>

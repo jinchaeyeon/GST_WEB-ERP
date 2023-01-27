@@ -41,6 +41,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UsePermissions,
+  handleKeyPressSearch
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -719,7 +720,7 @@ const MA_B7000: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>재고년도</th>

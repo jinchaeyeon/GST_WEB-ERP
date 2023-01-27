@@ -41,6 +41,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseMessages,
+  handleKeyPressSearch,
   UsePermissions,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -931,7 +932,7 @@ const SA_B2410: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>판매일자</th>

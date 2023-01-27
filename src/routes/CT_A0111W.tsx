@@ -36,6 +36,7 @@ import {
   setDefaultDate,
   UseCustomOption,
   UsePermissions,
+  handleKeyPressSearch
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -276,7 +277,7 @@ const CT_A0111W: React.FC = () => {
       </TitleContainer>
 
       <FilterBoxWrap>
-        <FilterBox>
+        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>품목코드</th>

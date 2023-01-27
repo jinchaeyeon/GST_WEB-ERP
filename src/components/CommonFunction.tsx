@@ -528,6 +528,11 @@ export const checkIsObjValid = (value: object, comparisonValue: object) => {
     : true;
 };
 
+export const handleKeyPressSearch = (e: any, search: any) => {
+  if(e.key === "Enter"){
+    search();
+  }
+}
 export const getGridItemChangedData = (
   event: GridItemChangeEvent,
   dataResult: any,

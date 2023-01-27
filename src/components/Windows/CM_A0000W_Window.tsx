@@ -6,21 +6,14 @@ import {
   createContext,
 } from "react";
 import * as React from "react";
-import { useSetRecoilState } from "recoil";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridEvent,
   GridCellProps,
-  GridToolbar,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridHeaderSelectionChangeEvent,
-  GridHeaderCellProps,
-  GridDataStateChangeEvent,
 } from "@progress/kendo-react-grid";
-import CheckBoxReadOnlyCell from "../../components/Cells/CheckBoxReadOnlyCell";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
@@ -39,324 +32,280 @@ import {
   FieldArray,
   FieldArrayRenderProps,
   FormRenderProps,
-  FieldWrapper,
-  FieldRenderProps,
 } from "@progress/kendo-react-form";
-import { Error, Label } from "@progress/kendo-react-labels";
 import {
-  FormNumberCell,
-  FormNameCell,
   FormInput,
   FormDatePicker,
   FormReadOnly,
-  FormReadOnlyNumberCell,
   FormComboBoxCell,
   FormComboBox,
+  FormTextArea,
   FormCheckBox,
   FormCheckBoxReadOnlyCell,
-  FormReadOnlyNameCell,
+  FormCheckBoxCell,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
-  validator,
-  checkIsDDLValid,
-  chkScrollHandler,
   convertDateToStr,
   dateformat,
-  getItemQuery,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
-  findMessage,
   UseMessages,
   setDefaultDate,
   getCodeFromValue,
   arrayLengthValidator,
   getUnpQuery,
+  getQueryFromBizComponent,
+  UseGetValueFromSessionItem,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
+import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  IAttachmentData,
-  ICustData,
-  IItemData,
-  IWindowPosition,
-} from "../../hooks/interfaces";
-import {
-  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   FORM_DATA_INDEX,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
-import { tokenState, isLoading } from "../../store/atoms";
+import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
-import { Input } from "@progress/kendo-react-inputs";
-import RequiredHeader from "../RequiredHeader";
 import { bytesToBase64 } from "byte-base64";
-import CheckBoxCell from "../Cells/CheckBoxCell";
-const DATA_ITEM_KEY = "user_id";
-let deletedRows: object[] = [];
+
 const idGetter = getter(FORM_DATA_INDEX);
+
 type TKendoWindow = {
   getVisible(t: boolean): void;
   reloadData(workType: string): void;
   workType: "U" | "N";
   datnum?: string;
+  categories?: string;
   para?: Iparameters; //{};
 };
 
 type TDetailData = {
-  rowstatus_s: string[];
-  chk_s: string[];
-  ordseq_s: string[];
-  poregseq_s: string[];
-  itemcd_s: string[];
-  itemnm_s: string[];
-  itemacnt_s: string[];
-  insiz_s: string[];
-  bnatur_s: string[];
-  qty_s: string[];
-  qtyunit_s: string[];
-  totwgt_s: string[];
-  wgtunit_s: string[];
-  len_s: string[];
-  totlen_s: string[];
-  lenunit_s: string[];
-  thickness_s: string[];
-  width_s: string[];
-  length_s: string[];
-  unpcalmeth_s: string[];
-  unp_s: string[];
-  amt_s: string[];
-  taxamt_s: string[];
-  dlramt_s: string[];
-  wonamt_s: string[];
-  remark_s: string[];
-  pac_s: string[];
-  finyn_s: string[];
-  specialunp_s: string[];
-  lotnum_s: string[];
-  dlvdt_s: string[];
-  specialamt_s: string[];
-  heatno_s: string[];
-  bf_qty_s: string[];
+  person2: string[];
+  chooses: string[];
+  loadok: string[];
+  readok: string[];
 };
 
 export const unpContext = createContext<{
-  orddt: string;
-  setOrddt: (orddt: string) => void;
+  publish_start_date: string;
+  setOrddt: (publish_start_date: string) => void;
+  category: string;
+  setCategory: (category: string) => void;
   unpList: [];
-  getUnpList: (custcd: string) => void;
-  changeUnpData: () => void;
+  getUnpList: (contents: string) => void;
 }>({} as any);
 
-export const gridContext = createContext<{
-  changeGridData: () => void;
-}>({} as any);
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_dptcd_001, L_HU005", setBizComponentData);
 
-export const FormCustcdInput = (fieldRenderProps: FieldRenderProps) => {
-  const { validationMessage, visited, label, id, valid, onBlur, ...others } =
-    fieldRenderProps;
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "dptcd" ? "L_dptcd_001" : field === "postcd" ? "L_HU005" : "";
 
-  const { getUnpList, setOrddt, changeUnpData } = useContext(unpContext);
-
-  const onHandleBlur = (e: any) => {
-    const { value, name } = e.target;
-    if (name === "custcd") {
-      getUnpList(value);
-      changeUnpData();
-    } else if (name === "orddt") {
-      setOrddt(value);
-      changeUnpData();
-    }
-  };
-
-  return (
-    <FieldWrapper>
-      <Label editorId={id} editorValid={valid}>
-        {label}
-      </Label>
-      <div className={"k-form-field-wrap"}>
-        <Input valid={valid} id={id} onBlur={onHandleBlur} {...others} />
-      </div>
-    </FieldWrapper>
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
   );
-};
 
-const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { datnum } = fieldArrayRenderProps;
-  const setLoading = useSetRecoilState(isLoading);
-  const processApi = useApi();
-  const idGetter = getter(DATA_ITEM_KEY);
-  const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
-  });
-  const [selectedState, setSelectedState] = useState<{
+  if (bizComponentIdVal == "L_dptcd_001") {
+    return bizComponent ? (
+      <FormComboBoxCell
+        bizComponent={bizComponent}
+        valueField="dptcd"
+        textField="dptnm"
+        {...props}
+      />
+    ) : (
+      <td />
+    );
+  } else {
+    return bizComponent ? (
+      <FormComboBoxCell bizComponent={bizComponent} {...props} />
+    ) : (
+      <td />
+    );
+  }
+};
+const FormGrid2 = (fieldArrayRenderProps: FieldArrayRenderProps) => {
+  const { name, dataItemKey } =fieldArrayRenderProps;
+
+  const dataWithIndexes = fieldArrayRenderProps.value.map(
+    (item: any, index: any) => {
+      return { ...item, [FORM_DATA_INDEX]: index };
+    }
+  );
+
+  const [selectedState, setSelectedState] = React.useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
-  );
-  const subparameters: Iparameters = {
-    procedureName: "P_CM_A0000W_Q",
-    pageNumber: 0,
-    pageSize: 1,
-    parameters: {
-      "@p_work_type": "LOAD",
-      "@p_orgdiv": "01",
-      "@p_datnum": datnum,
-      "@p_dtgb": "",
-      "@p_frdt": "",
-      "@p_category": "",
-      "@p_title": "",
-      "@p_yn": "",
-      "@p_attdatnum": "",
-      "@p_userid": "",
-      "@p_newDiv": "N",
+  const onSelectionChange = React.useCallback(
+    (event: GridSelectionChangeEvent) => {
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: selectedState,
+        dataItemKey: FORM_DATA_INDEX,
+      });
+      setSelectedState(newSelectedState);
     },
-  };
-
-  const fetchMainGrid = async () => {
-    // if (!permissions?.view) return;
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", subparameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows;
- 
-      if (totalRowCnt > 0)
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    setLoading(false);
-  };
-
-  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
-    setMainDataState(event.dataState);
-  };
-
-  const [departmentsListData, setDepartmentsListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
-  const [postcdListData, setPostcdListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_dptcd_001, L_HU005",
-    setBizComponentData
+    [selectedState]
   );
-
-  useEffect(() => {
-    fetchMainGrid();
-  }, []);
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      const departmentQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
-      );
-      fetchQuery(departmentQueryStr, setDepartmentsListData);
-      fetchQuery(postcdQueryStr, setPostcdListData);
-    }
-  }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   return (
-    <GridContainer>
-      <Grid
-        data={process(
-          mainDataResult.data.map((row) => ({
-            ...row,
-            dptcd: departmentsListData.find(
-              (item: any) => item.dptcd === row.dptcd
-            )?.dptnm,
-            postcd: postcdListData.find(
-              (item: any) => item.sub_code === row.postcd
-            )?.code_name,
-            readok: row.readok == null ? "Y" : null,
-            [SELECTED_FIELD]: selectedState[idGetter(row)],
-          })),
-          mainDataState
-        )}
-        {...mainDataState}
-        onDataStateChange={onMainDataStateChange}
-        //선택 기능
-        dataItemKey={DATA_ITEM_KEY}
-        selectedField={SELECTED_FIELD}
-        selectable={{
-          enabled: true,
-          mode: "single",
+      <GridContainer
+        style={{
+          display: "inline-block",
+          marginLeft: "3%",
+          width: "37%",
+          float: "right",
+          height: "500px",
         }}
-        total={mainDataResult.total}
       >
-        <GridColumn
-          field="user_name"
-          title="성명"
-          width="100px"
-          className="required"
-        />
-        <GridColumn field="dptcd" title="부서" width="140px" />
-        <GridColumn field="postcd" title="직위" width="90px" />
-        <GridColumn
-          field="chooses"
-          title="참조"
-          width="60px"
-          cell={CheckBoxReadOnlyCell}
-        />
-        <GridColumn
-          field="loadok"
-          title="확인"
-          width="60px"
-          cell={CheckBoxCell}
-        />
-        <GridColumn field="readok" title="열람" width="60px" />
-      </Grid>
-    </GridContainer>
+        <Grid
+          data={dataWithIndexes.map((item: any) => ({
+            ...item,
+            parentField: name,
+            [SELECTED_FIELD]: selectedState[idGetter(item)],
+          }))}
+          //선택 기능
+          dataItemKey={dataItemKey}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onSelectionChange}
+          total={dataWithIndexes.total}
+        >
+          <GridColumn
+            field="custcd"
+            title="업체코드"
+            width="140px"
+            className="required"
+            editable={false}
+          />
+          <GridColumn
+            field="custnm"
+            title="부서"
+            width="150px"
+            editable={false}
+          />
+          <GridColumn
+            field="user_name"
+            title="이름"
+            width="140px"
+            editable={false}
+          />
+          <GridColumn
+            field="chooses"
+            title="참조"
+            width="60px"
+            cell={FormCheckBoxCell}
+          />
+        </Grid>
+      </GridContainer>
+  );
+};
+// Create the Grid that will be used inside the Form
+const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
+  const { name, dataItemKey } = fieldArrayRenderProps;
+  const { category } = useContext(unpContext);
+
+  const dataWithIndexes = fieldArrayRenderProps.value.map(
+    (item: any, index: any) => {
+      return { ...item, [FORM_DATA_INDEX]: index };
+    }
+  );
+
+  const [selectedState, setSelectedState] = React.useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const onSelectionChange = React.useCallback(
+    (event: GridSelectionChangeEvent) => {
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: selectedState,
+        dataItemKey: FORM_DATA_INDEX,
+      });
+      setSelectedState(newSelectedState);
+    },
+    [selectedState]
+  );
+
+  return (
+      <GridContainer
+        style={{
+          display: "inline-block",
+          marginLeft: "3%",
+          width: "37%",
+          float: "right",
+          height: "500px",
+        }}
+      >
+        <Grid
+          data={dataWithIndexes.map((item: any) => ({
+            ...item,
+            parentField: name,
+            [SELECTED_FIELD]: selectedState[idGetter(item)],
+          }))}
+          //선택 기능
+          dataItemKey={dataItemKey}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onSelectionChange}
+          total={dataWithIndexes.total}
+        >
+          <GridColumn
+            field="user_name"
+            title="성명"
+            width="100px"
+            className="required"
+            editable={false}
+          />
+          <GridColumn
+            field="dptcd"
+            title="부서"
+            width="140px"
+            editable={false}
+            cell={CustomComboBoxCell}
+          />
+          <GridColumn
+            field="postcd"
+            title="직위"
+            width="90px"
+            editable={false}
+            cell={CustomComboBoxCell}
+          />
+          <GridColumn
+            field="chooses"
+            title="참조"
+            width="60px"
+            cell={
+              category == "200" ? FormCheckBoxCell : FormCheckBoxReadOnlyCell
+            }
+          />
+          <GridColumn
+            field="loadok"
+            title="확인"
+            width="60px"
+            cell={FormCheckBoxCell}
+          />
+          <GridColumn
+            field="readok"
+            title="열람"
+            width="60px"
+            editable={false}
+          />
+        </Grid>
+      </GridContainer>
   );
 };
 
@@ -365,11 +314,12 @@ const KendoWindow = ({
   reloadData,
   workType,
   datnum,
+  categories,
   para,
 }: TKendoWindow) => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
-
+  const user_name = UseGetValueFromSessionItem("user_name");
   const pathname: string = window.location.pathname.replace("/", "");
 
   //커스텀 옵션 조회
@@ -383,12 +333,15 @@ const KendoWindow = ({
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
+    width: 1500,
     height: 700,
   });
 
   const [unpList, setUnpList] = useState<any>([]);
-  const [orddt, setOrddt] = useState("");
+  const [publish_start_date, setOrddt] = useState("");
+  const [category, setCategory] = useState(
+    (categories == "" || categories == undefined) ? "100": categories
+  );
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -419,7 +372,6 @@ const KendoWindow = ({
   const [dataState, setDataState] = useState<State>({
     skip: 0,
     take: 20,
-    //sort: [{ field: "customerID", dir: "asc" }],
     group: [{ field: "itemacnt" }],
   });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
@@ -428,35 +380,49 @@ const KendoWindow = ({
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], dataState)
   );
-
-  const [custType, setCustType] = useState("");
+  const [detailDataResult2, setDetailDataResult2] = useState<DataResult>(
+    process([], dataState)
+  );
 
   useEffect(() => {
-    if (workType === "U") {
+    if (workType == "U") {
       fetchMain();
-      //fetchGrid();
+      fetchGrid();
     }
   }, []);
 
   const [initialVal, setInitialVal] = useState({
-    datnum: "",
-    user_name: "",
-    publish_yn: "",
-    cbocategory: "",
+    datnum: workType == "N" ? "" : datnum,
+    orgdiv: "01",
+    category: categories,
+    location: "01",
     publish_start_date: new Date(),
     publish_end_date: new Date(),
     title: "",
     contents: "",
-    attdatnum: "",
-    pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    publish_yn: "Y",
     publishdate: new Date(),
-    contents2: "",
-    chooses_s: "",
-    loadok_s: "",
-    readok_s: "",
-    cbodtgb: "C",
-    radPublish_yn: "%",
+    pgSize: PAGE_SIZE,
+    person: "",
+    attdatnum: "",
+    user_id: userId,
+    pc: "",
+    person2: "",
+    chooses: "",
+    loadok: "", //"KRW",
+    readok: 0,
+    custcd_s: 0,
+    form_id: "",
+    files: "",
+    dtgb: "C",
+    Insert_form_id: "",
+    Update_form_id: "",
+    insert_time: "",
+    insert_userid: "",
+    update_pc: "",
+    update_time: "",
+    update_userid: "",
+    user_name: "",
   });
 
   useEffect(() => {
@@ -472,14 +438,21 @@ const KendoWindow = ({
             customOptionData,
             "publish_end_date"
           ),
-          cbocategory: customOptionData.menuCustomDefaultOptions.query.find(
-            (item: any) => item.id === "cbocategory"
+          category: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "category"
           ).valueCode,
+          publish_yn: customOptionData.menuCustomDefaultOptions.new.find(
+            (item: any) => item.id === "publish_yn"
+          ).valueCode,
+          person: user_name,
         };
       });
+
+      fetchGrid();
     }
   }, [customOptionData]);
 
+  //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_CM_A0000W_Q",
     pageNumber: 1,
@@ -488,13 +461,32 @@ const KendoWindow = ({
       "@p_work_type": "Q",
       "@p_orgdiv": "01",
       "@p_datnum": datnum,
-      "@p_dtgb": initialVal.cbodtgb,
+      "@p_dtgb": initialVal.dtgb,
       "@p_frdt": convertDateToStr(initialVal.publish_start_date),
-      "@p_category": initialVal.cbocategory,
+      "@p_category": categories,
       "@p_title": initialVal.title,
-      "@p_yn": initialVal.radPublish_yn,
+      "@p_yn": initialVal.publish_yn,
       "@p_attdatnum": "",
-      "@p_userid": "admin",
+      "@p_userid": initialVal.user_id,
+      "@p_newDiv": "N",
+    },
+  };
+
+  const subparameters: Iparameters = {
+    procedureName: "P_CM_A0000W_Q",
+    pageNumber: 0,
+    pageSize: 1,
+    parameters: {
+      "@p_work_type": "LOAD",
+      "@p_orgdiv": "01",
+      "@p_datnum": datnum,
+      "@p_dtgb": "",
+      "@p_frdt": "",
+      "@p_category": categories,
+      "@p_title": "",
+      "@p_yn": "",
+      "@p_attdatnum": "",
+      "@p_userid": "",
       "@p_newDiv": "N",
     },
   };
@@ -516,23 +508,32 @@ const KendoWindow = ({
         return {
           ...prev,
           datnum: row.datnum,
-          user_name: row.user_name,
-          publish_yn: row.publish_yn,
-          cbocategory: row.category,
+          orgdiv: row.orgdiv,
+          category: row.category,
+          location: row.location,
           publish_start_date: new Date(dateformat(row.publish_start_date)),
           publish_end_date: new Date(dateformat(row.publish_end_date)),
           title: row.title,
           contents: row.contents,
+          publish_yn: row.publish_yn,
+          person: row.user_name,
           attdatnum: row.attdatnum,
-          pgSize: PAGE_SIZE,
-          orgdiv: row.orgdiv,
-          publishdate: new Date(dateformat(row.publishdate)),
-          contents2: row.contents2,
-          chooses_s: row.chooses_s,
-          loadok_s: row.loadok_s,
-          readok_s: row.readok_s,
-          cbodtgb: row.cbodtgb,
-          radPublish_yn: row.radPublish_yn,
+          person2: row.person2,
+          chooses: row.chooses_s,
+          loadok: row.loadok_s,
+          readok: row.readok_s, //0,
+          custcd_s: row.custcd_s, //0,
+          form_id: row.form_id,
+          Insert_form_id: row.Insert_form_id,
+          Update_form_id: row.Update_form_id,
+          pc: row.insert_pc,
+          insert_time: row.insert_time,
+          insert_userid: row.insert_userid,
+          publishdate: row.publishdate,
+          update_pc: row.update_pc,
+          update_time: row.update_time,
+          update_userid: row.update_userid,
+          user_name: row.user_name,
         };
       });
     }
@@ -541,183 +542,128 @@ const KendoWindow = ({
   useEffect(() => {
     //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
     resetForm();
+
+    setOrddt(convertDateToStr(initialVal.publish_start_date));
   }, [initialVal]);
 
   //fetch된 그리드 데이터가 그리드 폼에 세팅되도록 하기 위해 적용
   useEffect(() => {
     resetForm();
-  }, [detailDataResult]);
+  }, [detailDataResult, detailDataResult2]);
 
+  const subparameters2: Iparameters = {
+    procedureName: "P_CM_A0000W_Q",
+    pageNumber: 0,
+    pageSize: 1,
+    parameters: {
+      "@p_work_type": "LOAD",
+      "@p_orgdiv": "01",
+      "@p_datnum": datnum,
+      "@p_dtgb": "",
+      "@p_frdt": "",
+      "@p_category": "300",
+      "@p_title": "",
+      "@p_yn": "",
+      "@p_attdatnum": "",
+      "@p_userid": "",
+      "@p_newDiv": "N",
+    },
+  };
   //상세그리드 조회
   const fetchGrid = async () => {
     let data: any;
+    console.log(category)
+    if (category == "300" || categories == "300") {
+      try {
+        data = await processApi<any>("procedure", subparameters2);
+      } catch (error) {
+        data = null;
+      }
 
-    try {
-      data = await processApi<any>("procedure", para);
-    } catch (error) {
-      data = null;
+      if (data.isSuccess === true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows;
+
+        setDetailDataResult2(() => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
+      }
+    } else {
+      try {
+        data = await processApi<any>("procedure", subparameters);
+      } catch (error) {
+        data = null;
+      }
+      if (data.isSuccess === true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows;
+  
+        setDetailDataResult(() => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
+      }
     }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-
-      setDetailDataResult(() => {
-        return {
-          data: rows,
-          total: totalRowCnt,
-        };
-      });
-
-      //resetForm();
-    }
+    setInitialVal((prev) => {
+      return {
+        ...prev,
+        category: category
+      };
+    });
   };
+
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    service_id: "20190218001",
     orgdiv: "01",
     location: "01",
-    datnum: "",
-    poregnum: "",
-    project: "",
-    ordtype: "",
-    ordsts: "",
-    taxdiv: "",
-    orddt: "",
-    dlvdt: "",
-    dptcd: "",
+    datnum: initialVal.datnum,
+    category: "100",
+    title: "",
+    contents: "",
+    publish_yn: "Y",
+    publish_start_date: "",
+    publish_end_date: "",
     person: "",
-    amtunit: "",
-    portnm: "",
-    finaldes: "",
-    paymeth: "",
-    prcterms: "",
-    custcd: "",
-    custnm: "",
-    rcvcustcd: "",
-    rcvcustnm: "",
-    wonchgrat: 0,
-    uschgrat: 0,
-    doexdiv: "",
-    remark: "",
     attdatnum: "",
-    userid: userId,
-    pc: "WEB TEST",
-    ship_method: "",
-    dlv_method: "",
-    hullno: "",
-    rowstatus_s: "",
-    chk_s: "",
-    ordseq_s: "",
-    poregseq_s: "",
-    itemcd_s: "",
-    itemnm_s: "",
-    itemacnt_s: "",
-    insiz_s: "",
-    bnatur_s: "",
-    qty_s: "",
-    qtyunit_s: "",
-    totwgt_s: "",
-    wgtunit_s: "",
-    len_s: "",
-    totlen_s: "",
-    lenunit_s: "",
-    thickness_s: "",
-    width_s: "",
-    length_s: "",
-    unpcalmeth_s: "",
-    unp_s: "",
-    amt_s: "",
-    taxamt_s: "",
-    dlramt_s: "",
-    wonamt_s: "",
-    remark_s: "",
-    pac_s: "",
-    finyn_s: "",
-    specialunp_s: "",
-    lotnum_s: "",
-    dlvdt_s: "",
-    specialamt_s: "",
-    heatno_s: "",
-    bf_qty_s: "",
-    form_id: "",
+    user_id: "",
+    pc: initialVal.pc,
+    person2: "",
+    chooses: "",
+    loadok: "",
+    readok: "",
   });
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
-    procedureName: "P_SA_A2000W_S",
+    procedureName: "P_CM_A0000W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
       "@p_work_type": paraData.work_type,
-      "@p_service_id": paraData.service_id,
       "@p_orgdiv": paraData.orgdiv,
       "@p_location": paraData.location,
       "@p_datnum": paraData.datnum,
-      "@p_poregnum": paraData.poregnum,
-      "@p_project": paraData.project,
-      "@p_ordtype": paraData.ordtype,
-      "@p_ordsts": paraData.ordsts,
-      "@p_taxdiv": paraData.taxdiv,
-      "@p_orddt": paraData.orddt,
-      "@p_dlvdt": paraData.dlvdt,
-      "@p_dptcd": paraData.dptcd,
+      "@p_category": paraData.category,
+      "@p_title": paraData.title,
+      "@p_contents": paraData.contents,
+      "@p_publish_yn": paraData.publish_yn,
+      "@p_publish_start_date": paraData.publish_start_date,
+      "@p_publish_end_date": paraData.publish_end_date,
       "@p_person": paraData.person,
-      "@p_amtunit": paraData.amtunit,
-      "@p_portnm": paraData.portnm,
-      "@p_finaldes": paraData.finaldes,
-      "@p_paymeth": paraData.paymeth,
-      "@p_prcterms": paraData.prcterms,
-      "@p_custcd": paraData.custcd,
-      "@p_custnm": paraData.custnm,
-      "@p_rcvcustcd": paraData.rcvcustcd,
-      "@p_rcvcustnm": paraData.rcvcustnm,
-      "@p_wonchgrat": paraData.wonchgrat,
-      "@p_uschgrat": paraData.uschgrat,
-      "@p_doexdiv": paraData.doexdiv,
-      "@p_remark": paraData.remark,
       "@p_attdatnum": paraData.attdatnum,
-      "@p_userid": paraData.userid,
+      "@p_userid": paraData.user_id,
       "@p_pc": paraData.pc,
-      "@p_ship_method": paraData.ship_method,
-      "@p_dlv_method": paraData.dlv_method,
-      "@p_hullno": paraData.hullno,
-      "@p_rowstatus_s": paraData.rowstatus_s,
-      "@p_chk_s": paraData.chk_s,
-      "@p_ordseq_s": paraData.ordseq_s,
-      "@p_poregseq_s": paraData.poregseq_s,
-      "@p_itemcd_s": paraData.itemcd_s,
-      "@p_itemnm_s": paraData.itemnm_s,
-      "@p_itemacnt_s": paraData.itemacnt_s,
-      "@p_insiz_s": paraData.insiz_s,
-      "@p_bnatur_s": paraData.bnatur_s,
-      "@p_qty_s": paraData.qty_s,
-      "@p_qtyunit_s": paraData.qtyunit_s,
-      "@p_totwgt_s": paraData.totwgt_s,
-      "@p_wgtunit_s": paraData.wgtunit_s,
-      "@p_len_s": paraData.len_s,
-      "@p_totlen_s": paraData.totlen_s,
-      "@p_lenunit_s": paraData.lenunit_s,
-      "@p_thickness_s": paraData.thickness_s,
-      "@p_width_s": paraData.width_s,
-      "@p_length_s": paraData.length_s,
-      "@p_unpcalmeth_s": paraData.unpcalmeth_s,
-      "@p_unp_s": paraData.unp_s,
-      "@p_amt_s": paraData.amt_s,
-      "@p_taxamt_s": paraData.taxamt_s,
-      "@p_dlramt_s": paraData.dlramt_s,
-      "@p_wonamt_s": paraData.wonamt_s,
-      "@p_remark_s": paraData.remark_s,
-      "@p_pac_s": paraData.pac_s,
-      "@p_finyn_s": paraData.finyn_s,
-      "@p_specialunp_s": paraData.specialunp_s,
-      "@p_lotnum_s": paraData.lotnum_s,
-      "@p_dlvdt_s": paraData.dlvdt_s,
-      "@p_specialamt_s": paraData.specialamt_s,
-      "@p_heatno_s": paraData.heatno_s,
-      "@p_bf_qty_s": paraData.bf_qty_s,
-      "@p_form_id": paraData.form_id,
+      "@p_person2": paraData.person2,
+      "@p_chooses": paraData.chooses,
+      "@p_loadok": paraData.loadok,
+      "@p_readok": paraData.readok,
+      "@p_form_id": "CM_A0000W",
     },
   };
 
@@ -736,15 +682,14 @@ const KendoWindow = ({
       data = null;
     }
 
+    console.log(paraSaved);
+    console.log(data)
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "SA_A2000W_003"));
-      deletedRows = []; //초기화
+      alert("저장되었습니다.");
       if (workType === "U") {
         resetAllGrid();
-
+        getVisible(false);
         reloadData("U");
-        fetchMain();
-        fetchGrid();
       } else {
         getVisible(false);
         reloadData("N");
@@ -759,312 +704,90 @@ const KendoWindow = ({
   };
 
   const handleSubmit = (dataItem: { [name: string]: any }) => {
-    //alert(JSON.stringify(dataItem));
-
-    let valid = true;
-
-    //검증
-    try {
-      dataItem.orderDetails.forEach((item: any) => {
-        if (!!checkIsDDLValid(item.cbocategory)) {
-          throw findMessage(messagesData, "SA_A2000W_004");
-        }
-      });
-    } catch (e) {
-      alert(e);
-      valid = false;
-    }
-
-    if (!valid) return false;
 
     const {
-      location,
-      datnum,
-      poregnum,
-      project,
-      ordtype,
-      ordsts,
-      taxdiv,
-      orddt,
-      dlvdt,
-      dptcd,
-      person,
-      amtunit,
-      portnm,
-      finaldes,
-      paymeth,
-      prcterms,
-      custcd,
-      custnm,
-      rcvcustcd,
-      rcvcustnm,
-      wonchgrat,
-      uschgrat,
-      doexdiv,
-      remark,
       attdatnum,
-      ship_method,
-      dlv_method,
-      hullno,
+      category,
+      contents,
+      datnum,
+      location,
       orderDetails,
+      orderDetails2,
+      orgdiv,
+      pc,
+      person,
+      person2,
+      publish_end_date,
+      publish_start_date,
+      publish_yn,
+      rowstatus,
+      title,
+      user_id,
+      valueChanged,
     } = dataItem;
 
     let detailArr: TDetailData = {
-      rowstatus_s: [],
-      chk_s: [],
-      ordseq_s: [],
-      poregseq_s: [],
-      itemcd_s: [],
-      itemnm_s: [],
-      itemacnt_s: [],
-      insiz_s: [],
-      bnatur_s: [],
-      qty_s: [],
-      qtyunit_s: [],
-      totwgt_s: [],
-      wgtunit_s: [],
-      len_s: [],
-      totlen_s: [],
-      lenunit_s: [],
-      thickness_s: [],
-      width_s: [],
-      length_s: [],
-      unpcalmeth_s: [],
-      unp_s: [],
-      amt_s: [],
-      taxamt_s: [],
-      dlramt_s: [],
-      wonamt_s: [],
-      remark_s: [],
-      pac_s: [],
-      finyn_s: [],
-      specialunp_s: [],
-      lotnum_s: [],
-      dlvdt_s: [],
-      specialamt_s: [],
-      heatno_s: [],
-      bf_qty_s: [],
+      person2: [],
+      chooses: [],
+      loadok: [],
+      readok: [],
     };
-    orderDetails.forEach((item: any) => {
-      const {
-        rowstatus,
-        chk,
-        ordseq,
-        poregseq,
-        itemcd,
-        itemnm,
-        itemacnt,
-        insiz,
-        bnatur,
-        qty,
-        qtyunit,
-        totwgt,
-        wgtunit,
-        len,
-        totlen,
-        lenunit,
-        thickness,
-        width,
-        length,
-        unpcalmeth,
-        unp,
-        amt,
-        taxamt,
-        dlramt,
-        wonamt,
-        remark,
-        pac,
-        finyn,
-        specialunp,
-        lotnum,
-        dlvdt,
-        specialamt,
-        heatno,
-        bf_qty,
-      } = item;
 
-      detailArr.rowstatus_s.push("N");
-      detailArr.chk_s.push(chk);
-      detailArr.ordseq_s.push(ordseq);
-      detailArr.poregseq_s.push(poregseq);
-      detailArr.itemcd_s.push(itemcd);
-      detailArr.itemnm_s.push(itemnm);
-      detailArr.itemacnt_s.push(getCodeFromValue(itemacnt));
-      detailArr.insiz_s.push(insiz);
-      detailArr.bnatur_s.push(bnatur);
-      detailArr.qty_s.push(qty);
-      detailArr.qtyunit_s.push(getCodeFromValue(qtyunit));
-      detailArr.totwgt_s.push(totwgt);
-      detailArr.wgtunit_s.push(wgtunit);
-      detailArr.len_s.push(len);
-      detailArr.totlen_s.push(totlen);
-      detailArr.lenunit_s.push(lenunit);
-      detailArr.thickness_s.push(thickness);
-      detailArr.width_s.push(width);
-      detailArr.length_s.push(length);
-      detailArr.unpcalmeth_s.push(unpcalmeth);
-      detailArr.unp_s.push(unp);
-      detailArr.amt_s.push(amt);
-      detailArr.taxamt_s.push(taxamt);
-      detailArr.dlramt_s.push(dlramt);
-      detailArr.wonamt_s.push(wonamt);
-      detailArr.remark_s.push(remark);
-      detailArr.pac_s.push(pac);
-      detailArr.finyn_s.push(finyn === true ? "Y" : "N");
-      detailArr.specialunp_s.push(specialunp);
-      detailArr.lotnum_s.push(lotnum);
-      detailArr.dlvdt_s.push(dlvdt);
-      detailArr.specialamt_s.push(specialamt);
-      detailArr.heatno_s.push(heatno);
-      detailArr.bf_qty_s.push(bf_qty);
-    });
-
-    deletedRows.forEach((item: any) => {
-      const {
-        rowstatus,
-        chk,
-        ordseq,
-        poregseq,
-        itemcd,
-        itemnm,
-        itemacnt,
-        insiz,
-        bnatur,
-        qty,
-        qtyunit,
-        totwgt,
-        wgtunit,
-        len,
-        totlen,
-        lenunit,
-        thickness,
-        width,
-        length,
-        unpcalmeth,
-        unp,
-        amt,
-        taxamt,
-        dlramt,
-        wonamt,
-        remark,
-        pac,
-        finyn,
-        specialunp,
-        lotnum,
-        dlvdt,
-        specialamt,
-        heatno,
-        bf_qty,
-      } = item;
-
-      detailArr.rowstatus_s.push("D");
-      detailArr.chk_s.push(chk);
-      detailArr.ordseq_s.push(ordseq);
-      detailArr.poregseq_s.push(poregseq);
-      detailArr.itemcd_s.push(itemcd);
-      detailArr.itemnm_s.push(itemnm);
-      detailArr.itemacnt_s.push(getCodeFromValue(itemacnt));
-      detailArr.insiz_s.push(insiz);
-      detailArr.bnatur_s.push(bnatur);
-      detailArr.qty_s.push(qty);
-      detailArr.qtyunit_s.push(getCodeFromValue(qtyunit));
-      detailArr.totwgt_s.push(totwgt);
-      detailArr.wgtunit_s.push(wgtunit);
-      detailArr.len_s.push(len);
-      detailArr.totlen_s.push(totlen);
-      detailArr.lenunit_s.push(lenunit);
-      detailArr.thickness_s.push(thickness);
-      detailArr.width_s.push(width);
-      detailArr.length_s.push(length);
-      detailArr.unpcalmeth_s.push(unpcalmeth);
-      detailArr.unp_s.push(unp);
-      detailArr.amt_s.push(amt);
-      detailArr.taxamt_s.push(taxamt);
-      detailArr.dlramt_s.push(dlramt);
-      detailArr.wonamt_s.push(wonamt);
-      detailArr.remark_s.push(remark);
-      detailArr.pac_s.push(pac);
-      detailArr.finyn_s.push(finyn);
-      detailArr.specialunp_s.push(specialunp);
-      detailArr.lotnum_s.push(lotnum);
-      detailArr.dlvdt_s.push(dlvdt);
-      detailArr.specialamt_s.push(specialamt);
-      detailArr.heatno_s.push(heatno);
-      detailArr.bf_qty_s.push(bf_qty);
-    });
+    if(category == "300"){
+      orderDetails2.forEach((item: any) => {
+        const { chooses, loadok, user_id, readok } = item;
+  
+        detailArr.chooses.push(
+          chooses === "Y" ? "Y" : chooses === true ? "Y" : "N"
+        );
+        detailArr.loadok.push(loadok === "Y" ? "Y" : loadok === true ? "Y" : "N");
+        detailArr.person2.push(user_id);
+        detailArr.readok.push(readok);
+      });
+    } else {
+      orderDetails.forEach((item: any) => {
+        const { chooses, loadok, user_id, readok } = item;
+  
+        detailArr.chooses.push(
+          chooses === "Y" ? "Y" : chooses === true ? "Y" : "N"
+        );
+        detailArr.loadok.push(loadok === "Y" ? "Y" : loadok === true ? "Y" : "N");
+        detailArr.person2.push(user_id);
+        detailArr.readok.push(readok);
+      });
+    }
+    
 
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-      location: getCodeFromValue(location),
-      //location: typeof location === "string" ? location : location.sub_code,
+      orgdiv: "01",
+      location: "01",
       datnum,
-      poregnum,
-      project,
-      ordtype: getCodeFromValue(ordtype),
-      ordsts: getCodeFromValue(ordsts),
-      taxdiv: getCodeFromValue(taxdiv),
-      orddt: convertDateToStr(orddt),
-      dlvdt: convertDateToStr(dlvdt),
-      dptcd: getCodeFromValue(dptcd, "dptcd"),
-      person: getCodeFromValue(person, "user_id"),
-      amtunit: getCodeFromValue(amtunit),
-      portnm,
-      finaldes: "",
-      paymeth,
-      prcterms,
-      custcd,
-      custnm,
-      rcvcustcd,
-      rcvcustnm,
-      wonchgrat,
-      uschgrat,
-      doexdiv: getCodeFromValue(doexdiv),
-      remark,
+      category: getCodeFromValue(category),
+      title,
+      contents,
+      publish_yn: getCodeFromValue(publish_yn, "publish_yn"),
+      publish_start_date: convertDateToStr(publish_start_date),
+      publish_end_date: convertDateToStr(publish_end_date),
+      person: getCodeFromValue(user_id),
       attdatnum,
-      ship_method,
-      dlv_method,
-      hullno: "",
-      rowstatus_s: detailArr.rowstatus_s.join("|"), //"N|N",
-      chk_s: detailArr.chk_s.join("|"),
-      ordseq_s: detailArr.ordseq_s.join("|"),
-      poregseq_s: detailArr.poregseq_s.join("|"),
-      itemcd_s: detailArr.itemcd_s.join("|"),
-      itemnm_s: detailArr.itemnm_s.join("|"),
-      itemacnt_s: detailArr.itemacnt_s.join("|"),
-      insiz_s: detailArr.insiz_s.join("|"),
-      bnatur_s: detailArr.bnatur_s.join("|"),
-      qty_s: detailArr.qty_s.join("|"),
-      qtyunit_s: detailArr.qtyunit_s.join("|"),
-      totwgt_s: detailArr.totwgt_s.join("|"),
-      wgtunit_s: detailArr.wgtunit_s.join("|"),
-      len_s: detailArr.len_s.join("|"),
-      totlen_s: detailArr.totlen_s.join("|"),
-      lenunit_s: detailArr.lenunit_s.join("|"),
-      thickness_s: detailArr.thickness_s.join("|"),
-      width_s: detailArr.width_s.join("|"),
-      length_s: detailArr.length_s.join("|"),
-      unpcalmeth_s: detailArr.unpcalmeth_s.join("|"),
-      unp_s: detailArr.unp_s.join("|"),
-      amt_s: detailArr.amt_s.join("|"),
-      taxamt_s: detailArr.taxamt_s.join("|"),
-      dlramt_s: detailArr.dlramt_s.join("|"),
-      wonamt_s: detailArr.wonamt_s.join("|"),
-      remark_s: detailArr.remark_s.join("|"),
-      pac_s: detailArr.pac_s.join("|"),
-      finyn_s: detailArr.finyn_s.join("|"),
-      specialunp_s: detailArr.specialunp_s.join("|"),
-      lotnum_s: detailArr.lotnum_s.join("|"),
-      dlvdt_s: detailArr.dlvdt_s.join("|"),
-      specialamt_s: detailArr.specialamt_s.join("|"),
-      heatno_s: detailArr.heatno_s.join("|"),
-      bf_qty_s: detailArr.bf_qty_s.join("|"),
+      user_id: getCodeFromValue(user_id),
+      pc,
+      person2: detailArr.person2.join("|"),
+      chooses: detailArr.chooses.join("|"),
+      loadok: detailArr.loadok.join("|"),
+      readok: detailArr.readok.join("|"),
     }));
   };
 
   useEffect(() => {
     if (paraData.work_type !== "") fetchGridSaved();
   }, [paraData]);
+
+  useEffect(()=> {
+    fetchGrid();
+  },[category]);
 
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
@@ -1086,22 +809,23 @@ const KendoWindow = ({
   };
 
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_SYS007", setBizComponentData);
+  UseBizComponent("L_BA061,L_BA015", setBizComponentData);
 
   useEffect(() => {
     if (workType === "U") {
       if (bizComponentData.length) {
         resetAllGrid();
+        fetchMain();
         fetchGrid();
       }
     }
   }, [bizComponentData]);
 
-  const fetchUnp = useCallback(async (custcd: string) => {
-    if (custcd === "") return;
+  const fetchUnp = useCallback(async (contents: string) => {
+    if (contents === "") return;
     let data: any;
 
-    const queryStr = getUnpQuery(custcd);
+    const queryStr = getUnpQuery(contents);
     const bytes = require("utf8-bytes");
     const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -1121,44 +845,59 @@ const KendoWindow = ({
     }
   }, []);
 
-  const getUnpList = (custcd: string) => {
-    fetchUnp(custcd);
+  const getUnpList = (contents: string) => {
+    fetchUnp(contents);
   };
 
-  const { changeGridData } = useContext(gridContext);
-
-  const changeUnpData = () => {
-    console.log("양");
-    changeGridData();
+  const changeCategory = (event: any) => {
+    setCategory(event.value.sub_code);
   };
 
   return (
     <Window
-      title={workType === "N" ? "공지사항 생성" : "공지사항 수정"}
+      title={workType === "N" ? "공지생성" : "공지정보"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
-      style={{ minWidth: "1500px" }}
     >
       <unpContext.Provider
-        value={{ orddt, setOrddt, unpList, getUnpList, changeUnpData }}
+        value={{
+          publish_start_date,
+          setOrddt,
+          unpList,
+          getUnpList,
+          category,
+          setCategory,
+        }}
       >
         <Form
           onSubmit={handleSubmit}
           key={formKey}
           initialValues={{
             rowstatus: "",
-            cbocategory: initialVal.cbocategory,
             datnum: initialVal.datnum,
-            user_name: initialVal.user_name,
-            publish_yn: initialVal.publish_yn,
-            publish_start_date: initialVal.publish_start_date,
+            orgdiv: initialVal.orgdiv,
+            category: initialVal.category,
+            location: initialVal.location,
+            publish_start_date: initialVal.publish_start_date, //new Date(),
             publish_end_date: initialVal.publish_end_date,
             title: initialVal.title,
             contents: initialVal.contents,
+            publish_yn: initialVal.publish_yn,
+            person: initialVal.person,
             attdatnum: initialVal.attdatnum,
+            user_id: initialVal.user_id,
+            pc: initialVal.pc,
+            person2: initialVal.person2,
+            chooses: initialVal.chooses,
+            loadok: initialVal.loadok, //"KRW",
+            readok: initialVal.readok, //0,
+            custcd_s: initialVal.custcd_s, //0,
+            form_id: initialVal.form_id,
+            orderDetails: detailDataResult.data, //detailDataResult.data,
+            orderDetails2: detailDataResult2.data,
           }}
           render={(formRenderProps: FormRenderProps) => (
             <FormElement>
@@ -1184,43 +923,60 @@ const KendoWindow = ({
                     name={"datnum"}
                     label={"문서번호"}
                     component={FormReadOnly}
-                    validator={validator}
-                    className="required"
+                    className="readonly"
                   />
                   <div style={{ width: "10%" }}></div>
-                  <Field
-                    name={"user_name"}
-                    label={"담당자"}
-                    component={FormReadOnly}
-                    validator={validator}
-                    className="required"
-                  />
+                  {customOptionData !== null && (
+                    <Field
+                      name={"person"}
+                      label={"작성자"}
+                      component={FormReadOnly}
+                      className="readonly"
+                      queryStr={userId}
+                      // valueField={"user_id"}
+                      // textField={"user_name"}
+                      columns={userId}
+                    />
+                  )}
                 </FieldWrap>
                 <FieldWrap fieldWidth="45%">
                   {customOptionData !== null && (
                     <Field
-                      name={"cbocategory"}
+                      name={"category"}
                       label={"카테고리"}
                       component={FormComboBox}
                       queryStr={
-                        customOptionData.menuCustomDefaultOptions.query.find(
-                          (item: any) => item.id === "cbocategory"
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "category"
                         ).query
                       }
                       columns={
-                        customOptionData.menuCustomDefaultOptions.query.find(
-                          (item: any) => item.id === "cbocategory"
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "category"
                         ).bizComponentItems
                       }
                       className="required"
+                      onChange={changeCategory}
                     />
                   )}
                   <div style={{ width: "10%" }}></div>
-                  <Field
-                    name={"publish_yn"}
-                    label={"사용여부"}
-                    component={FormCheckBox}
-                  />
+                  {customOptionData !== null && (
+                    <Field
+                      name={"publish_yn"}
+                      label={"사용여부"}
+                      component={FormCheckBox}
+                      queryStr={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "publish_yn"
+                        ).query
+                      }
+                      columns={
+                        customOptionData.menuCustomDefaultOptions.new.find(
+                          (item: any) => item.id === "publish_yn"
+                        ).bizComponentItems
+                      }
+                    />
+                  )}
                 </FieldWrap>
                 <FieldWrap fieldWidth="45%">
                   <Field
@@ -1246,8 +1002,8 @@ const KendoWindow = ({
                 <Field
                   name={"contents"}
                   label={"내용"}
-                  component={FormInput}
-                  style={{ height: "200px" }}
+                  max={400}
+                  component={FormTextArea}
                 />
                 <FieldWrap fieldWidth="100%">
                   <Field
@@ -1267,35 +1023,28 @@ const KendoWindow = ({
                   </ButtonInFieldWrap>
                 </FieldWrap>
               </fieldset>
-              <fieldset
-                style={{
-                  display: "inline-block",
-                  marginLeft: "3%",
-                  width: "37%",
-                  float: "right",
-                  height: "500px"
-                }}
-                className={"k-form-fieldset"}
-              >
+              {category == "300" || categories =="300" ? (
+                <FieldArray
+                  name="orderDetails2"
+                  dataItemKey={FORM_DATA_INDEX}
+                  component={FormGrid2}
+                  validator={arrayLengthValidator}
+                />
+              ) : (
                 <FieldArray
                   name="orderDetails"
                   dataItemKey={FORM_DATA_INDEX}
-                  datnum={datnum}
                   component={FormGrid}
+                  workType={workType}
+                  category={category}
                   validator={arrayLengthValidator}
                 />
-              </fieldset>
+              )}
               <BottomContainer>
                 <ButtonContainer>
-                  {workType === "N" ? (
-                    <Button type={"submit"} themeColor={"primary"} icon="save">
-                      생성
-                    </Button>
-                  ) : (
-                    <Button type={"submit"} themeColor={"primary"} icon="save">
-                      수정
-                    </Button>
-                  )}
+                  <Button type={"submit"} themeColor={"primary"} icon="save">
+                    저장
+                  </Button>
                 </ButtonContainer>
               </BottomContainer>
             </FormElement>

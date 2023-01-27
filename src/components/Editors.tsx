@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   Checkbox,
   Input,
+  TextArea,
   NumericTextBox,
   NumericTextBoxBlurEvent,
   NumericTextBoxChangeEvent,
@@ -457,6 +458,36 @@ export const FormInput = (fieldRenderProps: FieldRenderProps) => {
       </Label>
       <div className={"k-form-field-wrap"}>
         <Input valid={valid} id={id} {...others} />
+      </div>
+    </FieldWrapper>
+  );
+};
+
+export const FormTextArea = (fieldRenderProps: FieldRenderProps) => {
+  const {
+    validationMessage,
+    label,
+    id,
+    valid,
+    max,
+    ...others
+  } = fieldRenderProps;
+
+  return (
+    <FieldWrapper>
+      <Label
+        editorId={id}
+        editorValid={valid}
+      >
+        {label}
+      </Label>
+      <div className={"k-form-field-wrap"}>
+        <TextArea
+          valid={valid}
+          id={id}
+          rows={8}
+          {...others}
+        />
       </div>
     </FieldWrapper>
   );

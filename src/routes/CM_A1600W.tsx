@@ -48,6 +48,7 @@ import {
   UseMessages,
   findMessage,
   UsePermissions,
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -976,7 +977,7 @@ const CM_A1600: React.FC = () => {
         <GridContainer>
           <GridTitleContainer>
             <FilterBoxWrap>
-              <FilterBox>
+              <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
                 <tbody>
                   <tr>
                     <th>작성자</th>
@@ -1044,7 +1045,7 @@ const CM_A1600: React.FC = () => {
             <GridContainer>
               <GridTitleContainer>
                 <FilterBoxWrap>
-                  <FilterBox>
+                  <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
                     <tbody>
                       <tr>
                         <th>일자</th>

@@ -50,6 +50,7 @@ import {
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
+  handleKeyPressSearch,
   UseDesignInfo,
   UsePermissions,
 } from "../components/CommonFunction";
@@ -492,7 +493,7 @@ const SA_B3000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-control-name="lblYyyy">기준년도</th>

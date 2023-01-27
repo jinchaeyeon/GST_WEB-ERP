@@ -44,6 +44,7 @@ import {
   UseDesignInfo,
   UseMessages,
   UsePermissions,
+  handleKeyPressSearch
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -1122,7 +1123,7 @@ const EA_A2000: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox className="FilterBox">
+        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-control-name="lblInsertdt">

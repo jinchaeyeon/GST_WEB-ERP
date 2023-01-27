@@ -36,6 +36,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
+  handleKeyPressSearch
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -539,7 +540,7 @@ const PR_A3000W: React.FC = () => {
       </TitleContainer>
 
       <FilterBoxWrap>
-        <FilterBox>
+         <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody className="PR_A3000W">
             <tr>
               <th>작업지시번호</th>
@@ -608,7 +609,7 @@ const PR_A3000W: React.FC = () => {
       </FilterBoxWrap>
 
       <FilterBoxWrap>
-        <FilterBox>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody className="PR_A3000W">
             <tr>
               <th>생산시작시간</th>
