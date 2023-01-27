@@ -35,11 +35,11 @@ import {
   dateformat,
   findMessage,
   getGridItemChangedData,
-  handleKeyPressSearch,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
   UsePermissions,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -647,7 +647,6 @@ const SY_A0120: React.FC = () => {
     resetAllGrid();
     fetchMainGrid();
   };
-
   return (
     <>
       <TitleContainer>
@@ -664,7 +663,7 @@ const SY_A0120: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>회사구분</th>
@@ -805,7 +804,7 @@ const SY_A0120: React.FC = () => {
             )}
           </GridTitleContainer>
           <Grid
-            style={{ height: "75vh" }}
+            style={{ height: "650px" }}
             data={process(
               mainDataResult.data.map((row, idx) => ({
                 ...row,

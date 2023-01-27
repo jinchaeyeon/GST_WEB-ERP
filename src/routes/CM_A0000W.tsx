@@ -36,7 +36,8 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  findMessage
+  findMessage,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -190,12 +191,14 @@ const CM_A0000W: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
+   
       setSelectedState({ [rowData.datnum]: true });
 
       setDetailFilters((prev) => ({
         ...prev,
         location: rowData.location,
         datnum: rowData.datnum,
+        category: rowData.category
       }));
 
       setWorkType("U");
@@ -305,6 +308,7 @@ const CM_A0000W: React.FC = () => {
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     datnum: "",
+    category: ""
   });
 
   //조회조건 파라미터
@@ -364,7 +368,7 @@ const CM_A0000W: React.FC = () => {
       "@p_datnum": detailFilters.datnum,
       "@p_dtgb": "",
       "@p_frdt": "",
-      "@p_category": "",
+      "@p_category": detailFilters.category,
       "@p_title": "",
       "@p_yn": "",
       "@p_attdatnum": "",
@@ -625,7 +629,7 @@ const CM_A0000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>일자구분</th>
@@ -805,6 +809,9 @@ const CM_A0000W: React.FC = () => {
           getVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
           datnum={detailFilters.datnum}
+          categories={categoryListData.find(
+            (item: any) => item.code_name === detailFilters.category
+          )?.sub_code}
           reloadData={reloadData}
           para={detailParameters}
         />

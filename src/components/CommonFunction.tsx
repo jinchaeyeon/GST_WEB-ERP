@@ -1,5 +1,5 @@
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
-import React, { KeyboardEvent, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, tokenState } from "../store/atoms";
@@ -527,6 +527,11 @@ export const checkIsObjValid = (value: object, comparisonValue: object) => {
     : true;
 };
 
+export const handleKeyPressSearch = (e: any, search: any) => {
+  if(e.key === "Enter"){
+    search();
+  }
+}
 export const getGridItemChangedData = (
   event: GridItemChangeEvent,
   dataResult: any,
@@ -767,13 +772,4 @@ export const UseParaPc = (setData: any) => {
 
     setData(locationIp.IPv4 + "/" + browser);
   }, []);
-};
-
-export const handleKeyPressSearch = (
-  e: KeyboardEvent<HTMLDivElement>,
-  search: () => void
-) => {
-  if (e.key === "Enter") {
-    search();
-  }
 };

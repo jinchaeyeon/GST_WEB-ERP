@@ -37,6 +37,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -531,7 +532,7 @@ const MA_B2000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>발주일자</th>

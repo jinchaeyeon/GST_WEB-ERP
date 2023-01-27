@@ -43,6 +43,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -792,7 +793,7 @@ const PR_A9100W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>연월</th>

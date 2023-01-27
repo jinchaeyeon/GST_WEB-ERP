@@ -32,6 +32,7 @@ import {
   convertDateToStrWithTime2,
   UseBizComponent,
   UsePermissions,
+  handleKeyPressSearch
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -250,7 +251,7 @@ const SY_A0120: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>기간</th>

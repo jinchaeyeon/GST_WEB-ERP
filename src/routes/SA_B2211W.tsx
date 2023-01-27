@@ -52,6 +52,7 @@ import {
   UseCustomOption,
   UseDesignInfo,
   UsePermissions,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { ICustData } from "../hooks/interfaces";
@@ -449,7 +450,7 @@ const SA_B2211W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-control-name="lblYyyy">기준년도</th>
