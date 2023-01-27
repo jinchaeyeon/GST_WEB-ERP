@@ -1,5 +1,5 @@
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { KeyboardEvent, useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, tokenState } from "../store/atoms";
@@ -769,7 +769,10 @@ export const UseParaPc = (setData: any) => {
   }, []);
 };
 
-export const handleKeyPressSearch = (e: any, search: any) => {
+export const handleKeyPressSearch = (
+  e: KeyboardEvent<HTMLDivElement>,
+  search: () => void
+) => {
   if (e.key === "Enter") {
     search();
   }
