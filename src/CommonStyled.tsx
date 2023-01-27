@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { GNV_WIDTH } from "./components/CommonString";
 
 export const TitleContainer = styled.div`
   display: flex;
@@ -526,3 +527,127 @@ export const NumberKeypadCell = styled.div`
     color: #ffffff;
   }
 `;
+
+/*=========================================================================
+	// PanelBarNavContainer 시작
+=========================================================================*/
+
+type TWrapper = {
+  isMenuOpend: boolean;
+};
+
+export const Wrapper = styled.div<TWrapper>`
+  display: flex;
+  width: 100%;
+  //overflow: ${(props) => (props.isMenuOpend ? "hidden" : "auto")};
+`;
+
+type TGnv = TWrapper;
+export const Gnv = styled.div<TGnv>`
+  min-width: ${GNV_WIDTH}px;
+  text-align: center;
+
+  min-height: 100vh;
+  background-color: #fff;
+  flex-direction: column;
+
+  .logout span {
+    color: #656565;
+  }
+  .logout > .k-link {
+    justify-content: center;
+  }
+
+  /*=========================================================================
+	미디어 쿼리
+	##Device = 모바일
+	##Screen = 768px 이하 해상도 모바일
+  =========================================================================*/
+  @media (max-width: 768px) {
+    display: ${(props) => (props.isMenuOpend ? "block" : "none")};
+    z-index: 10;
+    position: absolute;
+
+    h1 {
+      display: none;
+    }
+  }
+`;
+
+type ContentType = {
+  CLIENT_WIDTH?: number;
+};
+export const Content = styled.div<ContentType>`
+  width: calc(${(props) => props.CLIENT_WIDTH}px - ${GNV_WIDTH}px);
+
+  /*=========================================================================
+  미디어 쿼리
+  ##Device = 모바일
+  ##Screen = 768px 이하 해상도 모바일
+  =========================================================================*/
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+export const PageWrap = styled.div`
+  padding: 0 15px;
+`;
+
+export const AppName = styled.h1`
+  font-size: 26px;
+  color: #ff6358;
+  font-weight: 400;
+  /* padding: 10px 0; */
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #ebebeb;
+
+  /*=========================================================================
+  미디어 쿼리
+  ##Device = 모바일
+  ##Screen = 768px 이하 해상도 모바일
+  =========================================================================*/
+  @media (max-width: 768px) {
+    border: none;
+  }
+`;
+
+export const TopTitle = styled.div`
+  min-width: ${GNV_WIDTH}px;
+  /* text-align: center; */
+  padding: 0 15px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+
+  button {
+    height: 30px;
+  }
+
+  /*=========================================================================
+  미디어 쿼리
+  ##Device = 모바일
+  ##Screen = 768px 이하 해상도 모바일
+  =========================================================================*/
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+type TModal = TGnv;
+export const Modal = styled.div<TModal>`
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: ${(props) => (props.isMenuOpend ? "block" : "none")};
+  background-color: rgba(0, 0, 0, 0.4);
+`;
+/*=========================================================================
+	// PanelBarNavContainer 종료
+=========================================================================*/
