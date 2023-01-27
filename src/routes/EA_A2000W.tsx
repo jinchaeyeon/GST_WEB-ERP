@@ -1366,29 +1366,32 @@ const EA_A2000: React.FC = () => {
                     />
                   )}
                   {customOptionData !== null
-                    ? customOptionData.menuCustomColumnOptions["grdMyList"].map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 1
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )
+                    ? customOptionData.menuCustomColumnOptions["grdMyList"]
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 1
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                                locked={item.fixed === "None" ? false : true}
+                              />
+                            )
+                        )
                     : gridList
                         .find((grid: TGrid) => grid.gridName === "grdMyList")
                         ?.columns.map((item: TColumn, idx: number) => (
@@ -1408,6 +1411,7 @@ const EA_A2000: React.FC = () => {
                             footerCell={
                               idx === 0 ? mainTotalFooterCell : undefined
                             }
+                            locked={item.fixed === "None" ? false : true}
                           />
                         ))}
                   <GridColumn title={"File"} cell={CommandCell} width="55px" />
@@ -1516,30 +1520,33 @@ const EA_A2000: React.FC = () => {
                   {customOptionData !== null
                     ? customOptionData.menuCustomColumnOptions[
                         "grdUndecideList"
-                      ].map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 1
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )
+                      ]
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 1
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                                locked={item.fixed === "None" ? false : true}
+                              />
+                            )
+                        )
                     : gridList
                         .find(
                           (grid: TGrid) => grid.gridName === "grdUndecideList"
@@ -1561,6 +1568,7 @@ const EA_A2000: React.FC = () => {
                             footerCell={
                               idx === 0 ? mainTotalFooterCell : undefined
                             }
+                            locked={item.fixed === "None" ? false : true}
                           />
                         ))}
 
@@ -1631,32 +1639,33 @@ const EA_A2000: React.FC = () => {
                     />
                   )}
                   {customOptionData !== null
-                    ? customOptionData.menuCustomColumnOptions[
-                        "grdAlreadyList"
-                      ].map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 1
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )
+                    ? customOptionData.menuCustomColumnOptions["grdAlreadyList"]
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 1
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                                locked={item.fixed === "None" ? false : true}
+                              />
+                            )
+                        )
                     : gridList
                         .find(
                           (grid: TGrid) => grid.gridName === "grdAlreadyList"
@@ -1678,6 +1687,7 @@ const EA_A2000: React.FC = () => {
                             footerCell={
                               idx === 0 ? mainTotalFooterCell : undefined
                             }
+                            locked={item.fixed === "None" ? false : true}
                           />
                         ))}
                   <GridColumn title={"File"} cell={CommandCell} width="55px" />
@@ -1747,32 +1757,33 @@ const EA_A2000: React.FC = () => {
                     />
                   )}
                   {customOptionData !== null
-                    ? customOptionData.menuCustomColumnOptions[
-                        "grdRefChkList"
-                      ].map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 1
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )
+                    ? customOptionData.menuCustomColumnOptions["grdRefChkList"]
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 1
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                                locked={item.fixed === "None" ? false : true}
+                              />
+                            )
+                        )
                     : gridList
                         .find(
                           (grid: TGrid) => grid.gridName === "grdRefChkList"
@@ -1794,6 +1805,7 @@ const EA_A2000: React.FC = () => {
                             footerCell={
                               idx === 0 ? mainTotalFooterCell : undefined
                             }
+                            locked={item.fixed === "None" ? false : true}
                           />
                         ))}
                   <GridColumn title={"File"} cell={CommandCell} width="55px" />
@@ -1848,33 +1860,36 @@ const EA_A2000: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null
-                  ? customOptionData.menuCustomColumnOptions["grdLineList"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : dateField.includes(item.fieldName)
-                                ? DateCell
-                                : item.fieldName === "appyn" ||
-                                  item.fieldName === "arbitragb"
-                                ? CheckBoxReadOnlyCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 1
-                                ? detail1TotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )
+                  ? customOptionData.menuCustomColumnOptions["grdLineList"]
+                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      .map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : item.fieldName === "appyn" ||
+                                    item.fieldName === "arbitragb"
+                                  ? CheckBoxReadOnlyCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 1
+                                  ? detail1TotalFooterCell
+                                  : undefined
+                              }
+                              locked={item.fixed === "None" ? false : true}
+                            />
+                          )
+                      )
                   : gridList
                       .find((grid: TGrid) => grid.gridName === "grdLineList")
                       ?.columns.map((item: TColumn, idx: number) => (
@@ -1937,30 +1952,33 @@ const EA_A2000: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null
-                  ? customOptionData.menuCustomColumnOptions["grdRefList"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : dateField.includes(item.fieldName)
-                                ? DateCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 1
-                                ? detail2TotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )
+                  ? customOptionData.menuCustomColumnOptions["grdRefList"]
+                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      .map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 1
+                                  ? detail2TotalFooterCell
+                                  : undefined
+                              }
+                              locked={item.fixed === "None" ? false : true}
+                            />
+                          )
+                      )
                   : gridList
                       .find((grid: TGrid) => grid.gridName === "grdRefList")
                       ?.columns.map((item: TColumn, idx: number) => (
@@ -1980,6 +1998,7 @@ const EA_A2000: React.FC = () => {
                           footerCell={
                             idx === 0 ? detail2TotalFooterCell : undefined
                           }
+                          locked={item.fixed === "None" ? false : true}
                         />
                       ))}
               </Grid>
@@ -2065,36 +2084,39 @@ const EA_A2000: React.FC = () => {
                   editable={false}
                 />
                 {customOptionData !== null
-                  ? customOptionData.menuCustomColumnOptions["grdCmtList"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : dateField.includes(item.fieldName)
-                                ? DateCell
-                                : undefined
-                            }
-                            editable={
-                              item.fieldName === "time" ||
-                              item.fieldName === "insert_user"
-                                ? false
-                                : true
-                            }
-                            footerCell={
-                              item.sortOrder === 1
-                                ? detail3TotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )
+                  ? customOptionData.menuCustomColumnOptions["grdCmtList"]
+                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      .map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              editable={
+                                item.fieldName === "time" ||
+                                item.fieldName === "insert_user"
+                                  ? false
+                                  : true
+                              }
+                              footerCell={
+                                item.sortOrder === 1
+                                  ? detail3TotalFooterCell
+                                  : undefined
+                              }
+                              locked={item.fixed === "None" ? false : true}
+                            />
+                          )
+                      )
                   : gridList
                       .find((grid: TGrid) => grid.gridName === "grdCmtList")
                       ?.columns.map((item: TColumn, idx: number) => (
@@ -2114,6 +2136,7 @@ const EA_A2000: React.FC = () => {
                           footerCell={
                             idx === 0 ? detail3TotalFooterCell : undefined
                           }
+                          locked={item.fixed === "None" ? false : true}
                         />
                       ))}
               </Grid>

@@ -45,6 +45,7 @@ import {
   getCodeFromValue,
   getYn,
   UseGetIp,
+  UseParaPc,
   validator,
 } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
@@ -590,10 +591,8 @@ const KendoWindow = ({
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
 
-  const [ip, setIp] = useState("");
-  const browser = getBrowser();
-  UseGetIp(setIp);
-  const pc = `${ip}|${browser}`;
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({

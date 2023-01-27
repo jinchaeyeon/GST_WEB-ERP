@@ -1,16 +1,25 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
-import { Chat } from "@progress/kendo-react-conversational-ui";
+import {
+  Chat,
+  ChatMessageSendEvent,
+} from "@progress/kendo-react-conversational-ui";
 import { bytesToBase64 } from "byte-base64";
 import { useApi } from "../hooks/api";
+import { Iparameters } from "../store/types";
+import {
+  UseGetValueFromSessionItem,
+  UseParaPc,
+} from "../components/CommonFunction";
 
 interface IData {
+  id: string;
   question: string;
   parent_question: string;
   answer: string;
 }
 
 interface IQnaData {
+  id: string;
   value: string;
   parent: string;
   type: string;
@@ -46,7 +55,7 @@ const initialMessages = [
     author: bot,
     timestamp: new Date(),
     suggestedActions: [],
-    text: "안녕하세요. GST ERP 챗봇입니다.",
+    text: "안녕하세요. GST ERP 챗봇입니다. 무엇이든 물어보세요.",
   },
 ];
 
@@ -54,23 +63,59 @@ const CHAT_BOT: React.FC = () => {
   const processApi = useApi();
   const [messages, setMessages] = useState(initialMessages);
   const [qnaData, setQnaData] = useState<IQnaData[]>([]);
+  const userid = UseGetValueFromSessionItem("user_id");
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
 
-  const addNewMessage = (event: any) => {
+  const addNewMessage = (event: ChatMessageSendEvent) => {
+    const backToInit = "처음으로";
+    const welcomeAnswer = "무엇이든 물어보세요.";
+    const ifAskBackToInit = event.message.text === backToInit;
+
     let botResponse = Object.assign({}, event.message);
-    botResponse.text = firstAnswer(event.message.text);
+
+    //id 구하기
+    const id =
+      qnaData.find((item) => item.value === event.message.text)?.id ?? "";
+    //id 로그처리
+    fetchLogSaved(id);
+
+    // 응답 내용
+    botResponse.text = ifAskBackToInit
+      ? welcomeAnswer
+      : answer(event.message.text);
+
     botResponse.author = bot;
 
-    const suggestedActions = qnaData.filter(
+    // 제안 질문
+    let suggestedActions = qnaData.filter(
       (item) => item.parent === event.message.text
     );
+
+    // '첫질문으로' 제안 질문에 추가
+    suggestedActions.push({
+      id,
+      value: backToInit,
+      parent: "",
+      type: "reply",
+      content: welcomeAnswer,
+    });
+
+    // '첫질문으로' 질문한 경우 첫번째 제안 질문 제시
+    if (ifAskBackToInit) {
+      suggestedActions = qnaData.filter((item) => item.parent === "");
+    }
+
     botResponse.suggestedActions = suggestedActions;
 
-    setMessages([...messages, event.message]);
+    setMessages((prev: any) => [...prev, event.message]);
     setTimeout(() => {
-      setMessages((oldMessages) => [...oldMessages, botResponse]);
+      setMessages((oldMessages: any) => [...oldMessages, botResponse]);
     }, 1000);
   };
-  const firstAnswer = (question: any) => {
+
+  // 질문에 맞는 답변 찾기
+  const answer = (question: any) => {
     const content: IQnaData = qnaData.find(
       (solution) => question === solution.value
     )!;
@@ -80,12 +125,11 @@ const CHAT_BOT: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMain = async () => {
     // if (!permissions?.view) return;
     let data: any;
 
-    const queryStr =
-      "SELECT question, parent_question, answer FROM TEST_QNA_CHAT_BOT";
+    const queryStr = "SELECT * FROM chatBotManager";
     const bytes = require("utf8-bytes");
     const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -108,6 +152,7 @@ const CHAT_BOT: React.FC = () => {
           parent: row.parent_question,
           value: row.question,
           content: row.answer,
+          id: row.id,
           idx: idx,
         })
       );
@@ -130,12 +175,41 @@ const CHAT_BOT: React.FC = () => {
     }
   };
 
+  // 로그 저장 처리
+  const fetchLogSaved = async (id: string) => {
+    // if (!permissions?.view) return;
+    let data: any;
+
+    //파라미터
+    const paraSaved: Iparameters = {
+      procedureName: "P_CHAT_A0001_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "N",
+        "@p_id": id,
+        "@p_userid": userid,
+        "@p_pc": pc,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", paraSaved);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess !== true) {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+  };
   useEffect(() => {
-    fetchMainGrid();
+    fetchMain();
   }, []);
 
   return (
-    <div>
+    <div style={{ height: "80vh", display: "flex" }}>
       <Chat
         user={user}
         messages={messages}

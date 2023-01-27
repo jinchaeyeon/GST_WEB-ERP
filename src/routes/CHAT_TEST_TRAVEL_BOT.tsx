@@ -1,42 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
+import React, { useState, useCallback, useEffect } from "react";
 import { Chat, HeroCard } from "@progress/kendo-react-conversational-ui";
 import { DirectLine } from "botframework-directlinejs";
 import AdaptiveCards from "adaptivecards";
-// const user = {
-//   id: 1,
-//   avatarUrl:
-//     "https://demos.telerik.com/kendo-ui/content/web/Customers/RICSU.jpg",
-// };
 const client = new DirectLine({
   secret: "Y_ly-If6haE.cwA.PQE.ZwOOsq4MlHcD3_YLFI-t9oW6L6DXMMBoi67LBz9WaWA",
 });
-// const bot = { id: 0 };
-const solutions = [
-  {
-    type: "reply",
-    value: "ERP",
-    content: "중소·중견기업의 경영혁신을 위한 전사적 자원관리시스템",
-  },
-  {
-    type: "reply",
-    value: "SCM",
-    content: "자재공급망관리",
-  },
-  {
-    type: "reply",
-    value: "MES",
-    content: "제조실행 시스템 및 생산 시점 관리시스템",
-  },
-];
-// const initialMessages = [
-//   {
-//     author: bot,
-//     timestamp: new Date(),
-//     suggestedActions: solutions,
-//     text: "안녕하세요. GST ERP 챗봇입니다.",
-//   },
-// ];
 
 const bot = {
   id: "Botyo-BotTesting",
@@ -49,8 +17,8 @@ const user = {
 };
 
 const CHAT_BOT: React.FC = () => {
-  const [messages, setMessages] = React.useState<any>([]);
-  const onResponse = React.useCallback(
+  const [messages, setMessages] = useState<any>([]);
+  const onResponse = useCallback(
     (activity: any) => {
       let newMsg;
       if (activity.from.id === bot.id) {
@@ -67,7 +35,7 @@ const CHAT_BOT: React.FC = () => {
     },
     [messages]
   );
-  React.useEffect(() => {
+  useEffect(() => {
     client.activity$.subscribe((activity) => onResponse(activity));
   }, [onResponse]);
   const аttachmentTemplate = (props: any) => {
