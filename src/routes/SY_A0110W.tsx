@@ -264,19 +264,21 @@ const SY_A0110: React.FC = () => {
             <tr>
               <th>기간</th>
               <td className="expanded">
-                <DatePicker
-                  name="frdt"
-                  value={filters.frdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
-                ~
-                <DatePicker
-                  name="todt"
-                  value={filters.todt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
+                <div style={{ display: "flex" }}>
+                  <DatePicker
+                    name="frdt"
+                    value={filters.frdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                  ~
+                  <DatePicker
+                    name="todt"
+                    value={filters.todt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                </div>
               </td>
               <th></th>
               <td></td>

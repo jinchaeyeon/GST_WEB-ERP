@@ -1134,19 +1134,21 @@ const EA_A2000: React.FC = () => {
                   : "작성일자"}
               </th>
               <td colSpan={3} className="expanded">
-                <DatePicker
-                  name="ymdStartDt"
-                  value={filters.ymdStartDt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
-                ~
-                <DatePicker
-                  name="ymdEndDt"
-                  value={filters.ymdEndDt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
+                <div style={{ display: "flex" }}>
+                  <DatePicker
+                    name="ymdStartDt"
+                    value={filters.ymdStartDt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                  ~
+                  <DatePicker
+                    name="ymdEndDt"
+                    value={filters.ymdEndDt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                </div>
               </td>
 
               <th data-control-name="lblDptcd">

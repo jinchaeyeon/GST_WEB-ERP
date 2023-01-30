@@ -40,7 +40,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -834,24 +834,26 @@ const SA_B2000: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>납기일자</th>
               <td colSpan={3} className="expanded">
-                <DatePicker
-                  name="ymdFrdt"
-                  value={filters.ymdFrdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
-                ~
-                <DatePicker
-                  name="ymdTodt"
-                  value={filters.ymdTodt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
+                <div style={{ display: "flex" }}>
+                  <DatePicker
+                    name="ymdFrdt"
+                    value={filters.ymdFrdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                  ~
+                  <DatePicker
+                    name="ymdTodt"
+                    value={filters.ymdTodt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                </div>
               </td>
 
               <th>사업장</th>

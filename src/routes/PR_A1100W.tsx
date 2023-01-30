@@ -51,7 +51,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import PlanWindow from "../components/Windows/PR_A1100W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -1909,24 +1909,26 @@ const PR_A1100W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>수주일자</th>
               <td colSpan={3} className="expanded">
-                <DatePicker
-                  name="frdt"
-                  defaultValue={filters.frdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
-                ~
-                <DatePicker
-                  name="todt"
-                  defaultValue={filters.todt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
+                <div style={{ display: "flex" }}>
+                  <DatePicker
+                    name="frdt"
+                    defaultValue={filters.frdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                  ~
+                  <DatePicker
+                    name="todt"
+                    defaultValue={filters.todt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                </div>
               </td>
               <th>업체코드</th>
               <td>

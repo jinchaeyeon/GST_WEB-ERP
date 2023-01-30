@@ -533,21 +533,21 @@ const MA_B2000W: React.FC = () => {
             <tr>
               <th>발주일자</th>
               <td colSpan={3}>
-                <DatePicker
-                  name="ymdFrdt"
-                  value={filters.ymdFrdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  width="230px"
-                />
-                ~
-                <DatePicker
-                  name="ymdTodt"
-                  value={filters.ymdTodt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  width="230px"
-                />
+                <div style={{ display: "flex" }}>
+                  <DatePicker
+                    name="ymdFrdt"
+                    value={filters.ymdFrdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                  ~
+                  <DatePicker
+                    name="ymdTodt"
+                    value={filters.ymdTodt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                </div>
               </td>
               <th>업체코드</th>
               <td>

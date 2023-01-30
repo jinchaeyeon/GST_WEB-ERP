@@ -748,19 +748,21 @@ const PR_B3000W: React.FC = () => {
             <tr>
               <th>생산일자</th>
               <td colSpan={3} className="expanded">
-                <DatePicker
-                  name="ymdFrdt"
-                  value={filters.ymdFrdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
-                ~
-                <DatePicker
-                  name="ymdTodt"
-                  value={filters.ymdTodt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                />
+                <div style={{ display: "flex" }}>
+                  <DatePicker
+                    name="ymdFrdt"
+                    value={filters.ymdFrdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                  ~
+                  <DatePicker
+                    name="ymdTodt"
+                    value={filters.ymdTodt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                </div>
               </td>
 
               <th>품목코드</th>

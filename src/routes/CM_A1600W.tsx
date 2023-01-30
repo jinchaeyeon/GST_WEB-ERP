@@ -977,7 +977,7 @@ const CM_A1600: React.FC = () => {
         <GridContainer>
           <GridTitleContainer>
             <FilterBoxWrap>
-              <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                 <tbody>
                   <tr>
                     <th>작성자</th>
@@ -1045,23 +1045,27 @@ const CM_A1600: React.FC = () => {
             <GridContainer>
               <GridTitleContainer>
                 <FilterBoxWrap>
-                  <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
                     <tbody>
                       <tr>
                         <th>일자</th>
                         <td colSpan={3} className="expanded">
-                          <DatePicker
-                            name="frdt"
-                            value={todoFilter.frdt}
-                            format="yyyy-MM-dd"
-                            onChange={filterInputChange}
-                          />
-                          <DatePicker
-                            name="todt"
-                            value={todoFilter.todt}
-                            format="yyyy-MM-dd"
-                            onChange={filterInputChange}
-                          />
+                          <div style={{ display: "flex" }}>
+                            <DatePicker
+                              name="frdt"
+                              value={todoFilter.frdt}
+                              format="yyyy-MM-dd"
+                              onChange={filterInputChange}
+                            />
+                            <DatePicker
+                              name="todt"
+                              value={todoFilter.todt}
+                              format="yyyy-MM-dd"
+                              onChange={filterInputChange}
+                            />
+                          </div>
                         </td>
                         <th>완료</th>
                         <td>

@@ -918,20 +918,20 @@ const SA_B2410: React.FC = () => {
             <tr>
               <th>판매일자</th>
               <td colSpan={3}>
-                <DatePicker
-                  name="ymdFrdt"
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  width="300px"
-                />
-                ~
-                <DatePicker
-                  name="ymdTodt"
-                  value={filters.ymdTodt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  width="300px"
-                />
+                <div style={{ display: "flex" }}>
+                  <DatePicker
+                    name="ymdFrdt"
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                  ~
+                  <DatePicker
+                    name="ymdTodt"
+                    value={filters.ymdTodt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                </div>
               </td>
               <th>업체코드</th>
               <td>
@@ -1040,7 +1040,7 @@ const SA_B2410: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "40vh"}}
+                  style={{ height: "40vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
