@@ -263,7 +263,7 @@ const SY_A0110: React.FC = () => {
           <tbody>
             <tr>
               <th>기간</th>
-              <td className="expanded">
+              <td>
                 <div style={{ display: "flex" }}>
                   <DatePicker
                     name="frdt"

@@ -1913,7 +1913,7 @@ const PR_A1100W: React.FC = () => {
           <tbody>
             <tr>
               <th>수주일자</th>
-              <td colSpan={3} className="expanded">
+              <td colSpan={3}>
                 <div style={{ display: "flex" }}>
                   <DatePicker
                     name="frdt"
