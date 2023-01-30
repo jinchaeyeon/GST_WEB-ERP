@@ -124,6 +124,7 @@ const PanelBarNavContainer = (props: any) => {
 
     if (route) {
       setIsMenuOpend(false);
+      setUserOptionsWindowVisible(false);
     }
   };
 
