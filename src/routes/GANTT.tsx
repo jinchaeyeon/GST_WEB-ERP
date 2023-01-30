@@ -298,7 +298,7 @@ function App() {
       <Gantt
         taskListWidth={500}
         scaleType="weeks"
-        height={700}
+        height={"90vh"}
         onDependencyInserted={onDependencyInserted}
         onDependencyDeleted={onDependencyDeleted}
         onTaskInserted={onTaskInserted}
