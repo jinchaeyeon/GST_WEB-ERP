@@ -1051,7 +1051,7 @@ const CM_A1600: React.FC = () => {
                     <tbody>
                       <tr>
                         <th>일자</th>
-                        <td colSpan={3} className="expanded">
+                        <td colSpan={3}>
                           <div style={{ display: "flex" }}>
                             <DatePicker
                               name="frdt"

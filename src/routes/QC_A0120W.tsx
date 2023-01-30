@@ -568,7 +568,7 @@ const QC_A0120: React.FC = () => {
           <tbody>
             <tr>
               <th>불량일자</th>
-              <td colSpan={3} className="expanded">
+              <td colSpan={3}>
                 <div style={{ display: "flex" }}>
                   <DatePicker
                     name="ymdFrdt"

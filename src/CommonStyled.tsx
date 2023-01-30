@@ -135,13 +135,6 @@ export const FilterBox = styled.table`
     position: relative;
     vertical-align: middle;
   }
-  tr td.expanded {
-    min-width: 300px;
-  }
-  tr td.expanded > input,
-  tr td.expanded > .k-input {
-    width: 48%;
-  }
   .k-radio-list.k-list-horizontal {
     justify-content: center;
   }
@@ -593,6 +586,7 @@ export const Content = styled.div<ContentType>`
   =========================================================================*/
   @media (max-width: 768px) {
     width: 100%;
+    padding-bottom: 5vh;
   }
 `;
 

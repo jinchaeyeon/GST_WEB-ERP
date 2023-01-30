@@ -255,7 +255,7 @@ const SY_A0120: React.FC = () => {
           <tbody>
             <tr>
               <th>기간</th>
-              <td colSpan={3} className="expanded">
+              <td colSpan={3}>
                 <div style={{ display: "flex" }}>
                   <DatePicker
                     name="frdt"
