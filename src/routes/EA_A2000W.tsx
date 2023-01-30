@@ -1461,7 +1461,7 @@ const EA_A2000: React.FC = () => {
                   )}
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "280px" }}
+                  style={{ height: "30vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1820,7 +1820,7 @@ const EA_A2000: React.FC = () => {
                 <GridTitle data-control-name="grtlLineList">결재자</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "200px" }}
+                style={{ height: "20vh" }}
                 data={process(
                   detail1DataResult.data.map((row) => ({
                     ...row,
@@ -1920,7 +1920,7 @@ const EA_A2000: React.FC = () => {
                 <GridTitle data-control-name="grtlRefList">참조자</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "150px" }}
+                style={{ height: "21vh" }}
                 data={process(
                   detail2DataResult.data.map((row) => ({
                     ...row,
@@ -2038,7 +2038,7 @@ const EA_A2000: React.FC = () => {
                 )}
               </GridTitleContainer>
               <Grid
-                style={{ height: "390px" }}
+                style={{ height: "45vh" }}
                 data={process(
                   detail3DataResult.data.map((row) => ({
                     ...row,
@@ -2152,7 +2152,7 @@ const EA_A2000: React.FC = () => {
           <GridContainer
             style={{
               width: "650px",
-              height: "710px",
+              height: "79vh",
               overflow: "scroll",
               border: "solid 1px #e6e6e6",
               margin: "5px 0",

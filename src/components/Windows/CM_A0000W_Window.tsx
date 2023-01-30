@@ -572,7 +572,7 @@ const KendoWindow = ({
   //상세그리드 조회
   const fetchGrid = async () => {
     let data: any;
-    console.log(category)
+
     if (category == "300" || categories == "300") {
       try {
         data = await processApi<any>("procedure", subparameters2);
@@ -681,9 +681,6 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-
-    console.log(paraSaved);
-    console.log(data)
     if (data.isSuccess === true) {
       alert("저장되었습니다.");
       if (workType === "U") {

@@ -915,7 +915,7 @@ const MA_B7000: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "360px" }}
+            style={{ height: "37vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -991,7 +991,7 @@ const MA_B7000: React.FC = () => {
             <GridTitle>계정별LOT</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "360px" }}
+            style={{ height: "38vh" }}
             data={process(
               detail1DataResult.data.map((row) => ({
                 ...row,
@@ -1057,7 +1057,7 @@ const MA_B7000: React.FC = () => {
             <GridTitle>LOT별 상세이력</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "360px" }}
+            style={{ height: "38vh" }}
             data={process(detail2DataResult.data, detail2DataState)}
             {...detail2DataState}
             onDataStateChange={onDetail2DataStateChange}

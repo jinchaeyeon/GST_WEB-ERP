@@ -455,7 +455,7 @@ const App: React.FC = () => {
     return (
       <GridContainer clientWidth={CLIENT_WIDTH} inTab={true}>
         <Grid
-          style={{ height: "680px" }}
+          style={{ height: "80vh" }}
           data={process(
             mainDataResult.data.map((row: any) => ({
               ...row,

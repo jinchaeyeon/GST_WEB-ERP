@@ -2125,7 +2125,7 @@ const PR_A1100W: React.FC = () => {
                 </ButtonContainer> */}
               </GridTitleContainer>
               <Grid
-                style={{ height: "680px" }}
+                style={{ height: "73vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2262,7 +2262,7 @@ const PR_A1100W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "680px" }}
+                  style={{ height: "70vh" }}
                   data={process(
                     planDataResult.data.map((row, idx) => ({
                       ...row,
@@ -2387,7 +2387,7 @@ const PR_A1100W: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "680px" }}
+                style={{ height: "70vh" }}
                 data={process(
                   materialDataResult.data.map((row) => ({
                     ...row,

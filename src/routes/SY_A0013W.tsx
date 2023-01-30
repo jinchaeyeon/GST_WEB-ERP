@@ -1312,7 +1312,7 @@ const SY_A0120: React.FC = () => {
               <GridTitle>사용자 리스트</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "650px" }}
+              style={{ height: "80vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -1395,7 +1395,7 @@ const SY_A0120: React.FC = () => {
             </GridTitleContainer>
 
             <TreeList
-              style={{ height: "650px", overflow: "auto" }}
+              style={{ height: "80vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1432,7 +1432,7 @@ const SY_A0120: React.FC = () => {
               <GridTitle>[참조] 전체 메뉴</GridTitle>
             </GridTitleContainer>
             <TreeList
-              style={{ height: "650px", overflow: "auto" }}
+              style={{ height: "80vh", overflow: "auto" }}
               data={mapTree(
                 allMenuDataResult,
                 SUB_ITEMS_FIELD,

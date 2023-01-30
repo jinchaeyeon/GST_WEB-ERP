@@ -576,7 +576,7 @@ const SA_B2221: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "280px" }}
+                  style={{ height: "37vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -649,7 +649,7 @@ const SA_B2221: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "280px" }}
+                  style={{ height: "37vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -783,7 +783,7 @@ const SA_B2221: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "280px" }}
+                  style={{ height: "37vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,

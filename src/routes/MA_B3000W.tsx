@@ -560,7 +560,7 @@ const MA_B3000W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "280px" }}
+                  style={{ height: "37vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -636,7 +636,7 @@ const MA_B3000W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "280px" }}
+                  style={{ height: "37vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -775,7 +775,7 @@ const MA_B3000W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "280px" }}
+                  style={{ height: "37vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,

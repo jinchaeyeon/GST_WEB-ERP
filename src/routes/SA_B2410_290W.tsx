@@ -1059,7 +1059,7 @@ const SA_B2410: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "500px"}}
+                  style={{ height: "40vh"}}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1137,7 +1137,7 @@ const SA_B2410: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "500px" }}
+                  style={{ height: "40vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1218,7 +1218,7 @@ const SA_B2410: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "500px" }}
+                  style={{ height: "40vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1292,7 +1292,7 @@ const SA_B2410: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "500px" }}
+                  style={{ height: "40vh" }}
                   data={process(
                     detail2DataResult.data.map((row) => ({
                       ...row,
@@ -1362,7 +1362,7 @@ const SA_B2410: React.FC = () => {
             <GridTitle>세부정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "300px" }}
+            style={{ height: "32vh" }}
             data={process(
               detail1DataResult.data.map((row) => ({
                 ...row,

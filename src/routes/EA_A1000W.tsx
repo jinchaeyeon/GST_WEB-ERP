@@ -728,12 +728,10 @@ const EA_A1000: React.FC = () => {
         style={{
           display: "inline-block",
           float: "left",
-          width: "760px",
-          height: "80vh",
           marginRight: "3%",
         }}
       >
-        <GridContainer style={{ height: "100%" }}>
+        <GridContainer>
           <GridTitleContainer>
             <GridTitle>참조</GridTitle>
             <ButtonContainer>
@@ -769,6 +767,7 @@ const EA_A1000: React.FC = () => {
               enabled: true,
               mode: "single",
             }}
+            style={{ width: "760px", height: "84vh"}}
             onSelectionChange={onSubSelectionChange}
             //스크롤 조회 기능
             fixedScroll={true}
@@ -811,7 +810,7 @@ const EA_A1000: React.FC = () => {
           </Grid>
         </GridContainer>
       </GridContainerWrap>
-      <GridContainerWrap style={{ display: "inline-block", height: "100vh" }}>
+      <GridContainerWrap style={{ display: "inline-block"}}>
         <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -853,6 +852,7 @@ const EA_A1000: React.FC = () => {
               mainDataState
             )}
             {...mainDataState}
+            style={{height: "50vh"}}
             onDataStateChange={onMainDataStateChange}
             //선택 기능
             dataItemKey={DATA_ITEM_KEY}
@@ -957,6 +957,7 @@ const EA_A1000: React.FC = () => {
               mainData3State
             )}
             {...mainData3State}
+            style={{height: "30vh"}}
             onDataStateChange={onMainData3StateChange}
             //선택 기능
             dataItemKey={DATA_ITEM_KEY}
