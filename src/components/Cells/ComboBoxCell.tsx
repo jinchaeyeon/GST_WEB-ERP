@@ -29,12 +29,15 @@ const ComboBoxCell = (props: CustomCellProps) => {
 
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
+
   let isInEdit = field === dataItem.inEdit;
   if (className.includes("read-only")) {
     isInEdit = false;
   }
+
   const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
   const dataValue = dataItem[field];
+
   const value = listData.find((item: any) => item[valueField] === dataValue);
 
   useEffect(() => {

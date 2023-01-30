@@ -30,6 +30,7 @@ import SY_A0012W from "./routes/SY_A0012W";
 import SY_A0013W from "./routes/SY_A0013W";
 import SY_A0011W from "./routes/SY_A0011W";
 import CM_A1600W from "./routes/CM_A1600W";
+import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
 import PR_A9100W from "./routes/PR_A9100W";
 import PR_B3000W from "./routes/PR_B3000W";
@@ -167,6 +168,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/CM_A0000W" component={CM_A0000W} exact />
             <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
             {/* 전자결재 */}
+            <AuthRoute path="/EA_A1000W" component={EA_A1000W} exact />
             <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
             {/* 원가관리 */}
             <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
