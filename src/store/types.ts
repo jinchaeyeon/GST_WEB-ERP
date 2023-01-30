@@ -107,7 +107,7 @@ export type TMenu = {
 };
 
 export type TPath = {
-  path?: string;
+  path: string;
   menuName: string;
   index: string;
   menuId: string;
