@@ -42,7 +42,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -62,11 +62,13 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
-const DATA_ITEM_KEY = "ordnum";
+const DATA_ITEM_KEY = "itemcd";
+const SUB_DATA_ITEM_KEY2 = "itemcd";
 
 const BA_A0040: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(SUB_DATA_ITEM_KEY2);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -84,7 +86,7 @@ const BA_A0040: React.FC = () => {
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
-        console.log(defaultOption)
+
       setFilters((prev) => ({
         ...prev,
         useyn: defaultOption.find((item: any) => item.id === "useyn").valueCode,
@@ -198,49 +200,27 @@ const BA_A0040: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [detailDataState, setDetailDataState] = useState<State>({
+  const [subData2State, setSubData2State] = useState<State>({
     sort: [],
   });
+
   const [isInitSearch, setIsInitSearch] = useState(false);
-
-  const CommandCell = (props: GridCellProps) => {
-    const onEditClick = () => {
-      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      const rowData = props.dataItem;
-      setSelectedState({ [rowData.ordnum]: true });
-
-      setDetailFilters((prev) => ({
-        ...prev,
-        location: rowData.location,
-        ordnum: rowData.ordnum,
-      }));
-
-      setIsCopy(false);
-      setWorkType("U");
-      setDetailWindowVisible(true);
-    };
-
-    return (
-      <td className="k-command-cell">
-        <Button
-          className="k-grid-edit-command"
-          themeColor={"primary"}
-          fillMode="outline"
-          onClick={onEditClick}
-          icon="edit"
-        ></Button>
-      </td>
-    );
-  };
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
+  );
+
+  const [subData2Result, setSubData2Result] = useState<DataResult>(
+    process([], subData2State)
   );
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
+  const [selectedsubData2State, setSelectedsubData2State] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
@@ -248,6 +228,7 @@ const BA_A0040: React.FC = () => {
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
+  const [subPgNum, setSub2PgNum] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -288,24 +269,19 @@ const BA_A0040: React.FC = () => {
     workType: "Q",
     itemcd: "",
     itemnm: "",
-    insiz:"",
+    insiz: "",
     itemacnt: "",
-    useyn: "",
+    useyn: "Y",
     custcd: "",
     custnm: "",
     itemcd_s: "",
     spec: "",
-    location: "",
+    location: "01",
     remark: "",
     bnatur: "",
-    itemlvl1:"",
-    itemlvl2:"",
-    itemlvl3:"", 
-  });
-
-  const [detailFilters, setDetailFilters] = useState({
-    pgSize: PAGE_SIZE,
-    ordnum: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
   });
 
   //조회조건 파라미터
@@ -315,8 +291,8 @@ const BA_A0040: React.FC = () => {
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "Q",
-      "@p_itemcd": filters.itemcd, 
-      "@p_itemnm": filters.itemnm, 
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
       "@p_insiz": filters.insiz,
       "@p_itemacnt": filters.itemacnt,
       "@p_useyn": filters.useyn,
@@ -324,12 +300,38 @@ const BA_A0040: React.FC = () => {
       "@p_custnm": filters.custnm,
       "@p_itemcd_s": filters.itemcd_s,
       "@p_spec": filters.spec,
-      "@p_location": filters.location,
+      // "@p_location": filters.location,
       "@p_remark": filters.remark,
-      "@p_bnatur":filters.bnatur,
-      "@p_itemlvl1": filters.itemlvl1,
-      "@p_itemlvl2": filters.itemlvl2,
-      "@p_itemlvl3": filters.itemlvl3,
+      // "@p_bnatur":filters.bnatur,
+      // "@p_itemlvl1": filters.itemlvl1,
+      // "@p_itemlvl2": filters.itemlvl2,
+      // "@p_itemlvl3": filters.itemlvl3,
+      "@p_find_row_value": mainPgNum,
+    },
+  };
+
+  const subParameter: Iparameters = {
+    procedureName: "P_BA_A0040W_Q",
+    pageNumber: subPgNum,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q",
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_insiz": filters.insiz,
+      "@p_itemacnt": filters.itemacnt,
+      "@p_useyn": filters.useyn,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_itemcd_s": filters.itemcd_s,
+      "@p_spec": filters.spec,
+      // "@p_location": filters.location,
+      "@p_remark": filters.remark,
+      // "@p_bnatur":filters.bnatur,
+      // "@p_itemlvl1": filters.itemlvl1,
+      // "@p_itemlvl2": filters.itemlvl2,
+      // "@p_itemlvl3": filters.itemlvl3,
+      "@p_find_row_value": mainPgNum,
     },
   };
 
@@ -347,7 +349,7 @@ const BA_A0040: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
+      console.log(rows);
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
@@ -411,10 +413,19 @@ const BA_A0040: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
     setSelectedState(newSelectedState);
     if (tabSelected === 1) {
-    //   fetchGrid("MCHART", selectedRowData.custcd);
+      //   fetchGrid("MCHART", selectedRowData.custcd);
     } else if (tabSelected === 2) {
-    //   fetchGrid("QCHART", selectedRowData.custcd);
+      //   fetchGrid("QCHART", selectedRowData.custcd);
     }
+  };
+
+  const onSubData2SelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: SUB_DATA_ITEM_KEY2,
+    });
+    setSelectedsubData2State(newSelectedState);
   };
 
   //엑셀 내보내기
@@ -431,8 +442,18 @@ const BA_A0040: React.FC = () => {
       setMainPgNum((prev) => prev + 1);
   };
 
+  const onSub2ScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, subPgNum, PAGE_SIZE))
+      setSub2PgNum((prev) => prev + 1);
+  };
+
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
+  };
+
+  const onSubData2StateChange = (event: GridDataStateChangeEvent) => {
+    setSubData2State(event.dataState);
   };
 
   //그리드 푸터
@@ -458,39 +479,8 @@ const BA_A0040: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-  const onCopyClick = () => {
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
-
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item.ordnum === ordnum
-    );
-
-    setDetailFilters((prev) => ({
-      ...prev,
-      location: selectedRowData.location,
-      ordnum: selectedRowData.ordnum,
-    }));
-
-    setIsCopy(true);
-    setWorkType("N");
-    setDetailWindowVisible(true);
-  };
-
-  const reloadData = (workType: string) => {
-    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
-    if (workType === "U") {
-      setIfSelectFirstRow(false);
-    } else {
-      setIfSelectFirstRow(true);
-    }
-
-    resetAllGrid();
-    fetchMainGrid();
-  };
-
-
   useEffect(() => {
-    search();
+    // search();
   }, [tabSelected]);
 
   const handleSelectTab = (e: any) => {
@@ -569,8 +559,9 @@ const BA_A0040: React.FC = () => {
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  const onDetailSortChange = (e: any) => {
-    setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
+
+  const onSubData2SortChange = (e: any) => {
+    setSubData2State((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const search = () => {
@@ -593,7 +584,7 @@ const BA_A0040: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>품목코드</th>
@@ -642,7 +633,7 @@ const BA_A0040: React.FC = () => {
               </td>
             </tr>
             <tr>
-            <th>규격</th>
+              <th>규격</th>
               <td>
                 <Input
                   name="insiz"
@@ -761,64 +752,111 @@ const BA_A0040: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn cell={CommandCell} width="55px" />
             <GridColumn
               field="itemnm"
               title="품목명"
               footerCell={mainTotalFooterCell}
               width="140px"
             />
-            <GridColumn
-              field="itemcd"
-              title="품목코드"
-              width="200px"
-            />
+            <GridColumn field="itemcd" title="품목코드" width="200px" />
             <GridColumn field="spec" title="사양" width="140px" />
             <GridColumn field="insiz" title="규격" width="160px" />
             <GridColumn field="itemacnt" title="품목계정" width="140px" />
-            <GridColumn field="invunit" title="수량단위" width="10px" />
-            <GridColumn field="useyn" title="사용여부" width="100px" cell={CheckBoxCell}/>
+            <GridColumn field="invunit" title="수량단위" width="100px" />
+            <GridColumn
+              field="useyn"
+              title="사용여부"
+              width="100px"
+              cell={CheckBoxCell}
+            />
             <GridColumn
               field="safeqty"
               title="안전재고량"
               width="140px"
+              cell={NumberCell}
             />
             <GridColumn
               field="purleadtime"
               title="구매리드타임"
               width="140px"
+              cell={NumberCell}
             />
-            <GridColumn
-              field="cnt"
-              title="첨부"
-              width="140px"
-            />
-            <GridColumn
-              field="custnm"
-              title="업체명"
-              width="160px"
-            />
-            <GridColumn
-              field="remark"
-              title="비고"
-              width="250px"
-            />
-            <GridColumn
-              field="bnatur"
-              title="재질"
-              width="140px"
-            />
+            <GridColumn field="cnt" title="첨부" width="140px" />
+            <GridColumn field="custnm" title="업체명" width="160px" />
+            <GridColumn field="remark" title="비고" width="250px" />
+            <GridColumn field="bnatur" title="재질" width="140px" />
           </Grid>
         </ExcelExport>
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
-        <TabStripTab title="상세정보">
-
-        </TabStripTab>
+        <TabStripTab title="상세정보"></TabStripTab>
         <TabStripTab title="단가">
-
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>단가정보</GridTitle>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "40vh" }}
+              data={process(
+                subData2Result.data.map((row) => ({
+                  ...row,
+                  // ordsts: ordstsListData.find(
+                  //   (item: any) => item.sub_code === row.ordsts
+                  // )?.code_name,
+                  // doexdiv: doexdivListData.find(
+                  //   (item: any) => item.sub_code === row.doexdiv
+                  // )?.code_name,
+                  // taxdiv: taxdivListData.find(
+                  //   (item: any) => item.sub_code === row.taxdiv
+                  // )?.code_name,
+                  // location: locationListData.find(
+                  //   (item: any) => item.sub_code === row.location
+                  // )?.code_name,
+                  // person: usersListData.find(
+                  //   (item: any) => item.user_id === row.person
+                  // )?.user_name,
+                  // dptcd: departmentsListData.find(
+                  //   (item: any) => item.dptcd === row.dptcd
+                  // )?.dptnm,
+                  // finyn: finynListData.find(
+                  //   (item: any) => item.code === row.finyn
+                  // )?.name,
+                  [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
+                })),
+                subData2State
+              )}
+              {...subData2State}
+              onDataStateChange={onSubData2StateChange}
+              //선택 기능
+              dataItemKey={SUB_DATA_ITEM_KEY2}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSubData2SelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={subData2Result.total}
+              onScroll={onMainScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onSubData2SortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              <GridColumn field="recdt" title="적용일" width="140px" />
+              <GridColumn field="unpitem" title="단가항목" width="250px" />
+              <GridColumn field="amtunit" title="화폐단위" width="140px" />
+              <GridColumn field="itemacnt" title="품목계정" width="140px" />
+              <GridColumn field="unp" title="단가" width="250px" />
+              <GridColumn field="remark" title="비고" width="250px" />
+            </Grid>
+          </GridContainer>
         </TabStripTab>
-    </TabStrip>
+      </TabStrip>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

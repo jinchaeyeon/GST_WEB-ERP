@@ -729,6 +729,7 @@ const EA_A1000: React.FC = () => {
           display: "inline-block",
           float: "left",
           marginRight: "3%",
+          width: "600px", 
         }}
       >
         <GridContainer>
@@ -767,7 +768,7 @@ const EA_A1000: React.FC = () => {
               enabled: true,
               mode: "single",
             }}
-            style={{ width: "760px", height: "84vh"}}
+            style={{height: "78vh"}}
             onSelectionChange={onSubSelectionChange}
             //스크롤 조회 기능
             fixedScroll={true}
@@ -852,7 +853,7 @@ const EA_A1000: React.FC = () => {
               mainDataState
             )}
             {...mainDataState}
-            style={{height: "50vh"}}
+            style={{height: "44vh"}}
             onDataStateChange={onMainDataStateChange}
             //선택 기능
             dataItemKey={DATA_ITEM_KEY}

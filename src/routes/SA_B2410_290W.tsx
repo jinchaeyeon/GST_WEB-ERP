@@ -1344,7 +1344,7 @@ const SA_B2410: React.FC = () => {
             <GridTitle>세부정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "32vh" }}
+            style={{ height: "26vh" }}
             data={process(
               detail1DataResult.data.map((row) => ({
                 ...row,
@@ -1402,21 +1402,21 @@ const SA_B2410: React.FC = () => {
             <GridColumn
               field="wonamt"
               title="원화금액"
-              width="150px"
+              width="100px"
               cell={NumberCell}
               footerCell={detailwonamtFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
-              width="200px"
+              width="100px"
               cell={NumberCell}
               footerCell={detailtaxamtFooterCell}
             />
             <GridColumn
               field="totamt"
               title="합계금액"
-              width="150px"
+              width="130px"
               cell={NumberCell}
               footerCell={detailtotamtFooterCell}
             />

@@ -1024,7 +1024,7 @@ const CM_A1600: React.FC = () => {
             <GridTitle>개인 스케줄러</GridTitle>
           </GridTitleContainer>
           <Scheduler
-            height={"85vh"}
+            height={"83vh"}
             data={schedulerDataResult}
             onDataChange={handleDataChange}
             defaultDate={displayDate}
@@ -1124,7 +1124,7 @@ const CM_A1600: React.FC = () => {
               </GridTitleContainer>
 
               <Grid
-                style={{ height: "85vh" }}
+                style={{ height: "83vh" }}
                 data={process(
                   todoDataResult.data.map((row) => ({
                     ...row,

@@ -576,7 +576,7 @@ const SA_B2211W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "37vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -652,7 +652,7 @@ const SA_B2211W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "37vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -791,7 +791,7 @@ const SA_B2211W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "37vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
