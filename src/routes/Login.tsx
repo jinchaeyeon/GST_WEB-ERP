@@ -108,7 +108,6 @@ const Login: React.FC = () => {
   }, []);
 
   const companyCodeKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    console.log(e);
     if (
       e.ctrlKey &&
       e.key === "'" &&
