@@ -41,7 +41,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -306,7 +306,7 @@ const MA_B7000: React.FC = () => {
       "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
       "@p_location": filters.cboLocation,
-      "@p_yyyymm": convertDateToStr(filters.ymdyyyy),
+      "@p_yyyymm": convertDateToStr(filters.ymdyyyy).slice(0, 4),
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_insiz": filters.insiz,
@@ -331,7 +331,7 @@ const MA_B7000: React.FC = () => {
       "@p_work_type": "DETAIL1",
       "@p_orgdiv": detailFilters1.orgdiv,
       "@p_location": filters.cboLocation,
-      "@p_yyyymm": convertDateToStr(filters.ymdyyyy),
+      "@p_yyyymm": convertDateToStr(filters.ymdyyyy).slice(0, 4),
       "@p_itemcd": detailFilters1.itemcd,
       "@p_itemnm": detailFilters1.itemnm,
       "@p_insiz": detailFilters1.insiz,
@@ -356,7 +356,7 @@ const MA_B7000: React.FC = () => {
       "@p_work_type": "DETAIL2",
       "@p_orgdiv": detailFilters2.orgdiv,
       "@p_location": filters.cboLocation,
-      "@p_yyyymm": convertDateToStr(filters.ymdyyyy),
+      "@p_yyyymm": convertDateToStr(filters.ymdyyyy).slice(0, 4),
       "@p_itemcd": detailFilters1.itemcd,
       "@p_itemnm": detailFilters2.itemnm,
       "@p_insiz": "",
@@ -720,7 +720,7 @@ const MA_B7000: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>재고년도</th>
@@ -976,7 +976,7 @@ const MA_B7000: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
@@ -1040,7 +1040,7 @@ const MA_B7000: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1
+                          item.sortOrder === 0
                             ? detail1TotalFooterCell
                             : undefined
                         }
@@ -1092,7 +1092,7 @@ const MA_B7000: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1
+                          item.sortOrder === 0
                             ? detail2TotalFooterCell
                             : undefined
                         }

@@ -44,7 +44,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -743,7 +743,7 @@ const PR_B3000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>생산일자</th>
@@ -925,7 +925,7 @@ const PR_B3000W: React.FC = () => {
                       }
                       className="read-only"
                       footerCell={
-                        item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }
                       editable={false}
                     />

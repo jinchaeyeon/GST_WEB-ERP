@@ -52,7 +52,7 @@ import {
   UseCustomOption,
   UseDesignInfo,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -113,7 +113,7 @@ const MA_B3100: React.FC = () => {
   );
 
   const [isInitSearch, setIsInitSearch] = useState(false);
-  
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -248,7 +248,7 @@ const MA_B3100: React.FC = () => {
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
 
-    if (
+      if (
         workType === "GRID" ||
         workType === "MONTH" ||
         workType === "QUARTER" ||
@@ -420,7 +420,6 @@ const MA_B3100: React.FC = () => {
       gubun: "전체",
       argument: "-",
     });
-
   };
 
   const quarterDonutRenderTooltip = (context: any) => {
@@ -465,7 +464,7 @@ const MA_B3100: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-control-name="lblYyyy">기준년도</th>
@@ -639,7 +638,7 @@ const MA_B3100: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -717,7 +716,7 @@ const MA_B3100: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -850,7 +849,7 @@ const MA_B3100: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : undefined
                             }
@@ -894,7 +893,7 @@ const MA_B3100: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell

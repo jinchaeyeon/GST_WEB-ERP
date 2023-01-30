@@ -52,7 +52,7 @@ import {
   UseCustomOption,
   UseDesignInfo,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { ICustData } from "../hooks/interfaces";
@@ -450,7 +450,7 @@ const SA_B2211W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-control-name="lblYyyy">기준년도</th>
@@ -626,7 +626,7 @@ const SA_B2211W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -704,7 +704,7 @@ const SA_B2211W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -837,7 +837,7 @@ const SA_B2211W: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : undefined
                             }
@@ -881,7 +881,7 @@ const SA_B2211W: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell

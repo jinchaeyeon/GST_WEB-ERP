@@ -37,7 +37,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -86,9 +86,7 @@ const MA_B2000W: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
-        finyn: defaultOption.find(
-            (item: any) => item.id === "finyn"
-          ).valueCode,
+        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -225,7 +223,6 @@ const MA_B2000W: React.FC = () => {
     }));
   };
 
-
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -243,7 +240,7 @@ const MA_B2000W: React.FC = () => {
     itemacnt: "",
     gonum: "",
     finyn: "%",
-    proccd:"",
+    proccd: "",
     poregnum: "",
     project: "",
     position: "",
@@ -262,8 +259,8 @@ const MA_B2000W: React.FC = () => {
       "@p_work_type": "Q",
       "@p_orgdiv": filters.orgdiv,
       "@p_location": filters.location,
-      "@p_purnum" : filters.purnum,
-      "@p_doexdiv" : filters.doexdiv,
+      "@p_purnum": filters.purnum,
+      "@p_doexdiv": filters.doexdiv,
       "@p_purtype": filters.purtype,
       "@p_reqdt_s": convertDateToStr(filters.ymdFrdt),
       "@p_reqdt_e": convertDateToStr(filters.ymdTodt),
@@ -416,7 +413,7 @@ const MA_B2000W: React.FC = () => {
     });
     return (
       <td colSpan={props.colSpan} style={props.style}>
-         {sum.toLocaleString()}
+        {sum.toLocaleString()}
       </td>
     );
   };
@@ -429,7 +426,7 @@ const MA_B2000W: React.FC = () => {
     });
     setSelectedState(newSelectedState);
   };
-  
+
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -489,7 +486,6 @@ const MA_B2000W: React.FC = () => {
     custitemnm: string;
   }
 
-  
   //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
@@ -532,7 +528,7 @@ const MA_B2000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>발주일자</th>
@@ -611,7 +607,7 @@ const MA_B2000W: React.FC = () => {
               </td>
             </tr>
             <tr>
-            <th>완료여부</th>
+              <th>완료여부</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
@@ -749,15 +745,17 @@ const MA_B2000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : item.sortOrder === 8
-                          ? mainSumFooterCell
-                          : item.sortOrder === 11
-                          ? mainamtFooterCell
-                          : item.sortOrder === 12
-                          ? maintaxamtFooterCell
-                          : item.sortOrder === 13
-                          ? maintotamtFooterCell
-                          : undefined
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell
+                            : item.sortOrder === 8
+                            ? mainSumFooterCell
+                            : item.sortOrder === 11
+                            ? mainamtFooterCell
+                            : item.sortOrder === 12
+                            ? maintaxamtFooterCell
+                            : item.sortOrder === 13
+                            ? maintotamtFooterCell
+                            : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>

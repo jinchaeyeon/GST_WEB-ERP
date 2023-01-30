@@ -37,7 +37,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -57,12 +57,8 @@ import { gridList } from "../store/columns/SA_B2410W_C";
 import MultiSelectDrop from "../components/MultiSelect/MultiSelect";
 
 const dateField = ["outdt"];
-const DATA_ITEM_KEY = "reckey";  
-const numberField = [
-  "itemno",
-  "orglot",
-  "qty",
-];
+const DATA_ITEM_KEY = "reckey";
+const numberField = ["itemno", "orglot", "qty"];
 
 const SA_B2410: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -95,7 +91,7 @@ const SA_B2410: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA171,L_BA004,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173",
-       //대분류, 출고유형, 품목계정, 수량단위, 내수구분, 중분류, 소분류
+    //대분류, 출고유형, 품목계정, 수량단위, 내수구분, 중분류, 소분류
     setBizComponentData
   );
 
@@ -284,7 +280,7 @@ const SA_B2410: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      
+
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
@@ -310,7 +306,7 @@ const SA_B2410: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-    fetchMainGrid();
+      fetchMainGrid();
     }
   }, [mainPgNum]);
 
@@ -362,16 +358,16 @@ const SA_B2410: React.FC = () => {
   };
   const mainSumFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
-    mainDataResult.data.map((item)=> {
+    mainDataResult.data.map((item) => {
       sum = sum += item.qty;
-    })
+    });
     return (
       <td colSpan={props.colSpan} style={props.style}>
         {sum.toLocaleString()}
       </td>
     );
   };
-  
+
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -481,7 +477,7 @@ const SA_B2410: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>출고일자</th>
@@ -701,9 +697,11 @@ const SA_B2410: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : item.sortOrder === 9
-                          ? mainSumFooterCell
-                          : undefined
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell
+                            : item.sortOrder === 9
+                            ? mainSumFooterCell
+                            : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>

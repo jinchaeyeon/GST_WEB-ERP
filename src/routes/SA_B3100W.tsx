@@ -52,7 +52,7 @@ import {
   UseCustomOption,
   UseDesignInfo,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -484,7 +484,7 @@ const SA_B3100W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-control-name="lblYyyy">기준년도</th>
@@ -649,7 +649,7 @@ const SA_B3100W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -720,7 +720,7 @@ const SA_B3100W: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : undefined
                             }
@@ -745,7 +745,7 @@ const SA_B3100W: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -878,7 +878,7 @@ const SA_B3100W: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : undefined
                             }
@@ -959,7 +959,7 @@ const SA_B3100W: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -1143,7 +1143,7 @@ const SA_B3100W: React.FC = () => {
                             ]
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder === 0
                               ? gridTotalFooterCell
                               : undefined
                           }
@@ -1324,7 +1324,7 @@ const SA_B3100W: React.FC = () => {
                           field={item.fieldName}
                           title={item.caption}
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder === 0
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell

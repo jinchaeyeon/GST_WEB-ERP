@@ -37,7 +37,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -56,15 +56,8 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2100W_C";
 
 const dateField = ["indt"];
-const DATA_ITEM_KEY = "reckey";  
-const numberField = [
-  "qty",
-  "unp",
-  "amt",
-  "wonamt",
-  "taxamt",
-  "totamt"
-];
+const DATA_ITEM_KEY = "reckey";
+const numberField = ["qty", "unp", "amt", "wonamt", "taxamt", "totamt"];
 
 const MA_B2100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -96,7 +89,7 @@ const MA_B2100W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA171,L_BA004,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
-       //대분류, 출고유형, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
+    //대분류, 출고유형, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
     setBizComponentData
   );
 
@@ -131,7 +124,7 @@ const MA_B2100W: React.FC = () => {
   const [PacListData, setPacListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
@@ -345,7 +338,7 @@ const MA_B2100W: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-    fetchMainGrid();
+      fetchMainGrid();
     }
   }, [mainPgNum]);
 
@@ -397,9 +390,9 @@ const MA_B2100W: React.FC = () => {
   };
   const mainSumFooterCell = (props: GridFooterCellProps, index: number) => {
     var sum = 0;
-    mainDataResult.data.map((item)=> {
+    mainDataResult.data.map((item) => {
       sum = sum += item.qty;
-    })
+    });
     return (
       <td colSpan={props.colSpan} style={props.style}>
         {sum.toLocaleString()}
@@ -408,9 +401,9 @@ const MA_B2100W: React.FC = () => {
   };
   const mainamtFooterCell = (props: GridFooterCellProps, index: number) => {
     var sum = 0;
-    mainDataResult.data.map((item)=> {
+    mainDataResult.data.map((item) => {
       sum = sum += item.amt;
-    })
+    });
     return (
       <td colSpan={props.colSpan} style={props.style}>
         {sum.toLocaleString()}
@@ -419,9 +412,9 @@ const MA_B2100W: React.FC = () => {
   };
   const mainwonamtFooterCell = (props: GridFooterCellProps, index: number) => {
     var sum = 0;
-    mainDataResult.data.map((item)=> {
+    mainDataResult.data.map((item) => {
       sum = sum += item.wonamt;
-    })
+    });
     return (
       <td colSpan={props.colSpan} style={props.style}>
         {sum.toLocaleString()}
@@ -430,9 +423,9 @@ const MA_B2100W: React.FC = () => {
   };
   const maintaxamtFooterCell = (props: GridFooterCellProps, index: number) => {
     var sum = 0;
-    mainDataResult.data.map((item)=> {
+    mainDataResult.data.map((item) => {
       sum = sum += item.taxamt;
-    })
+    });
     return (
       <td colSpan={props.colSpan} style={props.style}>
         {sum.toLocaleString()}
@@ -441,12 +434,12 @@ const MA_B2100W: React.FC = () => {
   };
   const maintotamtFooterCell = (props: GridFooterCellProps, index: number) => {
     var sum = 0;
-    mainDataResult.data.map((item)=> {
+    mainDataResult.data.map((item) => {
       sum = sum += item.totamt;
-    })
+    });
     return (
       <td colSpan={props.colSpan} style={props.style}>
-         {sum.toLocaleString()}
+        {sum.toLocaleString()}
       </td>
     );
   };
@@ -560,12 +553,12 @@ const MA_B2100W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-            <th>입고구분</th>
+              <th>입고구분</th>
               <td>
-              {customOptionData !== null && (
+                {customOptionData !== null && (
                   <CustomOptionComboBox
                     name="inkind"
                     value={filters.inkind}
@@ -576,7 +569,7 @@ const MA_B2100W: React.FC = () => {
               </td>
               <th>입고일자</th>
               <td colSpan={3}>
-              <DatePicker
+                <DatePicker
                   name="ymdFrdt"
                   value={filters.ymdFrdt}
                   format="yyyy-MM-dd"
@@ -618,7 +611,7 @@ const MA_B2100W: React.FC = () => {
               </td>
             </tr>
             <tr>
-            <th>내수구분</th>
+              <th>내수구분</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
@@ -678,8 +671,8 @@ const MA_B2100W: React.FC = () => {
             <tr>
               <th>품목계정</th>
               <td colSpan={1}>
-              {customOptionData !== null && (
-                 <CustomOptionComboBox
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
                     name="itemacnt"
                     value={filters.itemacnt}
                     customOptionData={customOptionData}
@@ -774,7 +767,7 @@ const MA_B2100W: React.FC = () => {
                 )?.user_name,
                 pac: PacListData.find(
                   (item: any) => item.sub_code === row.inkind
-                  )?.code_name,
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -820,17 +813,19 @@ const MA_B2100W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : item.sortOrder === 11
-                          ? mainSumFooterCell
-                          : item.sortOrder === 15
-                          ? mainamtFooterCell
-                          : item.sortOrder === 16
-                          ? mainwonamtFooterCell
-                          : item.sortOrder === 17
-                          ? maintaxamtFooterCell
-                          : item.sortOrder === 18
-                          ? maintotamtFooterCell
-                          : undefined
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell
+                            : item.sortOrder === 11
+                            ? mainSumFooterCell
+                            : item.sortOrder === 15
+                            ? mainamtFooterCell
+                            : item.sortOrder === 16
+                            ? mainwonamtFooterCell
+                            : item.sortOrder === 17
+                            ? maintaxamtFooterCell
+                            : item.sortOrder === 18
+                            ? maintotamtFooterCell
+                            : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
