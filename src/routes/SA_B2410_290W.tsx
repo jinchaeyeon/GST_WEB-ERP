@@ -13,10 +13,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import {
-  TabStrip,
-  TabStripTab,
-} from "@progress/kendo-react-layout";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   Title,
   FilterBoxWrap,
@@ -62,7 +59,7 @@ import { gridList } from "../store/columns/SA_B2410_290W_C";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
-const DETAIL_DATA_ITEM_KEY2 = "num"
+const DETAIL_DATA_ITEM_KEY2 = "num";
 const numberField = ["qty", "wonamt", "taxamt", "totamt"];
 const dateField = ["outdt"];
 
@@ -75,7 +72,7 @@ const SA_B2410: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   //UseMessages(pathname, setMessagesData);
@@ -267,7 +264,7 @@ const SA_B2410: React.FC = () => {
     custcd: "",
     itemcd: "",
     workType: "detail",
-    ymdFrdt: filters.ymdFrdt
+    ymdFrdt: filters.ymdFrdt,
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
@@ -351,13 +348,13 @@ const SA_B2410: React.FC = () => {
   const fetchDetailGrid1 = async () => {
     let data: any;
     setLoading(true);
-    
+
     try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
       data = null;
     }
-    console.log(detailParameters)
+    console.log(detailParameters);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -370,9 +367,9 @@ const SA_B2410: React.FC = () => {
           };
         });
       }
-    } 
+    }
     setLoading(false);
-  }
+  };
 
   const fetchDetailGrid2 = async () => {
     let data: any;
@@ -382,7 +379,7 @@ const SA_B2410: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(detail2Parameters)
+    console.log(detail2Parameters);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -415,7 +412,7 @@ const SA_B2410: React.FC = () => {
       fetchMainGrid();
     }
   }, [mainPgNum]);
-  
+
   useEffect(() => {
     resetDetailGrid();
     if (customOptionData !== null) {
@@ -452,32 +449,31 @@ const SA_B2410: React.FC = () => {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.custcd]: true });
 
-        if (filters.workType == "Q1"){
+        if (filters.workType == "Q1") {
           setDetailFilters1((prev) => ({
             ...prev,
             custcd: firstRowData.custcd,
             itemcd: "",
           }));
-        } 
-        if (filters.workType == "Q2"){
+        }
+        if (filters.workType == "Q2") {
           setDetailFilters1((prev) => ({
             ...prev,
             custcd: "",
             itemcd: firstRowData.itemcd,
           }));
-        } 
-        if (filters.workType == "Q3"){
+        }
+        if (filters.workType == "Q3") {
           setDetailFilters2((prev) => ({
             ...prev,
             custcd: firstRowData.custcd,
           }));
-        } 
+        }
         setIfSelectFirstRow(true);
       }
     }
   }, [mainDataResult]);
 
-  
   useEffect(() => {
     if (ifSelectFirstRow) {
       if (detail1DataResult.total > 0) {
@@ -497,7 +493,7 @@ const SA_B2410: React.FC = () => {
         setDetail2SelectedState({ [firstRowData.outdt]: true });
         setDetailFilters1((prev) => ({
           ...prev,
-          ymdFrdt: firstRowData.outdt
+          ymdFrdt: firstRowData.outdt,
         }));
         setIfSelectFirstRow(true);
       }
@@ -518,7 +514,6 @@ const SA_B2410: React.FC = () => {
     setDetail1DataResult(process([], detail1DataState));
   };
 
-  
   const resetDetail2Grid = () => {
     setDetail2PgNum(1);
     setDetail1PgNum(1);
@@ -566,7 +561,7 @@ const SA_B2410: React.FC = () => {
       selectedState: detailSelectedState,
       dataItemKey: DETAIL_DATA_ITEM_KEY,
     });
-    setDetailSelectedState(newSelectedState);  
+    setDetailSelectedState(newSelectedState);
   };
 
   const onSelection2Change = (event: GridSelectionChangeEvent) => {
@@ -582,7 +577,7 @@ const SA_B2410: React.FC = () => {
 
     setDetailFilters1((prev) => ({
       ...prev,
-      ymdFrdt: selectedRowData.outdt
+      ymdFrdt: selectedRowData.outdt,
     }));
   };
   //그리드 푸터
@@ -659,9 +654,7 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-  const detailunpFooterCell = (
-    props: GridFooterCellProps,
-  ) => {
+  const detailunpFooterCell = (props: GridFooterCellProps) => {
     var sum = 0;
     detail1DataResult.data.map((item) => {
       sum = sum += item.unp;
@@ -673,9 +666,7 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-  const detailwonamtFooterCell = (
-    props: GridFooterCellProps,
-  ) => {
+  const detailwonamtFooterCell = (props: GridFooterCellProps) => {
     var sum = 0;
     detail1DataResult.data.map((item) => {
       sum = sum += item.wonamt;
@@ -687,9 +678,7 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-  const detailtaxamtFooterCell = (
-    props: GridFooterCellProps,
-  ) => {
+  const detailtaxamtFooterCell = (props: GridFooterCellProps) => {
     var sum = 0;
     detail1DataResult.data.map((item) => {
       sum = sum += item.taxamt;
@@ -700,9 +689,7 @@ const SA_B2410: React.FC = () => {
       </td>
     );
   };
-  const detailtotamtFooterCell = (
-    props: GridFooterCellProps,
-  ) => {
+  const detailtotamtFooterCell = (props: GridFooterCellProps) => {
     var sum = 0;
     detail1DataResult.data.map((item) => {
       sum = sum += item.totamt;
@@ -714,7 +701,6 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-
   const subTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -723,9 +709,7 @@ const SA_B2410: React.FC = () => {
     );
   };
 
- const subqtyFooterCell = (
-    props: GridFooterCellProps,
-  ) => {
+  const subqtyFooterCell = (props: GridFooterCellProps) => {
     var sum = 0;
     detail2DataResult.data.map((item) => {
       sum = sum += item.outqty;
@@ -737,9 +721,7 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-  const suboutamtFooterCell = (
-    props: GridFooterCellProps,
-  ) => {
+  const suboutamtFooterCell = (props: GridFooterCellProps) => {
     var sum = 0;
     detail2DataResult.data.map((item) => {
       sum = sum += item.outamt;
@@ -755,38 +737,38 @@ const SA_B2410: React.FC = () => {
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
-        "workType": "Q1",
+        workType: "Q1",
       }));
       setDetailFilters1((prev) => ({
         ...prev,
-        "workType": "detail",
+        workType: "detail",
         custcd: "",
         itemcd: "",
-        ymdFrdt: filters.ymdFrdt
+        ymdFrdt: filters.ymdFrdt,
       }));
     } else if (e.selected == 1) {
       setFilters((prev) => ({
         ...prev,
-        "workType":  "Q2",
+        workType: "Q2",
       }));
       setDetailFilters1((prev) => ({
         ...prev,
-        "workType": "detail2",
+        workType: "detail2",
         custcd: "",
         itemcd: "",
-        ymdFrdt: filters.ymdFrdt
+        ymdFrdt: filters.ymdFrdt,
       }));
     } else if (e.selected == 2) {
       setFilters((prev) => ({
         ...prev,
-        "workType":  "Q3",
+        workType: "Q3",
       }));
       setDetailFilters1((prev) => ({
         ...prev,
-        "workType": "detail3",
+        workType: "detail3",
         custcd: "",
         itemcd: "",
-        ymdFrdt: ""
+        ymdFrdt: "",
       }));
     }
 
@@ -806,19 +788,19 @@ const SA_B2410: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    if (filters.workType == "Q1"){
+    if (filters.workType == "Q1") {
       setDetailFilters1((prev) => ({
         ...prev,
         custcd: selectedRowData.custcd,
         itemcd: "",
       }));
-    } else if (filters.workType == "Q2"){
+    } else if (filters.workType == "Q2") {
       setDetailFilters1((prev) => ({
         ...prev,
         custcd: "",
         itemcd: selectedRowData.itemcd,
       }));
-    } else if (filters.workType == "Q3"){
+    } else if (filters.workType == "Q3") {
       setDetailFilters1((prev) => ({
         ...prev,
         custcd: selectedRowData.custcd,
@@ -828,7 +810,7 @@ const SA_B2410: React.FC = () => {
         ...prev,
         custcd: selectedRowData.custcd,
       }));
-    } 
+    }
   };
 
   const onCustWndClick = () => {
@@ -910,7 +892,6 @@ const SA_B2410: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-
   const search = () => {
     resetAllGrid();
     fetchMainGrid();
@@ -932,7 +913,7 @@ const SA_B2410: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>판매일자</th>
@@ -1106,7 +1087,7 @@ const SA_B2410: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1
+                                item.sortOrder === 0
                                   ? mainTotalFooterCell
                                   : item.sortOrder === 3
                                   ? mainqtyooterCell
@@ -1187,17 +1168,17 @@ const SA_B2410: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1
-                                ? mainTotalFooterCell
-                                : item.sortOrder === 5
-                                ? mainqtyooterCell
-                                : item.sortOrder === 7
-                                ? mainwonamtFooterCell
-                                : item.sortOrder === 8
-                                ? maintaxamtFooterCell
-                                : item.sortOrder === 9
-                                ? maintotamtFooterCell
-                                : undefined
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell
+                                  : item.sortOrder === 5
+                                  ? mainqtyooterCell
+                                  : item.sortOrder === 7
+                                  ? mainwonamtFooterCell
+                                  : item.sortOrder === 8
+                                  ? maintaxamtFooterCell
+                                  : item.sortOrder === 9
+                                  ? maintotamtFooterCell
+                                  : undefined
                               }
                               locked={item.fixed === "None" ? false : true}
                             ></GridColumn>
@@ -1209,7 +1190,7 @@ const SA_B2410: React.FC = () => {
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="일자별">
-        <GridContainerWrap>
+          <GridContainerWrap>
             <GridContainer>
               <ExcelExport
                 data={mainDataResult.data}
@@ -1265,17 +1246,17 @@ const SA_B2410: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1
-                                ? mainTotalFooterCell
-                                : item.sortOrder === 3
-                                ? mainqtyooterCell
-                                : item.sortOrder === 4
-                                ? mainwonamtFooterCell
-                                : item.sortOrder === 5
-                                ? maintaxamtFooterCell
-                                : item.sortOrder === 6
-                                ? maintotamtFooterCell
-                                : undefined
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell
+                                  : item.sortOrder === 3
+                                  ? mainqtyooterCell
+                                  : item.sortOrder === 4
+                                  ? mainwonamtFooterCell
+                                  : item.sortOrder === 5
+                                  ? maintaxamtFooterCell
+                                  : item.sortOrder === 6
+                                  ? maintotamtFooterCell
+                                  : undefined
                               }
                               locked={item.fixed === "None" ? false : true}
                             ></GridColumn>
@@ -1296,7 +1277,8 @@ const SA_B2410: React.FC = () => {
                   data={process(
                     detail2DataResult.data.map((row) => ({
                       ...row,
-                      [SELECTED_FIELD]: detail2SelectedState[detailId2Getter(row)],
+                      [SELECTED_FIELD]:
+                        detail2SelectedState[detailId2Getter(row)],
                     })),
                     detail2DataState
                   )}
@@ -1332,19 +1314,19 @@ const SA_B2410: React.FC = () => {
                               width={item.width}
                               cell={
                                 numberField.includes(item.fieldName)
-                                  ? NumberCell 
+                                  ? NumberCell
                                   : dateField.includes(item.fieldName)
                                   ? DateCell
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1
-                                ? subTotalFooterCell
-                                : item.sortOrder === 2
-                                ? subqtyFooterCell
-                                : item.sortOrder === 3
-                                ? suboutamtFooterCell
-                                : undefined
+                                item.sortOrder === 0
+                                  ? subTotalFooterCell
+                                  : item.sortOrder === 2
+                                  ? subqtyFooterCell
+                                  : item.sortOrder === 3
+                                  ? suboutamtFooterCell
+                                  : undefined
                               }
                               locked={item.fixed === "None" ? false : true}
                             ></GridColumn>

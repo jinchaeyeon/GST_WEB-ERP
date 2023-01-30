@@ -37,7 +37,7 @@ import {
   UseMessages,
   UsePermissions,
   findMessage,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -185,20 +185,21 @@ const CM_A0000W: React.FC = () => {
   );
 
   //window
-  const [detailWindowVisible, setDetailWindowVisible] = useState<boolean>(false);
+  const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-   
+
       setSelectedState({ [rowData.datnum]: true });
 
       setDetailFilters((prev) => ({
         ...prev,
         location: rowData.location,
         datnum: rowData.datnum,
-        category: rowData.category
+        category: rowData.category,
       }));
 
       setWorkType("U");
@@ -245,7 +246,7 @@ const CM_A0000W: React.FC = () => {
     }
 
     const datnum = Object.getOwnPropertyNames(selectedState)[0];
-    
+
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
@@ -308,7 +309,7 @@ const CM_A0000W: React.FC = () => {
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     datnum: "",
-    category: ""
+    category: "",
   });
 
   //조회조건 파라미터
@@ -346,7 +347,7 @@ const CM_A0000W: React.FC = () => {
       "@p_userid": "",
       "@p_contents": "",
       "@p_publish_yn": "",
-      "@p_publish_start_date":"",
+      "@p_publish_start_date": "",
       "@p_publish_end_date": "",
       "@p_person": "",
       "@p_pc": "",
@@ -409,7 +410,7 @@ const CM_A0000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       alert(findMessage(messagesData, "CM_A0000W_002"));
 
@@ -629,7 +630,7 @@ const CM_A0000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>일자구분</th>
@@ -772,10 +773,7 @@ const CM_A0000W: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              cell={CommandCell}
-              width="100px"
-            />
+            <GridColumn cell={CommandCell} width="100px" />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
                 .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
@@ -795,7 +793,7 @@ const CM_A0000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
@@ -809,9 +807,11 @@ const CM_A0000W: React.FC = () => {
           getVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
           datnum={detailFilters.datnum}
-          categories={categoryListData.find(
-            (item: any) => item.code_name === detailFilters.category
-          )?.sub_code}
+          categories={
+            categoryListData.find(
+              (item: any) => item.code_name === detailFilters.category
+            )?.sub_code
+          }
           reloadData={reloadData}
           para={detailParameters}
         />

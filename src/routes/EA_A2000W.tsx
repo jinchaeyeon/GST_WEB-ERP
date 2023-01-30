@@ -44,7 +44,7 @@ import {
   UseDesignInfo,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -1123,7 +1123,7 @@ const EA_A2000: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-control-name="lblInsertdt">
@@ -1384,7 +1384,7 @@ const EA_A2000: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 1
+                                  item.sortOrder === 0
                                     ? mainTotalFooterCell
                                     : undefined
                                 }
@@ -1539,7 +1539,7 @@ const EA_A2000: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 1
+                                  item.sortOrder === 0
                                     ? mainTotalFooterCell
                                     : undefined
                                 }
@@ -1658,7 +1658,7 @@ const EA_A2000: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 1
+                                  item.sortOrder === 0
                                     ? mainTotalFooterCell
                                     : undefined
                                 }
@@ -1776,7 +1776,7 @@ const EA_A2000: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 1
+                                  item.sortOrder === 0
                                     ? mainTotalFooterCell
                                     : undefined
                                 }
@@ -1882,7 +1882,7 @@ const EA_A2000: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1
+                                item.sortOrder === 0
                                   ? detail1TotalFooterCell
                                   : undefined
                               }
@@ -1971,7 +1971,7 @@ const EA_A2000: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1
+                                item.sortOrder === 0
                                   ? detail2TotalFooterCell
                                   : undefined
                               }
@@ -2109,7 +2109,7 @@ const EA_A2000: React.FC = () => {
                                   : true
                               }
                               footerCell={
-                                item.sortOrder === 1
+                                item.sortOrder === 0
                                   ? detail3TotalFooterCell
                                   : undefined
                               }

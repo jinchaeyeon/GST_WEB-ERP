@@ -37,7 +37,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -67,7 +67,7 @@ const numberField = [
   "amt",
   "wonamt",
   "taxamt",
-  "dlramt"
+  "dlramt",
 ];
 
 const SA_B2205: React.FC = () => {
@@ -200,7 +200,7 @@ const SA_B2205: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
-      
+
       fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -584,20 +584,20 @@ const SA_B2205: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>일자</th>
               <td colSpan={3}>
-                <div style={{width: "200px", display: "inline-block"}}>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cbofrdt"
-                    value={filters.cbofrdt}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
+                <div style={{ width: "200px", display: "inline-block" }}>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="cbofrdt"
+                      value={filters.cbofrdt}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
                 </div>
                 <DatePicker
                   name="ymdFrdt"
@@ -845,7 +845,7 @@ const SA_B2205: React.FC = () => {
                 finyn: finynListData.find(
                   (item: any) => item.code === row.finyn
                 )?.name,
-                dptcd : departmentsListData.find(
+                dptcd: departmentsListData.find(
                   (item: any) => item.dptcd === row.dptcd
                 )?.dptnm,
                 itemlvl1: itemlvl1ListData.find(
@@ -908,7 +908,7 @@ const SA_B2205: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
@@ -931,7 +931,7 @@ const SA_B2205: React.FC = () => {
           setData={setItemData}
         />
       )}
-      
+
       {gridList.map((grid: any) =>
         grid.columns.map((column: any) => (
           <div

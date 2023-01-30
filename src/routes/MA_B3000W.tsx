@@ -52,7 +52,7 @@ import {
   UseCustomOption,
   UseDesignInfo,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { ICustData } from "../hooks/interfaces";
@@ -245,7 +245,7 @@ const MA_B3000W: React.FC = () => {
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
 
-    if (
+      if (
         workType === "GRID" ||
         workType === "MONTH" ||
         workType === "QUARTER"
@@ -399,7 +399,6 @@ const MA_B3000W: React.FC = () => {
       gubun: "전체",
       argument: "-",
     });
-
   };
 
   const quarterDonutRenderTooltip = (context: any) => {
@@ -444,7 +443,7 @@ const MA_B3000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-control-name="lblYyyy">기준년도</th>
@@ -610,7 +609,7 @@ const MA_B3000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -688,7 +687,7 @@ const MA_B3000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -821,7 +820,7 @@ const MA_B3000W: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : undefined
                             }
@@ -865,7 +864,7 @@ const MA_B3000W: React.FC = () => {
                             field={item.fieldName}
                             title={item.caption}
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder === 0
                                 ? gridTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell

@@ -32,7 +32,7 @@ import {
   setDefaultDate,
   UseCustomOption,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -259,7 +259,7 @@ const SY_A0110: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>기간</th>
@@ -343,7 +343,7 @@ const SY_A0110: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       footerCell={
-                        item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )
