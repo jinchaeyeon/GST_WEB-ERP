@@ -613,7 +613,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
       fetchControl();
     } else {
       console.log("[오류 발생]");
@@ -899,7 +898,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       if (customOptionParaData.work_type === "init") {
         alert("초기화가 완료되었습니다.");
       } else {
-        alert("저장이 완료되었습니다.");
       }
 
       if (customOptionParaData.type === "Column") {

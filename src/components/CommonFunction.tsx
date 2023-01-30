@@ -171,7 +171,8 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
 
 //messages API 데이터에서 ID가 매칭되는 메시지를 찾아서 반환
 export const findMessage = (messagesData: any, id: string) => {
-  return messagesData.find((item: any) => item.messageId === id).message;
+  const messageItem = messagesData.find((item: any) => item.messageId === id);
+  return messageItem ? messageItem.message : "";
 };
 
 //현재 경로를 받아서 메시지 조회 후 결과값을 반환
@@ -528,10 +529,10 @@ export const checkIsObjValid = (value: object, comparisonValue: object) => {
 };
 
 export const handleKeyPressSearch = (e: any, search: any) => {
-  if(e.key === "Enter"){
+  if (e.key === "Enter") {
     search();
   }
-}
+};
 export const getGridItemChangedData = (
   event: GridItemChangeEvent,
   dataResult: any,
