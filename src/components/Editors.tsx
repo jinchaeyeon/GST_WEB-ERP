@@ -1,10 +1,10 @@
+/*  Form 내에서 사용되는 컴포넌트들을 저장하는 페이지   */
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Checkbox,
   Input,
   TextArea,
   NumericTextBox,
-  NumericTextBoxBlurEvent,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
 import {
@@ -12,8 +12,8 @@ import {
   FieldRenderProps,
   FieldWrapper,
 } from "@progress/kendo-react-form";
-import { Label, Error, Hint } from "@progress/kendo-react-labels";
-import { GridCellProps, GridFilterCellProps } from "@progress/kendo-react-grid";
+import { Label, Error } from "@progress/kendo-react-labels";
+import { GridCellProps } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import FieldDropDownList from "./DropDownLists/FieldDropDownList";
 import FieldComboBox from "./ComboBoxes/FieldComboBox";
@@ -28,8 +28,7 @@ import moment from "moment";
 import { useApi } from "../hooks/api";
 import { FORM_DATA_INDEX } from "./CommonString";
 import { bytesToBase64 } from "byte-base64";
-
-/*  Form 내에서 사용되는 컴포넌트들을 저장하는 페이지   */
+import { IFormComboBoxCell } from "../hooks/interfaces";
 
 //Grid Cell에 표시되는 Value
 export const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
@@ -326,22 +325,7 @@ export const FormDropDownListCell = (props: GridCellProps) => {
     : defaultRendering;
 };
 
-interface IComboBoxColumns {
-  sortOrder: number;
-  fieldName: string;
-  caption: string;
-  columnWidth: number;
-  dataAlignment: string;
-}
-interface CustomCellProps extends GridCellProps {
-  bizComponent?: any;
-  valueField?: string;
-  textField?: string;
-  data?: any[];
-  columns?: IComboBoxColumns[];
-}
-
-export const FormComboBoxCell = (props: CustomCellProps) => {
+export const FormComboBoxCell = (props: IFormComboBoxCell) => {
   const {
     field,
     dataItem,
@@ -464,30 +448,16 @@ export const FormInput = (fieldRenderProps: FieldRenderProps) => {
 };
 
 export const FormTextArea = (fieldRenderProps: FieldRenderProps) => {
-  const {
-    validationMessage,
-    label,
-    id,
-    valid,
-    max,
-    ...others
-  } = fieldRenderProps;
+  const { validationMessage, label, id, valid, max, ...others } =
+    fieldRenderProps;
 
   return (
     <FieldWrapper>
-      <Label
-        editorId={id}
-        editorValid={valid}
-      >
+      <Label editorId={id} editorValid={valid}>
         {label}
       </Label>
       <div className={"k-form-field-wrap"}>
-        <TextArea
-          valid={valid}
-          id={id}
-          rows={8}
-          {...others}
-        />
+        <TextArea valid={valid} id={id} rows={8} {...others} />
       </div>
     </FieldWrapper>
   );
