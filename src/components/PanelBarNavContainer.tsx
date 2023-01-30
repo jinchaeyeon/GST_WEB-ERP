@@ -6,8 +6,9 @@ import {
 } from "@progress/kendo-react-layout";
 import { useLocation, withRouter } from "react-router-dom";
 import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
+  isLoading,
   isMenuOpendState,
   menusState,
   sessionItemState,
@@ -40,7 +41,8 @@ const PanelBarNavContainer = (props: any) => {
   const loginKey = token ? token.loginKey : "";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const setSessionItem = useSetRecoilState(sessionItemState);
+  const setLoading = useSetRecoilState(isLoading);
 
   useEffect(() => {
     if (token && menus === null) fetchMenus();
@@ -122,6 +124,7 @@ const PanelBarNavContainer = (props: any) => {
 
     if (route) {
       setIsMenuOpend(false);
+      setUserOptionsWindowVisible(false);
     }
   };
 
@@ -204,11 +207,13 @@ const PanelBarNavContainer = (props: any) => {
   const selected = setSelectedIndex(props.location.pathname);
 
   const logout = useCallback(() => {
+    setLoading(true);
     setToken(null as any);
     setMenus(null as any);
     setSessionItem(null as any);
     // 전체 페이지 reload (cache 삭제)
     (window as any).location = "/";
+    setLoading(false);
   }, []);
 
   const onClickUserOptions = () => {
@@ -223,6 +228,32 @@ const PanelBarNavContainer = (props: any) => {
     window.open("/CHAT_A0001W", "_blank");
   };
 
+  const panelBars: TPath[] = [
+    ...paths.filter((path) => path.path === "/Home"),
+    ...paths.filter((path) => path.menuCategory === "GROUP"),
+  ];
+  if (companyCode !== "2207C612") {
+    panelBars.push({
+      path: "/WORD_EDITOR",
+      menuName: "EDITOR",
+      index: "",
+      menuId: "",
+      parentMenuId: "",
+      menuCategory: "",
+    });
+    panelBars.push({
+      path: "/GANTT",
+      menuName: "GANTT",
+      index: "",
+      menuId: "",
+      parentMenuId: "",
+      menuCategory: "",
+    });
+  }
+
+  // Parent 그룹 없는 메뉴 Array
+  const singleMenus = ["/Home", "/GANTT", "/WORD_EDITOR"];
+
   return (
     <Wrapper isMenuOpend={isMenuOpend}>
       <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
@@ -234,50 +265,36 @@ const PanelBarNavContainer = (props: any) => {
             expandMode={"single"}
             onSelect={onSelect}
           >
-            {paths
-              .filter((path: TPath) => path.path === "/Home")
-              .map((path: TPath, idx: number) => {
-                return (
-                  <PanelBarItem
-                    key={idx}
-                    title={path.menuName}
-                    route={path.path}
-                  />
-                );
-              })}
-
-            {paths
-              .filter((path: TPath) => path.menuCategory === "GROUP")
-              .map((path: TPath, idx: number) => {
-                return (
-                  <PanelBarItem key={idx} title={path.menuName}>
-                    {paths
-                      .filter(
-                        (childPath: TPath) =>
-                          childPath.menuCategory === "WEB" &&
-                          childPath.parentMenuId === path.menuId
-                      )
-                      .map((childPath: any, childIdx: number) => (
-                        <PanelBarItem
-                          key={childIdx}
-                          title={childPath.menuName}
-                          route={childPath.path}
-                        />
-                      ))}
-                  </PanelBarItem>
-                );
-              })}
-            {companyCode !== "2207C612" && (
-              <PanelBarItem title={"EDITOR"} route="/WORD_EDITOR" />
-            )}
-            {companyCode !== "2207C612" && (
-              <PanelBarItem title={"GANTT"} route="/GANTT" />
-            )}
+            {panelBars.map((path: TPath, idx: number) => {
+              return singleMenus.includes(path.path) ? (
+                <PanelBarItem
+                  key={idx}
+                  title={path.menuName}
+                  route={path.path}
+                />
+              ) : (
+                <PanelBarItem key={idx} title={path.menuName}>
+                  {paths
+                    .filter(
+                      (childPath: TPath) =>
+                        childPath.menuCategory === "WEB" &&
+                        childPath.parentMenuId === path.menuId
+                    )
+                    .map((childPath: any, childIdx: number) => (
+                      <PanelBarItem
+                        key={childIdx}
+                        title={childPath.menuName}
+                        route={childPath.path}
+                      />
+                    ))}
+                </PanelBarItem>
+              );
+            })}
           </PanelBar>
         )}
 
         {/* GST */}
-        {companyCode === "2207C612" && (
+        {/* {companyCode === "2207C612" && (
           <PanelBar
             selected={selected}
             expandMode={"single"}
@@ -292,7 +309,7 @@ const PanelBarNavContainer = (props: any) => {
               <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
             </PanelBarItem>
           </PanelBar>
-        )}
+        )} */}
 
         <ButtonContainer flexDirection={"column"}>
           <Button

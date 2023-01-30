@@ -792,7 +792,7 @@ const KendoWindow = ({
       detailArr.caption.push(item.caption);
       detailArr.word_id.push(item.word_id);
       detailArr.sort_order.push(
-        getYn(item.hidden) === "Y" ? "-1" : String(idx + 1)
+        getYn(item.hidden) === "Y" ? "-1" : String(idx)
       );
       detailArr.user_editable.push(getYn(item.user_editable));
       detailArr.column_id.push(item.column_id);

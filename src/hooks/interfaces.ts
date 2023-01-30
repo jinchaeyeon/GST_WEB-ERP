@@ -1,3 +1,5 @@
+import { GridCellProps } from "@progress/kendo-react-grid";
+
 export type TCommonCodeData = {
   sub_code: string;
   code_name: string;
@@ -63,4 +65,25 @@ export interface IItemData {
   itemlvl4: string;
   itemlvl5: string;
   custitemnm: string;
+}
+
+export interface IUnpList {
+  custcd: string;
+  list: [];
+}
+
+export interface IComboBoxColumns {
+  sortOrder: number;
+  fieldName: string;
+  caption: string;
+  columnWidth: number;
+  dataAlignment: string;
+}
+
+export interface IFormComboBoxCell extends GridCellProps {
+  bizComponent?: any;
+  valueField?: string;
+  textField?: string;
+  data?: any[];
+  columns?: IComboBoxColumns[];
 }

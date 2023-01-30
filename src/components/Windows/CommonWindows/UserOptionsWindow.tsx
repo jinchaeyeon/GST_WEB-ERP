@@ -1375,7 +1375,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       const { column_id, width, fixed, hidden } = item;
 
       dataArr.column_id.push(column_id);
-      dataArr.sort_order.push(getYn(hidden) === "Y" ? "-1" : String(idx + 1));
+      dataArr.sort_order.push(getYn(hidden) === "Y" ? "-1" : String(idx));
       dataArr.width.push(width);
       dataArr.fixed.push(getYn(fixed) === "Y" ? "Left" : "None");
     });
