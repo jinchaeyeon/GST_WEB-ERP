@@ -39,7 +39,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -634,8 +634,6 @@ const SY_A0120: React.FC = () => {
         }
       }
 
-      alert(findMessage(messagesData, "SY_A0012W_001"));
-
       resetAllGrid();
       fetchMainGrid();
     } catch (e) {
@@ -663,7 +661,7 @@ const SY_A0120: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>회사구분</th>

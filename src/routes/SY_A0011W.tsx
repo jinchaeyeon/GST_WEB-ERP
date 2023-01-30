@@ -51,7 +51,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   CLIENT_WIDTH,
@@ -732,8 +732,6 @@ const SY_A0120: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "SY_A0011W_001"));
-
       resetAllGrid();
       fetchMainGrid();
     } else {
@@ -838,8 +836,6 @@ const SY_A0120: React.FC = () => {
         const result = fetchGridSaved(para);
         if (result instanceof Error) throw result;
       });
-
-      alert(findMessage(messagesData, "SY_A0011W_002"));
 
       resetAllGrid();
       fetchMainGrid();
@@ -1245,7 +1241,7 @@ const SY_A0120: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>사용자그룹ID</th>

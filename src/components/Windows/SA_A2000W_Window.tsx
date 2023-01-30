@@ -16,7 +16,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridHeaderSelectionChangeEvent,
-  GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -1249,7 +1248,6 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "SA_A2000W_003"));
       deletedRows = []; //초기화
       if (workType === "U" || isCopy === true) {
         resetAllGrid();

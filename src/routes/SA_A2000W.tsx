@@ -713,8 +713,6 @@ const SA_B2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "SA_A2000W_002"));
-
       resetAllGrid();
       fetchMainGrid();
     } else {
