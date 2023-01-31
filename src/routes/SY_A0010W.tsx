@@ -481,6 +481,7 @@ const Page: React.FC = () => {
       </td>
     );
   };
+
   const calculateWidth = (field: any) => {
     let maxWidth = 0;
     mainDataResult.data.forEach((item) => {
@@ -886,7 +887,9 @@ const Page: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder === 0
+                            ? detailTotalFooterCell
+                            : undefined
                         }
                       />
                     )
