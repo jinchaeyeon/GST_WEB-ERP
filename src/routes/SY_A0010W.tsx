@@ -390,6 +390,12 @@ const Page: React.FC = () => {
   }, [mainPgNum]);
 
   useEffect(() => {
+    if (customOptionData !== null) {
+      fetchDetailGrid();
+    }
+  }, [detailPgNum]);
+
+  useEffect(() => {
     resetDetailGrid();
     fetchDetailGrid();
   }, [detailFilters]);
@@ -901,13 +907,12 @@ const Page: React.FC = () => {
       </GridContainerWrap>
       {detailWindowVisible && (
         <DetailWindow
-          getVisible={setDetailWindowVisible}
+          setVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
           group_code={detailFilters.group_code}
           isCopy={isCopy}
           setGroupCode={setGroupCode}
           reloadData={reloadData}
-          para={detailParameters}
         />
       )}
 

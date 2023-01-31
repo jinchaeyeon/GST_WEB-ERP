@@ -1,17 +1,22 @@
-import { useEffect, useState, useCallback } from "react";
-import * as React from "react";
+import {
+  useEffect,
+  useState,
+  useCallback,
+  createContext,
+  useContext,
+} from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
   GridEvent,
-  GridCellProps,
   GridToolbar,
-  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridHeaderSelectionChangeEvent,
-  GridHeaderCellProps,
+  GridFooterCellProps,
+  GridDataStateChangeEvent,
+  GridSortChangeEvent,
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -33,19 +38,15 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
-import { clone } from "@progress/kendo-react-common";
 import {
   FormNumberCell,
   FormNameCell,
   FormInput,
   FormReadOnly,
-  FormComboBoxCell,
-  FormReadOnlyNameCell,
   FormComboBox,
   FormCheckBox,
   FormNumericTextBox,
   FormCheckBoxCell,
-  FormEditableNameCellInNew,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
@@ -57,13 +58,14 @@ import {
   UseCustomOption,
   UseMessages,
   findMessage,
-  UseParaPc
+  UseParaPc,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
   COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
   FORM_DATA_INDEX,
   PAGE_SIZE,
   SELECTED_FIELD,
@@ -72,6 +74,7 @@ import { CellRender, RowRender } from "../Renderers";
 import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
 import { bytesToBase64 } from "byte-base64";
+import RequiredHeader from "../RequiredHeader";
 
 const requiredField = ["sub_code", "code_name"];
 const numberField = [
@@ -93,15 +96,11 @@ const readOnlyField = [
   "update_time1",
 ];
 
-// Create React.Context to pass props to the Form Field components from the main component
-export const FormGridEditContext = React.createContext<{
-  onRemove: (dataItem: any) => void;
-  onEdit: (dataItem: any, isNew: boolean) => void;
-  onCopy: (dataItem: any) => void;
-  onSave: () => void;
-  onCancel: () => void;
-  editIndex: number | undefined;
-  parentField: string;
+export const FormContext = createContext<{
+  dataTotal: number;
+  dataState: State;
+  setDataState: (d: any) => void;
+  fetchGrid: (n: number) => any;
 }>({} as any);
 
 let deletedRows: object[] = [];
@@ -110,72 +109,33 @@ const DATA_ITEM_KEY = "sub_code";
 const idGetter = getter(FORM_DATA_INDEX);
 
 type TKendoWindow = {
-  getVisible(t: boolean): void;
+  setVisible(t: boolean): void;
   reloadData(workType: string): void;
   setGroupCode(groupCode: string): void;
   workType: string;
   group_code?: string;
   isCopy: boolean;
-  para?: Iparameters; //{};
-};
-
-type TDetail = {
-  rowstatus_s: string;
-  sub_code: string;
-  code_name: string;
-  system_yn: string;
-  extra_field1: string;
-  extra_field2: string;
-  extra_field3: string;
-  extra_field4: string;
-  extra_field5: string;
-  extra_field6: string;
-  extra_field7: string;
-  extra_field8: string;
-  extra_field9: string;
-  extra_field10: string;
-  numref1: number;
-  numref2: number;
-  numref3: number;
-  numref4: number;
-  numref5: number;
-  sort_seq: number;
-};
-
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_BA061,L_BA015", setBizComponentData);
-
-  const field = props.field ?? "";
-  const bizComponentIdVal =
-    field === "itemacnt" ? "L_BA061" : field === "qtyunit" ? "L_BA015" : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
-  );
-
-  return <FormComboBoxCell bizComponent={bizComponent} {...props} />;
 };
 
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey, value } =
+  const { validationMessage, visited, name, dataItemKey } =
     fieldArrayRenderProps;
-  const [editIndex, setEditIndex] = React.useState<number | undefined>();
-  const editItemCloneRef = React.useRef();
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+
+  const { dataTotal, dataState, setDataState, fetchGrid } =
+    useContext(FormContext);
 
   const [detailPgNum, setDetailPgNum] = useState(1);
 
-  const [editedRowIdx, setEditedRowIdx] = useState(-1);
-  const [editedRowData, setEditedRowData] = useState({});
   const pathname: string = window.location.pathname.replace("/", "");
 
   //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
   // Add a new item to the Form FieldArray that will be shown in the Grid
-  const onAdd = React.useCallback(
+  const onAdd = useCallback(
     (e: any) => {
       e.preventDefault();
       fieldArrayRenderProps.onPush({
@@ -196,7 +156,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [fieldArrayRenderProps]
   );
 
-  const onRemove = React.useCallback(() => {
+  const onRemove = useCallback(() => {
     let newData: any[] = [];
 
     //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
@@ -229,24 +189,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setEditIndex(undefined);
   }, [fieldArrayRenderProps]);
 
-  // Update an item from the Grid and update the index of the edited item
-  const onEdit = React.useCallback((dataItem: any, isNewItem: any) => {
-    if (!isNewItem) {
-      editItemCloneRef.current = clone(dataItem);
-    }
-
-    fieldArrayRenderProps.onReplace({
-      index: dataItem[FORM_DATA_INDEX],
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-      },
-    });
-
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
-  }, []);
-
-  const onCopy = React.useCallback(() => {
+  const onCopy = useCallback(() => {
     let newData: any[] = [];
     let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
 
@@ -274,24 +217,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setEditIndex(undefined);
   }, [fieldArrayRenderProps]);
 
-  // Cancel the editing of an item and return its initial value
-  const onCancel = React.useCallback(() => {
-    if (editItemCloneRef.current) {
-      fieldArrayRenderProps.onReplace({
-        index: editItemCloneRef.current[FORM_DATA_INDEX],
-        value: editItemCloneRef.current,
-      });
-    }
-
-    editItemCloneRef.current = undefined;
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  // Save the changes
-  const onSave = React.useCallback(() => {
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
       return { ...item, [FORM_DATA_INDEX]: index };
@@ -304,16 +229,29 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       setDetailPgNum((prev) => prev + 1);
   };
 
-  const itemChange = (event: GridItemChangeEvent) => {
-    // const inEditID = event.dataItem.ProductID;
-    // const field = event.field || "";
-    // const newData = data.map((item) =>
-    //   item.ProductID === inEditID ? { ...item, [field]: event.value } : item
-    // );
-    // setData(newData);
-  };
+  // 페이지 1 이후 데이터 조회
+  useEffect(() => {
+    if (detailPgNum > 1) {
+      getMoreData();
+    }
+  }, [detailPgNum]);
 
-  const EDIT_FIELD = "inEdit";
+  const getMoreData = async () => {
+    let data;
+    try {
+      data = await fetchGrid(detailPgNum);
+    } catch {
+      data = null;
+    }
+
+    if (data) {
+      data.forEach((item: any) => {
+        fieldArrayRenderProps.onPush({
+          value: { ...item },
+        });
+      });
+    }
+  };
 
   const enterEdit = (dataItem: any, field: string | undefined) => {
     fieldArrayRenderProps.onReplace({
@@ -358,11 +296,11 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     />
   );
 
-  const [selectedState, setSelectedState] = React.useState<{
+  const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  const onSelectionChange = React.useCallback(
+  const onSelectionChange = useCallback(
     (event: GridSelectionChangeEvent) => {
       const newSelectedState = getSelectedState({
         event,
@@ -375,7 +313,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [selectedState]
   );
 
-  const onHeaderSelectionChange = React.useCallback(
+  const onHeaderSelectionChange = useCallback(
     (event: GridHeaderSelectionChangeEvent) => {
       const checkboxElement: any = event.syntheticEvent.target;
       const checked = checkboxElement.checked;
@@ -402,157 +340,168 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     []
   );
 
-  interface ProductNameHeaderProps extends GridHeaderCellProps {
-    children: any;
-  }
+  const onGridSortChange = (e: GridSortChangeEvent) => {
+    setDataState((prev: any) => ({ ...prev, sort: e.sort }));
+  };
 
-  const RequiredHeader = (props: ProductNameHeaderProps) => {
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
+    setDataState(event.dataState);
+  };
+
+  const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <span className="k-cell-inner">
-        <a className="k-link" onClick={props.onClick}>
-          <span style={{ color: "#ff6358" }}>{props.title}</span>
-          {props.children}
-        </a>
-      </span>
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {dataTotal}건
+      </td>
     );
   };
 
   return (
     <GridContainer margin={{ top: "30px" }}>
-      <FormGridEditContext.Provider
-        value={{
-          onCancel,
-          onEdit,
-          onCopy,
-          onRemove,
-          onSave,
-          editIndex,
-          parentField: name,
-        }}
-      >
-        {visited && validationMessage && <Error>{validationMessage}</Error>}
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
+      {visited && validationMessage && <Error>{validationMessage}</Error>}
+      <Grid
+        style={{ height: "400px" }}
+        data={process(
+          dataWithIndexes.map((item: any) => ({
             ...item,
             parentField: name,
             [SELECTED_FIELD]: selectedState[idGetter(item)],
-          }))}
-          total={dataWithIndexes.total}
-          dataItemKey={dataItemKey}
-          style={{ height: "400px" }}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          onItemChange={itemChange}
-          onScroll={scrollHandler}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            drag: false,
-            cell: false,
-            mode: "multiple",
-          }}
-          onSelectionChange={onSelectionChange}
-          onHeaderSelectionChange={onHeaderSelectionChange}
-        >
-          <GridToolbar>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onAdd}
-              icon="add"
-            >
-              추가
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onRemove}
-              icon="minus"
-            >
-              삭제
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onCopy}
-              icon="copy"
-            >
-              복사
-            </Button>
-          </GridToolbar>
+          })),
+          dataState
+        )}
+        {...dataState}
+        onDataStateChange={onGridDataStateChange}
+        // 렌더
+        cellRender={customCellRender}
+        rowRender={customRowRender}
+        //선택기능
+        dataItemKey={dataItemKey}
+        selectedField={SELECTED_FIELD}
+        selectable={{
+          enabled: true,
+          drag: false,
+          cell: false,
+          mode: "multiple",
+        }}
+        onSelectionChange={onSelectionChange}
+        onHeaderSelectionChange={onHeaderSelectionChange}
+        //스크롤 조회 기능
+        fixedScroll={true}
+        total={dataTotal}
+        onScroll={scrollHandler}
+        //정렬기능
+        sortable={true}
+        onSortChange={onGridSortChange}
+        //컬럼순서조정
+        reorderable={true}
+        //컬럼너비조정
+        resizable={true}
+      >
+        <GridToolbar>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onAdd}
+            icon="add"
+          >
+            추가
+          </Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onRemove}
+            icon="minus"
+          >
+            삭제
+          </Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onCopy}
+            icon="copy"
+          >
+            복사
+          </Button>
+        </GridToolbar>
 
-          <GridColumn
-            field={SELECTED_FIELD}
-            width="45px"
-            headerSelectionValue={
-              dataWithIndexes.findIndex(
-                (item: any) => !selectedState[idGetter(item)]
-              ) === -1
-            }
-          />
-          <GridColumn field="rowstatus" title=" " width="40px" />
+        <GridColumn
+          field={SELECTED_FIELD}
+          width="45px"
+          headerSelectionValue={
+            dataWithIndexes.findIndex(
+              (item: any) => !selectedState[idGetter(item)]
+            ) === -1
+          }
+        />
+        <GridColumn field="rowstatus" title=" " width="40px" />
 
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdDetailList"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={item.width}
-                    cell={
-                      numberField.includes(item.fieldName)
-                        ? FormNumberCell
-                        : checkBoxField.includes(item.fieldName)
-                        ? FormCheckBoxCell
-                        : readOnlyField.includes(item.fieldName)
-                        ? FormReadOnlyNameCell
-                        : item.fieldName === "sub_code"
-                        ? FormEditableNameCellInNew
-                        : FormNameCell
-                    }
-                    headerCell={
-                      requiredField.includes(item.fieldName)
-                        ? RequiredHeader
-                        : undefined
-                    }
-                    className={
-                      requiredField.includes(item.fieldName) ? "required" : ""
-                    }
-                    // footerCell={
-                    //   item.sortOrder === 2 ? detailTotalFooterCell : ""
-                    // }
-                  ></GridColumn>
-                )
-            )}
-        </Grid>
-      </FormGridEditContext.Provider>
+        {customOptionData !== null &&
+          customOptionData.menuCustomColumnOptions["grdDetailList"].map(
+            (item: any, idx: number) =>
+              item.sortOrder !== -1 && (
+                <GridColumn
+                  key={idx}
+                  field={item.fieldName}
+                  title={item.caption}
+                  width={item.width}
+                  cell={
+                    numberField.includes(item.fieldName)
+                      ? FormNumberCell
+                      : checkBoxField.includes(item.fieldName)
+                      ? FormCheckBoxCell
+                      : FormNameCell
+                  }
+                  headerCell={
+                    requiredField.includes(item.fieldName)
+                      ? RequiredHeader
+                      : undefined
+                  }
+                  className={
+                    readOnlyField.includes(item.fieldName)
+                      ? "read-only"
+                      : item.fieldName === "sub_code"
+                      ? "editable-new-only"
+                      : requiredField.includes(item.fieldName)
+                      ? "required"
+                      : ""
+                  }
+                  footerCell={
+                    item.sortOrder === 0 ? detailTotalFooterCell : undefined
+                  }
+                ></GridColumn>
+              )
+          )}
+      </Grid>
     </GridContainer>
   );
 };
 const KendoWindow = ({
-  getVisible,
+  setVisible,
   reloadData,
   setGroupCode,
   workType,
   group_code = "",
   isCopy,
-  para,
 }: TKendoWindow) => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+
+  const [dataState, setDataState] = useState<State>({
+    sort: [],
+  });
+
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent("L_BA000", setBizComponentData);
 
   // 그룹 카테고리 리스트
-  const [groupCategoryListData, setGroupCategoryListData] = React.useState([
+  const [groupCategoryListData, setGroupCategoryListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
 
@@ -618,10 +567,10 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
-  const [formKey, setFormKey] = React.useState(1);
+  const [formKey, setFormKey] = useState(1);
   const resetForm = () => {
     setFormKey(formKey + 1);
   };
@@ -631,13 +580,7 @@ const KendoWindow = ({
     valueChanged!.click();
   }, [formKey]);
   const processApi = useApi();
-  const [dataState, setDataState] = useState<State>({
-    skip: 0,
-    take: 20,
-  });
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], dataState)
-  );
+
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], dataState)
   );
@@ -646,12 +589,9 @@ const KendoWindow = ({
     [id: string]: boolean | number[];
   }>({});
 
-  const [custType, setCustType] = useState("");
-
   useEffect(() => {
     if (workType === "U" || isCopy === true) {
       fetchMain();
-      //fetchGrid();
     }
   }, []);
 
@@ -711,18 +651,18 @@ const KendoWindow = ({
           group_code: row.group_code,
           group_name: row.group_name,
           code_length: row.code_length,
-          group_category: row.group_category,
-          field_caption1: row.field_caption1,
-          field_caption2: row.field_caption2,
-          field_caption3: row.field_caption3,
-          field_caption4: row.field_caption4,
-          field_caption5: row.field_caption5,
-          field_caption6: row.field_caption6,
-          field_caption7: row.field_caption7,
-          field_caption8: row.field_caption8,
-          field_caption9: row.field_caption9,
-          field_caption10: row.field_caption10,
-          memo: row.memo,
+          group_category: row.group_category ?? "",
+          field_caption1: row.field_caption1 ?? "",
+          field_caption2: row.field_caption2 ?? "",
+          field_caption3: row.field_caption3 ?? "",
+          field_caption4: row.field_caption4 ?? "",
+          field_caption5: row.field_caption5 ?? "",
+          field_caption6: row.field_caption6 ?? "",
+          field_caption7: row.field_caption7 ?? "",
+          field_caption8: row.field_caption8 ?? "",
+          field_caption9: row.field_caption9 ?? "",
+          field_caption10: row.field_caption10 ?? "",
+          memo: row.memo ?? "",
           use_yn: row.use_yn,
           attdatnum: row.attdatnum,
         };
@@ -740,22 +680,29 @@ const KendoWindow = ({
     resetForm();
   }, [detailDataResult]);
 
-  //itemacnt, qtyunit list가 조회된 후 상세그리드 조회
-  // useEffect(() => {
-  //   if (workType === "U" || isCopy === true) {
-  //     if (itemacntListData.length > 0 && qtyunitListData.length > 0) {
-  //       resetAllGrid();
-  //       fetchGrid();
-  //     }
-  //   }
-  // }, [itemacntListData, qtyunitListData]);
-
   //상세그리드 조회
-  const fetchGrid = async () => {
+  const fetchGrid = async (pgNum: number) => {
     let data: any;
+    let result = [];
 
+    const detailParameters: Iparameters = {
+      procedureName: "P_SY_A0010W_Q",
+      pageNumber: pgNum,
+      pageSize: PAGE_SIZE,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_group_category": "",
+        "@p_group_code": group_code,
+        "@p_group_name": "",
+        "@p_memo": "",
+        "@p_userid": userId,
+        "@p_sub_code": "",
+        "@p_subcode_name": "",
+        "@p_comment": "",
+      },
+    };
     try {
-      data = await processApi<any>("procedure", para);
+      data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
       data = null;
     }
@@ -766,24 +713,41 @@ const KendoWindow = ({
         return {
           ...row,
           rowstatus: workType === "N" ? "N" : "",
+          extra_field1: row.extra_field1 ?? "",
+          extra_field2: row.extra_field2 ?? "",
+          extra_field3: row.extra_field3 ?? "",
+          extra_field4: row.extra_field4 ?? "",
+          extra_field5: row.extra_field5 ?? "",
+          extra_field6: row.extra_field6 ?? "",
+          extra_field7: row.extra_field7 ?? "",
+          extra_field8: row.extra_field8 ?? "",
+          extra_field9: row.extra_field9 ?? "",
+          extra_field10: row.extra_field10 ?? "",
+          memo: row.memo ?? "",
+          update_pc: row.update_pc ?? "",
+          update_time: row.update_time ?? "",
+          update_userid: row.update_userid ?? "",
         };
       });
 
-      setDetailDataResult(() => {
-        return {
-          data: [...rows],
-          total: totalRowCnt,
-        };
-      });
-
-      //resetForm();
+      if (pgNum > 1) {
+        result = rows;
+      } else {
+        setDetailDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+      }
     }
+    return result;
   };
 
   const pathname: string = window.location.pathname.replace("/", "");
 
   //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
+  const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
   //프로시저 파라미터 초기값
@@ -843,7 +807,6 @@ const KendoWindow = ({
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainDataResult(process([], dataState));
     setDetailDataResult(process([], dataState));
   };
 
@@ -862,9 +825,9 @@ const KendoWindow = ({
 
         reloadData("U");
         fetchMain();
-        fetchGrid();
+        fetchGrid(1);
       } else {
-        getVisible(false);
+        setVisible(false);
         setGroupCode(paraData.group_code);
         reloadData("N");
       }
@@ -1104,7 +1067,7 @@ const KendoWindow = ({
     if (workType === "U" || isCopy === true) {
       if (bizComponentData.length) {
         resetAllGrid();
-        fetchGrid();
+        fetchGrid(1);
       }
     }
   }, [bizComponentData]);
@@ -1118,184 +1081,192 @@ const KendoWindow = ({
       onResize={handleResize}
       onClose={onClose}
     >
-      <Form
-        onSubmit={handleSubmit}
-        key={formKey}
-        initialValues={{
-          rowstatus: "",
-          group_code: isCopy === true ? "" : initialVal.group_code,
-          group_name: isCopy === true ? "" : initialVal.group_name,
-          code_length: initialVal.code_length,
-          group_category: {
-            sub_code: initialVal.group_category,
-            code_name: groupCategoryListData.find(
-              (item: any) => item.sub_code === initialVal.group_category
-            )?.code_name,
-          },
-          field_caption1: initialVal.field_caption1,
-          field_caption2: initialVal.field_caption2,
-          field_caption3: initialVal.field_caption3,
-          field_caption4: initialVal.field_caption4,
-          field_caption5: initialVal.field_caption5,
-          field_caption6: initialVal.field_caption6,
-          field_caption7: initialVal.field_caption7,
-          field_caption8: initialVal.field_caption8,
-          field_caption9: initialVal.field_caption9,
-          field_caption10: initialVal.field_caption10,
-          memo: initialVal.memo,
-          use_yn: initialVal.use_yn,
-          orderDetails: detailDataResult.data, //detailDataResult.data,
+      <FormContext.Provider
+        value={{
+          dataState,
+          setDataState,
+          dataTotal: detailDataResult.total,
+          fetchGrid,
         }}
-        render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true}>
-            <fieldset className={"k-form-fieldset"}>
-              <button
-                id="valueChanged"
-                style={{ display: "none" }}
-                onClick={(e) => {
-                  e.preventDefault(); // Changing desired field value
-                  formRenderProps.onChange("valueChanged", {
-                    value: "1",
-                  });
-                }}
-              ></button>
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  name={"group_code"}
-                  label={"그룹코드"}
-                  component={workType === "N" ? FormInput : FormReadOnly}
-                  validator={validator}
-                  className={workType === "N" ? "required" : "readonly"}
-                />
-                <Field
-                  name={"group_name"}
-                  label={"그룹코드명"}
-                  component={FormInput}
-                  validator={validator}
-                  className="required"
-                />
-                <Field
-                  name={"code_length"}
-                  label={"세부코드길이"}
-                  component={FormNumericTextBox}
-                  validator={validator}
-                  className="required"
-                />
-                {bizComponentData.length > 0 && (
+      >
+        <Form
+          onSubmit={handleSubmit}
+          key={formKey}
+          initialValues={{
+            rowstatus: "",
+            group_code: isCopy === true ? "" : initialVal.group_code,
+            group_name: isCopy === true ? "" : initialVal.group_name,
+            code_length: initialVal.code_length,
+            group_category: {
+              sub_code: initialVal.group_category,
+              code_name: groupCategoryListData.find(
+                (item: any) => item.sub_code === initialVal.group_category
+              )?.code_name,
+            },
+            field_caption1: initialVal.field_caption1,
+            field_caption2: initialVal.field_caption2,
+            field_caption3: initialVal.field_caption3,
+            field_caption4: initialVal.field_caption4,
+            field_caption5: initialVal.field_caption5,
+            field_caption6: initialVal.field_caption6,
+            field_caption7: initialVal.field_caption7,
+            field_caption8: initialVal.field_caption8,
+            field_caption9: initialVal.field_caption9,
+            field_caption10: initialVal.field_caption10,
+            memo: initialVal.memo,
+            use_yn: initialVal.use_yn,
+            orderDetails: detailDataResult.data, //detailDataResult.data,
+          }}
+          render={(formRenderProps: FormRenderProps) => (
+            <FormElement horizontal={true}>
+              <fieldset className={"k-form-fieldset"}>
+                <button
+                  id="valueChanged"
+                  style={{ display: "none" }}
+                  onClick={(e) => {
+                    e.preventDefault(); // Changing desired field value
+                    formRenderProps.onChange("valueChanged", {
+                      value: "1",
+                    });
+                  }}
+                ></button>
+                <FieldWrap fieldWidth="25%">
                   <Field
-                    name={"group_category"}
-                    label={"유형분류"}
-                    component={FormComboBox}
-                    queryStr={groupCategoryQuery}
-                    textField={"code_name"}
-                    columns={
-                      bizComponentData.find(
-                        (item: any) => item.bizComponentId === "L_BA000"
-                      ).bizComponentItems
-                    }
+                    name={"group_code"}
+                    label={"그룹코드"}
+                    component={workType === "N" ? FormInput : FormReadOnly}
+                    validator={validator}
+                    className={workType === "N" ? "required" : "readonly"}
+                  />
+                  <Field
+                    name={"group_name"}
+                    label={"그룹코드명"}
+                    component={FormInput}
+                    validator={validator}
                     className="required"
                   />
-                )}
-              </FieldWrap>
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  name={"field_caption1"}
-                  label={"여유필드캡션1"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"field_caption2"}
-                  label={"여유필드캡션2"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"field_caption3"}
-                  label={"여유필드캡션3"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"field_caption4"}
-                  label={"여유필드캡션4"}
-                  component={FormInput}
-                />
-              </FieldWrap>
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  name={"field_caption5"}
-                  label={"여유필드캡션5"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"field_caption6"}
-                  label={"여유필드캡션6"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"field_caption7"}
-                  label={"여유필드캡션7"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"field_caption8"}
-                  label={"여유필드캡션8"}
-                  component={FormInput}
-                />
-              </FieldWrap>
-
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  name={"field_caption9"}
-                  label={"여유필드캡션9"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"field_caption10"}
-                  label={"여유필드캡션10"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"files"}
-                  component={FormReadOnly}
-                  label={"첨부파일"}
-                />
-                <ButtonInFieldWrap>
-                  <ButtonInField>
-                    <Button
-                      type={"button"}
-                      onClick={onAttachmentsWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
+                  <Field
+                    name={"code_length"}
+                    label={"세부코드길이"}
+                    component={FormNumericTextBox}
+                    validator={validator}
+                    className="required"
+                  />
+                  {bizComponentData.length > 0 && (
+                    <Field
+                      name={"group_category"}
+                      label={"유형분류"}
+                      component={FormComboBox}
+                      queryStr={groupCategoryQuery}
+                      textField={"code_name"}
+                      columns={
+                        bizComponentData.find(
+                          (item: any) => item.bizComponentId === "L_BA000"
+                        ).bizComponentItems
+                      }
+                      className="required"
                     />
-                  </ButtonInField>
-                </ButtonInFieldWrap>
-                <Field name={"memo"} component={FormInput} label={"메모"} />
-              </FieldWrap>
-              <FieldWrap fieldWidth="25%">
-                <Field
-                  name={"use_yn"}
-                  label={"사용여부"}
-                  component={FormCheckBox}
-                />
-              </FieldWrap>
-            </fieldset>
-            <FieldArray
-              name="orderDetails"
-              dataItemKey={FORM_DATA_INDEX}
-              component={FormGrid}
-              validator={arrayLengthValidator}
-            />
+                  )}
+                </FieldWrap>
+                <FieldWrap fieldWidth="25%">
+                  <Field
+                    name={"field_caption1"}
+                    label={"여유필드캡션1"}
+                    component={FormInput}
+                  />
+                  <Field
+                    name={"field_caption2"}
+                    label={"여유필드캡션2"}
+                    component={FormInput}
+                  />
+                  <Field
+                    name={"field_caption3"}
+                    label={"여유필드캡션3"}
+                    component={FormInput}
+                  />
+                  <Field
+                    name={"field_caption4"}
+                    label={"여유필드캡션4"}
+                    component={FormInput}
+                  />
+                </FieldWrap>
+                <FieldWrap fieldWidth="25%">
+                  <Field
+                    name={"field_caption5"}
+                    label={"여유필드캡션5"}
+                    component={FormInput}
+                  />
+                  <Field
+                    name={"field_caption6"}
+                    label={"여유필드캡션6"}
+                    component={FormInput}
+                  />
+                  <Field
+                    name={"field_caption7"}
+                    label={"여유필드캡션7"}
+                    component={FormInput}
+                  />
+                  <Field
+                    name={"field_caption8"}
+                    label={"여유필드캡션8"}
+                    component={FormInput}
+                  />
+                </FieldWrap>
 
-            <BottomContainer>
-              <ButtonContainer>
-                <Button type={"submit"} themeColor={"primary"} icon="save">
-                  저장
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </FormElement>
-        )}
-      />
+                <FieldWrap fieldWidth="25%">
+                  <Field
+                    name={"field_caption9"}
+                    label={"여유필드캡션9"}
+                    component={FormInput}
+                  />
+                  <Field
+                    name={"field_caption10"}
+                    label={"여유필드캡션10"}
+                    component={FormInput}
+                  />
+                  <Field
+                    name={"files"}
+                    component={FormReadOnly}
+                    label={"첨부파일"}
+                  />
+                  <ButtonInFieldWrap>
+                    <ButtonInField>
+                      <Button
+                        type={"button"}
+                        onClick={onAttachmentsWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInField>
+                  </ButtonInFieldWrap>
+                  <Field name={"memo"} component={FormInput} label={"메모"} />
+                </FieldWrap>
+                <FieldWrap fieldWidth="25%">
+                  <Field
+                    name={"use_yn"}
+                    label={"사용여부"}
+                    component={FormCheckBox}
+                  />
+                </FieldWrap>
+              </fieldset>
+              <FieldArray
+                name="orderDetails"
+                dataItemKey={FORM_DATA_INDEX}
+                component={FormGrid}
+                validator={arrayLengthValidator}
+              />
 
+              <BottomContainer>
+                <ButtonContainer>
+                  <Button type={"submit"} themeColor={"primary"} icon="save">
+                    저장
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </FormElement>
+          )}
+        />
+      </FormContext.Provider>
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           getVisible={setAttachmentsWindowVisible}
