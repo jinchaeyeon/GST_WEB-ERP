@@ -15,6 +15,7 @@ import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -74,36 +75,11 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
 let deletedTodoRows: object[] = [];
-
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
-  UseBizComponent("L_BA008,L_BA020,L_BA061", setBizComponentData);
-
-  const field = props.field ?? "";
-  const bizComponentIdVal =
-    field === "unpitem"
-      ? "L_BA008"
-      : field === "amtunit"
-      ? "L_BA020"
-      : field === "itemacnt"
-      ? "L_BA061"
-      : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
-  );
-
-  return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
-  ) : (
-    <td></td>
-  );
-};
 
 const BA_A0020: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -136,38 +112,12 @@ const BA_A0020: React.FC = () => {
         custdiv: defaultOption.find((item: any) => item.id === "custdiv")
           .valueCode,
       }));
-      setInfomation((prev) => ({
-        ...prev,
-        inunpitem: defaultOption.find((item: any) => item.id === "inunpitem")
-          .valueCode,
-        unpitem: defaultOption.find((item: any) => item.id === "unpitem")
-          .valueCode,
-        bizdiv: defaultOption.find((item: any) => item.id === "bizdiv")
-          .valueCode,
-        estbdt: setDefaultDate(customOptionData, "estbdt"),
-        taxorg: defaultOption.find((item: any) => item.id === "taxorg")
-          .valueCode,
-        useyn: defaultOption.find((item: any) => item.id === "useyn").valueCode,
-        scmyn: defaultOption.find((item: any) => item.id === "scmyn").valueCode,
-        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
-          .valueCode,
-        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
-          .valueCode,
-        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
-          .valueCode,
-        rtxisuyn: defaultOption.find((item: any) => item.id === "rtxisuyn")
-          .valueCode,
-        etxprs: defaultOption.find((item: any) => item.id === "etxprs")
-          .valueCode,
-        bill_type: defaultOption.find((item: any) => item.id === "bill_type")
-          .valueCode,
-      }));
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA026,L_BA027",
+    "L_BA026,L_BA027,L_AC901,L_sysUserMaster_001,R_USEYN,L_BA173,L_BA172,L_BA171,L_BA049,R_RTXISUYN,L_BA008",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -343,8 +293,8 @@ const BA_A0020: React.FC = () => {
     efaxnum: "",
     email: "",
     taxortnm: "",
-    useyn: "",
-    scmyn: "",
+    useyn: "Y",
+    scmyn: "Y",
     pariodyn: "",
     attdatnum: "",
     itemlvl1: "",
@@ -357,6 +307,7 @@ const BA_A0020: React.FC = () => {
     emailaddr_og: "",
     bill_type: "",
     recvid: "",
+    rtxisuyn: "Y",
   });
 
   //조회조건 초기값
@@ -450,8 +401,6 @@ const BA_A0020: React.FC = () => {
       data = null;
     }
 
-    console.log(parameters);
-    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -471,40 +420,40 @@ const BA_A0020: React.FC = () => {
     setLoading(false);
   };
 
-//   const fetchSubGrid = async () => {
-//     //if (!permissions?.view) return;
-//     let data: any;
+  //   const fetchSubGrid = async () => {
+  //     //if (!permissions?.view) return;
+  //     let data: any;
 
-//     setLoading(true);
-//     try {
-//       data = await processApi<any>("procedure", subparameters);
-//     } catch (error) {
-//       data = null;
-//     }
+  //     setLoading(true);
+  //     try {
+  //       data = await processApi<any>("procedure", subparameters);
+  //     } catch (error) {
+  //       data = null;
+  //     }
 
-//     if (data.isSuccess === true) {
-//       const totalRowCnt = data.tables[0].RowCount;
-//       const rows = data.tables[0].Rows;
+  //     if (data.isSuccess === true) {
+  //       const totalRowCnt = data.tables[0].RowCount;
+  //       const rows = data.tables[0].Rows;
 
-//       const row = rows.map((item: any) => ({
-//         ...item,
-//         inEdit: "recdt",
-//         rowstatus: "U",
-//       }));
-//       if (totalRowCnt > 0) {
-//         setSubDataResult((prev) => {
-//           return {
-//             data: [...prev.data, ...row],
-//             total: totalRowCnt,
-//           };
-//         });
-//       }
-//     } else {
-//       console.log("[오류 발생]");
-//       console.log(data);
-//     }
-//     setLoading(false);
-//   };
+  //       const row = rows.map((item: any) => ({
+  //         ...item,
+  //         inEdit: "recdt",
+  //         rowstatus: "U",
+  //       }));
+  //       if (totalRowCnt > 0) {
+  //         setSubDataResult((prev) => {
+  //           return {
+  //             data: [...prev.data, ...row],
+  //             total: totalRowCnt,
+  //           };
+  //         });
+  //       }
+  //     } else {
+  //       console.log("[오류 발생]");
+  //       console.log(data);
+  //     }
+  //     setLoading(false);
+  //   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -524,9 +473,9 @@ const BA_A0020: React.FC = () => {
     }
   }, [mainPgNum]);
 
-//   useEffect(() => {
-//     fetchSubGrid();
-//   }, [subPgNum]);
+  //   useEffect(() => {
+  //     fetchSubGrid();
+  //   }, [subPgNum]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -560,27 +509,27 @@ const BA_A0020: React.FC = () => {
     }
   }, [mainDataResult]);
 
-//   useEffect(() => {
-//     setSubPgNum(1);
-//     setSubDataResult(process([], subDataState));
-//     if (customOptionData !== null) {
-//       fetchSubGrid();
-//     }
-//   }, [subfilters]);
+  //   useEffect(() => {
+  //     setSubPgNum(1);
+  //     setSubDataResult(process([], subDataState));
+  //     if (customOptionData !== null) {
+  //       fetchSubGrid();
+  //     }
+  //   }, [subfilters]);
 
-//   useEffect(() => {
-//     if (customOptionData !== null) {
-//       fetchSubGrid();
-//     }
-//   }, [subPgNum]);
+  //   useEffect(() => {
+  //     if (customOptionData !== null) {
+  //       fetchSubGrid();
+  //     }
+  //   }, [subPgNum]);
 
-//   useEffect(() => {
-//     setSubPgNum(1);
-//     setSubDataResult(process([], subDataState));
-//     if (customOptionData !== null) {
-//       fetchSubGrid();
-//     }
-//   }, [tabSelected]);
+  //   useEffect(() => {
+  //     setSubPgNum(1);
+  //     setSubDataResult(process([], subDataState));
+  //     if (customOptionData !== null) {
+  //       fetchSubGrid();
+  //     }
+  //   }, [tabSelected]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -603,52 +552,53 @@ const BA_A0020: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     setInfomation({
-        pgSize: PAGE_SIZE,
-        workType: "U",
-        custcd: selectedRowData.custcd,
-        custnm: selectedRowData.custnm,
-        custdiv: selectedRowData.custdiv,
-        custabbr: selectedRowData.custabbr,
-        compnm_eng: selectedRowData.compnm_eng,
-        inunpitem: selectedRowData.inunpitem,
-        bizregnum: selectedRowData.bizregnum,
-        zipcode: selectedRowData.zipcode,
-        area: selectedRowData.area,
-        unpitem: selectedRowData.unpitem,
-        ceonm: selectedRowData.ceonm,
-        address: selectedRowData.address,
-        bizdiv: selectedRowData.bizdiv,
-        repreregno: selectedRowData.repreregno,
-        address_eng: selectedRowData.address_eng,
-        estbdt: new Date(),
-        phonenum: selectedRowData.phonenum,
-        bnkinfo: selectedRowData.bnkinfo,
-        bankacntuser: selectedRowData.bankacntuser,
-        compclass: selectedRowData.compclass,
-        etelnum: selectedRowData.etelnum,
-        bankacnt: selectedRowData.bankacnt,
-        comptype: selectedRowData.comptype,
-        faxnum: selectedRowData.faxnum,
-        bnkinfo2: selectedRowData.bnkinfo2,
-        bankacnt2: selectedRowData.bankacnt2,
-        taxorg: selectedRowData.taxorg,
-        efaxnum: selectedRowData.efaxnum,
-        email: selectedRowData.email,
-        taxortnm: selectedRowData.taxortnm,
-        useyn: selectedRowData.useyn,
-        scmyn: selectedRowData.scmyn,
-        pariodyn: selectedRowData.pariodyn,
-        attdatnum: selectedRowData.attdatnum,
-        itemlvl1: selectedRowData.itemlvl1,
-        itemlvl2: selectedRowData.itemlvl2,
-        itemlvl3: selectedRowData.itemlvl3,
-        etax: selectedRowData.etax,
-        remark: selectedRowData.remark,
-        etxprs: selectedRowData.etxprs,
-        phonenum_og: selectedRowData.phonenum_og,
-        emailaddr_og: selectedRowData.emailaddr_og,
-        bill_type: selectedRowData.bill_type,
-        recvid: selectedRowData.recvid,
+      pgSize: PAGE_SIZE,
+      workType: "U",
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      custdiv: selectedRowData.custdiv,
+      custabbr: selectedRowData.custabbr,
+      compnm_eng: selectedRowData.compnm_eng,
+      inunpitem: selectedRowData.inunpitem,
+      bizregnum: selectedRowData.bizregnum,
+      zipcode: selectedRowData.zipcode,
+      area: selectedRowData.area,
+      unpitem: selectedRowData.unpitem,
+      ceonm: selectedRowData.ceonm,
+      address: selectedRowData.address,
+      bizdiv: selectedRowData.bizdiv,
+      repreregno: selectedRowData.repreregno,
+      address_eng: selectedRowData.address_eng,
+      estbdt: new Date(),
+      phonenum: selectedRowData.phonenum,
+      bnkinfo: selectedRowData.bnkinfo,
+      bankacntuser: selectedRowData.bankacntuser,
+      compclass: selectedRowData.compclass,
+      etelnum: selectedRowData.etelnum,
+      bankacnt: selectedRowData.bankacnt,
+      comptype: selectedRowData.comptype,
+      faxnum: selectedRowData.faxnum,
+      bnkinfo2: selectedRowData.bnkinfo2,
+      bankacnt2: selectedRowData.bankacnt2,
+      taxorg: selectedRowData.taxorg,
+      efaxnum: selectedRowData.efaxnum,
+      email: selectedRowData.email,
+      taxortnm: selectedRowData.taxortnm,
+      useyn: selectedRowData.useyn,
+      scmyn: selectedRowData.scmyn,
+      pariodyn: selectedRowData.pariodyn,
+      attdatnum: selectedRowData.attdatnum,
+      itemlvl1: selectedRowData.itemlvl1,
+      itemlvl2: selectedRowData.itemlvl2,
+      itemlvl3: selectedRowData.itemlvl3,
+      etax: selectedRowData.etax,
+      remark: selectedRowData.remark,
+      etxprs: selectedRowData.etxprs,
+      phonenum_og: selectedRowData.phonenum_og,
+      emailaddr_og: selectedRowData.emailaddr_og,
+      bill_type: selectedRowData.bill_type,
+      recvid: selectedRowData.recvid,
+      rtxisuyn: selectedRowData.rtxisuyn,
     });
     if (tabSelected === 1) {
       setsubFilters((prev) => ({
@@ -720,52 +670,53 @@ const BA_A0020: React.FC = () => {
   const onAddClick2 = () => {
     setWorkType("N");
     setInfomation({
-        pgSize: PAGE_SIZE,
-        workType: "N",
-        custcd: "자동생성",
-        custnm: "",
-        custdiv: "",
-        custabbr: "",
-        compnm_eng: "",
-        inunpitem: "",
-        bizregnum: "",
-        zipcode: 0,
-        area: "",
-        unpitem: "",
-        ceonm: "",
-        address: "",
-        bizdiv: "",
-        repreregno: "",
-        address_eng: "",
-        estbdt: new Date(),
-        phonenum: "",
-        bnkinfo: "",
-        bankacntuser: "",
-        compclass: "",
-        etelnum: "",
-        bankacnt: "",
-        comptype: "",
-        faxnum: "",
-        bnkinfo2: "",
-        bankacnt2: "",
-        taxorg: "",
-        efaxnum: "",
-        email: "",
-        taxortnm: "",
-        useyn: "",
-        scmyn: "",
-        pariodyn: "",
-        attdatnum: "",
-        itemlvl1: "",
-        itemlvl2: "",
-        itemlvl3: "",
-        etax: "",
-        remark: "",
-        etxprs: "",
-        phonenum_og: "",
-        emailaddr_og: "",
-        bill_type: "",
-        recvid: "",
+      pgSize: PAGE_SIZE,
+      workType: "N",
+      custcd: "자동생성",
+      custnm: "",
+      custdiv: "",
+      custabbr: "",
+      compnm_eng: "",
+      inunpitem: "",
+      bizregnum: "",
+      zipcode: 0,
+      area: "",
+      unpitem: "",
+      ceonm: "",
+      address: "",
+      bizdiv: "",
+      repreregno: "",
+      address_eng: "",
+      estbdt: new Date(),
+      phonenum: "",
+      bnkinfo: "",
+      bankacntuser: "",
+      compclass: "",
+      etelnum: "",
+      bankacnt: "",
+      comptype: "",
+      faxnum: "",
+      bnkinfo2: "",
+      bankacnt2: "",
+      taxorg: "",
+      efaxnum: "",
+      email: "",
+      taxortnm: "",
+      useyn: "",
+      scmyn: "",
+      pariodyn: "",
+      attdatnum: "",
+      itemlvl1: "",
+      itemlvl2: "",
+      itemlvl3: "",
+      etax: "",
+      remark: "",
+      etxprs: "",
+      phonenum_og: "",
+      emailaddr_og: "",
+      bill_type: "",
+      recvid: "",
+      rtxisuyn: "",
     });
   };
 
@@ -1112,67 +1063,89 @@ const BA_A0020: React.FC = () => {
   //     },
   //   };
 
-  //   const infopara: Iparameters = {
-  //     procedureName: "P_BA_A0040W_S",
-  //     pageNumber: 0,
-  //     pageSize: 0,
-  //     parameters: {
-  //       "@p_work_type": infomation.workType,
-  //       "@p_itemcd": infomation.itemcd,
-  //       "@p_itemnm": infomation.itemnm,
-  //       "@p_itemacnt": itemacntListData.find(
-  //         (item: any) => item.code_name === infomation.itemacnt
-  //       )?.sub_code,
-  //       "@p_bnatur": infomation.bnatur,
-  //       "@p_insiz": infomation.insiz,
-  //       "@p_spec": infomation.spec,
-  //       "@p_maker": infomation.maker,
-  //       "@p_dwgno": infomation.dwgno,
-  //       "@p_itemlvl1": infomation.itemlvl1,
-  //       "@p_itemlvl2": infomation.itemlvl2,
-  //       "@p_itemlvl3": infomation.itemlvl3,
-  //       "@p_itemlvl4": infomation.itemlvl4,
-  //       "@p_invunit": qtyunitListData.find(
-  //         (item: any) => item.code_name === infomation.invunit
-  //       )?.sub_code,
-  //       "@p_bomyn": infomation.bomyn,
-  //       "@p_qcyn": infomation.qcyn,
-  //       "@p_unitwgt": infomation.unitwgt,
-  //       "@p_useyn": infomation.useyn,
-  //       "@p_attdatnum": infomation.attdatnum,
-  //       "@p_attdatnum_img": infomation.attdatnum_img,
-  //       "@p_attdatnum_img2": infomation.attdatnum_img2,
-  //       "@p_remark": infomation.remark,
-  //       "@p_safeqty": infomation.safeqty,
-  //       "@p_location": "01",
-  //       "@p_custcd": infomation.custcd,
-  //       "@p_custnm": infomation.custnm,
-  //       "@p_snp": infomation.snp,
-  //       "@p_autocode": "Y",
-  //       "@p_person": infomation.person,
-  //       "@p_extra_field2": infomation.extra_field2,
-  //       "@p_serviceid": "2207A046",
-  //       "@p_purleadtime": infomation.purleadtime,
-  //       "@p_len": infomation.len,
-  //       "@p_purqty": infomation.purqty,
-  //       "@p_boxqty": infomation.boxqty,
-  //       "@p_part": "",
-  //       "@p_pac": infomation.pac,
-  //       "@p_bnatur_insiz": infomation.bnatur_insiz,
-  //       "@p_itemno": infomation.itemno,
-  //       "@p_itemgroup": infomation.itemgroup,
-  //       "@p_lenunit": infomation.lenunit,
-  //       "@p_hscode": infomation.hscode,
-  //       "@p_wgtunit": infomation.wgtunit,
-  //       "@p_custitemnm": infomation.custitemnm,
-  //       "@p_unitqty": infomation.unitqty,
-  //       "@p_procday": infomation.procday,
-  //       "@p_itemcd_s": "",
-  //       "@p_userid": userId,
-  //       "@p_pc": pc,
-  //       "@p_form_id": "BA_A0040W",
-  //     },
-  //   };
+  const infopara: Iparameters = {
+    procedureName: "P_BA_A0020W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": infomation.workType,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_auto": "Y",
+      "@p_custcd": infomation.custcd,
+      "@p_custnm": infomation.custnm,
+      "@p_custdiv": custdivListData.find(
+        (item: any) => item.code_name === infomation.custdiv
+      )?.sub_code,
+      "@p_custabbr": infomation.custabbr,
+      "@p_bizdiv": bizdivListData.find(
+        (item: any) => item.code_name === infomation.bizdiv
+      )?.sub_code,
+      "@p_bizregnum": infomation.bizregnum,
+      "@p_ceonm": infomation.ceonm,
+      "@p_repreregno": infomation.repreregno,
+      "@p_comptype": infomation.comptype,
+      "@p_compclass": infomation.compclass,
+      "@p_zipcode": infomation.zipcode,
+      "@p_address": infomation.address,
+      "@p_phonenum": infomation.phonenum,
+      "@p_faxnum": infomation.faxnum,
+      "@p_estbdt": infomation.estbdt,
+      "@p_compnm_eng": infomation.compnm_eng,
+      "@p_address_eng": infomation.address_eng,
+      "@p_bnkinfo": infomation.bnkinfo,
+      "@p_etelnum": infomation.etelnum,
+      "@p_efaxnum": infomation.efaxnum,
+      "@p_unpitem": infomation.unpitem,
+      "@p_useyn": infomation.useyn,
+      "@p_remark": infomation.remark,
+      "@p_attdatnum": infomation.attdatnum,
+      "@p_bill_type": infomation.bill_type,
+      "@p_recvid": infomation.recvid,
+      "@p_rtxisuyn": infomation.rtxisuyn,
+      "@p_etxprs": infomation.etxprs,
+      "@p_emailaddr_og": infomation.emailaddr_og,
+      "@p_phonenum_og": infomation.phonenum_og,
+      "@p_etax": infomation.etax,
+      "@p_inunpitem": infomation.inunpitem,
+      "@p_email": infomation.email,
+      "@p_itemlvl1": infomation.itemlvl1,
+      "@p_itemlvl2": infomation.itemlvl2,
+      "@p_itemlvl3": infomation.itemlvl3,
+      "@p_bankacnt": infomation.bankacnt,
+      "@p_bankacntuser": infomation.bankacntuser,
+      "@p_scmyn": infomation.scmyn,
+      "@p_periodyn": "",
+      "@p_bnkinfo2": infomation.bnkinfo2,
+      "@p_bankacnt2": infomation.bankacnt2,
+      "@p_area": infomation.area,
+      "@p_rowstatus_s": "",
+      "@p_remark_s": "",
+      "@p_custprsncd_s": "",
+      "@p_prsnnm_s": "",
+      "@p_dptnm_s": "",
+      "@p_postcd_s": "",
+      "@p_telno_s": "",
+      "@p_phoneno_s": "",
+      "@p_email_s": "",
+      "@p_rtrchk_s": "",
+      "@p_attdatnum_s": "",
+      "@p_sort_seq_s": "",
+      "@p_seq_s": "",
+      "@p_yyyy_s": "",
+      "@p_totasset_s": "",
+      "@p_paid_up_capital_s": "",
+      "@p_totcapital_s": "",
+      "@p_salesmoney_s": "",
+      "@p_operating_profits_s": "",
+      "@p_current_income_s": "",
+      "@p_dedt_rati_s": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "BA_A0020W",
+      "@p_company_code": "2207A046",
+    },
+  };
 
   //   useEffect(() => {
   //     if (paraDataDeleted.work_type === "D") fetchToDelete();
@@ -1278,23 +1251,47 @@ const BA_A0020: React.FC = () => {
   //     paraDataDeleted.itemcd = "";
   //   };
 
-  //   const onSaveClick2 = async () => {
-  //     fetchSaved();
-  //   };
-  //   const fetchSaved = async () => {
+  const onSaveClick2 = async () => {
+    fetchSaved();
+  };
+
+  const fetchSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", infopara);
+    } catch (error) {
+      data = null;
+    }
+
+    console.log(infopara);
+    console.log(data);
+    if (data.isSuccess === true) {
+      setMainPgNum(1);
+      setMainDataResult(process([], mainDataState));
+
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  //   const fetchTodoGridSaved = async () => {
   //     let data: any;
   //     setLoading(true);
   //     try {
-  //       data = await processApi<any>("procedure", infopara);
+  //       data = await processApi<any>("procedure", para);
   //     } catch (error) {
   //       data = null;
   //     }
 
   //     if (data.isSuccess === true) {
-  //       setMainPgNum(1);
-  //       setMainDataResult(process([], mainDataState));
+  //       setSubPgNum(1);
+  //       setSubDataResult(process([], subDataState));
 
-  //       fetchMainGrid();
+  //       fetchSubGrid();
   //     } else {
   //       console.log("[오류 발생]");
   //       console.log(data);
@@ -1302,32 +1299,11 @@ const BA_A0020: React.FC = () => {
   //     setLoading(false);
   //   };
 
-//   const fetchTodoGridSaved = async () => {
-//     let data: any;
-//     setLoading(true);
-//     try {
-//       data = await processApi<any>("procedure", para);
-//     } catch (error) {
-//       data = null;
-//     }
-
-//     if (data.isSuccess === true) {
-//       setSubPgNum(1);
-//       setSubDataResult(process([], subDataState));
-
-//       fetchSubGrid();
-//     } else {
-//       console.log("[오류 발생]");
-//       console.log(data);
-//     }
-//     setLoading(false);
-//   };
-
-//   useEffect(() => {
-//     if (paraData.itemcd != "") {
-//       fetchTodoGridSaved();
-//     }
-//   }, [paraData]);
+  //   useEffect(() => {
+  //     if (paraData.itemcd != "") {
+  //       fetchTodoGridSaved();
+  //     }
+  //   }, [paraData]);
   return (
     <>
       <TitleContainer>
@@ -1389,7 +1365,7 @@ const BA_A0020: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
-                    name="useyn"
+                    name="raduseyn"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
@@ -1443,7 +1419,7 @@ const BA_A0020: React.FC = () => {
                 icon="delete"
               >
                 품목삭제
-              </Button>
+              </Button> */}
               <Button
                 onClick={onSaveClick2}
                 fillMode="outline"
@@ -1451,7 +1427,7 @@ const BA_A0020: React.FC = () => {
                 icon="save"
               >
                 저장
-              </Button> */}
+              </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
@@ -1547,11 +1523,12 @@ const BA_A0020: React.FC = () => {
                   </td>
                   <th>업체구분</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
                         name="custdiv"
                         value={infomation.custdiv}
-                        customOptionData={customOptionData}
+                        bizComponentId="L_BA026"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                         textField={"code_name"}
                         valueField={"code_name"}
@@ -1567,27 +1544,31 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>영문회사명</th>
+                  <th>사업자구분</th>
                   <td>
-                    <Input
-                      name="compnm_eng"
-                      type="text"
-                      value={infomation.compnm_eng}
-                      onChange={InputChange}
-                    />
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="bizdiv"
+                        value={infomation.bizdiv}
+                        bizComponentId="L_BA027"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        textField={"code_name"}
+                        valueField={"code_name"}
+                      />
+                    )}
                   </td>
                 </tr>
                 <tr>
                   <th>매입단가항목</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
                         name="inunpitem"
                         value={infomation.inunpitem}
-                        customOptionData={customOptionData}
+                        bizComponentId="L_BA008"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
-                        textField={"code_name"}
-                        valueField={"code_name"}
                       />
                     )}
                   </td>
@@ -1618,11 +1599,12 @@ const BA_A0020: React.FC = () => {
                   </td>
                   <th>단가항목</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
                         name="unpitem"
                         value={infomation.unpitem}
-                        customOptionData={customOptionData}
+                        bizComponentId="L_BA008"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                       />
                     )}
@@ -1647,18 +1629,14 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>사업자구분</th>
+                  <th>영문회사명</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="bizdiv"
-                        value={infomation.bizdiv}
-                        customOptionData={customOptionData}
-                        changeData={ComboBoxChange}
-                        textField={"code_name"}
-                        valueField={"code_name"}
-                      />
-                    )}
+                    <Input
+                      name="compnm_eng"
+                      type="text"
+                      value={infomation.compnm_eng}
+                      onChange={InputChange}
+                    />
                   </td>
                   <th>주민등록번호</th>
                   <td>
@@ -1811,10 +1789,12 @@ const BA_A0020: React.FC = () => {
                   </td>
                   <th>역발행여부</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
                         name="rtxisuyn"
-                        customOptionData={customOptionData}
+                        value={infomation.rtxisuyn}
+                        bizComponentId="R_RTXISUYN"
+                        bizComponentData={bizComponentData}
                         changeData={RadioChange}
                       />
                     )}
@@ -1823,14 +1803,13 @@ const BA_A0020: React.FC = () => {
                 <tr>
                   <th>신고세무소</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="taxorg"
-                        value={infomation.taxorg}
-                        customOptionData={customOptionData}
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="bizdiv"
+                        value={infomation.bizdiv}
+                        bizComponentId="L_BA049"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
-                        textField={"code_name"}
-                        valueField={"code_name"}
                       />
                     )}
                   </td>
@@ -1845,33 +1824,36 @@ const BA_A0020: React.FC = () => {
                   </td>
                   <th>대분류</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
                         name="itemlvl1"
                         value={infomation.itemlvl1}
-                        customOptionData={customOptionData}
+                        bizComponentId="L_BA171"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                       />
                     )}
                   </td>
                   <th>중분류</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
                         name="itemlvl2"
                         value={infomation.itemlvl2}
-                        customOptionData={customOptionData}
+                        bizComponentId="L_BA172"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                       />
                     )}
                   </td>
                   <th>소분류</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
                         name="itemlvl3"
                         value={infomation.itemlvl3}
-                        customOptionData={customOptionData}
+                        bizComponentId="L_BA173"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                       />
                     )}
@@ -1880,20 +1862,24 @@ const BA_A0020: React.FC = () => {
                 <tr>
                   <th>사용여부</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
                         name="useyn"
-                        customOptionData={customOptionData}
+                        value={infomation.useyn}
+                        bizComponentId="R_USEYN"
+                        bizComponentData={bizComponentData}
                         changeData={RadioChange}
                       />
                     )}
                   </td>
                   <th>SCM사용여부</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
                         name="scmyn"
-                        customOptionData={customOptionData}
+                        value={infomation.scmyn}
+                        bizComponentId="R_USEYN"
+                        bizComponentData={bizComponentData}
                         changeData={RadioChange}
                       />
                     )}
@@ -1936,11 +1922,12 @@ const BA_A0020: React.FC = () => {
                 <tr>
                   <th>etax담당자</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
                         name="etxprs"
                         value={infomation.etxprs}
-                        customOptionData={customOptionData}
+                        bizComponentId="L_sysUserMaster_001"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                       />
                     )}
@@ -1965,23 +1952,15 @@ const BA_A0020: React.FC = () => {
                   </td>
                   <th>센드빌회원여부</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
                         name="bill_type"
                         value={infomation.bill_type}
-                        customOptionData={customOptionData}
+                        bizComponentId="L_AC901"
+                        bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                       />
                     )}
-                  </td>
-                  <th>역발행여부</th>
-                  <td>
-                    <Input
-                      name="recvid"
-                      type="text"
-                      value={infomation.recvid}
-                      onChange={InputChange}
-                    />
                   </td>
                 </tr>
               </tbody>
