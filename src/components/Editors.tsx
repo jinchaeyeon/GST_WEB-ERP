@@ -253,43 +253,6 @@ export const FormNameCell = (props: GridCellProps) => {
     : defaultRendering;
 };
 
-//Grid Cell에서 사용되는 Name Feild (신규 행인 경우만 수정 가능한 셀)
-export const FormEditableNameCellInNew = (props: GridCellProps) => {
-  const { field, dataItem, className, render } = props;
-  const isInEdit =
-    dataItem.rowstatus === "N" ? field === dataItem.inEdit : false;
-  const parentField = dataItem.parentField;
-
-  let defaultRendering = (
-    <td className={className ?? ""}>
-      <Field
-        component={isInEdit ? TextInputWithValidation : DisplayValue}
-        name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
-        className={className ?? ""}
-      />
-    </td>
-  );
-  return render
-    ? render.call(undefined, defaultRendering, props)
-    : defaultRendering;
-};
-
-//Grid Cell에서 사용되는 ReadOnly Cell
-export const FormReadOnlyNameCell = (props: GridCellProps) => {
-  //  const { parentField } = React.useContext(FormGridEditContext);
-  const { field, dataItem, className } = props;
-  const parentField = dataItem.parentField;
-
-  return (
-    <td className={className ?? ""}>
-      <Field
-        component={DisplayValue}
-        name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
-      />
-    </td>
-  );
-};
-
 //Grid Cell에서 사용되는 ReadOnly NumberCell
 export const FormReadOnlyNumberCell = (props: GridCellProps) => {
   const { field, dataItem, className } = props;
