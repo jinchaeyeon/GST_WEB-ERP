@@ -16,6 +16,8 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridHeaderSelectionChangeEvent,
+  GridDataStateChangeEvent,
+  GridSortChangeEvent,
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -39,6 +41,7 @@ import {
   FieldRenderProps,
 } from "@progress/kendo-react-form";
 import { Error, Label } from "@progress/kendo-react-labels";
+import { DatePickerChangeEvent } from "@progress/kendo-react-dateinputs";
 import {
   FormNumberCell,
   FormNameCell,
@@ -66,6 +69,8 @@ import {
   getCodeFromValue,
   arrayLengthValidator,
   getUnpQuery,
+  UseParaPc,
+  getCustinfoQuery,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -140,33 +145,73 @@ type TDetailData = {
   bf_qty_s: string[];
 };
 
-export const unpContext = createContext<{
+const formContext = createContext<{
   orddt: string;
-  setOrddt: (orddt: string) => void;
-  unpList: [];
-  getUnpList: (custcd: string) => void;
-  changeUnpData: () => void;
+  setOrddt: (o: string) => void;
+  custcd: string;
+  setCustcd: (c: string) => void;
+  setChangedCustInfo: (c: { custcd: string; custnm: string }) => void;
+  setChangedRcvcustInfo: (c: { rcvcustcd: string; rcvcustnm: string }) => void;
+  dataState: State;
+  setDataState: (d: any) => void;
 }>({} as any);
 
-export const gridContext = createContext<{
-  changeGridData: () => void;
-}>({} as any);
-
-export const FormCustcdInput = (fieldRenderProps: FieldRenderProps) => {
+const FormCustInput = (fieldRenderProps: FieldRenderProps) => {
   const { validationMessage, visited, label, id, valid, onBlur, ...others } =
     fieldRenderProps;
 
-  const { getUnpList, setOrddt, changeUnpData } = useContext(unpContext);
+  const processApi = useApi();
+  const { setCustcd, setChangedCustInfo, setChangedRcvcustInfo } =
+    useContext(formContext);
 
-  const onHandleBlur = (e: any) => {
+  const onHandleBlur = async (e: any) => {
     const { value, name } = e.target;
+
+    // 업체명 조회
+    const custInfo = await fetchCustInfo(value);
+
     if (name === "custcd") {
-      getUnpList(value);
-      changeUnpData();
-    } else if (name === "orddt") {
-      setOrddt(value);
-      changeUnpData();
+      setCustcd(value);
+
+      if (custInfo) {
+        setChangedCustInfo(custInfo);
+      }
+    } else {
+      if (custInfo)
+        setChangedRcvcustInfo({
+          rcvcustcd: custInfo.custcd,
+          rcvcustnm: custInfo.custnm,
+        });
     }
+  };
+
+  const fetchCustInfo = async (custcd: string) => {
+    if (custcd === "") return;
+    let data: any;
+    let custInfo: null | { custcd: string; custnm: string } = null;
+
+    const queryStr = getCustinfoQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        custInfo = { custcd: rows[0].custcd, custnm: rows[0].custnm };
+      }
+    }
+
+    return custInfo;
   };
 
   return (
@@ -208,7 +253,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [editedRowData, setEditedRowData] = useState<any>({});
-  const { unpList, orddt } = useContext(unpContext);
+  const [unpList, setUnpList] = useState([]);
+  const { orddt, custcd, dataState, setDataState } = useContext(formContext);
 
   const ItemBtnCell = (props: GridCellProps) => {
     const { dataIndex } = props;
@@ -579,18 +625,30 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     []
   );
 
-  // 모든 행 단가 관련 필드 업데이트 (업체코드, 수주일자 변경시 호출)
-  const changeGridData = () => {
+  // 업체코드 변경 시 단가 조회
+  useEffect(() => {
+    fetchUnp(custcd);
+  }, [custcd]);
+
+  // 단가정보, 수주일자 변경 시 그리드의 단가 업데이트
+  useEffect(() => {
+    if (unpList.length > 0) {
+      changeGridUnpData();
+    }
+  }, [unpList, orddt]);
+
+  // 모든 행 단가 관련 필드 업데이트
+  const changeGridUnpData = () => {
     fieldArrayRenderProps.value.forEach((item: any, index: number) => {
       let { qty, unp, wonamt, taxamt, totamt, itemcd } = item;
 
       //단가정보
-      const unpData: any = unpList.filter(
+      const unpData: any = unpList.find(
         (unpItem: any) => unpItem.recdt <= orddt && unpItem.itemcd === itemcd
       );
 
-      if (unpData.length > 0) {
-        unp = unpData[0].unp;
+      if (unpData) {
+        unp = unpData.unp;
         wonamt = unp * qty;
         taxamt = wonamt / 10;
         totamt = wonamt + taxamt;
@@ -600,6 +658,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         index: index,
         value: {
           ...item,
+          unp,
           wonamt,
           taxamt,
           totamt,
@@ -608,214 +667,262 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       });
     });
   };
+
+  const fetchUnp = useCallback(async (custcd: string) => {
+    if (custcd === "") return;
+    let data: any;
+
+    const queryStr = getUnpQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setUnpList(rows);
+    }
+  }, []);
+
+  const onGridSortChange = (e: GridSortChangeEvent) => {
+    setDataState((prev: any) => ({ ...prev, sort: e.sort }));
+  };
+
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
+    setDataState(event.dataState);
+  };
+
   return (
-    <gridContext.Provider value={{ changeGridData }}>
-      <GridContainer margin={{ top: "30px" }}>
-        {visited && validationMessage && <Error>{validationMessage}</Error>}
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
+    <GridContainer margin={{ top: "30px" }}>
+      {visited && validationMessage && <Error>{validationMessage}</Error>}
+      <Grid
+        style={{ height: "300px" }}
+        data={process(
+          dataWithIndexes.map((item: any) => ({
             ...item,
             parentField: name,
             [SELECTED_FIELD]: selectedState[idGetter(item)],
-          }))}
-          total={dataWithIndexes.length}
-          dataItemKey={dataItemKey}
-          style={{ height: "300px" }}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          onScroll={scrollHandler}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            drag: false,
-            cell: false,
-            mode: "multiple",
-          }}
-          onSelectionChange={onSelectionChange}
-          onHeaderSelectionChange={onHeaderSelectionChange}
-        >
-          <GridToolbar>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onAdd}
-              icon="add"
-            >
-              추가
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onRemove}
-              icon="minus"
-            >
-              삭제
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onCopy}
-              icon="copy"
-            >
-              복사
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onItemWndClick}
-            >
-              품목참조
-            </Button>
-          </GridToolbar>
-
-          <GridColumn
-            field={SELECTED_FIELD}
-            width="45px"
-            headerSelectionValue={
-              dataWithIndexes.findIndex(
-                (item: any) => !selectedState[idGetter(item)]
-              ) === -1
-            }
-          />
-          <GridColumn field="rowstatus" title=" " width="40px" />
-          <GridColumn
-            field="itemcd"
-            title="품목코드"
-            width="160px"
-            cell={FormNameCell}
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn cell={ItemBtnCell} width="55px" />
-          <GridColumn
-            field="itemnm"
-            title="품목명"
-            width="180px"
-            cell={FormNameCell}
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn
-            field="insiz"
-            title="규격"
-            width="200px"
-            cell={FormNameCell}
-          />
-          <GridColumn
-            field="itemacnt"
-            title="품목계정"
-            width="120px"
-            cell={CustomComboBoxCell}
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn
-            field="qty"
-            title="수주량"
-            width="120px"
-            cell={FormNumberCell}
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn
-            field="qtyunit"
-            title="단위"
-            width="120px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="specialunp"
-            title="발주단가"
-            width="120px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="specialamt"
-            title="발주금액"
-            width="120px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="unp"
-            title="단가"
-            width="120px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="wonamt"
-            title="금액"
-            width="120px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="taxamt"
-            title="세액"
-            width="120px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="totamt"
-            title="합계금액"
-            width="120px"
-            cell={FormReadOnlyNumberCell}
-          />
-          <GridColumn
-            field="remark"
-            title="비고"
-            width="120px"
-            cell={FormNameCell}
-          />
-          <GridColumn
-            field="purcustnm"
-            title="발주처"
-            width="120px"
-            cell={FormNameCell}
-          />
-          <GridColumn
-            field="outqty"
-            title="출하수량"
-            width="120px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="sale_qty"
-            title="판매수량"
-            width="120px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="finyn"
-            title="완료여부"
-            width="120px"
-            cell={FormCheckBoxReadOnlyCell}
-          />
-          <GridColumn
-            field="bf_qty"
-            title="LOT수량"
-            width="120px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="lotnum"
-            title="LOT NO"
-            width="120px"
-            cell={FormNameCell}
-          />
-        </Grid>
-
-        {itemWindowVisible && (
-          <ItemsWindow
-            workType={editIndex === undefined ? "ROWS_ADD" : "ROW_ADD"}
-            setVisible={setItemWindowVisible}
-            setData={setItemData}
-          />
+          })),
+          dataState
         )}
-      </GridContainer>
-    </gridContext.Provider>
+        {...dataState}
+        onDataStateChange={onGridDataStateChange}
+        // 렌더
+        cellRender={customCellRender}
+        rowRender={customRowRender}
+        //선택기능
+        dataItemKey={dataItemKey}
+        selectedField={SELECTED_FIELD}
+        selectable={{
+          enabled: true,
+          drag: false,
+          cell: false,
+          mode: "multiple",
+        }}
+        onHeaderSelectionChange={onHeaderSelectionChange}
+        //스크롤 조회 기능
+        fixedScroll={true}
+        total={dataWithIndexes.length}
+        onScroll={scrollHandler}
+        onSelectionChange={onSelectionChange}
+        //정렬기능
+        sortable={true}
+        onSortChange={onGridSortChange}
+        //컬럼순서조정
+        reorderable={true}
+        //컬럼너비조정
+        resizable={true}
+      >
+        <GridToolbar>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onAdd}
+            icon="add"
+          >
+            추가
+          </Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onRemove}
+            icon="minus"
+          >
+            삭제
+          </Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onCopy}
+            icon="copy"
+          >
+            복사
+          </Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onItemWndClick}
+          >
+            품목참조
+          </Button>
+        </GridToolbar>
+
+        <GridColumn
+          field={SELECTED_FIELD}
+          width="45px"
+          headerSelectionValue={
+            dataWithIndexes.findIndex(
+              (item: any) => !selectedState[idGetter(item)]
+            ) === -1
+          }
+        />
+        <GridColumn field="rowstatus" title=" " width="40px" />
+        <GridColumn
+          field="itemcd"
+          title="품목코드"
+          width="160px"
+          cell={FormNameCell}
+          headerCell={RequiredHeader}
+          className="required"
+        />
+        <GridColumn cell={ItemBtnCell} width="55px" />
+        <GridColumn
+          field="itemnm"
+          title="품목명"
+          width="180px"
+          cell={FormNameCell}
+          headerCell={RequiredHeader}
+          className="required"
+        />
+        <GridColumn
+          field="insiz"
+          title="규격"
+          width="200px"
+          cell={FormNameCell}
+        />
+        <GridColumn
+          field="itemacnt"
+          title="품목계정"
+          width="120px"
+          cell={CustomComboBoxCell}
+          headerCell={RequiredHeader}
+          className="required"
+        />
+        <GridColumn
+          field="qty"
+          title="수주량"
+          width="120px"
+          cell={FormNumberCell}
+          headerCell={RequiredHeader}
+          className="required"
+        />
+        <GridColumn
+          field="qtyunit"
+          title="단위"
+          width="120px"
+          cell={CustomComboBoxCell}
+        />
+        <GridColumn
+          field="specialunp"
+          title="발주단가"
+          width="120px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="specialamt"
+          title="발주금액"
+          width="120px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="unp"
+          title="단가"
+          width="120px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="wonamt"
+          title="금액"
+          width="120px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="taxamt"
+          title="세액"
+          width="120px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="totamt"
+          title="합계금액"
+          width="120px"
+          cell={FormReadOnlyNumberCell}
+        />
+        <GridColumn
+          field="remark"
+          title="비고"
+          width="120px"
+          cell={FormNameCell}
+        />
+        <GridColumn
+          field="purcustnm"
+          title="발주처"
+          width="120px"
+          cell={FormNameCell}
+        />
+        <GridColumn
+          field="outqty"
+          title="출하수량"
+          width="120px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="sale_qty"
+          title="판매수량"
+          width="120px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="finyn"
+          title="완료여부"
+          width="120px"
+          cell={FormCheckBoxReadOnlyCell}
+        />
+        <GridColumn
+          field="bf_qty"
+          title="LOT수량"
+          width="120px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="lotnum"
+          title="LOT NO"
+          width="120px"
+          cell={FormNameCell}
+        />
+      </Grid>
+
+      {itemWindowVisible && (
+        <ItemsWindow
+          workType={editIndex === undefined ? "ROWS_ADD" : "ROW_ADD"}
+          setVisible={setItemWindowVisible}
+          setData={setItemData}
+        />
+      )}
+    </GridContainer>
   );
 };
 const KendoWindow = ({
@@ -839,6 +946,9 @@ const KendoWindow = ({
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -846,8 +956,23 @@ const KendoWindow = ({
     height: 800,
   });
 
-  const [unpList, setUnpList] = useState<any>([]);
+  // 업체별 단가 처리에 사용 (수주일자, 업체코드)
   const [orddt, setOrddt] = useState("");
+  const [custcd, setCustcd] = useState("");
+
+  // 동적으로 Form Value를 변경하기 위해 사용하는 변수
+  const [changedCustInfo, setChangedCustInfo] = useState({
+    custcd: "",
+    custnm: "",
+  });
+  const [changedRcvcustInfo, setChangedRcvcustInfo] = useState({
+    rcvcustcd: "",
+    rcvcustnm: "",
+  });
+  const [changedAttachmentInfo, setChangedAttachmentInfo] = useState({
+    attdatnum: "",
+    files: "",
+  });
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -865,6 +990,30 @@ const KendoWindow = ({
     getVisible(false);
   };
 
+  // 업체코드 변경 시 Form 업체정보 change
+  useEffect(() => {
+    if (changedCustInfo.custcd !== "") {
+      const valueChanged = document.getElementById("custcdChanged");
+      valueChanged!.click();
+    }
+  }, [changedCustInfo]);
+
+  // 인수처코드 변경 시  Form 업체정보 change
+  useEffect(() => {
+    if (changedRcvcustInfo.rcvcustcd !== "") {
+      const valueChanged = document.getElementById("rcvcustcdChanged");
+      valueChanged!.click();
+    }
+  }, [changedRcvcustInfo]);
+
+  // 파일정보 변경 시  Form 업체정보 change
+  useEffect(() => {
+    if (changedAttachmentInfo.attdatnum !== "") {
+      const valueChanged = document.getElementById("attachmentChanged");
+      valueChanged!.click();
+    }
+  }, [changedAttachmentInfo]);
+
   const [formKey, setFormKey] = React.useState(1);
   const resetForm = () => {
     setFormKey(formKey + 1);
@@ -876,28 +1025,17 @@ const KendoWindow = ({
   }, [formKey]);
   const processApi = useApi();
   const [dataState, setDataState] = useState<State>({
-    skip: 0,
-    take: 20,
-    //sort: [{ field: "customerID", dir: "asc" }],
-    group: [{ field: "itemacnt" }],
+    sort: [],
   });
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], dataState)
-  );
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], dataState)
   );
-
-  const [detailSelectedState, setDetailSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
 
   const [custType, setCustType] = useState("");
 
   useEffect(() => {
     if (workType === "U" || isCopy === true) {
       fetchMain();
-      //fetchGrid();
     }
   }, []);
 
@@ -1047,10 +1185,7 @@ const KendoWindow = ({
   useEffect(() => {
     //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
     resetForm();
-
-    if (workType === "U" || isCopy === true) {
-      fetchUnp(initialVal.custcd);
-    }
+    //fetch된 orddt 데이터 세팅 (단가세팅용도)
     setOrddt(convertDateToStr(initialVal.orddt));
   }, [initialVal]);
 
@@ -1083,6 +1218,7 @@ const KendoWindow = ({
       //resetForm();
     }
   };
+
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -1114,7 +1250,7 @@ const KendoWindow = ({
     remark: "",
     attdatnum: "",
     userid: userId,
-    pc: "WEB TEST",
+    pc: pc,
     ship_method: "",
     dlv_method: "",
     hullno: "",
@@ -1158,8 +1294,8 @@ const KendoWindow = ({
   //프로시저 파라미터
   const paraSaved: Iparameters = {
     procedureName: "P_SA_A2000W_S",
-    pageNumber: 1,
-    pageSize: 10,
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
       "@p_work_type": paraData.work_type,
       "@p_service_id": paraData.service_id,
@@ -1234,7 +1370,6 @@ const KendoWindow = ({
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainDataResult(process([], dataState));
     setDetailDataResult(process([], dataState));
   };
 
@@ -1602,34 +1737,23 @@ const KendoWindow = ({
     useState<boolean>(false);
 
   const setCustData = (data: ICustData) => {
+    const { custcd, custnm } = data;
     if (custType === "CUST") {
-      setInitialVal((prev) => {
-        return {
-          ...prev,
-          custcd: data.custcd,
-          custnm: data.custnm,
-        };
-      });
+      // 업체
+      setCustcd(custcd);
+      setChangedCustInfo({ custcd, custnm });
     } else {
-      setInitialVal((prev) => {
-        return {
-          ...prev,
-          rcvcustnm: data.custnm,
-          rcvcustcd: data.custcd,
-        };
-      });
+      // 인수처
+      setChangedRcvcustInfo({ rcvcustcd: custcd, rcvcustnm: custnm });
     }
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    setInitialVal((prev) => {
-      return {
-        ...prev,
-        attdatnum: data.attdatnum,
-        files:
-          data.original_name +
-          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-      };
+    setChangedAttachmentInfo({
+      files:
+        data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      attdatnum: data.attdatnum,
     });
   };
 
@@ -1645,39 +1769,15 @@ const KendoWindow = ({
     }
   }, [bizComponentData]);
 
-  const fetchUnp = useCallback(async (custcd: string) => {
-    if (custcd === "") return;
-    let data: any;
+  const onChangeOrddt = (e: DatePickerChangeEvent) => {
+    const { value } = e;
+    if (value) {
+      setOrddt(convertDateToStr(value));
 
-    const queryStr = getUnpQuery(custcd);
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
+      if (custcd === "") {
+        setCustcd(initialVal.custcd);
+      }
     }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setUnpList(rows);
-    }
-  }, []);
-
-  const getUnpList = (custcd: string) => {
-    fetchUnp(custcd);
-  };
-
-  const { changeGridData } = useContext(gridContext);
-
-  const changeUnpData = () => {
-    console.log("양");
-    changeGridData();
   };
 
   return (
@@ -1689,8 +1789,17 @@ const KendoWindow = ({
       onResize={handleResize}
       onClose={onClose}
     >
-      <unpContext.Provider
-        value={{ orddt, setOrddt, unpList, getUnpList, changeUnpData }}
+      <formContext.Provider
+        value={{
+          orddt,
+          setOrddt,
+          custcd,
+          setCustcd,
+          setChangedRcvcustInfo,
+          setChangedCustInfo,
+          dataState,
+          setDataState,
+        }}
       >
         <Form
           onSubmit={handleSubmit}
@@ -1737,6 +1846,48 @@ const KendoWindow = ({
                     e.preventDefault(); // Changing desired field value
                     formRenderProps.onChange("valueChanged", {
                       value: "1",
+                    });
+                  }}
+                ></button>
+                <button
+                  id="custcdChanged"
+                  style={{ display: "none" }}
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    formRenderProps.onChange("custcd", {
+                      value: changedCustInfo.custcd,
+                    });
+                    formRenderProps.onChange("custnm", {
+                      value: changedCustInfo.custnm,
+                    });
+                  }}
+                ></button>
+                <button
+                  id="rcvcustcdChanged"
+                  style={{ display: "none" }}
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    formRenderProps.onChange("rcvcustcd", {
+                      value: changedRcvcustInfo.rcvcustcd,
+                    });
+                    formRenderProps.onChange("rcvcustnm", {
+                      value: changedRcvcustInfo.rcvcustnm,
+                    });
+                  }}
+                ></button>
+                <button
+                  id="attachmentChanged"
+                  style={{ display: "none" }}
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    formRenderProps.onChange("files", {
+                      value: changedAttachmentInfo.files,
+                    });
+                    formRenderProps.onChange("attdatnum", {
+                      value: changedAttachmentInfo.attdatnum,
                     });
                   }}
                 ></button>
@@ -1808,6 +1959,7 @@ const KendoWindow = ({
                     name={"orddt"}
                     component={FormDatePicker}
                     className="required"
+                    onChange={onChangeOrddt}
                   />
                   <Field
                     label={"납기일자"}
@@ -1864,7 +2016,7 @@ const KendoWindow = ({
                   <Field
                     label={"업체코드"}
                     name={"custcd"}
-                    component={FormCustcdInput}
+                    component={FormCustInput}
                     validator={validator}
                     className="required"
                   />
@@ -1887,7 +2039,7 @@ const KendoWindow = ({
                   />
                   <Field
                     name={"rcvcustcd"}
-                    component={FormInput}
+                    component={FormCustInput}
                     label={"인수처코드"}
                   />
                   <ButtonInFieldWrap>
@@ -2056,7 +2208,7 @@ const KendoWindow = ({
             </FormElement>
           )}
         />
-      </unpContext.Provider>
+      </formContext.Provider>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

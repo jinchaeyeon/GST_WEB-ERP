@@ -42,7 +42,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  UseGetValueFromSessionItem
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -486,6 +486,7 @@ const SA_B2000: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      resetAllGrid();
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {

@@ -671,6 +671,14 @@ export const getSelectedFirstData = (
   return selectedRowData;
 };
 
+export const getCustinfoQuery = (custcd: string) => {
+  return `
+  SELECT custcd, custnm 
+    FROM ba020t 
+    WHERE BA020T.custcd =  '${custcd}'    
+      `;
+};
+
 export const getUnpQuery = (custcd: string) => {
   return `
   SELECT * 
