@@ -11,12 +11,14 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import { Field } from "@progress/kendo-react-form";
 import calculateSize from "calculate-size";
 import {
   Title,
@@ -28,6 +30,8 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
+  ButtonInFieldWrap,
+  ButtonInField,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -51,7 +55,7 @@ import {
   dateformat2,
   UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A2000W_Window";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -125,9 +129,23 @@ const BA_A0040: React.FC = () => {
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
-
       setFilters((prev) => ({
         ...prev,
+        raduseyn: defaultOption.find((item: any) => item.id === "raduseyn").valueCode,
+      }));
+      setInfomation((prev) => ({
+        ...prev,
+        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+          .valueCode,
+        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+          .valueCode,
+        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+          .valueCode,
+        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+          .valueCode,
+        invunit: defaultOption.find((item: any) => item.id === "invunit")
+          .valueCode,
+        qcyn: defaultOption.find((item: any) => item.id === "qcyn").valueCode,
         useyn: defaultOption.find((item: any) => item.id === "useyn").valueCode,
       }));
     }
@@ -212,12 +230,13 @@ const BA_A0040: React.FC = () => {
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSub2PgNum] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
-  const [workType, setWorkType] = useState<string>("Q");
+  const [workType, setWorkType] = useState<string>("U");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [isCopy, setIsCopy] = useState(false);
 
@@ -229,6 +248,32 @@ const BA_A0040: React.FC = () => {
         ...prev,
         [name]: value,
       }));
+  };
+
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+    setInfomation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const RadioChange = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const ComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -251,6 +296,55 @@ const BA_A0040: React.FC = () => {
     }));
   };
 
+  const [infomation, setInfomation] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "U",
+    itemcd: "자동생성",
+    itemnm: "",
+    insiz: "",
+    itemacnt: "제품",
+    useyn: "Y",
+    custcd: "",
+    custnm: "",
+    itemcd_s: "",
+    spec: "",
+    location: "01",
+    remark: "",
+    bnatur: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
+    itemlvl4: "",
+    bomyn: "",
+    attdatnum: "",
+    row_values: null,
+    safeqty: 0,
+    unitwgt: 0,
+    invunit: "",
+    dwgno: "",
+    maker: "",
+    qcyn: "N",
+    attdatnum_img: null,
+    attdatnum_img2: null,
+    snp: 0,
+    person: "",
+    extra_field2: "",
+    purleadtime: 0,
+    len: 0,
+    purqty: 0,
+    boxqty: 0,
+    pac: "",
+    bnatur_insiz: 0,
+    itemno: "",
+    itemgroup: "",
+    lenunit: "",
+    hscode: "",
+    wgtunit: "",
+    custitemnm: "",
+    unitqty: 0,
+    procday: "",
+  });
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -259,7 +353,7 @@ const BA_A0040: React.FC = () => {
     itemnm: "",
     insiz: "",
     itemacnt: "",
-    useyn: "Y",
+    raduseyn: "Y",
     custcd: "",
     custnm: "",
     itemcd_s: "",
@@ -284,7 +378,7 @@ const BA_A0040: React.FC = () => {
       "@p_itemnm": filters.itemnm,
       "@p_insiz": filters.insiz,
       "@p_itemacnt": filters.itemacnt,
-      "@p_useyn": filters.useyn,
+      "@p_useyn": filters.raduseyn,
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
       "@p_itemcd_s": filters.itemcd_s,
@@ -506,6 +600,54 @@ const BA_A0040: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
+    setInfomation({
+      pgSize: PAGE_SIZE,
+      workType: "U",
+      itemcd: selectedRowData.itemcd,
+      itemnm: selectedRowData.itemnm,
+      insiz: selectedRowData.insiz,
+      itemacnt: selectedRowData.itemacnt,
+      useyn: selectedRowData.useyn,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      itemcd_s: selectedRowData.itemcd_s,
+      spec: selectedRowData.spec,
+      location: "01",
+      remark: selectedRowData.remark,
+      bnatur: selectedRowData.bnatur,
+      itemlvl1: selectedRowData.itemlvl1,
+      itemlvl2: selectedRowData.itemlvl2,
+      itemlvl3: selectedRowData.itemlvl3,
+      itemlvl4: selectedRowData.itemlvl4,
+      bomyn: selectedRowData.bomyn,
+      attdatnum: selectedRowData.attdatnum,
+      row_values: selectedRowData.row_values,
+      safeqty: selectedRowData.safeqty,
+      unitwgt: selectedRowData.unitwgt,
+      invunit: selectedRowData.invunit,
+      dwgno: selectedRowData.dwgno,
+      maker: selectedRowData.maker,
+      qcyn: selectedRowData.qcyn,
+      attdatnum_img: selectedRowData.attdatnum_img,
+      attdatnum_img2: selectedRowData.attdatnum_img2,
+      snp: selectedRowData.snp,
+      person: selectedRowData.person,
+      extra_field2: selectedRowData.extra_field2,
+      purleadtime: selectedRowData.purleadtime,
+      len: selectedRowData.len,
+      purqty: selectedRowData.purqty,
+      boxqty: selectedRowData.boxqty,
+      pac: selectedRowData.pac,
+      bnatur_insiz: selectedRowData.bnatur_insiz,
+      itemno: selectedRowData.itemno,
+      itemgroup: selectedRowData.itemgroup,
+      lenunit: selectedRowData.lenunit,
+      hscode: selectedRowData.hscode,
+      wgtunit: selectedRowData.wgtunit,
+      custitemnm: selectedRowData.custitemnm,
+      unitqty: selectedRowData.unitqty,
+      procday: selectedRowData.procday,
+    });
     if (tabSelected === 1) {
       setsubFilters((prev) => ({
         ...prev,
@@ -573,6 +715,58 @@ const BA_A0040: React.FC = () => {
     );
   };
 
+  const onAddClick2 = () => {
+    setWorkType("N");
+    setInfomation({
+      pgSize: PAGE_SIZE,
+      workType: "N",
+      itemcd: "자동생성",
+      itemnm: "",
+      insiz: "",
+      itemacnt: "제품",
+      useyn: "",
+      custcd: "",
+      custnm: "",
+      itemcd_s: "",
+      spec: "",
+      location: "01",
+      remark: "",
+      bnatur: "",
+      itemlvl1: "",
+      itemlvl2: "",
+      itemlvl3: "",
+      itemlvl4: "",
+      bomyn: "",
+      attdatnum: "",
+      row_values: null,
+      safeqty: 0,
+      unitwgt: 0,
+      invunit: "",
+      dwgno: "",
+      maker: "",
+      qcyn: "N",
+      attdatnum_img: null,
+      attdatnum_img2: null,
+      snp: 0,
+      person: "",
+      extra_field2: "",
+      purleadtime: 0,
+      len: 0,
+      purqty: 0,
+      boxqty: 0,
+      pac: "",
+      bnatur_insiz: 0,
+      itemno: "",
+      itemgroup: "",
+      lenunit: "",
+      hscode: "",
+      wgtunit: "",
+      custitemnm: "",
+      unitqty: 0,
+      procday: "",
+    });
+  };
+
   const onAddClick = () => {
     let seq = 1;
 
@@ -584,13 +778,6 @@ const BA_A0040: React.FC = () => {
       });
       seq++;
     }
-
-    const idx: number =
-      Number(Object.getOwnPropertyNames(selectedState)[0]) ?? null;
-    if (idx === null) return false;
-    const selectedRowData = subData2Result.data.find(
-      (item) => item.idx === idx
-    );
 
     const newDataItem = {
       [SUB_DATA_ITEM_KEY2]: seq,
@@ -616,6 +803,10 @@ const BA_A0040: React.FC = () => {
     setCustWindowVisible(true);
   };
 
+  const onCustWndClick2 = () => {
+    setCustWindowVisible2(true);
+  };
+
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
@@ -624,6 +815,25 @@ const BA_A0040: React.FC = () => {
     setTabSelected(e.selected);
     setSub2PgNum(1);
     setSubData2Result(process([], subData2State));
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setInfomation((prev) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
   };
 
   interface ICustData {
@@ -688,6 +898,14 @@ const BA_A0040: React.FC = () => {
   //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
+      ...prev,
+      custcd: data.custcd,
+      custnm: data.custnm,
+    }));
+  };
+
+  const setCustData2 = (data: ICustData) => {
+    setInfomation((prev) => ({
       ...prev,
       custcd: data.custcd,
       custnm: data.custnm,
@@ -779,6 +997,20 @@ const BA_A0040: React.FC = () => {
     />
   );
 
+  const [paraDataDeleted, setParaDataDeleted] = useState({
+    work_type: "",
+    itemcd: "",
+  });
+
+  const onDeleteClick = (e: any) => {
+    const item = Object.getOwnPropertyNames(selectedState)[0];
+    setParaDataDeleted((prev) => ({
+      ...prev,
+      work_type: "D",
+      itemcd: item,
+    }));
+  };
+
   const [paraData, setParaData] = useState({
     workType: "",
     orgdiv: "01",
@@ -796,7 +1028,7 @@ const BA_A0040: React.FC = () => {
   });
 
   const para: Iparameters = {
-    procedureName: "P_BA_A0080_S",
+    procedureName: "P_BA_A0080W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -816,6 +1048,134 @@ const BA_A0040: React.FC = () => {
     },
   };
 
+  const paraDeleted: Iparameters = {
+    procedureName: "P_BA_A0040W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": "D",
+      "@p_itemcd": paraDataDeleted.itemcd,
+      "@p_itemnm": infomation.itemnm,
+      "@p_itemacnt": itemacntListData.find(
+        (item: any) => item.code_name === infomation.itemacnt
+      )?.sub_code,
+      "@p_bnatur": infomation.bnatur,
+      "@p_insiz": infomation.insiz,
+      "@p_spec": infomation.spec,
+      "@p_maker": infomation.maker,
+      "@p_dwgno": infomation.dwgno,
+      "@p_itemlvl1": infomation.itemlvl1,
+      "@p_itemlvl2": infomation.itemlvl2,
+      "@p_itemlvl3": infomation.itemlvl3,
+      "@p_itemlvl4": infomation.itemlvl4,
+      "@p_invunit": qtyunitListData.find(
+        (item: any) => item.code_name === infomation.invunit
+      )?.sub_code,
+      "@p_bomyn": infomation.bomyn,
+      "@p_qcyn": infomation.qcyn,
+      "@p_unitwgt": infomation.unitwgt,
+      "@p_useyn": infomation.useyn,
+      "@p_attdatnum": infomation.attdatnum,
+      "@p_attdatnum_img": infomation.attdatnum_img,
+      "@p_attdatnum_img2": infomation.attdatnum_img2,
+      "@p_remark": infomation.remark,
+      "@p_safeqty": infomation.safeqty,
+      "@p_location": "01",
+      "@p_custcd": infomation.custcd,
+      "@p_custnm": infomation.custnm,
+      "@p_snp": infomation.snp,
+      "@p_autocode": "Y",
+      "@p_person": infomation.person,
+      "@p_extra_field2": infomation.extra_field2,
+      "@p_serviceid": "2207A046",
+      "@p_purleadtime": infomation.purleadtime,
+      "@p_len": infomation.len,
+      "@p_purqty": infomation.purqty,
+      "@p_boxqty": infomation.boxqty,
+      "@p_part": "",
+      "@p_pac": infomation.pac,
+      "@p_bnatur_insiz": infomation.bnatur_insiz,
+      "@p_itemno": infomation.itemno,
+      "@p_itemgroup": infomation.itemgroup,
+      "@p_lenunit": infomation.lenunit,
+      "@p_hscode": infomation.hscode,
+      "@p_wgtunit": infomation.wgtunit,
+      "@p_custitemnm": infomation.custitemnm,
+      "@p_unitqty": infomation.unitqty,
+      "@p_procday": infomation.procday,
+      "@p_itemcd_s": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "BA_A0040W",
+    },
+  };
+
+  const infopara: Iparameters = {
+    procedureName: "P_BA_A0040W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": infomation.workType,
+      "@p_itemcd": infomation.itemcd,
+      "@p_itemnm": infomation.itemnm,
+      "@p_itemacnt": itemacntListData.find(
+        (item: any) => item.code_name === infomation.itemacnt
+      )?.sub_code,
+      "@p_bnatur": infomation.bnatur,
+      "@p_insiz": infomation.insiz,
+      "@p_spec": infomation.spec,
+      "@p_maker": infomation.maker,
+      "@p_dwgno": infomation.dwgno,
+      "@p_itemlvl1": infomation.itemlvl1,
+      "@p_itemlvl2": infomation.itemlvl2,
+      "@p_itemlvl3": infomation.itemlvl3,
+      "@p_itemlvl4": infomation.itemlvl4,
+      "@p_invunit": qtyunitListData.find(
+        (item: any) => item.code_name === infomation.invunit
+      )?.sub_code,
+      "@p_bomyn": infomation.bomyn,
+      "@p_qcyn": infomation.qcyn,
+      "@p_unitwgt": infomation.unitwgt,
+      "@p_useyn": infomation.useyn,
+      "@p_attdatnum": infomation.attdatnum,
+      "@p_attdatnum_img": infomation.attdatnum_img,
+      "@p_attdatnum_img2": infomation.attdatnum_img2,
+      "@p_remark": infomation.remark,
+      "@p_safeqty": infomation.safeqty,
+      "@p_location": "01",
+      "@p_custcd": infomation.custcd,
+      "@p_custnm": infomation.custnm,
+      "@p_snp": infomation.snp,
+      "@p_autocode": "Y",
+      "@p_person": infomation.person,
+      "@p_extra_field2": infomation.extra_field2,
+      "@p_serviceid": "2207A046",
+      "@p_purleadtime": infomation.purleadtime,
+      "@p_len": infomation.len,
+      "@p_purqty": infomation.purqty,
+      "@p_boxqty": infomation.boxqty,
+      "@p_part": "",
+      "@p_pac": infomation.pac,
+      "@p_bnatur_insiz": infomation.bnatur_insiz,
+      "@p_itemno": infomation.itemno,
+      "@p_itemgroup": infomation.itemgroup,
+      "@p_lenunit": infomation.lenunit,
+      "@p_hscode": infomation.hscode,
+      "@p_wgtunit": infomation.wgtunit,
+      "@p_custitemnm": infomation.custitemnm,
+      "@p_unitqty": infomation.unitqty,
+      "@p_procday": infomation.procday,
+      "@p_itemcd_s": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "BA_A0040W",
+    },
+  };
+
+  useEffect(() => {
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
+  }, [paraDataDeleted]);
+
   const onSaveClick = async () => {
     const dataItem = subData2Result.data.filter((item: any) => {
       return (
@@ -824,24 +1184,6 @@ const BA_A0040: React.FC = () => {
       );
     });
 
-    // //검증
-    // let valid = true;
-    // try {
-    //   dataItem.forEach((item: any) => {
-    //     if (!item.user_id) {
-    //       throw findMessage(messagesData, "SY_A0012W_002");
-    //     }
-
-    //     if (!item.user_name) {
-    //       throw findMessage(messagesData, "SY_A0012W_003");
-    //     }
-    //   });
-    // } catch (e) {
-    //   alert(e);
-    //   valid = false;
-    // }
-
-    // if (!valid) return false;
     let dataArr: TdataArr = {
       unpitem: [],
       rowstatus: [],
@@ -912,6 +1254,52 @@ const BA_A0040: React.FC = () => {
     }));
   };
 
+  const fetchToDelete = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", paraDeleted);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      resetAllGrid();
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
+
+    paraDataDeleted.work_type = ""; //초기화
+    paraDataDeleted.itemcd = "";
+  };
+
+  const onSaveClick2 = async () => {
+    fetchSaved();
+  };
+  const fetchSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", infopara);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setMainPgNum(1);
+      setMainDataResult(process([], mainDataState));
+
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
@@ -938,28 +1326,6 @@ const BA_A0040: React.FC = () => {
       fetchTodoGridSaved();
     }
   }, [paraData]);
-
-  const onRemoveClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
-    let newData: any[] = [];
-
-    subData2Result.data.forEach((item: any, index: number) => {
-      if (!selectedsubData2State[item[SUB_DATA_ITEM_KEY2]]) {
-        newData.push(item);
-      } else {
-        deletedTodoRows.push(item);
-      }
-    });
-
-    //newData 생성
-    setSubData2Result((prev) => ({
-      data: newData,
-      total: newData.length,
-    }));
-
-    //선택 상태 초기화
-    setSelectedsubData2State({});
-  };
   return (
     <>
       <TitleContainer>
@@ -1006,18 +1372,20 @@ const BA_A0040: React.FC = () => {
               </td>
               <th>품목계정</th>
               <td>
-                <Input
-                  name="itenacnt"
-                  type="text"
-                  value={filters.itemacnt}
-                  onChange={filterInputChange}
-                />
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemacnt"
+                    value={filters.itemacnt}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
               <th>사용여부</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
-                    name="useyn"
+                    name="raduseyn"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
@@ -1091,6 +1459,32 @@ const BA_A0040: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                품목생성
+              </Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                품목삭제
+              </Button>
+              <Button
+                onClick={onSaveClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              >
+                저장
+              </Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "40vh" }}
@@ -1167,108 +1561,231 @@ const BA_A0040: React.FC = () => {
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="상세정보">
-          <tbody>
-            <tr>
-              <th>품목코드</th>
-              <td>
-                <Input
-                  name="itemcd"
-                  type="text"
-                  value={filters.itemcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onItemWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>품목명</th>
-              <td>
-                <Input
-                  name="itemnm"
-                  type="text"
-                  value={filters.itemnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>품목계정</th>
-              <td>
-                <Input
-                  name="itenacnt"
-                  type="text"
-                  value={filters.itemacnt}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사용여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="useyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>규격</th>
-              <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사양</th>
-              <td>
-                <Input
-                  name="spec"
-                  type="text"
-                  value={filters.spec}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>비고</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>업체코드</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={filters.custcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onCustWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>업체명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-            </tr>
-          </tbody>
+          <FilterBoxWrap style={{ height: "22vh" }}>
+            <FilterBox>
+              <tbody>
+                <tr>
+                  <th>품목코드</th>
+                  <td>
+                    <Input
+                      name="itemcd"
+                      type="text"
+                      value={infomation.itemcd}
+                      className="readonly"
+                    />
+                  </td>
+                  <th>품목명</th>
+                  <td>
+                    <Input
+                      name="itemnm"
+                      type="text"
+                      value={infomation.itemnm}
+                      onChange={InputChange}
+                      className="required"
+                    />
+                  </td>
+                  <th>품목계정</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemacnt"
+                        value={infomation.itemacnt}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField={"code_name"}
+                        valueField={"code_name"}
+                      />
+                    )}
+                  </td>
+                  <th>사용여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="useyn"
+                        customOptionData={customOptionData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>재질</th>
+                  <td>
+                    <Input
+                      name="bnatur"
+                      type="text"
+                      value={infomation.bnatur}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>단위중량</th>
+                  <td>
+                    <Input
+                      name="unitwgt"
+                      type="number"
+                      value={infomation.unitwgt}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>안전재고량</th>
+                  <td>
+                    <Input
+                      name="safeqty"
+                      type="number"
+                      value={infomation.safeqty}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>대분류</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemlvl1"
+                        value={infomation.itemlvl1}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>중분류</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemlvl2"
+                        value={infomation.itemlvl2}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>소분류</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemlvl3"
+                        value={infomation.itemlvl3}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>규격</th>
+                  <td>
+                    <Input
+                      name="insiz"
+                      type="text"
+                      value={infomation.insiz}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>사양</th>
+                  <td>
+                    <Input
+                      name="spec"
+                      type="text"
+                      value={infomation.spec}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>수량단위</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="invunit"
+                        value={infomation.invunit}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField={"code_name"}
+                        valueField={"code_name"}
+                      />
+                    )}
+                  </td>
+                  <th>업체코드</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={infomation.custcd}
+                      onChange={InputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick2}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>업체명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={infomation.custnm}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>도면번호</th>
+                  <td>
+                    <Input
+                      name="dwgno"
+                      type="text"
+                      value={infomation.dwgno}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>Marker</th>
+                  <td>
+                    <Input
+                      name="maker"
+                      type="text"
+                      value={infomation.maker}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>검사유무</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="qcyn"
+                        customOptionData={customOptionData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>비고</th>
+                  <td>
+                    <Input
+                      name="remark"
+                      type="text"
+                      value={infomation.remark}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>첨부파일</th>
+                  <td>
+                    <Input
+                      name="attdatnum"
+                      type="text"
+                      value={infomation.attdatnum}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type={"button"}
+                        onClick={onAttachmentsWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterBoxWrap>
         </TabStripTab>
         <TabStripTab title="단가">
           <GridContainer>
@@ -1282,7 +1799,7 @@ const BA_A0040: React.FC = () => {
                   icon="plus"
                 ></Button>
                 <Button
-                  onClick={onRemoveClick}
+                  onClick={onDeleteClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
@@ -1377,11 +1894,25 @@ const BA_A0040: React.FC = () => {
           setData={setCustData}
         />
       )}
+      {custWindowVisible2 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible2}
+          workType={workType}
+          setData={setCustData2}
+        />
+      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+        />
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          getVisible={setAttachmentsWindowVisible}
+          getData={getAttachmentsData}
+          para={infomation.attdatnum}
         />
       )}
     </>
