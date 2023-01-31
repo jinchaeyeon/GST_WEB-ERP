@@ -22,6 +22,7 @@ import {
   checkIsDDLValid,
   checkIsObjValid,
   getQueryFromBizComponent,
+  numberWithCommas,
   requiredValidator,
 } from "./CommonFunction";
 import moment from "moment";
@@ -33,6 +34,11 @@ import { IFormComboBoxCell } from "../hooks/interfaces";
 //Grid Cell에 표시되는 Value
 export const DisplayValue = (fieldRenderProps: FieldRenderProps) => {
   return <>{fieldRenderProps.value}</>;
+};
+
+//Grid Cell에 표시되는 Number Value
+export const DisplayNumberValue = (fieldRenderProps: FieldRenderProps) => {
+  return <>{numberWithCommas(fieldRenderProps.value)}</>;
 };
 
 //Grid Cell에 표시되는 DropDownList Name Value
@@ -208,7 +214,7 @@ export const FormNumberCell = (props: GridCellProps) => {
   let defaultRendering = (
     <td className={className ?? ""} style={{ textAlign: "right" }}>
       <Field
-        component={isInEdit ? NumericTextBoxWithValidation : DisplayValue}
+        component={isInEdit ? NumericTextBoxWithValidation : DisplayNumberValue}
         name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
         className={className ?? ""}
       />
