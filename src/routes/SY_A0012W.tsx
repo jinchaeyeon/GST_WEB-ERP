@@ -40,7 +40,8 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc
+  UseParaPc,
+  UseGetValueFromSessionItem
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -135,6 +136,7 @@ const SY_A0120: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -208,7 +210,7 @@ const SY_A0120: React.FC = () => {
     dptcd: "",
     lang_id: "",
     user_category: "",
-    user_id: "",
+    user_id: userId,
     user_name: "",
     radRtrchk: "%",
     radUsediv: "%",

@@ -1006,6 +1006,7 @@ const KendoWindow = ({
   const pathname: string = window.location.pathname.replace("/", "");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -1375,7 +1376,7 @@ const KendoWindow = ({
     outprocyn_s: "",
     lotnum_s: "",
     ordyn_s: "",
-    userid: "",
+    userid: userId,
     pc: pc,
     purtype: "",
     urgencyyn: "",
@@ -1646,7 +1647,7 @@ const KendoWindow = ({
       outprocyn_s: processArr.outprocyn.join("|"),
       lotnum_s: "",
       ordyn_s: "",
-      userid: "admin",
+      userid: userId,
       pc: "WEB TEST",
       purtype: "",
       urgencyyn: "",

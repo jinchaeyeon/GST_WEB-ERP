@@ -49,6 +49,7 @@ import {
   dateformat,
   UseParaPc,
   dateformat2,
+  UseGetValueFromSessionItem
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -107,6 +108,7 @@ const BA_A0040: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -267,6 +269,7 @@ const BA_A0040: React.FC = () => {
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
+    row_values: null
   });
 
   //조회조건 파라미터
@@ -291,7 +294,7 @@ const BA_A0040: React.FC = () => {
       // "@p_itemlvl1": filters.itemlvl1,
       // "@p_itemlvl2": filters.itemlvl2,
       // "@p_itemlvl3": filters.itemlvl3,
-      "@p_find_row_value": mainPgNum,
+      "@p_find_row_value": filters.row_values,
     },
   };
 
@@ -382,8 +385,6 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-    console.log(subparameters);
-    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -504,9 +505,7 @@ const BA_A0040: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    if (tabSelected === 0) {
-    } else if (tabSelected === 1) {
-      //if (!permissions?.view) return
+    if (tabSelected === 1) {
       setsubFilters((prev) => ({
         ...prev,
         itemcd: selectedRowData.itemcd,
@@ -782,7 +781,7 @@ const BA_A0040: React.FC = () => {
   const [paraData, setParaData] = useState({
     workType: "",
     orgdiv: "01",
-    user_id: "admin",
+    user_id: userId,
     form_id: "BA_A0040W",
     pc: pc,
     unpitem: "",
@@ -898,7 +897,7 @@ const BA_A0040: React.FC = () => {
       ...prev,
       workType: "",
       orgdiv: "01",
-      user_id: "admin",
+      user_id: userId,
       form_id: "BA_A0040W",
       pc: pc,
       unpitem: dataArr.unpitem.join("|"),
@@ -921,8 +920,6 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-    console.log(para);
-    console.log(data);
     if (data.isSuccess === true) {
       setSub2PgNum(1);
       setSubData2Result(process([], subData2State));
@@ -1168,7 +1165,110 @@ const BA_A0040: React.FC = () => {
         </ExcelExport>
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
-        <TabStripTab title="상세정보"></TabStripTab>
+        <TabStripTab title="상세정보">
+        <tbody>
+            <tr>
+              <th>품목코드</th>
+              <td>
+                <Input
+                  name="itemcd"
+                  type="text"
+                  value={filters.itemcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onItemWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>품목명</th>
+              <td>
+                <Input
+                  name="itemnm"
+                  type="text"
+                  value={filters.itemnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>품목계정</th>
+              <td>
+                <Input
+                  name="itenacnt"
+                  type="text"
+                  value={filters.itemacnt}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>사용여부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="useyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>규격</th>
+              <td>
+                <Input
+                  name="insiz"
+                  type="text"
+                  value={filters.insiz}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>사양</th>
+              <td>
+                <Input
+                  name="spec"
+                  type="text"
+                  value={filters.spec}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>비고</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>업체코드</th>
+              <td>
+                <Input
+                  name="custcd"
+                  type="text"
+                  value={filters.custcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onCustWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>업체명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </TabStripTab>
         <TabStripTab title="단가">
           <GridContainer>
             <GridTitleContainer>

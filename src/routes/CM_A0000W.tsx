@@ -39,7 +39,7 @@ import {
   findMessage,
   handleKeyPressSearch,
   UseGetValueFromSessionItem,
-  UseParaPc
+  UseParaPc,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -74,6 +74,7 @@ const CM_A0000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
+  const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -331,7 +332,7 @@ const CM_A0000W: React.FC = () => {
       "@p_title": filters.title,
       "@p_yn": filters.radPublish_yn,
       "@p_attdatnum": "",
-      "@p_userid": "admin",
+      "@p_userid": userId,
       "@p_newDiv": "N",
     },
   };
@@ -348,7 +349,7 @@ const CM_A0000W: React.FC = () => {
       "@p_category": "",
       "@p_title": "",
       "@p_attdatnum": "",
-      "@p_userid": "",
+      "@p_userid": userId,
       "@p_contents": "",
       "@p_publish_yn": "",
       "@p_publish_start_date": "",
@@ -377,7 +378,7 @@ const CM_A0000W: React.FC = () => {
       "@p_title": "",
       "@p_yn": "",
       "@p_attdatnum": "",
-      "@p_userid": "admin",
+      "@p_userid": userId,
       "@p_newDiv": "N",
     },
   };

@@ -29,6 +29,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
+  UseGetValueFromSessionItem
 } from "../components/CommonFunction";
 import { IItemData } from "../hooks/interfaces";
 import {
@@ -49,6 +50,7 @@ import { Checkbox } from "@progress/kendo-react-inputs";
 const App: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
+  const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -264,7 +266,7 @@ const App: React.FC = () => {
       "@p_yyyymm": convertDateToStr(filters.yyyymm),
       "@p_menu_group": "",
       "@p_menu_id": "",
-      "@p_user_id": "",
+      "@p_user_id": userId,
       "@p_viewType": dataFilters.cboViewType,
     },
   };

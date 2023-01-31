@@ -57,7 +57,7 @@ import {
   getUnpQuery,
   getQueryFromBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc
+  UseParaPc,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -413,7 +413,7 @@ const KendoWindow = ({
     Insert_form_id: "",
     Update_form_id: "",
     insert_time: "",
-    insert_userid: "",
+    insert_userid: userId,
     update_pc: pc,
     update_time: "",
     update_userid: "",
@@ -560,7 +560,7 @@ const KendoWindow = ({
       "@p_title": "",
       "@p_yn": "",
       "@p_attdatnum": "",
-      "@p_userid": "",
+      "@p_userid": userId,
       "@p_newDiv": "N",
     },
   };
@@ -626,7 +626,7 @@ const KendoWindow = ({
     publish_end_date: "",
     person: "",
     attdatnum: "",
-    user_id: "",
+    user_id: initialVal.user_id,
     pc: initialVal.pc,
     person2: "",
     chooses: "",

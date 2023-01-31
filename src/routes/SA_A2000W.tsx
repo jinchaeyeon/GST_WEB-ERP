@@ -41,7 +41,8 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc
+  UseParaPc,
+  UseGetValueFromSessionItem
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -69,6 +70,7 @@ const SA_B2000: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
+  const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -427,7 +429,7 @@ const SA_B2000: React.FC = () => {
       "@p_doexdiv": "",
       "@p_remark": "",
       "@p_attdatnum": "",
-      "@p_userid": "",
+      "@p_userid": userId,
       "@p_pc": pc,
       "@p_ship_method": "",
       "@p_dlv_method": "",
