@@ -262,7 +262,7 @@ const SY_A0120: React.FC = () => {
             <tr>
               <th>기간</th>
               <td colSpan={3}>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   <DatePicker
                     name="frdt"
                     defaultValue={filters.frdt}

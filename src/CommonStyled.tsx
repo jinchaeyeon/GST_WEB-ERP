@@ -135,7 +135,8 @@ export const FilterBox = styled.table`
     position: relative;
     vertical-align: middle;
   }
-  tr td > div {
+  .filter-item-wrap {
+    display: flex;
     align-items: center;
   }
   .k-radio-list.k-list-horizontal {

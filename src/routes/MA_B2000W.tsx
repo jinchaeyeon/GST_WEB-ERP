@@ -534,7 +534,7 @@ const MA_B2000W: React.FC = () => {
             <tr>
               <th>발주일자</th>
               <td colSpan={3}>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   <DatePicker
                     name="ymdFrdt"
                     value={filters.ymdFrdt}

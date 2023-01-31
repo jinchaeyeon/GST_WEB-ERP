@@ -919,7 +919,7 @@ const SA_B2410: React.FC = () => {
             <tr>
               <th>판매일자</th>
               <td colSpan={3}>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   <DatePicker
                     name="ymdFrdt"
                     format="yyyy-MM-dd"

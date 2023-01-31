@@ -590,7 +590,7 @@ const SA_B2205: React.FC = () => {
             <tr>
               <th>일자</th>
               <td colSpan={3}>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="cbofrdt"

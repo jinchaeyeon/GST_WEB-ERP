@@ -49,7 +49,7 @@ import {
   findMessage,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc
+  UseParaPc,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1051,7 +1051,7 @@ const CM_A1600: React.FC = () => {
                       <tr>
                         <th>일자</th>
                         <td colSpan={3}>
-                          <div style={{ display: "flex" }}>
+                          <div className="filter-item-wrap">
                             <DatePicker
                               name="frdt"
                               value={todoFilter.frdt}

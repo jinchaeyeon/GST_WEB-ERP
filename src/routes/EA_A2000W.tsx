@@ -1136,7 +1136,7 @@ const EA_A2000: React.FC = () => {
                   : "작성일자"}
               </th>
               <td colSpan={3}>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   <DatePicker
                     name="ymdStartDt"
                     value={filters.ymdStartDt}

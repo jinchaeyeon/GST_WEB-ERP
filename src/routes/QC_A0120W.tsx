@@ -570,7 +570,7 @@ const QC_A0120: React.FC = () => {
             <tr>
               <th>불량일자</th>
               <td colSpan={3}>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   <DatePicker
                     name="ymdFrdt"
                     value={filters.ymdFrdt}

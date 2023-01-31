@@ -265,7 +265,7 @@ const SY_A0110: React.FC = () => {
             <tr>
               <th>기간</th>
               <td>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   <DatePicker
                     name="frdt"
                     value={filters.frdt}
