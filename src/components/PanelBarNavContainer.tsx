@@ -212,10 +212,12 @@ const PanelBarNavContainer = (props: any) => {
         "@p_user_id": userId,
         "@p_form_id": logParaVal.form_id,
         "@p_form_name": logParaVal.form_name,
-        "@p_form_login_key": logParaVal.form_login_key,
-        "@p_browser_login_key": loginKey,
-        "@p_ip": ip,
-        "@p_client_pc": broswer,
+
+        "@p_login_key": logParaVal.form_login_key,
+        "@p_parent_login_key": loginKey,
+
+        "@p_ip_address": ip,
+        "@p_pc": broswer,
         "@p_mac_address": "",
       },
     };
