@@ -37,7 +37,7 @@ import {
   UseCustomOption,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc
+  UseParaPc,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -151,10 +151,11 @@ const PR_A3000W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
   //조회조건 NumericTextBox Change 함수 => 사용자가 NumericTextBox 입력한 값을 조회 파라미터로 세팅
   const filterNumericTextBoxChange = (e: NumericTextBoxChangeEvent) => {
@@ -543,7 +544,7 @@ const PR_A3000W: React.FC = () => {
       </TitleContainer>
 
       <FilterBoxWrap>
-         <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody className="PR_A3000W">
             <tr>
               <th>작업지시번호</th>
@@ -612,7 +613,7 @@ const PR_A3000W: React.FC = () => {
       </FilterBoxWrap>
 
       <FilterBoxWrap>
-      <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody className="PR_A3000W">
             <tr>
               <th>생산시작시간</th>

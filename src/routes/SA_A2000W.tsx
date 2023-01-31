@@ -42,7 +42,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  UseGetValueFromSessionItem
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -284,10 +284,11 @@ const SA_B2000: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -486,6 +487,7 @@ const SA_B2000: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      resetAllGrid();
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
@@ -842,7 +844,7 @@ const SA_B2000: React.FC = () => {
             <tr>
               <th>납기일자</th>
               <td colSpan={3}>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   <DatePicker
                     name="ymdFrdt"
                     value={filters.ymdFrdt}

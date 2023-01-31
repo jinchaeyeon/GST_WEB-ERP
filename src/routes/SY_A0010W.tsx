@@ -40,7 +40,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc
+  UseParaPc,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
@@ -217,10 +217,11 @@ const Page: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -480,6 +481,7 @@ const Page: React.FC = () => {
       </td>
     );
   };
+
   const calculateWidth = (field: any) => {
     let maxWidth = 0;
     mainDataResult.data.forEach((item) => {
@@ -885,7 +887,9 @@ const Page: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder === 0
+                            ? detailTotalFooterCell
+                            : undefined
                         }
                       />
                     )

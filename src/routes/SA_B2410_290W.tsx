@@ -198,10 +198,11 @@ const SA_B2410: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   const filterRadioChange = (e: any) => {
@@ -918,7 +919,7 @@ const SA_B2410: React.FC = () => {
             <tr>
               <th>판매일자</th>
               <td colSpan={3}>
-                <div style={{ display: "flex" }}>
+                <div className="filter-item-wrap">
                   <DatePicker
                     name="ymdFrdt"
                     format="yyyy-MM-dd"

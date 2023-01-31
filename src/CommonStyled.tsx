@@ -135,6 +135,10 @@ export const FilterBox = styled.table`
     position: relative;
     vertical-align: middle;
   }
+  .filter-item-wrap {
+    display: flex;
+    align-items: center;
+  }
   .k-radio-list.k-list-horizontal {
     justify-content: center;
   }
