@@ -45,6 +45,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
+  UseParaPc
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -92,6 +93,8 @@ const EA_A2000: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const detail3IdGetter = getter(DETAIL3_DATA_ITEM_KEY);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [token] = useRecoilState(tokenState);
   const userId = token ? token.userId : "";
@@ -863,7 +866,7 @@ const EA_A2000: React.FC = () => {
     attdatnum: "",
     rtcomment: "",
     userid: userId,
-    pc: "",
+    pc: pc,
     pagediv: "",
     comment: "",
     form_id: pathname,

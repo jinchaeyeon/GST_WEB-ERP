@@ -44,6 +44,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
+  UseParaPc
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -137,6 +138,8 @@ const PR_A9100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -717,7 +720,7 @@ const PR_A9100W: React.FC = () => {
     totwgt_s: "",
     pgmdiv_s: "",
     userid: userId,
-    pc: "",
+    pc: pc,
     form_id: pathname,
   });
 

@@ -50,7 +50,8 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
+  UseParaPc
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -197,6 +198,8 @@ const SY_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const processApi = useApi();
@@ -838,7 +841,7 @@ const SY_A0120: React.FC = () => {
     layout_key: "",
     category: "",
     userid: userId,
-    pc: "",
+    pc: pc,
   });
 
   const paraSaved: Iparameters = {

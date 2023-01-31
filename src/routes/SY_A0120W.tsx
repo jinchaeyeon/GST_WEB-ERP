@@ -33,6 +33,7 @@ import {
   UseBizComponent,
   UsePermissions,
   handleKeyPressSearch,
+  UseParaPc,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -48,6 +49,8 @@ const SY_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -105,7 +108,7 @@ const SY_A0120: React.FC = () => {
     user_id: "",
     user_name: "",
     ip: "",
-    pc: "",
+    pc: pc,
   });
 
   //조회조건 파라미터

@@ -8,8 +8,10 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
+  GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { CellRender, RowRender } from "../components/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -43,8 +45,13 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
+  getGridItemChangedData,
+  dateformat,
+  UseParaPc,
+  dateformat2,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -53,6 +60,7 @@ import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
+  EDIT_FIELD,
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -63,13 +71,42 @@ import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const DATA_ITEM_KEY = "itemcd";
-const SUB_DATA_ITEM_KEY2 = "itemcd";
+const SUB_DATA_ITEM_KEY2 = "num";
+let deletedTodoRows: object[] = [];
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
+  UseBizComponent("L_BA008,L_BA020,L_BA061", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "unpitem"
+      ? "L_BA008"
+      : field === "amtunit"
+      ? "L_BA020"
+      : field === "itemacnt"
+      ? "L_BA061"
+      : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td></td>
+  );
+};
 
 const BA_A0040: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY2);
   const processApi = useApi();
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -96,82 +133,30 @@ const BA_A0040: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_BA061,L_BA015",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [ordstsListData, setOrdstsListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [doexdivListData, setDoexdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [taxdivListData, setTaxdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [usersListData, setUsersListData] = useState([
-    { user_id: "", user_name: "" },
-  ]);
-
-  const [departmentsListData, setDepartmentsListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
-      );
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
-      );
-      const departmentQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
-      );
 
-      fetchQuery(ordstsQueryStr, setOrdstsListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(locationQueryStr, setLocationListData);
-      fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(departmentQueryStr, setDepartmentsListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(finynQueryStr, setFinynListData);
     }
   }, [bizComponentData]);
 
@@ -230,7 +215,7 @@ const BA_A0040: React.FC = () => {
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSub2PgNum] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
-  const [workType, setWorkType] = useState<"N" | "U">("N");
+  const [workType, setWorkType] = useState<string>("Q");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [isCopy, setIsCopy] = useState(false);
 
@@ -290,7 +275,7 @@ const BA_A0040: React.FC = () => {
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "Q",
+      "@p_work_type": filters.workType,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_insiz": filters.insiz,
@@ -310,28 +295,49 @@ const BA_A0040: React.FC = () => {
     },
   };
 
-  const subParameter: Iparameters = {
+  const [subfilters, setsubFilters] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "UNP",
+    itemcd: "",
+    itemnm: "",
+    insiz: "",
+    itemacnt: "",
+    useyn: "",
+    custcd: "",
+    custnm: "",
+    itemcd_s: "",
+    spec: "",
+    location: "",
+    remark: "",
+    bnatur: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
+  });
+
+  //조회조건 파라미터
+  const subparameters: Iparameters = {
     procedureName: "P_BA_A0040W_Q",
     pageNumber: subPgNum,
-    pageSize: filters.pgSize,
+    pageSize: subfilters.pgSize,
     parameters: {
-      "@p_work_type": "Q",
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_itemacnt": filters.itemacnt,
-      "@p_useyn": filters.useyn,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_itemcd_s": filters.itemcd_s,
-      "@p_spec": filters.spec,
-      // "@p_location": filters.location,
-      "@p_remark": filters.remark,
-      // "@p_bnatur":filters.bnatur,
-      // "@p_itemlvl1": filters.itemlvl1,
-      // "@p_itemlvl2": filters.itemlvl2,
-      // "@p_itemlvl3": filters.itemlvl3,
-      "@p_find_row_value": mainPgNum,
+      "@p_work_type": subfilters.workType,
+      "@p_itemcd": subfilters.itemcd,
+      "@p_itemnm": subfilters.itemnm,
+      "@p_insiz": subfilters.insiz,
+      "@p_itemacnt": subfilters.itemacnt,
+      "@p_useyn": subfilters.useyn,
+      "@p_custcd": subfilters.custcd,
+      "@p_custnm": subfilters.custnm,
+      "@p_itemcd_s": subfilters.itemcd_s,
+      "@p_spec": subfilters.spec,
+      // "@p_location": subfilters.location,
+      "@p_remark": subfilters.remark,
+      // "@p_bnatur":subfilters.bnatur,
+      // "@p_itemlvl1": subfilters.itemlvl1,
+      // "@p_itemlvl2": subfilters.itemlvl2,
+      // "@p_itemlvl3": subfilters.itemlvl3,
+      "@p_find_row_value": null,
     },
   };
 
@@ -349,14 +355,52 @@ const BA_A0040: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log(rows);
-      if (totalRowCnt > 0)
+
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchSubGrid = async () => {
+    //if (!permissions?.view) return;
+    let data: any;
+
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", subparameters);
+    } catch (error) {
+      data = null;
+    }
+
+    console.log(subparameters);
+    console.log(data);
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+
+      const row = rows.map((item: any) => ({
+        ...item,
+        inEdit: "recdt",
+        rowstatus: "U",
+      }));
+      if (totalRowCnt > 0) {
+        setSubData2Result((prev) => {
+          return {
+            data: [...prev.data, ...row],
+            total: totalRowCnt,
+          };
+        });
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -382,22 +426,70 @@ const BA_A0040: React.FC = () => {
     }
   }, [mainPgNum]);
 
+  useEffect(() => {
+    fetchSubGrid();
+  }, [subPgNum]);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.ordnum]: true });
+        setSelectedState({ [firstRowData.itemcd]: true });
+
+        setsubFilters((prev) => ({
+          ...prev,
+          workType: "UNP",
+          itemcd: firstRowData.itemcd,
+          itemnm: firstRowData.itemnm,
+          insiz: firstRowData.insiz,
+          itemacnt: firstRowData.itemacnt,
+          useyn: firstRowData.useyn,
+          custcd: firstRowData.custcd,
+          custnm: firstRowData.custnm,
+          itemcd_s: "",
+          spec: firstRowData.spec,
+          location: firstRowData.location,
+          remark: firstRowData.remark,
+          bnatur: firstRowData.bnatur,
+          itemlvl1: firstRowData.itemlvl1,
+          itemlvl2: firstRowData.itemlvl2,
+          itemlvl3: firstRowData.itemlvl3,
+        }));
 
         setIfSelectFirstRow(true);
       }
     }
   }, [mainDataResult]);
 
+  useEffect(() => {
+    setSub2PgNum(1);
+    setSubData2Result(process([], subData2State));
+    if (customOptionData !== null) {
+      fetchSubGrid();
+    }
+  }, [subfilters]);
+
+  useEffect(() => {
+    if (customOptionData !== null) {
+      fetchSubGrid();
+    }
+  }, [subPgNum]);
+
+  useEffect(() => {
+    setSub2PgNum(1);
+    setSubData2Result(process([], subData2State));
+    if (customOptionData !== null) {
+      fetchSubGrid();
+    }
+  }, [tabSelected]);
+
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
+    setSub2PgNum(1);
+    setSubData2Result(process([], subData2State));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -411,11 +503,28 @@ const BA_A0040: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-    setSelectedState(newSelectedState);
-    if (tabSelected === 1) {
-      //   fetchGrid("MCHART", selectedRowData.custcd);
-    } else if (tabSelected === 2) {
-      //   fetchGrid("QCHART", selectedRowData.custcd);
+
+    if (tabSelected === 0) {
+    } else if (tabSelected === 1) {
+      //if (!permissions?.view) return
+      setsubFilters((prev) => ({
+        ...prev,
+        itemcd: selectedRowData.itemcd,
+        itemnm: selectedRowData.itemnm,
+        insiz: selectedRowData.insiz,
+        itemacnt: selectedRowData.itemacnt,
+        useyn: selectedRowData.useyn,
+        custcd: selectedRowData.custcd,
+        custnm: selectedRowData.custnm,
+        itemcd_s: "",
+        spec: selectedRowData.spec,
+        location: selectedRowData.location,
+        remark: selectedRowData.remark,
+        bnatur: selectedRowData.bnatur,
+        itemlvl1: selectedRowData.itemlvl1,
+        itemlvl2: selectedRowData.itemlvl2,
+        itemlvl3: selectedRowData.itemlvl3,
+      }));
     }
   };
 
@@ -447,7 +556,6 @@ const BA_A0040: React.FC = () => {
       setSub2PgNum((prev) => prev + 1);
   };
 
-
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
@@ -466,9 +574,42 @@ const BA_A0040: React.FC = () => {
   };
 
   const onAddClick = () => {
-    setIsCopy(false);
-    setWorkType("N");
-    setDetailWindowVisible(true);
+    let seq = 1;
+
+    if (subData2Result.total > 0) {
+      subData2Result.data.forEach((item) => {
+        if (item[SUB_DATA_ITEM_KEY2] > seq) {
+          seq = item[SUB_DATA_ITEM_KEY2];
+        }
+      });
+      seq++;
+    }
+
+    const idx: number =
+      Number(Object.getOwnPropertyNames(selectedState)[0]) ?? null;
+    if (idx === null) return false;
+    const selectedRowData = subData2Result.data.find(
+      (item) => item.idx === idx
+    );
+
+    const newDataItem = {
+      [SUB_DATA_ITEM_KEY2]: seq,
+      recdt: convertDateToStr(new Date()),
+      unpitem: "SYS01",
+      amtunit: "KRW",
+      itemacnt: "2",
+      unp: 0,
+      remark: "",
+      inEdit: "recdt",
+      rowstatus: "N",
+    };
+
+    setSubData2Result((prev) => {
+      return {
+        data: [...prev.data, newDataItem],
+        total: prev.total + 1,
+      };
+    });
   };
 
   const onCustWndClick = () => {
@@ -479,14 +620,10 @@ const BA_A0040: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-  useEffect(() => {
-    // search();
-  }, [tabSelected]);
-
   const handleSelectTab = (e: any) => {
-    // onRefreshClick();
     setTabSelected(e.selected);
-    // resetGrid();
+    setSub2PgNum(1);
+    setSubData2Result(process([], subData2State));
   };
 
   interface ICustData {
@@ -538,6 +675,16 @@ const BA_A0040: React.FC = () => {
     custitemnm: string;
   }
 
+  type TdataArr = {
+    unpitem: string[];
+    rowstatus: string[];
+    itemcd: string[];
+    unp: string[];
+    itemacnt: string[];
+    remark: string[];
+    recdt: string[];
+    amtunit: string[];
+  };
   //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
@@ -567,6 +714,253 @@ const BA_A0040: React.FC = () => {
   const search = () => {
     resetAllGrid();
     fetchMainGrid();
+  };
+
+  const onSubItemChange = (event: GridItemChangeEvent) => {
+    getGridItemChangedData(
+      event,
+      subData2Result,
+      setSubData2Result,
+      SUB_DATA_ITEM_KEY2
+    );
+  };
+
+  const enterEdit = (dataItem: any, field: string) => {
+    const newData = subData2Result.data.map((item) =>
+      item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: field,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+
+    setSubData2Result((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const exitEdit = () => {
+    const newData = subData2Result.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setSubData2Result((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const [paraData, setParaData] = useState({
+    workType: "",
+    orgdiv: "01",
+    user_id: "admin",
+    form_id: "BA_A0040W",
+    pc: pc,
+    unpitem: "",
+    rowstatus: "",
+    itemcd: "",
+    unp: "",
+    itemacnt: "",
+    remark: "",
+    recdt: "",
+    amtunit: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_BA_A0080_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": "",
+      "@p_orgdiv": paraData.orgdiv,
+      "@p_unpitem_s": paraData.unpitem,
+      "@p_rowstatus_s": paraData.rowstatus,
+      "@p_itemcd_s": paraData.itemcd,
+      "@p_itemacnt_s": paraData.itemacnt,
+      "@p_unp_s": paraData.unp,
+      "@p_remark_s": paraData.remark,
+      "@p_userid": paraData.user_id,
+      "@p_recdt_s": paraData.recdt,
+      "@p_amtunit_s": paraData.amtunit,
+      "@p_form_id": paraData.form_id,
+      "@p_pc": paraData.pc,
+    },
+  };
+
+  const onSaveClick = async () => {
+    const dataItem = subData2Result.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    // //검증
+    // let valid = true;
+    // try {
+    //   dataItem.forEach((item: any) => {
+    //     if (!item.user_id) {
+    //       throw findMessage(messagesData, "SY_A0012W_002");
+    //     }
+
+    //     if (!item.user_name) {
+    //       throw findMessage(messagesData, "SY_A0012W_003");
+    //     }
+    //   });
+    // } catch (e) {
+    //   alert(e);
+    //   valid = false;
+    // }
+
+    // if (!valid) return false;
+    let dataArr: TdataArr = {
+      unpitem: [],
+      rowstatus: [],
+      itemcd: [],
+      unp: [],
+      itemacnt: [],
+      remark: [],
+      recdt: [],
+      amtunit: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        unpitem = "",
+        rowstatus = "",
+        itemcd = "",
+        unp = "",
+        itemacnt = "",
+        remark = "",
+        recdt = "",
+        amtunit = "",
+      } = item;
+
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.unpitem.push(unpitem);
+      dataArr.itemcd.push(Object.getOwnPropertyNames(selectedState)[0]);
+      dataArr.unp.push(unp);
+      dataArr.itemacnt.push(itemacnt);
+      dataArr.remark.push(remark);
+      dataArr.recdt.push(recdt);
+      dataArr.amtunit.push(amtunit);
+    });
+    deletedTodoRows.forEach((item: any, idx: number) => {
+      const {
+        unpitem = "",
+        rowstatus = "",
+        itemcd = "",
+        unp = "",
+        itemacnt = "",
+        remark = "",
+        recdt = "",
+        amtunit = "",
+      } = item;
+      dataArr.rowstatus.push("D");
+      dataArr.unpitem.push(unpitem);
+      dataArr.itemcd.push(Object.getOwnPropertyNames(selectedState)[0]);
+      dataArr.unp.push(unp);
+      dataArr.itemacnt.push(itemacnt);
+      dataArr.remark.push(remark);
+      dataArr.recdt.push(recdt);
+      dataArr.amtunit.push(amtunit);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "",
+      orgdiv: "01",
+      user_id: "admin",
+      form_id: "BA_A0040W",
+      pc: pc,
+      unpitem: dataArr.unpitem.join("|"),
+      rowstatus: dataArr.rowstatus.join("|"),
+      itemcd: dataArr.itemcd.join("|"),
+      unp: dataArr.unp.join("|"),
+      itemacnt: dataArr.itemacnt.join("|"),
+      remark: dataArr.remark.join("|"),
+      recdt: dataArr.recdt.join("|"),
+      amtunit: dataArr.amtunit.join("|"),
+    }));
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    console.log(para);
+    console.log(data);
+    if (data.isSuccess === true) {
+      setSub2PgNum(1);
+      setSubData2Result(process([], subData2State));
+
+      fetchSubGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (paraData.itemcd != "") {
+      fetchTodoGridSaved();
+    }
+  }, [paraData]);
+
+  const onRemoveClick = () => {
+    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+    let newData: any[] = [];
+
+    subData2Result.data.forEach((item: any, index: number) => {
+      if (!selectedsubData2State[item[SUB_DATA_ITEM_KEY2]]) {
+        newData.push(item);
+      } else {
+        deletedTodoRows.push(item);
+      }
+    });
+
+    //newData 생성
+    setSubData2Result((prev) => ({
+      data: newData,
+      total: newData.length,
+    }));
+
+    //선택 상태 초기화
+    setSelectedsubData2State({});
   };
   return (
     <>
@@ -705,27 +1099,12 @@ const BA_A0040: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                // ordsts: ordstsListData.find(
-                //   (item: any) => item.sub_code === row.ordsts
-                // )?.code_name,
-                // doexdiv: doexdivListData.find(
-                //   (item: any) => item.sub_code === row.doexdiv
-                // )?.code_name,
-                // taxdiv: taxdivListData.find(
-                //   (item: any) => item.sub_code === row.taxdiv
-                // )?.code_name,
-                // location: locationListData.find(
-                //   (item: any) => item.sub_code === row.location
-                // )?.code_name,
-                // person: usersListData.find(
-                //   (item: any) => item.user_id === row.person
-                // )?.user_name,
-                // dptcd: departmentsListData.find(
-                //   (item: any) => item.dptcd === row.dptcd
-                // )?.dptnm,
-                // finyn: finynListData.find(
-                //   (item: any) => item.code === row.finyn
-                // )?.name,
+                itemacnt: itemacntListData.find(
+                  (item: any) => item.sub_code === row.itemacnt
+                )?.code_name,
+                invunit: qtyunitListData.find(
+                  (item: any) => item.sub_code === row.invunit
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -794,33 +1173,33 @@ const BA_A0040: React.FC = () => {
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>단가정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="plus"
+                ></Button>
+                <Button
+                  onClick={onRemoveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                ></Button>
+              </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "40vh" }}
+              style={{ height: "26vh" }}
               data={process(
                 subData2Result.data.map((row) => ({
                   ...row,
-                  // ordsts: ordstsListData.find(
-                  //   (item: any) => item.sub_code === row.ordsts
-                  // )?.code_name,
-                  // doexdiv: doexdivListData.find(
-                  //   (item: any) => item.sub_code === row.doexdiv
-                  // )?.code_name,
-                  // taxdiv: taxdivListData.find(
-                  //   (item: any) => item.sub_code === row.taxdiv
-                  // )?.code_name,
-                  // location: locationListData.find(
-                  //   (item: any) => item.sub_code === row.location
-                  // )?.code_name,
-                  // person: usersListData.find(
-                  //   (item: any) => item.user_id === row.person
-                  // )?.user_name,
-                  // dptcd: departmentsListData.find(
-                  //   (item: any) => item.dptcd === row.dptcd
-                  // )?.dptnm,
-                  // finyn: finynListData.find(
-                  //   (item: any) => item.code === row.finyn
-                  // )?.name,
+                  recdt: new Date(dateformat(row.recdt)),
                   [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
                 })),
                 subData2State
@@ -832,13 +1211,13 @@ const BA_A0040: React.FC = () => {
               selectedField={SELECTED_FIELD}
               selectable={{
                 enabled: true,
-                mode: "single",
+                mode: "multiple",
               }}
               onSelectionChange={onSubData2SelectionChange}
               //스크롤 조회 기능
               fixedScroll={true}
               total={subData2Result.total}
-              onScroll={onMainScrollHandler}
+              onScroll={onSub2ScrollHandler}
               //정렬기능
               sortable={true}
               onSortChange={onSubData2SortChange}
@@ -846,13 +1225,46 @@ const BA_A0040: React.FC = () => {
               reorderable={true}
               //컬럼너비조정
               resizable={true}
+              onItemChange={onSubItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
             >
-              <GridColumn field="recdt" title="적용일" width="140px" />
-              <GridColumn field="unpitem" title="단가항목" width="250px" />
-              <GridColumn field="amtunit" title="화폐단위" width="140px" />
-              <GridColumn field="itemacnt" title="품목계정" width="140px" />
-              <GridColumn field="unp" title="단가" width="250px" />
-              <GridColumn field="remark" title="비고" width="250px" />
+              <GridColumn
+                field={SELECTED_FIELD}
+                width="45px"
+                headerSelectionValue={
+                  subData2Result.data.findIndex(
+                    (item: any) => !selectedsubData2State[idGetter2(item)]
+                  ) === -1
+                }
+              />
+              <GridColumn
+                field="recdt"
+                title="적용일"
+                width="260px"
+                cell={DateCell}
+              />
+              <GridColumn
+                field="unpitem"
+                title="단가항목"
+                width="370px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn
+                field="amtunit"
+                title="화폐단위"
+                width="200px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn
+                field="itemacnt"
+                title="품목계정"
+                width="200px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn field="unp" title="단가" width="210px" />
+              <GridColumn field="remark" title="비고" width="400px" />
             </Grid>
           </GridContainer>
         </TabStripTab>

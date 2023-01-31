@@ -40,6 +40,7 @@ import {
   getGridItemChangedData,
   handleKeyPressSearch,
   UseGetValueFromSessionItem,
+  UseParaPc
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -83,6 +84,8 @@ const EA_A1000: React.FC = () => {
   const user_id = UseGetValueFromSessionItem("user_id");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
@@ -574,7 +577,7 @@ const EA_A1000: React.FC = () => {
         appseq: 0,
         arbitragb: "N",
         dptcd: item.dptcd,
-        insert_pc: "",
+        insert_pc: pc,
         insert_time: "",
         insert_userid: item.user_id,
         userid: user_id,

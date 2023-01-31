@@ -16,7 +16,7 @@ import {
 } from "@progress/kendo-react-form";
 import { FormInput, FormReadOnly, FormCheckBox } from "../Editors";
 import { Iparameters } from "../../store/types";
-import { validator } from "../CommonFunction";
+import { validator, UseParaPc } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { tokenState } from "../../store/atoms";
@@ -57,6 +57,8 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -203,7 +205,7 @@ const KendoWindow = ({
     memo: "",
     use_yn: "",
     userid: userId,
-    pc: "",
+    pc: pc,
   });
 
   //프로시저 파라미터

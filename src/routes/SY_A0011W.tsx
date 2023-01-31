@@ -51,7 +51,8 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
+  UseParaPc
 } from "../components/CommonFunction";
 import {
   CLIENT_WIDTH,
@@ -118,6 +119,8 @@ const SY_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const processApi = useApi();
@@ -699,8 +702,8 @@ const SY_A0120: React.FC = () => {
       "@p_user_group_name": "",
       "@p_memo": "",
       "@p_use_yn": "",
-      "@p_userid": "",
-      "@p_pc": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
     },
   };
 
@@ -797,7 +800,7 @@ const SY_A0120: React.FC = () => {
             "@p_form_save_yn": getYn(form_save_yn),
             "@p_form_delete_yn": getYn(form_delete_yn),
             "@p_userid": userId,
-            "@p_pc": "",
+            "@p_pc": pc,
           },
         };
 
@@ -831,7 +834,7 @@ const SY_A0120: React.FC = () => {
             "@p_form_save_yn": getYn(form_save_yn),
             "@p_form_delete_yn": getYn(form_delete_yn),
             "@p_userid": userId,
-            "@p_pc": "",
+            "@p_pc": pc,
           },
         };
 
@@ -867,7 +870,7 @@ const SY_A0120: React.FC = () => {
     layout_key: "",
     category: "",
     userid: userId,
-    pc: "",
+    pc: pc,
   });
 
   const paraSaved: Iparameters = {

@@ -36,7 +36,8 @@ import {
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
+  UseParaPc
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -64,6 +65,8 @@ const DATA_ITEM_KEY = "idx";
 const PR_A3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const token = useRecoilValue(tokenState);
   const setLoading = useSetRecoilState(isLoading);
@@ -207,7 +210,7 @@ const PR_A3000W: React.FC = () => {
     stopcd: "",
     serviceid: "",
     userid: token.userId,
-    pc: "",
+    pc: pc,
     form_id: pathname,
   });
 

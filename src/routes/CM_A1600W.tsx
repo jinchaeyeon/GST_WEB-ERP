@@ -49,6 +49,7 @@ import {
   findMessage,
   UsePermissions,
   handleKeyPressSearch,
+  UseParaPc
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -78,7 +79,8 @@ const CM_A1600: React.FC = () => {
   const [token] = useRecoilState(tokenState);
   const userId = token ? token.userId : "";
   const companyCode = token ? token.companyCode : "";
-
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(
     OLD_COMPANY.includes(companyCode)
       ? {
@@ -451,7 +453,7 @@ const CM_A1600: React.FC = () => {
     person_s: userId,
     planyn_s: "",
     userid: userId,
-    pc: "",
+    pc: pc,
     finyn_s: "",
     kind1_s: "",
     custcd_s: "",
@@ -838,7 +840,7 @@ const CM_A1600: React.FC = () => {
     person_s: "",
     planyn_s: "Y",
     userid: userId,
-    pc: "",
+    pc: pc,
     finyn_s: "",
     kind1_s: "",
     custcd_s: "",

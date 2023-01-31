@@ -21,7 +21,7 @@ import {
   FormComboBox,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
-import { UseBizComponent, validator } from "../CommonFunction";
+import { UseBizComponent, validator, UseParaPc } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { sessionItemState, tokenState } from "../../store/atoms";
@@ -39,7 +39,9 @@ type TKendoWindow = {
 
 const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
   const [token] = useRecoilState(tokenState);
-
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  
   const { userId } = token;
   const [position, setPosition] = useState({
     left: 300,
@@ -128,7 +130,7 @@ const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
     memo: "",
     use_yn: "",
     userid: userId,
-    pc: "",
+    pc: pc,
   });
 
   //프로시저 파라미터
@@ -153,7 +155,7 @@ const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
       "@p_stopcd": initialVal.stopcd,
       "@p_serviceid": "",
       "@p_userid": userId,
-      "@p_pc": "",
+      "@p_pc" : pc,
       "@p_form_id": pathname,
     },
   };

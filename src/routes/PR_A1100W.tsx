@@ -52,6 +52,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
+  UseParaPc
 } from "../components/CommonFunction";
 import PlanWindow from "../components/Windows/PR_A1100W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -153,6 +154,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 const PR_A1100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -480,7 +483,7 @@ const PR_A1100W: React.FC = () => {
       "@p_doexdiv": "",
       "@p_remark": "",
       "@p_attdatnum": "",
-      "@p_userid": "",
+      "@p_userid": userId,
       "@p_pc": "",
       "@p_ship_method": "",
       "@p_dlv_method": "",
@@ -580,7 +583,7 @@ const PR_A1100W: React.FC = () => {
     lotnum_s: "",
     ordyn_s: "",
     userid: userId,
-    pc: "",
+    pc: pc,
     purtype: "",
     urgencyyn: "",
     service_id: "",

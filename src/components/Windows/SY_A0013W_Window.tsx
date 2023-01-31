@@ -29,6 +29,7 @@ import {
   UseMessages,
   findMessage,
   getYn,
+  UseParaPc
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -182,6 +183,8 @@ const KendoWindow = ({
   const { user_id, user_name } = para;
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
 
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
@@ -277,9 +280,6 @@ const KendoWindow = ({
         };
       });
 
-      console.log("rows");
-      console.log(rows);
-
       setDetailDataResult(() => {
         return {
           data: [...rows],
@@ -313,7 +313,7 @@ const KendoWindow = ({
     layout_key: "",
     category: "",
     userid: userId,
-    pc: "",
+    pc: pc,
   });
 
   //프로시저 파라미터

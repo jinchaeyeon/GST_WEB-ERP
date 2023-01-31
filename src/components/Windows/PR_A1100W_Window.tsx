@@ -58,6 +58,8 @@ import {
   UseMessages,
   getCodeFromValue,
   getQueryFromBizComponent,
+  UseGetValueFromSessionItem,
+  UseParaPc
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -755,7 +757,6 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       });
 
       if (editedField === "chlditemcd" && editIndex === index) {
-        console.log(editedField);
         getItemcd(chlditemcd);
       }
     });
@@ -1003,7 +1004,8 @@ const KendoWindow = ({
   para,
 }: TKendoWindow) => {
   const pathname: string = window.location.pathname.replace("/", "");
-
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -1374,7 +1376,7 @@ const KendoWindow = ({
     lotnum_s: "",
     ordyn_s: "",
     userid: "",
-    pc: "",
+    pc: pc,
     purtype: "",
     urgencyyn: "",
     service_id: "",
@@ -1578,8 +1580,6 @@ const KendoWindow = ({
       processArr.prodmac.push(getCodeFromValue(prodmac));
     });
 
-    console.log("materialList");
-    console.log(materialList);
     materialList.forEach((item: any, idx: number) => {
       const { unitqty, outgb, chlditemcd, qtyunit, proccd } = item;
       materialArr.seq.push("0");

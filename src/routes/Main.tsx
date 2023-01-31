@@ -653,7 +653,7 @@ const Main: React.FC = () => {
               selectedField={SELECTED_FIELD}
               selectable={{
                 enabled: true,
-                mode: "single",
+                mode: "multiple",
               }}
               onSelectionChange={onDetailSelectionChange}
               //정렬기능

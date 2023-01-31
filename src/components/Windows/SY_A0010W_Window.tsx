@@ -57,6 +57,7 @@ import {
   UseCustomOption,
   UseMessages,
   findMessage,
+  UseParaPc
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -544,7 +545,8 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
-
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent("L_BA000", setBizComponentData);
@@ -805,7 +807,7 @@ const KendoWindow = ({
     memo: "",
     use_yn: "",
     userid: userId,
-    pc: "",
+    pc: pc,
     form_id: pathname,
   });
 
@@ -980,7 +982,7 @@ const KendoWindow = ({
           "@p_sort_seq": 0,
           "@p_use_yn": "",
           "@p_userid": userId,
-          "@p_pc": "",
+          "@p_pc": pc,
           "@p_attdatnum_img": "",
           "@p_form_id": pathname,
         },
@@ -1045,7 +1047,7 @@ const KendoWindow = ({
           "@p_sort_seq": sort_seq,
           "@p_use_yn": use_yn === "Y" || use_yn === true ? "Y" : "N",
           "@p_userid": userId,
-          "@p_pc": "",
+          "@p_pc": pc,
           "@p_attdatnum_img": null,
           "@p_form_id": pathname,
         },

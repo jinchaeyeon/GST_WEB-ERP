@@ -38,6 +38,8 @@ import {
   UsePermissions,
   findMessage,
   handleKeyPressSearch,
+  UseGetValueFromSessionItem,
+  UseParaPc
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -71,6 +73,8 @@ const CM_A0000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -350,7 +354,7 @@ const CM_A0000W: React.FC = () => {
       "@p_publish_start_date": "",
       "@p_publish_end_date": "",
       "@p_person": "",
-      "@p_pc": "",
+      "@p_pc": pc,
       "@p_person2": "",
       "@p_chooses": "",
       "@p_loadok": "",
@@ -689,7 +693,7 @@ const CM_A0000W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>수주상태</th>
+              <th>공지사용여부</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup

@@ -40,6 +40,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
+  UseParaPc
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
@@ -75,6 +76,8 @@ const Page: React.FC = () => {
   const DATA_ITEM_KEY = "group_code";
   const DETAIL_DATA_ITEM_KEY = "sub_code";
   const SELECTED_FIELD = "selected";
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
@@ -286,7 +289,7 @@ const Page: React.FC = () => {
       "@p_group_code": detailFilters.group_code,
       "@p_group_name": "",
       "@p_memo": "",
-      "@p_userid": "",
+      "@p_userid": userId,
       "@p_sub_code": "",
       "@p_subcode_name": "",
       "@p_comment": "",
@@ -323,8 +326,8 @@ const Page: React.FC = () => {
       "@p_attdatnum": "",
       "@p_memo": "",
       "@p_use_yn": "",
-      "@p_userid": "",
-      "@p_pc": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
       "@p_form_id": "",
     },
   };

@@ -46,6 +46,7 @@ import {
   findMessage,
   getYn,
   getCodeFromValue,
+  UseParaPc
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -409,7 +410,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
   const [token] = useRecoilState(tokenState);
   const { userId } = token;
-
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent("L_BA000", setBizComponentData);
@@ -523,7 +525,7 @@ const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
     badqty_s: "",
     remark_s: "",
     userid: userId,
-    pc: "",
+    pc: pc,
     form_id: pathname,
   });
 

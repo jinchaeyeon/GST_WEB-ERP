@@ -57,6 +57,7 @@ import {
   getUnpQuery,
   getQueryFromBizComponent,
   UseGetValueFromSessionItem,
+  UseParaPc
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -321,7 +322,8 @@ const KendoWindow = ({
   const { userId } = token;
   const user_name = UseGetValueFromSessionItem("user_name");
   const pathname: string = window.location.pathname.replace("/", "");
-
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -406,7 +408,7 @@ const KendoWindow = ({
     person: "",
     attdatnum: "",
     user_id: userId,
-    pc: "",
+    pc: pc,
     person2: "",
     chooses: "",
     loadok: "", //"KRW",
@@ -419,7 +421,7 @@ const KendoWindow = ({
     Update_form_id: "",
     insert_time: "",
     insert_userid: "",
-    update_pc: "",
+    update_pc: pc,
     update_time: "",
     update_userid: "",
     user_name: "",
@@ -486,7 +488,7 @@ const KendoWindow = ({
       "@p_title": "",
       "@p_yn": "",
       "@p_attdatnum": "",
-      "@p_userid": "",
+      "@p_userid": userId,
       "@p_newDiv": "N",
     },
   };

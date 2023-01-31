@@ -39,7 +39,8 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch
+  handleKeyPressSearch,
+  UseParaPc
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -132,6 +133,8 @@ const SY_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -517,7 +520,7 @@ const SY_A0120: React.FC = () => {
             "@p_position": "",
             "@p_home_menu_id": "",
             "@p_id": "",
-            "@p_pc": "",
+            "@p_pc": pc,
           },
         };
 
