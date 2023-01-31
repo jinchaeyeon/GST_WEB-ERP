@@ -590,7 +590,7 @@ const SA_B2205: React.FC = () => {
             <tr>
               <th>일자</th>
               <td colSpan={3}>
-                <div style={{ width: "200px", display: "inline-block" }}>
+                <div style={{ display: "flex" }}>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="cbofrdt"
@@ -599,22 +599,20 @@ const SA_B2205: React.FC = () => {
                       changeData={filterComboBoxChange}
                     />
                   )}
+                  <DatePicker
+                    name="ymdFrdt"
+                    value={filters.ymdFrdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
+                  ~
+                  <DatePicker
+                    name="ymdTodt"
+                    value={filters.ymdTodt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                  />
                 </div>
-                <DatePicker
-                  name="ymdFrdt"
-                  value={filters.ymdFrdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  width="160px"
-                />
-                ~
-                <DatePicker
-                  name="ymdTodt"
-                  value={filters.ymdTodt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  width="160px"
-                />
               </td>
 
               <th>수주번호</th>
