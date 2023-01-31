@@ -51,7 +51,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc
+  UseParaPc,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -266,10 +266,11 @@ const SY_A0120: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅

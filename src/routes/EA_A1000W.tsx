@@ -40,7 +40,7 @@ import {
   getGridItemChangedData,
   handleKeyPressSearch,
   UseGetValueFromSessionItem,
-  UseParaPc
+  UseParaPc,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -71,10 +71,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
   return bizComponent ? (
-    <ComboBoxCell
-      bizComponent={bizComponent}
-      {...props}
-    />
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
     <td></td>
   );
@@ -223,10 +220,11 @@ const EA_A1000: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -497,7 +495,6 @@ const EA_A1000: React.FC = () => {
     );
   };
   const enterEdit = (dataItem: any, field: string) => {
-
     const newData = mainDataResult.data.map((item) =>
       item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
         ? {
@@ -554,13 +551,13 @@ const EA_A1000: React.FC = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     let isValid = true;
     rows.map((item) => {
-      mainDataResult.data.map((items)=> {
-        if(item.user_id == items.resno) {
+      mainDataResult.data.map((items) => {
+        if (item.user_id == items.resno) {
           isValid = false;
           return false;
         }
-      })
-    })
+      });
+    });
 
     if (!isValid) {
       alert("중복되는 유저가 있습니다.");
@@ -591,7 +588,7 @@ const EA_A1000: React.FC = () => {
         vicarid: "",
         rowstatus: "N",
         form_id: "EA_A1000W",
-        inEdit: undefined
+        inEdit: undefined,
       };
       idx++;
       count++;
@@ -607,10 +604,13 @@ const EA_A1000: React.FC = () => {
   const onSaveClick = async () => {
     let isValid = true;
 
-    for(var i = count; i > 0; i--){
-        if(mainDataResult.data[mainDataResult.data.length - i].appseq == 0 || mainDataResult.data[mainDataResult.data.length - i].appline ==""){
-          isValid = false;
-        }
+    for (var i = count; i > 0; i--) {
+      if (
+        mainDataResult.data[mainDataResult.data.length - i].appseq == 0 ||
+        mainDataResult.data[mainDataResult.data.length - i].appline == ""
+      ) {
+        isValid = false;
+      }
     }
 
     if (!isValid) {
@@ -644,7 +644,7 @@ const EA_A1000: React.FC = () => {
             "@p_dptcd": datas.dptcd,
             "@p_userid": datas.userid,
             "@p_pc": datas.insert_pc,
-            "@p_form_id": datas.form_id
+            "@p_form_id": datas.form_id,
           },
         };
 
@@ -660,7 +660,7 @@ const EA_A1000: React.FC = () => {
           console.log("[오류 발생]");
           console.log(data);
           throw data.resultMessage;
-        } 
+        }
       }
 
       resetAllGrid();
@@ -732,7 +732,7 @@ const EA_A1000: React.FC = () => {
           display: "inline-block",
           float: "left",
           marginRight: "3%",
-          width: "600px", 
+          width: "600px",
         }}
       >
         <GridContainer>
@@ -771,7 +771,7 @@ const EA_A1000: React.FC = () => {
               enabled: true,
               mode: "single",
             }}
-            style={{height: "78vh"}}
+            style={{ height: "78vh" }}
             onSelectionChange={onSubSelectionChange}
             //스크롤 조회 기능
             fixedScroll={true}
@@ -814,119 +814,119 @@ const EA_A1000: React.FC = () => {
           </Grid>
         </GridContainer>
       </GridContainerWrap>
-      <GridContainerWrap style={{ display: "inline-block"}}>
+      <GridContainerWrap style={{ display: "inline-block" }}>
         <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-          <GridTitleContainer>
-            <GridTitle>결재라인</GridTitle>
-            <ButtonContainer>
-              <Button
-                // onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                행 삭제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                dptcd: dptcdListData.find(
-                  (item: any) => item.dptcd === row.dptcd
-                )?.dptnm,
-                postcd: postcdListData.find(
-                  (item: any) => item.sub_code === row.postcd
-                )?.code_name,
-                resno: resnoListData.find(
-                  (item: any) => item.user_id === row.resno
-                )?.user_name,
-                appgb: appgbListData.find(
-                  (item: any) => item.sub_code === row.appgb
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            style={{height: "44vh"}}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            //incell 수정 기능
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
           >
-            <GridColumn
-              field="dptcd"
-              title="부서"
-              width="180px"
-              editable={false}
-            />
-            <GridColumn
-              field="resno"
-              title="성명"
-              width="180px"
-              editable={false}
-            />
-            <GridColumn
-              field="postcd"
-              title="직위"
-              width="160px"
-              editable={false}
-            />
-            <GridColumn
-              field="appgb"
-              title="결재구분"
-              width="140px"
-              editable={false}
-            />
-            <GridColumn
-              field="appseq"
-              title="결재순서"
-              width="100px"
-              className="required"
-            />
-            <GridColumn
-              field="appline"
-              title="결재라인"
-              width="150px"
-              cell={CustomComboBoxCell}
-              className="required"
-            />
-            <GridColumn
-              field="arbitragb"
-              title="전결유무"
-              width="120px"
-              cell={CheckBoxCell}
-            />
-          </Grid>
+            <GridTitleContainer>
+              <GridTitle>결재라인</GridTitle>
+              <ButtonContainer>
+                <Button
+                  // onClick={onDeleteClick}
+                  icon="delete"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                >
+                  행 삭제
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  dptcd: dptcdListData.find(
+                    (item: any) => item.dptcd === row.dptcd
+                  )?.dptnm,
+                  postcd: postcdListData.find(
+                    (item: any) => item.sub_code === row.postcd
+                  )?.code_name,
+                  resno: resnoListData.find(
+                    (item: any) => item.user_id === row.resno
+                  )?.user_name,
+                  appgb: appgbListData.find(
+                    (item: any) => item.sub_code === row.appgb
+                  )?.code_name,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              style={{ height: "44vh" }}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              onScroll={onMainScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              //incell 수정 기능
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn
+                field="dptcd"
+                title="부서"
+                width="180px"
+                editable={false}
+              />
+              <GridColumn
+                field="resno"
+                title="성명"
+                width="180px"
+                editable={false}
+              />
+              <GridColumn
+                field="postcd"
+                title="직위"
+                width="160px"
+                editable={false}
+              />
+              <GridColumn
+                field="appgb"
+                title="결재구분"
+                width="140px"
+                editable={false}
+              />
+              <GridColumn
+                field="appseq"
+                title="결재순서"
+                width="100px"
+                className="required"
+              />
+              <GridColumn
+                field="appline"
+                title="결재라인"
+                width="150px"
+                cell={CustomComboBoxCell}
+                className="required"
+              />
+              <GridColumn
+                field="arbitragb"
+                title="전결유무"
+                width="120px"
+                cell={CheckBoxCell}
+              />
+            </Grid>
           </ExcelExport>
         </GridContainer>
         <GridContainer>
@@ -961,7 +961,7 @@ const EA_A1000: React.FC = () => {
               mainData3State
             )}
             {...mainData3State}
-            style={{height: "30vh"}}
+            style={{ height: "30vh" }}
             onDataStateChange={onMainData3StateChange}
             //선택 기능
             dataItemKey={DATA_ITEM_KEY}

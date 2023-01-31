@@ -49,7 +49,7 @@ import {
   dateformat,
   UseParaPc,
   dateformat2,
-  UseGetValueFromSessionItem
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -224,10 +224,11 @@ const BA_A0040: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -269,7 +270,7 @@ const BA_A0040: React.FC = () => {
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
-    row_values: null
+    row_values: null,
   });
 
   //조회조건 파라미터
@@ -1166,7 +1167,7 @@ const BA_A0040: React.FC = () => {
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="상세정보">
-        <tbody>
+          <tbody>
             <tr>
               <th>품목코드</th>
               <td>
