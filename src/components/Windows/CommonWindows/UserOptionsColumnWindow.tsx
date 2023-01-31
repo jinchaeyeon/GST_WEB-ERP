@@ -53,8 +53,8 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
-import { tokenState } from "../../../store/atoms";
-import { useRecoilState } from "recoil";
+import { isLoading, tokenState } from "../../../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT =
@@ -523,6 +523,7 @@ const KendoWindow = ({
     height: 800,
   });
 
+  const setLoading = useSetRecoilState(isLoading);
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -686,6 +687,7 @@ const KendoWindow = ({
 
   //요약정보 & 상세정보 조회
   const fetchMain = async () => {
+    setLoading(true);
     let data: any;
 
     try {
@@ -713,9 +715,11 @@ const KendoWindow = ({
         };
       });
     }
+    setLoading(false);
   };
 
   const fetchGridSaved = async () => {
+    setLoading(true);
     let data: any;
 
     try {
@@ -725,7 +729,6 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
       if (workType === "U") {
         fetchMain();
         reloadData();
@@ -738,6 +741,7 @@ const KendoWindow = ({
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
+    setLoading(false);
   };
 
   const handleSubmit = (dataItem: { [name: string]: any }) => {

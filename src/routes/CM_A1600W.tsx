@@ -544,7 +544,6 @@ const CM_A1600: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "CM_A1600W_002"));
       fetchScheduler();
     } else {
       console.log("[오류 발생]");
@@ -930,8 +929,6 @@ const CM_A1600: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "CM_A1600W_002"));
-
       setTodoPgNum(1);
       setTodoDataResult(process([], todoDataState));
       fetchTodoGrid();

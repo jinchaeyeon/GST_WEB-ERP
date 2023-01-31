@@ -174,12 +174,12 @@ const DefaultUseSessioneCell = (props: GridCellProps) => {
 
 // 디폴트 디테일 그리드 - 기본값 필드 셀
 const DefaultValueCell = (props: GridCellProps) => {
-  const { ariaColumnIndex, columnIndex, dataItem, field = "", render } = props;
+  const { ariaColumnIndex, columnIndex, dataItem, render } = props;
   const valueType = dataItem["value_type"];
   const bcId = dataItem["bc_id"];
   //const useSession = getYn(dataItem["use_session"]);
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent(bcId, setBizComponentData);
+  if (bcId) UseBizComponent(bcId, setBizComponentData);
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bcId
   );
@@ -490,36 +490,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     option_name: "",
   });
 
-  const columnDetailParameters: Iparameters = {
-    procedureName: "sel_custom_option",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "detail",
-      "@p_form_id": pathname,
-      "@p_type": "Column",
-      "@p_option_id": columnDetailInitialVal.option_id,
-      "@p_option_name": "",
-      "@p_remarks": "",
-      "@p_company_code": "",
-    },
-  };
-
-  const defaultDetailParameters: Iparameters = {
-    procedureName: "sel_custom_option",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "detail",
-      "@p_form_id": pathname,
-      "@p_type": "Default",
-      "@p_option_id": defaultDetailInitialVal.option_id,
-      "@p_option_name": "",
-      "@p_remarks": "",
-      "@p_company_code": "",
-    },
-  };
-
   //columnDetailInitialVal 변경 될 시 컬럼 디테일 그리드 조회
   useEffect(() => {
     fetchDetailColumn();
@@ -643,7 +613,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
       fetchControl();
     } else {
       console.log("[오류 발생]");
@@ -690,8 +659,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       console.log(data);
     }
   };
-
-  const companyCode = token ? token.companyCode : "";
 
   //컬럼 상세그리드 조회
   const fetchDetailColumn = async () => {
@@ -931,7 +898,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
       if (customOptionParaData.work_type === "init") {
         alert("초기화가 완료되었습니다.");
       } else {
-        alert("저장이 완료되었습니다.");
       }
 
       if (customOptionParaData.type === "Column") {
@@ -1744,8 +1710,6 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   const reloadData = () => {
     fetchMainColumn();
     fetchMainDefault();
-    fetchDetailColumn();
-    fetchDetailDefault();
   };
 
   const onGetControlClick = () => {
@@ -2217,7 +2181,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
                   <GridColumn
                     title="수정(시스템)"
                     cell={DefaultCommandCell}
-                    width="110px"
+                    width="100px"
                   />
                 )}
                 <GridColumn field="option_id" title="타입ID" />

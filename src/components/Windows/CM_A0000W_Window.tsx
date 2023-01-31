@@ -132,7 +132,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   }
 };
 const FormGrid2 = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { name, dataItemKey } =fieldArrayRenderProps;
+  const { name, dataItemKey } = fieldArrayRenderProps;
 
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
@@ -157,58 +157,58 @@ const FormGrid2 = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 
   return (
-      <GridContainer
-        style={{
-          display: "inline-block",
-          marginLeft: "3%",
-          width: "37%",
-          float: "right",
-          height: "500px",
+    <GridContainer
+      style={{
+        display: "inline-block",
+        marginLeft: "3%",
+        width: "37%",
+        float: "right",
+        height: "500px",
+      }}
+    >
+      <Grid
+        data={dataWithIndexes.map((item: any) => ({
+          ...item,
+          parentField: name,
+          [SELECTED_FIELD]: selectedState[idGetter(item)],
+        }))}
+        //선택 기능
+        dataItemKey={dataItemKey}
+        selectedField={SELECTED_FIELD}
+        selectable={{
+          enabled: true,
+          mode: "single",
         }}
+        onSelectionChange={onSelectionChange}
+        total={dataWithIndexes.total}
       >
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
-            ...item,
-            parentField: name,
-            [SELECTED_FIELD]: selectedState[idGetter(item)],
-          }))}
-          //선택 기능
-          dataItemKey={dataItemKey}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
-          }}
-          onSelectionChange={onSelectionChange}
-          total={dataWithIndexes.total}
-        >
-          <GridColumn
-            field="custcd"
-            title="업체코드"
-            width="140px"
-            className="required"
-            editable={false}
-          />
-          <GridColumn
-            field="custnm"
-            title="부서"
-            width="150px"
-            editable={false}
-          />
-          <GridColumn
-            field="user_name"
-            title="이름"
-            width="140px"
-            editable={false}
-          />
-          <GridColumn
-            field="chooses"
-            title="참조"
-            width="60px"
-            cell={FormCheckBoxCell}
-          />
-        </Grid>
-      </GridContainer>
+        <GridColumn
+          field="custcd"
+          title="업체코드"
+          width="140px"
+          className="required"
+          editable={false}
+        />
+        <GridColumn
+          field="custnm"
+          title="부서"
+          width="150px"
+          editable={false}
+        />
+        <GridColumn
+          field="user_name"
+          title="이름"
+          width="140px"
+          editable={false}
+        />
+        <GridColumn
+          field="chooses"
+          title="참조"
+          width="60px"
+          cell={FormCheckBoxCell}
+        />
+      </Grid>
+    </GridContainer>
   );
 };
 // Create the Grid that will be used inside the Form
@@ -239,74 +239,67 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 
   return (
-      <GridContainer
-        style={{
-          display: "inline-block",
-          marginLeft: "3%",
-          width: "37%",
-          float: "right",
-          height: "500px",
+    <GridContainer
+      style={{
+        display: "inline-block",
+        marginLeft: "3%",
+        width: "37%",
+        float: "right",
+        height: "500px",
+      }}
+    >
+      <Grid
+        data={dataWithIndexes.map((item: any) => ({
+          ...item,
+          parentField: name,
+          [SELECTED_FIELD]: selectedState[idGetter(item)],
+        }))}
+        //선택 기능
+        dataItemKey={dataItemKey}
+        selectedField={SELECTED_FIELD}
+        selectable={{
+          enabled: true,
+          mode: "single",
         }}
+        onSelectionChange={onSelectionChange}
+        total={dataWithIndexes.total}
       >
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
-            ...item,
-            parentField: name,
-            [SELECTED_FIELD]: selectedState[idGetter(item)],
-          }))}
-          //선택 기능
-          dataItemKey={dataItemKey}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
-          }}
-          onSelectionChange={onSelectionChange}
-          total={dataWithIndexes.total}
-        >
-          <GridColumn
-            field="user_name"
-            title="성명"
-            width="100px"
-            className="required"
-            editable={false}
-          />
-          <GridColumn
-            field="dptcd"
-            title="부서"
-            width="140px"
-            editable={false}
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="postcd"
-            title="직위"
-            width="90px"
-            editable={false}
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="chooses"
-            title="참조"
-            width="60px"
-            cell={
-              category == "200" ? FormCheckBoxCell : FormCheckBoxReadOnlyCell
-            }
-          />
-          <GridColumn
-            field="loadok"
-            title="확인"
-            width="60px"
-            cell={FormCheckBoxCell}
-          />
-          <GridColumn
-            field="readok"
-            title="열람"
-            width="60px"
-            editable={false}
-          />
-        </Grid>
-      </GridContainer>
+        <GridColumn
+          field="user_name"
+          title="성명"
+          width="100px"
+          className="required"
+          editable={false}
+        />
+        <GridColumn
+          field="dptcd"
+          title="부서"
+          width="140px"
+          editable={false}
+          cell={CustomComboBoxCell}
+        />
+        <GridColumn
+          field="postcd"
+          title="직위"
+          width="90px"
+          editable={false}
+          cell={CustomComboBoxCell}
+        />
+        <GridColumn
+          field="chooses"
+          title="참조"
+          width="60px"
+          cell={category == "200" ? FormCheckBoxCell : FormCheckBoxReadOnlyCell}
+        />
+        <GridColumn
+          field="loadok"
+          title="확인"
+          width="60px"
+          cell={FormCheckBoxCell}
+        />
+        <GridColumn field="readok" title="열람" width="60px" editable={false} />
+      </Grid>
+    </GridContainer>
   );
 };
 
@@ -342,7 +335,7 @@ const KendoWindow = ({
   const [unpList, setUnpList] = useState<any>([]);
   const [publish_start_date, setOrddt] = useState("");
   const [category, setCategory] = useState(
-    (categories == "" || categories == undefined) ? "100": categories
+    categories == "" || categories == undefined ? "100" : categories
   );
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -602,7 +595,7 @@ const KendoWindow = ({
       if (data.isSuccess === true) {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows;
-  
+
         setDetailDataResult(() => {
           return {
             data: rows,
@@ -614,7 +607,7 @@ const KendoWindow = ({
     setInitialVal((prev) => {
       return {
         ...prev,
-        category: category
+        category: category,
       };
     });
   };
@@ -684,7 +677,6 @@ const KendoWindow = ({
       data = null;
     }
     if (data.isSuccess === true) {
-      alert("저장되었습니다.");
       if (workType === "U") {
         resetAllGrid();
         getVisible(false);
@@ -703,7 +695,6 @@ const KendoWindow = ({
   };
 
   const handleSubmit = (dataItem: { [name: string]: any }) => {
-
     const {
       attdatnum,
       category,
@@ -732,30 +723,33 @@ const KendoWindow = ({
       readok: [],
     };
 
-    if(category == "300"){
+    if (category == "300") {
       orderDetails2.forEach((item: any) => {
         const { chooses, loadok, user_id, readok } = item;
-  
+
         detailArr.chooses.push(
           chooses === "Y" ? "Y" : chooses === true ? "Y" : "N"
         );
-        detailArr.loadok.push(loadok === "Y" ? "Y" : loadok === true ? "Y" : "N");
+        detailArr.loadok.push(
+          loadok === "Y" ? "Y" : loadok === true ? "Y" : "N"
+        );
         detailArr.person2.push(user_id);
         detailArr.readok.push(readok);
       });
     } else {
       orderDetails.forEach((item: any) => {
         const { chooses, loadok, user_id, readok } = item;
-  
+
         detailArr.chooses.push(
           chooses === "Y" ? "Y" : chooses === true ? "Y" : "N"
         );
-        detailArr.loadok.push(loadok === "Y" ? "Y" : loadok === true ? "Y" : "N");
+        detailArr.loadok.push(
+          loadok === "Y" ? "Y" : loadok === true ? "Y" : "N"
+        );
         detailArr.person2.push(user_id);
         detailArr.readok.push(readok);
       });
     }
-    
 
     setParaData((prev) => ({
       ...prev,
@@ -784,9 +778,9 @@ const KendoWindow = ({
     if (paraData.work_type !== "") fetchGridSaved();
   }, [paraData]);
 
-  useEffect(()=> {
+  useEffect(() => {
     fetchGrid();
-  },[category]);
+  }, [category]);
 
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
@@ -1022,7 +1016,7 @@ const KendoWindow = ({
                   </ButtonInFieldWrap>
                 </FieldWrap>
               </fieldset>
-              {category == "300" || categories =="300" ? (
+              {category == "300" || categories == "300" ? (
                 <FieldArray
                   name="orderDetails2"
                   dataItemKey={FORM_DATA_INDEX}

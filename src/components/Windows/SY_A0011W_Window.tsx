@@ -240,7 +240,6 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
       if (workType === "U") {
         resetAllGrid();
 

@@ -575,8 +575,6 @@ const Page: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "SY_A0010W_001"));
-
       resetAllGrid();
       fetchMainGrid();
     } else {

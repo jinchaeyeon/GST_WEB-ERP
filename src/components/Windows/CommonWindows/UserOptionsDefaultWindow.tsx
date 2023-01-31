@@ -1,5 +1,4 @@
-import { createContext, useEffect, useState } from "react";
-import * as React from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
@@ -41,10 +40,8 @@ import { Iparameters } from "../../../store/types";
 import {
   arrayLengthValidator,
   chkScrollHandler,
-  getBrowser,
   getCodeFromValue,
   getYn,
-  UseGetIp,
   UseParaPc,
   validator,
 } from "../../CommonFunction";
@@ -60,13 +57,7 @@ import {
 import { CellRender, RowRender } from "../../Renderers";
 import { useRecoilState } from "recoil";
 import { tokenState } from "../../../store/atoms";
-
-// Create React.Context to pass props to the Form Field components from the main component
-export const USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT =
-  createContext<{
-    editIndex: number | undefined;
-    parentField: string;
-  }>({} as any);
+import RequiredHeader from "../../RequiredHeader";
 
 let deletedRows: object[] = [];
 
@@ -198,16 +189,18 @@ const sessionItemComboBoxCell = (props: GridCellProps) => {
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   const { validationMessage, visited, name, dataItemKey } =
     fieldArrayRenderProps;
-  const [editIndex, setEditIndex] = React.useState<number | undefined>();
+  const [editIndex, setEditIndex] = useState<number | undefined>();
   const [detailPgNum, setDetailPgNum] = useState(1);
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   // Add a new item to the Form FieldArray that will be shown in the Grid
-  const onAdd = React.useCallback(
+  const onAdd = useCallback(
     (e: any) => {
       e.preventDefault();
       fieldArrayRenderProps.onPush({
         value: {
-          srcPgName: "USER_OPTIONS_DEFAULT_WINDOW",
           rowstatus: "N",
           value_type: COM_CODE_DEFAULT_VALUE,
           use_session: "N",
@@ -223,12 +216,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [fieldArrayRenderProps]
   );
 
-  const onRemove = React.useCallback(() => {
+  const onRemove = useCallback(() => {
     let newData: any[] = [];
 
     //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
     fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      if (!selectedState[index]) {
+      if (!selectedState[item[FORM_DATA_INDEX]]) {
         newData.push(item);
       } else {
         deletedRows.push(item);
@@ -254,7 +247,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
     //수정 상태 초기화
     setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
+  }, [fieldArrayRenderProps, selectedState]);
 
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
@@ -311,11 +304,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     />
   );
 
-  const [selectedState, setSelectedState] = React.useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const onSelectionChange = React.useCallback(
+  const onSelectionChange = useCallback(
     (event: GridSelectionChangeEvent) => {
       const newSelectedState = getSelectedState({
         event,
@@ -328,7 +317,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     [selectedState]
   );
 
-  const onHeaderSelectionChange = React.useCallback(
+  const onHeaderSelectionChange = useCallback(
     (event: GridHeaderSelectionChangeEvent) => {
       const checkboxElement: any = event.syntheticEvent.target;
       const checked = checkboxElement.checked;
@@ -355,74 +344,53 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     []
   );
 
-  interface ProductNameHeaderProps extends GridHeaderCellProps {
-    children: any;
-  }
-
-  const RequiredHeader = (props: ProductNameHeaderProps) => {
-    return (
-      <span className="k-cell-inner">
-        <a className="k-link" onClick={props.onClick}>
-          <span style={{ color: "#ff6358" }}>{props.title}</span>
-          {props.children}
-        </a>
-      </span>
-    );
-  };
-
   return (
     <GridContainer margin={{ top: "30px" }}>
-      <USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider
-        value={{
-          editIndex,
+      {visited && validationMessage && <Error>{validationMessage}</Error>}
+      <Grid
+        data={dataWithIndexes.map((item: any) => ({
+          ...item,
           parentField: name,
+          [SELECTED_FIELD]: selectedState[idGetter(item)],
+        }))}
+        total={dataWithIndexes.total}
+        dataItemKey={dataItemKey}
+        style={{ height: "550px" }}
+        cellRender={customCellRender}
+        rowRender={customRowRender}
+        onScroll={scrollHandler}
+        selectedField={SELECTED_FIELD}
+        selectable={{
+          enabled: true,
+          drag: false,
+          cell: false,
+          mode: "multiple",
         }}
+        onSelectionChange={onSelectionChange}
+        onHeaderSelectionChange={onHeaderSelectionChange}
       >
-        {visited && validationMessage && <Error>{validationMessage}</Error>}
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
-            ...item,
-            parentField: name,
-            [SELECTED_FIELD]: selectedState[idGetter(item)],
-          }))}
-          total={dataWithIndexes.total}
-          dataItemKey={dataItemKey}
-          style={{ height: "550px" }}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          onScroll={scrollHandler}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            drag: false,
-            cell: false,
-            mode: "multiple",
-          }}
-          onSelectionChange={onSelectionChange}
-          onHeaderSelectionChange={onHeaderSelectionChange}
-        >
-          <GridToolbar>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onAdd}
-              icon="add"
-            >
-              추가
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onRemove}
-              icon="minus"
-            >
-              삭제
-            </Button>
-          </GridToolbar>
+        <GridToolbar>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onAdd}
+            icon="add"
+          >
+            추가
+          </Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onRemove}
+            icon="minus"
+          >
+            삭제
+          </Button>
+        </GridToolbar>
 
-          {/* <GridColumn
+        {/* <GridColumn
             field={SELECTED_FIELD}
             width="45px"
             headerSelectionValue={
@@ -431,85 +399,84 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
               ) === -1
             }
           /> */}
-          <GridColumn field="rowstatus" title=" " width="40px" />
-          <GridColumn
-            field="default_id"
-            title="필드명"
-            width="130px"
-            cell={FormNameCell}
-            headerCell={RequiredHeader}
-            className="required editable-new-only"
-          />
-          <GridColumn
-            field="caption"
-            title="캡션"
-            width="130px"
-            cell={FormNameCell}
-          />
-          <GridColumn
-            field="value_type"
-            title="VALUE타입"
-            width="120px"
-            cell={valueTypeComboBoxCell}
-            headerCell={RequiredHeader}
-            className="required"
-          />
-          <GridColumn
-            field="value_code"
-            title="VALUE 코드"
-            width="100px"
-            cell={FormNameCell}
-          />
-          <GridColumn
-            field="value"
-            title="VALUE 이름"
-            width="100px"
-            cell={FormNameCell}
-          />
-          <GridColumn
-            field="bc_id"
-            title="비즈니스 컴포넌트 ID"
-            width="170px"
-            cell={FormNameCell}
-          />
-          <GridColumn
-            field="session_item"
-            title="세션 아이템"
-            width="170px"
-            cell={sessionItemComboBoxCell}
-          />
-          <GridColumn
-            field="use_session"
-            title="세션 사용유무"
-            width="120px"
-            cell={FormCheckBoxCell}
-          />
-          <GridColumn
-            field="add_year"
-            title="연 추가"
-            width="90px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="add_month"
-            title="월 추가"
-            width="90px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="add_day"
-            title="일 추가"
-            width="90px"
-            cell={FormNumberCell}
-          />
-          <GridColumn
-            field="user_editable"
-            title="사용자 수정 가능 여부"
-            width="180px"
-            cell={FormCheckBoxCell}
-          />
-        </Grid>
-      </USER_OPTIONS_DEFAULT_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider>
+        <GridColumn field="rowstatus" title=" " width="40px" />
+        <GridColumn
+          field="default_id"
+          title="필드명"
+          width="130px"
+          cell={FormNameCell}
+          headerCell={RequiredHeader}
+          className="required editable-new-only"
+        />
+        <GridColumn
+          field="caption"
+          title="캡션"
+          width="130px"
+          cell={FormNameCell}
+        />
+        <GridColumn
+          field="value_type"
+          title="VALUE타입"
+          width="120px"
+          cell={valueTypeComboBoxCell}
+          headerCell={RequiredHeader}
+          className="required"
+        />
+        <GridColumn
+          field="value_code"
+          title="VALUE 코드"
+          width="100px"
+          cell={FormNameCell}
+        />
+        <GridColumn
+          field="value"
+          title="VALUE 이름"
+          width="100px"
+          cell={FormNameCell}
+        />
+        <GridColumn
+          field="bc_id"
+          title="비즈니스 컴포넌트 ID"
+          width="170px"
+          cell={FormNameCell}
+        />
+        <GridColumn
+          field="session_item"
+          title="세션 아이템"
+          width="170px"
+          cell={sessionItemComboBoxCell}
+        />
+        <GridColumn
+          field="use_session"
+          title="세션 사용유무"
+          width="120px"
+          cell={FormCheckBoxCell}
+        />
+        <GridColumn
+          field="add_year"
+          title="연 추가"
+          width="90px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="add_month"
+          title="월 추가"
+          width="90px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="add_day"
+          title="일 추가"
+          width="90px"
+          cell={FormNumberCell}
+        />
+        <GridColumn
+          field="user_editable"
+          title="사용자 수정 가능 여부"
+          width="180px"
+          cell={FormCheckBoxCell}
+        />
+      </Grid>
     </GridContainer>
   );
 };
@@ -545,7 +512,7 @@ const KendoWindow = ({
   };
 
   //수정 없이 submit 가능하도록 임의 value를 change 시켜줌
-  const [formKey, setFormKey] = React.useState(1);
+  const [formKey, setFormKey] = useState(1);
   const resetForm = () => {
     setFormKey(formKey + 1);
   };
@@ -703,14 +670,7 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       const totalRowsCnt = data.tables[0].Rows.length;
-      let rows = data.tables[0].Rows;
-
-      rows = rows.map((row: any) => {
-        return {
-          ...row,
-          srcPgName: "USER_OPTIONS_DEFAULT_WINDOW",
-        };
-      });
+      const rows = data.tables[0].Rows;
 
       setDetailDataResult(() => {
         return {
@@ -742,7 +702,6 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert("저장이 완료되었습니다.");
       if (workType === "U") {
         fetchMain();
         reloadData();
@@ -751,7 +710,9 @@ const KendoWindow = ({
         reloadData();
       }
 
-      deletedRows = []; //초기화
+      //초기화
+      setParaData((prev) => ({ ...prev, work_type: "" }));
+      deletedRows = [];
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -764,7 +725,7 @@ const KendoWindow = ({
 
     //검증
     try {
-      dataItem.orderDetails.forEach((item: any) => {
+      dataItem.optionDetails.forEach((item: any) => {
         if (!item.default_id) {
           const errText = "필드명을 입력하세요.";
           throw errText;
@@ -773,8 +734,9 @@ const KendoWindow = ({
           const errText = "VALUE타입을 선택하세요.";
           throw errText;
         }
+
         if (
-          (item.value_type === "Radio" || item.value_type === "Lookup") &&
+          ["Radio", "Lookup"].includes(getCodeFromValue(item.value_type)) &&
           (item.bc_id === "" || item.bc_id === null || item.bc_id === undefined)
         ) {
           const errText =
@@ -789,7 +751,7 @@ const KendoWindow = ({
 
     if (!valid) return false;
 
-    const { option_id, orderDetails } = dataItem;
+    const { option_id, optionDetails } = dataItem;
 
     let detailArr: TDetailData = {
       row_status: [],
@@ -810,7 +772,7 @@ const KendoWindow = ({
       user_editable: [],
     };
 
-    orderDetails.forEach((item: any, idx: number) => {
+    optionDetails.forEach((item: any, idx: number) => {
       if (!item.rowstatus) return;
       const {
         rowstatus,
@@ -883,11 +845,15 @@ const KendoWindow = ({
       detailArr.use_session.push(getYn(use_session));
       detailArr.user_editable.push(getYn(user_editable));
     });
+
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
       option_id: getCodeFromValue(option_id),
-      option_name: getCodeFromValue(option_id, "code_name"),
+      option_name:
+        workType === "N"
+          ? getCodeFromValue(option_id, "code_name")
+          : option_name,
       row_status: detailArr.row_status.join("|"),
       default_id: detailArr.default_id.join("|"),
       caption: detailArr.caption.join("|"),
@@ -927,7 +893,7 @@ const KendoWindow = ({
           rowstatus: "",
           option_id: workType === "N" ? "" : option_id,
           option_name: workType === "N" ? "" : option_name,
-          orderDetails: detailDataResult.data,
+          optionDetails: detailDataResult.data,
         }}
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
@@ -952,17 +918,10 @@ const KendoWindow = ({
                   data={typeData}
                   columns={typeColumn}
                 />
-                {/* <Field
-                  label={"설명"}
-                  name={"option_name"}
-                  component={FormInput}
-                  validator={validator}
-                  className="required"
-                /> */}
               </FieldWrap>
             </fieldset>
             <FieldArray
-              name="orderDetails"
+              name="optionDetails"
               dataItemKey={FORM_DATA_INDEX}
               component={FormGrid}
               validator={arrayLengthValidator}

@@ -906,8 +906,6 @@ const EA_A2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "EA_A2000W_001"));
-
       if (detailParaDataSaved.work_type === "CMT") {
         setDetail1DataResult(process([], detail1DataState));
         setDetail2DataResult(process([], detail2DataState));

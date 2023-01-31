@@ -1467,7 +1467,6 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "PR_A1100W_002"));
       if (workType === "U") {
         resetAllGrid();
 

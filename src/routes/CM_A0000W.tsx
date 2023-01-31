@@ -416,8 +416,6 @@ const CM_A0000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "CM_A0000W_002"));
-
       resetAllGrid();
       fetchMainGrid();
     } else {

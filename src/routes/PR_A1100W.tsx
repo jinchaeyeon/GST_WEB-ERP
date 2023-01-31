@@ -1458,8 +1458,6 @@ const PR_A1100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "PR_A1100W_002"));
-
       resetAllGrid();
       fetchPlanGrid();
       fetchMaterialGrid();

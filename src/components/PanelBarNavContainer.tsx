@@ -29,6 +29,7 @@ import {
   TopTitle,
   Wrapper,
 } from "../CommonStyled";
+import { getBrowser, UseGetIp } from "./CommonFunction";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -43,6 +44,33 @@ const PanelBarNavContainer = (props: any) => {
   const [formKey, setFormKey] = useState("");
   const setSessionItem = useSetRecoilState(sessionItemState);
   const setLoading = useSetRecoilState(isLoading);
+
+  const [ip, setIp] = useState(null);
+  UseGetIp(setIp);
+
+  let broswer = getBrowser();
+  broswer = broswer.substring(broswer.lastIndexOf("/") + 1);
+
+  // useEffect(() => {
+  //   const handleTabClose = (event: BeforeUnloadEvent) => {
+  //     event.preventDefault();
+  //     fetchToLog({
+  //       work_type: "OPEN",
+  //       form_id: previousRoute,
+  //       form_name: "",
+  //       form_login_key: formKey,
+  //       t: "2",
+  //     });
+
+  //     //return (event.returnValue = "true");
+  //   };
+
+  //   window.addEventListener("beforeunload", handleTabClose);
+
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleTabClose);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (token && menus === null) fetchMenus();
@@ -129,30 +157,40 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (token && ip !== null) {
       const pathname = location.pathname.replace("/", "");
 
       // 폼 로그 처리
       if (previousRoute === "") {
+        const pathitem = paths.find(
+          (item) => item.path.replace("/", "") === pathname
+        );
+
         //최초 오픈
         fetchToLog({
           work_type: "OPEN",
           form_id: pathname,
-          form_name: "",
+          form_name: pathitem ? pathitem.menuName : "",
           form_login_key: "",
         });
       } else if (pathname !== previousRoute) {
+        const pathitem = paths.find(
+          (item) => item.path.replace("/", "") === pathname
+        );
+        const previousPathitem = paths.find(
+          (item) => item.path.replace("/", "") === previousRoute
+        );
         // 오픈, 클로즈
         fetchToLog({
           work_type: "CLOSE",
           form_id: previousRoute,
-          form_name: "",
+          form_name: previousPathitem ? previousPathitem.menuName : "",
           form_login_key: formKey,
         });
         fetchToLog({
           work_type: "OPEN",
           form_id: pathname,
-          form_name: "",
+          form_name: pathitem ? pathitem.menuName : "",
           form_login_key: "",
         });
       }
@@ -160,15 +198,15 @@ const PanelBarNavContainer = (props: any) => {
       // 이전 루트 저장
       setPreviousRoute(pathname);
     }
-  }, [location]);
+  }, [location, ip]);
 
   const fetchToLog = async (logParaVal: TLogParaVal) => {
     let data: any;
 
     const logPara: Iparameters = {
       procedureName: "sys_sav_form_access_log",
-      pageNumber: 1,
-      pageSize: 50,
+      pageNumber: 0,
+      pageSize: 0,
       parameters: {
         "@p_work_type": logParaVal.work_type,
         "@p_user_id": userId,
@@ -176,8 +214,8 @@ const PanelBarNavContainer = (props: any) => {
         "@p_form_name": logParaVal.form_name,
         "@p_form_login_key": logParaVal.form_login_key,
         "@p_browser_login_key": loginKey,
-        "@p_ip": "", //ip 추가 필요
-        "@p_client_pc": "", //브라우저 정보 추가 필요
+        "@p_ip": ip,
+        "@p_client_pc": broswer,
         "@p_mac_address": "",
       },
     };

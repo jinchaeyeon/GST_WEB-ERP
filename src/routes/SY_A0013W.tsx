@@ -879,8 +879,6 @@ const SY_A0120: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      alert(findMessage(messagesData, "SY_A0013W_001"));
-
       resetAllGrid();
       fetchMainGrid();
       deletedMainRows = [];
@@ -1216,7 +1214,7 @@ const SY_A0120: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>회사구분</th>
