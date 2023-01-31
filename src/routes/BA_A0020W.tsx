@@ -13,8 +13,6 @@ import {
 } from "@progress/kendo-react-grid";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -77,8 +75,8 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
-const DATA_ITEM_KEY = "itemcd";
-const SUB_DATA_ITEM_KEY2 = "num";
+const DATA_ITEM_KEY = "custcd";
+const SUB_DATA_ITEM_KEY = "num";
 let deletedTodoRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -107,10 +105,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const BA_A0040: React.FC = () => {
+const BA_A0020: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const idGetter2 = getter(SUB_DATA_ITEM_KEY2);
+  const idGetter2 = getter(SUB_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -135,7 +133,33 @@ const BA_A0040: React.FC = () => {
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
           .valueCode,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+        custdiv: defaultOption.find((item: any) => item.id === "custdiv")
+          .valueCode,
+      }));
+      setInfomation((prev) => ({
+        ...prev,
+        inunpitem: defaultOption.find((item: any) => item.id === "inunpitem")
+          .valueCode,
+        unpitem: defaultOption.find((item: any) => item.id === "unpitem")
+          .valueCode,
+        bizdiv: defaultOption.find((item: any) => item.id === "bizdiv")
+          .valueCode,
+        estbdt: setDefaultDate(customOptionData, "estbdt"),
+        taxorg: defaultOption.find((item: any) => item.id === "taxorg")
+          .valueCode,
+        useyn: defaultOption.find((item: any) => item.id === "useyn").valueCode,
+        scmyn: defaultOption.find((item: any) => item.id === "scmyn").valueCode,
+        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+          .valueCode,
+        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+          .valueCode,
+        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+          .valueCode,
+        rtxisuyn: defaultOption.find((item: any) => item.id === "rtxisuyn")
+          .valueCode,
+        etxprs: defaultOption.find((item: any) => item.id === "etxprs")
+          .valueCode,
+        bill_type: defaultOption.find((item: any) => item.id === "bill_type")
           .valueCode,
       }));
     }
@@ -143,30 +167,30 @@ const BA_A0040: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN",
+    "L_BA026,L_BA027",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [itemacntListData, setItemacntListData] = useState([
+  const [custdivListData, setCustdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [qtyunitListData, setQtyunitListData] = useState([
+  const [bizdivListData, setBizdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+      const custdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
       );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+      const BizdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA027")
       );
 
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      fetchQuery(custdivQueryStr, setCustdivListData);
+      fetchQuery(BizdivQueryStr, setBizdivListData);
     }
   }, [bizComponentData]);
 
@@ -195,7 +219,7 @@ const BA_A0040: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [subData2State, setSubData2State] = useState<State>({
+  const [subDataState, setSubDataState] = useState<State>({
     sort: [],
   });
 
@@ -205,15 +229,15 @@ const BA_A0040: React.FC = () => {
     process([], mainDataState)
   );
 
-  const [subData2Result, setSubData2Result] = useState<DataResult>(
-    process([], subData2State)
+  const [subDataResult, setSubDataResult] = useState<DataResult>(
+    process([], subDataState)
   );
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  const [selectedsubData2State, setSelectedsubData2State] = useState<{
+  const [selectedsubDataState, setSelectedsubDataState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -224,7 +248,7 @@ const BA_A0040: React.FC = () => {
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
-  const [subPgNum, setSub2PgNum] = useState(1);
+  const [subPgNum, setSubPgNum] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
   const [workType, setWorkType] = useState<string>("U");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -289,97 +313,83 @@ const BA_A0040: React.FC = () => {
   const [infomation, setInfomation] = useState({
     pgSize: PAGE_SIZE,
     workType: "U",
-    itemcd: "자동생성",
-    itemnm: "",
-    insiz: "",
-    itemacnt: "제품",
-    useyn: "Y",
-    custcd: "",
+    custcd: "자동생성",
     custnm: "",
-    itemcd_s: "",
-    spec: "",
-    location: "01",
-    remark: "",
-    bnatur: "",
+    custdiv: "",
+    custabbr: "",
+    compnm_eng: "",
+    inunpitem: "",
+    bizregnum: "",
+    zipcode: 0,
+    area: "",
+    unpitem: "",
+    ceonm: "",
+    address: "",
+    bizdiv: "",
+    repreregno: "",
+    address_eng: "",
+    estbdt: new Date(),
+    phonenum: "",
+    bnkinfo: "",
+    bankacntuser: "",
+    compclass: "",
+    etelnum: "",
+    bankacnt: "",
+    comptype: "",
+    faxnum: "",
+    bnkinfo2: "",
+    bankacnt2: "",
+    taxorg: "",
+    efaxnum: "",
+    email: "",
+    taxortnm: "",
+    useyn: "",
+    scmyn: "",
+    pariodyn: "",
+    attdatnum: "",
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
-    itemlvl4: "",
-    bomyn: "",
-    attdatnum: "",
-    row_values: null,
-    safeqty: 0,
-    unitwgt: 0,
-    invunit: "",
-    dwgno: "",
-    maker: "",
-    qcyn: "N",
-    attdatnum_img: null,
-    attdatnum_img2: null,
-    snp: 0,
-    person: "",
-    extra_field2: "",
-    purleadtime: 0,
-    len: 0,
-    purqty: 0,
-    boxqty: 0,
-    pac: "",
-    bnatur_insiz: 0,
-    itemno: "",
-    itemgroup: "",
-    lenunit: "",
-    hscode: "",
-    wgtunit: "",
-    custitemnm: "",
-    unitqty: 0,
-    procday: "",
+    etax: "",
+    remark: "",
+    etxprs: "",
+    phonenum_og: "",
+    emailaddr_og: "",
+    bill_type: "",
+    recvid: "",
   });
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    workType: "Q",
-    itemcd: "",
-    itemnm: "",
-    insiz: "",
-    itemacnt: "",
-    raduseyn: "Y",
+    workType: "LIST",
+    orgdiv: "01",
     custcd: "",
     custnm: "",
-    itemcd_s: "",
-    spec: "",
-    location: "01",
-    remark: "",
-    bnatur: "",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
-    row_values: null,
+    custdiv: "",
+    bizregnum: "",
+    ceonm: "",
+    raduseyn: "Y",
+    company_code: "2207A046",
+    row_value: null,
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_BA_A0040W_Q",
+    procedureName: "P_BA_A0020W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": filters.workType,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_itemacnt": filters.itemacnt,
-      "@p_useyn": filters.raduseyn,
+      "@p_orgdiv": filters.orgdiv,
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
-      "@p_itemcd_s": filters.itemcd_s,
-      "@p_spec": filters.spec,
-      // "@p_location": filters.location,
-      "@p_remark": filters.remark,
-      // "@p_bnatur":filters.bnatur,
-      // "@p_itemlvl1": filters.itemlvl1,
-      // "@p_itemlvl2": filters.itemlvl2,
-      // "@p_itemlvl3": filters.itemlvl3,
-      "@p_find_row_value": filters.row_values,
+      "@p_custdiv": filters.custdiv,
+      "@p_bizregnum": filters.bizregnum,
+      "@p_ceonm": filters.ceonm,
+      "@p_useyn": filters.raduseyn,
+      "@p_company_code": filters.company_code,
+      "@p_find_row_value": filters.row_value,
     },
   };
 
@@ -440,6 +450,8 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
+    console.log(parameters);
+    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -459,40 +471,40 @@ const BA_A0040: React.FC = () => {
     setLoading(false);
   };
 
-  const fetchSubGrid = async () => {
-    //if (!permissions?.view) return;
-    let data: any;
+//   const fetchSubGrid = async () => {
+//     //if (!permissions?.view) return;
+//     let data: any;
 
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", subparameters);
-    } catch (error) {
-      data = null;
-    }
+//     setLoading(true);
+//     try {
+//       data = await processApi<any>("procedure", subparameters);
+//     } catch (error) {
+//       data = null;
+//     }
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows;
+//     if (data.isSuccess === true) {
+//       const totalRowCnt = data.tables[0].RowCount;
+//       const rows = data.tables[0].Rows;
 
-      const row = rows.map((item: any) => ({
-        ...item,
-        inEdit: "recdt",
-        rowstatus: "U",
-      }));
-      if (totalRowCnt > 0) {
-        setSubData2Result((prev) => {
-          return {
-            data: [...prev.data, ...row],
-            total: totalRowCnt,
-          };
-        });
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    setLoading(false);
-  };
+//       const row = rows.map((item: any) => ({
+//         ...item,
+//         inEdit: "recdt",
+//         rowstatus: "U",
+//       }));
+//       if (totalRowCnt > 0) {
+//         setSubDataResult((prev) => {
+//           return {
+//             data: [...prev.data, ...row],
+//             total: totalRowCnt,
+//           };
+//         });
+//       }
+//     } else {
+//       console.log("[오류 발생]");
+//       console.log(data);
+//     }
+//     setLoading(false);
+//   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -512,16 +524,16 @@ const BA_A0040: React.FC = () => {
     }
   }, [mainPgNum]);
 
-  useEffect(() => {
-    fetchSubGrid();
-  }, [subPgNum]);
+//   useEffect(() => {
+//     fetchSubGrid();
+//   }, [subPgNum]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.itemcd]: true });
+        setSelectedState({ [firstRowData.custcd]: true });
 
         setsubFilters((prev) => ({
           ...prev,
@@ -548,34 +560,34 @@ const BA_A0040: React.FC = () => {
     }
   }, [mainDataResult]);
 
-  useEffect(() => {
-    setSub2PgNum(1);
-    setSubData2Result(process([], subData2State));
-    if (customOptionData !== null) {
-      fetchSubGrid();
-    }
-  }, [subfilters]);
+//   useEffect(() => {
+//     setSubPgNum(1);
+//     setSubDataResult(process([], subDataState));
+//     if (customOptionData !== null) {
+//       fetchSubGrid();
+//     }
+//   }, [subfilters]);
 
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchSubGrid();
-    }
-  }, [subPgNum]);
+//   useEffect(() => {
+//     if (customOptionData !== null) {
+//       fetchSubGrid();
+//     }
+//   }, [subPgNum]);
 
-  useEffect(() => {
-    setSub2PgNum(1);
-    setSubData2Result(process([], subData2State));
-    if (customOptionData !== null) {
-      fetchSubGrid();
-    }
-  }, [tabSelected]);
+//   useEffect(() => {
+//     setSubPgNum(1);
+//     setSubDataResult(process([], subDataState));
+//     if (customOptionData !== null) {
+//       fetchSubGrid();
+//     }
+//   }, [tabSelected]);
 
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setSub2PgNum(1);
-    setSubData2Result(process([], subData2State));
+    setSubPgNum(1);
+    setSubDataResult(process([], subDataState));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -590,55 +602,53 @@ const BA_A0040: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    console.log("selectedRowData");
-    console.log(selectedRowData);
     setInfomation({
-      pgSize: PAGE_SIZE,
-      workType: "U",
-      itemcd: selectedRowData.itemcd,
-      itemnm: selectedRowData.itemnm,
-      insiz: selectedRowData.insiz,
-      itemacnt: selectedRowData.itemacnt,
-      useyn: selectedRowData.useyn,
-      custcd: selectedRowData.custcd,
-      custnm: selectedRowData.custnm,
-      itemcd_s: selectedRowData.itemcd_s,
-      spec: selectedRowData.spec,
-      location: "01",
-      remark: selectedRowData.remark,
-      bnatur: selectedRowData.bnatur,
-      itemlvl1: selectedRowData.itemlvl1,
-      itemlvl2: selectedRowData.itemlvl2,
-      itemlvl3: selectedRowData.itemlvl3,
-      itemlvl4: selectedRowData.itemlvl4,
-      bomyn: selectedRowData.bomyn,
-      attdatnum: selectedRowData.attdatnum,
-      row_values: selectedRowData.row_values,
-      safeqty: selectedRowData.safeqty,
-      unitwgt: selectedRowData.unitwgt,
-      invunit: selectedRowData.invunit,
-      dwgno: selectedRowData.dwgno,
-      maker: selectedRowData.maker,
-      qcyn: selectedRowData.qcyn,
-      attdatnum_img: selectedRowData.attdatnum_img,
-      attdatnum_img2: selectedRowData.attdatnum_img2,
-      snp: selectedRowData.snp,
-      person: selectedRowData.person,
-      extra_field2: selectedRowData.extra_field2,
-      purleadtime: selectedRowData.purleadtime,
-      len: selectedRowData.len,
-      purqty: selectedRowData.purqty,
-      boxqty: selectedRowData.boxqty,
-      pac: selectedRowData.pac,
-      bnatur_insiz: selectedRowData.bnatur_insiz,
-      itemno: selectedRowData.itemno,
-      itemgroup: selectedRowData.itemgroup,
-      lenunit: selectedRowData.lenunit,
-      hscode: selectedRowData.hscode,
-      wgtunit: selectedRowData.wgtunit,
-      custitemnm: selectedRowData.custitemnm,
-      unitqty: selectedRowData.unitqty,
-      procday: selectedRowData.procday,
+        pgSize: PAGE_SIZE,
+        workType: "U",
+        custcd: selectedRowData.custcd,
+        custnm: selectedRowData.custnm,
+        custdiv: selectedRowData.custdiv,
+        custabbr: selectedRowData.custabbr,
+        compnm_eng: selectedRowData.compnm_eng,
+        inunpitem: selectedRowData.inunpitem,
+        bizregnum: selectedRowData.bizregnum,
+        zipcode: selectedRowData.zipcode,
+        area: selectedRowData.area,
+        unpitem: selectedRowData.unpitem,
+        ceonm: selectedRowData.ceonm,
+        address: selectedRowData.address,
+        bizdiv: selectedRowData.bizdiv,
+        repreregno: selectedRowData.repreregno,
+        address_eng: selectedRowData.address_eng,
+        estbdt: new Date(),
+        phonenum: selectedRowData.phonenum,
+        bnkinfo: selectedRowData.bnkinfo,
+        bankacntuser: selectedRowData.bankacntuser,
+        compclass: selectedRowData.compclass,
+        etelnum: selectedRowData.etelnum,
+        bankacnt: selectedRowData.bankacnt,
+        comptype: selectedRowData.comptype,
+        faxnum: selectedRowData.faxnum,
+        bnkinfo2: selectedRowData.bnkinfo2,
+        bankacnt2: selectedRowData.bankacnt2,
+        taxorg: selectedRowData.taxorg,
+        efaxnum: selectedRowData.efaxnum,
+        email: selectedRowData.email,
+        taxortnm: selectedRowData.taxortnm,
+        useyn: selectedRowData.useyn,
+        scmyn: selectedRowData.scmyn,
+        pariodyn: selectedRowData.pariodyn,
+        attdatnum: selectedRowData.attdatnum,
+        itemlvl1: selectedRowData.itemlvl1,
+        itemlvl2: selectedRowData.itemlvl2,
+        itemlvl3: selectedRowData.itemlvl3,
+        etax: selectedRowData.etax,
+        remark: selectedRowData.remark,
+        etxprs: selectedRowData.etxprs,
+        phonenum_og: selectedRowData.phonenum_og,
+        emailaddr_og: selectedRowData.emailaddr_og,
+        bill_type: selectedRowData.bill_type,
+        recvid: selectedRowData.recvid,
     });
     if (tabSelected === 1) {
       setsubFilters((prev) => ({
@@ -662,13 +672,13 @@ const BA_A0040: React.FC = () => {
     }
   };
 
-  const onSubData2SelectionChange = (event: GridSelectionChangeEvent) => {
+  const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
       selectedState: selectedState,
-      dataItemKey: SUB_DATA_ITEM_KEY2,
+      dataItemKey: SUB_DATA_ITEM_KEY,
     });
-    setSelectedsubData2State(newSelectedState);
+    setSelectedsubDataState(newSelectedState);
   };
 
   //엑셀 내보내기
@@ -685,17 +695,17 @@ const BA_A0040: React.FC = () => {
       setMainPgNum((prev) => prev + 1);
   };
 
-  const onSub2ScrollHandler = (event: GridEvent) => {
+  const onSubScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, subPgNum, PAGE_SIZE))
-      setSub2PgNum((prev) => prev + 1);
+      setSubPgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
 
-  const onSubData2StateChange = (event: GridDataStateChangeEvent) => {
-    setSubData2State(event.dataState);
+  const onSubDataStateChange = (event: GridDataStateChangeEvent) => {
+    setSubDataState(event.dataState);
   };
 
   //그리드 푸터
@@ -710,69 +720,69 @@ const BA_A0040: React.FC = () => {
   const onAddClick2 = () => {
     setWorkType("N");
     setInfomation({
-      pgSize: PAGE_SIZE,
-      workType: "N",
-      itemcd: "자동생성",
-      itemnm: "",
-      insiz: "",
-      itemacnt: "제품",
-      useyn: "",
-      custcd: "",
-      custnm: "",
-      itemcd_s: "",
-      spec: "",
-      location: "01",
-      remark: "",
-      bnatur: "",
-      itemlvl1: "",
-      itemlvl2: "",
-      itemlvl3: "",
-      itemlvl4: "",
-      bomyn: "",
-      attdatnum: "",
-      row_values: null,
-      safeqty: 0,
-      unitwgt: 0,
-      invunit: "",
-      dwgno: "",
-      maker: "",
-      qcyn: "N",
-      attdatnum_img: null,
-      attdatnum_img2: null,
-      snp: 0,
-      person: "",
-      extra_field2: "",
-      purleadtime: 0,
-      len: 0,
-      purqty: 0,
-      boxqty: 0,
-      pac: "",
-      bnatur_insiz: 0,
-      itemno: "",
-      itemgroup: "",
-      lenunit: "",
-      hscode: "",
-      wgtunit: "",
-      custitemnm: "",
-      unitqty: 0,
-      procday: "",
+        pgSize: PAGE_SIZE,
+        workType: "N",
+        custcd: "자동생성",
+        custnm: "",
+        custdiv: "",
+        custabbr: "",
+        compnm_eng: "",
+        inunpitem: "",
+        bizregnum: "",
+        zipcode: 0,
+        area: "",
+        unpitem: "",
+        ceonm: "",
+        address: "",
+        bizdiv: "",
+        repreregno: "",
+        address_eng: "",
+        estbdt: new Date(),
+        phonenum: "",
+        bnkinfo: "",
+        bankacntuser: "",
+        compclass: "",
+        etelnum: "",
+        bankacnt: "",
+        comptype: "",
+        faxnum: "",
+        bnkinfo2: "",
+        bankacnt2: "",
+        taxorg: "",
+        efaxnum: "",
+        email: "",
+        taxortnm: "",
+        useyn: "",
+        scmyn: "",
+        pariodyn: "",
+        attdatnum: "",
+        itemlvl1: "",
+        itemlvl2: "",
+        itemlvl3: "",
+        etax: "",
+        remark: "",
+        etxprs: "",
+        phonenum_og: "",
+        emailaddr_og: "",
+        bill_type: "",
+        recvid: "",
     });
   };
 
   const onAddClick = () => {
     let seq = 1;
 
-    if (subData2Result.total > 0) {
-      subData2Result.data.forEach((item) => {
-        if (item[SUB_DATA_ITEM_KEY2] > seq) {
-          seq = item[SUB_DATA_ITEM_KEY2];
+    if (subDataResult.total > 0) {
+      subDataResult.data.forEach((item) => {
+        if (item[SUB_DATA_ITEM_KEY] > seq) {
+          seq = item[SUB_DATA_ITEM_KEY];
         }
       });
       seq++;
     }
 
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY2]: seq,
+      [SUB_DATA_ITEM_KEY]: seq,
       recdt: convertDateToStr(new Date()),
       unpitem: "SYS01",
       amtunit: "KRW",
@@ -783,7 +793,7 @@ const BA_A0040: React.FC = () => {
       rowstatus: "N",
     };
 
-    setSubData2Result((prev) => {
+    setSubDataResult((prev) => {
       return {
         data: [...prev.data, newDataItem],
         total: prev.total + 1,
@@ -805,8 +815,8 @@ const BA_A0040: React.FC = () => {
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
-    setSub2PgNum(1);
-    setSubData2Result(process([], subData2State));
+    setSubPgNum(1);
+    setSubDataResult(process([], subDataState));
   };
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
@@ -917,8 +927,8 @@ const BA_A0040: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const onSubData2SortChange = (e: any) => {
-    setSubData2State((prev) => ({ ...prev, sort: e.sort }));
+  const onSubDataSortChange = (e: any) => {
+    setSubDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const search = () => {
@@ -929,15 +939,15 @@ const BA_A0040: React.FC = () => {
   const onSubItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
       event,
-      subData2Result,
-      setSubData2Result,
-      SUB_DATA_ITEM_KEY2
+      subDataResult,
+      setSubDataResult,
+      SUB_DATA_ITEM_KEY
     );
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = subData2Result.data.map((item) =>
-      item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
+    const newData = subDataResult.data.map((item) =>
+      item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
         ? {
             ...item,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
@@ -949,7 +959,7 @@ const BA_A0040: React.FC = () => {
           }
     );
 
-    setSubData2Result((prev) => {
+    setSubDataResult((prev) => {
       return {
         data: newData,
         total: prev.total,
@@ -958,12 +968,12 @@ const BA_A0040: React.FC = () => {
   };
 
   const exitEdit = () => {
-    const newData = subData2Result.data.map((item) => ({
+    const newData = subDataResult.data.map((item) => ({
       ...item,
       [EDIT_FIELD]: undefined,
     }));
 
-    setSubData2Result((prev) => {
+    setSubDataResult((prev) => {
       return {
         data: newData,
         total: prev.total,
@@ -1040,136 +1050,136 @@ const BA_A0040: React.FC = () => {
     },
   };
 
-  const paraDeleted: Iparameters = {
-    procedureName: "P_BA_A0040W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "D",
-      "@p_itemcd": paraDataDeleted.itemcd,
-      "@p_itemnm": infomation.itemnm,
-      "@p_itemacnt": itemacntListData.find(
-        (item: any) => item.code_name === infomation.itemacnt
-      )?.sub_code,
-      "@p_bnatur": infomation.bnatur,
-      "@p_insiz": infomation.insiz,
-      "@p_spec": infomation.spec,
-      "@p_maker": infomation.maker,
-      "@p_dwgno": infomation.dwgno,
-      "@p_itemlvl1": infomation.itemlvl1,
-      "@p_itemlvl2": infomation.itemlvl2,
-      "@p_itemlvl3": infomation.itemlvl3,
-      "@p_itemlvl4": infomation.itemlvl4,
-      "@p_invunit": qtyunitListData.find(
-        (item: any) => item.code_name === infomation.invunit
-      )?.sub_code,
-      "@p_bomyn": infomation.bomyn,
-      "@p_qcyn": infomation.qcyn,
-      "@p_unitwgt": infomation.unitwgt,
-      "@p_useyn": infomation.useyn,
-      "@p_attdatnum": infomation.attdatnum,
-      "@p_attdatnum_img": infomation.attdatnum_img,
-      "@p_attdatnum_img2": infomation.attdatnum_img2,
-      "@p_remark": infomation.remark,
-      "@p_safeqty": infomation.safeqty,
-      "@p_location": "01",
-      "@p_custcd": infomation.custcd,
-      "@p_custnm": infomation.custnm,
-      "@p_snp": infomation.snp,
-      "@p_autocode": "Y",
-      "@p_person": infomation.person,
-      "@p_extra_field2": infomation.extra_field2,
-      "@p_serviceid": "2207A046",
-      "@p_purleadtime": infomation.purleadtime,
-      "@p_len": infomation.len,
-      "@p_purqty": infomation.purqty,
-      "@p_boxqty": infomation.boxqty,
-      "@p_part": "",
-      "@p_pac": infomation.pac,
-      "@p_bnatur_insiz": infomation.bnatur_insiz,
-      "@p_itemno": infomation.itemno,
-      "@p_itemgroup": infomation.itemgroup,
-      "@p_lenunit": infomation.lenunit,
-      "@p_hscode": infomation.hscode,
-      "@p_wgtunit": infomation.wgtunit,
-      "@p_custitemnm": infomation.custitemnm,
-      "@p_unitqty": infomation.unitqty,
-      "@p_procday": infomation.procday,
-      "@p_itemcd_s": "",
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_form_id": "BA_A0040W",
-    },
-  };
+  //   const paraDeleted: Iparameters = {
+  //     procedureName: "P_BA_A0040W_S",
+  //     pageNumber: 0,
+  //     pageSize: 0,
+  //     parameters: {
+  //       "@p_work_type": "D",
+  //       "@p_itemcd": paraDataDeleted.itemcd,
+  //       "@p_itemnm": infomation.itemnm,
+  //       "@p_itemacnt": itemacntListData.find(
+  //         (item: any) => item.code_name === infomation.itemacnt
+  //       )?.sub_code,
+  //       "@p_bnatur": infomation.bnatur,
+  //       "@p_insiz": infomation.insiz,
+  //       "@p_spec": infomation.spec,
+  //       "@p_maker": infomation.maker,
+  //       "@p_dwgno": infomation.dwgno,
+  //       "@p_itemlvl1": infomation.itemlvl1,
+  //       "@p_itemlvl2": infomation.itemlvl2,
+  //       "@p_itemlvl3": infomation.itemlvl3,
+  //       "@p_itemlvl4": infomation.itemlvl4,
+  //       "@p_invunit": qtyunitListData.find(
+  //         (item: any) => item.code_name === infomation.invunit
+  //       )?.sub_code,
+  //       "@p_bomyn": infomation.bomyn,
+  //       "@p_qcyn": infomation.qcyn,
+  //       "@p_unitwgt": infomation.unitwgt,
+  //       "@p_useyn": infomation.useyn,
+  //       "@p_attdatnum": infomation.attdatnum,
+  //       "@p_attdatnum_img": infomation.attdatnum_img,
+  //       "@p_attdatnum_img2": infomation.attdatnum_img2,
+  //       "@p_remark": infomation.remark,
+  //       "@p_safeqty": infomation.safeqty,
+  //       "@p_location": "01",
+  //       "@p_custcd": infomation.custcd,
+  //       "@p_custnm": infomation.custnm,
+  //       "@p_snp": infomation.snp,
+  //       "@p_autocode": "Y",
+  //       "@p_person": infomation.person,
+  //       "@p_extra_field2": infomation.extra_field2,
+  //       "@p_serviceid": "2207A046",
+  //       "@p_purleadtime": infomation.purleadtime,
+  //       "@p_len": infomation.len,
+  //       "@p_purqty": infomation.purqty,
+  //       "@p_boxqty": infomation.boxqty,
+  //       "@p_part": "",
+  //       "@p_pac": infomation.pac,
+  //       "@p_bnatur_insiz": infomation.bnatur_insiz,
+  //       "@p_itemno": infomation.itemno,
+  //       "@p_itemgroup": infomation.itemgroup,
+  //       "@p_lenunit": infomation.lenunit,
+  //       "@p_hscode": infomation.hscode,
+  //       "@p_wgtunit": infomation.wgtunit,
+  //       "@p_custitemnm": infomation.custitemnm,
+  //       "@p_unitqty": infomation.unitqty,
+  //       "@p_procday": infomation.procday,
+  //       "@p_itemcd_s": "",
+  //       "@p_userid": userId,
+  //       "@p_pc": pc,
+  //       "@p_form_id": "BA_A0040W",
+  //     },
+  //   };
 
-  const infopara: Iparameters = {
-    procedureName: "P_BA_A0040W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": infomation.workType,
-      "@p_itemcd": infomation.itemcd,
-      "@p_itemnm": infomation.itemnm,
-      "@p_itemacnt": itemacntListData.find(
-        (item: any) => item.code_name === infomation.itemacnt
-      )?.sub_code,
-      "@p_bnatur": infomation.bnatur,
-      "@p_insiz": infomation.insiz,
-      "@p_spec": infomation.spec,
-      "@p_maker": infomation.maker,
-      "@p_dwgno": infomation.dwgno,
-      "@p_itemlvl1": infomation.itemlvl1,
-      "@p_itemlvl2": infomation.itemlvl2,
-      "@p_itemlvl3": infomation.itemlvl3,
-      "@p_itemlvl4": infomation.itemlvl4,
-      "@p_invunit": qtyunitListData.find(
-        (item: any) => item.code_name === infomation.invunit
-      )?.sub_code,
-      "@p_bomyn": infomation.bomyn,
-      "@p_qcyn": infomation.qcyn,
-      "@p_unitwgt": infomation.unitwgt,
-      "@p_useyn": infomation.useyn,
-      "@p_attdatnum": infomation.attdatnum,
-      "@p_attdatnum_img": infomation.attdatnum_img,
-      "@p_attdatnum_img2": infomation.attdatnum_img2,
-      "@p_remark": infomation.remark,
-      "@p_safeqty": infomation.safeqty,
-      "@p_location": "01",
-      "@p_custcd": infomation.custcd,
-      "@p_custnm": infomation.custnm,
-      "@p_snp": infomation.snp,
-      "@p_autocode": "Y",
-      "@p_person": infomation.person,
-      "@p_extra_field2": infomation.extra_field2,
-      "@p_serviceid": "2207A046",
-      "@p_purleadtime": infomation.purleadtime,
-      "@p_len": infomation.len,
-      "@p_purqty": infomation.purqty,
-      "@p_boxqty": infomation.boxqty,
-      "@p_part": "",
-      "@p_pac": infomation.pac,
-      "@p_bnatur_insiz": infomation.bnatur_insiz,
-      "@p_itemno": infomation.itemno,
-      "@p_itemgroup": infomation.itemgroup,
-      "@p_lenunit": infomation.lenunit,
-      "@p_hscode": infomation.hscode,
-      "@p_wgtunit": infomation.wgtunit,
-      "@p_custitemnm": infomation.custitemnm,
-      "@p_unitqty": infomation.unitqty,
-      "@p_procday": infomation.procday,
-      "@p_itemcd_s": "",
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_form_id": "BA_A0040W",
-    },
-  };
+  //   const infopara: Iparameters = {
+  //     procedureName: "P_BA_A0040W_S",
+  //     pageNumber: 0,
+  //     pageSize: 0,
+  //     parameters: {
+  //       "@p_work_type": infomation.workType,
+  //       "@p_itemcd": infomation.itemcd,
+  //       "@p_itemnm": infomation.itemnm,
+  //       "@p_itemacnt": itemacntListData.find(
+  //         (item: any) => item.code_name === infomation.itemacnt
+  //       )?.sub_code,
+  //       "@p_bnatur": infomation.bnatur,
+  //       "@p_insiz": infomation.insiz,
+  //       "@p_spec": infomation.spec,
+  //       "@p_maker": infomation.maker,
+  //       "@p_dwgno": infomation.dwgno,
+  //       "@p_itemlvl1": infomation.itemlvl1,
+  //       "@p_itemlvl2": infomation.itemlvl2,
+  //       "@p_itemlvl3": infomation.itemlvl3,
+  //       "@p_itemlvl4": infomation.itemlvl4,
+  //       "@p_invunit": qtyunitListData.find(
+  //         (item: any) => item.code_name === infomation.invunit
+  //       )?.sub_code,
+  //       "@p_bomyn": infomation.bomyn,
+  //       "@p_qcyn": infomation.qcyn,
+  //       "@p_unitwgt": infomation.unitwgt,
+  //       "@p_useyn": infomation.useyn,
+  //       "@p_attdatnum": infomation.attdatnum,
+  //       "@p_attdatnum_img": infomation.attdatnum_img,
+  //       "@p_attdatnum_img2": infomation.attdatnum_img2,
+  //       "@p_remark": infomation.remark,
+  //       "@p_safeqty": infomation.safeqty,
+  //       "@p_location": "01",
+  //       "@p_custcd": infomation.custcd,
+  //       "@p_custnm": infomation.custnm,
+  //       "@p_snp": infomation.snp,
+  //       "@p_autocode": "Y",
+  //       "@p_person": infomation.person,
+  //       "@p_extra_field2": infomation.extra_field2,
+  //       "@p_serviceid": "2207A046",
+  //       "@p_purleadtime": infomation.purleadtime,
+  //       "@p_len": infomation.len,
+  //       "@p_purqty": infomation.purqty,
+  //       "@p_boxqty": infomation.boxqty,
+  //       "@p_part": "",
+  //       "@p_pac": infomation.pac,
+  //       "@p_bnatur_insiz": infomation.bnatur_insiz,
+  //       "@p_itemno": infomation.itemno,
+  //       "@p_itemgroup": infomation.itemgroup,
+  //       "@p_lenunit": infomation.lenunit,
+  //       "@p_hscode": infomation.hscode,
+  //       "@p_wgtunit": infomation.wgtunit,
+  //       "@p_custitemnm": infomation.custitemnm,
+  //       "@p_unitqty": infomation.unitqty,
+  //       "@p_procday": infomation.procday,
+  //       "@p_itemcd_s": "",
+  //       "@p_userid": userId,
+  //       "@p_pc": pc,
+  //       "@p_form_id": "BA_A0040W",
+  //     },
+  //   };
 
-  useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
-  }, [paraDataDeleted]);
+  //   useEffect(() => {
+  //     if (paraDataDeleted.work_type === "D") fetchToDelete();
+  //   }, [paraDataDeleted]);
 
   const onSaveClick = async () => {
-    const dataItem = subData2Result.data.filter((item: any) => {
+    const dataItem = subDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
@@ -1246,82 +1256,82 @@ const BA_A0040: React.FC = () => {
     }));
   };
 
-  const fetchToDelete = async () => {
-    let data: any;
+  //   const fetchToDelete = async () => {
+  //     let data: any;
 
-    try {
-      data = await processApi<any>("procedure", paraDeleted);
-    } catch (error) {
-      data = null;
-    }
+  //     try {
+  //       data = await processApi<any>("procedure", paraDeleted);
+  //     } catch (error) {
+  //       data = null;
+  //     }
 
-    if (data.isSuccess === true) {
-      resetAllGrid();
-      fetchMainGrid();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
-    }
+  //     if (data.isSuccess === true) {
+  //       resetAllGrid();
+  //       fetchMainGrid();
+  //     } else {
+  //       console.log("[오류 발생]");
+  //       console.log(data);
+  //       alert("[" + data.statusCode + "] " + data.resultMessage);
+  //     }
 
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.itemcd = "";
-  };
+  //     paraDataDeleted.work_type = ""; //초기화
+  //     paraDataDeleted.itemcd = "";
+  //   };
 
-  const onSaveClick2 = async () => {
-    fetchSaved();
-  };
-  const fetchSaved = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", infopara);
-    } catch (error) {
-      data = null;
-    }
+  //   const onSaveClick2 = async () => {
+  //     fetchSaved();
+  //   };
+  //   const fetchSaved = async () => {
+  //     let data: any;
+  //     setLoading(true);
+  //     try {
+  //       data = await processApi<any>("procedure", infopara);
+  //     } catch (error) {
+  //       data = null;
+  //     }
 
-    if (data.isSuccess === true) {
-      setMainPgNum(1);
-      setMainDataResult(process([], mainDataState));
+  //     if (data.isSuccess === true) {
+  //       setMainPgNum(1);
+  //       setMainDataResult(process([], mainDataState));
 
-      fetchMainGrid();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    setLoading(false);
-  };
+  //       fetchMainGrid();
+  //     } else {
+  //       console.log("[오류 발생]");
+  //       console.log(data);
+  //     }
+  //     setLoading(false);
+  //   };
 
-  const fetchTodoGridSaved = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", para);
-    } catch (error) {
-      data = null;
-    }
+//   const fetchTodoGridSaved = async () => {
+//     let data: any;
+//     setLoading(true);
+//     try {
+//       data = await processApi<any>("procedure", para);
+//     } catch (error) {
+//       data = null;
+//     }
 
-    if (data.isSuccess === true) {
-      setSub2PgNum(1);
-      setSubData2Result(process([], subData2State));
+//     if (data.isSuccess === true) {
+//       setSubPgNum(1);
+//       setSubDataResult(process([], subDataState));
 
-      fetchSubGrid();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    setLoading(false);
-  };
+//       fetchSubGrid();
+//     } else {
+//       console.log("[오류 발생]");
+//       console.log(data);
+//     }
+//     setLoading(false);
+//   };
 
-  useEffect(() => {
-    if (paraData.itemcd != "") {
-      fetchTodoGridSaved();
-    }
-  }, [paraData]);
+//   useEffect(() => {
+//     if (paraData.itemcd != "") {
+//       fetchTodoGridSaved();
+//     }
+//   }, [paraData]);
   return (
     <>
       <TitleContainer>
-        <Title>품목관리</Title>
+        <Title>업체관리</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -1337,81 +1347,6 @@ const BA_A0040: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>품목코드</th>
-              <td>
-                <Input
-                  name="itemcd"
-                  type="text"
-                  value={filters.itemcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onItemWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>품목명</th>
-              <td>
-                <Input
-                  name="itemnm"
-                  type="text"
-                  value={filters.itemnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>품목계정</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="itemacnt"
-                    value={filters.itemacnt}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>사용여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="raduseyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>규격</th>
-              <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사양</th>
-              <td>
-                <Input
-                  name="spec"
-                  type="text"
-                  value={filters.spec}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>비고</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -1437,6 +1372,47 @@ const BA_A0040: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
+              <th>업체구분</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="custdiv"
+                    value={filters.custdiv}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>사용여부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="useyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
+              <th>대표자명</th>
+              <td>
+                <Input
+                  name="ceonm"
+                  type="text"
+                  value={filters.ceonm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>사업자등록번호</th>
+              <td>
+                <Input
+                  name="bizregnum"
+                  type="text"
+                  value={filters.bizregnum}
+                  onChange={filterInputChange}
+                />
+              </td>
             </tr>
           </tbody>
         </FilterBox>
@@ -1458,9 +1434,9 @@ const BA_A0040: React.FC = () => {
                 themeColor={"primary"}
                 icon="file-add"
               >
-                품목생성
+                업체생성
               </Button>
-              <Button
+              {/* <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
                 themeColor={"primary"}
@@ -1475,19 +1451,19 @@ const BA_A0040: React.FC = () => {
                 icon="save"
               >
                 저장
-              </Button>
+              </Button> */}
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "40vh" }}
+            style={{ height: "30vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                custdiv: custdivListData.find(
+                  (item: any) => item.sub_code === row.custdiv
                 )?.code_name,
-                invunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.invunit
+                bizdiv: bizdivListData.find(
+                  (item: any) => item.sub_code === row.bizdiv
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1516,206 +1492,48 @@ const BA_A0040: React.FC = () => {
             resizable={true}
           >
             <GridColumn
-              field="itemnm"
-              title="품목명"
+              field="custcd"
+              title="업체코드"
               footerCell={mainTotalFooterCell}
               width="140px"
             />
-            <GridColumn field="itemcd" title="품목코드" width="200px" />
-            <GridColumn field="spec" title="사양" width="140px" />
-            <GridColumn field="insiz" title="규격" width="160px" />
-            <GridColumn field="itemacnt" title="품목계정" width="140px" />
-            <GridColumn field="invunit" title="수량단위" width="100px" />
+            <GridColumn field="custnm" title="업체명" width="200px" />
+            <GridColumn field="custdiv" title="업체구분" width="140px" />
+            <GridColumn field="bizdiv" title="사업자구분" width="120px" />
+            <GridColumn field="ceonm" title="대표자명" width="100px" />
             <GridColumn
-              field="useyn"
+              field="bizregnum"
+              title="사업자등록번호"
+              width="180px"
+            />
+            <GridColumn field="address" title="주소" width="400px" />
+            <GridColumn field="email" title="이메일" width="180px" />
+            <GridColumn field="phonenum" title="전화번호" width="150px" />
+            <GridColumn field="faxnum" title="팩스번호" width="150px" />
+            <GridColumn
+              field="raduseyn"
               title="사용여부"
               width="100px"
               cell={CheckBoxCell}
             />
-            <GridColumn
-              field="safeqty"
-              title="안전재고량"
-              width="140px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="purleadtime"
-              title="구매리드타임"
-              width="140px"
-              cell={NumberCell}
-            />
-            <GridColumn field="cnt" title="첨부" width="140px" />
-            <GridColumn field="custnm" title="업체명" width="160px" />
-            <GridColumn field="remark" title="비고" width="250px" />
-            <GridColumn field="bnatur" title="재질" width="140px" />
+            <GridColumn field="remark" title="비고" width="300px" />
           </Grid>
         </ExcelExport>
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="상세정보">
-          <FilterBoxWrap style={{ height: "22vh" }}>
+          <FilterBoxWrap style={{ height: "40vh" }}>
             <FilterBox>
               <tbody>
                 <tr>
-                  <th>품목코드</th>
-                  <td>
-                    <Input
-                      name="itemcd"
-                      type="text"
-                      value={infomation.itemcd}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>품목명</th>
-                  <td>
-                    <Input
-                      name="itemnm"
-                      type="text"
-                      value={infomation.itemnm}
-                      onChange={InputChange}
-                      className="required"
-                    />
-                  </td>
-                  <th>품목계정</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="itemacnt"
-                        value={infomation.itemacnt}
-                        bizComponentId="L_BA061"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        textField={"code_name"}
-                        valueField={"code_name"}
-                      />
-                    )}
-                  </td>
-                  <th>사용여부</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="useyn"
-                        value={infomation.useyn}
-                        bizComponentId="R_USEYN"
-                        bizComponentData={bizComponentData}
-                        changeData={RadioChange}
-                      />
-                    )}
-                  </td>
-                  <th>재질</th>
-                  <td>
-                    <Input
-                      name="bnatur"
-                      type="text"
-                      value={infomation.bnatur}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>단위중량</th>
-                  <td>
-                    <Input
-                      name="unitwgt"
-                      type="number"
-                      value={infomation.unitwgt}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>안전재고량</th>
-                  <td>
-                    <Input
-                      name="safeqty"
-                      type="number"
-                      value={infomation.safeqty}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>대분류</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="itemlvl1"
-                        value={infomation.itemlvl1}
-                        bizComponentId="L_BA171"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>중분류</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="itemlvl2"
-                        value={infomation.itemlvl2}
-                        bizComponentId="L_BA172"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>소분류</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="itemlvl3"
-                        value={infomation.itemlvl3}
-                        bizComponentId="L_BA173"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>규격</th>
-                  <td>
-                    <Input
-                      name="insiz"
-                      type="text"
-                      value={infomation.insiz}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>사양</th>
-                  <td>
-                    <Input
-                      name="spec"
-                      type="text"
-                      value={infomation.spec}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>수량단위</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="invunit"
-                        value={infomation.invunit}
-                        bizComponentId="L_BA015"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        textField={"code_name"}
-                        valueField={"code_name"}
-                      />
-                    )}
-                  </td>
                   <th>업체코드</th>
                   <td>
                     <Input
                       name="custcd"
                       type="text"
                       value={infomation.custcd}
-                      onChange={InputChange}
+                      className="readonly"
                     />
-                    <ButtonInInput>
-                      <Button
-                        onClick={onCustWndClick2}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
                   </td>
                   <th>업체명</th>
                   <td>
@@ -1724,39 +1542,370 @@ const BA_A0040: React.FC = () => {
                       type="text"
                       value={infomation.custnm}
                       onChange={InputChange}
+                      className="required"
+                    />
+                  </td>
+                  <th>업체구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="custdiv"
+                        value={infomation.custdiv}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField={"code_name"}
+                        valueField={"code_name"}
+                      />
+                    )}
+                  </td>
+                  <th>업체약어</th>
+                  <td>
+                    <Input
+                      name="custabbr"
+                      type="text"
+                      value={infomation.custabbr}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>영문회사명</th>
+                  <td>
+                    <Input
+                      name="compnm_eng"
+                      type="text"
+                      value={infomation.compnm_eng}
+                      onChange={InputChange}
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>도면번호</th>
+                  <th>매입단가항목</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="inunpitem"
+                        value={infomation.inunpitem}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField={"code_name"}
+                        valueField={"code_name"}
+                      />
+                    )}
+                  </td>
+                  <th>사업자등록번호</th>
                   <td>
                     <Input
-                      name="dwgno"
-                      type="text"
-                      value={infomation.dwgno}
+                      name="bizregnum"
+                      value={infomation.bizregnum}
                       onChange={InputChange}
                     />
                   </td>
-                  <th>Marker</th>
+                  <th>우편번호</th>
                   <td>
                     <Input
-                      name="maker"
-                      type="text"
-                      value={infomation.maker}
+                      name="zipcode"
+                      type="number"
+                      value={infomation.zipcode}
                       onChange={InputChange}
                     />
                   </td>
-                  <th>검사유무</th>
+                  <th>지역</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="qcyn"
-                        value={infomation.qcyn}
-                        bizComponentId="R_QCYN"
-                        bizComponentData={bizComponentData}
+                    <Input
+                      name="area"
+                      value={infomation.area}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>단가항목</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="unpitem"
+                        value={infomation.unpitem}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>대표자명</th>
+                  <td>
+                    <Input
+                      name="ceonm"
+                      type="text"
+                      value={infomation.ceonm}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>주소</th>
+                  <td>
+                    <Input
+                      name="address"
+                      type="text"
+                      value={infomation.address}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>사업자구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="bizdiv"
+                        value={infomation.bizdiv}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField={"code_name"}
+                        valueField={"code_name"}
+                      />
+                    )}
+                  </td>
+                  <th>주민등록번호</th>
+                  <td>
+                    <Input
+                      name="repreregno"
+                      value={infomation.repreregno}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>영문주소</th>
+                  <td>
+                    <Input
+                      name="address_eng"
+                      type="text"
+                      value={infomation.address_eng}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>개업년월일</th>
+                  <td>
+                    <DatePicker
+                      name="estbdt"
+                      value={infomation.estbdt}
+                      format="yyyy-MM-dd"
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>은행정보</th>
+                  <td>
+                    <Input
+                      name="bnkinfo"
+                      type="text"
+                      value={infomation.bnkinfo}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>예금주</th>
+                  <td>
+                    <Input
+                      name="bankacntuser"
+                      type="text"
+                      value={infomation.bankacntuser}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>업태</th>
+                  <td>
+                    <Input
+                      name="compclass"
+                      type="text"
+                      value={infomation.compclass}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>전자팩스번호</th>
+                  <td>
+                    <Input
+                      name="efaxnum"
+                      type="text"
+                      value={infomation.efaxnum}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>전자전화번호</th>
+                  <td>
+                    <Input
+                      name="etelnum"
+                      type="text"
+                      value={infomation.etelnum}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>전화번호</th>
+                  <td>
+                    <Input
+                      name="phonenum"
+                      type="text"
+                      value={infomation.phonenum}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>계좌번호</th>
+                  <td>
+                    <Input
+                      name="bankacnt"
+                      type="text"
+                      value={infomation.bankacnt}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>업종</th>
+                  <td>
+                    <Input
+                      name="comptype"
+                      type="text"
+                      value={infomation.comptype}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>이메일</th>
+                  <td>
+                    <Input
+                      name="email"
+                      type="text"
+                      value={infomation.email}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>팩스번호</th>
+                  <td>
+                    <Input
+                      name="faxnum"
+                      type="text"
+                      value={infomation.faxnum}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>은행정보2</th>
+                  <td>
+                    <Input
+                      name="bnkinfo2"
+                      type="text"
+                      value={infomation.bnkinfo2}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>계좌번호2</th>
+                  <td>
+                    <Input
+                      name="bankacnt2"
+                      type="text"
+                      value={infomation.bankacnt2}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>TAX구분</th>
+                  <td>
+                    <Input
+                      name="etax"
+                      type="text"
+                      value={infomation.etax}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>역발행여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="rtxisuyn"
+                        customOptionData={customOptionData}
                         changeData={RadioChange}
                       />
                     )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>신고세무소</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="taxorg"
+                        value={infomation.taxorg}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField={"code_name"}
+                        valueField={"code_name"}
+                      />
+                    )}
+                  </td>
+                  <th>신고세무소명</th>
+                  <td>
+                    <Input
+                      name="taxortnm"
+                      type="text"
+                      value={infomation.taxortnm}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>대분류</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemlvl1"
+                        value={infomation.itemlvl1}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>중분류</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemlvl2"
+                        value={infomation.itemlvl2}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>소분류</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemlvl3"
+                        value={infomation.itemlvl3}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>사용여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="useyn"
+                        customOptionData={customOptionData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>SCM사용여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="scmyn"
+                        customOptionData={customOptionData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>정기/비정기</th>
+                  <td>
+                    <Input
+                      name="pariodyn"
+                      type="text"
+                      value={infomation.pariodyn}
+                      onChange={InputChange}
+                    />
                   </td>
                   <th>비고</th>
                   <td>
@@ -1784,11 +1933,62 @@ const BA_A0040: React.FC = () => {
                     </ButtonInInput>
                   </td>
                 </tr>
+                <tr>
+                  <th>etax담당자</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="etxprs"
+                        value={infomation.etxprs}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>etax전화번호</th>
+                  <td>
+                    <Input
+                      name="phonenum_og"
+                      type="text"
+                      value={infomation.phonenum_og}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>etax이메일</th>
+                  <td>
+                    <Input
+                      name="emailaddr_og"
+                      type="text"
+                      value={infomation.emailaddr_og}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>센드빌회원여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="bill_type"
+                        value={infomation.bill_type}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>역발행여부</th>
+                  <td>
+                    <Input
+                      name="recvid"
+                      type="text"
+                      value={infomation.recvid}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
               </tbody>
             </FilterBox>
           </FilterBoxWrap>
         </TabStripTab>
-        <TabStripTab title="단가">
+        {/* <TabStripTab title="단가">
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>단가정보</GridTitle>
@@ -1886,7 +2086,7 @@ const BA_A0040: React.FC = () => {
               <GridColumn field="remark" title="비고" width="400px" />
             </Grid>
           </GridContainer>
-        </TabStripTab>
+        </TabStripTab> */}
       </TabStrip>
       {custWindowVisible && (
         <CustomersWindow
@@ -1920,4 +2120,4 @@ const BA_A0040: React.FC = () => {
   );
 };
 
-export default BA_A0040;
+export default BA_A0020;
