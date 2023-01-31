@@ -51,10 +51,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-<<<<<<< HEAD
   UseParaPc
-=======
->>>>>>> beccf5e70c359d4bf653d11dca26c01176ed15b5
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
