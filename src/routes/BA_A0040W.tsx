@@ -250,7 +250,6 @@ const BA_A0040: React.FC = () => {
 
   const RadioChange = (e: any) => {
     const { name, value } = e;
-
     setInfomation((prev) => ({
       ...prev,
       [name]: value,
@@ -1210,7 +1209,7 @@ const BA_A0040: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-    
+
     let dataArr: TdataArr = {
       unpitem: [],
       rowstatus: [],
@@ -1312,13 +1311,13 @@ const BA_A0040: React.FC = () => {
 
     let valid = true;
     try {
-        if (!infomation.invunit) {
-          throw findMessage(messagesData, "BA_A0040W_001");
-        }
+      if (!infomation.invunit) {
+        throw findMessage(messagesData, "BA_A0040W_001");
+      }
 
-        if (!infomation.itemnm) {
-          throw findMessage(messagesData, "BA_A0040W_002");
-        }
+      if (!infomation.itemnm) {
+        throw findMessage(messagesData, "BA_A0040W_002");
+      }
     } catch (e) {
       alert(e);
       valid = false;
@@ -1650,8 +1649,12 @@ const BA_A0040: React.FC = () => {
                       <BizComponentRadioGroup
                         name="useyn"
                         value={infomation.useyn}
-                        bizComponentId="R_USEYN"
-                        bizComponentData={bizComponentData}
+                        bizComponentId=""
+                        bizComponentData={undefined}
+                        data={[
+                          { label: "사용", value: "Y" },
+                          { label: "미사용", value: "N" },
+                        ]}
                         changeData={RadioChange}
                       />
                     )}
@@ -1806,8 +1809,12 @@ const BA_A0040: React.FC = () => {
                       <BizComponentRadioGroup
                         name="qcyn"
                         value={infomation.qcyn}
-                        bizComponentId="R_QCYN"
-                        bizComponentData={bizComponentData}
+                        bizComponentId=""
+                        bizComponentData={undefined}
+                        data={[
+                          { label: "검사", value: "Y" },
+                          { label: "무검사", value: "N" },
+                        ]}
                         changeData={RadioChange}
                       />
                     )}
