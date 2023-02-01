@@ -373,12 +373,7 @@ const BA_A0040: React.FC = () => {
       "@p_custnm": filters.custnm,
       "@p_itemcd_s": filters.itemcd_s,
       "@p_spec": filters.spec,
-      // "@p_location": filters.location,
       "@p_remark": filters.remark,
-      // "@p_bnatur":filters.bnatur,
-      // "@p_itemlvl1": filters.itemlvl1,
-      // "@p_itemlvl2": filters.itemlvl2,
-      // "@p_itemlvl3": filters.itemlvl3,
       "@p_find_row_value": filters.row_values,
     },
   };
@@ -419,12 +414,7 @@ const BA_A0040: React.FC = () => {
       "@p_custnm": subfilters.custnm,
       "@p_itemcd_s": subfilters.itemcd_s,
       "@p_spec": subfilters.spec,
-      // "@p_location": subfilters.location,
       "@p_remark": subfilters.remark,
-      // "@p_bnatur":subfilters.bnatur,
-      // "@p_itemlvl1": subfilters.itemlvl1,
-      // "@p_itemlvl2": subfilters.itemlvl2,
-      // "@p_itemlvl3": subfilters.itemlvl3,
       "@p_find_row_value": null,
     },
   };
@@ -542,7 +532,54 @@ const BA_A0040: React.FC = () => {
           itemlvl2: firstRowData.itemlvl2,
           itemlvl3: firstRowData.itemlvl3,
         }));
-
+        setInfomation({
+          pgSize: PAGE_SIZE,
+          workType: "U",
+          itemcd: firstRowData.itemcd,
+          itemnm: firstRowData.itemnm,
+          insiz: firstRowData.insiz,
+          itemacnt: firstRowData.itemacnt,
+          useyn: firstRowData.useyn,
+          custcd: firstRowData.custcd,
+          custnm: firstRowData.custnm,
+          itemcd_s: firstRowData.itemcd_s,
+          spec: firstRowData.spec,
+          location: "01",
+          remark: firstRowData.remark,
+          bnatur: firstRowData.bnatur,
+          itemlvl1: firstRowData.itemlvl1,
+          itemlvl2: firstRowData.itemlvl2,
+          itemlvl3: firstRowData.itemlvl3,
+          itemlvl4: firstRowData.itemlvl4,
+          bomyn: firstRowData.bomyn,
+          attdatnum: firstRowData.attdatnum,
+          row_values: firstRowData.row_values,
+          safeqty: firstRowData.safeqty,
+          unitwgt: firstRowData.unitwgt,
+          invunit: firstRowData.invunit,
+          dwgno: firstRowData.dwgno,
+          maker: firstRowData.maker,
+          qcyn: firstRowData.qcyn,
+          attdatnum_img: firstRowData.attdatnum_img,
+          attdatnum_img2: firstRowData.attdatnum_img2,
+          snp: firstRowData.snp,
+          person: firstRowData.person,
+          extra_field2: firstRowData.extra_field2,
+          purleadtime: firstRowData.purleadtime,
+          len: firstRowData.len,
+          purqty: firstRowData.purqty,
+          boxqty: firstRowData.boxqty,
+          pac: firstRowData.pac,
+          bnatur_insiz: firstRowData.bnatur_insiz,
+          itemno: firstRowData.itemno,
+          itemgroup: firstRowData.itemgroup,
+          lenunit: firstRowData.lenunit,
+          hscode: firstRowData.hscode,
+          wgtunit: firstRowData.wgtunit,
+          custitemnm: firstRowData.custitemnm,
+          unitqty: firstRowData.unitqty,
+          procday: firstRowData.procday,
+        });
         setIfSelectFirstRow(true);
       }
     }
@@ -590,8 +627,6 @@ const BA_A0040: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    console.log("selectedRowData");
-    console.log(selectedRowData);
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "U",
@@ -1175,7 +1210,7 @@ const BA_A0040: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-
+    
     let dataArr: TdataArr = {
       unpitem: [],
       rowstatus: [],
@@ -1271,9 +1306,28 @@ const BA_A0040: React.FC = () => {
   const onSaveClick2 = async () => {
     fetchSaved();
   };
+
   const fetchSaved = async () => {
     let data: any;
+
+    let valid = true;
+    try {
+        if (!infomation.invunit) {
+          throw findMessage(messagesData, "BA_A0040W_001");
+        }
+
+        if (!infomation.itemnm) {
+          throw findMessage(messagesData, "BA_A0040W_002");
+        }
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
     setLoading(true);
+
     try {
       data = await processApi<any>("procedure", infopara);
     } catch (error) {
