@@ -114,6 +114,15 @@ a {
   justify-content: center; /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
 }
 
+input.required,
+input.required:hover,
+input.required.k-hover {
+  background-color: #fff0ef;
+}
+input.readonly {
+  background-color: #efefef;
+}
+
 `;
 
 const App: React.FC = () => {

@@ -728,12 +728,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           cell: false,
           mode: "multiple",
         }}
+        onSelectionChange={onSelectionChange}
         onHeaderSelectionChange={onHeaderSelectionChange}
         //스크롤 조회 기능
         fixedScroll={true}
         total={dataWithIndexes.length}
         onScroll={scrollHandler}
-        onSelectionChange={onSelectionChange}
         //정렬기능
         sortable={true}
         onSortChange={onGridSortChange}

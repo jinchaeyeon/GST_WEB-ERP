@@ -359,14 +359,6 @@ export const FieldWrap = styled.div<TFieldWrap>`
   .k-picker.k-hover {
     background-color: #ffffff;
   }
-  .required,
-  .required:hover,
-  .required.k-hover {
-    background-color: #fff0ef;
-  }
-  .readonly {
-    background-color: #efefef;
-  }
 `;
 
 export const LoginBox = styled.div`
