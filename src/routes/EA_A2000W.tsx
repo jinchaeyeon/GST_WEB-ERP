@@ -296,7 +296,7 @@ const EA_A2000: React.FC = () => {
     pgSize: PAGE_SIZE,
     radWorkType: "B",
     orgdiv: "01",
-    user_id: userId,
+    user_id: "",
     ymdStartDt: new Date(),
     ymdEndDt: new Date(),
     txtAppnm: "",

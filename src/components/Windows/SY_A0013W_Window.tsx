@@ -248,7 +248,7 @@ const KendoWindow = ({
       "@p_dptcd": "",
       "@p_lang_id": "",
       "@p_user_category": "",
-      "@p_user_id": user_id,
+      "@p_user_id": "",
       "@p_user_name": "",
       "@p_menu_name": "",
       "@p_layout_key": "",

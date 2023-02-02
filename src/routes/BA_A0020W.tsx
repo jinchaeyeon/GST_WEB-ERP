@@ -80,12 +80,15 @@ import { FormReadOnly } from "../components/Editors";
 
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
+const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: any[] = [];
+let deletedMainRows2: any[] = [];
 
 const BA_A0020: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
+  const idGetter3 = getter(SUB_DATA_ITEM_KEY2);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -173,7 +176,9 @@ const BA_A0020: React.FC = () => {
   const [subDataState, setSubDataState] = useState<State>({
     sort: [],
   });
-
+  const [subDataState2, setSubDataState2] = useState<State>({
+    sort: [],
+  });
   const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
@@ -184,11 +189,19 @@ const BA_A0020: React.FC = () => {
     process([], subDataState)
   );
 
+  const [subDataResult2, setSubDataResult2] = useState<DataResult>(
+    process([], subDataState2)
+  );
+
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
   const [selectedsubDataState, setSelectedsubDataState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [selectedsubDataState2, setSelectedsubDataState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -198,6 +211,7 @@ const BA_A0020: React.FC = () => {
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
+  const [subPgNum2, setSubPgNum2] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
   const [workType, setWorkType] = useState<string>("U");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -353,6 +367,17 @@ const BA_A0020: React.FC = () => {
     useyn: "",
   });
 
+  const [subfilters2, setsubFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "MONEY",
+    custcd: infomation.custcd,
+    custnm: "",
+    custdiv: "",
+    bizregnum: "",
+    ceonm: "",
+    useyn: "",
+  });
+
   //조회조건 파라미터
   const subparameters: Iparameters = {
     procedureName: "P_BA_A0020W_Q",
@@ -364,9 +389,41 @@ const BA_A0020: React.FC = () => {
       "@p_useyn": subfilters.useyn,
       "@p_custcd": subfilters.custcd,
       "@p_custnm": subfilters.custnm,
-      "@p_custdiv": subfilters.custdiv,
+      "@p_custdiv":
+        custdivListData.find(
+          (item: any) => item.code_name === subfilters.custdiv
+        )?.sub_code == undefined
+          ? ""
+          : custdivListData.find(
+              (item: any) => item.code_name === subfilters.custdiv
+            )?.sub_code,
       "@p_bizregnum": subfilters.bizregnum,
       "@p_ceonm": subfilters.ceonm,
+      "@p_company_code": "2207A046",
+      "@p_find_row_value": null,
+    },
+  };
+
+  const subparameters2: Iparameters = {
+    procedureName: "P_BA_A0020W_Q",
+    pageNumber: subPgNum2,
+    pageSize: subfilters2.pgSize,
+    parameters: {
+      "@p_work_type": subfilters2.workType,
+      "@p_orgdiv": "01",
+      "@p_useyn": subfilters2.useyn,
+      "@p_custcd": subfilters2.custcd,
+      "@p_custnm": subfilters2.custnm,
+      "@p_custdiv":
+        custdivListData.find(
+          (item: any) => item.code_name === subfilters2.custdiv
+        )?.sub_code == undefined
+          ? ""
+          : custdivListData.find(
+              (item: any) => item.code_name === subfilters2.custdiv
+            )?.sub_code,
+      "@p_bizregnum": subfilters2.bizregnum,
+      "@p_ceonm": subfilters2.ceonm,
       "@p_company_code": "2207A046",
       "@p_find_row_value": null,
     },
@@ -412,7 +469,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(subparameters);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -424,6 +481,41 @@ const BA_A0020: React.FC = () => {
       }));
       if (totalRowCnt > 0) {
         setSubDataResult((prev) => {
+          return {
+            data: [...prev.data, ...row],
+            total: totalRowCnt,
+          };
+        });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchSubGrid2 = async () => {
+    //if (!permissions?.view) return;
+    let data: any;
+
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", subparameters2);
+    } catch (error) {
+      data = null;
+    }
+    console.log(data);
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+
+      const row = rows.map((item: any) => ({
+        ...item,
+        inEdit: "recdt",
+        rowstatus: "U",
+      }));
+      if (totalRowCnt > 0) {
+        setSubDataResult2((prev) => {
           return {
             data: [...prev.data, ...row],
             total: totalRowCnt,
@@ -459,24 +551,17 @@ const BA_A0020: React.FC = () => {
     fetchSubGrid();
   }, [subPgNum]);
 
+  useEffect(() => {
+    fetchSubGrid2();
+  }, [subPgNum2]);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.custcd]: true });
-
-        setsubFilters((prev) => ({
-          ...prev,
-          workType: "CustPerson",
-          useyn: firstRowData.useyn,
-          custcd: firstRowData.custcd,
-          custnm: firstRowData.custnm,
-          custdiv: firstRowData.custdiv,
-          bizregnum: firstRowData.bizregnum,
-          ceonm: firstRowData.ceonm,
-        }));
-
+    
         setInfomation({
           pgSize: PAGE_SIZE,
           workType: "U",
@@ -527,6 +612,29 @@ const BA_A0020: React.FC = () => {
           rtxisuyn: firstRowData.rtxisuyn,
         });
 
+          setsubFilters((prev) => ({
+            ...prev,
+            workType: "CustPerson",
+            useyn: firstRowData.useyn,
+            custcd: firstRowData.custcd,
+            custnm:  firstRowData.custnm,
+            custdiv:  firstRowData.custdiv,
+            bizregnum:  firstRowData.bizregnum,
+            ceonm:  firstRowData.ceonm,
+          }));
+
+
+          setsubFilters2((prev) => ({
+            ...prev,
+            workType: "MONEY",
+            useyn:  firstRowData.useyn,
+            custcd:  firstRowData.custcd,
+            custnm:  firstRowData.custnm,
+            custdiv:  firstRowData.custdiv,
+            bizregnum:  firstRowData.bizregnum,
+            ceonm:  firstRowData.ceonm,
+          }));
+
         setIfSelectFirstRow(true);
       }
     }
@@ -536,12 +644,23 @@ const BA_A0020: React.FC = () => {
     if (ifSelectFirstRow) {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
-        setSelectedsubDataState({ [firstRowData.num]: true });
+        // setSelectedsubDataState({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
+        // setIfSelectFirstRow(true);
       }
     }
   }, [subDataResult]);
+
+  useEffect(() => {
+    if (ifSelectFirstRow) {
+      if (subDataResult2.total > 0) {
+        const firstRowData = subDataResult2.data[0];
+        // setSelectedsubDataState({ [firstRowData.num]: true });
+
+        // setIfSelectFirstRow(true);
+      }
+    }
+  }, [subDataResult2]);
 
   useEffect(() => {
     setSubPgNum(1);
@@ -552,16 +671,32 @@ const BA_A0020: React.FC = () => {
   }, [subfilters]);
 
   useEffect(() => {
+    setSubPgNum2(1);
+    setSubDataResult2(process([], subDataState2));
+    if (customOptionData !== null) {
+      fetchSubGrid2();
+    }
+  }, [subfilters2]);
+
+  useEffect(() => {
     if (customOptionData !== null) {
       fetchSubGrid();
     }
   }, [subPgNum]);
 
   useEffect(() => {
-    setSubPgNum(1);
-    setSubDataResult(process([], subDataState));
     if (customOptionData !== null) {
-      fetchSubGrid();
+      fetchSubGrid2();
+    }
+  }, [subPgNum2]);
+
+  useEffect(() => {
+    if (customOptionData !== null) {
+      if(tabSelected == 1) {
+        fetchSubGrid();
+      } else if(tabSelected == 2){
+        fetchSubGrid2();
+      }
     }
   }, [tabSelected]);
 
@@ -571,6 +706,8 @@ const BA_A0020: React.FC = () => {
     setMainDataResult(process([], mainDataState));
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
+    setSubPgNum2(1);
+    setSubDataResult2(process([], subDataState2));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -634,10 +771,22 @@ const BA_A0020: React.FC = () => {
       recvid: selectedRowData.recvid,
       rtxisuyn: selectedRowData.rtxisuyn,
     });
-    if (tabSelected === 1) {
+
+    if(tabSelected == 1){
       setsubFilters((prev) => ({
         ...prev,
         workType: "CustPerson",
+        useyn: selectedRowData.useyn,
+        custcd: selectedRowData.custcd,
+        custnm: selectedRowData.custnm,
+        custdiv: selectedRowData.custdiv,
+        bizregnum: selectedRowData.bizregnum,
+        ceonm: selectedRowData.ceonm,
+      }));
+    } else if(tabSelected == 2){
+      setsubFilters2((prev) => ({
+        ...prev,
+        workType: "MONEY",
         useyn: selectedRowData.useyn,
         custcd: selectedRowData.custcd,
         custnm: selectedRowData.custnm,
@@ -655,6 +804,15 @@ const BA_A0020: React.FC = () => {
       dataItemKey: SUB_DATA_ITEM_KEY,
     });
     setSelectedsubDataState(newSelectedState);
+  };
+
+  const onSubDataSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: SUB_DATA_ITEM_KEY2,
+    });
+    setSelectedsubDataState2(newSelectedState);
   };
 
   //엑셀 내보내기
@@ -676,12 +834,21 @@ const BA_A0020: React.FC = () => {
       setSubPgNum((prev) => prev + 1);
   };
 
+  const onSubScrollHandler2 = (event: GridEvent) => {
+    if (chkScrollHandler(event, subPgNum2, PAGE_SIZE))
+      setSubPgNum2((prev) => prev + 1);
+  };
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
 
   const onSubDataStateChange = (event: GridDataStateChangeEvent) => {
     setSubDataState(event.dataState);
+  };
+
+  const onSubDataStateChange2 = (event: GridDataStateChangeEvent) => {
+    setSubDataState2(event.dataState);
   };
 
   //그리드 푸터
@@ -693,6 +860,18 @@ const BA_A0020: React.FC = () => {
     );
   };
 
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    subDataResult2.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {sum}
+      </td>
+    );
+  };
   const onAddClick2 = () => {
     setWorkType("N");
     setInfomation({
@@ -793,6 +972,42 @@ const BA_A0020: React.FC = () => {
     });
   };
 
+  const onAddClick3 = () => {
+    let seq = 1;
+
+    if (subDataResult2.total > 0) {
+      subDataResult2.data.forEach((item) => {
+        if (item[SUB_DATA_ITEM_KEY2] > seq) {
+          seq = item[SUB_DATA_ITEM_KEY2];
+        }
+      });
+      seq++;
+    }
+
+    const newDataItem = {
+      [SUB_DATA_ITEM_KEY2]: seq,
+      custcd: infomation.custcd,
+      current_income: 0,
+      dedt_ratio: 0,
+      operating_profits: 0,
+      paid_up_capital: 0,
+      ramark: "",
+      salesmoney: 0,
+      seq: 0,
+      totasset: 0,
+      totcapital: 0,
+      yyyy: "",
+      rowstatus: "N",
+    };
+
+    setSubDataResult2((prev) => {
+      return {
+        data: [...prev.data, newDataItem],
+        total: prev.total + 1,
+      };
+    });
+  };
+
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -801,6 +1016,8 @@ const BA_A0020: React.FC = () => {
     setTabSelected(e.selected);
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
+    setSubPgNum2(1);
+    setSubDataResult2(process([], subDataState2));
   };
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
@@ -909,6 +1126,20 @@ const BA_A0020: React.FC = () => {
     attdatnum_s: string[];
     sort_seq_s: string[];
   };
+
+  type TdataArr2 = {
+    rowstatus: string[];
+    remark_s: string[];
+    seq_s: string[];
+    yyyy_s: string[];
+    totasset_s: string[];
+    paid_up_capital_s: string[];
+    totcaptial_s: string[];
+    salesmoney_s: string[];
+    operating_profits_s: string[];
+    current_income_s: string[];
+    dedt_rati_s: string[];
+  };
   //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
@@ -935,9 +1166,18 @@ const BA_A0020: React.FC = () => {
     setSubDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
+  const onSubDataSortChange2 = (e: any) => {
+    setSubDataState2((prev) => ({ ...prev, sort: e.sort }));
+  };
+
   const search = () => {
-    resetAllGrid();
+    setSubPgNum(1);
+    setSubDataResult(process([], subDataState));
+    setSubPgNum2(1);
+    setSubDataResult2(process([], subDataState2));
     fetchMainGrid();
+    fetchSubGrid();
+    fetchSubGrid2();
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
@@ -948,6 +1188,16 @@ const BA_A0020: React.FC = () => {
       SUB_DATA_ITEM_KEY
     );
   };
+
+  const onSubItemChange2 = (event: GridItemChangeEvent) => {
+    getGridItemChangedData(
+      event,
+      subDataResult2,
+      setSubDataResult2,
+      SUB_DATA_ITEM_KEY2
+    );
+  };
+
   const enterEdit = (dataItem: any, field: string) => {
     const newData = subDataResult.data.map((item) =>
       item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
@@ -970,6 +1220,28 @@ const BA_A0020: React.FC = () => {
     });
   };
 
+  const enterEdit2 = (dataItem: any, field: string) => {
+    const newData = subDataResult2.data.map((item) =>
+      item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: field,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+
+    setSubDataResult2((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
   const exitEdit = () => {
     const newData = subDataResult.data.map((item) => ({
       ...item,
@@ -977,6 +1249,20 @@ const BA_A0020: React.FC = () => {
     }));
 
     setSubDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const exitEdit2 = () => {
+    const newData = subDataResult2.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setSubDataResult2((prev) => {
       return {
         data: newData,
         total: prev.total,
@@ -993,11 +1279,29 @@ const BA_A0020: React.FC = () => {
     />
   );
 
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
   const customRowRender = (tr: any, props: any) => (
     <RowRender
       originalProps={props}
       tr={tr}
       exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
       editField={EDIT_FIELD}
     />
   );
@@ -1027,6 +1331,28 @@ const BA_A0020: React.FC = () => {
     }));
 
     setSubDataState({});
+  };
+
+  const onDeleteClick3 = (e: any) => {
+    let newData: any[] = [];
+
+    subDataResult2.data.forEach((item: any, index: number) => {
+      if (!selectedsubDataState2[item[SUB_DATA_ITEM_KEY2]]) {
+        newData.push(item);
+      } else {
+        const newData2 = {
+          ...item,
+          rowstatus: "D",
+        };
+        deletedMainRows2.push(newData2);
+      }
+    });
+    setSubDataResult2((prev) => ({
+      data: newData,
+      total: newData.length,
+    }));
+
+    setSubDataState2({});
   };
 
   const onDeleteClick2 = (e: any) => {
@@ -1122,13 +1448,22 @@ const BA_A0020: React.FC = () => {
       "@p_auto": "N",
       "@p_custcd": paraData.custcd,
       "@p_custnm": paraData.custnm,
-      "@p_custdiv": custdivListData.find(
-        (item: any) => item.code_name === infomation.custdiv
-      )?.sub_code,
+      "@p_custdiv":
+        custdivListData.find(
+          (item: any) => item.code_name === infomation.custdiv
+        )?.sub_code == undefined
+          ? ""
+          : custdivListData.find(
+              (item: any) => item.code_name === infomation.custdiv
+            )?.sub_code,
       "@p_custabbr": paraData.custabbr,
-      "@p_bizdiv": bizdivListData.find(
-        (item: any) => item.code_name === infomation.bizdiv
-      )?.sub_code,
+      "@p_bizdiv":
+        bizdivListData.find((item: any) => item.code_name === infomation.bizdiv)
+          ?.sub_code == undefined
+          ? ""
+          : bizdivListData.find(
+              (item: any) => item.code_name === infomation.bizdiv
+            )?.sub_code,
       "@p_bizregnum": paraData.bizregnum,
       "@p_ceonm": paraData.ceonm,
       "@p_repreregno": paraData.repreregno,
@@ -1570,8 +1905,233 @@ const BA_A0020: React.FC = () => {
       phoneno_s: dataArr.phoneno_s.join("|"),
       email_s: dataArr.email_s.join("|"),
       rtrchk_s: dataArr.rtrchk_s.join("|"),
-      attdatnum_s: dataArr.attdatnum_s[0],
+      attdatnum_s: dataArr.attdatnum_s.join("|"),
       sort_seq_s: dataArr.sort_seq_s.join("|"),
+      seq_s: "",
+      yyyy_s:"",
+      totasset_s: "",
+      paid_up_capital_s: "",
+      totcapital_s:"",
+      salesmoney_s:"",
+      operating_profits_s:"",
+      current_income_s:"",
+      dedt_rati_s: "",
+    }));
+  };
+
+  const onSaveClick3 = async () => {
+    const dataItem = subDataResult2.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
+    let dataArr: TdataArr2 = {
+      rowstatus: [],
+      remark_s: [],
+      seq_s: [],
+      yyyy_s: [],
+      totasset_s: [],
+      paid_up_capital_s: [],
+      totcaptial_s: [],
+      salesmoney_s: [],
+      operating_profits_s: [],
+      current_income_s: [],
+      dedt_rati_s: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        remark = "",
+        current_income=0,
+        dedt_ratio=0,
+        operating_profits = 0,
+        paid_up_capital =0,
+        salesmoney =0,
+        seq=0,
+        totasset=0,
+        totcapital=0,
+        yyyy=""
+      } = item;
+
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.remark_s.push(remark);
+      dataArr.seq_s.push(seq);
+      dataArr.yyyy_s.push(yyyy);
+      dataArr.totasset_s.push(totasset);
+      dataArr.paid_up_capital_s.push(paid_up_capital);
+      dataArr.totcaptial_s.push(totcapital);
+      dataArr.salesmoney_s.push(salesmoney);
+      dataArr.operating_profits_s.push(operating_profits);
+      dataArr.current_income_s.push(current_income);
+      dataArr.dedt_rati_s.push(dedt_ratio);
+    });
+    deletedMainRows2.forEach(async (item: any, idx: number) => {
+      const paraD: Iparameters = {
+        procedureName: "P_BA_A0020W_S",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_work_type": "MONEY",
+          "@p_orgdiv": "01",
+          "@p_location": "01",
+          "@p_auto": "N",
+          "@p_custcd": infomation.custcd,
+          "@p_custnm": infomation.custnm,
+          "@p_custdiv": infomation.custdiv,
+          "@p_custabbr": infomation.custabbr,
+          "@p_bizdiv": infomation.bizdiv,
+          "@p_bizregnum": infomation.bizregnum,
+          "@p_ceonm": infomation.ceonm,
+          "@p_repreregno": infomation.repreregno,
+          "@p_comptype": infomation.comptype,
+          "@p_compclass": infomation.compclass,
+          "@p_zipcode": infomation.zipcode,
+          "@p_address": infomation.address,
+          "@p_phonenum": infomation.phonenum,
+          "@p_faxnum": infomation.faxnum,
+          "@p_estbdt": convertDateToStr(infomation.estbdt),
+          "@p_compnm_eng": infomation.compnm_eng,
+          "@p_address_eng": infomation.address_eng,
+          "@p_bnkinfo": infomation.bnkinfo,
+          "@p_etelnum": infomation.etelnum,
+          "@p_efaxnum": infomation.efaxnum,
+          "@p_unpitem": infomation.unpitem,
+          "@p_useyn": infomation.useyn,
+          "@p_remark": infomation.remark,
+          "@p_attdatnum": infomation.attdatnum,
+          "@p_bill_type": infomation.bill_type,
+          "@p_recvid": infomation.recvid,
+          "@p_rtxisuyn": infomation.rtxisuyn,
+          "@p_etxprs": infomation.etxprs,
+          "@p_emailaddr_og": infomation.emailaddr_og,
+          "@p_phonenum_og": infomation.phonenum_og,
+          "@p_etax": infomation.etax,
+          "@p_inunpitem": infomation.inunpitem,
+          "@p_email": infomation.email,
+          "@p_itemlvl1": infomation.itemlvl1,
+          "@p_itemlvl2": infomation.itemlvl2,
+          "@p_itemlvl3": infomation.itemlvl3,
+          "@p_bankacnt": infomation.bankacnt,
+          "@p_bankacntuser": infomation.bankacntuser,
+          "@p_scmyn": infomation.scmyn,
+          "@p_periodyn":
+            infomation.pariodyn == undefined ? "" : infomation.pariodyn,
+          "@p_bnkinfo2": infomation.bnkinfo2,
+          "@p_bankacnt2": infomation.bankacnt2,
+          "@p_area": infomation.area,
+          "@p_rowstatus_s": item.rowstatus,
+          "@p_remark_s": item.remark,
+          "@p_custprsncd_s": "",
+          "@p_prsnnm_s": "",
+          "@p_dptnm_s": "",
+          "@p_postcd_s": "",
+          "@p_telno_s": "",
+          "@p_phoneno_s": "",
+          "@p_email_s": "",
+          "@p_rtrchk_s": "",
+          "@p_attdatnum_s": "",
+          "@p_sort_seq_s": "",
+          "@p_seq_s": item.seq,
+          "@p_yyyy_s": item.yyyy,
+          "@p_totasset_s":  item.totasset,
+          "@p_paid_up_capital_s":  item.paid_up_capital,
+          "@p_totcapital_s":  item.totcapital,
+          "@p_salesmoney_s":  item.salesmoney,
+          "@p_operating_profits_s":  item.operating_profits,
+          "@p_current_income_s":  item.current_income,
+          "@p_dedt_rati_s":  item.dedt_ratio,
+          "@p_userid": userId,
+          "@p_pc": pc,
+          "@p_form_id": "BA_A0020W",
+          "@p_company_code": "2207A046",
+        },
+      };
+      let data: any;
+
+      try {
+        data = await processApi<any>("procedure", paraD);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess !== true) {
+        console.log("[오류 발생]");
+        console.log(data);
+      }
+    });
+    deletedMainRows2 = [];
+    const item = Object.getOwnPropertyNames(selectedState)[0];
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "MONEY",
+      custcd: item.toString(),
+      custnm: infomation.custnm,
+      custdiv: infomation.custdiv,
+      custabbr: infomation.custabbr,
+      bizdiv: infomation.bizdiv,
+      bizregnum: infomation.bizregnum,
+      ceonm: infomation.ceonm,
+      repreregno: infomation.repreregno,
+      comptype: infomation.comptype,
+      compclass: infomation.compclass,
+      zipcode: infomation.zipcode,
+      address: infomation.address,
+      phonenum: infomation.phonenum,
+      faxnum: infomation.faxnum,
+      estbdt: infomation.estbdt,
+      compnm_eng: infomation.compnm_eng,
+      address_eng: infomation.address_eng,
+      bnkinfo: infomation.bnkinfo,
+      etelnum: infomation.etelnum,
+      efaxnum: infomation.efaxnum,
+      unpitem: infomation.unpitem,
+      useyn: infomation.useyn,
+      remark: infomation.remark,
+      attdatnum: infomation.attdatnum,
+      bill_type: infomation.bill_type,
+      recvid: infomation.recvid,
+      rtxisuyn: infomation.rtxisuyn,
+      etxprs: infomation.etxprs,
+      emailaddr_og: infomation.emailaddr_og,
+      phonenum_og: infomation.phonenum_og,
+      etax: infomation.etax,
+      inunpitem: infomation.inunpitem,
+      email: infomation.email,
+      itemlvl1: infomation.itemlvl1,
+      itemlvl2: infomation.itemlvl2,
+      itemlvl3: infomation.itemlvl3,
+      bankacnt: infomation.bankacnt,
+      bankacntuser: infomation.bankacntuser,
+      scmyn: infomation.scmyn,
+      pariodyn: infomation.pariodyn,
+      bnkinfo2: infomation.bnkinfo2,
+      bankacnt2: infomation.bankacnt2,
+      area: infomation.area,
+      remark_s: dataArr.remark_s.join("|"),
+      rowstatus: dataArr.rowstatus.join("|"),
+      prsnnm_s: "",
+      custprsncd_s: "",
+      dptnm: "",
+      postcd_s: "",
+      telno: "",
+      phoneno_s:  "",
+      email_s:  "",
+      rtrchk_s:  "",
+      attdatnum_s:  "",
+      sort_seq_s: "",
+      seq_s: dataArr.seq_s.join("|"),
+      yyyy_s:dataArr.yyyy_s.join("|"),
+      totasset_s: dataArr.totasset_s.join("|"),
+      paid_up_capital_s: dataArr.paid_up_capital_s.join("|"),
+      totcapital_s:dataArr.totcaptial_s.join("|"),
+      salesmoney_s:dataArr.salesmoney_s.join("|"),
+      operating_profits_s: dataArr.operating_profits_s.join("|"),
+      current_income_s:dataArr.current_income_s.join("|"),
+      dedt_rati_s: dataArr.dedt_rati_s.join("|"),
     }));
   };
 
@@ -1664,8 +2224,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data);
+
     if (data.isSuccess === true) {
       setSubPgNum(1);
       setSubDataResult(process([], subDataState));
@@ -1935,8 +2494,6 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA026"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
-                        textField={"code_name"}
-                        valueField={"code_name"}
                       />
                     )}
                   </td>
@@ -1958,8 +2515,6 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA027"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
-                        textField={"code_name"}
-                        valueField={"code_name"}
                       />
                     )}
                   </td>
@@ -2400,7 +2955,7 @@ const BA_A0020: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "26vh" }}
+              style={{ height: "34vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -2473,6 +3028,129 @@ const BA_A0020: React.FC = () => {
                 width="160px"
                 cell={CommandCell}
               />
+            </Grid>
+          </GridContainer>
+        </TabStripTab>
+        <TabStripTab title="재무현황">
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>재무현황</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick3}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="plus"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick3}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                ></Button>
+                <Button
+                  onClick={onSaveClick3}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "34vh" }}
+              data={process(
+                subDataResult2.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
+                })),
+                subDataState2
+              )}
+              {...subDataState2}
+              onDataStateChange={onSubDataStateChange2}
+              //선택 기능
+              dataItemKey={SUB_DATA_ITEM_KEY2}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "multiple",
+              }}
+              onSelectionChange={onSubDataSelectionChange2}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={subDataResult2.total}
+              onScroll={onSubScrollHandler2}
+              //정렬기능
+              sortable={true}
+              onSortChange={onSubDataSortChange2}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onSubItemChange2}
+              cellRender={customCellRender2}
+              rowRender={customRowRender2}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn
+                field={SELECTED_FIELD}
+                width="45px"
+                headerSelectionValue={
+                  subDataResult.data.findIndex(
+                    (item: any) => !selectedsubDataState[idGetter2(item)]
+                  ) === -1
+                }
+              />
+              <GridColumn field="yyyy" title="결산년도" width="150px"/>
+              <GridColumn
+                field="totasset"
+                title="총자산"
+                width="160px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="paid_up_capital"
+                title="납입자본"
+                width="160px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="totcapital"
+                title="자본총계"
+                width="160px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="salesmoney"
+                title="매출액"
+                width="200px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="operating_profits"
+                title="영업이익"
+                width="200px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="current_income"
+                title="당기순이익"
+                width="160px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="dedt_ratio"
+                title="부채비율"
+                width="160px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn field="remark" title="비고" width="290px" />
             </Grid>
           </GridContainer>
         </TabStripTab>

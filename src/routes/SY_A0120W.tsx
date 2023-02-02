@@ -108,7 +108,7 @@ const SY_A0120: React.FC = () => {
     location: "01",
     frdt: new Date(),
     todt: new Date(),
-    user_id: userId,
+    user_id: "",
     user_name: "",
     ip: "",
     pc: pc,

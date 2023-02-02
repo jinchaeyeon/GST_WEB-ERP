@@ -211,7 +211,7 @@ const SY_A0120: React.FC = () => {
     dptcd: "",
     lang_id: "",
     user_category: "",
-    user_id: userId,
+    user_id: "",
     user_name: "",
     radRtrchk: "%",
     radUsediv: "%",

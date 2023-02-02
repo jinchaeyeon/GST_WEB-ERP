@@ -27,6 +27,12 @@ export const convertDateToStr = (date: Date) => {
   return year + month + day;
 };
 
+export const convertYeasrToStr = (date: Date) => {
+  const year = date.getFullYear();
+
+  return year;
+};
+
 //Date 타입 인수를 YYYYMMDD hh:mm string로 날짜 변환하여 반환 (ex. => 20220101 00:00)
 export const convertDateToStrWithTime = (date: Date) => {
   //if (date.getFullYear || date.getMonth || date.getDate) {
