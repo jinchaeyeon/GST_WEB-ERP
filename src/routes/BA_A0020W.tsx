@@ -1171,6 +1171,8 @@ const BA_A0020: React.FC = () => {
   };
 
   const search = () => {
+    setMainPgNum(1);
+    setMainDataResult(process([], mainDataState));
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
     setSubPgNum2(1);
