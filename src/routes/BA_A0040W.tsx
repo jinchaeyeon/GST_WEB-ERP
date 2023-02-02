@@ -79,7 +79,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY2 = "num";
-let deletedTodoRows: object[] = [];
+let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -1030,11 +1030,33 @@ const BA_A0040: React.FC = () => {
   });
 
   const onDeleteClick = (e: any) => {
+    let newData: any[] = [];
+
+    subData2Result.data.forEach((item: any, index: number) => {
+      if (!selectedsubData2State[item[SUB_DATA_ITEM_KEY2]]) {
+        newData.push(item);
+      } else {
+        const newData2 = {
+          ...item,
+          rowstatus: "D"
+        }
+        deletedMainRows.push(newData2);
+      }
+    });
+    setSubData2Result((prev) => ({
+      data: newData,
+      total: newData.length,
+    }));
+
+    setSubData2State({});
+  };
+
+  const onDeleteClick2 = (e: any) => {
     const item = Object.getOwnPropertyNames(selectedState)[0];
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      itemcd: item,
+      custcd: item,
     }));
   };
 
@@ -1210,7 +1232,8 @@ const BA_A0040: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-    
+
+    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
     let dataArr: TdataArr = {
       unpitem: [],
       rowstatus: [],
@@ -1242,7 +1265,7 @@ const BA_A0040: React.FC = () => {
       dataArr.recdt.push(recdt);
       dataArr.amtunit.push(amtunit);
     });
-    deletedTodoRows.forEach((item: any, idx: number) => {
+    deletedMainRows.forEach((item: any, idx: number) => {
       const {
         unpitem = "",
         rowstatus = "",
@@ -1515,7 +1538,7 @@ const BA_A0040: React.FC = () => {
                 품목생성
               </Button>
               <Button
-                onClick={onDeleteClick}
+                onClick={onDeleteClick2}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="delete"
