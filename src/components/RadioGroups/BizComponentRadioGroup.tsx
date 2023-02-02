@@ -10,29 +10,31 @@ type TBizComponentRadioGroup = {
   value: string | number;
   bizComponentId: string;
   bizComponentData: any;
+  data?: { value: any; label: string }[];
   changeData(e: any): void;
 };
 
 const BizComponentRadioGroup = ({
   name,
   value,
+  data,
   bizComponentId,
   bizComponentData,
   changeData,
 }: TBizComponentRadioGroup) => {
-  bizComponentData = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentId
-  );
+  if (bizComponentData) {
+    bizComponentData = bizComponentData.find(
+      (item: any) => item.bizComponentId === bizComponentId
+    );
+  }
 
-  const defaultValue = value;
-
-  //커스텀 옵션에 저장된 값으로 디폴트 값
-  const dataList =
-    bizComponentData !== null ? bizComponentData.data.Rows : null;
+  const dataList = bizComponentData ? bizComponentData.data.Rows : null;
 
   let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
-  if (dataList) {
+  if (data) {
+    newRadioGroup = data;
+  } else if (dataList) {
     newRadioGroup = dataList
       // 제외 처리 (filter)
       .filter(
@@ -59,17 +61,14 @@ const BizComponentRadioGroup = ({
       }));
   }
 
-  const [state, setState] = useState(defaultValue); //상태
-
   useEffect(() => {
-    changeData({ name, value: defaultValue });
+    changeData({ name, value });
   }, []);
 
   const onChangeHandle = (e: RadioGroupChangeEvent) => {
     const { value } = e;
     const { name } = e.syntheticEvent.currentTarget;
 
-    setState(value);
     changeData({ name, value });
   };
 
@@ -78,7 +77,7 @@ const BizComponentRadioGroup = ({
       name={name}
       data={newRadioGroup}
       layout={"horizontal"}
-      defaultValue={state}
+      value={value}
       onChange={onChangeHandle}
     />
   );
