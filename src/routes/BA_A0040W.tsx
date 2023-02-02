@@ -432,7 +432,7 @@ const BA_A0040: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
+      console.log(rows)
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
@@ -538,7 +538,7 @@ const BA_A0040: React.FC = () => {
           itemnm: firstRowData.itemnm,
           insiz: firstRowData.insiz,
           itemacnt: firstRowData.itemacnt,
-          useyn: firstRowData.useyn,
+          useyn: firstRowData.useyn == "Y" ? "Y" : "N",
           custcd: firstRowData.custcd,
           custnm: firstRowData.custnm,
           itemcd_s: firstRowData.itemcd_s,
@@ -558,7 +558,7 @@ const BA_A0040: React.FC = () => {
           invunit: firstRowData.invunit,
           dwgno: firstRowData.dwgno,
           maker: firstRowData.maker,
-          qcyn: firstRowData.qcyn,
+          qcyn: firstRowData.qcyn == "Y" ? "Y": "N",
           attdatnum_img: firstRowData.attdatnum_img,
           attdatnum_img2: firstRowData.attdatnum_img2,
           snp: firstRowData.snp,
@@ -633,7 +633,7 @@ const BA_A0040: React.FC = () => {
       itemnm: selectedRowData.itemnm,
       insiz: selectedRowData.insiz,
       itemacnt: selectedRowData.itemacnt,
-      useyn: selectedRowData.useyn,
+      useyn: selectedRowData.useyn == "Y"? "Y" : "N",
       custcd: selectedRowData.custcd,
       custnm: selectedRowData.custnm,
       itemcd_s: selectedRowData.itemcd_s,
@@ -653,7 +653,7 @@ const BA_A0040: React.FC = () => {
       invunit: selectedRowData.invunit,
       dwgno: selectedRowData.dwgno,
       maker: selectedRowData.maker,
-      qcyn: selectedRowData.qcyn,
+      qcyn: selectedRowData.qcyn == "Y" ? "Y" : "N",
       attdatnum_img: selectedRowData.attdatnum_img,
       attdatnum_img2: selectedRowData.attdatnum_img2,
       snp: selectedRowData.snp,

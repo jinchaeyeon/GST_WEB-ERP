@@ -122,32 +122,36 @@ const PR_A0060: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_PR030,R_USEYN,L_dptcd_001,L_sysUserMaster_001,L_PR010",
+    "L_PR030,R_USEYN,L_dptcd_001,L_sysUserMaster_001,L_PR010,L_sysUserMaster_004",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [custdivListData, setCustdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
+  const [dptcdListData, setdptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
   ]);
-  const [bizdivListData, setBizdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
+  const [personListData, setPersonListData] = useState([
+    { user_id: "", user_name: "" },
   ]);
 
-  //   useEffect(() => {
-  //     if (bizComponentData !== null) {
-  //       const custdivQueryStr = getQueryFromBizComponent(
-  //         bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
-  //       );
-  //       const BizdivQueryStr = getQueryFromBizComponent(
-  //         bizComponentData.find((item: any) => item.bizComponentId === "L_BA027")
-  //       );
+    useEffect(() => {
+      if (bizComponentData !== null) {
+        const dptcdQueryStr = getQueryFromBizComponent(
+          bizComponentData.find(
+            (item: any) => item.bizComponentId === "L_dptcd_001"
+          )
+        );
+        const personQueryStr = getQueryFromBizComponent(
+          bizComponentData.find(
+            (item: any) => item.bizComponentId === "L_sysUserMaster_004"
+          )
+        );
 
-  //       fetchQuery(custdivQueryStr, setCustdivListData);
-  //       fetchQuery(BizdivQueryStr, setBizdivListData);
-  //     }
-  //   }, [bizComponentData]);
+        fetchQuery(dptcdQueryStr, setdptcdListData);
+        fetchQuery(personQueryStr, setPersonListData);
+      }
+    }, [bizComponentData]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -395,14 +399,14 @@ const PR_A0060: React.FC = () => {
       "@p_useyn": subfilters.useyn,
       "@p_custcd": subfilters.custcd,
       "@p_custnm": subfilters.custnm,
-      "@p_custdiv":
-        custdivListData.find(
-          (item: any) => item.code_name === subfilters.custdiv
-        )?.sub_code == undefined
-          ? ""
-          : custdivListData.find(
-              (item: any) => item.code_name === subfilters.custdiv
-            )?.sub_code,
+      // "@p_custdiv":
+      //   custdivListData.find(
+      //     (item: any) => item.code_name === subfilters.custdiv
+      //   )?.sub_code == undefined
+      //     ? ""
+      //     : custdivListData.find(
+      //         (item: any) => item.code_name === subfilters.custdiv
+      //       )?.sub_code,
       "@p_bizregnum": subfilters.bizregnum,
       "@p_ceonm": subfilters.ceonm,
       "@p_company_code": "2207A046",
@@ -420,14 +424,14 @@ const PR_A0060: React.FC = () => {
       "@p_useyn": subfilters2.useyn,
       "@p_custcd": subfilters2.custcd,
       "@p_custnm": subfilters2.custnm,
-      "@p_custdiv":
-        custdivListData.find(
-          (item: any) => item.code_name === subfilters2.custdiv
-        )?.sub_code == undefined
-          ? ""
-          : custdivListData.find(
-              (item: any) => item.code_name === subfilters2.custdiv
-            )?.sub_code,
+      // "@p_custdiv":
+      //   custdivListData.find(
+      //     (item: any) => item.code_name === subfilters2.custdiv
+      //   )?.sub_code == undefined
+      //     ? ""
+      //     : custdivListData.find(
+      //         (item: any) => item.code_name === subfilters2.custdiv
+      //       )?.sub_code,
       "@p_bizregnum": subfilters2.bizregnum,
       "@p_ceonm": subfilters2.ceonm,
       "@p_company_code": "2207A046",
@@ -596,7 +600,7 @@ const PR_A0060: React.FC = () => {
           classnm2: firstRowData.classnm2,
           classnm3: firstRowData.classnm3,
           remark: firstRowData.remark,
-          useyn: firstRowData.useyn,
+          useyn: firstRowData.useyn == "Y" ? "Y" : "N" ,
           attdatnum: firstRowData.attdatnum,
           proccd: firstRowData.proccd,
           IOT_TER_ID: firstRowData.IOT_TER_ID,
@@ -606,7 +610,7 @@ const PR_A0060: React.FC = () => {
           cnt: firstRowData.cnt,
           files: firstRowData.files,
           availabletime: firstRowData.availabletime,
-          viewyn: firstRowData.viewyn,
+          viewyn: firstRowData.viewyn == "Y" ? "Y" : "N" ,
           insert_form_id: "PR_A0060W",
           update_form_id: "",
         });
@@ -746,7 +750,7 @@ const PR_A0060: React.FC = () => {
       classnm2: selectedRowData.classnm2,
       classnm3: selectedRowData.classnm3,
       remark: selectedRowData.remark,
-      useyn: selectedRowData.useyn,
+      useyn: selectedRowData.useyn == "Y" ? "Y" : "N" ,
       attdatnum: selectedRowData.attdatnum,
       proccd: selectedRowData.proccd,
       IOT_TER_ID: selectedRowData.IOT_TER_ID,
@@ -756,7 +760,7 @@ const PR_A0060: React.FC = () => {
       cnt: selectedRowData.cnt,
       files: selectedRowData.files,
       availabletime: selectedRowData.availabletime,
-      viewyn: selectedRowData.viewyn,
+      viewyn: selectedRowData.viewyn == "Y" ? "Y" : "N" ,
       insert_form_id: "PR_A0060W",
       update_form_id: "",
     });
@@ -1538,8 +1542,16 @@ const PR_A0060: React.FC = () => {
         "@p_fxnm": infomation.fxnm,
         "@p_fxno": infomation.fxno,
         "@p_spec": infomation.spec,
-        "@p_dptcd": infomation.dptcd,
-        "@p_person": infomation.person,
+        "@p_dptcd": dptcdListData.find(
+          (item: any) => item.dptnm === infomation.dptcd
+        )?.dptcd == undefined ? "" : dptcdListData.find(
+          (item: any) => item.dptnm === infomation.dptcd
+        )?.dptcd,
+        "@p_person": personListData.find(
+          (item: any) => item.user_name === infomation.person
+        )?.user_id == undefined ? "" : personListData.find(
+          (item: any) => item.user_name === infomation.person
+        )?.user_id,
         "@p_place": infomation.place,
         "@p_makedt": convertDateToStr(infomation.makedt),
         "@p_maker": infomation.maker,
@@ -1595,8 +1607,16 @@ const PR_A0060: React.FC = () => {
         "@p_fxnm": infomation.fxnm,
         "@p_fxno": infomation.fxno,
         "@p_spec": infomation.spec,
-        "@p_dptcd": infomation.dptcd,
-        "@p_person": infomation.person,
+        "@p_dptcd": dptcdListData.find(
+          (item: any) => item.dptnm === infomation.dptcd
+        )?.dptcd == undefined ? "" : dptcdListData.find(
+          (item: any) => item.dptnm === infomation.dptcd
+        )?.dptcd,
+        "@p_person": personListData.find(
+          (item: any) => item.user_name === infomation.person
+        )?.user_id == undefined ? "" : personListData.find(
+          (item: any) => item.user_name === infomation.person
+        )?.user_id,
         "@p_place": infomation.place,
         "@p_makedt": convertDateToStr(infomation.makedt),
         "@p_maker": infomation.maker,
@@ -2384,6 +2404,12 @@ const PR_A0060: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
+                dptcd: dptcdListData.find(
+                  (item: any) => item.dptcd === row.dptcd
+                )?.dptnm,
+                person: personListData.find(
+                  (item: any) => item.user_id === row.person
+                )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -2459,7 +2485,7 @@ const PR_A0060: React.FC = () => {
               cell={NumberCell}
             />
             <GridColumn
-              field="raduseyn"
+              field="useyn"
               title="사용여부"
               width="150px"
               cell={CheckBoxCell}
@@ -2601,7 +2627,7 @@ const PR_A0060: React.FC = () => {
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                         textField="dptnm"
-                        valueField="dptcd"
+                        valueField="dptnm"
                       />
                     )}
                   </td>
@@ -2615,7 +2641,7 @@ const PR_A0060: React.FC = () => {
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                         textField="user_name"
-                        valueField="user_id"
+                        valueField="user_name"
                       />
                     )}
                   </td>

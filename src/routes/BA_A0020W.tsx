@@ -504,7 +504,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -595,9 +595,9 @@ const BA_A0020: React.FC = () => {
           efaxnum: firstRowData.efaxnum,
           email: firstRowData.email,
           taxortnm: firstRowData.taxortnm,
-          useyn: firstRowData.useyn,
-          scmyn: firstRowData.scmyn,
-          pariodyn: firstRowData.pariodyn,
+          useyn: firstRowData.useyn == "Y" ? "Y" : "N" ,
+          scmyn: firstRowData.scmyn == "Y" ? "Y" : "N" ,
+          pariodyn: firstRowData.pariodyn == "Y" ? "Y" : "N" ,
           attdatnum: firstRowData.attdatnum,
           itemlvl1: firstRowData.itemlvl1,
           itemlvl2: firstRowData.itemlvl2,
@@ -755,9 +755,9 @@ const BA_A0020: React.FC = () => {
       efaxnum: selectedRowData.efaxnum,
       email: selectedRowData.email,
       taxortnm: selectedRowData.taxortnm,
-      useyn: selectedRowData.useyn,
-      scmyn: selectedRowData.scmyn,
-      pariodyn: selectedRowData.pariodyn,
+      useyn: selectedRowData.useyn == "Y" ? "Y" : "N" ,
+      scmyn: selectedRowData.scmyn == "Y" ? "Y" : "N" ,
+      pariodyn: selectedRowData.pariodyn == "Y" ? "Y" : "N" ,
       attdatnum: selectedRowData.attdatnum,
       itemlvl1: selectedRowData.itemlvl1,
       itemlvl2: selectedRowData.itemlvl2,
@@ -1623,13 +1623,9 @@ const BA_A0020: React.FC = () => {
       "@p_auto": "Y",
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
-      "@p_custdiv": custdivListData.find(
-        (item: any) => item.code_name === infomation.custdiv
-      )?.sub_code,
+      "@p_custdiv": infomation.custdiv,
       "@p_custabbr": infomation.custabbr,
-      "@p_bizdiv": bizdivListData.find(
-        (item: any) => item.code_name === infomation.bizdiv
-      )?.sub_code,
+      "@p_bizdiv": infomation.bizdiv,
       "@p_bizregnum": infomation.bizregnum,
       "@p_ceonm": infomation.ceonm,
       "@p_repreregno": infomation.repreregno,
@@ -2205,7 +2201,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+ 
     if (data.isSuccess === true) {
       setMainPgNum(1);
       setMainDataResult(process([], mainDataState));
@@ -2453,7 +2449,7 @@ const BA_A0020: React.FC = () => {
             <GridColumn field="phonenum" title="전화번호" width="150px" />
             <GridColumn field="faxnum" title="팩스번호" width="150px" />
             <GridColumn
-              field="raduseyn"
+              field="useyn"
               title="사용여부"
               width="100px"
               cell={CheckBoxCell}
