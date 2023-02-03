@@ -80,16 +80,13 @@ import { FormReadOnly } from "../components/Editors";
 import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 
 const DATA_ITEM_KEY = "fxcode";
-const SUB_DATA_ITEM_KEY = "num";
-const SUB_DATA_ITEM_KEY2 = "num";
+const SUB_DATA_ITEM_KEY = "fxseq";
 let deletedMainRows: any[] = [];
-let deletedMainRows2: any[] = [];
-
 const PR_A0060: React.FC = () => {
+  const [rows, setrows] = useState<number>(0);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
-  const idGetter3 = getter(SUB_DATA_ITEM_KEY2);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -135,23 +132,23 @@ const PR_A0060: React.FC = () => {
     { user_id: "", user_name: "" },
   ]);
 
-    useEffect(() => {
-      if (bizComponentData !== null) {
-        const dptcdQueryStr = getQueryFromBizComponent(
-          bizComponentData.find(
-            (item: any) => item.bizComponentId === "L_dptcd_001"
-          )
-        );
-        const personQueryStr = getQueryFromBizComponent(
-          bizComponentData.find(
-            (item: any) => item.bizComponentId === "L_sysUserMaster_004"
-          )
-        );
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      const personQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_004"
+        )
+      );
 
-        fetchQuery(dptcdQueryStr, setdptcdListData);
-        fetchQuery(personQueryStr, setPersonListData);
-      }
-    }, [bizComponentData]);
+      fetchQuery(dptcdQueryStr, setdptcdListData);
+      fetchQuery(personQueryStr, setPersonListData);
+    }
+  }, [bizComponentData]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -181,9 +178,7 @@ const PR_A0060: React.FC = () => {
   const [subDataState, setSubDataState] = useState<State>({
     sort: [],
   });
-  const [subDataState2, setSubDataState2] = useState<State>({
-    sort: [],
-  });
+
   const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
@@ -194,10 +189,6 @@ const PR_A0060: React.FC = () => {
     process([], subDataState)
   );
 
-  const [subDataResult2, setSubDataResult2] = useState<DataResult>(
-    process([], subDataState2)
-  );
-
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -206,18 +197,14 @@ const PR_A0060: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [selectedsubDataState2, setSelectedsubDataState2] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
+  const [custWindowVisible3, setCustWindowVisible3] = useState<boolean>(false);
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
-  const [subPgNum2, setSubPgNum2] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
   const [workType, setWorkType] = useState<string>("U");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -317,6 +304,18 @@ const PR_A0060: React.FC = () => {
     viewyn: "",
     insert_form_id: "PR_A0060W",
     update_form_id: "",
+    rowstatus_s: "U",
+    fxseq_s: 0,
+    fxdt_s: new Date(),
+    custcd_s: "", //한글
+    custnm_s: "",
+    errtext_s: "",
+    protext_s: "",
+    fxcost_s: 0,
+    remark1_s: "",
+    attdatnum_s: "",
+    stdtime_s: 0,
+    errcode_s: "",
   });
 
   //조회조건 초기값
@@ -368,74 +367,46 @@ const PR_A0060: React.FC = () => {
 
   const [subfilters, setsubFilters] = useState({
     pgSize: PAGE_SIZE,
-    workType: "CustPerson",
-    custcd: infomation.custcd,
+    workType: "HISTORY",
+    orgdiv: "01",
+    fxcode: infomation.fxcode,
+    fxnum: "",
+    fxnm: "",
+    fxno: "",
+    useyn: "%",
+    custcd: "",
     custnm: "",
-    custdiv: "",
-    bizregnum: "",
-    ceonm: "",
-    useyn: "",
-  });
-
-  const [subfilters2, setsubFilters2] = useState({
-    pgSize: PAGE_SIZE,
-    workType: "MONEY",
-    custcd: infomation.custcd,
-    custnm: "",
-    custdiv: "",
-    bizregnum: "",
-    ceonm: "",
-    useyn: "",
+    maker: "",
+    kind: "",
+    classnm1: "",
+    classnm2: "",
+    classnm3: "",
+    position: "",
+    location: "01",
   });
 
   //조회조건 파라미터
   const subparameters: Iparameters = {
-    procedureName: "P_BA_A0020W_Q",
+    procedureName: "P_PR_A0060W_Q",
     pageNumber: subPgNum,
     pageSize: subfilters.pgSize,
     parameters: {
       "@p_work_type": subfilters.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": subfilters.orgdiv,
+      "@p_location": subfilters.location,
+      "@p_fxcode": subfilters.fxcode,
+      "@p_fxnum": subfilters.fxnum,
+      "@p_fxnm": subfilters.fxnm,
+      "@p_fxno": subfilters.fxno,
       "@p_useyn": subfilters.useyn,
       "@p_custcd": subfilters.custcd,
       "@p_custnm": subfilters.custnm,
-      // "@p_custdiv":
-      //   custdivListData.find(
-      //     (item: any) => item.code_name === subfilters.custdiv
-      //   )?.sub_code == undefined
-      //     ? ""
-      //     : custdivListData.find(
-      //         (item: any) => item.code_name === subfilters.custdiv
-      //       )?.sub_code,
-      "@p_bizregnum": subfilters.bizregnum,
-      "@p_ceonm": subfilters.ceonm,
-      "@p_company_code": "2207A046",
-      "@p_find_row_value": null,
-    },
-  };
-
-  const subparameters2: Iparameters = {
-    procedureName: "P_BA_A0020W_Q",
-    pageNumber: subPgNum2,
-    pageSize: subfilters2.pgSize,
-    parameters: {
-      "@p_work_type": subfilters2.workType,
-      "@p_orgdiv": "01",
-      "@p_useyn": subfilters2.useyn,
-      "@p_custcd": subfilters2.custcd,
-      "@p_custnm": subfilters2.custnm,
-      // "@p_custdiv":
-      //   custdivListData.find(
-      //     (item: any) => item.code_name === subfilters2.custdiv
-      //   )?.sub_code == undefined
-      //     ? ""
-      //     : custdivListData.find(
-      //         (item: any) => item.code_name === subfilters2.custdiv
-      //       )?.sub_code,
-      "@p_bizregnum": subfilters2.bizregnum,
-      "@p_ceonm": subfilters2.ceonm,
-      "@p_company_code": "2207A046",
-      "@p_find_row_value": null,
+      "@p_maker": subfilters.maker,
+      "@p_kind": subfilters.kind,
+      "@p_classnm1": subfilters.classnm1,
+      "@p_classnm2": subfilters.classnm2,
+      "@p_classnm3": subfilters.classnm3,
+      "@p_position": subfilters.position,
     },
   };
 
@@ -450,8 +421,6 @@ const PR_A0060: React.FC = () => {
       data = null;
     }
 
-    console.log(parameters);
-    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -470,7 +439,7 @@ const PR_A0060: React.FC = () => {
     }
     setLoading(false);
   };
-  console.log(mainDataResult);
+
   const fetchSubGrid = async () => {
     //if (!permissions?.view) return;
     let data: any;
@@ -488,46 +457,11 @@ const PR_A0060: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        inEdit: "recdt",
+        inEdit: "fxdt",
         rowstatus: "U",
       }));
       if (totalRowCnt > 0) {
         setSubDataResult((prev) => {
-          return {
-            data: [...prev.data, ...row],
-            total: totalRowCnt,
-          };
-        });
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    setLoading(false);
-  };
-
-  const fetchSubGrid2 = async () => {
-    //if (!permissions?.view) return;
-    let data: any;
-
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", subparameters2);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows;
-
-      const row = rows.map((item: any) => ({
-        ...item,
-        inEdit: "recdt",
-        rowstatus: "U",
-      }));
-      if (totalRowCnt > 0) {
-        setSubDataResult2((prev) => {
           return {
             data: [...prev.data, ...row],
             total: totalRowCnt,
@@ -563,9 +497,6 @@ const PR_A0060: React.FC = () => {
     fetchSubGrid();
   }, [subPgNum]);
 
-  useEffect(() => {
-    fetchSubGrid2();
-  }, [subPgNum2]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -600,7 +531,7 @@ const PR_A0060: React.FC = () => {
           classnm2: firstRowData.classnm2,
           classnm3: firstRowData.classnm3,
           remark: firstRowData.remark,
-          useyn: firstRowData.useyn == "Y" ? "Y" : "N" ,
+          useyn: firstRowData.useyn == "Y" ? "Y" : "N",
           attdatnum: firstRowData.attdatnum,
           proccd: firstRowData.proccd,
           IOT_TER_ID: firstRowData.IOT_TER_ID,
@@ -610,32 +541,28 @@ const PR_A0060: React.FC = () => {
           cnt: firstRowData.cnt,
           files: firstRowData.files,
           availabletime: firstRowData.availabletime,
-          viewyn: firstRowData.viewyn == "Y" ? "Y" : "N" ,
+          viewyn: firstRowData.viewyn == "Y" ? "Y" : "N",
           insert_form_id: "PR_A0060W",
           update_form_id: "",
+          rowstatus_s: firstRowData.rowstatus_s,
+          fxseq_s: firstRowData.fxseq_s,
+          fxdt_s: new Date(dateformat(firstRowData.fxdt_s)),
+          custcd_s: firstRowData.custcd_s,
+          custnm_s: firstRowData.custnm_s,
+          errtext_s: firstRowData.errtext_s,
+          protext_s: firstRowData.protext_s,
+          fxcost_s: firstRowData.fxcost_s,
+          remark1_s: firstRowData.remark1_s,
+          attdatnum_s: firstRowData.attdatnum_s,
+          stdtime_s: firstRowData.stdtime_s,
+          errcode_s: firstRowData.errcode_s,
         });
 
-        //   setsubFilters((prev) => ({
-        //     ...prev,
-        //     workType: "CustPerson",
-        //     useyn: firstRowData.useyn,
-        //     custcd: firstRowData.custcd,
-        //     custnm:  firstRowData.custnm,
-        //     custdiv:  firstRowData.custdiv,
-        //     bizregnum:  firstRowData.bizregnum,
-        //     ceonm:  firstRowData.ceonm,
-        //   }));
-
-        //   setsubFilters2((prev) => ({
-        //     ...prev,
-        //     workType: "MONEY",
-        //     useyn:  firstRowData.useyn,
-        //     custcd:  firstRowData.custcd,
-        //     custnm:  firstRowData.custnm,
-        //     custdiv:  firstRowData.custdiv,
-        //     bizregnum:  firstRowData.bizregnum,
-        //     ceonm:  firstRowData.ceonm,
-        //   }));
+        setsubFilters((prev) => ({
+          ...prev,
+          workType: "HISTORY",
+          fxcode: firstRowData.fxcode,
+        }));
 
         setIfSelectFirstRow(true);
       }
@@ -646,23 +573,9 @@ const PR_A0060: React.FC = () => {
     if (ifSelectFirstRow) {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
-        // setSelectedsubDataState({ [firstRowData.num]: true });
-
-        // setIfSelectFirstRow(true);
       }
     }
   }, [subDataResult]);
-
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (subDataResult2.total > 0) {
-        const firstRowData = subDataResult2.data[0];
-        // setSelectedsubDataState({ [firstRowData.num]: true });
-
-        // setIfSelectFirstRow(true);
-      }
-    }
-  }, [subDataResult2]);
 
   useEffect(() => {
     setSubPgNum(1);
@@ -673,14 +586,6 @@ const PR_A0060: React.FC = () => {
   }, [subfilters]);
 
   useEffect(() => {
-    setSubPgNum2(1);
-    setSubDataResult2(process([], subDataState2));
-    if (customOptionData !== null) {
-      fetchSubGrid2();
-    }
-  }, [subfilters2]);
-
-  useEffect(() => {
     if (customOptionData !== null) {
       fetchSubGrid();
     }
@@ -688,16 +593,8 @@ const PR_A0060: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      fetchSubGrid2();
-    }
-  }, [subPgNum2]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
       if (tabSelected == 1) {
         fetchSubGrid();
-      } else if (tabSelected == 2) {
-        fetchSubGrid2();
       }
     }
   }, [tabSelected]);
@@ -708,8 +605,6 @@ const PR_A0060: React.FC = () => {
     setMainDataResult(process([], mainDataState));
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
-    setSubPgNum2(1);
-    setSubDataResult2(process([], subDataState2));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -750,7 +645,7 @@ const PR_A0060: React.FC = () => {
       classnm2: selectedRowData.classnm2,
       classnm3: selectedRowData.classnm3,
       remark: selectedRowData.remark,
-      useyn: selectedRowData.useyn == "Y" ? "Y" : "N" ,
+      useyn: selectedRowData.useyn == "Y" ? "Y" : "N",
       attdatnum: selectedRowData.attdatnum,
       proccd: selectedRowData.proccd,
       IOT_TER_ID: selectedRowData.IOT_TER_ID,
@@ -760,34 +655,28 @@ const PR_A0060: React.FC = () => {
       cnt: selectedRowData.cnt,
       files: selectedRowData.files,
       availabletime: selectedRowData.availabletime,
-      viewyn: selectedRowData.viewyn == "Y" ? "Y" : "N" ,
+      viewyn: selectedRowData.viewyn == "Y" ? "Y" : "N",
       insert_form_id: "PR_A0060W",
       update_form_id: "",
+      rowstatus_s: selectedRowData.rowstatus_s,
+      fxseq_s: selectedRowData.fxseq_s,
+      fxdt_s: new Date(dateformat(selectedRowData.fxdt_s)),
+      custcd_s: selectedRowData.custcd_s,
+      custnm_s: selectedRowData.custnm_s,
+      errtext_s: selectedRowData.errtext_s,
+      protext_s: selectedRowData.protext_s,
+      fxcost_s: selectedRowData.fxcost_s,
+      remark1_s: selectedRowData.remark1_s,
+      attdatnum_s: selectedRowData.attdatnum_s,
+      stdtime_s: selectedRowData.stdtime_s,
+      errcode_s: selectedRowData.errcode_s,
     });
 
-    // if(tabSelected == 1){
-    //   setsubFilters((prev) => ({
-    //     ...prev,
-    //     workType: "CustPerson",
-    //     useyn: selectedRowData.useyn,
-    //     custcd: selectedRowData.custcd,
-    //     custnm: selectedRowData.custnm,
-    //     custdiv: selectedRowData.custdiv,
-    //     bizregnum: selectedRowData.bizregnum,
-    //     ceonm: selectedRowData.ceonm,
-    //   }));
-    // } else if(tabSelected == 2){
-    //   setsubFilters2((prev) => ({
-    //     ...prev,
-    //     workType: "MONEY",
-    //     useyn: selectedRowData.useyn,
-    //     custcd: selectedRowData.custcd,
-    //     custnm: selectedRowData.custnm,
-    //     custdiv: selectedRowData.custdiv,
-    //     bizregnum: selectedRowData.bizregnum,
-    //     ceonm: selectedRowData.ceonm,
-    //   }));
-    // }
+    setsubFilters((prev) => ({
+        ...prev,
+        workType: "HISTORY",
+        fxcode: selectedRowData.fxcode,
+    }));
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -796,16 +685,8 @@ const PR_A0060: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: SUB_DATA_ITEM_KEY,
     });
-    setSelectedsubDataState(newSelectedState);
-  };
 
-  const onSubDataSelectionChange2 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: SUB_DATA_ITEM_KEY2,
-    });
-    setSelectedsubDataState2(newSelectedState);
+    setSelectedsubDataState(newSelectedState);
   };
 
   //엑셀 내보내기
@@ -827,21 +708,12 @@ const PR_A0060: React.FC = () => {
       setSubPgNum((prev) => prev + 1);
   };
 
-  const onSubScrollHandler2 = (event: GridEvent) => {
-    if (chkScrollHandler(event, subPgNum2, PAGE_SIZE))
-      setSubPgNum2((prev) => prev + 1);
-  };
-
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
 
   const onSubDataStateChange = (event: GridDataStateChangeEvent) => {
     setSubDataState(event.dataState);
-  };
-
-  const onSubDataStateChange2 = (event: GridDataStateChangeEvent) => {
-    setSubDataState2(event.dataState);
   };
 
   //그리드 푸터
@@ -853,9 +725,17 @@ const PR_A0060: React.FC = () => {
     );
   };
 
+  const subTotalFooterCell = (props: GridFooterCellProps) => {
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {subDataResult.total}건
+      </td>
+    );
+  };
+
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
-    subDataResult2.data.forEach((item) =>
+    subDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum += item[props.field]) : ""
     );
 
@@ -868,44 +748,56 @@ const PR_A0060: React.FC = () => {
   const onAddClick2 = () => {
     setWorkType("N");
     setInfomation({
-        pgSize: PAGE_SIZE,
-        workType: "N",
-        orgdiv: "01",
-        fxcode: "",
-        fxdiv: "",
-        location: "",
-        recdt: new Date(),
-        fxnum: "",
-        fxnm: "",
-        fxno: "",
-        spec: "",
-        dptcd: "",
-        person: "",
-        place: "",
-        makedt: new Date(),
-        maker: "",
-        indt: new Date(),
-        custcd: "",
-        kind: "",
-        amt: 0,
-        uph: 0,
-        classnm1: "",
-        classnm2: "",
-        classnm3: "",
-        remark: "",
-        useyn: "Y",
-        attdatnum: "",
-        proccd: "",
-        IOT_TER_ID: 0,
-        iotserialno: "",
-        attdatnum_img: null,
-        custnm: "",
-        cnt: 0,
-        files: "",
-        availabletime: 0,
-        viewyn: "",
-        insert_form_id: "PR_A0060W",
-        update_form_id: "",
+      pgSize: PAGE_SIZE,
+      workType: "N",
+      orgdiv: "01",
+      fxcode: "",
+      fxdiv: "",
+      location: "",
+      recdt: new Date(),
+      fxnum: "",
+      fxnm: "",
+      fxno: "",
+      spec: "",
+      dptcd: "",
+      person: "",
+      place: "",
+      makedt: new Date(),
+      maker: "",
+      indt: new Date(),
+      custcd: "",
+      kind: "",
+      amt: 0,
+      uph: 0,
+      classnm1: "",
+      classnm2: "",
+      classnm3: "",
+      remark: "",
+      useyn: "Y",
+      attdatnum: "",
+      proccd: "",
+      IOT_TER_ID: 0,
+      iotserialno: "",
+      attdatnum_img: null,
+      custnm: "",
+      cnt: 0,
+      files: "",
+      availabletime: 0,
+      viewyn: "",
+      insert_form_id: "PR_A0060W",
+      update_form_id: "",
+      rowstatus_s: "U",
+      fxseq_s: 0,
+      fxdt_s: new Date(),
+      custcd_s: "", //한글
+      custnm_s: "",
+      errtext_s: "",
+      protext_s: "",
+      fxcost_s: 0,
+      remark1_s: "",
+      attdatnum_s: "",
+      stdtime_s: 0,
+      errcode_s: "",
     });
   };
 
@@ -923,68 +815,21 @@ const PR_A0060: React.FC = () => {
 
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: seq,
-      recdt: convertDateToStr(new Date()),
-      attdatnum: "",
-      custcd: infomation.custcd,
-      custprsncd: "",
-      dptnm: "",
-      email: "",
-      files: "",
-      insert_form_id: "",
-      insert_pc: "",
-      insert_time: "",
-      insert_userid: "",
-      phoneno: "",
-      prsnnm: "",
-      remark: "",
-      rtrchk: "N",
-      sort_seq: 0,
-      telno: "",
-      update_form_id: "BA_A0020",
-      update_pc: "",
-      update_time: "",
-      update_userid: "",
-      inEdit: "recdt",
       rowstatus: "N",
+      fxdt: convertDateToStr(new Date()),
+      custcd: "",
+      custnm: "",
+      errtext: "",
+      protext: "",
+      fxcost: "",
+      remark1: "",
+      attdatnum: "",
+      stdtime: "",
+      errcode: "",
+      inEdit: "fxdt",
     };
 
     setSubDataResult((prev) => {
-      return {
-        data: [...prev.data, newDataItem],
-        total: prev.total + 1,
-      };
-    });
-  };
-
-  const onAddClick3 = () => {
-    let seq = 1;
-
-    if (subDataResult2.total > 0) {
-      subDataResult2.data.forEach((item) => {
-        if (item[SUB_DATA_ITEM_KEY2] > seq) {
-          seq = item[SUB_DATA_ITEM_KEY2];
-        }
-      });
-      seq++;
-    }
-
-    const newDataItem = {
-      [SUB_DATA_ITEM_KEY2]: seq,
-      custcd: infomation.custcd,
-      current_income: 0,
-      dedt_ratio: 0,
-      operating_profits: 0,
-      paid_up_capital: 0,
-      ramark: "",
-      salesmoney: 0,
-      seq: 0,
-      totasset: 0,
-      totcapital: 0,
-      yyyy: "",
-      rowstatus: "N",
-    };
-
-    setSubDataResult2((prev) => {
       return {
         data: [...prev.data, newDataItem],
         total: prev.total + 1,
@@ -1002,10 +847,8 @@ const PR_A0060: React.FC = () => {
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
-    // setSubPgNum(1);
-    // setSubDataResult(process([], subDataState));
-    // setSubPgNum2(1);
-    // setSubDataResult2(process([], subDataState2));
+    setSubPgNum(1);
+    setSubDataResult(process([], subDataState));
   };
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
@@ -1019,8 +862,9 @@ const PR_A0060: React.FC = () => {
     useState<boolean>(false);
 
   const getAttachmentsData2 = (data: IAttachmentData) => {
+    const items = parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0]);
     const datas = subDataResult.data.map((item: any) =>
-      item.num == rows
+      item.fxseq == items
         ? {
             ...item,
             attdatnum: data.attdatnum,
@@ -1102,32 +946,19 @@ const PR_A0060: React.FC = () => {
 
   type TdataArr = {
     rowstatus: string[];
-    remark_s: string[];
-    custprsncd_s: string[];
-    prsnnm_s: string[];
-    dptnm: string[];
-    postcd_s: string[];
-    telno: string[];
-    phoneno_s: string[];
-    email_s: string[];
-    rtrchk_s: string[];
+    fxseq_s: number[];
+    fxdt_s: string[];
+    custcd_s: string[];
+    custnm_s: string[];
+    errtext_s: string[];
+    protext_s: string[];
+    fxcost_s: string[];
+    remark1_s: string[];
     attdatnum_s: string[];
-    sort_seq_s: string[];
+    stdtime_s: number[];
+    errcode_s: string[];
   };
 
-  type TdataArr2 = {
-    rowstatus: string[];
-    remark_s: string[];
-    seq_s: string[];
-    yyyy_s: string[];
-    totasset_s: string[];
-    paid_up_capital_s: string[];
-    totcaptial_s: string[];
-    salesmoney_s: string[];
-    operating_profits_s: string[];
-    current_income_s: string[];
-    dedt_rati_s: string[];
-  };
   //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
@@ -1145,6 +976,29 @@ const PR_A0060: React.FC = () => {
     }));
   };
 
+
+  const setCustData3 = (data: ICustData) => {
+    const item = parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0]);
+    const newData = subDataResult.data.map((items) =>
+      items.fxseq === item
+        ? {
+            ...items,
+            custcd: data.custcd,
+            custnm: data.custnm,
+          }
+        : {
+            ...items,
+          }
+    );
+
+    setSubDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
@@ -1158,1046 +1012,667 @@ const PR_A0060: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-//   const onSubDataSortChange = (e: any) => {
-//     setSubDataState((prev) => ({ ...prev, sort: e.sort }));
-//   };
-
-//   const onSubDataSortChange2 = (e: any) => {
-//     setSubDataState2((prev) => ({ ...prev, sort: e.sort }));
-//   };
+  const onSubDataSortChange = (e: any) => {
+    setSubDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
 
   const search = () => {
-    // setSubPgNum(1);
-    // setSubDataResult(process([], subDataState));
-    // setSubPgNum2(1);
-    // setSubDataResult2(process([], subDataState2));
+    setSubPgNum(1);
+    setSubDataResult(process([], subDataState));
     setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
     fetchMainGrid();
-    // fetchSubGrid();
-    // fetchSubGrid2();
+    fetchSubGrid();
   };
 
-  //   const onSubItemChange = (event: GridItemChangeEvent) => {
-  //     getGridItemChangedData(
-  //       event,
-  //       subDataResult,
-  //       setSubDataResult,
-  //       SUB_DATA_ITEM_KEY
-  //     );
-  //   };
+  const onSubItemChange = (event: GridItemChangeEvent) => {
+    getGridItemChangedData(
+      event,
+      subDataResult,
+      setSubDataResult,
+      SUB_DATA_ITEM_KEY
+    );
+  };
 
-  //   const onSubItemChange2 = (event: GridItemChangeEvent) => {
-  //     getGridItemChangedData(
-  //       event,
-  //       subDataResult2,
-  //       setSubDataResult2,
-  //       SUB_DATA_ITEM_KEY2
-  //     );
-  //   };
+  const enterEdit = (dataItem: any, field: string) => {
+    const newData = subDataResult.data.map((item) =>
+      item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: field,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
 
-  //   const enterEdit = (dataItem: any, field: string) => {
-  //     const newData = subDataResult.data.map((item) =>
-  //       item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
-  //         ? {
-  //             ...item,
-  //             rowstatus: item.rowstatus === "N" ? "N" : "U",
-  //             [EDIT_FIELD]: field,
-  //           }
-  //         : {
-  //             ...item,
-  //             [EDIT_FIELD]: undefined,
-  //           }
-  //     );
-
-  //     setSubDataResult((prev) => {
-  //       return {
-  //         data: newData,
-  //         total: prev.total,
-  //       };
-  //     });
-  //   };
-
-  //   const enterEdit2 = (dataItem: any, field: string) => {
-  //     const newData = subDataResult2.data.map((item) =>
-  //       item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
-  //         ? {
-  //             ...item,
-  //             rowstatus: item.rowstatus === "N" ? "N" : "U",
-  //             [EDIT_FIELD]: field,
-  //           }
-  //         : {
-  //             ...item,
-  //             [EDIT_FIELD]: undefined,
-  //           }
-  //     );
-
-  //     setSubDataResult2((prev) => {
-  //       return {
-  //         data: newData,
-  //         total: prev.total,
-  //       };
-  //     });
-  //   };
-
-  //   const exitEdit = () => {
-  //     const newData = subDataResult.data.map((item) => ({
-  //       ...item,
-  //       [EDIT_FIELD]: undefined,
-  //     }));
-
-  //     setSubDataResult((prev) => {
-  //       return {
-  //         data: newData,
-  //         total: prev.total,
-  //       };
-  //     });
-  //   };
-
-  //   const exitEdit2 = () => {
-  //     const newData = subDataResult2.data.map((item) => ({
-  //       ...item,
-  //       [EDIT_FIELD]: undefined,
-  //     }));
-
-  //     setSubDataResult2((prev) => {
-  //       return {
-  //         data: newData,
-  //         total: prev.total,
-  //       };
-  //     });
-  //   };
-
-  //   const customCellRender = (td: any, props: any) => (
-  //     <CellRender
-  //       originalProps={props}
-  //       td={td}
-  //       enterEdit={enterEdit}
-  //       editField={EDIT_FIELD}
-  //     />
-  //   );
-
-  //   const customCellRender2 = (td: any, props: any) => (
-  //     <CellRender
-  //       originalProps={props}
-  //       td={td}
-  //       enterEdit={enterEdit2}
-  //       editField={EDIT_FIELD}
-  //     />
-  //   );
-
-  //   const customRowRender = (tr: any, props: any) => (
-  //     <RowRender
-  //       originalProps={props}
-  //       tr={tr}
-  //       exitEdit={exitEdit}
-  //       editField={EDIT_FIELD}
-  //     />
-  //   );
-
-  //   const customRowRender2 = (tr: any, props: any) => (
-  //     <RowRender
-  //       originalProps={props}
-  //       tr={tr}
-  //       exitEdit={exitEdit2}
-  //       editField={EDIT_FIELD}
-  //     />
-  //   );
-
-    const [paraDataDeleted, setParaDataDeleted] = useState({
-      work_type: "",
-      fxcode: "",
+    setSubDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
     });
+  };
 
-  //   const onDeleteClick = (e: any) => {
-  //     let newData: any[] = [];
+  const exitEdit = () => {
+    const newData = subDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
 
-  //     subDataResult.data.forEach((item: any, index: number) => {
-  //       if (!selectedsubDataState[item[SUB_DATA_ITEM_KEY]]) {
-  //         newData.push(item);
-  //       } else {
-  //         const newData2 = {
-  //           ...item,
-  //           rowstatus: "D",
-  //         };
-  //         deletedMainRows.push(newData2);
-  //       }
-  //     });
-  //     setSubDataResult((prev) => ({
-  //       data: newData,
-  //       total: newData.length,
-  //     }));
+    setSubDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
 
-  //     setSubDataState({});
-  //   };
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
 
-  //   const onDeleteClick3 = (e: any) => {
-  //     let newData: any[] = [];
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
 
-  //     subDataResult2.data.forEach((item: any, index: number) => {
-  //       if (!selectedsubDataState2[item[SUB_DATA_ITEM_KEY2]]) {
-  //         newData.push(item);
-  //       } else {
-  //         const newData2 = {
-  //           ...item,
-  //           rowstatus: "D",
-  //         };
-  //         deletedMainRows2.push(newData2);
-  //       }
-  //     });
-  //     setSubDataResult2((prev) => ({
-  //       data: newData,
-  //       total: newData.length,
-  //     }));
+  const [paraDataDeleted, setParaDataDeleted] = useState({
+    work_type: "",
+    fxcode: "",
+  });
 
-  //     setSubDataState2({});
-  //   };
+  const onDeleteClick = (e: any) => {
+    let newData: any[] = [];
 
-    const onDeleteClick2 = (e: any) => {
-      const item = Object.getOwnPropertyNames(selectedState)[0];
-      setParaDataDeleted((prev) => ({
-        ...prev,
-        work_type: "D",
-        fxcode: item,
-      }));
+    subDataResult.data.forEach((item: any, index: number) => {
+      if (!selectedsubDataState[item[SUB_DATA_ITEM_KEY]]) {
+        newData.push(item);
+      } else {
+        const newData2 = {
+          ...item,
+          rowstatus: "D"
+        }
+        deletedMainRows.push(newData2);
+      }
+    });
+    setSubDataResult((prev) => ({
+      data: newData,
+      total: newData.length,
+    }));
+
+    setSubDataState({});
+  };
+
+  const onDeleteClick2 = (e: any) => {
+    const item = Object.getOwnPropertyNames(selectedState)[0];
+    setParaDataDeleted((prev) => ({
+      ...prev,
+      work_type: "D",
+      fxcode: item,
+    }));
+  };
+
+  const [paraData, setParaData] = useState({
+    workType: "HISTORY",
+    orgdiv: "01",
+    fxcode: infomation.fxcode,
+    fxdiv: infomation.fxdiv,
+    location: infomation.location,
+    recdt: infomation.recdt,
+    fxnum: infomation.fxnum,
+    fxnm: infomation.fxnm,
+    fxno: infomation.fxno,
+    spec: infomation.spec,
+    dptcd: infomation.dptcd,
+    person: infomation.person,
+    place: infomation.place,
+    makedt: infomation.makedt,
+    maker: infomation.maker,
+    indt: infomation.indt,
+    custcd: infomation.custcd,
+    kind: infomation.kind,
+    amt: infomation.amt,
+    uph: infomation.uph,
+    classnm1: infomation.classnm1,
+    classnm2: infomation.classnm2,
+    classnm3: infomation.classnm3,
+    remark: infomation.remark,
+    useyn: infomation.useyn,
+    attdatnum: infomation.attdatnum,
+    proccd: infomation.proccd,
+    IOT_TER_ID: infomation.IOT_TER_ID,
+    iotserialno: infomation.iotserialno,
+    attdatnum_img: infomation.attdatnum_img,
+    custnm: infomation.custnm,
+    cnt: infomation.cnt,
+    files: infomation.files,
+    availabletime: infomation.availabletime,
+    viewyn: infomation.viewyn,
+    insert_form_id: "PR_A0060W",
+    update_form_id: infomation.update_form_id,
+    rowstatus_s: "",
+    fxseq_s: "",
+    fxdt_s: "",
+    custcd_s: "",
+    custnm_s: "",
+    errtext_s: "",
+    protext_s: "",
+    fxcost_s: "0",
+    remark1_s: "",
+    attdatnum_s: "",
+    stdtime_s: "",
+    errcode_s: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_PR_A0060W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData.workType,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_fxcode": paraData.fxcode,
+      "@p_recdt": convertDateToStr(paraData.recdt),
+      "@p_fxnum": paraData.fxnum,
+      "@p_fxnm": paraData.fxnm,
+      "@p_fxno": paraData.fxno,
+      "@p_spec": paraData.spec,
+      "@p_dptcd":
+        dptcdListData.find((item: any) => item.dptnm === paraData.dptcd)
+          ?.dptcd == undefined
+          ? ""
+          : dptcdListData.find((item: any) => item.dptnm === paraData.dptcd)
+              ?.dptcd,
+      "@p_person":
+        personListData.find((item: any) => item.user_name === paraData.person)
+          ?.user_id == undefined
+          ? ""
+          : personListData.find(
+              (item: any) => item.user_name === paraData.person
+            )?.user_id,
+      "@p_place": paraData.place,
+      "@p_makedt": convertDateToStr(paraData.makedt),
+      "@p_maker": paraData.maker,
+      "@p_indt": convertDateToStr(paraData.indt),
+      "@p_custcd": paraData.custcd,
+      "@p_amt": paraData.amt,
+      "@p_remark": paraData.remark,
+      "@p_attdatnum_img": null,
+      "@p_viewyn": paraData.viewyn,
+      "@p_useyn": paraData.useyn,
+      "@p_attdatnum": paraData.attdatnum,
+      "@p_kind": paraData.kind,
+      "@p_uph": paraData.uph,
+      "@p_IOT_TER_ID": paraData.IOT_TER_ID,
+      "@p_iotserialno": paraData.iotserialno,
+      "@p_classnm1": paraData.classnm1,
+      "@p_classnm2": paraData.classnm2,
+      "@p_classnm3": paraData.classnm3,
+      "@p_fxdiv": paraData.fxdiv,
+      "@p_proccd": paraData.proccd,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_pgmdiv": "F",
+      "@p_position": "",
+      "@p_form_id": "PR_A0060W",
+      "@p_availabletime": 2,
+      "@p_rowstatus_s": paraData.rowstatus_s,
+      "@p_fxseq_s": paraData.fxseq_s,
+      "@p_fxdt_s": paraData.fxdt_s,
+      "@p_custcd_s": paraData.custcd_s,
+      "@p_custnm_s": paraData.custnm_s,
+      "@p_errtext_s": paraData.errtext_s,
+      "@p_protext_s": paraData.protext_s,
+      "@p_fxcost_s": paraData.fxcost_s,
+      "@p_remark1_s": paraData.remark1_s,
+      "@p_attdatnum_s": paraData.attdatnum_s,
+      "@p_stdtime_s": paraData.stdtime_s,
+      // "@p_errcode_s": paraData.errcode_s,
+      "@p_company_code": "2207A046",
+    },
+  };
+
+  const paraDeleted: Iparameters = {
+    procedureName: "P_PR_A0060W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraDataDeleted.work_type,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_fxcode": paraDataDeleted.fxcode,
+      "@p_recdt": convertDateToStr(infomation.recdt),
+      "@p_fxnum": infomation.fxnum,
+      "@p_fxnm": infomation.fxnm,
+      "@p_fxno": infomation.fxno,
+      "@p_spec": infomation.spec,
+      "@p_dptcd":
+        dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+          ?.dptcd == undefined
+          ? ""
+          : dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+              ?.dptcd,
+      "@p_person":
+        personListData.find((item: any) => item.user_name === infomation.person)
+          ?.user_id == undefined
+          ? ""
+          : personListData.find(
+              (item: any) => item.user_name === infomation.person
+            )?.user_id,
+      "@p_place": infomation.place,
+      "@p_makedt": convertDateToStr(infomation.makedt),
+      "@p_maker": infomation.maker,
+      "@p_indt": convertDateToStr(infomation.indt),
+      "@p_custcd": infomation.custcd,
+      "@p_amt": infomation.amt,
+      "@p_remark": infomation.remark,
+      "@p_attdatnum_img": null,
+      "@p_viewyn": infomation.viewyn,
+      "@p_useyn": infomation.useyn,
+      "@p_attdatnum": infomation.attdatnum,
+      "@p_kind": infomation.kind,
+      "@p_uph": infomation.uph,
+      "@p_IOT_TER_ID": infomation.IOT_TER_ID,
+      "@p_iotserialno": infomation.iotserialno,
+      "@p_classnm1": infomation.classnm1,
+      "@p_classnm2": infomation.classnm2,
+      "@p_classnm3": infomation.classnm3,
+      "@p_fxdiv": infomation.fxdiv,
+      "@p_proccd": infomation.proccd,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_pgmdiv": "F",
+      "@p_position": "",
+      "@p_form_id": "PR_A0060W",
+      "@p_availabletime": 2,
+      "@p_rowstatus_s": "",
+      "@p_fxseq_s": "",
+      "@p_fxdt_s": "",
+      "@p_custcd_s": "",
+      "@p_custnm_s": "",
+      "@p_errtext_s": "",
+      "@p_protext_s": "",
+      "@p_fxcost_s": "",
+      "@p_remark1_s": "",
+      "@p_attdatnum_s": "",
+      "@p_stdtime_s": "",
+      "@p_company_code": "2207A046",
+    },
+  };
+
+  const infopara: Iparameters = {
+    procedureName: "P_PR_A0060W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": infomation.workType,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_fxcode": infomation.fxcode,
+      "@p_recdt": convertDateToStr(infomation.recdt),
+      "@p_fxnum": infomation.fxnum,
+      "@p_fxnm": infomation.fxnm,
+      "@p_fxno": infomation.fxno,
+      "@p_spec": infomation.spec,
+      "@p_dptcd":
+        dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+          ?.dptcd == undefined
+          ? ""
+          : dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+              ?.dptcd,
+      "@p_person":
+        personListData.find((item: any) => item.user_name === infomation.person)
+          ?.user_id == undefined
+          ? ""
+          : personListData.find(
+              (item: any) => item.user_name === infomation.person
+            )?.user_id,
+      "@p_place": infomation.place,
+      "@p_makedt": convertDateToStr(infomation.makedt),
+      "@p_maker": infomation.maker,
+      "@p_indt": convertDateToStr(infomation.indt),
+      "@p_custcd": infomation.custcd,
+      "@p_amt": infomation.amt,
+      "@p_remark": infomation.remark,
+      "@p_attdatnum_img": null,
+      "@p_viewyn": infomation.viewyn,
+      "@p_useyn": infomation.useyn,
+      "@p_attdatnum": infomation.attdatnum,
+      "@p_kind": infomation.kind,
+      "@p_uph": infomation.uph,
+      "@p_IOT_TER_ID": infomation.IOT_TER_ID,
+      "@p_iotserialno": infomation.iotserialno,
+      "@p_classnm1": infomation.classnm1,
+      "@p_classnm2": infomation.classnm2,
+      "@p_classnm3": infomation.classnm3,
+      "@p_fxdiv": infomation.fxdiv,
+      "@p_proccd": infomation.proccd,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_pgmdiv": "F",
+      "@p_position": "",
+      "@p_form_id": "PR_A0060W",
+      "@p_availabletime": 2,
+      "@p_rowstatus_s": "",
+      "@p_fxseq_s": "",
+      "@p_fxdt_s": "",
+      "@p_custcd_s": "",
+      "@p_custnm_s": "",
+      "@p_errtext_s": "",
+      "@p_protext_s": "",
+      "@p_fxcost_s": "",
+      "@p_remark1_s": "",
+      "@p_attdatnum_s": "",
+      "@p_stdtime_s": "",
+      "@p_company_code": "2207A046",
+    },
+  };
+
+  useEffect(() => {
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
+  }, [paraDataDeleted]);
+
+  const onSaveClick = async () => {
+    const dataItem = subDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    let dataArr: TdataArr = {
+      rowstatus: [],
+      fxseq_s: [],
+      fxdt_s: [],
+      custcd_s: [],
+      custnm_s: [],
+      errtext_s: [],
+      protext_s: [],
+      fxcost_s: [],
+      remark1_s: [],
+      attdatnum_s: [],
+      stdtime_s: [],
+      errcode_s: [],
     };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        fxdt = "",
+        fxseq = "",
+        custcd = "",
+        custnm = "",
+        errtext = "",
+        protext = "",
+        fxcost = "",
+        remark1 = "",
+        attdatnum = "",
+      } = item;
 
-  //   const [paraData, setParaData] = useState({
-  //     workType: "CustPerson",
-  //     orgdiv: "01",
-  //     custcd: "",
-  //     custnm: "",
-  //     custdiv: "",
-  //     custabbr: "",
-  //     bizdiv: "",
-  //     bizregnum: "",
-  //     ceonm: "",
-  //     repreregno: "",
-  //     comptype: "",
-  //     compclass: "",
-  //     zipcode: 0,
-  //     address: "",
-  //     phonenum: "",
-  //     faxnum: "",
-  //     estbdt: new Date(),
-  //     compnm_eng: "",
-  //     address_eng: "",
-  //     bnkinfo: "",
-  //     etelnum: "",
-  //     efaxnum: "",
-  //     unpitem: "",
-  //     useyn: "",
-  //     remark: "",
-  //     attdatnum: "",
-  //     bill_type: "",
-  //     recvid: "",
-  //     rtxisuyn: "",
-  //     etxprs: "",
-  //     emailaddr_og: "",
-  //     phonenum_og: "",
-  //     etax: "",
-  //     inunpitem: "",
-  //     email: "",
-  //     itemlvl1: "",
-  //     itemlvl2: "",
-  //     itemlvl3: "",
-  //     bankacnt: "",
-  //     bankacntuser: "",
-  //     scmyn: "",
-  //     pariodyn: "",
-  //     bnkinfo2: "",
-  //     bankacnt2: "",
-  //     area: "",
-  //     rowstatus: "",
-  //     remark_s: "",
-  //     custprsncd_s: "",
-  //     prsnnm_s: "",
-  //     dptnm: "",
-  //     postcd_s: "",
-  //     telno: "",
-  //     phoneno_s: "",
-  //     email_s: "",
-  //     rtrchk_s: "",
-  //     attdatnum_s: "",
-  //     sort_seq_s: "",
-  //     seq_s: "",
-  //     yyyy_s: "",
-  //     totasset_s: "",
-  //     paid_up_capital_s: "",
-  //     totcapital_s: "",
-  //     salesmoney_s: "",
-  //     operating_profits_s: "",
-  //     current_income_s: "",
-  //     dedt_rati_s: "",
-  //     user_id: userId,
-  //     pc: pc,
-  //     form_id: "BA_A0020W",
-  //     company_code: "2207A046",
-  //   });
-
-  //   const para: Iparameters = {
-  //     procedureName: "P_BA_A0020W_S",
-  //     pageNumber: 0,
-  //     pageSize: 0,
-  //     parameters: {
-  //       "@p_work_type": paraData.workType,
-  //       "@p_orgdiv": "01",
-  //       "@p_location": "01",
-  //       "@p_auto": "N",
-  //       "@p_custcd": paraData.custcd,
-  //       "@p_custnm": paraData.custnm,
-  //       "@p_custdiv":
-  //         custdivListData.find(
-  //           (item: any) => item.code_name === infomation.custdiv
-  //         )?.sub_code == undefined
-  //           ? ""
-  //           : custdivListData.find(
-  //               (item: any) => item.code_name === infomation.custdiv
-  //             )?.sub_code,
-  //       "@p_custabbr": paraData.custabbr,
-  //       "@p_bizdiv":
-  //         bizdivListData.find((item: any) => item.code_name === infomation.bizdiv)
-  //           ?.sub_code == undefined
-  //           ? ""
-  //           : bizdivListData.find(
-  //               (item: any) => item.code_name === infomation.bizdiv
-  //             )?.sub_code,
-  //       "@p_bizregnum": paraData.bizregnum,
-  //       "@p_ceonm": paraData.ceonm,
-  //       "@p_repreregno": paraData.repreregno,
-  //       "@p_comptype": paraData.comptype,
-  //       "@p_compclass": paraData.compclass,
-  //       "@p_zipcode": paraData.zipcode,
-  //       "@p_address": paraData.address,
-  //       "@p_phonenum": paraData.phonenum,
-  //       "@p_faxnum": paraData.faxnum,
-  //       "@p_estbdt": convertDateToStr(paraData.estbdt),
-  //       "@p_compnm_eng": paraData.compnm_eng,
-  //       "@p_address_eng": paraData.address_eng,
-  //       "@p_bnkinfo": paraData.bnkinfo,
-  //       "@p_etelnum": paraData.etelnum,
-  //       "@p_efaxnum": paraData.efaxnum,
-  //       "@p_unpitem": paraData.unpitem,
-  //       "@p_useyn": paraData.useyn,
-  //       "@p_remark": paraData.remark,
-  //       "@p_attdatnum": paraData.attdatnum,
-  //       "@p_bill_type": paraData.bill_type,
-  //       "@p_recvid": paraData.recvid,
-  //       "@p_rtxisuyn": paraData.rtxisuyn,
-  //       "@p_etxprs": paraData.etxprs,
-  //       "@p_emailaddr_og": paraData.emailaddr_og,
-  //       "@p_phonenum_og": paraData.phonenum_og,
-  //       "@p_etax": paraData.etax,
-  //       "@p_inunpitem": paraData.inunpitem,
-  //       "@p_email": paraData.email,
-  //       "@p_itemlvl1": paraData.itemlvl1,
-  //       "@p_itemlvl2": paraData.itemlvl2,
-  //       "@p_itemlvl3": paraData.itemlvl3,
-  //       "@p_bankacnt": paraData.bankacnt,
-  //       "@p_bankacntuser": paraData.bankacntuser,
-  //       "@p_scmyn": paraData.scmyn,
-  //       "@p_periodyn": paraData.pariodyn == undefined ? "" : paraData.pariodyn,
-  //       "@p_bnkinfo2": paraData.bnkinfo2,
-  //       "@p_bankacnt2": paraData.bankacnt2,
-  //       "@p_area": paraData.area,
-  //       "@p_rowstatus_s": paraData.rowstatus,
-  //       "@p_remark_s": paraData.remark_s,
-  //       "@p_custprsncd_s": paraData.custprsncd_s,
-  //       "@p_prsnnm_s": paraData.prsnnm_s,
-  //       "@p_dptnm_s": paraData.dptnm,
-  //       "@p_postcd_s": paraData.postcd_s,
-  //       "@p_telno_s": paraData.telno,
-  //       "@p_phoneno_s": paraData.phoneno_s,
-  //       "@p_email_s": paraData.email_s,
-  //       "@p_rtrchk_s": paraData.rtrchk_s,
-  //       "@p_attdatnum_s": paraData.attdatnum_s,
-  //       "@p_sort_seq_s": paraData.sort_seq_s,
-  //       "@p_seq_s": paraData.seq_s,
-  //       "@p_yyyy_s": paraData.yyyy_s,
-  //       "@p_totasset_s": paraData.totasset_s,
-  //       "@p_paid_up_capital_s": paraData.paid_up_capital_s,
-  //       "@p_totcapital_s": paraData.totcapital_s,
-  //       "@p_salesmoney_s": paraData.salesmoney_s,
-  //       "@p_operating_profits_s": paraData.operating_profits_s,
-  //       "@p_current_income_s": paraData.current_income_s,
-  //       "@p_dedt_rati_s": paraData.dedt_rati_s,
-  //       "@p_userid": userId,
-  //       "@p_pc": pc,
-  //       "@p_form_id": "BA_A0020W",
-  //       "@p_company_code": "2207A046",
-  //     },
-  //   };
-
-    const paraDeleted: Iparameters = {
-      procedureName: "P_PR_A0060W_S",
-      pageNumber: 0,
-      pageSize: 0,
-      parameters: {
-        "@p_work_type": paraDataDeleted.work_type,
-        "@p_orgdiv": "01",
-        "@p_location": "01",
-        "@p_fxcode": paraDataDeleted.fxcode,
-        "@p_recdt": convertDateToStr(infomation.recdt),
-        "@p_fxnum": infomation.fxnum,
-        "@p_fxnm": infomation.fxnm,
-        "@p_fxno": infomation.fxno,
-        "@p_spec": infomation.spec,
-        "@p_dptcd": dptcdListData.find(
-          (item: any) => item.dptnm === infomation.dptcd
-        )?.dptcd == undefined ? "" : dptcdListData.find(
-          (item: any) => item.dptnm === infomation.dptcd
-        )?.dptcd,
-        "@p_person": personListData.find(
-          (item: any) => item.user_name === infomation.person
-        )?.user_id == undefined ? "" : personListData.find(
-          (item: any) => item.user_name === infomation.person
-        )?.user_id,
-        "@p_place": infomation.place,
-        "@p_makedt": convertDateToStr(infomation.makedt),
-        "@p_maker": infomation.maker,
-        "@p_indt": convertDateToStr(infomation.indt),
-        "@p_custcd": infomation.custcd,
-        "@p_amt": infomation.amt,
-        "@p_remark": infomation.remark,
-        "@p_attdatnum_img": null,
-        "@p_viewyn" : infomation.viewyn,
-        "@p_useyn": infomation.useyn,
-        "@p_attdatnum": infomation.attdatnum,
-        "@p_kind": infomation.kind,
-        "@p_uph": infomation.uph,
-        "@p_IOT_TER_ID": infomation.IOT_TER_ID,
-        "@p_iotserialno": infomation.iotserialno,
-        "@p_classnm1": infomation.classnm1,
-        "@p_classnm2": infomation.classnm2,
-        "@p_classnm3": infomation.classnm3,
-        "@p_fxdiv": infomation.fxdiv,
-        "@p_proccd": infomation.proccd,
-        "@p_userid": userId,
-        "@p_pc": pc,
-        "@p_pgmdiv": "F",
-        "@p_position": "",
-        "@p_form_id": 'PR_A0060W',
-        "@p_availabletime": 2,
-        "@p_rowstatus_s":'',
-        "@p_fxseq_s": '',
-        "@p_fxdt_s":'',
-        "@p_custcd_s":'',
-        "@p_custnm_s":'',
-        "@p_errtext_s":'',
-        "@p_protext_s":'',
-        "@p_fxcost_s":'',
-        "@p_remark1_s":'',
-        "@p_attdatnum_s":'',
-        "@p_stdtime_s":'',
-        "@p_company_code": "2207A046"
-      },
-    };
-
-    const infopara: Iparameters = {
-      procedureName: "P_PR_A0060W_S",
-      pageNumber: 0,
-      pageSize: 0,
-      parameters: {
-        "@p_work_type": infomation.workType,
-        "@p_orgdiv": "01",
-        "@p_location": "01",
-        "@p_fxcode": infomation.fxcode,
-        "@p_recdt": convertDateToStr(infomation.recdt),
-        "@p_fxnum": infomation.fxnum,
-        "@p_fxnm": infomation.fxnm,
-        "@p_fxno": infomation.fxno,
-        "@p_spec": infomation.spec,
-        "@p_dptcd": dptcdListData.find(
-          (item: any) => item.dptnm === infomation.dptcd
-        )?.dptcd == undefined ? "" : dptcdListData.find(
-          (item: any) => item.dptnm === infomation.dptcd
-        )?.dptcd,
-        "@p_person": personListData.find(
-          (item: any) => item.user_name === infomation.person
-        )?.user_id == undefined ? "" : personListData.find(
-          (item: any) => item.user_name === infomation.person
-        )?.user_id,
-        "@p_place": infomation.place,
-        "@p_makedt": convertDateToStr(infomation.makedt),
-        "@p_maker": infomation.maker,
-        "@p_indt": convertDateToStr(infomation.indt),
-        "@p_custcd": infomation.custcd,
-        "@p_amt": infomation.amt,
-        "@p_remark": infomation.remark,
-        "@p_attdatnum_img": null,
-        "@p_viewyn" : infomation.viewyn,
-        "@p_useyn": infomation.useyn,
-        "@p_attdatnum": infomation.attdatnum,
-        "@p_kind": infomation.kind,
-        "@p_uph": infomation.uph,
-        "@p_IOT_TER_ID": infomation.IOT_TER_ID,
-        "@p_iotserialno": infomation.iotserialno,
-        "@p_classnm1": infomation.classnm1,
-        "@p_classnm2": infomation.classnm2,
-        "@p_classnm3": infomation.classnm3,
-        "@p_fxdiv": infomation.fxdiv,
-        "@p_proccd": infomation.proccd,
-        "@p_userid": userId,
-        "@p_pc": pc,
-        "@p_pgmdiv": "F",
-        "@p_position": "",
-        "@p_form_id": 'PR_A0060W',
-        "@p_availabletime": 2,
-        "@p_rowstatus_s":'',
-        "@p_fxseq_s": '',
-        "@p_fxdt_s":'',
-        "@p_custcd_s":'',
-        "@p_custnm_s":'',
-        "@p_errtext_s":'',
-        "@p_protext_s":'',
-        "@p_fxcost_s":'',
-        "@p_remark1_s":'',
-        "@p_attdatnum_s":'',
-        "@p_stdtime_s":'',
-        "@p_company_code": "2207A046"
-      },
-    };
-
-    useEffect(() => {
-      if (paraDataDeleted.work_type === "D") fetchToDelete();
-    }, [paraDataDeleted]);
-
-  //   const onSaveClick = async () => {
-  //     const dataItem = subDataResult.data.filter((item: any) => {
-  //       return (
-  //         (item.rowstatus === "N" || item.rowstatus === "U") &&
-  //         item.rowstatus !== undefined
-  //       );
-  //     });
-
-  //     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
-  //     let dataArr: TdataArr = {
-  //       rowstatus: [],
-  //       remark_s: [],
-  //       custprsncd_s: [],
-  //       prsnnm_s: [],
-  //       dptnm: [],
-  //       postcd_s: [],
-  //       telno: [],
-  //       phoneno_s: [],
-  //       email_s: [],
-  //       rtrchk_s: [],
-  //       attdatnum_s: [],
-  //       sort_seq_s: [],
-  //     };
-  //     dataItem.forEach((item: any, idx: number) => {
-  //       const {
-  //         rowstatus = "",
-  //         remark = "",
-  //         custprsncd = "",
-  //         custprsncd_s = "",
-  //         prsnnm = "",
-  //         prsnnm_s = "",
-  //         dptnm = "",
-  //         postcd_s = "",
-  //         telno = "",
-  //         phoneno = "",
-  //         email = "",
-  //         rtrchk = "",
-  //         attdatnum = "",
-  //         sort_seq = "",
-  //       } = item;
-
-  //       dataArr.rowstatus.push(rowstatus);
-  //       dataArr.remark_s.push(remark);
-  //       dataArr.custprsncd_s.push(custprsncd);
-  //       dataArr.prsnnm_s.push(prsnnm);
-  //       dataArr.dptnm.push(dptnm);
-  //       dataArr.postcd_s.push(postcd_s);
-  //       dataArr.telno.push(telno);
-  //       dataArr.phoneno_s.push(phoneno);
-  //       dataArr.email_s.push(email);
-  //       dataArr.rtrchk_s.push(rtrchk == true || rtrchk == "Y" ? "Y" : "N");
-  //       dataArr.attdatnum_s.push(attdatnum);
-  //       dataArr.sort_seq_s.push(sort_seq);
-  //     });
-  //     deletedMainRows.forEach(async (item: any, idx: number) => {
-  //       const paraD: Iparameters = {
-  //         procedureName: "P_BA_A0020W_S",
-  //         pageNumber: 0,
-  //         pageSize: 0,
-  //         parameters: {
-  //           "@p_work_type": "CustPerson",
-  //           "@p_orgdiv": "01",
-  //           "@p_location": "01",
-  //           "@p_auto": "N",
-  //           "@p_custcd": infomation.custcd,
-  //           "@p_custnm": infomation.custnm,
-  //           "@p_custdiv": infomation.custdiv,
-  //           "@p_custabbr": infomation.custabbr,
-  //           "@p_bizdiv": infomation.bizdiv,
-  //           "@p_bizregnum": infomation.bizregnum,
-  //           "@p_ceonm": infomation.ceonm,
-  //           "@p_repreregno": infomation.repreregno,
-  //           "@p_comptype": infomation.comptype,
-  //           "@p_compclass": infomation.compclass,
-  //           "@p_zipcode": infomation.zipcode,
-  //           "@p_address": infomation.address,
-  //           "@p_phonenum": infomation.phonenum,
-  //           "@p_faxnum": infomation.faxnum,
-  //           "@p_estbdt": convertDateToStr(infomation.estbdt),
-  //           "@p_compnm_eng": infomation.compnm_eng,
-  //           "@p_address_eng": infomation.address_eng,
-  //           "@p_bnkinfo": infomation.bnkinfo,
-  //           "@p_etelnum": infomation.etelnum,
-  //           "@p_efaxnum": infomation.efaxnum,
-  //           "@p_unpitem": infomation.unpitem,
-  //           "@p_useyn": infomation.useyn,
-  //           "@p_remark": infomation.remark,
-  //           "@p_attdatnum": infomation.attdatnum,
-  //           "@p_bill_type": infomation.bill_type,
-  //           "@p_recvid": infomation.recvid,
-  //           "@p_rtxisuyn": infomation.rtxisuyn,
-  //           "@p_etxprs": infomation.etxprs,
-  //           "@p_emailaddr_og": infomation.emailaddr_og,
-  //           "@p_phonenum_og": infomation.phonenum_og,
-  //           "@p_etax": infomation.etax,
-  //           "@p_inunpitem": infomation.inunpitem,
-  //           "@p_email": infomation.email,
-  //           "@p_itemlvl1": infomation.itemlvl1,
-  //           "@p_itemlvl2": infomation.itemlvl2,
-  //           "@p_itemlvl3": infomation.itemlvl3,
-  //           "@p_bankacnt": infomation.bankacnt,
-  //           "@p_bankacntuser": infomation.bankacntuser,
-  //           "@p_scmyn": infomation.scmyn,
-  //           "@p_periodyn":
-  //             infomation.pariodyn == undefined ? "" : infomation.pariodyn,
-  //           "@p_bnkinfo2": infomation.bnkinfo2,
-  //           "@p_bankacnt2": infomation.bankacnt2,
-  //           "@p_area": infomation.area,
-  //           "@p_rowstatus_s": item.rowstatus,
-  //           "@p_remark_s": item.remark,
-  //           "@p_custprsncd_s": item.custprsncd,
-  //           "@p_prsnnm_s": item.prsnnm,
-  //           "@p_dptnm_s": item.dptnm,
-  //           "@p_postcd_s": "",
-  //           "@p_telno_s": item.telno,
-  //           "@p_phoneno_s": item.phoneno,
-  //           "@p_email_s": item.email,
-  //           "@p_rtrchk_s": item.rtrchk == true || item.rtrchk == "Y" ? "Y" : "N",
-  //           "@p_attdatnum_s": item.attdatnum,
-  //           "@p_sort_seq_s": item.sort_seq,
-  //           "@p_seq_s": "",
-  //           "@p_yyyy_s": "",
-  //           "@p_totasset_s": "",
-  //           "@p_paid_up_capital_s": "",
-  //           "@p_totcapital_s": "",
-  //           "@p_salesmoney_s": "",
-  //           "@p_operating_profits_s": "",
-  //           "@p_current_income_s": "",
-  //           "@p_dedt_rati_s": "",
-  //           "@p_userid": userId,
-  //           "@p_pc": pc,
-  //           "@p_form_id": "BA_A0020W",
-  //           "@p_company_code": "2207A046",
-  //         },
-  //       };
-  //       let data: any;
-
-  //       try {
-  //         data = await processApi<any>("procedure", paraD);
-  //       } catch (error) {
-  //         data = null;
-  //       }
-
-  //       if (data.isSuccess !== true) {
-  //         console.log("[오류 발생]");
-  //         console.log(data);
-  //       }
-  //     });
-  //     deletedMainRows = [];
-  //     const item = Object.getOwnPropertyNames(selectedState)[0];
-
-  //     setParaData((prev) => ({
-  //       ...prev,
-  //       workType: "CustPerson",
-  //       custcd: item.toString(),
-  //       custnm: infomation.custnm,
-  //       custdiv: infomation.custdiv,
-  //       custabbr: infomation.custabbr,
-  //       bizdiv: infomation.bizdiv,
-  //       bizregnum: infomation.bizregnum,
-  //       ceonm: infomation.ceonm,
-  //       repreregno: infomation.repreregno,
-  //       comptype: infomation.comptype,
-  //       compclass: infomation.compclass,
-  //       zipcode: infomation.zipcode,
-  //       address: infomation.address,
-  //       phonenum: infomation.phonenum,
-  //       faxnum: infomation.faxnum,
-  //       estbdt: infomation.estbdt,
-  //       compnm_eng: infomation.compnm_eng,
-  //       address_eng: infomation.address_eng,
-  //       bnkinfo: infomation.bnkinfo,
-  //       etelnum: infomation.etelnum,
-  //       efaxnum: infomation.efaxnum,
-  //       unpitem: infomation.unpitem,
-  //       useyn: infomation.useyn,
-  //       remark: infomation.remark,
-  //       attdatnum: infomation.attdatnum,
-  //       bill_type: infomation.bill_type,
-  //       recvid: infomation.recvid,
-  //       rtxisuyn: infomation.rtxisuyn,
-  //       etxprs: infomation.etxprs,
-  //       emailaddr_og: infomation.emailaddr_og,
-  //       phonenum_og: infomation.phonenum_og,
-  //       etax: infomation.etax,
-  //       inunpitem: infomation.inunpitem,
-  //       email: infomation.email,
-  //       itemlvl1: infomation.itemlvl1,
-  //       itemlvl2: infomation.itemlvl2,
-  //       itemlvl3: infomation.itemlvl3,
-  //       bankacnt: infomation.bankacnt,
-  //       bankacntuser: infomation.bankacntuser,
-  //       scmyn: infomation.scmyn,
-  //       pariodyn: infomation.pariodyn,
-  //       bnkinfo2: infomation.bnkinfo2,
-  //       bankacnt2: infomation.bankacnt2,
-  //       area: infomation.area,
-  //       remark_s: dataArr.remark_s.join("|"),
-  //       rowstatus: dataArr.rowstatus.join("|"),
-  //       prsnnm_s: dataArr.prsnnm_s.join("|"),
-  //       custprsncd_s: dataArr.custprsncd_s.join("|"),
-  //       dptnm: dataArr.dptnm.join("|"),
-  //       postcd_s: dataArr.postcd_s.join("|"),
-  //       telno: dataArr.telno.join("|"),
-  //       phoneno_s: dataArr.phoneno_s.join("|"),
-  //       email_s: dataArr.email_s.join("|"),
-  //       rtrchk_s: dataArr.rtrchk_s.join("|"),
-  //       attdatnum_s: dataArr.attdatnum_s.join("|"),
-  //       sort_seq_s: dataArr.sort_seq_s.join("|"),
-  //       seq_s: "",
-  //       yyyy_s:"",
-  //       totasset_s: "",
-  //       paid_up_capital_s: "",
-  //       totcapital_s:"",
-  //       salesmoney_s:"",
-  //       operating_profits_s:"",
-  //       current_income_s:"",
-  //       dedt_rati_s: "",
-  //     }));
-  //   };
-
-  //   const onSaveClick3 = async () => {
-  //     const dataItem = subDataResult2.data.filter((item: any) => {
-  //       return (
-  //         (item.rowstatus === "N" || item.rowstatus === "U") &&
-  //         item.rowstatus !== undefined
-  //       );
-  //     });
-
-  //     if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
-  //     let dataArr: TdataArr2 = {
-  //       rowstatus: [],
-  //       remark_s: [],
-  //       seq_s: [],
-  //       yyyy_s: [],
-  //       totasset_s: [],
-  //       paid_up_capital_s: [],
-  //       totcaptial_s: [],
-  //       salesmoney_s: [],
-  //       operating_profits_s: [],
-  //       current_income_s: [],
-  //       dedt_rati_s: [],
-  //     };
-  //     dataItem.forEach((item: any, idx: number) => {
-  //       const {
-  //         rowstatus = "",
-  //         remark = "",
-  //         current_income=0,
-  //         dedt_ratio=0,
-  //         operating_profits = 0,
-  //         paid_up_capital =0,
-  //         salesmoney =0,
-  //         seq=0,
-  //         totasset=0,
-  //         totcapital=0,
-  //         yyyy=""
-  //       } = item;
-
-  //       dataArr.rowstatus.push(rowstatus);
-  //       dataArr.remark_s.push(remark);
-  //       dataArr.seq_s.push(seq);
-  //       dataArr.yyyy_s.push(yyyy);
-  //       dataArr.totasset_s.push(totasset);
-  //       dataArr.paid_up_capital_s.push(paid_up_capital);
-  //       dataArr.totcaptial_s.push(totcapital);
-  //       dataArr.salesmoney_s.push(salesmoney);
-  //       dataArr.operating_profits_s.push(operating_profits);
-  //       dataArr.current_income_s.push(current_income);
-  //       dataArr.dedt_rati_s.push(dedt_ratio);
-  //     });
-  //     deletedMainRows2.forEach(async (item: any, idx: number) => {
-  //       const paraD: Iparameters = {
-  //         procedureName: "P_BA_A0020W_S",
-  //         pageNumber: 0,
-  //         pageSize: 0,
-  //         parameters: {
-  //           "@p_work_type": "MONEY",
-  //           "@p_orgdiv": "01",
-  //           "@p_location": "01",
-  //           "@p_auto": "N",
-  //           "@p_custcd": infomation.custcd,
-  //           "@p_custnm": infomation.custnm,
-  //           "@p_custdiv": infomation.custdiv,
-  //           "@p_custabbr": infomation.custabbr,
-  //           "@p_bizdiv": infomation.bizdiv,
-  //           "@p_bizregnum": infomation.bizregnum,
-  //           "@p_ceonm": infomation.ceonm,
-  //           "@p_repreregno": infomation.repreregno,
-  //           "@p_comptype": infomation.comptype,
-  //           "@p_compclass": infomation.compclass,
-  //           "@p_zipcode": infomation.zipcode,
-  //           "@p_address": infomation.address,
-  //           "@p_phonenum": infomation.phonenum,
-  //           "@p_faxnum": infomation.faxnum,
-  //           "@p_estbdt": convertDateToStr(infomation.estbdt),
-  //           "@p_compnm_eng": infomation.compnm_eng,
-  //           "@p_address_eng": infomation.address_eng,
-  //           "@p_bnkinfo": infomation.bnkinfo,
-  //           "@p_etelnum": infomation.etelnum,
-  //           "@p_efaxnum": infomation.efaxnum,
-  //           "@p_unpitem": infomation.unpitem,
-  //           "@p_useyn": infomation.useyn,
-  //           "@p_remark": infomation.remark,
-  //           "@p_attdatnum": infomation.attdatnum,
-  //           "@p_bill_type": infomation.bill_type,
-  //           "@p_recvid": infomation.recvid,
-  //           "@p_rtxisuyn": infomation.rtxisuyn,
-  //           "@p_etxprs": infomation.etxprs,
-  //           "@p_emailaddr_og": infomation.emailaddr_og,
-  //           "@p_phonenum_og": infomation.phonenum_og,
-  //           "@p_etax": infomation.etax,
-  //           "@p_inunpitem": infomation.inunpitem,
-  //           "@p_email": infomation.email,
-  //           "@p_itemlvl1": infomation.itemlvl1,
-  //           "@p_itemlvl2": infomation.itemlvl2,
-  //           "@p_itemlvl3": infomation.itemlvl3,
-  //           "@p_bankacnt": infomation.bankacnt,
-  //           "@p_bankacntuser": infomation.bankacntuser,
-  //           "@p_scmyn": infomation.scmyn,
-  //           "@p_periodyn":
-  //             infomation.pariodyn == undefined ? "" : infomation.pariodyn,
-  //           "@p_bnkinfo2": infomation.bnkinfo2,
-  //           "@p_bankacnt2": infomation.bankacnt2,
-  //           "@p_area": infomation.area,
-  //           "@p_rowstatus_s": item.rowstatus,
-  //           "@p_remark_s": item.remark,
-  //           "@p_custprsncd_s": "",
-  //           "@p_prsnnm_s": "",
-  //           "@p_dptnm_s": "",
-  //           "@p_postcd_s": "",
-  //           "@p_telno_s": "",
-  //           "@p_phoneno_s": "",
-  //           "@p_email_s": "",
-  //           "@p_rtrchk_s": "",
-  //           "@p_attdatnum_s": "",
-  //           "@p_sort_seq_s": "",
-  //           "@p_seq_s": item.seq,
-  //           "@p_yyyy_s": item.yyyy,
-  //           "@p_totasset_s":  item.totasset,
-  //           "@p_paid_up_capital_s":  item.paid_up_capital,
-  //           "@p_totcapital_s":  item.totcapital,
-  //           "@p_salesmoney_s":  item.salesmoney,
-  //           "@p_operating_profits_s":  item.operating_profits,
-  //           "@p_current_income_s":  item.current_income,
-  //           "@p_dedt_rati_s":  item.dedt_ratio,
-  //           "@p_userid": userId,
-  //           "@p_pc": pc,
-  //           "@p_form_id": "BA_A0020W",
-  //           "@p_company_code": "2207A046",
-  //         },
-  //       };
-  //       let data: any;
-
-  //       try {
-  //         data = await processApi<any>("procedure", paraD);
-  //       } catch (error) {
-  //         data = null;
-  //       }
-
-  //       if (data.isSuccess !== true) {
-  //         console.log("[오류 발생]");
-  //         console.log(data);
-  //       }
-  //     });
-  //     deletedMainRows2 = [];
-  //     const item = Object.getOwnPropertyNames(selectedState)[0];
-
-  //     setParaData((prev) => ({
-  //       ...prev,
-  //       workType: "MONEY",
-  //       custcd: item.toString(),
-  //       custnm: infomation.custnm,
-  //       custdiv: infomation.custdiv,
-  //       custabbr: infomation.custabbr,
-  //       bizdiv: infomation.bizdiv,
-  //       bizregnum: infomation.bizregnum,
-  //       ceonm: infomation.ceonm,
-  //       repreregno: infomation.repreregno,
-  //       comptype: infomation.comptype,
-  //       compclass: infomation.compclass,
-  //       zipcode: infomation.zipcode,
-  //       address: infomation.address,
-  //       phonenum: infomation.phonenum,
-  //       faxnum: infomation.faxnum,
-  //       estbdt: infomation.estbdt,
-  //       compnm_eng: infomation.compnm_eng,
-  //       address_eng: infomation.address_eng,
-  //       bnkinfo: infomation.bnkinfo,
-  //       etelnum: infomation.etelnum,
-  //       efaxnum: infomation.efaxnum,
-  //       unpitem: infomation.unpitem,
-  //       useyn: infomation.useyn,
-  //       remark: infomation.remark,
-  //       attdatnum: infomation.attdatnum,
-  //       bill_type: infomation.bill_type,
-  //       recvid: infomation.recvid,
-  //       rtxisuyn: infomation.rtxisuyn,
-  //       etxprs: infomation.etxprs,
-  //       emailaddr_og: infomation.emailaddr_og,
-  //       phonenum_og: infomation.phonenum_og,
-  //       etax: infomation.etax,
-  //       inunpitem: infomation.inunpitem,
-  //       email: infomation.email,
-  //       itemlvl1: infomation.itemlvl1,
-  //       itemlvl2: infomation.itemlvl2,
-  //       itemlvl3: infomation.itemlvl3,
-  //       bankacnt: infomation.bankacnt,
-  //       bankacntuser: infomation.bankacntuser,
-  //       scmyn: infomation.scmyn,
-  //       pariodyn: infomation.pariodyn,
-  //       bnkinfo2: infomation.bnkinfo2,
-  //       bankacnt2: infomation.bankacnt2,
-  //       area: infomation.area,
-  //       remark_s: dataArr.remark_s.join("|"),
-  //       rowstatus: dataArr.rowstatus.join("|"),
-  //       prsnnm_s: "",
-  //       custprsncd_s: "",
-  //       dptnm: "",
-  //       postcd_s: "",
-  //       telno: "",
-  //       phoneno_s:  "",
-  //       email_s:  "",
-  //       rtrchk_s:  "",
-  //       attdatnum_s:  "",
-  //       sort_seq_s: "",
-  //       seq_s: dataArr.seq_s.join("|"),
-  //       yyyy_s:dataArr.yyyy_s.join("|"),
-  //       totasset_s: dataArr.totasset_s.join("|"),
-  //       paid_up_capital_s: dataArr.paid_up_capital_s.join("|"),
-  //       totcapital_s:dataArr.totcaptial_s.join("|"),
-  //       salesmoney_s:dataArr.salesmoney_s.join("|"),
-  //       operating_profits_s: dataArr.operating_profits_s.join("|"),
-  //       current_income_s:dataArr.current_income_s.join("|"),
-  //       dedt_rati_s: dataArr.dedt_rati_s.join("|"),
-  //     }));
-  //   };
-
-    const fetchToDelete = async () => {
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.fxseq_s.push(fxseq);
+      dataArr.fxdt_s.push(fxdt);
+      dataArr.custcd_s.push(custcd);
+      dataArr.custnm_s.push(custnm);
+      dataArr.errtext_s.push(errtext);
+      dataArr.protext_s.push(protext);
+      dataArr.fxcost_s.push(fxcost == "" ? 0 : fxcost);
+      dataArr.remark1_s.push(remark1);
+      dataArr.attdatnum_s.push(attdatnum);
+      dataArr.stdtime_s.push(0);
+      dataArr.errcode_s.push("");
+    });
+    deletedMainRows.forEach(async (item: any, idx: number) => {
+      const paraD: Iparameters = {
+        procedureName: "P_PR_A0060W_S",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_work_type": "U",
+          "@p_orgdiv": "01",
+          "@p_location": "01",
+          "@p_fxcode": infomation.fxcode,
+          "@p_recdt": convertDateToStr(infomation.recdt),
+          "@p_fxnum": infomation.fxnum,
+          "@p_fxnm": infomation.fxnm,
+          "@p_fxno": infomation.fxno,
+          "@p_spec": infomation.spec,
+          "@p_dptcd":
+            dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+              ?.dptcd == undefined
+              ? ""
+              : dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+                  ?.dptcd,
+          "@p_person":
+            personListData.find((item: any) => item.user_name === infomation.person)
+              ?.user_id == undefined
+              ? ""
+              : personListData.find(
+                  (item: any) => item.user_name === infomation.person
+                )?.user_id,
+          "@p_place": infomation.place,
+          "@p_makedt": convertDateToStr(infomation.makedt),
+          "@p_maker": infomation.maker,
+          "@p_indt": convertDateToStr(infomation.indt),
+          "@p_custcd": infomation.custcd,
+          "@p_amt": infomation.amt,
+          "@p_remark": infomation.remark,
+          "@p_attdatnum_img": null,
+          "@p_viewyn": infomation.viewyn,
+          "@p_useyn": infomation.useyn,
+          "@p_attdatnum": infomation.attdatnum,
+          "@p_kind": infomation.kind,
+          "@p_uph": infomation.uph,
+          "@p_IOT_TER_ID": infomation.IOT_TER_ID,
+          "@p_iotserialno": infomation.iotserialno,
+          "@p_classnm1": infomation.classnm1,
+          "@p_classnm2": infomation.classnm2,
+          "@p_classnm3": infomation.classnm3,
+          "@p_fxdiv": infomation.fxdiv,
+          "@p_proccd": infomation.proccd,
+          "@p_userid": userId,
+          "@p_pc": pc,
+          "@p_pgmdiv": "F",
+          "@p_position": "",
+          "@p_form_id": "PR_A0060W",
+          "@p_availabletime": 2,
+          "@p_rowstatus_s": item.rowstatus,
+          "@p_fxseq_s": item.fxseq,
+          "@p_fxdt_s": item.fxdt,
+          "@p_custcd_s": item.custcd,
+          "@p_custnm_s": item.custnm,
+          "@p_errtext_s": item.errtext,
+          "@p_protext_s": item.protext,
+          "@p_fxcost_s": item.fxcost,
+          "@p_remark1_s": item.remark1,
+          "@p_attdatnum_s": item.attdatnum,
+          "@p_stdtime_s": 0,
+          // "@p_errcode_s": paraData.errcode_s,
+          "@p_company_code": "2207A046",
+        },
+      };
       let data: any;
 
       try {
-        data = await processApi<any>("procedure", paraDeleted);
+        data = await processApi<any>("procedure", paraD);
       } catch (error) {
         data = null;
       }
 
-      if (data.isSuccess === true) {
-        resetAllGrid();
-        fetchMainGrid();
-      } else {
-        console.log("[오류 발생]");
-        console.log(data);
-        alert("[" + data.statusCode + "] " + data.resultMessage);
-      }
-
-      paraDataDeleted.work_type = ""; //초기화
-      paraDataDeleted.fxcode = "";
-    };
-
-    const onSaveClick2 = async () => {
-      fetchSaved();
-    };
-
-    const fetchSaved = async () => {
-      let data: any;
-
-      let valid = true;
-      try {
-        if (!infomation.fxnum) {
-          throw findMessage(messagesData, "PR_A0060W_001");
-        }
-
-        if (!infomation.fxnm) {
-          throw findMessage(messagesData, "PR_A0060W_002");
-        }
-
-      } catch (e) {
-        alert(e);
-        valid = false;
-      }
-
-      if (!valid) return false;
-
-      setLoading(true);
-
-      try {
-        data = await processApi<any>("procedure", infopara);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        setMainPgNum(1);
-        setMainDataResult(process([], mainDataState));
-
-        fetchMainGrid();
-      } else {
+      if (data.isSuccess !== true) {
         console.log("[오류 발생]");
         console.log(data);
       }
-      setLoading(false);
-    };
+    });
+    deletedMainRows = [];
+    
+    setParaData((prev) => ({
+      ...prev,
+      workType: "U",
+      fxcode: infomation.fxcode,
+      fxdiv: infomation.fxdiv,
+      location: infomation.location,
+      recdt: infomation.recdt,
+      fxnum: infomation.fxnum,
+      fxnm: infomation.fxnm,
+      fxno: infomation.fxno,
+      spec: infomation.spec,
+      dptcd: infomation.dptcd,
+      person: infomation.person,
+      place: infomation.place,
+      makedt: infomation.makedt,
+      maker: infomation.maker,
+      indt: infomation.indt,
+      custcd: infomation.custcd,
+      kind: infomation.kind,
+      amt: infomation.amt,
+      uph: infomation.uph,
+      classnm1: infomation.classnm1,
+      classnm2: infomation.classnm2,
+      classnm3: infomation.classnm3,
+      remark: infomation.remark,
+      useyn: infomation.useyn,
+      attdatnum: infomation.attdatnum,
+      proccd: infomation.proccd,
+      IOT_TER_ID: infomation.IOT_TER_ID,
+      iotserialno: infomation.iotserialno,
+      attdatnum_img: infomation.attdatnum_img,
+      custnm: infomation.custnm,
+      cnt: infomation.cnt,
+      files: infomation.files,
+      availabletime: infomation.availabletime,
+      viewyn: infomation.viewyn,
+      insert_form_id: "PR_A0060W",
+      update_form_id: infomation.update_form_id,
+      rowstatus_s: dataArr.rowstatus.join("|"),
+      fxseq_s: dataArr.fxseq_s.join("|"),
+      fxdt_s: dataArr.fxdt_s.join("|"),
+      custcd_s: dataArr.custcd_s.join("|"),
+      custnm_s: dataArr.custnm_s.join("|"),
+      errtext_s: dataArr.errtext_s.join("|"),
+      protext_s: dataArr.protext_s.join("|"),
+      fxcost_s: dataArr.fxcost_s.join("|"),
+      remark1_s: dataArr.remark1_s.join("|"),
+      attdatnum_s: dataArr.attdatnum_s.join("|"),
+      stdtime_s: dataArr.stdtime_s.join("|"),
+      errcode_s: dataArr.errcode_s.join("|"),
+    }));
+  };
 
-    // const fetchTodoGridSaved = async () => {
-    //   let data: any;
-    //   setLoading(true);
-    //   try {
-    //     data = await processApi<any>("procedure", para);
-    //   } catch (error) {
-    //     data = null;
-    //   }
+  const fetchToDelete = async () => {
+    let data: any;
 
-    //   if (data.isSuccess === true) {
-    //     setSubPgNum(1);
-    //     setSubDataResult(process([], subDataState));
+    try {
+      data = await processApi<any>("procedure", paraDeleted);
+    } catch (error) {
+      data = null;
+    }
 
-    //     fetchSubGrid();
-    //   } else {
-    //     console.log("[오류 발생]");
-    //     console.log(data);
-    //   }
-    //   setLoading(false);
-    // };
+    if (data.isSuccess === true) {
+      resetAllGrid();
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
 
-  //   useEffect(() => {
-  //     if (paraData.custcd != "") {
-  //       fetchTodoGridSaved();
-  //     }
-  //   }, [paraData]);
-  const [rows, setrows] = useState<number>(0);
+    paraDataDeleted.work_type = ""; //초기화
+    paraDataDeleted.fxcode = "";
+  };
+
+  const onSaveClick2 = async () => {
+    fetchSaved();
+  };
+
+  const fetchSaved = async () => {
+    let data: any;
+
+    let valid = true;
+    try {
+      if (!infomation.fxnum) {
+        throw findMessage(messagesData, "PR_A0060W_001");
+      }
+
+      if (!infomation.fxnm) {
+        throw findMessage(messagesData, "PR_A0060W_002");
+      }
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", infopara);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setMainPgNum(1);
+      setMainDataResult(process([], mainDataState));
+
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setSubPgNum(1);
+      setSubDataResult(process([], subDataState));
+
+      fetchSubGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (paraData.fxcode != "") {
+      fetchTodoGridSaved();
+    }
+  }, [paraData]);
+
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true });
-      setrows(rowData.num);
+      for(var i = 0; i< subDataResult.data.length; i++) {
+        if(rowData.fxseq == subDataResult.data[i].fxseq) {
+          setrows(i);
+        }
+      }
+      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true })
       setAttachmentsWindowVisible2(true);
     };
 
@@ -2217,6 +1692,33 @@ const PR_A0060: React.FC = () => {
     );
   };
 
+  const CommandCell2 = (props: GridCellProps) => {
+    const rowData = props.dataItem;
+
+    const onEditClick = () => {
+      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true })
+      setCustWindowVisible3(true);
+    };
+
+    return (
+      <>
+        <td className="k-command-cell">
+          <Input
+            name="custcd"
+            type="text"
+            value={rowData.custcd}
+            style={{ width: "100px" }}
+          />
+          <Button
+            onClick={onEditClick}
+            icon="more-horizontal"
+            fillMode="flat"
+          />
+        </td>
+      </>
+    );
+  };
   return (
     <>
       <TitleContainer>
@@ -2562,9 +2064,9 @@ const PR_A0060: React.FC = () => {
                   <th>가용시간</th>
                   <td>
                     <Input
-                      name="uph"
+                      name="availabletime"
                       type="number"
-                      value={infomation.uph}
+                      value={infomation.availabletime}
                       onChange={InputChange}
                     />
                   </td>
@@ -2793,7 +2295,6 @@ const PR_A0060: React.FC = () => {
                       name="attdatnum"
                       type="text"
                       value={infomation.attdatnum}
-                      onChange={InputChange}
                     />
                     <ButtonInInput>
                       <Button
@@ -2809,10 +2310,10 @@ const PR_A0060: React.FC = () => {
             </FilterBox>
           </FilterBoxWrap>
         </TabStripTab>
-        {/* <TabStripTab title="업체담당자">
+        <TabStripTab title="설비이력관리">
           <GridContainer>
             <GridTitleContainer>
-              <GridTitle>업체담당자</GridTitle>
+              <GridTitle>설비이력관리</GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
@@ -2835,10 +2336,11 @@ const PR_A0060: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "34vh" }}
+              style={{ height: "25vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
+                  fxdt: new Date(dateformat(row.fxdt)),
                   [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                 })),
                 subDataState
@@ -2879,29 +2381,28 @@ const PR_A0060: React.FC = () => {
                 }
               />
               <GridColumn
-                field="sort_seq"
-                title="정렬순서"
-                width="80px"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="custprsncd"
-                title="업체담당자"
+                field="fxdt"
+                title="처리일자"
                 width="150px"
-                editable={false}
+                cell={DateCell}
+                footerCell={subTotalFooterCell}
               />
-              <GridColumn field="prsnnm" title="성명" width="150px" />
-              <GridColumn field="dptnm" title="부서명" width="200px" />
-              <GridColumn field="telno" title="전화번호" width="150px" />
-              <GridColumn field="phoneno" title="휴대폰번호" width="180px" />
-              <GridColumn field="email" title="이메일" width="200px" />
-              <GridColumn field="remark" title="비고" width="290px" />
               <GridColumn
-                field="rtrchk"
-                title="퇴사"
-                width="80px"
-                cell={CheckBoxCell}
+                field="custcd"
+                title="업체코드조회"
+                width="200px"
+                cell={CommandCell2}
               />
+              <GridColumn field="custnm" title="업체명" width="160px" />
+              <GridColumn field="errtext" title="고장내용" width="280px" />
+              <GridColumn field="protext" title="조치내용" width="280px" />
+              <GridColumn
+                field="fxcost"
+                title="수리비용"
+                width="120px"
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn field="remark1" title="비고" width="290px" />
               <GridColumn
                 field="attdatnum"
                 title="첨부파일"
@@ -2911,129 +2412,6 @@ const PR_A0060: React.FC = () => {
             </Grid>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="재무현황">
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>재무현황</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick3}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="plus"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick3}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                ></Button>
-                <Button
-                  onClick={onSaveClick3}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "34vh" }}
-              data={process(
-                subDataResult2.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
-                })),
-                subDataState2
-              )}
-              {...subDataState2}
-              onDataStateChange={onSubDataStateChange2}
-              //선택 기능
-              dataItemKey={SUB_DATA_ITEM_KEY2}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "multiple",
-              }}
-              onSelectionChange={onSubDataSelectionChange2}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={subDataResult2.total}
-              onScroll={onSubScrollHandler2}
-              //정렬기능
-              sortable={true}
-              onSortChange={onSubDataSortChange2}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onSubItemChange2}
-              cellRender={customCellRender2}
-              rowRender={customRowRender2}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn
-                field={SELECTED_FIELD}
-                width="45px"
-                headerSelectionValue={
-                  subDataResult.data.findIndex(
-                    (item: any) => !selectedsubDataState[idGetter2(item)]
-                  ) === -1
-                }
-              />
-              <GridColumn field="yyyy" title="결산년도" width="150px"/>
-              <GridColumn
-                field="totasset"
-                title="총자산"
-                width="160px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="paid_up_capital"
-                title="납입자본"
-                width="160px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="totcapital"
-                title="자본총계"
-                width="160px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="salesmoney"
-                title="매출액"
-                width="200px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="operating_profits"
-                title="영업이익"
-                width="200px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="current_income"
-                title="당기순이익"
-                width="160px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="dedt_ratio"
-                title="부채비율"
-                width="160px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn field="remark" title="비고" width="290px" />
-            </Grid>
-          </GridContainer>
-        </TabStripTab> */}
       </TabStrip>
       {custWindowVisible && (
         <CustomersWindow
@@ -3042,11 +2420,18 @@ const PR_A0060: React.FC = () => {
           setData={setCustData}
         />
       )}
-    {custWindowVisible2 && (
+      {custWindowVisible2 && (
         <CustomersWindow
           setVisible={setCustWindowVisible2}
           workType={workType}
           setData={setCustData2}
+        />
+      )}
+      {custWindowVisible3 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible3}
+          workType={workType}
+          setData={setCustData3}
         />
       )}
       {itemWindowVisible && (
@@ -3067,7 +2452,7 @@ const PR_A0060: React.FC = () => {
         <AttachmentsWindow
           getVisible={setAttachmentsWindowVisible2}
           getData={getAttachmentsData2}
-          para={subDataResult.data[rows - 1].attdatnum}
+          para={subDataResult.data[rows].attdatnum}
         />
       )}
     </>
