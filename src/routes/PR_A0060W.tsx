@@ -144,23 +144,7 @@ const PR_A0060: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_004"
         )
       );
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_004"
-        )
-      );
 
-      fetchQuery(dptcdQueryStr, setdptcdListData);
-      fetchQuery(personQueryStr, setPersonListData);
-    }
-  }, [bizComponentData]);
       fetchQuery(dptcdQueryStr, setdptcdListData);
       fetchQuery(personQueryStr, setPersonListData);
     }
@@ -1104,10 +1088,68 @@ const PR_A0060: React.FC = () => {
     />
   );
 
-  const [paraDataDeleted, setParaDataDeleted] = useState({
-    work_type: "",
-    fxcode: "",
-  });
+  //     setSubDataResult((prev) => {
+  //       return {
+  //         data: newData,
+  //         total: prev.total,
+  //       };
+  //     });
+  //   };
+
+  //   const exitEdit2 = () => {
+  //     const newData = subDataResult2.data.map((item) => ({
+  //       ...item,
+  //       [EDIT_FIELD]: undefined,
+  //     }));
+
+  //     setSubDataResult2((prev) => {
+  //       return {
+  //         data: newData,
+  //         total: prev.total,
+  //       };
+  //     });
+  //   };
+
+  //   const customCellRender = (td: any, props: any) => (
+  //     <CellRender
+  //       originalProps={props}
+  //       td={td}
+  //       enterEdit={enterEdit}
+  //       editField={EDIT_FIELD}
+  //     />
+  //   );
+
+  //   const customCellRender2 = (td: any, props: any) => (
+  //     <CellRender
+  //       originalProps={props}
+  //       td={td}
+  //       enterEdit={enterEdit2}
+  //       editField={EDIT_FIELD}
+  //     />
+  //   );
+
+  //   const customRowRender = (tr: any, props: any) => (
+  //     <RowRender
+  //       originalProps={props}
+  //       tr={tr}
+  //       exitEdit={exitEdit}
+  //       editField={EDIT_FIELD}
+  //     />
+  //   );
+
+  //   const customRowRender2 = (tr: any, props: any) => (
+  //     <RowRender
+  //       originalProps={props}
+  //       tr={tr}
+  //       exitEdit={exitEdit2}
+  //       editField={EDIT_FIELD}
+  //     />
+  //   );
+
+    const [paraDataDeleted, setParaDataDeleted] = useState({
+      work_type: "",
+      fxcode: "",
+    });
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -1131,14 +1173,36 @@ const PR_A0060: React.FC = () => {
     setSubDataState({});
   };
 
-  const onDeleteClick2 = (e: any) => {
-    const item = Object.getOwnPropertyNames(selectedState)[0];
-    setParaDataDeleted((prev) => ({
-      ...prev,
-      work_type: "D",
-      fxcode: item,
-    }));
-  };
+  //   const onDeleteClick3 = (e: any) => {
+  //     let newData: any[] = [];
+
+  //     subDataResult2.data.forEach((item: any, index: number) => {
+  //       if (!selectedsubDataState2[item[SUB_DATA_ITEM_KEY2]]) {
+  //         newData.push(item);
+  //       } else {
+  //         const newData2 = {
+  //           ...item,
+  //           rowstatus: "D",
+  //         };
+  //         deletedMainRows2.push(newData2);
+  //       }
+  //     });
+  //     setSubDataResult2((prev) => ({
+  //       data: newData,
+  //       total: newData.length,
+  //     }));
+
+  //     setSubDataState2({});
+  //   };
+
+    const onDeleteClick2 = (e: any) => {
+      const item = Object.getOwnPropertyNames(selectedState)[0];
+      setParaDataDeleted((prev) => ({
+        ...prev,
+        work_type: "D",
+        fxcode: item,
+      }));
+    };
 
   const [paraData, setParaData] = useState({
     workType: "HISTORY",
@@ -1587,14 +1651,295 @@ const PR_A0060: React.FC = () => {
     }));
   };
 
-  const fetchToDelete = async () => {
-    let data: any;
+  //     setParaData((prev) => ({
+  //       ...prev,
+  //       workType: "CustPerson",
+  //       custcd: item.toString(),
+  //       custnm: infomation.custnm,
+  //       custdiv: infomation.custdiv,
+  //       custabbr: infomation.custabbr,
+  //       bizdiv: infomation.bizdiv,
+  //       bizregnum: infomation.bizregnum,
+  //       ceonm: infomation.ceonm,
+  //       repreregno: infomation.repreregno,
+  //       comptype: infomation.comptype,
+  //       compclass: infomation.compclass,
+  //       zipcode: infomation.zipcode,
+  //       address: infomation.address,
+  //       phonenum: infomation.phonenum,
+  //       faxnum: infomation.faxnum,
+  //       estbdt: infomation.estbdt,
+  //       compnm_eng: infomation.compnm_eng,
+  //       address_eng: infomation.address_eng,
+  //       bnkinfo: infomation.bnkinfo,
+  //       etelnum: infomation.etelnum,
+  //       efaxnum: infomation.efaxnum,
+  //       unpitem: infomation.unpitem,
+  //       useyn: infomation.useyn,
+  //       remark: infomation.remark,
+  //       attdatnum: infomation.attdatnum,
+  //       bill_type: infomation.bill_type,
+  //       recvid: infomation.recvid,
+  //       rtxisuyn: infomation.rtxisuyn,
+  //       etxprs: infomation.etxprs,
+  //       emailaddr_og: infomation.emailaddr_og,
+  //       phonenum_og: infomation.phonenum_og,
+  //       etax: infomation.etax,
+  //       inunpitem: infomation.inunpitem,
+  //       email: infomation.email,
+  //       itemlvl1: infomation.itemlvl1,
+  //       itemlvl2: infomation.itemlvl2,
+  //       itemlvl3: infomation.itemlvl3,
+  //       bankacnt: infomation.bankacnt,
+  //       bankacntuser: infomation.bankacntuser,
+  //       scmyn: infomation.scmyn,
+  //       pariodyn: infomation.pariodyn,
+  //       bnkinfo2: infomation.bnkinfo2,
+  //       bankacnt2: infomation.bankacnt2,
+  //       area: infomation.area,
+  //       remark_s: dataArr.remark_s.join("|"),
+  //       rowstatus: dataArr.rowstatus.join("|"),
+  //       prsnnm_s: dataArr.prsnnm_s.join("|"),
+  //       custprsncd_s: dataArr.custprsncd_s.join("|"),
+  //       dptnm: dataArr.dptnm.join("|"),
+  //       postcd_s: dataArr.postcd_s.join("|"),
+  //       telno: dataArr.telno.join("|"),
+  //       phoneno_s: dataArr.phoneno_s.join("|"),
+  //       email_s: dataArr.email_s.join("|"),
+  //       rtrchk_s: dataArr.rtrchk_s.join("|"),
+  //       attdatnum_s: dataArr.attdatnum_s.join("|"),
+  //       sort_seq_s: dataArr.sort_seq_s.join("|"),
+  //       seq_s: "",
+  //       yyyy_s:"",
+  //       totasset_s: "",
+  //       paid_up_capital_s: "",
+  //       totcapital_s:"",
+  //       salesmoney_s:"",
+  //       operating_profits_s:"",
+  //       current_income_s:"",
+  //       dedt_rati_s: "",
+  //     }));
+  //   };
 
-    try {
-      data = await processApi<any>("procedure", paraDeleted);
-    } catch (error) {
-      data = null;
-    }
+  //   const onSaveClick3 = async () => {
+  //     const dataItem = subDataResult2.data.filter((item: any) => {
+  //       return (
+  //         (item.rowstatus === "N" || item.rowstatus === "U") &&
+  //         item.rowstatus !== undefined
+  //       );
+  //     });
+
+  //     if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
+  //     let dataArr: TdataArr2 = {
+  //       rowstatus: [],
+  //       remark_s: [],
+  //       seq_s: [],
+  //       yyyy_s: [],
+  //       totasset_s: [],
+  //       paid_up_capital_s: [],
+  //       totcaptial_s: [],
+  //       salesmoney_s: [],
+  //       operating_profits_s: [],
+  //       current_income_s: [],
+  //       dedt_rati_s: [],
+  //     };
+  //     dataItem.forEach((item: any, idx: number) => {
+  //       const {
+  //         rowstatus = "",
+  //         remark = "",
+  //         current_income=0,
+  //         dedt_ratio=0,
+  //         operating_profits = 0,
+  //         paid_up_capital =0,
+  //         salesmoney =0,
+  //         seq=0,
+  //         totasset=0,
+  //         totcapital=0,
+  //         yyyy=""
+  //       } = item;
+
+  //       dataArr.rowstatus.push(rowstatus);
+  //       dataArr.remark_s.push(remark);
+  //       dataArr.seq_s.push(seq);
+  //       dataArr.yyyy_s.push(yyyy);
+  //       dataArr.totasset_s.push(totasset);
+  //       dataArr.paid_up_capital_s.push(paid_up_capital);
+  //       dataArr.totcaptial_s.push(totcapital);
+  //       dataArr.salesmoney_s.push(salesmoney);
+  //       dataArr.operating_profits_s.push(operating_profits);
+  //       dataArr.current_income_s.push(current_income);
+  //       dataArr.dedt_rati_s.push(dedt_ratio);
+  //     });
+  //     deletedMainRows2.forEach(async (item: any, idx: number) => {
+  //       const paraD: Iparameters = {
+  //         procedureName: "P_BA_A0020W_S",
+  //         pageNumber: 0,
+  //         pageSize: 0,
+  //         parameters: {
+  //           "@p_work_type": "MONEY",
+  //           "@p_orgdiv": "01",
+  //           "@p_location": "01",
+  //           "@p_auto": "N",
+  //           "@p_custcd": infomation.custcd,
+  //           "@p_custnm": infomation.custnm,
+  //           "@p_custdiv": infomation.custdiv,
+  //           "@p_custabbr": infomation.custabbr,
+  //           "@p_bizdiv": infomation.bizdiv,
+  //           "@p_bizregnum": infomation.bizregnum,
+  //           "@p_ceonm": infomation.ceonm,
+  //           "@p_repreregno": infomation.repreregno,
+  //           "@p_comptype": infomation.comptype,
+  //           "@p_compclass": infomation.compclass,
+  //           "@p_zipcode": infomation.zipcode,
+  //           "@p_address": infomation.address,
+  //           "@p_phonenum": infomation.phonenum,
+  //           "@p_faxnum": infomation.faxnum,
+  //           "@p_estbdt": convertDateToStr(infomation.estbdt),
+  //           "@p_compnm_eng": infomation.compnm_eng,
+  //           "@p_address_eng": infomation.address_eng,
+  //           "@p_bnkinfo": infomation.bnkinfo,
+  //           "@p_etelnum": infomation.etelnum,
+  //           "@p_efaxnum": infomation.efaxnum,
+  //           "@p_unpitem": infomation.unpitem,
+  //           "@p_useyn": infomation.useyn,
+  //           "@p_remark": infomation.remark,
+  //           "@p_attdatnum": infomation.attdatnum,
+  //           "@p_bill_type": infomation.bill_type,
+  //           "@p_recvid": infomation.recvid,
+  //           "@p_rtxisuyn": infomation.rtxisuyn,
+  //           "@p_etxprs": infomation.etxprs,
+  //           "@p_emailaddr_og": infomation.emailaddr_og,
+  //           "@p_phonenum_og": infomation.phonenum_og,
+  //           "@p_etax": infomation.etax,
+  //           "@p_inunpitem": infomation.inunpitem,
+  //           "@p_email": infomation.email,
+  //           "@p_itemlvl1": infomation.itemlvl1,
+  //           "@p_itemlvl2": infomation.itemlvl2,
+  //           "@p_itemlvl3": infomation.itemlvl3,
+  //           "@p_bankacnt": infomation.bankacnt,
+  //           "@p_bankacntuser": infomation.bankacntuser,
+  //           "@p_scmyn": infomation.scmyn,
+  //           "@p_periodyn":
+  //             infomation.pariodyn == undefined ? "" : infomation.pariodyn,
+  //           "@p_bnkinfo2": infomation.bnkinfo2,
+  //           "@p_bankacnt2": infomation.bankacnt2,
+  //           "@p_area": infomation.area,
+  //           "@p_rowstatus_s": item.rowstatus,
+  //           "@p_remark_s": item.remark,
+  //           "@p_custprsncd_s": "",
+  //           "@p_prsnnm_s": "",
+  //           "@p_dptnm_s": "",
+  //           "@p_postcd_s": "",
+  //           "@p_telno_s": "",
+  //           "@p_phoneno_s": "",
+  //           "@p_email_s": "",
+  //           "@p_rtrchk_s": "",
+  //           "@p_attdatnum_s": "",
+  //           "@p_sort_seq_s": "",
+  //           "@p_seq_s": item.seq,
+  //           "@p_yyyy_s": item.yyyy,
+  //           "@p_totasset_s":  item.totasset,
+  //           "@p_paid_up_capital_s":  item.paid_up_capital,
+  //           "@p_totcapital_s":  item.totcapital,
+  //           "@p_salesmoney_s":  item.salesmoney,
+  //           "@p_operating_profits_s":  item.operating_profits,
+  //           "@p_current_income_s":  item.current_income,
+  //           "@p_dedt_rati_s":  item.dedt_ratio,
+  //           "@p_userid": userId,
+  //           "@p_pc": pc,
+  //           "@p_form_id": "BA_A0020W",
+  //           "@p_company_code": "2207A046",
+  //         },
+  //       };
+  //       let data: any;
+
+  //       try {
+  //         data = await processApi<any>("procedure", paraD);
+  //       } catch (error) {
+  //         data = null;
+  //       }
+
+  //       if (data.isSuccess !== true) {
+  //         console.log("[오류 발생]");
+  //         console.log(data);
+  //       }
+  //     });
+  //     deletedMainRows2 = [];
+  //     const item = Object.getOwnPropertyNames(selectedState)[0];
+
+  //     setParaData((prev) => ({
+  //       ...prev,
+  //       workType: "MONEY",
+  //       custcd: item.toString(),
+  //       custnm: infomation.custnm,
+  //       custdiv: infomation.custdiv,
+  //       custabbr: infomation.custabbr,
+  //       bizdiv: infomation.bizdiv,
+  //       bizregnum: infomation.bizregnum,
+  //       ceonm: infomation.ceonm,
+  //       repreregno: infomation.repreregno,
+  //       comptype: infomation.comptype,
+  //       compclass: infomation.compclass,
+  //       zipcode: infomation.zipcode,
+  //       address: infomation.address,
+  //       phonenum: infomation.phonenum,
+  //       faxnum: infomation.faxnum,
+  //       estbdt: infomation.estbdt,
+  //       compnm_eng: infomation.compnm_eng,
+  //       address_eng: infomation.address_eng,
+  //       bnkinfo: infomation.bnkinfo,
+  //       etelnum: infomation.etelnum,
+  //       efaxnum: infomation.efaxnum,
+  //       unpitem: infomation.unpitem,
+  //       useyn: infomation.useyn,
+  //       remark: infomation.remark,
+  //       attdatnum: infomation.attdatnum,
+  //       bill_type: infomation.bill_type,
+  //       recvid: infomation.recvid,
+  //       rtxisuyn: infomation.rtxisuyn,
+  //       etxprs: infomation.etxprs,
+  //       emailaddr_og: infomation.emailaddr_og,
+  //       phonenum_og: infomation.phonenum_og,
+  //       etax: infomation.etax,
+  //       inunpitem: infomation.inunpitem,
+  //       email: infomation.email,
+  //       itemlvl1: infomation.itemlvl1,
+  //       itemlvl2: infomation.itemlvl2,
+  //       itemlvl3: infomation.itemlvl3,
+  //       bankacnt: infomation.bankacnt,
+  //       bankacntuser: infomation.bankacntuser,
+  //       scmyn: infomation.scmyn,
+  //       pariodyn: infomation.pariodyn,
+  //       bnkinfo2: infomation.bnkinfo2,
+  //       bankacnt2: infomation.bankacnt2,
+  //       area: infomation.area,
+  //       remark_s: dataArr.remark_s.join("|"),
+  //       rowstatus: dataArr.rowstatus.join("|"),
+  //       prsnnm_s: "",
+  //       custprsncd_s: "",
+  //       dptnm: "",
+  //       postcd_s: "",
+  //       telno: "",
+  //       phoneno_s:  "",
+  //       email_s:  "",
+  //       rtrchk_s:  "",
+  //       attdatnum_s:  "",
+  //       sort_seq_s: "",
+  //       seq_s: dataArr.seq_s.join("|"),
+  //       yyyy_s:dataArr.yyyy_s.join("|"),
+  //       totasset_s: dataArr.totasset_s.join("|"),
+  //       paid_up_capital_s: dataArr.paid_up_capital_s.join("|"),
+  //       totcapital_s:dataArr.totcaptial_s.join("|"),
+  //       salesmoney_s:dataArr.salesmoney_s.join("|"),
+  //       operating_profits_s: dataArr.operating_profits_s.join("|"),
+  //       current_income_s:dataArr.current_income_s.join("|"),
+  //       dedt_rati_s: dataArr.dedt_rati_s.join("|"),
+  //     }));
+  //   };
+
+    const fetchToDelete = async () => {
+      let data: any;
+
     try {
       data = await processApi<any>("procedure", paraDeleted);
     } catch (error) {
@@ -1609,18 +1954,7 @@ const PR_A0060: React.FC = () => {
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
-    if (data.isSuccess === true) {
-      resetAllGrid();
-      fetchMainGrid();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
-    }
 
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.fxcode = "";
-  };
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.fxcode = "";
   };
@@ -1631,14 +1965,7 @@ const PR_A0060: React.FC = () => {
 
   const fetchSaved = async () => {
     let data: any;
-  const fetchSaved = async () => {
-    let data: any;
 
-    let valid = true;
-    try {
-      if (!infomation.fxnum) {
-        throw findMessage(messagesData, "PR_A0060W_001");
-      }
     let valid = true;
     try {
       if (!infomation.fxnum) {
@@ -1652,25 +1979,11 @@ const PR_A0060: React.FC = () => {
       alert(e);
       valid = false;
     }
-      if (!infomation.fxnm) {
-        throw findMessage(messagesData, "PR_A0060W_002");
-      }
-    } catch (e) {
-      alert(e);
-      valid = false;
-    }
 
-    if (!valid) return false;
     if (!valid) return false;
 
     setLoading(true);
-    setLoading(true);
 
-    try {
-      data = await processApi<any>("procedure", infopara);
-    } catch (error) {
-      data = null;
-    }
     try {
       data = await processApi<any>("procedure", infopara);
     } catch (error) {
@@ -1680,17 +1993,7 @@ const PR_A0060: React.FC = () => {
     if (data.isSuccess === true) {
       setMainPgNum(1);
       setMainDataResult(process([], mainDataState));
-    if (data.isSuccess === true) {
-      setMainPgNum(1);
-      setMainDataResult(process([], mainDataState));
 
-      fetchMainGrid();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    setLoading(false);
-  };
       fetchMainGrid();
     } else {
       console.log("[오류 발생]");
@@ -2514,8 +2817,8 @@ const PR_A0060: React.FC = () => {
       {attachmentsWindowVisible2 && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible2}
-          getData={getAttachmentsData2}
-          para={subDataResult.data[rows - 1].attdatnum}
+          setData={getAttachmentsData2}
+          para={subDataResult.data[rows].attdatnum}
         />
       )}
     </>
