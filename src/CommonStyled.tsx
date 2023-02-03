@@ -553,6 +553,10 @@ export const Gnv = styled.div<TGnv>`
     justify-content: center;
   }
 
+  .k-panelbar-item-icon.k-icon.k-i-gear {
+    color: #ff6358;
+  }
+
   /*=========================================================================
 	미디어 쿼리
 	##Device = 모바일
