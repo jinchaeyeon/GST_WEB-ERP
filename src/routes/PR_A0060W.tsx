@@ -1263,7 +1263,7 @@ const PR_A0060: React.FC = () => {
     parameters: {
       "@p_work_type": paraData.workType,
       "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_location": paraData.location,
       "@p_fxcode": paraData.fxcode,
       "@p_recdt": convertDateToStr(paraData.recdt),
       "@p_fxnum": paraData.fxnum,
@@ -1332,7 +1332,7 @@ const PR_A0060: React.FC = () => {
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
       "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_location": infomation.location,
       "@p_fxcode": paraDataDeleted.fxcode,
       "@p_recdt": convertDateToStr(infomation.recdt),
       "@p_fxnum": infomation.fxnum,
@@ -1400,7 +1400,7 @@ const PR_A0060: React.FC = () => {
     parameters: {
       "@p_work_type": infomation.workType,
       "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_location": infomation.location,
       "@p_fxcode": infomation.fxcode,
       "@p_recdt": convertDateToStr(infomation.recdt),
       "@p_fxnum": infomation.fxnum,
@@ -1522,7 +1522,7 @@ const PR_A0060: React.FC = () => {
         parameters: {
           "@p_work_type": "U",
           "@p_orgdiv": "01",
-          "@p_location": "01",
+          "@p_location": infomation.location,
           "@p_fxcode": infomation.fxcode,
           "@p_recdt": convertDateToStr(infomation.recdt),
           "@p_fxnum": infomation.fxnum,
