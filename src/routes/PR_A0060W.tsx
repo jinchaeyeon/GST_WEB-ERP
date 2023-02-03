@@ -135,23 +135,23 @@ const PR_A0060: React.FC = () => {
     { user_id: "", user_name: "" },
   ]);
 
-    useEffect(() => {
-      if (bizComponentData !== null) {
-        const dptcdQueryStr = getQueryFromBizComponent(
-          bizComponentData.find(
-            (item: any) => item.bizComponentId === "L_dptcd_001"
-          )
-        );
-        const personQueryStr = getQueryFromBizComponent(
-          bizComponentData.find(
-            (item: any) => item.bizComponentId === "L_sysUserMaster_004"
-          )
-        );
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      const personQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_004"
+        )
+      );
 
-        fetchQuery(dptcdQueryStr, setdptcdListData);
-        fetchQuery(personQueryStr, setPersonListData);
-      }
-    }, [bizComponentData]);
+      fetchQuery(dptcdQueryStr, setdptcdListData);
+      fetchQuery(personQueryStr, setPersonListData);
+    }
+  }, [bizComponentData]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -600,7 +600,7 @@ const PR_A0060: React.FC = () => {
           classnm2: firstRowData.classnm2,
           classnm3: firstRowData.classnm3,
           remark: firstRowData.remark,
-          useyn: firstRowData.useyn == "Y" ? "Y" : "N" ,
+          useyn: firstRowData.useyn == "Y" ? "Y" : "N",
           attdatnum: firstRowData.attdatnum,
           proccd: firstRowData.proccd,
           IOT_TER_ID: firstRowData.IOT_TER_ID,
@@ -610,7 +610,7 @@ const PR_A0060: React.FC = () => {
           cnt: firstRowData.cnt,
           files: firstRowData.files,
           availabletime: firstRowData.availabletime,
-          viewyn: firstRowData.viewyn == "Y" ? "Y" : "N" ,
+          viewyn: firstRowData.viewyn == "Y" ? "Y" : "N",
           insert_form_id: "PR_A0060W",
           update_form_id: "",
         });
@@ -750,7 +750,7 @@ const PR_A0060: React.FC = () => {
       classnm2: selectedRowData.classnm2,
       classnm3: selectedRowData.classnm3,
       remark: selectedRowData.remark,
-      useyn: selectedRowData.useyn == "Y" ? "Y" : "N" ,
+      useyn: selectedRowData.useyn == "Y" ? "Y" : "N",
       attdatnum: selectedRowData.attdatnum,
       proccd: selectedRowData.proccd,
       IOT_TER_ID: selectedRowData.IOT_TER_ID,
@@ -760,7 +760,7 @@ const PR_A0060: React.FC = () => {
       cnt: selectedRowData.cnt,
       files: selectedRowData.files,
       availabletime: selectedRowData.availabletime,
-      viewyn: selectedRowData.viewyn == "Y" ? "Y" : "N" ,
+      viewyn: selectedRowData.viewyn == "Y" ? "Y" : "N",
       insert_form_id: "PR_A0060W",
       update_form_id: "",
     });
@@ -868,44 +868,44 @@ const PR_A0060: React.FC = () => {
   const onAddClick2 = () => {
     setWorkType("N");
     setInfomation({
-        pgSize: PAGE_SIZE,
-        workType: "N",
-        orgdiv: "01",
-        fxcode: "",
-        fxdiv: "",
-        location: "",
-        recdt: new Date(),
-        fxnum: "",
-        fxnm: "",
-        fxno: "",
-        spec: "",
-        dptcd: "",
-        person: "",
-        place: "",
-        makedt: new Date(),
-        maker: "",
-        indt: new Date(),
-        custcd: "",
-        kind: "",
-        amt: 0,
-        uph: 0,
-        classnm1: "",
-        classnm2: "",
-        classnm3: "",
-        remark: "",
-        useyn: "Y",
-        attdatnum: "",
-        proccd: "",
-        IOT_TER_ID: 0,
-        iotserialno: "",
-        attdatnum_img: null,
-        custnm: "",
-        cnt: 0,
-        files: "",
-        availabletime: 0,
-        viewyn: "",
-        insert_form_id: "PR_A0060W",
-        update_form_id: "",
+      pgSize: PAGE_SIZE,
+      workType: "N",
+      orgdiv: "01",
+      fxcode: "",
+      fxdiv: "",
+      location: "",
+      recdt: new Date(),
+      fxnum: "",
+      fxnm: "",
+      fxno: "",
+      spec: "",
+      dptcd: "",
+      person: "",
+      place: "",
+      makedt: new Date(),
+      maker: "",
+      indt: new Date(),
+      custcd: "",
+      kind: "",
+      amt: 0,
+      uph: 0,
+      classnm1: "",
+      classnm2: "",
+      classnm3: "",
+      remark: "",
+      useyn: "Y",
+      attdatnum: "",
+      proccd: "",
+      IOT_TER_ID: 0,
+      iotserialno: "",
+      attdatnum_img: null,
+      custnm: "",
+      cnt: 0,
+      files: "",
+      availabletime: 0,
+      viewyn: "",
+      insert_form_id: "PR_A0060W",
+      update_form_id: "",
     });
   };
 
@@ -1158,13 +1158,13 @@ const PR_A0060: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-//   const onSubDataSortChange = (e: any) => {
-//     setSubDataState((prev) => ({ ...prev, sort: e.sort }));
-//   };
+  //   const onSubDataSortChange = (e: any) => {
+  //     setSubDataState((prev) => ({ ...prev, sort: e.sort }));
+  //   };
 
-//   const onSubDataSortChange2 = (e: any) => {
-//     setSubDataState2((prev) => ({ ...prev, sort: e.sort }));
-//   };
+  //   const onSubDataSortChange2 = (e: any) => {
+  //     setSubDataState2((prev) => ({ ...prev, sort: e.sort }));
+  //   };
 
   const search = () => {
     // setSubPgNum(1);
@@ -1304,10 +1304,10 @@ const PR_A0060: React.FC = () => {
   //     />
   //   );
 
-    const [paraDataDeleted, setParaDataDeleted] = useState({
-      work_type: "",
-      fxcode: "",
-    });
+  const [paraDataDeleted, setParaDataDeleted] = useState({
+    work_type: "",
+    fxcode: "",
+  });
 
   //   const onDeleteClick = (e: any) => {
   //     let newData: any[] = [];
@@ -1353,14 +1353,14 @@ const PR_A0060: React.FC = () => {
   //     setSubDataState2({});
   //   };
 
-    const onDeleteClick2 = (e: any) => {
-      const item = Object.getOwnPropertyNames(selectedState)[0];
-      setParaDataDeleted((prev) => ({
-        ...prev,
-        work_type: "D",
-        fxcode: item,
-      }));
-    };
+  const onDeleteClick2 = (e: any) => {
+    const item = Object.getOwnPropertyNames(selectedState)[0];
+    setParaDataDeleted((prev) => ({
+      ...prev,
+      work_type: "D",
+      fxcode: item,
+    }));
+  };
 
   //   const [paraData, setParaData] = useState({
   //     workType: "CustPerson",
@@ -1528,139 +1528,145 @@ const PR_A0060: React.FC = () => {
   //     },
   //   };
 
-    const paraDeleted: Iparameters = {
-      procedureName: "P_PR_A0060W_S",
-      pageNumber: 0,
-      pageSize: 0,
-      parameters: {
-        "@p_work_type": paraDataDeleted.work_type,
-        "@p_orgdiv": "01",
-        "@p_location": "01",
-        "@p_fxcode": paraDataDeleted.fxcode,
-        "@p_recdt": convertDateToStr(infomation.recdt),
-        "@p_fxnum": infomation.fxnum,
-        "@p_fxnm": infomation.fxnm,
-        "@p_fxno": infomation.fxno,
-        "@p_spec": infomation.spec,
-        "@p_dptcd": dptcdListData.find(
-          (item: any) => item.dptnm === infomation.dptcd
-        )?.dptcd == undefined ? "" : dptcdListData.find(
-          (item: any) => item.dptnm === infomation.dptcd
-        )?.dptcd,
-        "@p_person": personListData.find(
-          (item: any) => item.user_name === infomation.person
-        )?.user_id == undefined ? "" : personListData.find(
-          (item: any) => item.user_name === infomation.person
-        )?.user_id,
-        "@p_place": infomation.place,
-        "@p_makedt": convertDateToStr(infomation.makedt),
-        "@p_maker": infomation.maker,
-        "@p_indt": convertDateToStr(infomation.indt),
-        "@p_custcd": infomation.custcd,
-        "@p_amt": infomation.amt,
-        "@p_remark": infomation.remark,
-        "@p_attdatnum_img": null,
-        "@p_viewyn" : infomation.viewyn,
-        "@p_useyn": infomation.useyn,
-        "@p_attdatnum": infomation.attdatnum,
-        "@p_kind": infomation.kind,
-        "@p_uph": infomation.uph,
-        "@p_IOT_TER_ID": infomation.IOT_TER_ID,
-        "@p_iotserialno": infomation.iotserialno,
-        "@p_classnm1": infomation.classnm1,
-        "@p_classnm2": infomation.classnm2,
-        "@p_classnm3": infomation.classnm3,
-        "@p_fxdiv": infomation.fxdiv,
-        "@p_proccd": infomation.proccd,
-        "@p_userid": userId,
-        "@p_pc": pc,
-        "@p_pgmdiv": "F",
-        "@p_position": "",
-        "@p_form_id": 'PR_A0060W',
-        "@p_availabletime": 2,
-        "@p_rowstatus_s":'',
-        "@p_fxseq_s": '',
-        "@p_fxdt_s":'',
-        "@p_custcd_s":'',
-        "@p_custnm_s":'',
-        "@p_errtext_s":'',
-        "@p_protext_s":'',
-        "@p_fxcost_s":'',
-        "@p_remark1_s":'',
-        "@p_attdatnum_s":'',
-        "@p_stdtime_s":'',
-        "@p_company_code": "2207A046"
-      },
-    };
+  const paraDeleted: Iparameters = {
+    procedureName: "P_PR_A0060W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraDataDeleted.work_type,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_fxcode": paraDataDeleted.fxcode,
+      "@p_recdt": convertDateToStr(infomation.recdt),
+      "@p_fxnum": infomation.fxnum,
+      "@p_fxnm": infomation.fxnm,
+      "@p_fxno": infomation.fxno,
+      "@p_spec": infomation.spec,
+      "@p_dptcd":
+        dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+          ?.dptcd == undefined
+          ? ""
+          : dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+              ?.dptcd,
+      "@p_person":
+        personListData.find((item: any) => item.user_name === infomation.person)
+          ?.user_id == undefined
+          ? ""
+          : personListData.find(
+              (item: any) => item.user_name === infomation.person
+            )?.user_id,
+      "@p_place": infomation.place,
+      "@p_makedt": convertDateToStr(infomation.makedt),
+      "@p_maker": infomation.maker,
+      "@p_indt": convertDateToStr(infomation.indt),
+      "@p_custcd": infomation.custcd,
+      "@p_amt": infomation.amt,
+      "@p_remark": infomation.remark,
+      "@p_attdatnum_img": null,
+      "@p_viewyn": infomation.viewyn,
+      "@p_useyn": infomation.useyn,
+      "@p_attdatnum": infomation.attdatnum,
+      "@p_kind": infomation.kind,
+      "@p_uph": infomation.uph,
+      "@p_IOT_TER_ID": infomation.IOT_TER_ID,
+      "@p_iotserialno": infomation.iotserialno,
+      "@p_classnm1": infomation.classnm1,
+      "@p_classnm2": infomation.classnm2,
+      "@p_classnm3": infomation.classnm3,
+      "@p_fxdiv": infomation.fxdiv,
+      "@p_proccd": infomation.proccd,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_pgmdiv": "F",
+      "@p_position": "",
+      "@p_form_id": "PR_A0060W",
+      "@p_availabletime": 2,
+      "@p_rowstatus_s": "",
+      "@p_fxseq_s": "",
+      "@p_fxdt_s": "",
+      "@p_custcd_s": "",
+      "@p_custnm_s": "",
+      "@p_errtext_s": "",
+      "@p_protext_s": "",
+      "@p_fxcost_s": "",
+      "@p_remark1_s": "",
+      "@p_attdatnum_s": "",
+      "@p_stdtime_s": "",
+      "@p_company_code": "2207A046",
+    },
+  };
 
-    const infopara: Iparameters = {
-      procedureName: "P_PR_A0060W_S",
-      pageNumber: 0,
-      pageSize: 0,
-      parameters: {
-        "@p_work_type": infomation.workType,
-        "@p_orgdiv": "01",
-        "@p_location": "01",
-        "@p_fxcode": infomation.fxcode,
-        "@p_recdt": convertDateToStr(infomation.recdt),
-        "@p_fxnum": infomation.fxnum,
-        "@p_fxnm": infomation.fxnm,
-        "@p_fxno": infomation.fxno,
-        "@p_spec": infomation.spec,
-        "@p_dptcd": dptcdListData.find(
-          (item: any) => item.dptnm === infomation.dptcd
-        )?.dptcd == undefined ? "" : dptcdListData.find(
-          (item: any) => item.dptnm === infomation.dptcd
-        )?.dptcd,
-        "@p_person": personListData.find(
-          (item: any) => item.user_name === infomation.person
-        )?.user_id == undefined ? "" : personListData.find(
-          (item: any) => item.user_name === infomation.person
-        )?.user_id,
-        "@p_place": infomation.place,
-        "@p_makedt": convertDateToStr(infomation.makedt),
-        "@p_maker": infomation.maker,
-        "@p_indt": convertDateToStr(infomation.indt),
-        "@p_custcd": infomation.custcd,
-        "@p_amt": infomation.amt,
-        "@p_remark": infomation.remark,
-        "@p_attdatnum_img": null,
-        "@p_viewyn" : infomation.viewyn,
-        "@p_useyn": infomation.useyn,
-        "@p_attdatnum": infomation.attdatnum,
-        "@p_kind": infomation.kind,
-        "@p_uph": infomation.uph,
-        "@p_IOT_TER_ID": infomation.IOT_TER_ID,
-        "@p_iotserialno": infomation.iotserialno,
-        "@p_classnm1": infomation.classnm1,
-        "@p_classnm2": infomation.classnm2,
-        "@p_classnm3": infomation.classnm3,
-        "@p_fxdiv": infomation.fxdiv,
-        "@p_proccd": infomation.proccd,
-        "@p_userid": userId,
-        "@p_pc": pc,
-        "@p_pgmdiv": "F",
-        "@p_position": "",
-        "@p_form_id": 'PR_A0060W',
-        "@p_availabletime": 2,
-        "@p_rowstatus_s":'',
-        "@p_fxseq_s": '',
-        "@p_fxdt_s":'',
-        "@p_custcd_s":'',
-        "@p_custnm_s":'',
-        "@p_errtext_s":'',
-        "@p_protext_s":'',
-        "@p_fxcost_s":'',
-        "@p_remark1_s":'',
-        "@p_attdatnum_s":'',
-        "@p_stdtime_s":'',
-        "@p_company_code": "2207A046"
-      },
-    };
+  const infopara: Iparameters = {
+    procedureName: "P_PR_A0060W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": infomation.workType,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_fxcode": infomation.fxcode,
+      "@p_recdt": convertDateToStr(infomation.recdt),
+      "@p_fxnum": infomation.fxnum,
+      "@p_fxnm": infomation.fxnm,
+      "@p_fxno": infomation.fxno,
+      "@p_spec": infomation.spec,
+      "@p_dptcd":
+        dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+          ?.dptcd == undefined
+          ? ""
+          : dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+              ?.dptcd,
+      "@p_person":
+        personListData.find((item: any) => item.user_name === infomation.person)
+          ?.user_id == undefined
+          ? ""
+          : personListData.find(
+              (item: any) => item.user_name === infomation.person
+            )?.user_id,
+      "@p_place": infomation.place,
+      "@p_makedt": convertDateToStr(infomation.makedt),
+      "@p_maker": infomation.maker,
+      "@p_indt": convertDateToStr(infomation.indt),
+      "@p_custcd": infomation.custcd,
+      "@p_amt": infomation.amt,
+      "@p_remark": infomation.remark,
+      "@p_attdatnum_img": null,
+      "@p_viewyn": infomation.viewyn,
+      "@p_useyn": infomation.useyn,
+      "@p_attdatnum": infomation.attdatnum,
+      "@p_kind": infomation.kind,
+      "@p_uph": infomation.uph,
+      "@p_IOT_TER_ID": infomation.IOT_TER_ID,
+      "@p_iotserialno": infomation.iotserialno,
+      "@p_classnm1": infomation.classnm1,
+      "@p_classnm2": infomation.classnm2,
+      "@p_classnm3": infomation.classnm3,
+      "@p_fxdiv": infomation.fxdiv,
+      "@p_proccd": infomation.proccd,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_pgmdiv": "F",
+      "@p_position": "",
+      "@p_form_id": "PR_A0060W",
+      "@p_availabletime": 2,
+      "@p_rowstatus_s": "",
+      "@p_fxseq_s": "",
+      "@p_fxdt_s": "",
+      "@p_custcd_s": "",
+      "@p_custnm_s": "",
+      "@p_errtext_s": "",
+      "@p_protext_s": "",
+      "@p_fxcost_s": "",
+      "@p_remark1_s": "",
+      "@p_attdatnum_s": "",
+      "@p_stdtime_s": "",
+      "@p_company_code": "2207A046",
+    },
+  };
 
-    useEffect(() => {
-      if (paraDataDeleted.work_type === "D") fetchToDelete();
-    }, [paraDataDeleted]);
+  useEffect(() => {
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
+  }, [paraDataDeleted]);
 
   //   const onSaveClick = async () => {
   //     const dataItem = subDataResult.data.filter((item: any) => {
@@ -2099,92 +2105,91 @@ const PR_A0060: React.FC = () => {
   //     }));
   //   };
 
-    const fetchToDelete = async () => {
-      let data: any;
+  const fetchToDelete = async () => {
+    let data: any;
 
-      try {
-        data = await processApi<any>("procedure", paraDeleted);
-      } catch (error) {
-        data = null;
+    try {
+      data = await processApi<any>("procedure", paraDeleted);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      resetAllGrid();
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
+
+    paraDataDeleted.work_type = ""; //초기화
+    paraDataDeleted.fxcode = "";
+  };
+
+  const onSaveClick2 = async () => {
+    fetchSaved();
+  };
+
+  const fetchSaved = async () => {
+    let data: any;
+
+    let valid = true;
+    try {
+      if (!infomation.fxnum) {
+        throw findMessage(messagesData, "PR_A0060W_001");
       }
 
-      if (data.isSuccess === true) {
-        resetAllGrid();
-        fetchMainGrid();
-      } else {
-        console.log("[오류 발생]");
-        console.log(data);
-        alert("[" + data.statusCode + "] " + data.resultMessage);
+      if (!infomation.fxnm) {
+        throw findMessage(messagesData, "PR_A0060W_002");
       }
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
 
-      paraDataDeleted.work_type = ""; //초기화
-      paraDataDeleted.fxcode = "";
-    };
+    if (!valid) return false;
 
-    const onSaveClick2 = async () => {
-      fetchSaved();
-    };
+    setLoading(true);
 
-    const fetchSaved = async () => {
-      let data: any;
+    try {
+      data = await processApi<any>("procedure", infopara);
+    } catch (error) {
+      data = null;
+    }
 
-      let valid = true;
-      try {
-        if (!infomation.fxnum) {
-          throw findMessage(messagesData, "PR_A0060W_001");
-        }
+    if (data.isSuccess === true) {
+      setMainPgNum(1);
+      setMainDataResult(process([], mainDataState));
 
-        if (!infomation.fxnm) {
-          throw findMessage(messagesData, "PR_A0060W_002");
-        }
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
 
-      } catch (e) {
-        alert(e);
-        valid = false;
-      }
+  // const fetchTodoGridSaved = async () => {
+  //   let data: any;
+  //   setLoading(true);
+  //   try {
+  //     data = await processApi<any>("procedure", para);
+  //   } catch (error) {
+  //     data = null;
+  //   }
 
-      if (!valid) return false;
+  //   if (data.isSuccess === true) {
+  //     setSubPgNum(1);
+  //     setSubDataResult(process([], subDataState));
 
-      setLoading(true);
-
-      try {
-        data = await processApi<any>("procedure", infopara);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        setMainPgNum(1);
-        setMainDataResult(process([], mainDataState));
-
-        fetchMainGrid();
-      } else {
-        console.log("[오류 발생]");
-        console.log(data);
-      }
-      setLoading(false);
-    };
-
-    // const fetchTodoGridSaved = async () => {
-    //   let data: any;
-    //   setLoading(true);
-    //   try {
-    //     data = await processApi<any>("procedure", para);
-    //   } catch (error) {
-    //     data = null;
-    //   }
-
-    //   if (data.isSuccess === true) {
-    //     setSubPgNum(1);
-    //     setSubDataResult(process([], subDataState));
-
-    //     fetchSubGrid();
-    //   } else {
-    //     console.log("[오류 발생]");
-    //     console.log(data);
-    //   }
-    //   setLoading(false);
-    // };
+  //     fetchSubGrid();
+  //   } else {
+  //     console.log("[오류 발생]");
+  //     console.log(data);
+  //   }
+  //   setLoading(false);
+  // };
 
   //   useEffect(() => {
   //     if (paraData.custcd != "") {
@@ -3042,7 +3047,7 @@ const PR_A0060: React.FC = () => {
           setData={setCustData}
         />
       )}
-    {custWindowVisible2 && (
+      {custWindowVisible2 && (
         <CustomersWindow
           setVisible={setCustWindowVisible2}
           workType={workType}
@@ -3058,15 +3063,15 @@ const PR_A0060: React.FC = () => {
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible}
-          getData={getAttachmentsData}
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
           para={infomation.attdatnum}
         />
       )}
       {attachmentsWindowVisible2 && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible2}
-          getData={getAttachmentsData2}
+          setVisible={setAttachmentsWindowVisible2}
+          setData={getAttachmentsData2}
           para={subDataResult.data[rows - 1].attdatnum}
         />
       )}

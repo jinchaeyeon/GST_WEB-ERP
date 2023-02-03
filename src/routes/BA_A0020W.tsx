@@ -561,7 +561,7 @@ const BA_A0020: React.FC = () => {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.custcd]: true });
-    
+
         setInfomation({
           pgSize: PAGE_SIZE,
           workType: "U",
@@ -595,9 +595,9 @@ const BA_A0020: React.FC = () => {
           efaxnum: firstRowData.efaxnum,
           email: firstRowData.email,
           taxortnm: firstRowData.taxortnm,
-          useyn: firstRowData.useyn == "Y" ? "Y" : "N" ,
-          scmyn: firstRowData.scmyn == "Y" ? "Y" : "N" ,
-          pariodyn: firstRowData.pariodyn == "Y" ? "Y" : "N" ,
+          useyn: firstRowData.useyn == "Y" ? "Y" : "N",
+          scmyn: firstRowData.scmyn == "Y" ? "Y" : "N",
+          pariodyn: firstRowData.pariodyn == "Y" ? "Y" : "N",
           attdatnum: firstRowData.attdatnum,
           itemlvl1: firstRowData.itemlvl1,
           itemlvl2: firstRowData.itemlvl2,
@@ -612,28 +612,27 @@ const BA_A0020: React.FC = () => {
           rtxisuyn: firstRowData.rtxisuyn,
         });
 
-          setsubFilters((prev) => ({
-            ...prev,
-            workType: "CustPerson",
-            useyn: firstRowData.useyn,
-            custcd: firstRowData.custcd,
-            custnm:  firstRowData.custnm,
-            custdiv:  firstRowData.custdiv,
-            bizregnum:  firstRowData.bizregnum,
-            ceonm:  firstRowData.ceonm,
-          }));
+        setsubFilters((prev) => ({
+          ...prev,
+          workType: "CustPerson",
+          useyn: firstRowData.useyn,
+          custcd: firstRowData.custcd,
+          custnm: firstRowData.custnm,
+          custdiv: firstRowData.custdiv,
+          bizregnum: firstRowData.bizregnum,
+          ceonm: firstRowData.ceonm,
+        }));
 
-
-          setsubFilters2((prev) => ({
-            ...prev,
-            workType: "MONEY",
-            useyn:  firstRowData.useyn,
-            custcd:  firstRowData.custcd,
-            custnm:  firstRowData.custnm,
-            custdiv:  firstRowData.custdiv,
-            bizregnum:  firstRowData.bizregnum,
-            ceonm:  firstRowData.ceonm,
-          }));
+        setsubFilters2((prev) => ({
+          ...prev,
+          workType: "MONEY",
+          useyn: firstRowData.useyn,
+          custcd: firstRowData.custcd,
+          custnm: firstRowData.custnm,
+          custdiv: firstRowData.custdiv,
+          bizregnum: firstRowData.bizregnum,
+          ceonm: firstRowData.ceonm,
+        }));
 
         setIfSelectFirstRow(true);
       }
@@ -692,9 +691,9 @@ const BA_A0020: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      if(tabSelected == 1) {
+      if (tabSelected == 1) {
         fetchSubGrid();
-      } else if(tabSelected == 2){
+      } else if (tabSelected == 2) {
         fetchSubGrid2();
       }
     }
@@ -755,9 +754,9 @@ const BA_A0020: React.FC = () => {
       efaxnum: selectedRowData.efaxnum,
       email: selectedRowData.email,
       taxortnm: selectedRowData.taxortnm,
-      useyn: selectedRowData.useyn == "Y" ? "Y" : "N" ,
-      scmyn: selectedRowData.scmyn == "Y" ? "Y" : "N" ,
-      pariodyn: selectedRowData.pariodyn == "Y" ? "Y" : "N" ,
+      useyn: selectedRowData.useyn == "Y" ? "Y" : "N",
+      scmyn: selectedRowData.scmyn == "Y" ? "Y" : "N",
+      pariodyn: selectedRowData.pariodyn == "Y" ? "Y" : "N",
       attdatnum: selectedRowData.attdatnum,
       itemlvl1: selectedRowData.itemlvl1,
       itemlvl2: selectedRowData.itemlvl2,
@@ -772,7 +771,7 @@ const BA_A0020: React.FC = () => {
       rtxisuyn: selectedRowData.rtxisuyn,
     });
 
-    if(tabSelected == 1){
+    if (tabSelected == 1) {
       setsubFilters((prev) => ({
         ...prev,
         workType: "CustPerson",
@@ -783,7 +782,7 @@ const BA_A0020: React.FC = () => {
         bizregnum: selectedRowData.bizregnum,
         ceonm: selectedRowData.ceonm,
       }));
-    } else if(tabSelected == 2){
+    } else if (tabSelected == 2) {
       setsubFilters2((prev) => ({
         ...prev,
         workType: "MONEY",
@@ -1906,13 +1905,13 @@ const BA_A0020: React.FC = () => {
       attdatnum_s: dataArr.attdatnum_s.join("|"),
       sort_seq_s: dataArr.sort_seq_s.join("|"),
       seq_s: "",
-      yyyy_s:"",
+      yyyy_s: "",
       totasset_s: "",
       paid_up_capital_s: "",
-      totcapital_s:"",
-      salesmoney_s:"",
-      operating_profits_s:"",
-      current_income_s:"",
+      totcapital_s: "",
+      salesmoney_s: "",
+      operating_profits_s: "",
+      current_income_s: "",
       dedt_rati_s: "",
     }));
   };
@@ -1943,15 +1942,15 @@ const BA_A0020: React.FC = () => {
       const {
         rowstatus = "",
         remark = "",
-        current_income=0,
-        dedt_ratio=0,
+        current_income = 0,
+        dedt_ratio = 0,
         operating_profits = 0,
-        paid_up_capital =0,
-        salesmoney =0,
-        seq=0,
-        totasset=0,
-        totcapital=0,
-        yyyy=""
+        paid_up_capital = 0,
+        salesmoney = 0,
+        seq = 0,
+        totasset = 0,
+        totcapital = 0,
+        yyyy = "",
       } = item;
 
       dataArr.rowstatus.push(rowstatus);
@@ -2034,13 +2033,13 @@ const BA_A0020: React.FC = () => {
           "@p_sort_seq_s": "",
           "@p_seq_s": item.seq,
           "@p_yyyy_s": item.yyyy,
-          "@p_totasset_s":  item.totasset,
-          "@p_paid_up_capital_s":  item.paid_up_capital,
-          "@p_totcapital_s":  item.totcapital,
-          "@p_salesmoney_s":  item.salesmoney,
-          "@p_operating_profits_s":  item.operating_profits,
-          "@p_current_income_s":  item.current_income,
-          "@p_dedt_rati_s":  item.dedt_ratio,
+          "@p_totasset_s": item.totasset,
+          "@p_paid_up_capital_s": item.paid_up_capital,
+          "@p_totcapital_s": item.totcapital,
+          "@p_salesmoney_s": item.salesmoney,
+          "@p_operating_profits_s": item.operating_profits,
+          "@p_current_income_s": item.current_income,
+          "@p_dedt_rati_s": item.dedt_ratio,
           "@p_userid": userId,
           "@p_pc": pc,
           "@p_form_id": "BA_A0020W",
@@ -2116,19 +2115,19 @@ const BA_A0020: React.FC = () => {
       dptnm: "",
       postcd_s: "",
       telno: "",
-      phoneno_s:  "",
-      email_s:  "",
-      rtrchk_s:  "",
-      attdatnum_s:  "",
+      phoneno_s: "",
+      email_s: "",
+      rtrchk_s: "",
+      attdatnum_s: "",
       sort_seq_s: "",
       seq_s: dataArr.seq_s.join("|"),
-      yyyy_s:dataArr.yyyy_s.join("|"),
+      yyyy_s: dataArr.yyyy_s.join("|"),
       totasset_s: dataArr.totasset_s.join("|"),
       paid_up_capital_s: dataArr.paid_up_capital_s.join("|"),
-      totcapital_s:dataArr.totcaptial_s.join("|"),
-      salesmoney_s:dataArr.salesmoney_s.join("|"),
+      totcapital_s: dataArr.totcaptial_s.join("|"),
+      salesmoney_s: dataArr.salesmoney_s.join("|"),
       operating_profits_s: dataArr.operating_profits_s.join("|"),
-      current_income_s:dataArr.current_income_s.join("|"),
+      current_income_s: dataArr.current_income_s.join("|"),
       dedt_rati_s: dataArr.dedt_rati_s.join("|"),
     }));
   };
@@ -2201,7 +2200,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       setMainPgNum(1);
       setMainDataResult(process([], mainDataState));
@@ -3098,7 +3097,7 @@ const BA_A0020: React.FC = () => {
                   ) === -1
                 }
               />
-              <GridColumn field="yyyy" title="결산년도" width="150px"/>
+              <GridColumn field="yyyy" title="결산년도" width="150px" />
               <GridColumn
                 field="totasset"
                 title="총자산"
@@ -3169,15 +3168,15 @@ const BA_A0020: React.FC = () => {
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible}
-          getData={getAttachmentsData}
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
           para={infomation.attdatnum}
         />
       )}
       {attachmentsWindowVisible2 && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible2}
-          getData={getAttachmentsData2}
+          setVisible={setAttachmentsWindowVisible2}
+          setData={getAttachmentsData2}
           para={subDataResult.data[rows - 1].attdatnum}
         />
       )}

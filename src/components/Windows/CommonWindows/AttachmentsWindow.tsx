@@ -27,12 +27,12 @@ import CenterCell from "../../Cells/CenterCell";
 import * as base64 from "byte-base64";
 
 type IKendoWindow = {
-  getVisible(arg: boolean): void;
-  getData(data: object): void;
+  setVisible(arg: boolean): void;
+  setData(data: object): void;
   para: string; //{};
 };
 
-const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
+const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -55,7 +55,7 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
   const processApi = useApi();
@@ -76,9 +76,6 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
         : "attached",
       files: files, //.FileList,
     };
-
-    console.log("filePara");
-    console.log(filePara);
 
     try {
       data = await processApi<any>("file-upload", filePara);
@@ -118,23 +115,26 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
 
     if (data !== null) {
       const totalRowCnt = data.tables[0].rowCount;
-      const rows = data.tables[0].Rows;
 
-      setMainDataResult((prev) => {
-        return {
-          data: [...rows],
-          total: totalRowCnt,
+      if (totalRowCnt > 0) {
+        const rows = data.tables[0].Rows;
+
+        setMainDataResult((prev) => {
+          return {
+            data: [...rows],
+            total: totalRowCnt,
+          };
+        });
+
+        result = {
+          attdatnum: rows[0].attdatnum,
+          original_name: rows[0].original_name,
+          rowCount: totalRowCnt,
         };
-      });
-
-      result = {
-        attdatnum: rows[0].attdatnum,
-        original_name: rows[0].original_name,
-        rowCount: totalRowCnt,
-      };
+      }
     }
 
-    getData(result);
+    setData(result);
   };
 
   const excelInput: any = React.useRef();

@@ -2219,8 +2219,8 @@ const KendoWindow = ({
 
       {attachmentsWindowVisible && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible}
-          getData={getAttachmentsData}
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
           para={initialVal.attdatnum}
         />
       )}
