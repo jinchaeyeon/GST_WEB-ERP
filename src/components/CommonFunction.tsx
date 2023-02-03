@@ -659,6 +659,9 @@ export const getCodeFromValue = (value: any, valueField?: string) => {
 export const getYn = (value: string | boolean) => {
   return value === "Y" || value === true ? "Y" : "N";
 };
+export const getBooleanFromYn = (value: string | boolean) => {
+  return value === "Y" || value === true ? true : false;
+};
 
 // 선택된 행 중 첫번째 행의 데이터를 반환
 export const getSelectedFirstData = (
