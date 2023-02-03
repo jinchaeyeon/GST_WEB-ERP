@@ -1,8 +1,8 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Form, Field, FormElement } from "@progress/kendo-react-form";
-import { KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { menusState, tokenState } from "../store/atoms";
+import { tokenState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useSetRecoilState } from "recoil";
 import { FormInput, FormComboBox } from "../components/Editors";
@@ -28,7 +28,6 @@ const Login: React.FC = () => {
   const processApi = useApi();
   const history = useHistory();
   const setToken = useSetRecoilState(tokenState);
-  const setMenus = useSetRecoilState(menusState);
   const setLoading = useSetRecoilState(isLoading);
   const [isAllowedIpAddress, setIsAllowedIpAddress] = useState(false);
   const [ip, setIp] = useState("");
@@ -99,13 +98,6 @@ const Login: React.FC = () => {
     },
     []
   );
-  const emailValidator = (value: string) =>
-    value !== "" ? "" : "Please enter a valid email.";
-
-  useEffect(() => {
-    setToken(null as any);
-    setMenus(null as any);
-  }, []);
 
   const companyCodeKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (
@@ -171,12 +163,7 @@ const Login: React.FC = () => {
                 />
               )}
 
-              <Field
-                name={"userId"}
-                label={"ID"}
-                component={FormInput}
-                validator={emailValidator}
-              />
+              <Field name={"userId"} label={"ID"} component={FormInput} />
               <Field
                 name={"password"}
                 label={"PASSWORD"}

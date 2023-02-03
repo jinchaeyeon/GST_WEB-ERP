@@ -271,14 +271,27 @@ const PanelBarNavContainer = (props: any) => {
   const selected = setSelectedIndex(props.location.pathname);
 
   const logout = useCallback(() => {
-    setLoading(true);
+    // fetchLogout();
     setToken(null as any);
-    setMenus(null as any);
-    setSessionItem(null as any);
-    // 전체 페이지 reload (cache 삭제)
-    (window as any).location = "/";
-    setLoading(false);
   }, []);
+
+  const fetchLogout = async () => {
+    let data: any;
+
+    const para = {
+      accessToken: accessToken,
+    };
+
+    try {
+      data = await processApi<any>("logout", para);
+    } catch (error) {
+      data = null;
+    }
+    if (data === null) {
+      console.log("[An error occured to log for logout]");
+      console.log(data);
+    }
+  };
 
   const onMenuBtnClick = () => {
     setIsMenuOpend((prev) => !prev);

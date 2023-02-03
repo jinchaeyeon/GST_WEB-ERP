@@ -33,6 +33,7 @@ const domain: any = {
     action: "get",
     url: "api/data/:formId/custom-option/:para",
   },
+  logout: { action: "post", url: "api/auth/logout" },
   login: { action: "post", url: "api/auth/login" },
   "login-old": { action: "post", url: "api/auth/login-old" },
   "company-code": { action: "get", url: "api/auth/company-codes" },
