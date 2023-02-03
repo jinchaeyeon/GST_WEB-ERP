@@ -69,7 +69,7 @@ const DATA_ITEM_KEY = "column_id";
 const idGetter = getter(DATA_ITEM_KEY);
 
 type TKendoWindow = {
-  getVisible(t: boolean): void;
+  setVisible(t: boolean): void;
   workType: string;
   reloadData: () => void;
   parentComponent: { option_id: string; option_name: string };
@@ -509,7 +509,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 };
 const KendoWindow = ({
-  getVisible,
+  setVisible,
   workType,
   reloadData,
   parentComponent,
@@ -537,7 +537,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
   //수정 없이 submit 가능하도록 임의 value를 change 시켜줌
@@ -733,7 +733,7 @@ const KendoWindow = ({
         fetchMain();
         reloadData();
       } else {
-        getVisible(false);
+        setVisible(false);
         reloadData();
       }
     } else {

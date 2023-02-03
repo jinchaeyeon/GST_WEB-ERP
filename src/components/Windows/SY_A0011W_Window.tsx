@@ -22,22 +22,8 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
 
-// Create React.Context to pass props to the Form Field components from the main component
-export const FormGridEditContext = React.createContext<{
-  onRemove: (dataItem: any) => void;
-  onEdit: (dataItem: any, isNew: boolean) => void;
-  onCopy: (dataItem: any) => void;
-  onSave: () => void;
-  onCancel: () => void;
-  editIndex: number | undefined;
-  parentField: string;
-  getItemcd: (itemcd: string) => void;
-  calculateAmt: () => void;
-  calculateSpecialAmt: () => void;
-}>({} as any);
-
 type TKendoWindow = {
-  getVisible(t: boolean): void;
+  setVisible(t: boolean): void;
   reloadData(workType: string): void;
   setGroupId(groupCode: string): void;
   workType: string;
@@ -47,7 +33,7 @@ type TKendoWindow = {
 };
 
 const KendoWindow = ({
-  getVisible,
+  setVisible,
   reloadData,
   setGroupId,
   workType,
@@ -79,7 +65,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
   const [formKey, setFormKey] = React.useState(1);
@@ -247,7 +233,7 @@ const KendoWindow = ({
         fetchMain();
         fetchGrid();
       } else {
-        getVisible(false);
+        setVisible(false);
         setGroupId(paraData.user_group_id);
         reloadData("N");
       }

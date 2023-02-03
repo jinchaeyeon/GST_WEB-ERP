@@ -1482,7 +1482,7 @@ const SY_A0120: React.FC = () => {
       </GridContainerWrap>
       {detailWindowVisible && (
         <DetailWindow
-          getVisible={setDetailWindowVisible}
+          setVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
           user_group_id={userMenuFilters.user_group_id}
           setGroupId={setGroupCode}

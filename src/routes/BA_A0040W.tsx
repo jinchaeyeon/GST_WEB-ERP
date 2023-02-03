@@ -432,7 +432,7 @@ const BA_A0040: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log(rows)
+      console.log(rows);
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
@@ -558,7 +558,7 @@ const BA_A0040: React.FC = () => {
           invunit: firstRowData.invunit,
           dwgno: firstRowData.dwgno,
           maker: firstRowData.maker,
-          qcyn: firstRowData.qcyn == "Y" ? "Y": "N",
+          qcyn: firstRowData.qcyn == "Y" ? "Y" : "N",
           attdatnum_img: firstRowData.attdatnum_img,
           attdatnum_img2: firstRowData.attdatnum_img2,
           snp: firstRowData.snp,
@@ -633,7 +633,7 @@ const BA_A0040: React.FC = () => {
       itemnm: selectedRowData.itemnm,
       insiz: selectedRowData.insiz,
       itemacnt: selectedRowData.itemacnt,
-      useyn: selectedRowData.useyn == "Y"? "Y" : "N",
+      useyn: selectedRowData.useyn == "Y" ? "Y" : "N",
       custcd: selectedRowData.custcd,
       custnm: selectedRowData.custnm,
       itemcd_s: selectedRowData.itemcd_s,
@@ -1037,8 +1037,8 @@ const BA_A0040: React.FC = () => {
       } else {
         const newData2 = {
           ...item,
-          rowstatus: "D"
-        }
+          rowstatus: "D",
+        };
         deletedMainRows.push(newData2);
       }
     });
@@ -1995,8 +1995,8 @@ const BA_A0040: React.FC = () => {
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible}
-          getData={getAttachmentsData}
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
           para={infomation.attdatnum}
         />
       )}

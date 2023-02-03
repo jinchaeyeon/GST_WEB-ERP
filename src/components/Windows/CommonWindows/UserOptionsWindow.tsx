@@ -69,7 +69,7 @@ import CheckBoxCell from "../../Cells/CheckBoxCell";
 import NumberCell from "../../Cells/NumberCell";
 
 type TKendoWindow = {
-  getVisible(t: boolean): void;
+  setVisible(t: boolean): void;
 };
 
 const ControlColumns: TreeListColumnProps[] = [
@@ -289,7 +289,7 @@ const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
 const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
 const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
 
-const KendoWindow = ({ getVisible }: TKendoWindow) => {
+const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -407,7 +407,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
   const processApi = useApi();
@@ -2474,7 +2474,7 @@ const KendoWindow = ({ getVisible }: TKendoWindow) => {
 
       {columnWindowVisible && (
         <ColumnWindow
-          getVisible={setColumnWindowVisible}
+          setVisible={setColumnWindowVisible}
           workType={columnWindowWorkType}
           parentComponent={parentComponent}
           reloadData={reloadData}

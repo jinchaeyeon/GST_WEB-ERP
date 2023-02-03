@@ -4,35 +4,26 @@ import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
-  GridCellProps,
-  GridFilterChangeEvent,
   GridHeaderSelectionChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { DataResult, process, getter } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
-
 import { ButtonContainer, TitleContainer } from "../../../CommonStyled";
-
-import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
-import { saveAs, encodeBase64 } from "@progress/kendo-file-saver";
-//import FileSaver from "file-saver";
-import fileDownload from "file-saver";
 import NumberCell from "../../Cells/NumberCell";
 import CenterCell from "../../Cells/CenterCell";
-import * as base64 from "byte-base64";
+import { convertDateToStrWithTime2 } from "../../CommonFunction";
 
 type IKendoWindow = {
-  getVisible(arg: boolean): void;
-  getData(data: object): void;
+  setVisible(arg: boolean): void;
+  setData(data: object): void;
   para: string; //{};
 };
 
-const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
+const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -55,7 +46,7 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
   };
 
   const onClose = () => {
-    getVisible(false);
+    setVisible(false);
   };
 
   const processApi = useApi();
@@ -76,9 +67,6 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
         : "attached",
       files: files, //.FileList,
     };
-
-    console.log("filePara");
-    console.log(filePara);
 
     try {
       data = await processApi<any>("file-upload", filePara);
@@ -117,24 +105,40 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
     };
 
     if (data !== null) {
-      const totalRowCnt = data.tables[0].rowCount;
-      const rows = data.tables[0].Rows;
+      const totalRowCnt = data.tables[0].RowCount;
 
-      setMainDataResult((prev) => {
-        return {
-          data: [...rows],
-          total: totalRowCnt,
+      if (totalRowCnt > 0) {
+        const rows = data.tables[0].Rows;
+
+        setMainDataResult((prev) => {
+          return {
+            data: [...rows],
+            total: totalRowCnt,
+          };
+        });
+
+        result = {
+          attdatnum: rows[0].attdatnum,
+          original_name: rows[0].original_name,
+          rowCount: totalRowCnt,
         };
-      });
+      } else {
+        setMainDataResult((prev) => {
+          return {
+            data: [],
+            total: 0,
+          };
+        });
 
-      result = {
-        attdatnum: rows[0].attdatnum,
-        original_name: rows[0].original_name,
-        rowCount: totalRowCnt,
-      };
+        result = {
+          attdatnum: attachmentNumber,
+          original_name: "",
+          rowCount: 0,
+        };
+      }
     }
 
-    getData(result);
+    setData(result);
   };
 
   const excelInput: any = React.useRef();
@@ -152,67 +156,66 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
       }
     }
     const parameters = Object.keys(selectedState);
-    const parameter = parameters[0];
-
-    //for (const parameter of parameters) {
+    // const parameter = parameters[0];
     let response: any;
-    //parameters.forEach(async (parameter) => {
-    console.log(parameter);
-    try {
-      response = await processApi<any>("file-download", {
-        attached: parameter,
-      });
-    } catch (error) {
-      response = null;
-    }
 
-    if (response !== null) {
-      const blob = new Blob([response.data]);
-      // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
-      // const blob = new Blob([this.content], {type: 'text/plain'})
+    parameters.forEach(async (parameter) => {
+      console.log(parameter);
+      try {
+        response = await processApi<any>("file-download", {
+          attached: parameter,
+        });
+      } catch (error) {
+        response = null;
+      }
 
-      // blob을 사용해 객체 URL을 생성합니다.
-      const fileObjectUrl = window.URL.createObjectURL(blob);
+      if (response !== null) {
+        const blob = new Blob([response.data]);
+        // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
+        // const blob = new Blob([this.content], {type: 'text/plain'})
 
-      // blob 객체 URL을 설정할 링크를 만듭니다.
-      const link = document.createElement("a");
-      link.href = fileObjectUrl;
-      link.style.display = "none";
+        // blob을 사용해 객체 URL을 생성합니다.
+        const fileObjectUrl = window.URL.createObjectURL(blob);
 
-      // 다운로드 파일 이름을 추출하는 함수
-      const extractDownloadFilename = (response: any) => {
-        console.log(response);
-        if (response.headers) {
-          const disposition = response.headers["content-disposition"];
-          let filename = "";
-          if (disposition) {
-            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-            var matches = filenameRegex.exec(disposition);
-            if (matches != null && matches[1]) {
-              filename = matches[1].replace(/['"]/g, "");
+        // blob 객체 URL을 설정할 링크를 만듭니다.
+        const link = document.createElement("a");
+        link.href = fileObjectUrl;
+        link.style.display = "none";
+
+        // 다운로드 파일 이름을 추출하는 함수
+        const extractDownloadFilename = (response: any) => {
+          console.log(response);
+          if (response.headers) {
+            const disposition = response.headers["content-disposition"];
+            let filename = "";
+            if (disposition) {
+              var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+              var matches = filenameRegex.exec(disposition);
+              if (matches != null && matches[1]) {
+                filename = matches[1].replace(/['"]/g, "");
+              }
             }
+            return filename;
+          } else {
+            return "";
           }
-          return filename;
-        } else {
-          return "";
-        }
-      };
+        };
 
-      // 다운로드 파일 이름을 지정 할 수 있습니다.
-      // 일반적으로 서버에서 전달해준 파일 이름은 응답 Header의 Content-Disposition에 설정됩니다.
-      link.download = extractDownloadFilename(response);
+        // 다운로드 파일 이름을 지정 할 수 있습니다.
+        // 일반적으로 서버에서 전달해준 파일 이름은 응답 Header의 Content-Disposition에 설정됩니다.
+        link.download = extractDownloadFilename(response);
 
-      // 다운로드 파일의 이름은 직접 지정 할 수 있습니다.
-      // link.download = "sample-file.xlsx";
+        // 다운로드 파일의 이름은 직접 지정 할 수 있습니다.
+        // link.download = "sample-file.xlsx";
 
-      // 링크를 body에 추가하고 강제로 click 이벤트를 발생시켜 파일 다운로드를 실행시킵니다.
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+        // 링크를 body에 추가하고 강제로 click 이벤트를 발생시켜 파일 다운로드를 실행시킵니다.
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
 
-      // 다운로드가 끝난 리소스(객체 URL)를 해제합니다
-    }
-    //}
+        // 다운로드가 끝난 리소스(객체 URL)를 해제합니다
+      }
+    });
   };
 
   const deleteFiles = () => {
@@ -229,7 +232,7 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
         data = null;
       }
 
-      if (data.result === true) {
+      if (data !== null) {
         fetchGrid();
       } else {
         alert("처리 중 오류가 발생하였습니다.");
@@ -270,16 +273,6 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
       });
 
       setSelectedState(newSelectedState);
-
-      //선택된 상태로 리랜더링
-      // event.dataItems.forEach((item: any, index: number) => {
-      //   fieldArrayRenderProps.onReplace({
-      //     index: index,
-      //     value: {
-      //       ...item,
-      //     },
-      //   });
-      // });
     },
     []
   );
@@ -308,10 +301,13 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
               type="file"
               multiple
               ref={excelInput}
-              onChange={(event: any) => {
-                const files = event.target.files[0];
-                if (!files) return false;
-                uploadFile(files);
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                const files = event.target.files;
+                if (files === null) return false;
+                for (let i = 0; i < files.length; ++i) {
+                  const file = files[i];
+                  uploadFile(file);
+                }
               }}
             />
           </Button>
@@ -338,6 +334,7 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
         data={process(
           mainDataResult.data.map((row) => ({
             ...row,
+            insert_time: convertDateToStrWithTime2(new Date(row.insert_time)),
             [SELECTED_FIELD]: selectedState[idGetter(row)],
           })),
           {}
@@ -349,7 +346,6 @@ const KendoWindow = ({ getVisible, getData, para = "" }: IKendoWindow) => {
         fixedScroll={true}
         total={mainDataResult.total}
         //onScroll={scrollHandler}
-
         selectedField={SELECTED_FIELD}
         selectable={{
           enabled: true,

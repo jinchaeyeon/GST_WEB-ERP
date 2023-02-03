@@ -15,6 +15,7 @@ import {
   tokenState,
 } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
+import ChangePasswordWindow from "./Windows/CommonWindows/ChangePasswordWindow";
 import { CLIENT_WIDTH } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { Iparameters, TLogParaVal, TPath } from "../store/types";
@@ -145,14 +146,23 @@ const PanelBarNavContainer = (props: any) => {
 
   const [userOptionsWindowVisible, setUserOptionsWindowVisible] =
     useState<boolean>(false);
+  const [changePasswordWindowVisible, setChangePasswordWindowVisible] =
+    useState<boolean>(false);
 
   const onSelect = (event: PanelBarSelectEventArguments) => {
-    const route = event.target.props.route;
+    const { route, id } = event.target.props;
     props.history.push(route);
 
     if (route) {
       setIsMenuOpend(false);
       setUserOptionsWindowVisible(false);
+      setChangePasswordWindowVisible(false);
+    }
+
+    if (id === "custom-option") {
+      setUserOptionsWindowVisible(true);
+    } else if (id === "change-password") {
+      setChangePasswordWindowVisible(true);
     }
   };
 
@@ -256,10 +266,6 @@ const PanelBarNavContainer = (props: any) => {
     setLoading(false);
   }, []);
 
-  const onClickUserOptions = () => {
-    setUserOptionsWindowVisible(true);
-  };
-
   const onMenuBtnClick = () => {
     setIsMenuOpend((prev) => !prev);
   };
@@ -289,6 +295,38 @@ const PanelBarNavContainer = (props: any) => {
       parentMenuId: "",
       menuCategory: "",
     });
+    panelBars.push({
+      path: "/",
+      menuName: "설정",
+      index: "",
+      menuId: "setting",
+      parentMenuId: "",
+      menuCategory: "WEB",
+    });
+    paths.push({
+      path: "/",
+      menuName: "비밀번호 변경",
+      index: "",
+      menuId: "change-password",
+      parentMenuId: "setting",
+      menuCategory: "WEB",
+    });
+    paths.push({
+      path: "/",
+      menuName: "사용자 옵션",
+      index: "",
+      menuId: "custom-option",
+      parentMenuId: "setting",
+      menuCategory: "WEB",
+    });
+    paths.push({
+      path: "/",
+      menuName: "시스템 옵션",
+      index: "",
+      menuId: "system-option",
+      parentMenuId: "setting",
+      menuCategory: "WEB",
+    });
   }
 
   // Parent 그룹 없는 메뉴 Array
@@ -313,18 +351,25 @@ const PanelBarNavContainer = (props: any) => {
                   route={path.path}
                 />
               ) : (
-                <PanelBarItem key={idx} title={path.menuName}>
+                <PanelBarItem
+                  key={idx}
+                  title={path.menuName}
+                  icon={path.menuId === "setting" ? "gear" : undefined}
+                >
                   {paths
                     .filter(
                       (childPath: TPath) =>
                         childPath.menuCategory === "WEB" &&
                         childPath.parentMenuId === path.menuId
                     )
-                    .map((childPath: any, childIdx: number) => (
+                    .map((childPath: TPath, childIdx: number) => (
                       <PanelBarItem
                         key={childIdx}
                         title={childPath.menuName}
-                        route={childPath.path}
+                        route={
+                          path.menuId === "setting" ? undefined : childPath.path
+                        }
+                        id={childPath.menuId}
                       />
                     ))}
                 </PanelBarItem>
@@ -360,13 +405,13 @@ const PanelBarNavContainer = (props: any) => {
           >
             로그아웃
           </Button>
-          <Button
+          {/* <Button
             onClick={onClickUserOptions}
             fillMode={"flat"}
             themeColor={"secondary"}
           >
             사용자 옵션
-          </Button>
+          </Button> */}
           <Button
             onClick={onClickChatbot}
             icon={"hyperlink-open-sm"}
@@ -394,7 +439,10 @@ const PanelBarNavContainer = (props: any) => {
         <PageWrap>{props.children}</PageWrap>
       </Content>
       {userOptionsWindowVisible && (
-        <UserOptionsWindow getVisible={setUserOptionsWindowVisible} />
+        <UserOptionsWindow setVisible={setUserOptionsWindowVisible} />
+      )}
+      {changePasswordWindowVisible && (
+        <ChangePasswordWindow setVisible={setChangePasswordWindowVisible} />
       )}
 
       <Loading />

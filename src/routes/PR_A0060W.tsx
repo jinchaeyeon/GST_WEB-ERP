@@ -144,7 +144,23 @@ const PR_A0060: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_004"
         )
       );
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      const personQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_004"
+        )
+      );
 
+      fetchQuery(dptcdQueryStr, setdptcdListData);
+      fetchQuery(personQueryStr, setPersonListData);
+    }
+  }, [bizComponentData]);
       fetchQuery(dptcdQueryStr, setdptcdListData);
       fetchQuery(personQueryStr, setPersonListData);
     }
@@ -1579,7 +1595,20 @@ const PR_A0060: React.FC = () => {
     } catch (error) {
       data = null;
     }
+    try {
+      data = await processApi<any>("procedure", paraDeleted);
+    } catch (error) {
+      data = null;
+    }
 
+    if (data.isSuccess === true) {
+      resetAllGrid();
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
     if (data.isSuccess === true) {
       resetAllGrid();
       fetchMainGrid();
@@ -1592,6 +1621,9 @@ const PR_A0060: React.FC = () => {
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.fxcode = "";
   };
+    paraDataDeleted.work_type = ""; //초기화
+    paraDataDeleted.fxcode = "";
+  };
 
   const onSaveClick2 = async () => {
     fetchSaved();
@@ -1599,7 +1631,14 @@ const PR_A0060: React.FC = () => {
 
   const fetchSaved = async () => {
     let data: any;
+  const fetchSaved = async () => {
+    let data: any;
 
+    let valid = true;
+    try {
+      if (!infomation.fxnum) {
+        throw findMessage(messagesData, "PR_A0060W_001");
+      }
     let valid = true;
     try {
       if (!infomation.fxnum) {
@@ -1613,11 +1652,25 @@ const PR_A0060: React.FC = () => {
       alert(e);
       valid = false;
     }
+      if (!infomation.fxnm) {
+        throw findMessage(messagesData, "PR_A0060W_002");
+      }
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
 
+    if (!valid) return false;
     if (!valid) return false;
 
     setLoading(true);
+    setLoading(true);
 
+    try {
+      data = await processApi<any>("procedure", infopara);
+    } catch (error) {
+      data = null;
+    }
     try {
       data = await processApi<any>("procedure", infopara);
     } catch (error) {
@@ -1627,7 +1680,17 @@ const PR_A0060: React.FC = () => {
     if (data.isSuccess === true) {
       setMainPgNum(1);
       setMainDataResult(process([], mainDataState));
+    if (data.isSuccess === true) {
+      setMainPgNum(1);
+      setMainDataResult(process([], mainDataState));
 
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
       fetchMainGrid();
     } else {
       console.log("[오류 발생]");
@@ -2443,16 +2506,16 @@ const PR_A0060: React.FC = () => {
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible}
-          getData={getAttachmentsData}
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
           para={infomation.attdatnum}
         />
       )}
       {attachmentsWindowVisible2 && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible2}
+          setVisible={setAttachmentsWindowVisible2}
           getData={getAttachmentsData2}
-          para={subDataResult.data[rows].attdatnum}
+          para={subDataResult.data[rows - 1].attdatnum}
         />
       )}
     </>

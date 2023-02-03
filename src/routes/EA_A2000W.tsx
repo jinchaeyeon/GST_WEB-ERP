@@ -2186,8 +2186,8 @@ const EA_A2000: React.FC = () => {
 
       {attachmentsWindowVisible && (
         <AttachmentsWindow
-          getVisible={setAttachmentsWindowVisible}
-          getData={getAttachmentsData}
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
           para={detailFilters.attdatnum}
         />
       )}
