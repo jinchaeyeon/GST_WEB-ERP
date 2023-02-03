@@ -16,12 +16,15 @@ import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
 import NumberCell from "../../Cells/NumberCell";
 import CenterCell from "../../Cells/CenterCell";
 import { convertDateToStrWithTime2 } from "../../CommonFunction";
+import { SELECTED_FIELD } from "../../CommonString";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
   setData(data: object): void;
   para: string; //{};
 };
+
+const DATA_ITEM_KEY = "saved_name";
 
 const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -240,8 +243,6 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
     });
   };
 
-  const DATA_ITEM_KEY = "saved_name";
-  const SELECTED_FIELD = "selected";
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -329,8 +330,37 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
+
+      <div
+        onDrop={(event: React.DragEvent<HTMLInputElement>) => {
+          event.preventDefault();
+          const files = event.dataTransfer.files;
+          if (files === null) return false;
+          for (let i = 0; i < files.length; ++i) {
+            const file = files[i];
+            uploadFile(file);
+          }
+        }}
+        onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
+          e.preventDefault();
+        }}
+        style={{
+          width: "100% ",
+          lineHeight: "100px",
+          border: "solid 1px rgba(0, 0, 0, 0.08)",
+          marginBottom: "5px",
+          textAlign: "center",
+          color: "rgba(0,0,0,0.8)",
+        }}
+      >
+        <span
+          className="k-icon k-i-file-add"
+          style={{ marginRight: "5px" }}
+        ></span>
+        업로드할 파일을 마우스로 끌어오세요.
+      </div>
       <Grid
-        style={{ height: "600px" }}
+        style={{ height: "550px" }}
         data={process(
           mainDataResult.data.map((row) => ({
             ...row,
