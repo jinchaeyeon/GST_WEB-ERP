@@ -52,6 +52,20 @@ const PanelBarNavContainer = (props: any) => {
   let broswer = getBrowser();
   broswer = broswer.substring(broswer.lastIndexOf("/") + 1);
 
+  // 반응형 처리
+  const [clientWidth, setClientWidth] = useState(
+    document.documentElement.getBoundingClientRect().width
+  );
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setClientWidth(document.documentElement.getBoundingClientRect().width);
+    };
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  });
+
   // useEffect(() => {
   //   const handleTabClose = (event: BeforeUnloadEvent) => {
   //     event.preventDefault();
@@ -425,7 +439,7 @@ const PanelBarNavContainer = (props: any) => {
           </Button>
         </ButtonContainer>
       </Gnv>
-      <Content CLIENT_WIDTH={CLIENT_WIDTH}>
+      <Content CLIENT_WIDTH={clientWidth}>
         <TopTitle>
           <div style={{ width: "30px" }}></div>
           <AppName>GST ERP</AppName>
