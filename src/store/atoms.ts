@@ -1,5 +1,5 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
-import { TMenu, TSessionItem, TToken } from "./types";
+import { TMenu, TPasswordExpirationInfo, TSessionItem, TToken } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
@@ -45,6 +45,12 @@ export const sessionItemState = atom<Array<TSessionItem>>({
     { code: "dptcd", value: "" },
   ],
   effects_UNSTABLE: [localStorageEffect("sessionItem")],
+});
+
+export const passwordExpirationInfoState = atom<TPasswordExpirationInfo>({
+  key: "passwordExpirationInfoState",
+  default: null as any,
+  effects_UNSTABLE: [localStorageEffect("passwordExpirationInfo")],
 });
 
 export const totalDataNumber = atom({

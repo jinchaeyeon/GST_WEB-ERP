@@ -53,6 +53,29 @@ export type TSessionItem = {
   value: string;
 };
 
+// Ok (정상)
+// Expired (만료됨) → 반드시 비밀번호 변경
+// BeforeExpiry (만료전) → 비밀번호 변경 알림
+// Initial (초기값) → 반드시 비밀번호 변경
+export type TPasswordExpirationInfo = {
+  status: "Ok" | "Expired" | "BeforeExpiry" | "Initial";
+  useExpiration: boolean;
+  lastChangePasswordDate: string;
+  expirationDate: string;
+  remainingDays: number;
+};
+export type TPasswordRequirements = {
+  useExpiration: boolean;
+  expirationPeriodMonths: number;
+  minimumLength: number;
+  useSpecialChar: boolean;
+  useChangeNext: boolean;
+  useAccessRestriction: boolean;
+  maximumNumberOfWrongs: number;
+  useNotifyBeforePeriod: boolean;
+  notifyBeforePeriodDays: number;
+};
+
 export type TSessionItemCode =
   | "user_id"
   | "user_name"

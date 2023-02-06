@@ -16,6 +16,14 @@ const domain: any = {
   "design-info": { action: "get", url: "api/data/:formId/design-info" },
   "biz-components": { action: "get", url: "api/data/:id" },
   permissions: { action: "get", url: "api/data/:para" },
+  "get-password-requirements": {
+    action: "get",
+    url: "api/data/password-requirements",
+  },
+  "set-password-requirements": {
+    action: "post",
+    url: "api/data/password-requirements",
+  },
   menus: { action: "get", url: "api/data/:para" },
   "default-list": {
     action: "get",

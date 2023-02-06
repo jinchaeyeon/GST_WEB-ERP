@@ -2,7 +2,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Form, Field, FormElement } from "@progress/kendo-react-form";
 import { KeyboardEvent, useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { tokenState } from "../store/atoms";
+import { passwordExpirationInfoState, tokenState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useSetRecoilState } from "recoil";
 import { FormInput, FormComboBox } from "../components/Editors";
@@ -28,6 +28,7 @@ const Login: React.FC = () => {
   const processApi = useApi();
   const history = useHistory();
   const setToken = useSetRecoilState(tokenState);
+  const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
   const [isAllowedIpAddress, setIsAllowedIpAddress] = useState(false);
   const [ip, setIp] = useState("");
@@ -74,6 +75,7 @@ const Login: React.FC = () => {
           serviceName,
           customerName,
           loginKey,
+          passwordExpirationInfo,
         } = response;
 
         setToken({
@@ -87,6 +89,8 @@ const Login: React.FC = () => {
           customerName,
           loginKey,
         });
+
+        setPwExpInfo(passwordExpirationInfo);
 
         history.replace("/Home");
         setLoading(false);
