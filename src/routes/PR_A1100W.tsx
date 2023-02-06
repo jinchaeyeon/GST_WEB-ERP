@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -14,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import calculateSize from "calculate-size";
@@ -31,12 +30,8 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Input,
-  RadioGroup,
-  RadioGroupChangeEvent,
-} from "@progress/kendo-react-inputs";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { Input } from "@progress/kendo-react-inputs";
+import { useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -53,6 +48,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import PlanWindow from "../components/Windows/PR_A1100W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -69,7 +65,7 @@ import {
 import { CellRender, RowRender } from "../components/GroupRenderers";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { isLoading, tokenState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { bytesToBase64 } from "byte-base64";
@@ -163,8 +159,7 @@ const PR_A1100W: React.FC = () => {
   const planIdGetter = getter(PLAN_DATA_ITEM_KEY);
   const materialIdGetter = getter(MATERIAL_DATA_ITEM_KEY);
 
-  const [token] = useRecoilState(tokenState);
-  const { userId, companyCode } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
 
   const pathname: string = window.location.pathname.replace("/", "");
 

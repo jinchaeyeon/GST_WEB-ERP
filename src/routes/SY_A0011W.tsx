@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
 import {
   TreeList,
   createDataTree,
@@ -19,10 +18,8 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
-  GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -43,8 +40,6 @@ import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
-  findMessage,
-  getGridItemChangedData,
   getQueryFromBizComponent,
   getYn,
   UseBizComponent,
@@ -53,6 +48,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import {
   CLIENT_WIDTH,
@@ -65,11 +61,10 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import { CellRender, RowRender } from "../components/Renderers";
 import { Renderers } from "../components/TreeListRenderers";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
-import { isLoading, tokenState } from "../store/atoms";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
+import { useSetRecoilState } from "recoil";
 import DetailWindow from "../components/Windows/SY_A0011W_Window";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
@@ -115,10 +110,10 @@ const RowRenderForDragging = (properties: any) => {
 };
 
 let selectedRowIdx = 0;
-const SY_A0120: React.FC = () => {
+
+const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1494,4 +1489,4 @@ const SY_A0120: React.FC = () => {
   );
 };
 
-export default SY_A0120;
+export default Page;

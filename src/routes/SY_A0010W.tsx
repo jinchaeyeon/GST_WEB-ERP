@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -11,7 +10,7 @@ import {
   GridCellProps,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import calculateSize from "calculate-size";
 import {
@@ -27,13 +26,10 @@ import {
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, RadioGroupChangeEvent } from "@progress/kendo-react-inputs";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { tokenState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
-  findMessage,
   getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
@@ -41,6 +37,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
@@ -69,10 +66,9 @@ const numberField = [
 const checkBoxField = ["system_yn", "use_yn"];
 
 const Page: React.FC = () => {
-  const [token] = useRecoilState(tokenState);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const DATA_ITEM_KEY = "group_code";
   const DETAIL_DATA_ITEM_KEY = "sub_code";
   const SELECTED_FIELD = "selected";

@@ -52,6 +52,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  UseGetValueFromSessionItem,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import {
@@ -68,8 +69,8 @@ import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox"
 import { Renderers } from "../components/TreeListRenderers";
 import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
-import { isLoading, tokenState } from "../store/atoms";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
+import { useSetRecoilState } from "recoil";
 import TopButtons from "../components/TopButtons";
 import GroupWindow from "../components/Windows/SY_A0013W_Window";
 import { bytesToBase64 } from "byte-base64";
@@ -194,10 +195,9 @@ const userMenuColumns: TreeListColumnProps[] = [
   { field: "path", title: "경로", width: "100px", cell: CustomComboBoxCell },
 ];
 
-const SY_A0120: React.FC = () => {
+const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1473,4 +1473,4 @@ const SY_A0120: React.FC = () => {
   );
 };
 
-export default SY_A0120;
+export default Page;
