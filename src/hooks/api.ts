@@ -16,6 +16,14 @@ const domain: any = {
   "design-info": { action: "get", url: "api/data/:formId/design-info" },
   "biz-components": { action: "get", url: "api/data/:id" },
   permissions: { action: "get", url: "api/data/:para" },
+  "get-password-requirements": {
+    action: "get",
+    url: "api/data/password-requirements",
+  },
+  "set-password-requirements": {
+    action: "post",
+    url: "api/data/password-requirements",
+  },
   menus: { action: "get", url: "api/data/:para" },
   "default-list": {
     action: "get",
@@ -33,6 +41,7 @@ const domain: any = {
     action: "get",
     url: "api/data/:formId/custom-option/:para",
   },
+  logout: { action: "post", url: "api/auth/logout" },
   login: { action: "post", url: "api/auth/login" },
   "login-old": { action: "post", url: "api/auth/login-old" },
   "company-code": { action: "get", url: "api/auth/company-codes" },

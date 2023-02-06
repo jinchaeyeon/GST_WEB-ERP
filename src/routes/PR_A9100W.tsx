@@ -45,6 +45,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -65,7 +66,7 @@ import YearCalendar from "../components/Calendars/YearCalendar";
 import NumberCell from "../components/Cells/NumberCell";
 import RequiredHeader from "../components/RequiredHeader";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, sessionItemState, tokenState } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { bytesToBase64 } from "byte-base64";
 
 //그리드 별 키 필드값
@@ -703,8 +704,7 @@ const PR_A9100W: React.FC = () => {
     paraData.work_type = ""; //초기화
   };
 
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({

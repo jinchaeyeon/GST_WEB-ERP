@@ -14,11 +14,11 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import { FormInput } from "../../Editors";
-import { Iparameters } from "../../../store/types";
+import { Iparameters, TPasswordRequirements } from "../../../store/types";
 import { validator, UseParaPc } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { tokenState } from "../../../store/atoms";
+import { passwordExpirationInfoState, tokenState } from "../../../store/atoms";
 import { useRecoilState } from "recoil";
 
 type TKendoWindow = {
@@ -27,7 +27,9 @@ type TKendoWindow = {
 
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [token] = useRecoilState(tokenState);
+  const [pwExpInfo] = useRecoilState(passwordExpirationInfoState);
   const { userId } = token;
+  const [pwReq, setPwReq] = useState<TPasswordRequirements | null>(null);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 
@@ -35,7 +37,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     left: 300,
     top: 100,
     width: 500,
-    height: 280,
+    height: 310,
   });
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -51,6 +53,14 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   };
 
   const onClose = () => {
+    if (
+      pwExpInfo &&
+      pwExpInfo.useExpiration &&
+      (pwExpInfo.status === "Expired" || pwExpInfo.status === "Initial")
+    ) {
+      alert("비밀번호를 수정 후 저장해주세요.");
+      return false;
+    }
     setVisible(false);
   };
 
@@ -131,6 +141,26 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     if (paraData.work_type !== "") fetchMainSaved();
   }, [paraData]);
 
+  useEffect(() => {
+    fetchPasswordRequirements();
+  }, []);
+
+  const fetchPasswordRequirements = async () => {
+    let data: any;
+    try {
+      data = await processApi<any>("get-password-requirements");
+    } catch (error) {
+      data = null;
+    }
+
+    if (data) {
+      setPwReq(data);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  };
+
   return (
     <Window
       title={"비밀번호 변경"}
@@ -189,6 +219,23 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 />
               </FieldWrap>
             </fieldset>
+            {pwReq && (
+              <div
+                style={{
+                  fontSize: "12px",
+                  textAlign: "right",
+                  marginTop: "10px",
+                  color: "#ff6358",
+                }}
+              >
+                <p>
+                  - 비밀번호는 최소 {pwReq.minimumLength}자리를 입력해주세요.
+                </p>
+                {pwReq.useSpecialChar && (
+                  <p>- 비밀번호는 특수문자를 포함해주세요.</p>
+                )}
+              </div>
+            )}
             <BottomContainer>
               <ButtonContainer>
                 <Button type={"submit"} themeColor={"primary"} icon="save">

@@ -6,16 +6,18 @@ import {
 } from "@progress/kendo-react-layout";
 import { useLocation, withRouter } from "react-router-dom";
 import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   isLoading,
   isMenuOpendState,
   menusState,
+  passwordExpirationInfoState,
   sessionItemState,
   tokenState,
 } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import ChangePasswordWindow from "./Windows/CommonWindows/ChangePasswordWindow";
+import SystemOptionWindow from "./Windows/CommonWindows/SystemOptionWindow";
 import { CLIENT_WIDTH } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { Iparameters, TLogParaVal, TPath } from "../store/types";
@@ -30,17 +32,25 @@ import {
   TopTitle,
   Wrapper,
 } from "../CommonStyled";
-import { getBrowser, UseGetIp } from "./CommonFunction";
+import { getBrowser, getToday, UseGetIp } from "./CommonFunction";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
   const [token, setToken] = useRecoilState(tokenState);
+  const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
+  useEffect(() => {
+    if (token === null) fetchMenus();
+  }, [token]);
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
   const companyCode = token ? token.companyCode : "";
   const userId = token ? token.userId : "";
   const loginKey = token ? token.loginKey : "";
+  const role = token ? token.role : "";
+  const accessToken = token ? token.token : "";
+  const isAdmin = role === "ADMIN" || role === "DEVELOPER" ? true : false;
+
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
   const setSessionItem = useSetRecoilState(sessionItemState);
@@ -51,6 +61,20 @@ const PanelBarNavContainer = (props: any) => {
 
   let broswer = getBrowser();
   broswer = broswer.substring(broswer.lastIndexOf("/") + 1);
+
+  // 반응형 처리
+  const [clientWidth, setClientWidth] = useState(
+    document.documentElement.getBoundingClientRect().width
+  );
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setClientWidth(document.documentElement.getBoundingClientRect().width);
+    };
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  });
 
   // useEffect(() => {
   //   const handleTabClose = (event: BeforeUnloadEvent) => {
@@ -76,6 +100,20 @@ const PanelBarNavContainer = (props: any) => {
   useEffect(() => {
     if (token && menus === null) fetchMenus();
   }, [menus]);
+
+  useEffect(() => {
+    checkPwExpInfo();
+  }, []);
+
+  const checkPwExpInfo = () => {
+    if (pwExpInfo && pwExpInfo.useExpiration) {
+      if (pwExpInfo.status !== "Ok") {
+        setChangePasswordWindowVisible(true);
+      }
+      // 로그인 후 최초 한번만 팝업 뜨도록
+      setPwExpInfo((prev) => ({ ...prev, useExpiration: false }));
+    }
+  };
 
   const fetchMenus = useCallback(async () => {
     try {
@@ -148,21 +186,26 @@ const PanelBarNavContainer = (props: any) => {
     useState<boolean>(false);
   const [changePasswordWindowVisible, setChangePasswordWindowVisible] =
     useState<boolean>(false);
+  const [systemOptionWindowWindowVisible, setSystemOptionWindowVisible] =
+    useState<boolean>(false);
 
   const onSelect = (event: PanelBarSelectEventArguments) => {
-    const { route, id } = event.target.props;
+    const { route, className = "" } = event.target.props;
     props.history.push(route);
 
     if (route) {
       setIsMenuOpend(false);
       setUserOptionsWindowVisible(false);
       setChangePasswordWindowVisible(false);
+      setSystemOptionWindowVisible(false);
     }
 
-    if (id === "custom-option") {
+    if (className.includes("custom-option")) {
       setUserOptionsWindowVisible(true);
-    } else if (id === "change-password") {
+    } else if (className.includes("change-password")) {
       setChangePasswordWindowVisible(true);
+    } else if (className.includes("system-option")) {
+      setSystemOptionWindowVisible(true);
     }
   };
 
@@ -257,14 +300,27 @@ const PanelBarNavContainer = (props: any) => {
   const selected = setSelectedIndex(props.location.pathname);
 
   const logout = useCallback(() => {
-    setLoading(true);
+    fetchLogout();
     setToken(null as any);
-    setMenus(null as any);
-    setSessionItem(null as any);
-    // 전체 페이지 reload (cache 삭제)
-    (window as any).location = "/";
-    setLoading(false);
   }, []);
+
+  const fetchLogout = async () => {
+    let data: any;
+
+    const para = {
+      accessToken: accessToken,
+    };
+
+    try {
+      data = await processApi<any>("logout", para);
+    } catch (error) {
+      data = null;
+    }
+    if (data === null) {
+      console.log("[An error occured to log for logout]");
+      console.log(data);
+    }
+  };
 
   const onMenuBtnClick = () => {
     setIsMenuOpend((prev) => !prev);
@@ -319,14 +375,16 @@ const PanelBarNavContainer = (props: any) => {
       parentMenuId: "setting",
       menuCategory: "WEB",
     });
-    paths.push({
-      path: "/",
-      menuName: "시스템 옵션",
-      index: "",
-      menuId: "system-option",
-      parentMenuId: "setting",
-      menuCategory: "WEB",
-    });
+    if (isAdmin) {
+      paths.push({
+        path: "/",
+        menuName: "시스템 옵션",
+        index: "",
+        menuId: "system-option",
+        parentMenuId: "setting",
+        menuCategory: "WEB",
+      });
+    }
   }
 
   // Parent 그룹 없는 메뉴 Array
@@ -369,7 +427,7 @@ const PanelBarNavContainer = (props: any) => {
                         route={
                           path.menuId === "setting" ? undefined : childPath.path
                         }
-                        id={childPath.menuId}
+                        className={childPath.menuId}
                       />
                     ))}
                 </PanelBarItem>
@@ -396,22 +454,10 @@ const PanelBarNavContainer = (props: any) => {
           </PanelBar>
         )} */}
 
-        <ButtonContainer flexDirection={"column"}>
-          <Button
-            onClick={logout}
-            icon={"logout"}
-            fillMode={"flat"}
-            themeColor={"secondary"}
-          >
-            로그아웃
-          </Button>
-          {/* <Button
-            onClick={onClickUserOptions}
-            fillMode={"flat"}
-            themeColor={"secondary"}
-          >
-            사용자 옵션
-          </Button> */}
+        <ButtonContainer
+          flexDirection={"column"}
+          style={{ marginTop: "10px", gap: "5px" }}
+        >
           <Button
             onClick={onClickChatbot}
             icon={"hyperlink-open-sm"}
@@ -423,9 +469,26 @@ const PanelBarNavContainer = (props: any) => {
           >
             Chatbot
           </Button>
+          {isAdmin && (
+            <Button
+              onClick={() => setUserOptionsWindowVisible(true)}
+              fillMode={"flat"}
+              themeColor={"secondary"}
+            >
+              사용자 옵션
+            </Button>
+          )}
+          <Button
+            onClick={logout}
+            icon={"logout"}
+            fillMode={"flat"}
+            themeColor={"secondary"}
+          >
+            로그아웃
+          </Button>
         </ButtonContainer>
       </Gnv>
-      <Content CLIENT_WIDTH={CLIENT_WIDTH}>
+      <Content CLIENT_WIDTH={clientWidth}>
         <TopTitle>
           <div style={{ width: "30px" }}></div>
           <AppName>GST ERP</AppName>
@@ -443,6 +506,9 @@ const PanelBarNavContainer = (props: any) => {
       )}
       {changePasswordWindowVisible && (
         <ChangePasswordWindow setVisible={setChangePasswordWindowVisible} />
+      )}
+      {systemOptionWindowWindowVisible && (
+        <SystemOptionWindow setVisible={setSystemOptionWindowVisible} />
       )}
 
       <Loading />

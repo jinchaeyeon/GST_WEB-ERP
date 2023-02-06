@@ -1,59 +1,34 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
-import {
-  Grid,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridFooterCellProps,
-} from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
   FilterBoxWrap,
   FilterBox,
-  GridContainer,
-  GridTitle,
   TitleContainer,
   ButtonContainer,
-  GridTitleContainer,
 } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
-  chkScrollHandler,
-  convertDateToStr,
   convertDateToStrWithTime2,
   convertMilliSecondsToTimeStr,
-  dateformat2,
   getQueryFromBizComponent,
-  setDefaultDate,
   UseBizComponent,
-  UseCustomOption,
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  UseGetValueFromSessionItem,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import { Button } from "@progress/kendo-react-buttons";
 import {
   Input,
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { isLoading, sessionItemState, tokenState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, sessionItemState } from "../store/atoms";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
 import DefectWindow from "../components/Windows/PR_A3000W_Defect_Window";
@@ -68,7 +43,7 @@ const PR_A3000W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
-  const token = useRecoilValue(tokenState);
+  const userId = UseGetValueFromSessionItem("user_id");
   const setLoading = useSetRecoilState(isLoading);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -203,14 +178,14 @@ const PR_A3000W: React.FC = () => {
   });
   const [filtersSaved, setFiltersSaved] = useState({
     work_type: "",
-    prodemp: token.userId,
+    prodemp: userId,
     prodmac: "",
     qty: 0,
     badqty: 0,
     rekey: "",
     stopcd: "",
     serviceid: "",
-    userid: token.userId,
+    userid: userId,
     pc: pc,
     form_id: pathname,
   });

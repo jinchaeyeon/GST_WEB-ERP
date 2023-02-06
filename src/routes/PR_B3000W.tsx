@@ -1,5 +1,4 @@
-import React, { useRef, useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -14,7 +13,6 @@ import {
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import cryptoRandomString from "crypto-random-string";
 import {
   Title,
   FilterBoxWrap,
@@ -33,12 +31,10 @@ import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
-  dateformat,
   dateformat2,
   findMessage,
   getGridItemChangedData,
   getItemQuery,
-  getSelectedFirstData,
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
@@ -46,6 +42,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -53,18 +50,16 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { CellRender, RowRender } from "../components/Renderers";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import TopButtons from "../components/TopButtons";
 import { gridList } from "../store/columns/PR_B3000W_C";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 import { IItemData } from "../hooks/interfaces";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import NumberCell from "../components/Cells/NumberCell";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, sessionItemState, tokenState } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import CenterCell from "../components/Cells/CenterCell";
 import { Window } from "@progress/kendo-react-dialogs";
 import WorkDailyReport from "../components/Prints/WorkDailyReport";
@@ -674,8 +669,7 @@ const PR_B3000W: React.FC = () => {
     paraData.work_type = ""; //초기화
   };
 
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
