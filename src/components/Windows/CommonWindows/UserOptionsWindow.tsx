@@ -59,7 +59,7 @@ import {
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { tokenState } from "../../../store/atoms";
+import { loginResultState } from "../../../store/atoms";
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilValue } from "recoil";
 import ComboBoxCell from "../../Cells/ComboBoxCell";
@@ -297,8 +297,8 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     height: 800,
   });
 
-  const token = useRecoilValue(tokenState);
-  const role = token ? token.role : "";
+  const loginResult = useRecoilValue(loginResultState);
+  const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN" || role === "DEVELOPER" ? true : false;
   const sessionUserId = UseGetValueFromSessionItem("user_id");
 

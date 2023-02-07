@@ -444,14 +444,16 @@ const Page: React.FC = () => {
         // 드래그앤드롭 사용 시 그리드 내 데이터 최소 1개 필요함
         const appMenuRow = [
           {
-            KeyID: allMenuDataResult[0].KeyID,
-            ParentKeyID: allMenuDataResult[0].ParentKeyID,
+            KeyID: allMenuDataResult ? allMenuDataResult[0].KeyID : "",
+            ParentKeyID: allMenuDataResult
+              ? allMenuDataResult[0].ParentKeyID
+              : "",
             form_delete_yn: "Y",
             form_id: "",
             form_print_yn: "Y",
             form_save_yn: "Y",
             form_view_yn: "Y",
-            menu_name: allMenuDataResult[0].menu_name,
+            menu_name: allMenuDataResult ? allMenuDataResult[0].menu_name : "",
             path: "",
             row_state: "Q",
             sort_order: 0,

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Grid, GridColumn } from "@progress/kendo-react-grid";
@@ -20,23 +20,21 @@ import {
 } from "@progress/kendo-react-form";
 import { Error } from "@progress/kendo-react-labels";
 import { clone } from "@progress/kendo-react-common";
-import { FormReadOnly, FormComboBoxCell, FormCheckBoxCell } from "../Editors";
+import { FormReadOnly, FormCheckBoxCell } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
   validator,
   arrayLengthValidator,
   UseBizComponent,
   UseMessages,
-  findMessage,
   getYn,
-  UseParaPc
+  UseParaPc,
+  UseGetValueFromSessionItem,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
+import { EDIT_FIELD, FORM_DATA_INDEX } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
-import { tokenState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = React.createContext<{
@@ -181,8 +179,7 @@ const KendoWindow = ({
   para = { user_id: "", user_name: "" },
 }: TKendoWindow) => {
   const { user_id, user_name } = para;
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 

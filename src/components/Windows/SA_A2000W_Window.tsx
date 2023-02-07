@@ -71,6 +71,7 @@ import {
   getUnpQuery,
   UseParaPc,
   getCustinfoQuery,
+  UseGetValueFromSessionItem,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -90,8 +91,6 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
-import { tokenState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
 import { Input } from "@progress/kendo-react-inputs";
 import RequiredHeader from "../RequiredHeader";
 import { bytesToBase64 } from "byte-base64";
@@ -933,8 +932,7 @@ const KendoWindow = ({
   isCopy,
   para,
 }: TKendoWindow) => {
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
 
   const pathname: string = window.location.pathname.replace("/", "");
 

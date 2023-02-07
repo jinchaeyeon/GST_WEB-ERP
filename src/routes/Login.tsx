@@ -2,7 +2,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Form, Field, FormElement } from "@progress/kendo-react-form";
 import { KeyboardEvent, useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { passwordExpirationInfoState, tokenState } from "../store/atoms";
+import { passwordExpirationInfoState, loginResultState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useSetRecoilState } from "recoil";
 import { FormInput, FormComboBox } from "../components/Editors";
@@ -27,7 +27,7 @@ interface IFormData {
 const Login: React.FC = () => {
   const processApi = useApi();
   const history = useHistory();
-  const setToken = useSetRecoilState(tokenState);
+  const setLoginResult = useSetRecoilState(loginResultState);
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
   const [isAllowedIpAddress, setIsAllowedIpAddress] = useState(false);
@@ -68,6 +68,7 @@ const Login: React.FC = () => {
 
         const {
           token,
+          refreshToken,
           userId,
           userName,
           role,
@@ -78,8 +79,10 @@ const Login: React.FC = () => {
           passwordExpirationInfo,
         } = response;
 
-        setToken({
-          token,
+        localStorage.setItem("accessToken", token);
+        localStorage.setItem("refreshToken", refreshToken);
+
+        setLoginResult({
           langCode: formData.langCode,
           userId,
           userName,

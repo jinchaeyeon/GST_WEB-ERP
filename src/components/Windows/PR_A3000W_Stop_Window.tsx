@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -14,18 +14,16 @@ import {
   FormElement,
   FormRenderProps,
 } from "@progress/kendo-react-form";
-import {
-  FormInput,
-  FormReadOnly,
-  FormCheckBox,
-  FormComboBox,
-} from "../Editors";
+import { FormReadOnly, FormComboBox } from "../Editors";
 import { Iparameters } from "../../store/types";
-import { UseBizComponent, validator, UseParaPc } from "../CommonFunction";
+import {
+  UseBizComponent,
+  UseParaPc,
+  UseGetValueFromSessionItem,
+} from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { sessionItemState, tokenState } from "../../store/atoms";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { sessionItemState } from "../../store/atoms";
+import { useRecoilState } from "recoil";
 
 type TData = {
   prodmac: string;
@@ -38,11 +36,10 @@ type TKendoWindow = {
 };
 
 const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
-  const [token] = useRecoilState(tokenState);
+  const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  
-  const { userId } = token;
+
   const [position, setPosition] = useState({
     left: 300,
     top: 100,
@@ -155,7 +152,7 @@ const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
       "@p_stopcd": initialVal.stopcd,
       "@p_serviceid": "",
       "@p_userid": userId,
-      "@p_pc" : pc,
+      "@p_pc": pc,
       "@p_form_id": pathname,
     },
   };

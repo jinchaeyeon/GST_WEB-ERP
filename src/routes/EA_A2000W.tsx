@@ -74,7 +74,7 @@ import { CellRender, RowRender } from "../components/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { Window } from "@progress/kendo-react-dialogs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
-import { isLoading, tokenState } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 
@@ -96,9 +96,9 @@ const EA_A2000: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
-  const [token] = useRecoilState(tokenState);
-  const userId = token ? token.userId : "";
-  const companyCode = token ? token.companyCode : "";
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
+  const companyCode = loginResult ? loginResult.companyCode : "";
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);

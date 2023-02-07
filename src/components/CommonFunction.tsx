@@ -2,7 +2,7 @@ import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { sessionItemState, tokenState } from "../store/atoms";
+import { sessionItemState, loginResultState } from "../store/atoms";
 import { COM_CODE_DEFAULT_VALUE } from "./CommonString";
 import { detect } from "detect-browser";
 import { bytesToBase64 } from "byte-base64";
@@ -212,9 +212,9 @@ export const UseMessages = (pathname: string, setListData: any) => {
 export const UseCustomOption = (pathname: string, setListData: any) => {
   const processApi = useApi();
   const [sessionItem] = useRecoilState(sessionItemState);
-  const [token] = useRecoilState(tokenState);
+  const [loginResult] = useRecoilState(loginResultState);
   useEffect(() => {
-    if (token) {
+    if (loginResult) {
       fetchCustomOptionData();
     }
   }, []);
@@ -364,10 +364,10 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 //현재 경로를 받아서 디자인 정보 조회 후 결과값을 반환
 export const UseDesignInfo = (pathname: string, setListData: any) => {
   const processApi = useApi();
-  const [token] = useRecoilState(tokenState);
+  const [loginResult] = useRecoilState(loginResultState);
 
   useEffect(() => {
-    if (token) {
+    if (loginResult) {
       fetchDesignInfoData();
     }
   }, []);
@@ -396,11 +396,11 @@ export const UseDesignInfo = (pathname: string, setListData: any) => {
 export const UsePermissions = (setListData: any) => {
   const processApi = useApi();
   const pathname = window.location.pathname.replace("/", "");
-  const [token] = useRecoilState(tokenState);
-  const userId = token ? token.userId : "";
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
 
   useEffect(() => {
-    if (token) {
+    if (loginResult) {
       fetchData();
     }
   }, []);
@@ -430,10 +430,10 @@ export const UsePermissions = (setListData: any) => {
 //비즈니스 컴포넌트 조회
 export const UseBizComponent = (bizComponentId: string, setListData: any) => {
   const processApi = useApi();
-  const [token] = useRecoilState(tokenState);
+  const [loginResult] = useRecoilState(loginResultState);
 
   useEffect(() => {
-    if (token) {
+    if (loginResult) {
       fetchBizComponentData();
     }
   }, []);

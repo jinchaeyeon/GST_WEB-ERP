@@ -33,7 +33,7 @@ import {
 } from "../CommonStyled";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { isLoading, tokenState } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
@@ -76,9 +76,9 @@ const CM_A1600: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const [token] = useRecoilState(tokenState);
-  const userId = token ? token.userId : "";
-  const companyCode = token ? token.companyCode : "";
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(
