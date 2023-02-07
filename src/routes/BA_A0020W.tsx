@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { TextArea } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -320,6 +321,7 @@ const BA_A0020: React.FC = () => {
     bill_type: "",
     recvid: "",
     rtxisuyn: "",
+    files: ""
   });
 
   //조회조건 초기값
@@ -567,7 +569,13 @@ const BA_A0020: React.FC = () => {
           workType: "U",
           custcd: firstRowData.custcd,
           custnm: firstRowData.custnm,
-          custdiv: firstRowData.custdiv,
+          custdiv: custdivListData.find(
+            (item: any) => item.sub_code === firstRowData.custdiv
+          )?.code_name == undefined
+            ? firstRowData.custdiv
+            : custdivListData.find(
+                (item: any) => item.sub_code === firstRowData.custdiv
+              )?.code_name,
           custabbr: firstRowData.custabbr,
           compnm_eng: firstRowData.compnm_eng,
           inunpitem: firstRowData.inunpitem,
@@ -577,7 +585,13 @@ const BA_A0020: React.FC = () => {
           unpitem: firstRowData.unpitem,
           ceonm: firstRowData.ceonm,
           address: firstRowData.address,
-          bizdiv: firstRowData.bizdiv,
+          bizdiv: bizdivListData.find(
+            (item: any) => item.sub_code === firstRowData.bizdiv
+          )?.code_name == undefined
+            ? firstRowData.bizdiv
+            : bizdivListData.find(
+                (item: any) => item.sub_code === firstRowData.bizdiv
+              )?.code_name,
           repreregno: firstRowData.repreregno,
           address_eng: firstRowData.address_eng,
           estbdt: new Date(dateformat(firstRowData.estbdt)),
@@ -610,6 +624,7 @@ const BA_A0020: React.FC = () => {
           bill_type: firstRowData.bill_type,
           recvid: firstRowData.recvid,
           rtxisuyn: firstRowData.rtxisuyn,
+          files: firstRowData.files
         });
 
         setsubFilters((prev) => ({
@@ -769,6 +784,7 @@ const BA_A0020: React.FC = () => {
       bill_type: selectedRowData.bill_type,
       recvid: selectedRowData.recvid,
       rtxisuyn: selectedRowData.rtxisuyn,
+      files: selectedRowData.files
     });
 
     if (tabSelected == 1) {
@@ -852,9 +868,13 @@ const BA_A0020: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -864,10 +884,11 @@ const BA_A0020: React.FC = () => {
     subDataResult2.data.forEach((item) =>
       props.field !== undefined ? (sum += item[props.field]) : ""
     );
-
+    var parts = sum.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {sum}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
       </td>
     );
   };
@@ -906,8 +927,8 @@ const BA_A0020: React.FC = () => {
       efaxnum: "",
       email: "",
       taxortnm: "",
-      useyn: "",
-      scmyn: "",
+      useyn: "N",
+      scmyn: "N",
       pariodyn: "",
       attdatnum: "",
       itemlvl1: "",
@@ -920,7 +941,8 @@ const BA_A0020: React.FC = () => {
       emailaddr_og: "",
       bill_type: "",
       recvid: "",
-      rtxisuyn: "",
+      rtxisuyn: "N",
+      files: ""
     });
   };
 
@@ -1182,6 +1204,7 @@ const BA_A0020: React.FC = () => {
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
+    setSubDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
       event,
       subDataResult,
@@ -1191,6 +1214,7 @@ const BA_A0020: React.FC = () => {
   };
 
   const onSubItemChange2 = (event: GridItemChangeEvent) => {
+    setSubDataState2((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
       event,
       subDataResult2,
@@ -1542,9 +1566,13 @@ const BA_A0020: React.FC = () => {
       "@p_auto": "Y",
       "@p_custcd": paraDataDeleted.custcd,
       "@p_custnm": infomation.custnm,
-      "@p_custdiv": infomation.custdiv,
+      "@p_custdiv": custdivListData.find(
+        (item: any) => item.code_name === infomation.custdiv
+      )?.sub_code,
       "@p_custabbr": infomation.custabbr,
-      "@p_bizdiv": infomation.bizdiv,
+      "@p_bizdiv": bizdivListData.find(
+        (item: any) => item.code_name === infomation.bizdiv
+      )?.sub_code,
       "@p_bizregnum": infomation.bizregnum,
       "@p_ceonm": infomation.ceonm,
       "@p_repreregno": infomation.repreregno,
@@ -1622,9 +1650,17 @@ const BA_A0020: React.FC = () => {
       "@p_auto": "Y",
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
-      "@p_custdiv": infomation.custdiv,
+      "@p_custdiv": custdivListData.find(
+        (item: any) => item.code_name === infomation.custdiv
+      )?.sub_code == undefined ? infomation.custdiv : custdivListData.find(
+        (item: any) => item.code_name === infomation.custdiv
+      )?.sub_code,
       "@p_custabbr": infomation.custabbr,
-      "@p_bizdiv": infomation.bizdiv,
+      "@p_bizdiv": bizdivListData.find(
+        (item: any) => item.code_name === infomation.bizdiv
+      )?.sub_code == undefined ? infomation.bizdiv : bizdivListData.find(
+        (item: any) => item.code_name === infomation.bizdiv
+      )?.sub_code,
       "@p_bizregnum": infomation.bizregnum,
       "@p_ceonm": infomation.ceonm,
       "@p_repreregno": infomation.repreregno,
@@ -2355,7 +2391,9 @@ const BA_A0020: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
 
-      <GridContainer>
+      <GridContainer
+        style={{ display: "inline-block", float: "left", width: "35vw" }}
+      >
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -2364,35 +2402,9 @@ const BA_A0020: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                업체생성
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                품목삭제
-              </Button>
-              <Button
-                onClick={onSaveClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-            </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "30vh" }}
+            style={{ height: "76vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -2457,9 +2469,39 @@ const BA_A0020: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+      <TabStrip
+        selected={tabSelected}
+        onSelect={handleSelectTab}
+        style={{ display: "inline-block", float: "right", width: "53vw" }}
+      >
         <TabStripTab title="상세정보">
-          <FilterBoxWrap style={{ height: "40vh" }}>
+        <ButtonContainer style={{float: "right", marginBottom: "1vh"}}>
+              <Button
+                onClick={onAddClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                업체생성
+              </Button>
+              <Button
+                onClick={onDeleteClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                품목삭제
+              </Button>
+              <Button
+                onClick={onSaveClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              >
+                저장
+              </Button>
+            </ButtonContainer>
+          <FilterBoxWrap style={{ height: "70vh" }}>
             <FilterBox>
               <tbody>
                 <tr>
@@ -2473,7 +2515,7 @@ const BA_A0020: React.FC = () => {
                     />
                   </td>
                   <th>업체명</th>
-                  <td>
+                  <td colSpan={3}>
                     <Input
                       name="custnm"
                       type="text"
@@ -2491,9 +2533,14 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA026"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
+                        required={true}
+                        textField="code_name"
+                        valueField="code_name"
                       />
                     )}
                   </td>
+                </tr>
+                <tr>
                   <th>업체약어</th>
                   <td>
                     <Input
@@ -2503,20 +2550,15 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>사업자구분</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="bizdiv"
-                        value={infomation.bizdiv}
-                        bizComponentId="L_BA027"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                  <th>영문회사명</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="compnm_eng"
+                      type="text"
+                      value={infomation.compnm_eng}
+                      onChange={InputChange}
+                    />
                   </td>
-                </tr>
-                <tr>
                   <th>매입단가항목</th>
                   <td>
                     {bizComponentData !== null && (
@@ -2526,9 +2568,12 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA008"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
+                        required={true}
                       />
                     )}
                   </td>
+                </tr>
+                <tr>
                   <th>사업자등록번호</th>
                   <td>
                     <Input
@@ -2563,6 +2608,7 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA008"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
+                        required={true}
                       />
                     )}
                   </td>
@@ -2578,7 +2624,7 @@ const BA_A0020: React.FC = () => {
                     />
                   </td>
                   <th>주소</th>
-                  <td>
+                  <td colSpan={3}>
                     <Input
                       name="address"
                       type="text"
@@ -2586,15 +2632,23 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>영문회사명</th>
+                  <th>사업자구분</th>
                   <td>
-                    <Input
-                      name="compnm_eng"
-                      type="text"
-                      value={infomation.compnm_eng}
-                      onChange={InputChange}
-                    />
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="bizdiv"
+                        value={infomation.bizdiv}
+                        bizComponentId="L_BA027"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        required={true}
+                        textField="code_name"
+                        valueField="code_name"
+                      />
+                    )}
                   </td>
+                </tr>
+                <tr>
                   <th>주민등록번호</th>
                   <td>
                     <Input
@@ -2604,7 +2658,7 @@ const BA_A0020: React.FC = () => {
                     />
                   </td>
                   <th>영문주소</th>
-                  <td>
+                  <td colSpan={3}>
                     <Input
                       name="address_eng"
                       type="text"
@@ -2612,14 +2666,23 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                </tr>
-                <tr>
                   <th>개업년월일</th>
                   <td>
                     <DatePicker
                       name="estbdt"
                       value={infomation.estbdt}
                       format="yyyy-MM-dd"
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>전화번호</th>
+                  <td>
+                    <Input
+                      name="phonenum"
+                      type="text"
+                      value={infomation.phonenum}
                       onChange={InputChange}
                     />
                   </td>
@@ -2650,15 +2713,6 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>전자팩스번호</th>
-                  <td>
-                    <Input
-                      name="efaxnum"
-                      type="text"
-                      value={infomation.efaxnum}
-                      onChange={InputChange}
-                    />
-                  </td>
                 </tr>
                 <tr>
                   <th>전자전화번호</th>
@@ -2670,17 +2724,8 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>전화번호</th>
-                  <td>
-                    <Input
-                      name="phonenum"
-                      type="text"
-                      value={infomation.phonenum}
-                      onChange={InputChange}
-                    />
-                  </td>
                   <th>계좌번호</th>
-                  <td>
+                  <td colSpan={3}>
                     <Input
                       name="bankacnt"
                       type="text"
@@ -2694,15 +2739,6 @@ const BA_A0020: React.FC = () => {
                       name="comptype"
                       type="text"
                       value={infomation.comptype}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>이메일</th>
-                  <td>
-                    <Input
-                      name="email"
-                      type="text"
-                      value={infomation.email}
                       onChange={InputChange}
                     />
                   </td>
@@ -2735,29 +2771,6 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>TAX구분</th>
-                  <td>
-                    <Input
-                      name="etax"
-                      type="text"
-                      value={infomation.etax}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>역발행여부</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="rtxisuyn"
-                        value={infomation.rtxisuyn}
-                        bizComponentId="R_RTXISUYN"
-                        bizComponentData={bizComponentData}
-                        changeData={RadioChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
                   <th>신고세무소</th>
                   <td>
                     {bizComponentData !== null && (
@@ -2770,12 +2783,104 @@ const BA_A0020: React.FC = () => {
                       />
                     )}
                   </td>
+                </tr>
+                <tr>
+                  <th>전자팩스번호</th>
+                  <td>
+                    <Input
+                      name="efaxnum"
+                      type="text"
+                      value={infomation.efaxnum}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>이메일</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="email"
+                      type="text"
+                      value={infomation.email}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>신고세무소명</th>
                   <td>
                     <Input
                       name="taxortnm"
                       type="text"
                       value={infomation.taxortnm}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>사용여부</th>
+                  <td colSpan={3}>
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
+                        name="useyn"
+                        value={infomation.useyn}
+                        bizComponentId="R_USEYN"
+                        bizComponentData={bizComponentData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>SCM사용여부</th>
+                  <td colSpan={3}>
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
+                        name="scmyn"
+                        value={infomation.scmyn}
+                        bizComponentId="R_USEYN"
+                        bizComponentData={bizComponentData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>역발행여부</th>
+                  <td colSpan={3}> 
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
+                        name="rtxisuyn"
+                        value={infomation.rtxisuyn}
+                        bizComponentId="R_RTXISUYN"
+                        bizComponentData={bizComponentData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>정기/비정기</th>
+                  <td>
+                    <Input
+                      name="pariodyn"
+                      type="text"
+                      value={infomation.pariodyn}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>센드빌회원여부</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="bill_type"
+                        value={infomation.bill_type}
+                        bizComponentId="L_AC901"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>TAX구분</th>
+                  <td>
+                    <Input
+                      name="etax"
+                      type="text"
+                      value={infomation.etax}
                       onChange={InputChange}
                     />
                   </td>
@@ -2817,66 +2922,6 @@ const BA_A0020: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>사용여부</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="useyn"
-                        value={infomation.useyn}
-                        bizComponentId="R_USEYN"
-                        bizComponentData={bizComponentData}
-                        changeData={RadioChange}
-                      />
-                    )}
-                  </td>
-                  <th>SCM사용여부</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="scmyn"
-                        value={infomation.scmyn}
-                        bizComponentId="R_USEYN"
-                        bizComponentData={bizComponentData}
-                        changeData={RadioChange}
-                      />
-                    )}
-                  </td>
-                  <th>정기/비정기</th>
-                  <td>
-                    <Input
-                      name="pariodyn"
-                      type="text"
-                      value={infomation.pariodyn}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>비고</th>
-                  <td>
-                    <Input
-                      name="remark"
-                      type="text"
-                      value={infomation.remark}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>첨부파일</th>
-                  <td>
-                    <Input
-                      name="attdatnum"
-                      type="text"
-                      value={infomation.attdatnum}
-                    />
-                    <ButtonInInput>
-                      <Button
-                        type={"button"}
-                        onClick={onAttachmentsWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td>
-                </tr>
-                <tr>
                   <th>etax담당자</th>
                   <td>
                     {bizComponentData !== null && (
@@ -2891,6 +2936,15 @@ const BA_A0020: React.FC = () => {
                       />
                     )}
                   </td>
+                  <th>etax이메일</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="emailaddr_og"
+                      type="text"
+                      value={infomation.emailaddr_og}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>etax전화번호</th>
                   <td>
                     <Input
@@ -2900,26 +2954,32 @@ const BA_A0020: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>etax이메일</th>
-                  <td>
+                </tr>
+                <tr>
+                  <th>첨부파일</th>
+                  <td colSpan={3}>
                     <Input
-                      name="emailaddr_og"
+                      name="files"
                       type="text"
-                      value={infomation.emailaddr_og}
+                      value={infomation.files}
+                    />
+                    <ButtonInInput style={{marginTop: "2vh"}}>
+                      <Button
+                        type={"button"}
+                        onClick={onAttachmentsWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>비고</th>
+                  <td colSpan={3}>
+                    <TextArea
+                      value={infomation.remark}
+                      name="remark"
+                      rows={3}
                       onChange={InputChange}
                     />
-                  </td>
-                  <th>센드빌회원여부</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="bill_type"
-                        value={infomation.bill_type}
-                        bizComponentId="L_AC901"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
                   </td>
                 </tr>
               </tbody>
@@ -2927,7 +2987,7 @@ const BA_A0020: React.FC = () => {
           </FilterBoxWrap>
         </TabStripTab>
         <TabStripTab title="업체담당자">
-          <GridContainer>
+          <GridContainer style={{ width: "50vw" }}>
             <GridTitleContainer>
               <GridTitle>업체담당자</GridTitle>
               <ButtonContainer>
@@ -2952,7 +3012,7 @@ const BA_A0020: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "34vh" }}
+              style={{ height: "68vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -3029,7 +3089,7 @@ const BA_A0020: React.FC = () => {
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="재무현황">
-          <GridContainer>
+          <GridContainer style={{ width: "51vw" }}>
             <GridTitleContainer>
               <GridTitle>재무현황</GridTitle>
               <ButtonContainer>
@@ -3054,7 +3114,7 @@ const BA_A0020: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "34vh" }}
+              style={{ height: "68vh" }}
               data={process(
                 subDataResult2.data.map((row) => ({
                   ...row,

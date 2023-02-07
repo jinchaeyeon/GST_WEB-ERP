@@ -577,7 +577,7 @@ const SY_A0125W: React.FC = () => {
       update_pc: "",
       update_time: "",
       update_userid: "",
-      useyn: "",
+      useyn: "Y",
     });
   };
 
@@ -669,6 +669,7 @@ const SY_A0125W: React.FC = () => {
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
+    setSubDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
       event,
       subDataResult,
@@ -1142,6 +1143,7 @@ const SY_A0125W: React.FC = () => {
                     type="text"
                     value={infomation.dptcd}
                     onChange={InputChange}
+                    className="required"
                   />
                 </td>
                 <th>부서명</th>

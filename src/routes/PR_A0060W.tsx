@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { TextArea } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -497,7 +498,6 @@ const PR_A0060: React.FC = () => {
     fetchSubGrid();
   }, [subPgNum]);
 
-
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
@@ -673,9 +673,9 @@ const PR_A0060: React.FC = () => {
     });
 
     setsubFilters((prev) => ({
-        ...prev,
-        workType: "HISTORY",
-        fxcode: selectedRowData.fxcode,
+      ...prev,
+      workType: "HISTORY",
+      fxcode: selectedRowData.fxcode,
     }));
   };
 
@@ -976,7 +976,6 @@ const PR_A0060: React.FC = () => {
     }));
   };
 
-
   const setCustData3 = (data: ICustData) => {
     const item = parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0]);
     const newData = subDataResult.data.map((items) =>
@@ -1026,6 +1025,7 @@ const PR_A0060: React.FC = () => {
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
+    setSubDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
       event,
       subDataResult,
@@ -1146,10 +1146,10 @@ const PR_A0060: React.FC = () => {
   //     />
   //   );
 
-    const [paraDataDeleted, setParaDataDeleted] = useState({
-      work_type: "",
-      fxcode: "",
-    });
+  const [paraDataDeleted, setParaDataDeleted] = useState({
+    work_type: "",
+    fxcode: "",
+  });
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -1160,8 +1160,8 @@ const PR_A0060: React.FC = () => {
       } else {
         const newData2 = {
           ...item,
-          rowstatus: "D"
-        }
+          rowstatus: "D",
+        };
         deletedMainRows.push(newData2);
       }
     });
@@ -1195,14 +1195,14 @@ const PR_A0060: React.FC = () => {
   //     setSubDataState2({});
   //   };
 
-    const onDeleteClick2 = (e: any) => {
-      const item = Object.getOwnPropertyNames(selectedState)[0];
-      setParaDataDeleted((prev) => ({
-        ...prev,
-        work_type: "D",
-        fxcode: item,
-      }));
-    };
+  const onDeleteClick2 = (e: any) => {
+    const item = Object.getOwnPropertyNames(selectedState)[0];
+    setParaDataDeleted((prev) => ({
+      ...prev,
+      work_type: "D",
+      fxcode: item,
+    }));
+  };
 
   const [paraData, setParaData] = useState({
     workType: "HISTORY",
@@ -1533,11 +1533,13 @@ const PR_A0060: React.FC = () => {
             dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
               ?.dptcd == undefined
               ? ""
-              : dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
-                  ?.dptcd,
+              : dptcdListData.find(
+                  (item: any) => item.dptnm === infomation.dptcd
+                )?.dptcd,
           "@p_person":
-            personListData.find((item: any) => item.user_name === infomation.person)
-              ?.user_id == undefined
+            personListData.find(
+              (item: any) => item.user_name === infomation.person
+            )?.user_id == undefined
               ? ""
               : personListData.find(
                   (item: any) => item.user_name === infomation.person
@@ -1597,7 +1599,7 @@ const PR_A0060: React.FC = () => {
       }
     });
     deletedMainRows = [];
-    
+
     setParaData((prev) => ({
       ...prev,
       workType: "U",
@@ -1937,8 +1939,8 @@ const PR_A0060: React.FC = () => {
   //     }));
   //   };
 
-    const fetchToDelete = async () => {
-      let data: any;
+  const fetchToDelete = async () => {
+    let data: any;
 
     try {
       data = await processApi<any>("procedure", paraDeleted);
@@ -2033,12 +2035,12 @@ const PR_A0060: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      for(var i = 0; i< subDataResult.data.length; i++) {
-        if(rowData.fxseq == subDataResult.data[i].fxseq) {
+      for (var i = 0; i < subDataResult.data.length; i++) {
+        if (rowData.fxseq == subDataResult.data[i].fxseq) {
           setrows(i);
         }
       }
-      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true })
+      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true });
       setAttachmentsWindowVisible2(true);
     };
 
@@ -2063,7 +2065,7 @@ const PR_A0060: React.FC = () => {
 
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true })
+      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true });
       setCustWindowVisible3(true);
     };
 
@@ -2268,7 +2270,7 @@ const PR_A0060: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "35vh" }}
+            style={{ height: "27vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -2370,7 +2372,7 @@ const PR_A0060: React.FC = () => {
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="설비정보">
-          <FilterBoxWrap style={{ height: "30vh" }}>
+          <FilterBoxWrap style={{ height: "40vh" }}>
             <FilterBox>
               <tbody>
                 <tr>
@@ -2385,7 +2387,7 @@ const PR_A0060: React.FC = () => {
                     />
                   </td>
                   <th>설비명</th>
-                  <td>
+                  <td colSpan={3}>
                     <Input
                       name="fxnm"
                       type="text"
@@ -2413,6 +2415,8 @@ const PR_A0060: React.FC = () => {
                       className="readonly"
                     />
                   </td>
+                </tr>
+                <tr>
                   <th>설비구분</th>
                   <td>
                     {bizComponentData !== null && (
@@ -2425,8 +2429,14 @@ const PR_A0060: React.FC = () => {
                       />
                     )}
                   </td>
-                </tr>
-                <tr>
+                  <th>사양</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="spec"
+                      value={infomation.spec}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>가용시간</th>
                   <td>
                     <Input
@@ -2434,14 +2444,7 @@ const PR_A0060: React.FC = () => {
                       type="number"
                       value={infomation.availabletime}
                       onChange={InputChange}
-                    />
-                  </td>
-                  <th>사양</th>
-                  <td>
-                    <Input
-                      name="spec"
-                      value={infomation.spec}
-                      onChange={InputChange}
+                      style={{textAlign: "right"}}
                     />
                   </td>
                   <th>시간당생산수량</th>
@@ -2450,6 +2453,18 @@ const PR_A0060: React.FC = () => {
                       name="uph"
                       type="number"
                       value={infomation.uph}
+                      onChange={InputChange}
+                      style={{textAlign: "right"}}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>설비종류</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="kind"
+                      type="text"
+                      value={infomation.kind}
                       onChange={InputChange}
                     />
                   </td>
@@ -2474,54 +2489,6 @@ const PR_A0060: React.FC = () => {
                       />
                     )}
                   </td>
-                </tr>
-                <tr>
-                  <th>설비종류</th>
-                  <td>
-                    <Input
-                      name="kind"
-                      type="text"
-                      value={infomation.kind}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>담당부서</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="dptcd"
-                        value={infomation.dptcd}
-                        bizComponentId="L_dptcd_001"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        textField="dptnm"
-                        valueField="dptnm"
-                      />
-                    )}
-                  </td>
-                  <th>책임자</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="person"
-                        value={infomation.person}
-                        bizComponentId="L_sysUserMaster_001"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        textField="user_name"
-                        valueField="user_name"
-                      />
-                    )}
-                  </td>
-                  <th>장소</th>
-                  <td>
-                    <Input
-                      name="place"
-                      type="text"
-                      value={infomation.place}
-                      onChange={InputChange}
-                    />
-                  </td>
                   <th>IOT설비번호</th>
                   <td>
                     <Input
@@ -2529,10 +2496,20 @@ const PR_A0060: React.FC = () => {
                       type="number"
                       value={infomation.IOT_TER_ID}
                       onChange={InputChange}
+                      style={{textAlign: "right"}}
                     />
                   </td>
                 </tr>
                 <tr>
+                  <th>장소</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="place"
+                      type="text"
+                      value={infomation.place}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>제조일자</th>
                   <td>
                     <DatePicker
@@ -2557,24 +2534,6 @@ const PR_A0060: React.FC = () => {
                       name="classnm1"
                       type="text"
                       value={infomation.classnm1}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>분류2</th>
-                  <td>
-                    <Input
-                      name="classnm2"
-                      type="text"
-                      value={infomation.classnm2}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>분류3</th>
-                  <td>
-                    <Input
-                      name="classnm3"
-                      type="text"
-                      value={infomation.classnm3}
                       onChange={InputChange}
                     />
                   </td>
@@ -2621,19 +2580,48 @@ const PR_A0060: React.FC = () => {
                       type="number"
                       value={infomation.amt}
                       onChange={InputChange}
+                      style={{textAlign: "right"}}
                     />
                   </td>
-                  <th>IOT I/F No</th>
+                  <th>분류2</th>
                   <td>
                     <Input
-                      name="iotserialno"
+                      name="classnm2"
                       type="text"
-                      value={infomation.iotserialno}
+                      value={infomation.classnm2}
                       onChange={InputChange}
                     />
                   </td>
                 </tr>
                 <tr>
+                  <th>담당부서</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="dptcd"
+                        value={infomation.dptcd}
+                        bizComponentId="L_dptcd_001"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        textField="dptnm"
+                        valueField="dptnm"
+                      />
+                    )}
+                  </td>
+                  <th>책임자</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="person"
+                        value={infomation.person}
+                        bizComponentId="L_sysUserMaster_001"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        textField="user_name"
+                        valueField="user_name"
+                      />
+                    )}
+                  </td>
                   <th>소속공정</th>
                   <td>
                     {bizComponentData !== null && (
@@ -2646,23 +2634,34 @@ const PR_A0060: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>비고</th>
+                  <th>IOT I/F No</th>
                   <td>
                     <Input
-                      name="remark"
+                      name="iotserialno"
                       type="text"
-                      value={infomation.remark}
+                      value={infomation.iotserialno}
                       onChange={InputChange}
                     />
                   </td>
-                  <th>첨부파일</th>
+                  <th>분류3</th>
                   <td>
                     <Input
-                      name="attdatnum"
+                      name="classnm3"
                       type="text"
-                      value={infomation.attdatnum}
+                      value={infomation.classnm3}
+                      onChange={InputChange}
                     />
-                    <ButtonInInput>
+                  </td>
+                </tr>
+                <tr>
+                  <th>첨부파일</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="files"
+                      type="text"
+                      value={infomation.files}
+                    />
+                    <ButtonInInput style={{ marginTop: "3vh"}}>
                       <Button
                         type={"button"}
                         onClick={onAttachmentsWndClick}
@@ -2670,6 +2669,15 @@ const PR_A0060: React.FC = () => {
                         fillMode="flat"
                       />
                     </ButtonInInput>
+                  </td>
+                  <th>비고</th>
+                  <td colSpan={5}>
+                  <TextArea
+                      value={infomation.remark}
+                      name="remark"
+                      rows={4}
+                      onChange={InputChange}
+                    />
                   </td>
                 </tr>
               </tbody>
@@ -2702,7 +2710,7 @@ const PR_A0060: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "25vh" }}
+              style={{ height: "35vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -2766,13 +2774,14 @@ const PR_A0060: React.FC = () => {
                 field="fxcost"
                 title="수리비용"
                 width="120px"
+                cell={NumberCell}
                 footerCell={gridSumQtyFooterCell}
               />
               <GridColumn field="remark1" title="비고" width="290px" />
               <GridColumn
                 field="attdatnum"
                 title="첨부파일"
-                width="160px"
+                width="140px"
                 cell={CommandCell}
               />
             </Grid>

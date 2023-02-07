@@ -1248,7 +1248,7 @@ const Page: React.FC = () => {
                     bizComponentId="L_BA002"
                     bizComponentData={bizComponentData}
                     changeData={filterComboBoxChange}
-                  />
+              />
                 )}
               </td>
               <th>부서코드</th>

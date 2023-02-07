@@ -547,6 +547,7 @@ const PR_A3000W: React.FC = () => {
                     changeData={filterComboBoxChange}
                     valueField="user_id"
                     textField="user_name"
+
                   />
                 )}
               </td>
@@ -561,6 +562,7 @@ const PR_A3000W: React.FC = () => {
                     changeData={filterComboBoxChange}
                     valueField="fxcode"
                     textField="fxfull"
+
                   />
                 )}
               </td>

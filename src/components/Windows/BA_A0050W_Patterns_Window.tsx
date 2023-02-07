@@ -11,6 +11,7 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
+import NumberCell from "../Cells/NumberCell";
 import {
   BottomContainer,
   ButtonContainer,
@@ -465,8 +466,8 @@ const KendoWindow = ({
                 onRowDoubleClick={onRowDoubleClick}
                 style={{ height: "400px" }}
               >
-                <GridColumn field="proccd" title="공정" width="150px"/>
-                <GridColumn field="procseq" title="공정순서" width="120px" />
+                <GridColumn field="proccd" title="공정" width="140px"/>
+                <GridColumn field="procseq" title="공정순서" width="120px" cell={NumberCell}/>
                 <GridColumn field="outprocyn" title="외주구분" width="120px" />
                 <GridColumn field="remark" title="비고" width="200px" />
               </Grid>

@@ -14,7 +14,7 @@ import { Icon, getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
-import ItemsWindow from "../Windows/CommonWindows/ItemsWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 import { isLoading } from "../../store/atoms";
 import {
   BottomContainer,
@@ -50,6 +50,8 @@ import ComboBoxCell from "../Cells/ComboBoxCell";
 import { useSetRecoilState } from "recoil";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import { FormCheckBoxCell } from "../Editors";
+import NumberCell from "../Cells/NumberCell";
+
 const SUB_DATA_ITEM_KEY = "pattern_id";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -674,7 +676,7 @@ const KendoWindow = ({
                   style={{ height: "200px" }}
                 >
                   <GridColumn field="proccd" title="공정" width="150px" />
-                  <GridColumn field="procseq" title="공정순서" width="100px" />
+                  <GridColumn field="procseq" title="공정순서" width="100px" cell={NumberCell}/>
                   <GridColumn
                     field="outprocyn"
                     title="외주구분"
@@ -692,13 +694,14 @@ const KendoWindow = ({
                     title="소요자재명"
                     width="150px"
                   />
-                  <GridColumn field="unitqty" title="단위수량" width="120px" />
+                  <GridColumn field="unitqty" title="단위수량" width="120px" cell={NumberCell}/>
                   <GridColumn field="qtyunit" title="수량단위" width="120px" />
                   <GridColumn field="outgb" title="불출구분" width="120px" />
                   <GridColumn
                     field="procqty"
                     title="재공생산량"
                     width="120px"
+                    cell={NumberCell}
                   />
                   <GridColumn
                     field="procunit"

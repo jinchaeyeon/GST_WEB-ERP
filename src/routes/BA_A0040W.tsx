@@ -76,7 +76,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
-
+import { TextArea } from "@progress/kendo-react-inputs";
 const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: object[] = [];
@@ -332,6 +332,7 @@ const BA_A0040: React.FC = () => {
     custitemnm: "",
     unitqty: 0,
     procday: "",
+    files: "",
   });
 
   //조회조건 초기값
@@ -432,7 +433,12 @@ const BA_A0040: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log(rows);
+
+      rows.map((item: any) => {
+        if (item.itemnm == infomation.itemnm) {
+          setSelectedState({ [item.itemcd]: true });
+        }
+      });
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
@@ -465,7 +471,6 @@ const BA_A0040: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        inEdit: "recdt",
         rowstatus: "U",
       }));
       if (totalRowCnt > 0) {
@@ -537,7 +542,14 @@ const BA_A0040: React.FC = () => {
           itemcd: firstRowData.itemcd,
           itemnm: firstRowData.itemnm,
           insiz: firstRowData.insiz,
-          itemacnt: firstRowData.itemacnt,
+          itemacnt:
+            itemacntListData.find(
+              (item: any) => item.sub_code === firstRowData.itemacnt
+            )?.code_name == undefined
+              ? firstRowData.itemacnt
+              : itemacntListData.find(
+                  (item: any) => item.sub_code === firstRowData.itemacnt
+                )?.code_name,
           useyn: firstRowData.useyn == "Y" ? "Y" : "N",
           custcd: firstRowData.custcd,
           custnm: firstRowData.custnm,
@@ -555,7 +567,14 @@ const BA_A0040: React.FC = () => {
           row_values: firstRowData.row_values,
           safeqty: firstRowData.safeqty,
           unitwgt: firstRowData.unitwgt,
-          invunit: firstRowData.invunit,
+          invunit:
+            qtyunitListData.find(
+              (item: any) => item.sub_code === firstRowData.invunit
+            )?.code_name == undefined
+              ? firstRowData.invunit
+              : qtyunitListData.find(
+                  (item: any) => item.sub_code === firstRowData.invunit
+                )?.code_name,
           dwgno: firstRowData.dwgno,
           maker: firstRowData.maker,
           qcyn: firstRowData.qcyn == "Y" ? "Y" : "N",
@@ -578,6 +597,7 @@ const BA_A0040: React.FC = () => {
           custitemnm: firstRowData.custitemnm,
           unitqty: firstRowData.unitqty,
           procday: firstRowData.procday,
+          files: firstRowData.files,
         });
         setIfSelectFirstRow(true);
       }
@@ -622,7 +642,7 @@ const BA_A0040: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
+    setIfSelectFirstRow(false);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
@@ -673,6 +693,7 @@ const BA_A0040: React.FC = () => {
       custitemnm: selectedRowData.custitemnm,
       unitqty: selectedRowData.unitqty,
       procday: selectedRowData.procday,
+      files: selectedRowData.files,
     });
     if (tabSelected === 1) {
       setsubFilters((prev) => ({
@@ -734,9 +755,13 @@ const BA_A0040: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -750,7 +775,7 @@ const BA_A0040: React.FC = () => {
       itemnm: "",
       insiz: "",
       itemacnt: "제품",
-      useyn: "",
+      useyn: "Y",
       custcd: "",
       custnm: "",
       itemcd_s: "",
@@ -767,7 +792,7 @@ const BA_A0040: React.FC = () => {
       row_values: null,
       safeqty: 0,
       unitwgt: 0,
-      invunit: "",
+      invunit: "EA",
       dwgno: "",
       maker: "",
       qcyn: "N",
@@ -790,6 +815,7 @@ const BA_A0040: React.FC = () => {
       custitemnm: "",
       unitqty: 0,
       procday: "",
+      files: "",
     });
   };
 
@@ -961,6 +987,7 @@ const BA_A0040: React.FC = () => {
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
+    setSubData2State((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
       event,
       subData2Result,
@@ -1166,9 +1193,14 @@ const BA_A0040: React.FC = () => {
       "@p_work_type": infomation.workType,
       "@p_itemcd": infomation.itemcd,
       "@p_itemnm": infomation.itemnm,
-      "@p_itemacnt": itemacntListData.find(
-        (item: any) => item.code_name === infomation.itemacnt
-      )?.sub_code,
+      "@p_itemacnt":
+        itemacntListData.find(
+          (item: any) => item.code_name == infomation.itemacnt
+        )?.sub_code == undefined
+          ? infomation.itemacnt
+          : itemacntListData.find(
+              (item: any) => item.code_name == infomation.itemacnt
+            )?.sub_code,
       "@p_bnatur": infomation.bnatur,
       "@p_insiz": infomation.insiz,
       "@p_spec": infomation.spec,
@@ -1178,9 +1210,14 @@ const BA_A0040: React.FC = () => {
       "@p_itemlvl2": infomation.itemlvl2,
       "@p_itemlvl3": infomation.itemlvl3,
       "@p_itemlvl4": infomation.itemlvl4,
-      "@p_invunit": qtyunitListData.find(
-        (item: any) => item.code_name === infomation.invunit
-      )?.sub_code,
+      "@p_invunit":
+        qtyunitListData.find(
+          (item: any) => item.code_name === infomation.invunit
+        )?.sub_code == undefined
+          ? infomation.invunit
+          : qtyunitListData.find(
+              (item: any) => item.code_name === infomation.invunit
+            )?.sub_code,
       "@p_bomyn": infomation.bomyn,
       "@p_qcyn": infomation.qcyn,
       "@p_unitwgt": infomation.unitwgt,
@@ -1361,6 +1398,7 @@ const BA_A0040: React.FC = () => {
       setMainDataResult(process([], mainDataState));
 
       fetchMainGrid();
+      setSelectedState({ [infomation.itemcd]: true });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1629,7 +1667,7 @@ const BA_A0040: React.FC = () => {
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="상세정보">
-          <FilterBoxWrap style={{ height: "22vh" }}>
+          <FilterBoxWrap style={{ height: "30vh" }}>
             <FilterBox>
               <tbody>
                 <tr>
@@ -1663,6 +1701,7 @@ const BA_A0040: React.FC = () => {
                         changeData={ComboBoxChange}
                         textField={"code_name"}
                         valueField={"code_name"}
+                        required={true}
                       />
                     )}
                   </td>
@@ -1682,14 +1721,20 @@ const BA_A0040: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>재질</th>
+                  <th>수량단위</th>
                   <td>
-                    <Input
-                      name="bnatur"
-                      type="text"
-                      value={infomation.bnatur}
-                      onChange={InputChange}
-                    />
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="invunit"
+                        value={infomation.invunit}
+                        bizComponentId="L_BA015"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        textField={"code_name"}
+                        valueField={"code_name"}
+                        required={true}
+                      />
+                    )}
                   </td>
                 </tr>
                 <tr>
@@ -1700,6 +1745,7 @@ const BA_A0040: React.FC = () => {
                       type="number"
                       value={infomation.unitwgt}
                       onChange={InputChange}
+                      style={{ textAlign: "right" }}
                     />
                   </td>
                   <th>안전재고량</th>
@@ -1709,6 +1755,7 @@ const BA_A0040: React.FC = () => {
                       type="number"
                       value={infomation.safeqty}
                       onChange={InputChange}
+                      style={{ textAlign: "right" }}
                     />
                   </td>
                   <th>대분류</th>
@@ -1767,19 +1814,14 @@ const BA_A0040: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>수량단위</th>
+                  <th>재질</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="invunit"
-                        value={infomation.invunit}
-                        bizComponentId="L_BA015"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        textField={"code_name"}
-                        valueField={"code_name"}
-                      />
-                    )}
+                    <Input
+                      name="bnatur"
+                      type="text"
+                      value={infomation.bnatur}
+                      onChange={InputChange}
+                    />
                   </td>
                   <th>업체코드</th>
                   <td>
@@ -1842,22 +1884,9 @@ const BA_A0040: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>비고</th>
-                  <td>
-                    <Input
-                      name="remark"
-                      type="text"
-                      value={infomation.remark}
-                      onChange={InputChange}
-                    />
-                  </td>
                   <th>첨부파일</th>
                   <td>
-                    <Input
-                      name="attdatnum"
-                      type="text"
-                      value={infomation.attdatnum}
-                    />
+                    <Input name="files" type="text" value={infomation.files} />
                     <ButtonInInput>
                       <Button
                         type={"button"}
@@ -1866,6 +1895,17 @@ const BA_A0040: React.FC = () => {
                         fillMode="flat"
                       />
                     </ButtonInInput>
+                  </td>
+                </tr>
+                <tr>
+                  <th>비고</th>
+                  <td colSpan={10}>
+                    <TextArea
+                      value={infomation.remark}
+                      name="remark"
+                      rows={4}
+                      onChange={InputChange}
+                    />
                   </td>
                 </tr>
               </tbody>
@@ -1966,8 +2006,13 @@ const BA_A0040: React.FC = () => {
                 width="200px"
                 cell={CustomComboBoxCell}
               />
-              <GridColumn field="unp" title="단가" width="210px" />
-              <GridColumn field="remark" title="비고" width="400px" />
+              <GridColumn
+                field="unp"
+                title="단가"
+                width="210px"
+                cell={NumberCell}
+              />
+              <GridColumn field="remark" title="비고" width="380px" />
             </Grid>
           </GridContainer>
         </TabStripTab>

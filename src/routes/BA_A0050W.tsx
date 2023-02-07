@@ -15,8 +15,8 @@ import { CellRender, RowRender } from "../components/Renderers";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import CopyWindow from '../components/Windows/BA_A0050W_1_Window';
-import CopyWindow2 from "../components/Windows/BA_A0050W_2_Window";
+import CopyWindow from '../components/Windows/BA_A0050W_Copy_Window';
+import CopyWindow2 from "../components/Windows/BA_A0050W_Patterns_Window";
 import {
   Title,
   FilterBoxWrap,
@@ -656,26 +656,38 @@ const BA_A0050: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const subTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = subDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {subDataResult.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   
   const sub2TotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = subData2Result.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {subData2Result.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -772,6 +784,7 @@ const BA_A0050: React.FC = () => {
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
+    setSubDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
       event,
       subDataResult,
@@ -1455,7 +1468,7 @@ const BA_A0050: React.FC = () => {
             cell={CustomComboBoxCell}
             footerCell={subTotalFooterCell}
           />
-          <GridColumn field="procseq" title="공정순서" width="100px" />
+          <GridColumn field="procseq" title="공정순서" width="100px" cell={NumberCell}/>
           <GridColumn
             field="outprocyn"
             title="외주구분"
@@ -1476,7 +1489,7 @@ const BA_A0050: React.FC = () => {
             cell={CommandCell2}
           />
           <GridColumn field="chlditemnm" title="소요자재명" width="120px" />
-          <GridColumn field="unitqty" title="단위수량" width="120px" />
+          <GridColumn field="unitqty" title="단위수량" width="120px" cell={NumberCell}/>
           <GridColumn
             field="qtyunit"
             title="수량단위"
@@ -1484,7 +1497,7 @@ const BA_A0050: React.FC = () => {
             cell={CustomComboBoxCell}
           />
           <GridColumn field="outgb" title="불출구분" width="120px" />
-          <GridColumn field="procqty" title="재공생산량" width="120px" />
+          <GridColumn field="procqty" title="재공생산량" width="120px" cell={NumberCell}/>
           <GridColumn
             field="procunit"
             title="생산량단위"

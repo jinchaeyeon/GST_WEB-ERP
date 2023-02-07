@@ -16,6 +16,7 @@ type TCommonComboBox = {
   changeData(e: any): void;
   textField?: string;
   valueField?: string;
+  required?: boolean;
 };
 const CommonComboBox = ({
   name,
@@ -25,6 +26,7 @@ const CommonComboBox = ({
   changeData,
   textField = "code_name",
   valueField = "sub_code",
+  required = false
 }: TCommonComboBox) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
@@ -92,6 +94,7 @@ const CommonComboBox = ({
       columns={newColumns}
       textField={textField}
       onChange={onChangeHandle}
+      required={required}
     />
   );
 };
