@@ -777,12 +777,16 @@ const CM_A0000W: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn cell={CommandCell} width="100px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
+              [
+                { fieldName: "CommandCell" },
+                ...customOptionData.menuCustomColumnOptions["grdList"],
+              ]
                 .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
+                .map((item: any, idx: number) =>
+                  item.fieldName === "CommandCell" ? (
+                    <GridColumn cell={CommandCell} width="100px" />
+                  ) : (
                     item.sortOrder !== -1 && (
                       <GridColumn
                         key={idx}
@@ -802,6 +806,7 @@ const CM_A0000W: React.FC = () => {
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
                     )
+                  )
                 )}
           </Grid>
         </ExcelExport>
