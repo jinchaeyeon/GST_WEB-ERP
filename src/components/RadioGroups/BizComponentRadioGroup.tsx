@@ -12,6 +12,7 @@ type TBizComponentRadioGroup = {
   bizComponentData: any;
   data?: { value: any; label: string }[];
   changeData(e: any): void;
+  className?: string;
 };
 
 const BizComponentRadioGroup = ({
@@ -21,6 +22,7 @@ const BizComponentRadioGroup = ({
   bizComponentId,
   bizComponentData,
   changeData,
+  className = "",
 }: TBizComponentRadioGroup) => {
   if (bizComponentData) {
     bizComponentData = bizComponentData.find(
@@ -79,6 +81,7 @@ const BizComponentRadioGroup = ({
       layout={"horizontal"}
       value={value}
       onChange={onChangeHandle}
+      className={className}
     />
   );
 };

@@ -117,6 +117,10 @@ a {
   justify-content: center; /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
 }
 
+
+ul.required,
+ul.required:hover,
+ul.required.k-hover,
 span.required,
 span.required:hover,
 span.required.k-hover,
@@ -125,6 +129,7 @@ input.required:hover,
 input.required.k-hover {
   background-color: #fff0ef;
 }
+ul.readonly,
 span.readonly,
 input.readonly {
   background-color: #efefef;
