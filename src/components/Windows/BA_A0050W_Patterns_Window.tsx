@@ -35,7 +35,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
-import { tokenState } from "../../store/atoms";
+import { loginResultState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
 
 const SUB_DATA_ITEM_KEY = "pattern_id";
@@ -64,8 +64,6 @@ const KendoWindow = ({
   para = { user_id: "", user_name: "" },
 }: TKendoWindow) => {
   const { user_id, user_name } = para;
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 
