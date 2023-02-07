@@ -7,15 +7,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridEvent,
-  GridFooterCellProps,
-  GridCellProps,
 } from "@progress/kendo-react-grid";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
-import ItemsWindow from "../Windows/CommonWindows/ItemsWindow";
-import { isLoading } from "../../store/atoms";
 import {
   BottomContainer,
   ButtonContainer,
@@ -43,12 +39,7 @@ import {
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
-import { tokenState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
-import ComboBoxCell from "../Cells/ComboBoxCell";
-import { useSetRecoilState } from "recoil";
-import CheckBoxCell from "../Cells/CheckBoxCell";
+import { FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
 import { FormCheckBoxCell } from "../Editors";
 const SUB_DATA_ITEM_KEY = "pattern_id";
 
@@ -76,8 +67,6 @@ const KendoWindow = ({
   para = { user_id: "", user_name: "" },
 }: TKendoWindow) => {
   const { user_id, user_name } = para;
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -257,8 +246,8 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-    
-    console.log(data)
+
+    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -380,7 +369,7 @@ const KendoWindow = ({
       dataItemKey: FORM_DATA_INDEX,
     });
     setSelectedsubDataState2(newSelectedState);
-    console.log(newSelectedState)
+    console.log(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
   };
