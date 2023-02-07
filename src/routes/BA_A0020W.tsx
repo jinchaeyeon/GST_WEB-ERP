@@ -35,6 +35,8 @@ import {
   ButtonInInput,
   ButtonInFieldWrap,
   ButtonInField,
+  FormBoxWrap,
+  FormBox,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -566,7 +568,7 @@ const BA_A0020: React.FC = () => {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.custcd]: true });
-
+        console.log(firstRowData.estbdt)
         setInfomation({
           pgSize: PAGE_SIZE,
           workType: "U",
@@ -1956,6 +1958,23 @@ const BA_A0020: React.FC = () => {
   };
 
   const onSaveClick3 = async () => {
+    let valid = true;
+    try {
+      subDataResult2.data.map((item: any) => {
+        console.log(item.yyyy)
+        if (item.yyyy > convertDateToStr(new Date()).substring(0,4) || item.yyyy < "1997" || item.yyyy.length != 4) {
+          throw findMessage(messagesData, "BA_A0020W_007");
+        }
+      })
+      
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
+    
     const dataItem = subDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -2225,6 +2244,13 @@ const BA_A0020: React.FC = () => {
       if (!infomation.rtxisuyn) {
         throw findMessage(messagesData, "BA_A0020W_006");
       }
+
+      if (convertDateToStr(infomation.estbdt).length != 8 || convertDateToStr(infomation.estbdt).substring(0,4) > convertDateToStr(new Date()).substring(0,4)
+      || convertDateToStr(infomation.estbdt).substring(0,4) < "1400") {
+        throw findMessage(messagesData, "BA_A0020W_007");
+      }
+
+
     } catch (e) {
       alert(e);
       valid = false;
@@ -2396,7 +2422,7 @@ const BA_A0020: React.FC = () => {
       </FilterBoxWrap>
 
       <GridContainer
-        style={{ display: "inline-block", float: "left", width: "35vw" }}
+        style={{ display: "inline-block", float: "left", width: "26vw" }}
       >
         <ExcelExport
           data={mainDataResult.data}
@@ -2476,7 +2502,7 @@ const BA_A0020: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ display: "inline-block", float: "right", width: "53vw" }}
+        style={{ display: "inline-block", float: "right", width: "62vw" }}
       >
         <TabStripTab title="상세정보">
         <ButtonContainer style={{float: "right", marginBottom: "1vh"}}>
@@ -2505,8 +2531,8 @@ const BA_A0020: React.FC = () => {
                 저장
               </Button>
             </ButtonContainer>
-          <FilterBoxWrap style={{ height: "70vh" }}>
-            <FilterBox>
+          <FormBoxWrap style={{ height: "70vh" }}>
+            <FormBox>
               <tbody>
                 <tr>
                   <th>업체코드</th>
@@ -2987,11 +3013,11 @@ const BA_A0020: React.FC = () => {
                   </td>
                 </tr>
               </tbody>
-            </FilterBox>
-          </FilterBoxWrap>
+            </FormBox>
+          </FormBoxWrap>
         </TabStripTab>
         <TabStripTab title="업체담당자">
-          <GridContainer style={{ width: "50vw" }}>
+          <GridContainer style={{ width: "60vw" }}>
             <GridTitleContainer>
               <GridTitle>업체담당자</GridTitle>
               <ButtonContainer>
@@ -3093,7 +3119,7 @@ const BA_A0020: React.FC = () => {
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="재무현황">
-          <GridContainer style={{ width: "51vw" }}>
+          <GridContainer style={{ width: "60vw" }}>
             <GridTitleContainer>
               <GridTitle>재무현황</GridTitle>
               <ButtonContainer>
@@ -3122,6 +3148,9 @@ const BA_A0020: React.FC = () => {
               data={process(
                 subDataResult2.data.map((row) => ({
                   ...row,
+                  yyyy: row.yyyy
+                    ? new Date(dateformat(row.yyyy))
+                    : new Date(),
                   [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
                 })),
                 subDataState2

@@ -41,7 +41,7 @@ const DateCell = (props: GridCellProps) => {
           defaultValue={
             typeof value === "string" && value !== "" ? new Date() : value
           }
-          format={"yyyy-mm-dd"}
+          format={"yyyy-MM-dd"}
           onChange={onDateChange}
           //calendar={YearCalendar}
         />

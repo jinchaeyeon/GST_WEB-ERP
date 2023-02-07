@@ -26,6 +26,8 @@ import {
   Title,
   FilterBoxWrap,
   FilterBox,
+  FormBox,
+  FormBoxWrap,
   GridContainer,
   GridTitle,
   TitleContainer,
@@ -1966,12 +1968,10 @@ const PR_A0060: React.FC = () => {
   const onSaveClick2 = async () => {
     fetchSaved();
   };
-
+  
   const fetchSaved = async () => {
     let data: any;
-    // const isValidDate = function(value: Date) {
-    //   return value instanceof Date && !isNaN(value);
-    // }
+
     let valid = true;
     try {
       if (!infomation.fxnum) {
@@ -1982,9 +1982,10 @@ const PR_A0060: React.FC = () => {
         throw findMessage(messagesData, "PR_A0060W_002");
       }
 
-      // if(!isValidDate(infomation.recdt)){
-      //   throw findMessage(messagesData, "PR_A0060W_003")
-      // }
+      if (convertDateToStr(infomation.recdt).length != 8 || convertDateToStr(infomation.makedt).length != 8 || convertDateToStr(infomation.indt).length != 8) {
+        throw findMessage(messagesData, "PR_A0060W_003");
+      }
+
     } catch (e) {
       alert(e);
       valid = false;
@@ -1999,7 +2000,7 @@ const PR_A0060: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+ 
     if (data.isSuccess === true) {
       setMainPgNum(1);
       setMainDataResult(process([], mainDataState));
@@ -2380,8 +2381,8 @@ const PR_A0060: React.FC = () => {
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="설비정보">
-          <FilterBoxWrap style={{ height: "40vh" }}>
-            <FilterBox>
+          <FormBoxWrap style={{ height: "40vh" }}>
+            <FormBox>
               <tbody>
                 <tr>
                   <th>설비번호</th>
@@ -2689,8 +2690,8 @@ const PR_A0060: React.FC = () => {
                   </td>
                 </tr>
               </tbody>
-            </FilterBox>
-          </FilterBoxWrap>
+            </FormBox>
+          </FormBoxWrap>
         </TabStripTab>
         <TabStripTab title="설비이력관리">
           <GridContainer>
@@ -2768,6 +2769,7 @@ const PR_A0060: React.FC = () => {
                 width="150px"
                 cell={DateCell}
                 footerCell={subTotalFooterCell}
+                className="editable-new-only"
               />
               <GridColumn
                 field="custcd"

@@ -34,6 +34,8 @@ import {
   ButtonInInput,
   ButtonInFieldWrap,
   ButtonInField,
+  FormBoxWrap,
+  FormBox,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -473,6 +475,7 @@ const BA_A0040: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
+        inEdit: "recdt",
         rowstatus: "U",
       }));
       if (totalRowCnt > 0) {
@@ -1264,6 +1267,24 @@ const BA_A0040: React.FC = () => {
   }, [paraDataDeleted]);
 
   const onSaveClick = async () => {
+    let valid = true;
+    try {
+      subData2Result.data.map((item: any) => {
+        if (item.recdt > convertDateToStr(new Date()).substring(0,4) || 
+        item.recdt.substring(0,4)  < "1997" ||
+        item.recdt.substring(6,8) > "31" ||
+        item.recdt.substring(6,8) < "01" || item.recdt.substring(6,8).length != 2) {
+          throw findMessage(messagesData, "BA_A0040W_003");
+        }
+      })
+      
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
     const dataItem = subData2Result.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -1669,8 +1690,8 @@ const BA_A0040: React.FC = () => {
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="상세정보">
-          <FilterBoxWrap style={{ height: "30vh" }}>
-            <FilterBox>
+          <FormBoxWrap style={{ height: "30vh" }}>
+            <FormBox>
               <tbody>
                 <tr>
                   <th>품목코드</th>
@@ -1911,8 +1932,8 @@ const BA_A0040: React.FC = () => {
                   </td>
                 </tr>
               </tbody>
-            </FilterBox>
-          </FilterBoxWrap>
+            </FormBox>
+          </FormBoxWrap>
         </TabStripTab>
         <TabStripTab title="단가">
           <GridContainer>

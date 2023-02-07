@@ -29,6 +29,8 @@ import {
   ButtonInInput,
   ButtonInFieldWrap,
   ButtonInField,
+  FormBox,
+  FormBoxWrap,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -1328,8 +1330,8 @@ const BA_A0050: React.FC = () => {
         <GridTitleContainer>
           <GridTitle>공정리스트</GridTitle>
         </GridTitleContainer>
-        <FilterBoxWrap>
-          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+        <FormBoxWrap>
+          <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
                 <th>공정</th>
@@ -1343,8 +1345,8 @@ const BA_A0050: React.FC = () => {
                 </td>
               </tr>
             </tbody>
-          </FilterBox>
-        </FilterBoxWrap>
+          </FormBox>
+        </FormBoxWrap>
         <Grid
           style={{ height: "71vh" }}
           data={process(

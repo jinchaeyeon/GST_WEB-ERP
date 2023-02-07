@@ -39,6 +39,8 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
+  FormBoxWrap,
+  FormBox,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -1179,10 +1181,10 @@ const SY_A0125W: React.FC = () => {
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterBoxWrap
+        <FormBoxWrap
           style={{ height: "15vh", width: "51vw", marginLeft: "2vw" }}
         >
-          <FilterBox>
+          <FormBox>
             <tbody>
               <tr>
                 <th>상위부서</th>
@@ -1268,8 +1270,8 @@ const SY_A0125W: React.FC = () => {
                 </td>
               </tr>
             </tbody>
-          </FilterBox>
-        </FilterBoxWrap>
+          </FormBox>
+        </FormBoxWrap>
         <GridContainer
           style={{ height: "69vh", width: "51vw", marginLeft: "2vw" }}
         >

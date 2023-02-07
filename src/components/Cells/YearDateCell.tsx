@@ -48,9 +48,9 @@ const DateCell = (props: GridCellProps) => {
           calendar={YearCalendar}
         />
       ) : typeof value === "object" ? (
-        convertDateToStr(value)
+        convertDateToStr(value).substring(0,4)
       ) : typeof value === "string" && value !== "" ? (
-        value
+        value.substring(0,4)
       ) : (
         ""
       )}
