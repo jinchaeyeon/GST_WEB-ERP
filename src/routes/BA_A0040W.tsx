@@ -242,10 +242,12 @@ const BA_A0040: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    setInfomation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if(value != null) {
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const RadioChange = (e: any) => {
@@ -1701,7 +1703,7 @@ const BA_A0040: React.FC = () => {
                         changeData={ComboBoxChange}
                         textField={"code_name"}
                         valueField={"code_name"}
-                        required={true}
+                        className="required"
                       />
                     )}
                   </td>
@@ -1732,7 +1734,7 @@ const BA_A0040: React.FC = () => {
                         changeData={ComboBoxChange}
                         textField={"code_name"}
                         valueField={"code_name"}
-                        required={true}
+                        className="required"
                       />
                     )}
                   </td>
@@ -1987,6 +1989,7 @@ const BA_A0040: React.FC = () => {
                 title="적용일"
                 width="260px"
                 cell={DateCell}
+                className="editable-new-only"
               />
               <GridColumn
                 field="unpitem"

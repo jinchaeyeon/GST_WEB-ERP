@@ -270,14 +270,14 @@ const KendoWindow = ({
         };
       });
 
-      const totalRowCnt2 = data.tables[1].RowCount;
-      const rows2 = data.tables[1].Rows;
-      setDetailDataResult3(() => {
-        return {
-          data: rows2,
-          total: totalRowCnt2,
-        };
-      });
+      // const totalRowCnt2 = data.tables[1].RowCount;
+      // const rows2 = data.tables[1].Rows;
+      // setDetailDataResult3(() => {
+      //   return {
+      //     data: rows2,
+      //     total: totalRowCnt2,
+      //   };
+      // });
     }
   };
 

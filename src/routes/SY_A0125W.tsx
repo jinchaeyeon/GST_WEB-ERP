@@ -14,11 +14,16 @@ import {
   TreeList,
   createDataTree,
   mapTree,
+  TreeListToolbar,
   extendDataItem,
   TreeListExpandChangeEvent,
   TreeListColumnProps,
+  filterBy,
+  orderBy,
+  treeToFlat,
   TreeListSelectionChangeEvent,
 } from "@progress/kendo-react-treelist";
+import { FilterDescriptor, SortDescriptor } from "@progress/kendo-data-query";
 import { CellRender, RowRender } from "../components/Renderers";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -74,6 +79,30 @@ const allMenuColumns: TreeListColumnProps[] = [
   { field: "useyn", title: "사용여부", expandable: false, cell: CheckBoxTreeListCell,},
   { field: "remark", title: "비고", expandable: false },
 ];
+
+interface AppState {
+  data: dpt[],
+  dataState: DataState,
+  expanded: number[]
+}
+
+export interface dpt {
+  dptcd: string,
+  dptnm: string,
+  location: string,
+  mfcsaldv: string,
+  orgdiv: string,
+  prntdptcd: string,
+  prntdptnm: string,
+  refdptcd: string,
+  remark: string,
+  useyn: string,
+}
+
+export interface DataState {
+  sort: SortDescriptor[],
+  filter: FilterDescriptor[]
+}
 
 const DATA_ITEM_KEY = "dptcd";
 const SUB_DATA_ITEM_KEY = "user_id";
@@ -317,6 +346,7 @@ const SY_A0125W: React.FC = () => {
     },
   };
 
+
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     //if (!permissions?.view) return;
@@ -338,15 +368,22 @@ const SY_A0125W: React.FC = () => {
           (i: any) => i.dptcd,
           (i: any) => i.prntdptcd,
           SUB_ITEMS_FIELD
-        );
+        );  
 
         setAllMenuDataResult(dataTree);
+        setState((prev)=> {
+          return {
+            ...prev,
+            data: dataTree
+          }
+        })
         setMainDataResult((prev) => {
           return {
-            data: [...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
+
       }
     } else {
       console.log("[에러발생]");
@@ -530,10 +567,13 @@ const SY_A0125W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      _export.save(
+        treeToFlat(processData(), EXPANDED_FIELD, SUB_ITEMS_FIELD),
+        allMenuColumns
+      );
     }
   };
 
@@ -589,13 +629,19 @@ const SY_A0125W: React.FC = () => {
       : item;
 
   const onAllMenuExpandChange = (e: TreeListExpandChangeEvent) => {
-    setAllMenuExpanded(
-      e.value
-        ? allMenuExpanded.filter(
-            (id) => id !== e.dataItem[ALL_MENU_DATA_ITEM_KEY]
-          )
-        : [...allMenuExpanded, e.dataItem[ALL_MENU_DATA_ITEM_KEY]]
-    );
+    setState({
+      ...state,
+      expanded: e.value ?
+          state.expanded.filter(id => id !== e.dataItem[ALL_MENU_DATA_ITEM_KEY]) :
+          [...state.expanded, e.dataItem[ALL_MENU_DATA_ITEM_KEY]]
+  });
+    // setAllMenuExpanded(
+    //   e.value
+    //     ? allMenuExpanded.filter(
+    //         (id) => id !== e.dataItem[ALL_MENU_DATA_ITEM_KEY]
+    //       )
+    //     : [...allMenuExpanded, e.dataItem[ALL_MENU_DATA_ITEM_KEY]]
+    // );
   };
 
   interface ICustData {
@@ -983,6 +1029,33 @@ const SY_A0125W: React.FC = () => {
     }
   }, [paraData]);
 
+  const [state, setState] = React.useState<AppState>({
+    data: [...allMenuDataResult],
+    dataState: {
+        sort: [
+            { field: 'dptcd', dir: 'asc' }
+        ],
+        filter: []
+    },
+    expanded: []
+})
+
+  const processData = () => {
+    let { data, dataState } = state;
+    let filteredData = filterBy(data, dataState.filter, SUB_ITEMS_FIELD)
+    let sortedData = orderBy(filteredData, dataState.sort, SUB_ITEMS_FIELD)
+    return addExpandField(sortedData);
+}
+
+  const addExpandField = (dataTree : TreeListColumnProps[]) => {
+    const expanded = state.expanded;
+    return mapTree(dataTree, SUB_ITEMS_FIELD, (item) =>
+      extendDataItem(item, SUB_ITEMS_FIELD, {
+        [EXPANDED_FIELD]: expanded.includes(item.dptcd),
+      })
+    );
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1048,17 +1121,15 @@ const SY_A0125W: React.FC = () => {
         style={{ width: "36vw", display: "inline-block", float: "left" }}
       >
         <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
+           ref={exporter => _export = exporter}
+           hierarchy={true}
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <TreeList
             style={{ height: "80vh", overflow: "auto" }}
-            data={mapTree(allMenuDataResult, SUB_ITEMS_FIELD, allMenuCallback)}
+            data={processData()}
             expandField={EXPANDED_FIELD}
             subItemsField={SUB_ITEMS_FIELD}
             onExpandChange={onAllMenuExpandChange}
@@ -1070,9 +1141,13 @@ const SY_A0125W: React.FC = () => {
               enabled: true,
               mode: "single",
             }}
+            {...state.dataState}
+            sortable={{ mode: 'multiple' }}
             //드래그용 행
             columns={allMenuColumns}
-          ></TreeList>
+            toolbar={
+              <TreeListToolbar />
+            } />
         </ExcelExport>
       </GridContainer>
       <div style={{ display: "inline-block" }}>
@@ -1153,6 +1228,7 @@ const SY_A0125W: React.FC = () => {
                     type="text"
                     value={infomation.dptnm}
                     onChange={InputChange}
+                    className="required"
                   />
                 </td>
               </tr>

@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import YearDateCell from "../components/Cells/YearDateCell";
 import { TextArea } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
@@ -229,10 +230,12 @@ const BA_A0020: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    setInfomation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if(value != null) {
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const RadioChange = (e: any) => {
@@ -478,7 +481,7 @@ const BA_A0020: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        inEdit: "recdt",
+        inEdit: "yyyy",
         rowstatus: "U",
       }));
       if (totalRowCnt > 0) {
@@ -513,7 +516,7 @@ const BA_A0020: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        inEdit: "recdt",
+        inEdit: "yyyy",
         rowstatus: "U",
       }));
       if (totalRowCnt > 0) {
@@ -981,7 +984,6 @@ const BA_A0020: React.FC = () => {
       update_pc: "",
       update_time: "",
       update_userid: "",
-      inEdit: "recdt",
       rowstatus: "N",
     };
 
@@ -1018,6 +1020,7 @@ const BA_A0020: React.FC = () => {
       totasset: 0,
       totcapital: 0,
       yyyy: "",
+      inEdit: "yyyy",
       rowstatus: "N",
     };
 
@@ -2276,6 +2279,7 @@ const BA_A0020: React.FC = () => {
     }
   }, [paraData]);
   const [rows, setrows] = useState<number>(0);
+  
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
@@ -2533,7 +2537,7 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA026"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
-                        required={true}
+                        className="required"
                         textField="code_name"
                         valueField="code_name"
                       />
@@ -2568,7 +2572,7 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA008"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
-                        required={true}
+                        className="required"
                       />
                     )}
                   </td>
@@ -2608,7 +2612,7 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA008"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
-                        required={true}
+                        className="required"
                       />
                     )}
                   </td>
@@ -2641,7 +2645,7 @@ const BA_A0020: React.FC = () => {
                         bizComponentId="L_BA027"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
-                        required={true}
+                        className="required"
                         textField="code_name"
                         valueField="code_name"
                       />
@@ -3157,7 +3161,7 @@ const BA_A0020: React.FC = () => {
                   ) === -1
                 }
               />
-              <GridColumn field="yyyy" title="결산년도" width="150px" />
+              <GridColumn field="yyyy" cell={YearDateCell} title="결산년도" width="150px" />
               <GridColumn
                 field="totasset"
                 title="총자산"

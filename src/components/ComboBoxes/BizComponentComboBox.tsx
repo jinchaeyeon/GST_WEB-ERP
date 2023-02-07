@@ -16,7 +16,7 @@ type TCommonComboBox = {
   changeData(e: any): void;
   textField?: string;
   valueField?: string;
-  required?: boolean;
+  className?: string;
 };
 const CommonComboBox = ({
   name,
@@ -26,13 +26,18 @@ const CommonComboBox = ({
   changeData,
   textField = "code_name",
   valueField = "sub_code",
-  required = false
+  className = ""
 }: TCommonComboBox) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
   bizComponentData = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentId
   );
+
+  let required = false;
+  if (className.includes("required")) {
+    required = true;
+  } 
 
   useEffect(() => {
     fetchData();
@@ -95,6 +100,7 @@ const CommonComboBox = ({
       textField={textField}
       onChange={onChangeHandle}
       required={required}
+      className={className}
     />
   );
 };

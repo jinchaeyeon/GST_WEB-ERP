@@ -222,10 +222,12 @@ const PR_A0060: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    setInfomation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if(value != null) {
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const RadioChange = (e: any) => {
@@ -1967,7 +1969,9 @@ const PR_A0060: React.FC = () => {
 
   const fetchSaved = async () => {
     let data: any;
-
+    // const isValidDate = function(value: Date) {
+    //   return value instanceof Date && !isNaN(value);
+    // }
     let valid = true;
     try {
       if (!infomation.fxnum) {
@@ -1977,6 +1981,10 @@ const PR_A0060: React.FC = () => {
       if (!infomation.fxnm) {
         throw findMessage(messagesData, "PR_A0060W_002");
       }
+
+      // if(!isValidDate(infomation.recdt)){
+      //   throw findMessage(messagesData, "PR_A0060W_003")
+      // }
     } catch (e) {
       alert(e);
       valid = false;

@@ -1,13 +1,14 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { GridCellProps } from "@progress/kendo-react-grid";
-import { convertDateToStr, dateformat2 } from "../CommonFunction";
-
+import { convertDateToStr, convertYeasrToStr } from "../CommonFunction";
+import YearCalendar from "../Calendars/YearCalendar";
 const DateCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange,
     className = "", } =
     props;
     
   let isInEdit = field === dataItem.inEdit;
+
     if (className.includes("read-only")) {
       isInEdit = false;
     } else if (className.includes("editable-new-only")) {
@@ -18,6 +19,7 @@ const DateCell = (props: GridCellProps) => {
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const onDateChange = (e: any) => {
+
     if (onChange) {
       onChange({
         dataIndex: 0,
@@ -41,14 +43,14 @@ const DateCell = (props: GridCellProps) => {
           defaultValue={
             typeof value === "string" && value !== "" ? new Date() : value
           }
-          format={"yyyy-mm-dd"}
+          format={"yyyy"}
           onChange={onDateChange}
-          //calendar={YearCalendar}
+          calendar={YearCalendar}
         />
       ) : typeof value === "object" ? (
-        dateformat2(convertDateToStr(value))
+        convertDateToStr(value)
       ) : typeof value === "string" && value !== "" ? (
-        dateformat2(value)
+        value
       ) : (
         ""
       )}
