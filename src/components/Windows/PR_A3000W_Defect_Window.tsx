@@ -46,7 +46,8 @@ import {
   findMessage,
   getYn,
   getCodeFromValue,
-  UseParaPc
+  UseParaPc,
+  UseGetValueFromSessionItem,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -58,7 +59,7 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
-import { sessionItemState, tokenState } from "../../store/atoms";
+import { sessionItemState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -408,8 +409,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 };
 const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   // 비즈니스 컴포넌트 조회

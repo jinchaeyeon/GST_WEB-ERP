@@ -42,6 +42,7 @@ import {
   chkScrollHandler,
   getCodeFromValue,
   getYn,
+  UseGetValueFromSessionItem,
   UseParaPc,
   validator,
 } from "../../CommonFunction";
@@ -56,7 +57,6 @@ import {
 } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers";
 import { useRecoilState } from "recoil";
-import { tokenState } from "../../../store/atoms";
 import RequiredHeader from "../../RequiredHeader";
 
 let deletedRows: object[] = [];
@@ -555,8 +555,7 @@ const KendoWindow = ({
     },
   };
 
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);

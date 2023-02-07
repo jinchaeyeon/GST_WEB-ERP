@@ -1,8 +1,6 @@
 import { useRecoilState } from "recoil";
-import { menusState, tokenState } from "../store/atoms";
+import { loginResultState } from "../store/atoms";
 import axios from "axios";
-import { useState } from "react";
-import { UseGetIp } from "../components/CommonFunction";
 
 let BASE_URL = process.env.REACT_APP_API_URL;
 const cachios = require("cachios");
@@ -53,6 +51,17 @@ const domain: any = {
   },
   "file-delete": { action: "delete", url: "api/files/attached/:attached" },
 };
+let isTokenRefreshing = false;
+let refreshSubscribers: any[] = [];
+
+const onTokenRefreshed = (accessToken: any) => {
+  refreshSubscribers.map((callback) => callback(accessToken));
+  refreshSubscribers = [];
+};
+
+const addRefreshSubscriber = (callback: any) => {
+  refreshSubscribers.push(callback);
+};
 
 const initCache = () => {
   cachedHttp = cachios.create(axiosInstance, { stdTTL: 30, checkperiod: 120 });
@@ -90,8 +99,8 @@ const generateUrl = (url: string, params: any) => {
 };
 
 export const useApi = () => {
-  const [token, setToken] = useRecoilState(tokenState);
-  const [menus, setMenus] = useRecoilState(menusState);
+  const token = localStorage.getItem("accessToken");
+  const [loginResult, setLoginResult] = useRecoilState(loginResultState);
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
@@ -105,7 +114,7 @@ export const useApi = () => {
       url = generateUrl(info.url, params);
       url = `${BASE_URL}${url}`;
 
-      let headers = {};
+      let headers: any = {};
 
       if (name === "file-upload" || name === "file-download")
         headers = {
@@ -120,9 +129,13 @@ export const useApi = () => {
       if (name === "platform-procedure" || name === "platform-query")
         headers = { ...headers, DBAlias: "Platform" };
 
-      if (token) {
-        headers = { ...headers, Authorization: `Bearer ${token.token}` };
-        headers = { ...headers, CultureName: token.langCode };
+      if (loginResult) {
+        // headers = { ...headers, Authorization: `Bearer ${token}` };
+        headers = { ...headers, CultureName: loginResult.langCode };
+      }
+
+      if (token && !headers.hasOwnProperty("Authorization")) {
+        headers = { ...headers, Authorization: `Bearer ${token}` };
       }
 
       if (info.action != "get") {
@@ -135,6 +148,9 @@ export const useApi = () => {
 
       if (name === "file-download") {
         getHeader.responseType = "blob";
+      }
+
+      if (isTokenRefreshing) {
       }
 
       switch (info.action) {
@@ -169,13 +185,10 @@ export const useApi = () => {
           })
           .catch((err: any) => {
             const res = err.response;
-            if (res && res.status == 401) {
-              setToken(null as any);
-              setMenus(null as any);
-
-              // 전체 페이지 reload
-              //(window as any).location = "/"; //로그인 실패시 새로고침돼서 일단 주석 처리 해둠
-            }
+            // if (res && res.status == 401) {
+            //   // setToken(null as any);
+            //   // setMenus(null as any);
+            // }
             reject(res.data);
           })
       );
@@ -184,3 +197,72 @@ export const useApi = () => {
 
   return processApi;
 };
+
+axiosInstance.interceptors.response.use(
+  (response: any) => {
+    return response;
+  },
+  async (error: {
+    config: any;
+    response: { status: any };
+    message: string;
+  }) => {
+    // res에서 error가 발생했을 경우 catch로 넘어가기 전에 처리하는 부분
+    let errResponseStatus = null;
+    const originalRequest = error.config;
+
+    try {
+      errResponseStatus = error.response.status;
+    } catch (e) {}
+
+    if (errResponseStatus === 401) {
+      if (!isTokenRefreshing) {
+        let token = localStorage.getItem("accessToken");
+        let refreshToken = localStorage.getItem("refreshToken");
+
+        isTokenRefreshing = true;
+
+        const url = `${BASE_URL}api/auth/refresh`;
+        let p;
+
+        // refresh token을 이용하여 access token 재발행 받기
+        p = axios.post(url, {
+          accessToken: token,
+          refreshToken: refreshToken,
+        });
+
+        p.then((res: any) => {
+          const { token, refreshToken } = res.data;
+
+          localStorage.setItem("accessToken", token);
+          localStorage.setItem("refreshToken", refreshToken);
+
+          isTokenRefreshing = false;
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+
+          // 새로운 토큰으로 재요청 진행
+          onTokenRefreshed(token);
+        }).catch((err: any) => {
+          // access token을 받아오지 못하는 오류 발생시 logout 처리
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          window.location.href = "/";
+
+          return false;
+        });
+      }
+
+      // token이 재발급 되는 동안의 요청은 refreshSubscribers에 저장
+      const retryOriginalRequest = new Promise((resolve) => {
+        addRefreshSubscriber((accessToken: any) => {
+          originalRequest.headers.Authorization = "Bearer " + accessToken;
+          // axios(originalRequest);
+          resolve(axios(originalRequest));
+        });
+      });
+      return retryOriginalRequest;
+    }
+    // 오류 발생 시 오류 내용 출력 후 요청 거절
+    return Promise.reject(error);
+  }
+);

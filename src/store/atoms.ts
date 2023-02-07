@@ -1,5 +1,11 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
-import { TMenu, TPasswordExpirationInfo, TSessionItem, TToken } from "./types";
+import { DEFAULT_SESSION_ITEM } from "../components/CommonString";
+import {
+  TLoginResult,
+  TMenu,
+  TPasswordExpirationInfo,
+  TSessionItem,
+} from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
@@ -22,10 +28,10 @@ const localStorageEffect: <T>(key: string) => AtomEffect<T> =
       }
     });
   };
-export const tokenState = atom<TToken>({
-  key: "tokenState",
+export const loginResultState = atom<TLoginResult>({
+  key: "loginResultState",
   default: null as any,
-  effects_UNSTABLE: [localStorageEffect("accessToken")],
+  effects_UNSTABLE: [localStorageEffect("loginResult")],
 });
 
 export const menusState = atom<Array<TMenu>>({
@@ -36,14 +42,7 @@ export const menusState = atom<Array<TMenu>>({
 
 export const sessionItemState = atom<Array<TSessionItem>>({
   key: "sessionItemState",
-  default: [
-    { code: "user_id", value: "" },
-    { code: "user_name", value: "" },
-    { code: "orgdiv", value: "" },
-    { code: "location", value: "" },
-    { code: "position", value: "" },
-    { code: "dptcd", value: "" },
-  ],
+  default: DEFAULT_SESSION_ITEM,
   effects_UNSTABLE: [localStorageEffect("sessionItem")],
 });
 

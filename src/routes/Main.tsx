@@ -34,7 +34,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useApi } from "../hooks/api";
-import { sessionItemState, tokenState } from "../store/atoms";
+import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
@@ -55,15 +55,17 @@ const DATA_ITEM_KEY = "datnum";
 const Main: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const [token, setToken] = useRecoilState(tokenState);
-  const userId = token ? token.userId : "";
+  const [loginResult, setLoginResult] = useRecoilState(loginResultState);
+
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
 
   useEffect(() => {
-    if (token && sessionUserId === "") fetchSessionItem();
-  }, [sessionItem]);
+    if (sessionUserId === "") fetchSessionItem();
+    // if (token && sessionUserId === "") fetchSessionItem();
+  }, [sessionUserId]);
 
   let sessionOrgdiv = sessionItem.find(
     (sessionItem) => sessionItem.code === "orgdiv"

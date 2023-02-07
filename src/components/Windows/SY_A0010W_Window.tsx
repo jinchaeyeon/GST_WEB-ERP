@@ -59,6 +59,7 @@ import {
   UseMessages,
   findMessage,
   UseParaPc,
+  UseGetValueFromSessionItem,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -71,8 +72,6 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
-import { tokenState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
 import { bytesToBase64 } from "byte-base64";
 import RequiredHeader from "../RequiredHeader";
 
@@ -487,8 +486,7 @@ const KendoWindow = ({
   group_code = "",
   isCopy,
 }: TKendoWindow) => {
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 

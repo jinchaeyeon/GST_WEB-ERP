@@ -13,7 +13,7 @@ import {
   menusState,
   passwordExpirationInfoState,
   sessionItemState,
-  tokenState,
+  loginResultState,
 } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import ChangePasswordWindow from "./Windows/CommonWindows/ChangePasswordWindow";
@@ -37,18 +37,19 @@ import { getBrowser, getToday, UseGetIp } from "./CommonFunction";
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
-  const [token, setToken] = useRecoilState(tokenState);
+  const [loginResult, setLoginResult] = useRecoilState(loginResultState);
+  const accessToken = localStorage.getItem("accessToken");
+  const [token, setToken] = useState(accessToken);
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   useEffect(() => {
     if (token === null) fetchMenus();
   }, [token]);
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
-  const companyCode = token ? token.companyCode : "";
-  const userId = token ? token.userId : "";
-  const loginKey = token ? token.loginKey : "";
-  const role = token ? token.role : "";
-  const accessToken = token ? token.token : "";
+  const companyCode = loginResult ? loginResult.companyCode : "";
+  const userId = loginResult ? loginResult.userId : "";
+  const loginKey = loginResult ? loginResult.loginKey : "";
+  const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN" || role === "DEVELOPER" ? true : false;
 
   const [previousRoute, setPreviousRoute] = useState("");
@@ -280,7 +281,7 @@ const PanelBarNavContainer = (props: any) => {
     } catch (error) {
       data = null;
     }
-    if (data && data.isSuccess === true) {
+    if (data.isSuccess === true) {
       if (logParaVal.work_type === "OPEN") {
         const { form_login_key } = data.tables[0].Rows[0];
         setFormKey(form_login_key);
@@ -301,7 +302,10 @@ const PanelBarNavContainer = (props: any) => {
 
   const logout = useCallback(() => {
     fetchLogout();
-    setToken(null as any);
+
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    window.location.href = "/";
   }, []);
 
   const fetchLogout = async () => {

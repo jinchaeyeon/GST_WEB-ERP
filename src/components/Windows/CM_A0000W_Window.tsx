@@ -69,7 +69,6 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers";
-import { tokenState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
 import { bytesToBase64 } from "byte-base64";
 
@@ -311,8 +310,7 @@ const KendoWindow = ({
   categories,
   para,
 }: TKendoWindow) => {
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
   const pathname: string = window.location.pathname.replace("/", "");
   const [pc, setPc] = useState("");

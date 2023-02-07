@@ -31,8 +31,9 @@ export interface Iparameters {
   parameters: {};
 }
 
-export type TToken = {
-  token: string;
+export type TLoginResult = {
+  // token: string;
+  // refreshToken: string;
   userId: string;
   langCode: string;
   userName: string;

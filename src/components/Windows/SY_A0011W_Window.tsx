@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -16,11 +16,13 @@ import {
 } from "@progress/kendo-react-form";
 import { FormInput, FormReadOnly, FormCheckBox } from "../Editors";
 import { Iparameters } from "../../store/types";
-import { validator, UseParaPc } from "../CommonFunction";
+import {
+  validator,
+  UseParaPc,
+  UseGetValueFromSessionItem,
+} from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { tokenState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -41,8 +43,7 @@ const KendoWindow = ({
   isCopy,
   para,
 }: TKendoWindow) => {
-  const [token] = useRecoilState(tokenState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [position, setPosition] = useState<IWindowPosition>({

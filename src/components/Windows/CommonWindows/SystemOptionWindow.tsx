@@ -1,7 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
 import {
   BottomContainer,
@@ -14,23 +13,10 @@ import {
   FormElement,
   FormRenderProps,
 } from "@progress/kendo-react-form";
-import {
-  FormInput,
-  FormReadOnly,
-  FormCheckBox,
-  FormNumericTextBox,
-} from "../../Editors";
-import { Iparameters } from "../../../store/types";
-import {
-  validator,
-  UseParaPc,
-  getYn,
-  getBooleanFromYn,
-} from "../../CommonFunction";
+import { FormCheckBox, FormNumericTextBox } from "../../Editors";
+import { validator, getYn, getBooleanFromYn } from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { tokenState } from "../../../store/atoms";
-import { useRecoilState } from "recoil";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;

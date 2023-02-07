@@ -15,10 +15,14 @@ import {
 } from "@progress/kendo-react-form";
 import { FormInput } from "../../Editors";
 import { Iparameters, TPasswordRequirements } from "../../../store/types";
-import { validator, UseParaPc } from "../../CommonFunction";
+import {
+  validator,
+  UseParaPc,
+  UseGetValueFromSessionItem,
+} from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { passwordExpirationInfoState, tokenState } from "../../../store/atoms";
+import { passwordExpirationInfoState } from "../../../store/atoms";
 import { useRecoilState } from "recoil";
 
 type TKendoWindow = {
@@ -26,9 +30,8 @@ type TKendoWindow = {
 };
 
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
-  const [token] = useRecoilState(tokenState);
   const [pwExpInfo] = useRecoilState(passwordExpirationInfoState);
-  const { userId } = token;
+  const userId = UseGetValueFromSessionItem("user_id");
   const [pwReq, setPwReq] = useState<TPasswordRequirements | null>(null);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);

@@ -1,3 +1,5 @@
+import { TSessionItem } from "../store/types";
+
 export const SELECTED_FIELD = "selected";
 export const EDIT_FIELD = "inEdit";
 export const EXPANDED_FIELD: string = "expanded";
@@ -12,3 +14,12 @@ export const COM_CODE_DEFAULT_VALUE = { sub_code: "", code_name: "" };
 export const RADIO_GROUP_DEFAULT_DATA = [{ value: "", label: "" }];
 
 export const OLD_COMPANY = ["2207C612"];
+
+export const DEFAULT_SESSION_ITEM: TSessionItem[] = [
+  { code: "user_id", value: "" },
+  { code: "user_name", value: "" },
+  { code: "orgdiv", value: "" },
+  { code: "location", value: "" },
+  { code: "position", value: "" },
+  { code: "dptcd", value: "" },
+];
