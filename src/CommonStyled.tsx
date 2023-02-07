@@ -193,7 +193,7 @@ export const FormBox = styled.table`
   tr th {
     /* background-color: #f5f5f8;
     border: solid 1px #d7d7d7; */
-    width: 120px;
+    min-width: 100px;
     color: #333333;
     font-weight: 400;
     font-size: 14px;
