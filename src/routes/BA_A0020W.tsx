@@ -2499,13 +2499,7 @@ const BA_A0020: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      <TabStrip
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-        style={{ display: "inline-block", float: "right", width: "62vw" }}
-      >
-        <TabStripTab title="상세정보">
-        <ButtonContainer style={{float: "right", marginBottom: "1vh"}}>
+      <ButtonContainer style={{float: "right", marginBottom: "1vh"}}>
               <Button
                 onClick={onAddClick2}
                 fillMode="outline"
@@ -2531,7 +2525,13 @@ const BA_A0020: React.FC = () => {
                 저장
               </Button>
             </ButtonContainer>
-          <FormBoxWrap style={{ height: "70vh" }}>
+      <TabStrip
+        selected={tabSelected}
+        onSelect={handleSelectTab}
+        style={{ display: "inline-block", float: "right", width: "62vw" }}
+      >
+        <TabStripTab title="상세정보">
+          <FormBoxWrap style={{ height: "68vh" }}>
             <FormBox>
               <tbody>
                 <tr>
@@ -3042,7 +3042,7 @@ const BA_A0020: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "68vh" }}
+              style={{ height: "64vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -3144,7 +3144,7 @@ const BA_A0020: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "68vh" }}
+              style={{ height: "64vh" }}
               data={process(
                 subDataResult2.data.map((row) => ({
                   ...row,

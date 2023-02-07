@@ -78,32 +78,37 @@ import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 const allMenuColumns: TreeListColumnProps[] = [
   { field: "dptcd", title: "부서코드", expandable: true },
   { field: "dptnm", title: "부서명", expandable: false },
-  { field: "useyn", title: "사용여부", expandable: false, cell: CheckBoxTreeListCell,},
+  {
+    field: "useyn",
+    title: "사용여부",
+    expandable: false,
+    cell: CheckBoxTreeListCell,
+  },
   { field: "remark", title: "비고", expandable: false },
 ];
 
 interface AppState {
-  data: dpt[],
-  dataState: DataState,
-  expanded: number[]
+  data: dpt[];
+  dataState: DataState;
+  expanded: number[];
 }
 
 export interface dpt {
-  dptcd: string,
-  dptnm: string,
-  location: string,
-  mfcsaldv: string,
-  orgdiv: string,
-  prntdptcd: string,
-  prntdptnm: string,
-  refdptcd: string,
-  remark: string,
-  useyn: string,
+  dptcd: string;
+  dptnm: string;
+  location: string;
+  mfcsaldv: string;
+  orgdiv: string;
+  prntdptcd: string;
+  prntdptnm: string;
+  refdptcd: string;
+  remark: string;
+  useyn: string;
 }
 
 export interface DataState {
-  sort: SortDescriptor[],
-  filter: FilterDescriptor[]
+  sort: SortDescriptor[];
+  filter: FilterDescriptor[];
 }
 
 const DATA_ITEM_KEY = "dptcd";
@@ -348,7 +353,6 @@ const SY_A0125W: React.FC = () => {
     },
   };
 
-
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     //if (!permissions?.view) return;
@@ -370,22 +374,21 @@ const SY_A0125W: React.FC = () => {
           (i: any) => i.dptcd,
           (i: any) => i.prntdptcd,
           SUB_ITEMS_FIELD
-        );  
+        );
 
         setAllMenuDataResult(dataTree);
-        setState((prev)=> {
+        setState((prev) => {
           return {
             ...prev,
-            data: dataTree
-          }
-        })
+            data: dataTree,
+          };
+        });
         setMainDataResult((prev) => {
           return {
             data: rows,
             total: totalRowCnt,
           };
         });
-
       }
     } else {
       console.log("[에러발생]");
@@ -633,10 +636,12 @@ const SY_A0125W: React.FC = () => {
   const onAllMenuExpandChange = (e: TreeListExpandChangeEvent) => {
     setState({
       ...state,
-      expanded: e.value ?
-          state.expanded.filter(id => id !== e.dataItem[ALL_MENU_DATA_ITEM_KEY]) :
-          [...state.expanded, e.dataItem[ALL_MENU_DATA_ITEM_KEY]]
-  });
+      expanded: e.value
+        ? state.expanded.filter(
+            (id) => id !== e.dataItem[ALL_MENU_DATA_ITEM_KEY]
+          )
+        : [...state.expanded, e.dataItem[ALL_MENU_DATA_ITEM_KEY]],
+    });
     // setAllMenuExpanded(
     //   e.value
     //     ? allMenuExpanded.filter(
@@ -1034,22 +1039,20 @@ const SY_A0125W: React.FC = () => {
   const [state, setState] = React.useState<AppState>({
     data: [...allMenuDataResult],
     dataState: {
-        sort: [
-            { field: 'dptcd', dir: 'asc' }
-        ],
-        filter: []
+      sort: [{ field: "dptcd", dir: "asc" }],
+      filter: [],
     },
-    expanded: []
-})
+    expanded: [],
+  });
 
   const processData = () => {
     let { data, dataState } = state;
-    let filteredData = filterBy(data, dataState.filter, SUB_ITEMS_FIELD)
-    let sortedData = orderBy(filteredData, dataState.sort, SUB_ITEMS_FIELD)
+    let filteredData = filterBy(data, dataState.filter, SUB_ITEMS_FIELD);
+    let sortedData = orderBy(filteredData, dataState.sort, SUB_ITEMS_FIELD);
     return addExpandField(sortedData);
-}
+  };
 
-  const addExpandField = (dataTree : TreeListColumnProps[]) => {
+  const addExpandField = (dataTree: TreeListColumnProps[]) => {
     const expanded = state.expanded;
     return mapTree(dataTree, SUB_ITEMS_FIELD, (item) =>
       extendDataItem(item, SUB_ITEMS_FIELD, {
@@ -1122,10 +1125,7 @@ const SY_A0125W: React.FC = () => {
       <GridContainer
         style={{ width: "36vw", display: "inline-block", float: "left" }}
       >
-        <ExcelExport
-           ref={exporter => _export = exporter}
-           hierarchy={true}
-        >
+        <ExcelExport ref={(exporter) => (_export = exporter)} hierarchy={true}>
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
@@ -1144,214 +1144,209 @@ const SY_A0125W: React.FC = () => {
               mode: "single",
             }}
             {...state.dataState}
-            sortable={{ mode: 'multiple' }}
+            sortable={{ mode: "multiple" }}
             //드래그용 행
             columns={allMenuColumns}
-            toolbar={
-              <TreeListToolbar />
-            } />
+            toolbar={<TreeListToolbar />}
+          />
         </ExcelExport>
       </GridContainer>
-      <div style={{ display: "inline-block" }}>
-        <TitleContainer style={{ float: "right" }}>
+      <TitleContainer style={{ float: "right" }}>
+        <ButtonContainer>
+          <Button
+            onClick={onAddClick2}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="file-add"
+          >
+            부서생성
+          </Button>
+          <Button
+            onClick={onDeleteClick2}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="delete"
+          >
+            품목삭제
+          </Button>
+          <Button
+            onClick={onSaveClick2}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="save"
+          >
+            저장
+          </Button>
+        </ButtonContainer>
+      </TitleContainer>
+      <FormBoxWrap style={{ float: "right", height: "9vh", width: "51vw", marginLeft: "2vw" }}>
+        <FormBox>
+          <tbody>
+            <tr>
+              <th>상위부서</th>
+              <td>
+                <Input
+                  name="prntdptcd"
+                  type="text"
+                  value={infomation.prntdptcd}
+                  onChange={InputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    // onClick={onCustWndClick2}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>상위부서명</th>
+              <td>
+                <Input
+                  name="prntdptnm"
+                  type="text"
+                  value={infomation.prntdptnm}
+                  onChange={InputChange}
+                  className="readonly"
+                />
+              </td>
+              <th>부서코드</th>
+              <td>
+                <Input
+                  name="dptcd"
+                  type="text"
+                  value={infomation.dptcd}
+                  onChange={InputChange}
+                  className="required"
+                />
+              </td>
+              <th>부서명</th>
+              <td>
+                <Input
+                  name="dptnm"
+                  type="text"
+                  value={infomation.dptnm}
+                  onChange={InputChange}
+                  className="required"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>사업장</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="location"
+                    value={infomation.location}
+                    bizComponentId="L_BA002"
+                    bizComponentData={bizComponentData}
+                    changeData={ComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>사용여부</th>
+              <td colSpan={3}>
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="useyn"
+                    value={infomation.useyn}
+                    bizComponentId="R_USEYN"
+                    bizComponentData={bizComponentData}
+                    changeData={RadioChange}
+                  />
+                )}
+              </td>
+              <th>비고</th>
+              <td>
+                <Input
+                  name="remark"
+                  type="text"
+                  value={infomation.remark}
+                  onChange={InputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FormBox>
+      </FormBoxWrap>
+      <GridContainer
+        style={{ height: "66vh", width: "51vw", marginLeft: "2vw", display: "inline-block",  }}
+      >
+        <GridTitleContainer>
+          <GridTitle>기본정보</GridTitle>
           <ButtonContainer>
             <Button
-              onClick={onAddClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="file-add"
-            >
-              부서생성
-            </Button>
-            <Button
-              onClick={onDeleteClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="delete"
-            >
-              품목삭제
-            </Button>
-            <Button
-              onClick={onSaveClick2}
+              onClick={onSaveClick}
               fillMode="outline"
               themeColor={"primary"}
               icon="save"
-            >
-              저장
-            </Button>
+            ></Button>
           </ButtonContainer>
-        </TitleContainer>
-        <FormBoxWrap
-          style={{ height: "15vh", width: "51vw", marginLeft: "2vw" }}
+        </GridTitleContainer>
+        <Grid
+          style={{ height: "100%" }}
+          data={process(
+            subDataResult.data.map((row) => ({
+              ...row,
+              postcd: postcdListData.find(
+                (item: any) => item.sub_code === row.postcd
+              )?.code_name,
+              [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+            })),
+            subDataState
+          )}
+          {...subDataState}
+          onDataStateChange={onSubDataStateChange}
+          //선택 기능
+          dataItemKey={SUB_DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "multiple",
+          }}
+          onSelectionChange={onSubDataSelectionChange}
+          //스크롤 조회 기능
+          fixedScroll={true}
+          total={subDataResult.total}
+          onScroll={onSubScrollHandler}
+          //정렬기능
+          sortable={true}
+          onSortChange={onSubDataSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+          onItemChange={onSubItemChange}
+          cellRender={customCellRender}
+          rowRender={customRowRender}
+          editField={EDIT_FIELD}
         >
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>상위부서</th>
-                <td>
-                  <Input
-                    name="prntdptcd"
-                    type="text"
-                    value={infomation.prntdptcd}
-                    onChange={InputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      // onClick={onCustWndClick2}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>상위부서명</th>
-                <td>
-                  <Input
-                    name="prntdptnm"
-                    type="text"
-                    value={infomation.prntdptnm}
-                    onChange={InputChange}
-                    className="readonly"
-                  />
-                </td>
-                <th>부서코드</th>
-                <td>
-                  <Input
-                    name="dptcd"
-                    type="text"
-                    value={infomation.dptcd}
-                    onChange={InputChange}
-                    className="required"
-                  />
-                </td>
-                <th>부서명</th>
-                <td>
-                  <Input
-                    name="dptnm"
-                    type="text"
-                    value={infomation.dptnm}
-                    onChange={InputChange}
-                    className="required"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>사업장</th>
-                <td>
-                  {bizComponentData !== null && (
-                    <BizComponentComboBox
-                      name="location"
-                      value={infomation.location}
-                      bizComponentId="L_BA002"
-                      bizComponentData={bizComponentData}
-                      changeData={ComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>사용여부</th>
-                <td colSpan={3}>
-                  {bizComponentData !== null && (
-                    <BizComponentRadioGroup
-                      name="useyn"
-                      value={infomation.useyn}
-                      bizComponentId="R_USEYN"
-                      bizComponentData={bizComponentData}
-                      changeData={RadioChange}
-                    />
-                  )}
-                </td>
-                <th>비고</th>
-                <td>
-                  <Input
-                    name="remark"
-                    type="text"
-                    value={infomation.remark}
-                    onChange={InputChange}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <GridContainer
-          style={{ height: "69vh", width: "51vw", marginLeft: "2vw" }}
-        >
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "94.3%" }}
-            data={process(
-              subDataResult.data.map((row) => ({
-                ...row,
-                postcd: postcdListData.find(
-                  (item: any) => item.sub_code === row.postcd
-                )?.code_name,
-                [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-              })),
-              subDataState
-            )}
-            {...subDataState}
-            onDataStateChange={onSubDataStateChange}
-            //선택 기능
-            dataItemKey={SUB_DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "multiple",
-            }}
-            onSelectionChange={onSubDataSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={subDataResult.total}
-            onScroll={onSubScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onSubDataSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onSubItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
-          >
-            <GridColumn
-              field={SELECTED_FIELD}
-              width="45px"
-              headerSelectionValue={
-                subDataResult.data.findIndex(
-                  (item: any) => !selectedsubDataState[idGetter2(item)]
-                ) === -1
-              }
-            />
-            <GridColumn
-              field="user_id"
-              title="사원명"
-              width="150px"
-              className="readonly"
-              footerCell={subTotalFooterCell}
-            />
-            <GridColumn
-              field="postcd"
-              title="직위"
-              className="readonly"
-              width="150px"
-            />
-            <GridColumn field="email" title="이메일" width="200px" />
-            <GridColumn field="mobile_no" title="핸드폰번호" width="150px" />
-            <GridColumn field="memo" title="메모" width="260px" />
-          </Grid>
-        </GridContainer>
-      </div>
+          <GridColumn
+            field={SELECTED_FIELD}
+            width="45px"
+            headerSelectionValue={
+              subDataResult.data.findIndex(
+                (item: any) => !selectedsubDataState[idGetter2(item)]
+              ) === -1
+            }
+          />
+          <GridColumn
+            field="user_id"
+            title="사원명"
+            width="150px"
+            className="readonly"
+            footerCell={subTotalFooterCell}
+          />
+          <GridColumn
+            field="postcd"
+            title="직위"
+            className="readonly"
+            width="150px"
+          />
+          <GridColumn field="email" title="이메일" width="200px" />
+          <GridColumn field="mobile_no" title="핸드폰번호" width="150px" />
+          <GridColumn field="memo" title="메모" width="260px" />
+        </Grid>
+      </GridContainer>
     </>
   );
 };
