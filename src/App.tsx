@@ -135,7 +135,10 @@ span.readonly,
 input.readonly {
   background-color: #efefef;
 }
-
+.k-radio-label{
+  font-size:14px;
+  line-height: 1.4285714286;
+}
 `;
 
 const App: React.FC = () => {

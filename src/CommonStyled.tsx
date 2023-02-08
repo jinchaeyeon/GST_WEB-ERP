@@ -178,9 +178,15 @@ export const FilterBox = styled.table`
   }
 `;
 
-export const FormBoxWrap = styled.div`
-  padding: 5px 0 10px;
+type TFormBoxWrap = {
+  border?: boolean;
+};
+export const FormBoxWrap = styled.div<TFormBoxWrap>`
+  margin: 5px 0 10px;
   width: 100%;
+  padding: 10px;
+  border: ${(props) =>
+    props.border ? "solid 1px rgba(0, 0, 0, 0.08);" : undefined};
 `;
 export const FormBox = styled.table`
   /* line-height: 1.5; */
@@ -193,7 +199,7 @@ export const FormBox = styled.table`
   tr th {
     /* background-color: #f5f5f8;
     border: solid 1px #d7d7d7; */
-    min-width: 100px;
+    min-width: 120px;
     color: #333333;
     font-weight: 400;
     font-size: 14px;
