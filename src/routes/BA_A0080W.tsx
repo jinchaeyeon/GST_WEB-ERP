@@ -79,18 +79,11 @@ let deletedMainRows: object[] = [];
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
-  UseBizComponent(
-    "L_BA020,L_BA061",
-    setBizComponentData
-  );
+  UseBizComponent("L_BA020,L_BA061", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "itemacnt"
-      ? "L_BA061"
-      : field === "amtunit"
-      ? "L_BA020"
-      : "";
+    field === "itemacnt" ? "L_BA061" : field === "amtunit" ? "L_BA020" : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
@@ -156,20 +149,20 @@ const BA_A0080: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-        const itemlvl1QueryStr = getQueryFromBizComponent(
-            bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
-          );
-          const itemlvl2QueryStr = getQueryFromBizComponent(
-            bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
-          );
-          const itemlvl3QueryStr = getQueryFromBizComponent(
-            bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
-          );
-          fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-          fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-          fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      const itemlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+      );
+      const itemlvl2QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+      );
+      const itemlvl3QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+      );
+      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
+      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
+      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
     }
-  }, [bizComponentData])
+  }, [bizComponentData]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -192,7 +185,6 @@ const BA_A0080: React.FC = () => {
       setListData(rows);
     }
   }, []);
-
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -304,10 +296,10 @@ const BA_A0080: React.FC = () => {
       const rows = data.tables[1].Rows.map((row: any) => {
         return {
           ...row,
-          rowstatus: "U"
+          rowstatus: "U",
         };
       });
-      
+
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
@@ -547,8 +539,8 @@ const BA_A0080: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if(field != "itemlvl1" && field != "itemlvl2" && field != "itemlvl3" ) {
-        const newData = mainDataResult.data.map((item) =>
+    if (field != "itemlvl1" && field != "itemlvl2" && field != "itemlvl3") {
+      const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
@@ -560,7 +552,7 @@ const BA_A0080: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
-  
+
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -672,7 +664,6 @@ const BA_A0080: React.FC = () => {
           spec: "",
           unp: 0,
           rowstatus: "N",
-          inEdit: "recdt"
         };
         setMainDataResult((prev) => {
           return {
@@ -740,27 +731,34 @@ const BA_A0080: React.FC = () => {
     let valid = true;
     try {
       mainDataResult.data.map((item: any) => {
-        if (item.recdt.substring(0,4)  < "1997" ||
-        item.recdt.substring(6,8) > "31" ||
-        item.recdt.substring(6,8) < "01" || item.recdt.substring(6,8).length != 2) {
+        if (
+          item.recdt.substring(0, 4) < "1997" ||
+          item.recdt.substring(6, 8) > "31" ||
+          item.recdt.substring(6, 8) < "01" ||
+          item.recdt.substring(6, 8).length != 2
+        ) {
           throw findMessage(messagesData, "BA_A0080W_002");
         }
-        if(item.unp == 0) {
+        if (item.unp == 0) {
           throw findMessage(messagesData, "BA_A0080W_003");
         }
-        if(item.itemcd == "") {
-            throw findMessage(messagesData, "BA_A0080W_004");
+        if (item.itemcd == "") {
+          throw findMessage(messagesData, "BA_A0080W_004");
         }
-        if(item.itemnm == "") {
-            throw findMessage(messagesData, "BA_A0080W_005");
+        if (item.itemnm == "") {
+          throw findMessage(messagesData, "BA_A0080W_005");
         }
         mainDataResult.data.map((items: any) => {
-            if(item.num != items.num && item.itemcd == items.itemcd && item.recdt == items.recdt && item.itemnm == items.itemnm) {
-                throw findMessage(messagesData, "BA_A0080W_006");
-            }
-          })
-      })
-      
+          if (
+            item.num != items.num &&
+            item.itemcd == items.itemcd &&
+            item.recdt == items.recdt &&
+            item.itemnm == items.itemnm
+          ) {
+            throw findMessage(messagesData, "BA_A0080W_006");
+          }
+        });
+      });
     } catch (e) {
       alert(e);
       valid = false;
@@ -1022,7 +1020,19 @@ const BA_A0080: React.FC = () => {
           }}
         >
           <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
+            <GridTitle>
+              상세정보
+              <Button
+                title="Export Excel"
+                // onClick={exportExcel}
+                icon="file"
+                fillMode="outline"
+                themeColor={"primary"}
+                style={{marginLeft: "15px"}}
+              >
+                엑셀양식
+              </Button>
+            </GridTitle>
             <ButtonContainer>
               <Button
                 onClick={onAddClick}
@@ -1031,17 +1041,17 @@ const BA_A0080: React.FC = () => {
                 icon="plus"
               ></Button>
               <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                ></Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                ></Button>
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+              ></Button>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              ></Button>
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
@@ -1051,14 +1061,14 @@ const BA_A0080: React.FC = () => {
                 ...row,
                 recdt: row.recdt ? new Date(dateformat(row.recdt)) : new Date(),
                 itemlvl1: itemlvl1ListData.find(
-                    (item: any) => item.sub_code === row.itemlvl1
-                  )?.code_name,
-                  itemlvl2: itemlvl2ListData.find(
-                    (item: any) => item.sub_code === row.itemlvl2
-                  )?.code_name,
-                  itemlvl3: itemlvl3ListData.find(
-                    (item: any) => item.sub_code === row.itemlvl3
-                  )?.code_name,
+                  (item: any) => item.sub_code === row.itemlvl1
+                )?.code_name,
+                itemlvl2: itemlvl2ListData.find(
+                  (item: any) => item.sub_code === row.itemlvl2
+                )?.code_name,
+                itemlvl3: itemlvl3ListData.find(
+                  (item: any) => item.sub_code === row.itemlvl3
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1095,6 +1105,7 @@ const BA_A0080: React.FC = () => {
               width="150px"
               cell={DateCell}
               footerCell={mainTotalFooterCell}
+              className="editable-new-only"
             />
             <GridColumn
               field="itemcd"
@@ -1122,21 +1133,9 @@ const BA_A0080: React.FC = () => {
               cell={CustomComboBoxCell}
             />
             <GridColumn field="insiz" title="규격" width="150px" />
-            <GridColumn
-              field="itemlvl1"
-              title="대분류"
-              width="150px"
-            />
-            <GridColumn
-              field="itemlvl2"
-              title="중분류"
-              width="150px"
-            />
-            <GridColumn
-              field="itemlvl3"
-              title="소분류"
-              width="150px"
-            />
+            <GridColumn field="itemlvl1" title="대분류" width="150px" />
+            <GridColumn field="itemlvl2" title="중분류" width="150px" />
+            <GridColumn field="itemlvl3" title="소분류" width="150px" />
             <GridColumn field="spec" title="사양" width="150px" />
             <GridColumn field="remark" title="비고" width="150px" />
           </Grid>

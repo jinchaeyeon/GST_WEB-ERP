@@ -6,7 +6,6 @@ const DateCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange,
     className = "", } =
     props;
-    
   let isInEdit = field === dataItem.inEdit;
 
     if (className.includes("read-only")) {
@@ -16,6 +15,7 @@ const DateCell = (props: GridCellProps) => {
         isInEdit = false;
       }
     }
+
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const onDateChange = (e: any) => {
