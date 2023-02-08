@@ -1156,10 +1156,6 @@ const PR_A0060: React.FC = () => {
       else if (items == item.fxcode && item.useyn == "Y"){
         alert(findMessage(messagesData, "PR_A0060W_005"));
       }
-      else {
-        console.log(items);
-        console.log(item)
-      }
     });
   };
 
