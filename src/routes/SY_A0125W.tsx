@@ -986,6 +986,14 @@ const SY_A0125W: React.FC = () => {
       if (!infomation.dptnm) {
         throw findMessage(messagesData, "SY_A0125W_002");
       }
+
+      mainDataResult.data.map((item: any) => {
+        if (
+          item.dptcd == infomation.dptcd
+        ) {
+          throw findMessage(messagesData, "SY_A0125W_003");
+        }
+      });
     } catch (e) {
       alert(e);
       valid = false;

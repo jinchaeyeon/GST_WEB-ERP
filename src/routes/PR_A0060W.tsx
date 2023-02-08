@@ -433,7 +433,7 @@ const PR_A0060: React.FC = () => {
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -1494,6 +1494,21 @@ const PR_A0060: React.FC = () => {
   }, [paraDataDeleted]);
 
   const onSaveClick = async () => {
+    let valid = true;
+    try {
+      subDataResult.data.map((item: any) => {
+        subDataResult.data.map((items: any) => {
+          if(item.fxdt == items.fxdt) {
+            throw findMessage(messagesData, "PR_A0060W_004");
+          }
+        });
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
     const dataItem = subDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -2089,6 +2104,7 @@ const PR_A0060: React.FC = () => {
               onClick={onEditClick}
               icon="more-horizontal"
               fillMode="flat"
+              style={{float: "right"}}
             />
           </td>
         )}
@@ -2816,6 +2832,7 @@ const PR_A0060: React.FC = () => {
                 title="첨부파일"
                 width="140px"
                 cell={CommandCell}
+
               />
             </Grid>
           </GridContainer>

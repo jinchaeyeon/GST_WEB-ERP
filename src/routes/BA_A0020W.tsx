@@ -458,6 +458,7 @@ const BA_A0020: React.FC = () => {
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0) {
+
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
@@ -494,7 +495,7 @@ const BA_A0020: React.FC = () => {
       if (totalRowCnt > 0) {
         setSubDataResult((prev) => {
           return {
-            data: [...prev.data, ...row],
+            data: row,
             total: totalRowCnt,
           };
         });
@@ -529,7 +530,7 @@ const BA_A0020: React.FC = () => {
       if (totalRowCnt > 0) {
         setSubDataResult2((prev) => {
           return {
-            data: [...prev.data, ...row],
+            data: row,
             total: totalRowCnt,
           };
         });
@@ -690,16 +691,12 @@ const BA_A0020: React.FC = () => {
   }, [subDataResult2]);
 
   useEffect(() => {
-    setSubPgNum(1);
-    setSubDataResult(process([], subDataState));
     if (customOptionData !== null) {
       fetchSubGrid();
     }
   }, [subfilters]);
 
   useEffect(() => {
-    setSubPgNum2(1);
-    setSubDataResult2(process([], subDataState2));
     if (customOptionData !== null) {
       fetchSubGrid2();
     }
@@ -2261,6 +2258,7 @@ const BA_A0020: React.FC = () => {
         throw findMessage(messagesData, "BA_A0020W_006");
       }
 
+
       if (
         convertDateToStr(infomation.estbdt).length != 8 ||
         convertDateToStr(infomation.estbdt).substring(0, 4) >
@@ -2291,6 +2289,9 @@ const BA_A0020: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      if(data.statusCode == "P_BA_A0020_S_001") {
+        alert(data.resultMessage);
+      }
     }
     setLoading(false);
   };

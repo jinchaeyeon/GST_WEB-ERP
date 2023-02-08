@@ -1093,7 +1093,7 @@ const BA_A0040: React.FC = () => {
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      custcd: item,
+      itemcd: item,
     }));
   };
 
@@ -1170,7 +1170,7 @@ const BA_A0040: React.FC = () => {
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
       "@p_snp": infomation.snp,
-      "@p_autocode": infomation.auto,
+      "@p_autocode": infomation.auto == null ? "N" : infomation.auto,
       "@p_person": infomation.person,
       "@p_extra_field2": infomation.extra_field2,
       "@p_serviceid": "2207A046",
@@ -1242,7 +1242,7 @@ const BA_A0040: React.FC = () => {
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
       "@p_snp": infomation.snp,
-      "@p_autocode": infomation.auto,
+      "@p_autocode": infomation.auto == null ? "N" : infomation.auto,
       "@p_person": infomation.person,
       "@p_extra_field2": infomation.extra_field2,
       "@p_serviceid": "2207A046",

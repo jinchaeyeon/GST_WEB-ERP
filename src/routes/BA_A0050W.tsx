@@ -324,7 +324,7 @@ const BA_A0050: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "BOM",
     orgdiv: "01",
-    itemcd: Object.getOwnPropertyNames(selectedState)[0],
+    itemcd: "###1234",
     itemnm: "",
     insiz: "",
     itemacnt: "",
