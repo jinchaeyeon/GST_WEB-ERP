@@ -19,7 +19,9 @@ export const getToday = () => {
 };
 
 //Date 타입 인수를 8자리 YYYYMMDD string로 날짜 변환하여 반환 (ex. => 20220101)
-export const convertDateToStr = (date: Date) => {
+export const convertDateToStr = (date: Date | null) => {
+  if (date === null) return "";
+
   const year = date.getFullYear();
   const month = ("0" + (1 + date.getMonth())).slice(-2);
   const day = ("0" + date.getDate()).slice(-2);
@@ -790,4 +792,12 @@ export const UseParaPc = (setData: any) => {
 
     setData(locationIp.IPv4 + "/" + browser);
   }, []);
+};
+
+//
+export const isValidDate = (value: any) => {
+  if (typeof value === "string" && value.length === 8) {
+    value = new Date(dateformat(value));
+  }
+  return !isNaN(value) && value instanceof Date;
 };
