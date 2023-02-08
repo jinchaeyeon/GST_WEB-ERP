@@ -1,0 +1,1163 @@
+import React, { useCallback, useEffect, useState } from "react";
+import * as ReactDOM from "react-dom";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridCellProps,
+} from "@progress/kendo-react-grid";
+import { CellRender, RowRender } from "../components/Renderers";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import { Icon, getter } from "@progress/kendo-react-common";
+import { bytesToBase64 } from "byte-base64";
+import { DataResult, process, State } from "@progress/kendo-data-query";
+import {
+  Title,
+  FilterBoxWrap,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  TitleContainer,
+  ButtonContainer,
+  GridTitleContainer,
+  ButtonInInput,
+  ButtonInFieldWrap,
+  ButtonInField,
+  FormBox,
+  FormBoxWrap,
+} from "../CommonStyled";
+import { Button } from "@progress/kendo-react-buttons";
+import { Input } from "@progress/kendo-react-inputs";
+import { useApi } from "../hooks/api";
+import { Iparameters, TPermissions } from "../store/types";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import {
+  chkScrollHandler,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  setDefaultDate,
+  UseBizComponent,
+  UseCustomOption,
+  UseMessages,
+  UsePermissions,
+  handleKeyPressSearch,
+  getGridItemChangedData,
+  dateformat,
+  UseParaPc,
+  dateformat2,
+  UseGetValueFromSessionItem,
+  getCodeFromValue,
+  getSelectedFirstData,
+} from "../components/CommonFunction";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+  EDIT_FIELD,
+} from "../components/CommonString";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import TopButtons from "../components/TopButtons";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
+
+const DATA_ITEM_KEY = "num";
+const SUB_DATA_ITEM_KEY = "sub_code";
+let deletedMainRows: object[] = [];
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
+  UseBizComponent(
+    "L_BA020,L_BA061",
+    setBizComponentData
+  );
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "itemacnt"
+      ? "L_BA061"
+      : field === "amtunit"
+      ? "L_BA020"
+      : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td></td>
+  );
+};
+
+const BA_A0080: React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
+  const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(SUB_DATA_ITEM_KEY);
+  const idGetter3 = getter(SUB_DATA_ITEM_KEY);
+  const processApi = useApi();
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
+  const pathname: string = window.location.pathname.replace("/", "");
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      setFilters((prev) => ({
+        ...prev,
+        unpitem: defaultOption.find((item: any) => item.id === "unpitem")
+          .valueCode,
+        amtunit: defaultOption.find((item: any) => item.id === "amtunit")
+          .valueCode,
+      }));
+    }
+  }, [customOptionData]);
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA061, L_BA171, L_BA172, L_BA173",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    setBizComponentData
+  );
+  const [itemlvl1ListData, setItemlvl1ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+        const itemlvl1QueryStr = getQueryFromBizComponent(
+            bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+          );
+          const itemlvl2QueryStr = getQueryFromBizComponent(
+            bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+          );
+          const itemlvl3QueryStr = getQueryFromBizComponent(
+            bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+          );
+          fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
+          fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
+          fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+    }
+  }, [bizComponentData])
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
+
+
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [subDataState, setSubDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [isInitSearch, setIsInitSearch] = useState(false);
+
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+
+  const [subDataResult, setSubDataResult] = useState<DataResult>(
+    process([], subDataState)
+  );
+
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [selectedsubDataState, setSelectedsubDataState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+  const [mainPgNum, setMainPgNum] = useState(1);
+  const [subPgNum, setSub2PgNum] = useState(1);
+
+  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+
+  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+  const filterInputChange = (e: any) => {
+    const { value, name } = e.target;
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+  };
+
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //조회조건 초기값
+  const [filters, setFilters] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "Q",
+    orgdiv: "01",
+    unpitem: "SYS01",
+    itemcd: "",
+    itemnm: "",
+    insiz: "",
+    itemacnt: "",
+    amtunit: "KRW",
+  });
+
+  //조회조건 파라미터
+  const parameters: Iparameters = {
+    procedureName: "P_BA_A0080W_Q",
+    pageNumber: mainPgNum,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": filters.workType,
+      "@p_orgdiv": filters.orgdiv,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_insiz": filters.insiz,
+      "@p_itemacnt": filters.itemacnt,
+      "@p_unpitem": filters.unpitem,
+      "@p_amtunit": filters.amtunit,
+      "@p_serviceid": "2207A046",
+    },
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid = async () => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[1].RowCount;
+      const rows = data.tables[1].Rows.map((row: any) => {
+        return {
+          ...row,
+          rowstatus: "U"
+        };
+      });
+      
+      if (totalRowCnt > 0) {
+        setMainDataResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
+      }
+
+      const totalRowCnt2 = data.tables[0].RowCount;
+      const rows2 = data.tables[0].Rows;
+
+      if (totalRowCnt2 > 0) {
+        setSubDataResult((prev) => {
+          return {
+            data: rows2,
+            total: totalRowCnt2,
+          };
+        });
+      }
+      setIfSelectFirstRow(true);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (
+      customOptionData !== null &&
+      isInitSearch === false &&
+      permissions !== null
+    ) {
+      fetchMainGrid();
+      setIsInitSearch(true);
+    }
+  }, [filters, permissions]);
+
+  useEffect(() => {
+    if (customOptionData !== null) {
+      fetchMainGrid();
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    if (customOptionData !== null) {
+      fetchMainGrid();
+    }
+  }, [mainPgNum]);
+
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (ifSelectFirstRow) {
+      if (mainDataResult.total > 0) {
+        const firstRowData = mainDataResult.data[0];
+
+        if (firstRowData != null) {
+          setSelectedState({ [firstRowData.num]: true });
+        } else {
+          setSelectedState({});
+        }
+
+        // setIfSelectFirstRow(true);
+      }
+    }
+  }, [mainDataResult]);
+
+  useEffect(() => {
+    if (ifSelectFirstRow) {
+      if (subDataResult.total > 0) {
+        const firstRowData = subDataResult.data[0];
+        if (filters.itemacnt == "") {
+          setSelectedsubDataState({ [firstRowData.sub_code]: true });
+        }
+        // setIfSelectFirstRow(true);
+      }
+    }
+  }, [subDataResult]);
+
+  //그리드 리셋
+  const resetAllGrid = () => {
+    setMainPgNum(1);
+    setMainDataResult(process([], mainDataState));
+    setSubDataResult(process([], subDataState));
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+
+    setSelectedState(newSelectedState);
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+  };
+
+  const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: SUB_DATA_ITEM_KEY,
+    });
+    setSelectedsubDataState(newSelectedState);
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+    const datas = mainDataResult.data.filter(
+      (item) => item.itemacnt == selectedRowData.sub_code
+    );
+    setFilters((prev) => ({
+      ...prev,
+      itemacnt: selectedRowData.sub_code,
+    }));
+  };
+
+  //엑셀 내보내기
+  let _export: ExcelExport | null | undefined;
+  const exportExcel = () => {
+    if (_export !== null && _export !== undefined) {
+      _export.save();
+    }
+  };
+
+  //스크롤 핸들러
+  const onMainScrollHandler = (event: GridEvent) => {
+    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
+      setMainPgNum((prev) => prev + 1);
+  };
+
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
+
+  const onSubDataStateChange = (event: GridDataStateChangeEvent) => {
+    setSubDataState(event.dataState);
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const onItemWndClick = () => {
+    setItemWindowVisible(true);
+  };
+
+  interface IItemData {
+    itemcd: string;
+    itemno: string;
+    itemnm: string;
+    insiz: string;
+    model: string;
+    itemacnt: string;
+    itemacntnm: string;
+    bnatur: string;
+    spec: string;
+    invunit: string;
+    invunitnm: string;
+    unitwgt: string;
+    wgtunit: string;
+    wgtunitnm: string;
+    maker: string;
+    dwgno: string;
+    remark: string;
+    itemlvl1: string;
+    itemlvl2: string;
+    itemlvl3: string;
+    extra_field1: string;
+    extra_field2: string;
+    extra_field7: string;
+    extra_field6: string;
+    extra_field8: string;
+    packingsiz: string;
+    unitqty: string;
+    color: string;
+    gubun: string;
+    qcyn: string;
+    outside: string;
+    itemthick: string;
+    itemlvl4: string;
+    itemlvl5: string;
+    custitemnm: string;
+  }
+
+  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
+  const setItemData = (data: IItemData) => {
+    setFilters((prev) => ({
+      ...prev,
+      itemcd: data.itemcd,
+      itemnm: data.itemnm,
+    }));
+  };
+
+  const setItemData2 = (data: IItemData) => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            itemcd: data.itemcd,
+            itemnm: data.itemnm,
+          }
+        : {
+            ...item,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const onMainSortChange = (e: any) => {
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const onSubDataSortChange = (e: any) => {
+    setSubDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  };
+
+  const enterEdit = (dataItem: any, field: string) => {
+    if(field != "itemlvl1" && field != "itemlvl2" && field != "itemlvl3" ) {
+        const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+  
+      setIfSelectFirstRow(false);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+    setIfSelectFirstRow(false);
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
+  const CommandCell2 = (props: GridCellProps) => {
+    const rowData = props.dataItem;
+
+    const onEditClick = () => {
+      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+      setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
+      setItemWindowVisible2(true);
+    };
+
+    return (
+      <>
+        <td className="k-command-cell">
+          <Input
+            name="itemcd"
+            type="text"
+            value={rowData.itemcd}
+            style={{ width: "100px" }}
+          />
+          <Button
+            onClick={onEditClick}
+            icon="more-horizontal"
+            fillMode="flat"
+          />
+        </td>
+      </>
+    );
+  };
+
+  const onAddClick = () => {
+    let seq = 1;
+
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+      });
+      seq++;
+    }
+
+    try {
+      if (filters.itemacnt != "") {
+        const newDataItem = {
+          [DATA_ITEM_KEY]: seq,
+          amtunit: filters.amtunit,
+          bnatur: "",
+          insiz: "",
+          invunit: "",
+          itemacnt: filters.itemacnt,
+          itemcd: "",
+          itemlvl1: "",
+          itemlvl2: "",
+          itemlvl3: "",
+          itemnm: "",
+          position: "",
+          recdt: convertDateToStr(new Date()),
+          remark: "",
+          spec: "",
+          unp: 0,
+          rowstatus: "N",
+          inEdit: "recdt"
+        };
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, newDataItem],
+            total: prev.total + 1,
+          };
+        });
+      } else {
+        throw findMessage(messagesData, "BA_A0080W_001");
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const [paraData, setParaData] = useState({
+    workType: "",
+    orgdiv: "01",
+    user_id: userId,
+    form_id: "BA_A0080W",
+    pc: pc,
+    unpitem: "",
+    rowstatus: "",
+    itemcd: "",
+    unp: "",
+    itemacnt: "",
+    remark: "",
+    recdt: "",
+    amtunit: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_BA_A0080W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": "",
+      "@p_orgdiv": paraData.orgdiv,
+      "@p_unpitem_s": paraData.unpitem,
+      "@p_rowstatus_s": paraData.rowstatus,
+      "@p_itemcd_s": paraData.itemcd,
+      "@p_itemacnt_s": paraData.itemacnt,
+      "@p_unp_s": paraData.unp,
+      "@p_remark_s": paraData.remark,
+      "@p_userid": paraData.user_id,
+      "@p_recdt_s": paraData.recdt,
+      "@p_amtunit_s": paraData.amtunit,
+      "@p_form_id": paraData.form_id,
+      "@p_pc": paraData.pc,
+    },
+  };
+
+  type TdataArr = {
+    unpitem: string[];
+    rowstatus: string[];
+    itemcd: string[];
+    unp: string[];
+    itemacnt: string[];
+    remark: string[];
+    recdt: string[];
+    amtunit: string[];
+  };
+
+  const onSaveClick = async () => {
+    let valid = true;
+    try {
+      mainDataResult.data.map((item: any) => {
+        if (item.recdt.substring(0,4)  < "1997" ||
+        item.recdt.substring(6,8) > "31" ||
+        item.recdt.substring(6,8) < "01" || item.recdt.substring(6,8).length != 2) {
+          throw findMessage(messagesData, "BA_A0080W_002");
+        }
+        if(item.unp == 0) {
+          throw findMessage(messagesData, "BA_A0080W_003");
+        }
+        if(item.itemcd == "") {
+            throw findMessage(messagesData, "BA_A0080W_004");
+        }
+        if(item.itemnm == "") {
+            throw findMessage(messagesData, "BA_A0080W_005");
+        }
+        mainDataResult.data.map((items: any) => {
+            if(item.num != items.num && item.itemcd == items.itemcd && item.recdt == items.recdt && item.itemnm == items.itemnm) {
+                throw findMessage(messagesData, "BA_A0080W_006");
+            }
+          })
+      })
+      
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    let dataArr: TdataArr = {
+      unpitem: [],
+      rowstatus: [],
+      itemcd: [],
+      unp: [],
+      itemacnt: [],
+      remark: [],
+      recdt: [],
+      amtunit: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        unpitem = "",
+        rowstatus = "",
+        itemcd = "",
+        unp = "",
+        itemacnt = "",
+        remark = "",
+        recdt = "",
+        amtunit = "",
+      } = item;
+
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
+      dataArr.itemcd.push(itemcd);
+      dataArr.unp.push(unp);
+      dataArr.itemacnt.push(itemacnt);
+      dataArr.remark.push(remark);
+      dataArr.recdt.push(recdt);
+      dataArr.amtunit.push(amtunit);
+    });
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const {
+        unpitem = "",
+        rowstatus = "",
+        itemcd = "",
+        unp = "",
+        itemacnt = "",
+        remark = "",
+        recdt = "",
+        amtunit = "",
+      } = item;
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
+      dataArr.itemcd.push(itemcd);
+      dataArr.unp.push(unp);
+      dataArr.itemacnt.push(itemacnt);
+      dataArr.remark.push(remark);
+      dataArr.recdt.push(recdt);
+      dataArr.amtunit.push(amtunit);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "",
+      orgdiv: "01",
+      user_id: userId,
+      form_id: "BA_A0080W",
+      pc: pc,
+      unpitem: dataArr.unpitem.join("|"),
+      rowstatus: dataArr.rowstatus.join("|"),
+      itemcd: dataArr.itemcd.join("|"),
+      unp: dataArr.unp.join("|"),
+      itemacnt: dataArr.itemacnt.join("|"),
+      remark: dataArr.remark.join("|"),
+      recdt: dataArr.recdt.join("|"),
+      amtunit: dataArr.amtunit.join("|"),
+    }));
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (paraData.itemcd != "") {
+      fetchTodoGridSaved();
+    }
+  }, [paraData]);
+
+  const onDeleteClick = (e: any) => {
+    let newData: any[] = [];
+
+    mainDataResult.data.forEach((item: any, index: number) => {
+      if (!selectedState[item[DATA_ITEM_KEY]]) {
+        newData.push(item);
+      } else {
+        const newData2 = {
+          ...item,
+          rowstatus: "D",
+        };
+        deletedMainRows.push(newData2);
+      }
+    });
+    setMainDataResult((prev) => ({
+      data: newData,
+      total: newData.length,
+    }));
+
+    setMainDataState({});
+  };
+  return (
+    <>
+      <TitleContainer>
+        <Title>단가관리</Title>
+
+        <ButtonContainer>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+            />
+          )}
+        </ButtonContainer>
+      </TitleContainer>
+      <FilterBoxWrap>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>단가항목</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="unpitem"
+                    value={filters.unpitem}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    className="required"
+                  />
+                )}
+              </td>
+              <th>화폐단위</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="amtunit"
+                    value={filters.amtunit}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>규격</th>
+              <td>
+                <Input
+                  name="insiz"
+                  type="text"
+                  value={filters.insiz}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>품목코드</th>
+              <td>
+                <Input
+                  name="itemcd"
+                  type="text"
+                  value={filters.itemcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onItemWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>품목명</th>
+              <td>
+                <Input
+                  name="itemnm"
+                  type="text"
+                  value={filters.itemnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </FilterBoxWrap>
+
+      <GridContainer
+        style={{ width: "19.2vw", float: "left", display: "inline-block" }}
+      >
+        <GridTitleContainer>
+          <GridTitle>품목계정</GridTitle>
+        </GridTitleContainer>
+        <Grid
+          style={{ height: "80vh" }}
+          data={process(
+            subDataResult.data.map((row) => ({
+              ...row,
+              [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+            })),
+            subDataState
+          )}
+          {...subDataState}
+          onDataStateChange={onSubDataStateChange}
+          //선택 기능
+          dataItemKey={SUB_DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onSubDataSelectionChange}
+          //스크롤 조회 기능
+          fixedScroll={true}
+          total={subDataResult.total}
+          //정렬기능
+          sortable={true}
+          onSortChange={onSubDataSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+        >
+          <GridColumn field="sub_code" title="코드" width="150px" />
+          <GridColumn field="code_name" title="계정명" width="200px" />
+        </Grid>
+      </GridContainer>
+      <GridContainer
+        style={{ width: "68vw", display: "inline-block", float: "right" }}
+      >
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
+          }}
+        >
+          <GridTitleContainer>
+            <GridTitle>상세정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="plus"
+              ></Button>
+              <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
+          <Grid
+            style={{ height: "80vh" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                recdt: row.recdt ? new Date(dateformat(row.recdt)) : new Date(),
+                itemlvl1: itemlvl1ListData.find(
+                    (item: any) => item.sub_code === row.itemlvl1
+                  )?.code_name,
+                  itemlvl2: itemlvl2ListData.find(
+                    (item: any) => item.sub_code === row.itemlvl2
+                  )?.code_name,
+                  itemlvl3: itemlvl3ListData.find(
+                    (item: any) => item.sub_code === row.itemlvl3
+                  )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)],
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "multiple",
+            }}
+            onSelectionChange={onSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            onScroll={onMainScrollHandler}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender}
+            rowRender={customRowRender}
+            editField={EDIT_FIELD}
+          >
+            <GridColumn
+              field="recdt"
+              title="적용일"
+              width="150px"
+              cell={DateCell}
+              footerCell={mainTotalFooterCell}
+            />
+            <GridColumn
+              field="itemcd"
+              title="품목코드테스트"
+              width="250px"
+              cell={CommandCell2}
+            />
+            <GridColumn field="itemnm" title="품목명" width="250px" />
+            <GridColumn
+              field="itemacnt"
+              title="품목계정"
+              width="150px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="unp"
+              title="단가"
+              width="150px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="amtunit"
+              title="화폐단위"
+              width="150px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn field="insiz" title="규격" width="150px" />
+            <GridColumn
+              field="itemlvl1"
+              title="대분류"
+              width="150px"
+            />
+            <GridColumn
+              field="itemlvl2"
+              title="중분류"
+              width="150px"
+            />
+            <GridColumn
+              field="itemlvl3"
+              title="소분류"
+              width="150px"
+            />
+            <GridColumn field="spec" title="사양" width="150px" />
+            <GridColumn field="remark" title="비고" width="150px" />
+          </Grid>
+        </ExcelExport>
+      </GridContainer>
+      {itemWindowVisible && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible}
+          workType={"FILTER"}
+          setData={setItemData}
+        />
+      )}
+      {itemWindowVisible2 && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible2}
+          workType={"FILTER"}
+          setData={setItemData2}
+        />
+      )}
+    </>
+  );
+};
+
+export default BA_A0080;

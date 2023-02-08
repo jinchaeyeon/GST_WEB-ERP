@@ -224,7 +224,7 @@ const PR_A0060: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if(value != null) {
+    if (value != null) {
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
@@ -516,7 +516,10 @@ const PR_A0060: React.FC = () => {
           fxcode: firstRowData.fxcode,
           fxdiv: firstRowData.fxdiv,
           location: firstRowData.location,
-          recdt: new Date(dateformat(firstRowData.recdt)),
+          recdt:
+            firstRowData.recdt == ""
+              ? new Date()
+              : new Date(dateformat(firstRowData.recdt)),
           fxnum: firstRowData.fxnum,
           fxnm: firstRowData.fxnm,
           fxno: firstRowData.fxno,
@@ -524,9 +527,15 @@ const PR_A0060: React.FC = () => {
           dptcd: firstRowData.dptcd,
           person: firstRowData.person,
           place: firstRowData.place,
-          makedt: new Date(dateformat(firstRowData.makedt)),
+          makedt:
+            firstRowData.makedt == ""
+              ? new Date()
+              : new Date(dateformat(firstRowData.makedt)),
           maker: firstRowData.maker,
-          indt: new Date(dateformat(firstRowData.indt)),
+          indt:
+            firstRowData.indt == ""
+              ? new Date()
+              : new Date(dateformat(firstRowData.indt)),
           custcd: firstRowData.custcd,
           kind: firstRowData.kind,
           amt: firstRowData.amt,
@@ -550,7 +559,10 @@ const PR_A0060: React.FC = () => {
           update_form_id: "",
           rowstatus_s: firstRowData.rowstatus_s,
           fxseq_s: firstRowData.fxseq_s,
-          fxdt_s: new Date(dateformat(firstRowData.fxdt_s)),
+          fxdt_s:
+            firstRowData.fxdt_s == ""
+              ? new Date()
+              : new Date(dateformat(firstRowData.fxdt_s)),
           custcd_s: firstRowData.custcd_s,
           custnm_s: firstRowData.custnm_s,
           errtext_s: firstRowData.errtext_s,
@@ -630,7 +642,10 @@ const PR_A0060: React.FC = () => {
       fxcode: selectedRowData.fxcode,
       fxdiv: selectedRowData.fxdiv,
       location: selectedRowData.location,
-      recdt: new Date(dateformat(selectedRowData.recdt)),
+      recdt:
+        selectedRowData.recdt == ""
+          ? new Date()
+          : new Date(dateformat(selectedRowData.recdt)),
       fxnum: selectedRowData.fxnum,
       fxnm: selectedRowData.fxnm,
       fxno: selectedRowData.fxno,
@@ -638,9 +653,15 @@ const PR_A0060: React.FC = () => {
       dptcd: selectedRowData.dptcd,
       person: selectedRowData.person,
       place: selectedRowData.place,
-      makedt: new Date(dateformat(selectedRowData.makedt)),
+      makedt:
+        selectedRowData.makedt == ""
+          ? new Date()
+          : new Date(dateformat(selectedRowData.makedt)),
       maker: selectedRowData.maker,
-      indt: new Date(dateformat(selectedRowData.indt)),
+      indt:
+        selectedRowData.indt == ""
+          ? new Date()
+          : new Date(dateformat(selectedRowData.indt)),
       custcd: selectedRowData.custcd,
       kind: selectedRowData.kind,
       amt: selectedRowData.amt,
@@ -664,7 +685,10 @@ const PR_A0060: React.FC = () => {
       update_form_id: "",
       rowstatus_s: selectedRowData.rowstatus_s,
       fxseq_s: selectedRowData.fxseq_s,
-      fxdt_s: new Date(dateformat(selectedRowData.fxdt_s)),
+      fxdt_s:
+        selectedRowData.fxdt_s == ""
+          ? new Date()
+          : new Date(dateformat(selectedRowData.fxdt_s)),
       custcd_s: selectedRowData.custcd_s,
       custnm_s: selectedRowData.custnm_s,
       errtext_s: selectedRowData.errtext_s,
@@ -1968,7 +1992,7 @@ const PR_A0060: React.FC = () => {
   const onSaveClick2 = async () => {
     fetchSaved();
   };
-  
+
   const fetchSaved = async () => {
     let data: any;
 
@@ -1982,10 +2006,13 @@ const PR_A0060: React.FC = () => {
         throw findMessage(messagesData, "PR_A0060W_002");
       }
 
-      if (convertDateToStr(infomation.recdt).length != 8 || convertDateToStr(infomation.makedt).length != 8 || convertDateToStr(infomation.indt).length != 8) {
+      if (
+        convertDateToStr(infomation.recdt).length != 8 ||
+        convertDateToStr(infomation.makedt).length != 8 ||
+        convertDateToStr(infomation.indt).length != 8
+      ) {
         throw findMessage(messagesData, "PR_A0060W_003");
       }
-
     } catch (e) {
       alert(e);
       valid = false;
@@ -2000,7 +2027,7 @@ const PR_A0060: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       setMainPgNum(1);
       setMainDataResult(process([], mainDataState));
@@ -2258,15 +2285,7 @@ const PR_A0060: React.FC = () => {
                 themeColor={"primary"}
                 icon="file-add"
               >
-                설비생성
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                품목삭제
+                생성
               </Button>
               <Button
                 onClick={onSaveClick2}
@@ -2275,6 +2294,14 @@ const PR_A0060: React.FC = () => {
                 icon="save"
               >
                 저장
+              </Button>
+              <Button
+                onClick={onDeleteClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                삭제
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -2453,7 +2480,7 @@ const PR_A0060: React.FC = () => {
                       type="number"
                       value={infomation.availabletime}
                       onChange={InputChange}
-                      style={{textAlign: "right"}}
+                      style={{ textAlign: "right" }}
                     />
                   </td>
                   <th>시간당생산수량</th>
@@ -2463,7 +2490,7 @@ const PR_A0060: React.FC = () => {
                       type="number"
                       value={infomation.uph}
                       onChange={InputChange}
-                      style={{textAlign: "right"}}
+                      style={{ textAlign: "right" }}
                     />
                   </td>
                 </tr>
@@ -2505,7 +2532,7 @@ const PR_A0060: React.FC = () => {
                       type="number"
                       value={infomation.IOT_TER_ID}
                       onChange={InputChange}
-                      style={{textAlign: "right"}}
+                      style={{ textAlign: "right" }}
                     />
                   </td>
                 </tr>
@@ -2589,7 +2616,7 @@ const PR_A0060: React.FC = () => {
                       type="number"
                       value={infomation.amt}
                       onChange={InputChange}
-                      style={{textAlign: "right"}}
+                      style={{ textAlign: "right" }}
                     />
                   </td>
                   <th>분류2</th>
@@ -2665,12 +2692,8 @@ const PR_A0060: React.FC = () => {
                 <tr>
                   <th>첨부파일</th>
                   <td colSpan={3}>
-                    <Input
-                      name="files"
-                      type="text"
-                      value={infomation.files}
-                    />
-                    <ButtonInInput style={{ marginTop: "3vh"}}>
+                    <Input name="files" type="text" value={infomation.files} />
+                    <ButtonInInput style={{ marginTop: "3vh" }}>
                       <Button
                         type={"button"}
                         onClick={onAttachmentsWndClick}
@@ -2681,7 +2704,7 @@ const PR_A0060: React.FC = () => {
                   </td>
                   <th>비고</th>
                   <td colSpan={5}>
-                  <TextArea
+                    <TextArea
                       value={infomation.remark}
                       name="remark"
                       rows={4}

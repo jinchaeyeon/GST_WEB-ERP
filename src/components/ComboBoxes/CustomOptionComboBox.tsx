@@ -11,6 +11,7 @@ type TCustomOptionComboBox = {
   changeData(e: any): void;
   textField?: string;
   valueField?: string;
+  className?: string;
 };
 const CustomOptionComboBox = ({
   name,
@@ -19,12 +20,18 @@ const CustomOptionComboBox = ({
   changeData,
   textField = "code_name",
   valueField = "sub_code",
+  className = ""
 }: TCustomOptionComboBox) => {
   const dataList = customOptionData.menuCustomDefaultOptions.query;
   const dataItem = dataList.find((item: any) => item.id === name);
   const listData = dataItem.Rows;
 
   let newColumns = [];
+  let required = false;
+
+  if (className.includes("required")) {
+    required = true;
+  } 
 
   if (dataList) {
     const columns = dataItem.bizComponentItems;
@@ -54,6 +61,7 @@ const CustomOptionComboBox = ({
       columns={newColumns}
       onChange={onChangeHandle}
       id={name}
+      required={required}
     />
   );
 };

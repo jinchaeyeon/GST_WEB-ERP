@@ -10,6 +10,7 @@ import {
   GridFooterCellProps,
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
+import { TextArea } from "@progress/kendo-react-inputs";
 import {
   TreeList,
   createDataTree,
@@ -1151,23 +1152,16 @@ const SY_A0125W: React.FC = () => {
           />
         </ExcelExport>
       </GridContainer>
-      <TitleContainer style={{ float: "right" }}>
-        <ButtonContainer>
+      <TitleContainer>
+        <GridTitle style={{ marginLeft: "2.5vw" }}>부서인원정보</GridTitle>
+        <ButtonContainer style={{ float: "right" }}>
           <Button
             onClick={onAddClick2}
             fillMode="outline"
             themeColor={"primary"}
             icon="file-add"
           >
-            부서생성
-          </Button>
-          <Button
-            onClick={onDeleteClick2}
-            fillMode="outline"
-            themeColor={"primary"}
-            icon="delete"
-          >
-            품목삭제
+            신규
           </Button>
           <Button
             onClick={onSaveClick2}
@@ -1177,9 +1171,24 @@ const SY_A0125W: React.FC = () => {
           >
             저장
           </Button>
+          <Button
+            onClick={onDeleteClick2}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="delete"
+          >
+            삭제
+          </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FormBoxWrap style={{ float: "right", height: "9vh", width: "51vw", marginLeft: "2vw" }}>
+      <FormBoxWrap
+        style={{
+          float: "right",
+          height: "15.5vh",
+          width: "51vw",
+          marginLeft: "2vw",
+        }}
+      >
         <FormBox>
           <tbody>
             <tr>
@@ -1209,6 +1218,20 @@ const SY_A0125W: React.FC = () => {
                   className="readonly"
                 />
               </td>
+              <th>사업장</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="location"
+                    value={infomation.location}
+                    bizComponentId="L_BA002"
+                    bizComponentData={bizComponentData}
+                    changeData={ComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
               <th>부서코드</th>
               <td>
                 <Input
@@ -1229,22 +1252,8 @@ const SY_A0125W: React.FC = () => {
                   className="required"
                 />
               </td>
-            </tr>
-            <tr>
-              <th>사업장</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="location"
-                    value={infomation.location}
-                    bizComponentId="L_BA002"
-                    bizComponentData={bizComponentData}
-                    changeData={ComboBoxChange}
-                  />
-                )}
-              </td>
               <th>사용여부</th>
-              <td colSpan={3}>
+              <td>
                 {bizComponentData !== null && (
                   <BizComponentRadioGroup
                     name="useyn"
@@ -1255,12 +1264,14 @@ const SY_A0125W: React.FC = () => {
                   />
                 )}
               </td>
+            </tr>
+            <tr>
               <th>비고</th>
-              <td>
-                <Input
-                  name="remark"
-                  type="text"
+              <td colSpan={5}>
+                <TextArea
                   value={infomation.remark}
+                  name="remark"
+                  rows={2}
                   onChange={InputChange}
                 />
               </td>
@@ -1269,10 +1280,15 @@ const SY_A0125W: React.FC = () => {
         </FormBox>
       </FormBoxWrap>
       <GridContainer
-        style={{ height: "66vh", width: "51vw", marginLeft: "2vw", display: "inline-block",  }}
+        style={{
+          height: "60vh",
+          width: "51vw",
+          marginLeft: "2.5vw",
+          display: "inline-block",
+        }}
       >
         <GridTitleContainer>
-          <GridTitle>기본정보</GridTitle>
+          <GridTitle></GridTitle>
           <ButtonContainer>
             <Button
               onClick={onSaveClick}

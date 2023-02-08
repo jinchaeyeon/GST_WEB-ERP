@@ -12,7 +12,11 @@ import {
   GridCellProps,
 } from "@progress/kendo-react-grid";
 import YearDateCell from "../components/Cells/YearDateCell";
-import { TextArea } from "@progress/kendo-react-inputs";
+import {
+  TextArea,
+  Checkbox,
+  CheckboxChangeEvent,
+} from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -174,6 +178,7 @@ const BA_A0020: React.FC = () => {
     }
   }, []);
 
+  const [yn, setyn] = useState(true);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -232,7 +237,7 @@ const BA_A0020: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if(value != null) {
+    if (value != null) {
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
@@ -326,7 +331,8 @@ const BA_A0020: React.FC = () => {
     bill_type: "",
     recvid: "",
     rtxisuyn: "",
-    files: ""
+    files: "",
+    auto: "Y"
   });
 
   //조회조건 초기값
@@ -483,7 +489,6 @@ const BA_A0020: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        inEdit: "yyyy",
         rowstatus: "U",
       }));
       if (totalRowCnt > 0) {
@@ -518,8 +523,8 @@ const BA_A0020: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        inEdit: "yyyy",
         rowstatus: "U",
+        yyyy: item.yyyy < "1999" ? null : item.yyyy
       }));
       if (totalRowCnt > 0) {
         setSubDataResult2((prev) => {
@@ -568,19 +573,20 @@ const BA_A0020: React.FC = () => {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.custcd]: true });
-        console.log(firstRowData.estbdt)
+
         setInfomation({
           pgSize: PAGE_SIZE,
           workType: "U",
           custcd: firstRowData.custcd,
           custnm: firstRowData.custnm,
-          custdiv: custdivListData.find(
-            (item: any) => item.sub_code === firstRowData.custdiv
-          )?.code_name == undefined
-            ? firstRowData.custdiv
-            : custdivListData.find(
-                (item: any) => item.sub_code === firstRowData.custdiv
-              )?.code_name,
+          custdiv:
+            custdivListData.find(
+              (item: any) => item.sub_code === firstRowData.custdiv
+            )?.code_name == undefined
+              ? firstRowData.custdiv
+              : custdivListData.find(
+                  (item: any) => item.sub_code === firstRowData.custdiv
+                )?.code_name,
           custabbr: firstRowData.custabbr,
           compnm_eng: firstRowData.compnm_eng,
           inunpitem: firstRowData.inunpitem,
@@ -590,16 +596,17 @@ const BA_A0020: React.FC = () => {
           unpitem: firstRowData.unpitem,
           ceonm: firstRowData.ceonm,
           address: firstRowData.address,
-          bizdiv: bizdivListData.find(
-            (item: any) => item.sub_code === firstRowData.bizdiv
-          )?.code_name == undefined
-            ? firstRowData.bizdiv
-            : bizdivListData.find(
-                (item: any) => item.sub_code === firstRowData.bizdiv
-              )?.code_name,
+          bizdiv:
+            bizdivListData.find(
+              (item: any) => item.sub_code === firstRowData.bizdiv
+            )?.code_name == undefined
+              ? firstRowData.bizdiv
+              : bizdivListData.find(
+                  (item: any) => item.sub_code === firstRowData.bizdiv
+                )?.code_name,
           repreregno: firstRowData.repreregno,
           address_eng: firstRowData.address_eng,
-          estbdt: new Date(dateformat(firstRowData.estbdt)),
+          estbdt: firstRowData.estbdt == "        " ? new Date() : new Date(dateformat(firstRowData.estbdt)),
           phonenum: firstRowData.phonenum,
           bnkinfo: firstRowData.bnkinfo,
           bankacntuser: firstRowData.bankacntuser,
@@ -629,7 +636,8 @@ const BA_A0020: React.FC = () => {
           bill_type: firstRowData.bill_type,
           recvid: firstRowData.recvid,
           rtxisuyn: firstRowData.rtxisuyn,
-          files: firstRowData.files
+          files: firstRowData.files,
+          auto: firstRowData.auto
         });
 
         setsubFilters((prev) => ({
@@ -737,7 +745,7 @@ const BA_A0020: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
+    setyn(true);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
@@ -759,7 +767,7 @@ const BA_A0020: React.FC = () => {
       bizdiv: selectedRowData.bizdiv,
       repreregno: selectedRowData.repreregno,
       address_eng: selectedRowData.address_eng,
-      estbdt: new Date(dateformat(selectedRowData.estbdt)),
+      estbdt: selectedRowData.estbdt == "        " ? new Date() : new Date(dateformat(selectedRowData.estbdt)),
       phonenum: selectedRowData.phonenum,
       bnkinfo: selectedRowData.bnkinfo,
       bankacntuser: selectedRowData.bankacntuser,
@@ -789,7 +797,8 @@ const BA_A0020: React.FC = () => {
       bill_type: selectedRowData.bill_type,
       recvid: selectedRowData.recvid,
       rtxisuyn: selectedRowData.rtxisuyn,
-      files: selectedRowData.files
+      files: selectedRowData.files,
+      auto: selectedRowData.auto,
     });
 
     if (tabSelected == 1) {
@@ -947,7 +956,8 @@ const BA_A0020: React.FC = () => {
       bill_type: "",
       recvid: "",
       rtxisuyn: "N",
-      files: ""
+      files: "",
+      auto: "Y"
     });
   };
 
@@ -1465,6 +1475,7 @@ const BA_A0020: React.FC = () => {
     pc: pc,
     form_id: "BA_A0020W",
     company_code: "2207A046",
+    auto: "Y"
   });
 
   const para: Iparameters = {
@@ -1475,7 +1486,7 @@ const BA_A0020: React.FC = () => {
       "@p_work_type": paraData.workType,
       "@p_orgdiv": "01",
       "@p_location": "01",
-      "@p_auto": "N",
+      "@p_auto": paraData.auto,
       "@p_custcd": paraData.custcd,
       "@p_custnm": paraData.custnm,
       "@p_custdiv":
@@ -1568,7 +1579,7 @@ const BA_A0020: React.FC = () => {
       "@p_work_type": paraDataDeleted.work_type,
       "@p_orgdiv": "01",
       "@p_location": "01",
-      "@p_auto": "Y",
+      "@p_auto": infomation.auto,
       "@p_custcd": paraDataDeleted.custcd,
       "@p_custnm": infomation.custnm,
       "@p_custdiv": custdivListData.find(
@@ -1652,20 +1663,25 @@ const BA_A0020: React.FC = () => {
       "@p_work_type": infomation.workType,
       "@p_orgdiv": "01",
       "@p_location": "01",
-      "@p_auto": "Y",
+      "@p_auto": infomation.auto,
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
-      "@p_custdiv": custdivListData.find(
-        (item: any) => item.code_name === infomation.custdiv
-      )?.sub_code == undefined ? infomation.custdiv : custdivListData.find(
-        (item: any) => item.code_name === infomation.custdiv
-      )?.sub_code,
+      "@p_custdiv":
+        custdivListData.find(
+          (item: any) => item.code_name === infomation.custdiv
+        )?.sub_code == undefined
+          ? infomation.custdiv
+          : custdivListData.find(
+              (item: any) => item.code_name === infomation.custdiv
+            )?.sub_code,
       "@p_custabbr": infomation.custabbr,
-      "@p_bizdiv": bizdivListData.find(
-        (item: any) => item.code_name === infomation.bizdiv
-      )?.sub_code == undefined ? infomation.bizdiv : bizdivListData.find(
-        (item: any) => item.code_name === infomation.bizdiv
-      )?.sub_code,
+      "@p_bizdiv":
+        bizdivListData.find((item: any) => item.code_name === infomation.bizdiv)
+          ?.sub_code == undefined
+          ? infomation.bizdiv
+          : bizdivListData.find(
+              (item: any) => item.code_name === infomation.bizdiv
+            )?.sub_code,
       "@p_bizregnum": infomation.bizregnum,
       "@p_ceonm": infomation.ceonm,
       "@p_repreregno": infomation.repreregno,
@@ -1798,8 +1814,7 @@ const BA_A0020: React.FC = () => {
         parameters: {
           "@p_work_type": "CustPerson",
           "@p_orgdiv": "01",
-          "@p_location": "01",
-          "@p_auto": "N",
+          "@p_location":infomation.auto,
           "@p_custcd": infomation.custcd,
           "@p_custnm": infomation.custnm,
           "@p_custdiv": infomation.custdiv,
@@ -1961,12 +1976,14 @@ const BA_A0020: React.FC = () => {
     let valid = true;
     try {
       subDataResult2.data.map((item: any) => {
-        console.log(item.yyyy)
-        if (item.yyyy > convertDateToStr(new Date()).substring(0,4) || item.yyyy < "1997" || item.yyyy.length != 4) {
+        if (
+          item.yyyy > convertDateToStr(new Date()).substring(0, 4) ||
+          item.yyyy < "1997" ||
+          item.yyyy.length != 4
+        ) {
           throw findMessage(messagesData, "BA_A0020W_007");
         }
-      })
-      
+      });
     } catch (e) {
       alert(e);
       valid = false;
@@ -1974,7 +1991,6 @@ const BA_A0020: React.FC = () => {
 
     if (!valid) return false;
 
-    
     const dataItem = subDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -2032,7 +2048,7 @@ const BA_A0020: React.FC = () => {
           "@p_work_type": "MONEY",
           "@p_orgdiv": "01",
           "@p_location": "01",
-          "@p_auto": "N",
+          "@p_auto": infomation.auto,
           "@p_custcd": infomation.custcd,
           "@p_custnm": infomation.custnm,
           "@p_custdiv": infomation.custdiv,
@@ -2245,12 +2261,14 @@ const BA_A0020: React.FC = () => {
         throw findMessage(messagesData, "BA_A0020W_006");
       }
 
-      if (convertDateToStr(infomation.estbdt).length != 8 || convertDateToStr(infomation.estbdt).substring(0,4) > convertDateToStr(new Date()).substring(0,4)
-      || convertDateToStr(infomation.estbdt).substring(0,4) < "1400") {
+      if (
+        convertDateToStr(infomation.estbdt).length != 8 ||
+        convertDateToStr(infomation.estbdt).substring(0, 4) >
+          convertDateToStr(new Date()).substring(0, 4) ||
+        convertDateToStr(infomation.estbdt).substring(0, 4) < "1400"
+      ) {
         throw findMessage(messagesData, "BA_A0020W_007");
       }
-
-
     } catch (e) {
       alert(e);
       valid = false;
@@ -2265,7 +2283,6 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
     if (data.isSuccess === true) {
       setMainPgNum(1);
       setMainDataResult(process([], mainDataState));
@@ -2305,7 +2322,7 @@ const BA_A0020: React.FC = () => {
     }
   }, [paraData]);
   const [rows, setrows] = useState<number>(0);
-  
+
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
@@ -2324,11 +2341,21 @@ const BA_A0020: React.FC = () => {
               onClick={onEditClick}
               icon="more-horizontal"
               fillMode="flat"
+              style={{ float: "right" }}
             />
           </td>
         )}
       </>
     );
+  };
+
+  const CheckChange = (event: CheckboxChangeEvent) => {
+    setyn(event.value);
+    let value = event.value == true ? "Y" : "N"
+    setInfomation((prev) => ({
+      ...prev,
+      auto: value,
+    }));
   };
 
   return (
@@ -2499,32 +2526,32 @@ const BA_A0020: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      <ButtonContainer style={{float: "right", marginBottom: "1vh"}}>
-              <Button
-                onClick={onAddClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                업체생성
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                품목삭제
-              </Button>
-              <Button
-                onClick={onSaveClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-            </ButtonContainer>
+      <ButtonContainer style={{ float: "right", marginBottom: "1vh" }}>
+        <Button
+          onClick={onAddClick2}
+          fillMode="outline"
+          themeColor={"primary"}
+          icon="file-add"
+        >
+          신규
+        </Button>
+        <Button
+          onClick={onSaveClick2}
+          fillMode="outline"
+          themeColor={"primary"}
+          icon="save"
+        >
+          저장
+        </Button>
+        <Button
+          onClick={onDeleteClick2}
+          fillMode="outline"
+          themeColor={"primary"}
+          icon="delete"
+        >
+          삭제
+        </Button>
+      </ButtonContainer>
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
@@ -2536,16 +2563,50 @@ const BA_A0020: React.FC = () => {
               <tbody>
                 <tr>
                   <th>업체코드</th>
-                  <td>
-                    <Input
-                      name="custcd"
-                      type="text"
-                      value={infomation.custcd}
-                      className="readonly"
-                    />
-                  </td>
+                  {infomation.custcd != "자동생성" && yn == true ? (
+                    <>
+                      <td colSpan={2}>
+                        <Input
+                          name="custcd"
+                          type="text"
+                          value={infomation.custcd}
+                          className="readonly"
+                        />
+                      </td>
+                      <td></td>
+                    </>
+                  ) : (
+                    <>
+                      <td colSpan={2}>
+                        {yn == true ? (
+                          <Input
+                            name="custcd"
+                            type="text"
+                            value={"자동생성"}
+                            className="readonly"
+                          />
+                        ) : (
+                          <Input
+                            name="custcd"
+                            type="text"
+                            value={infomation.custcd}
+                            onChange={InputChange}
+                          />
+                        )}
+                      </td>
+                      <td>
+                        <Checkbox
+                          defaultChecked={true}
+                          value={yn}
+                          onChange={CheckChange}
+                          label={"자동생성"}
+                          style={{ marginLeft: "30px" }}
+                        />
+                      </td>
+                    </>
+                  )}
                   <th>업체명</th>
-                  <td colSpan={3}>
+                  <td>
                     <Input
                       name="custnm"
                       type="text"
@@ -2871,7 +2932,7 @@ const BA_A0020: React.FC = () => {
                 </tr>
                 <tr>
                   <th>역발행여부</th>
-                  <td colSpan={3}> 
+                  <td colSpan={3}>
                     {bizComponentData !== null && (
                       <BizComponentRadioGroup
                         name="rtxisuyn"
@@ -2988,12 +3049,8 @@ const BA_A0020: React.FC = () => {
                 <tr>
                   <th>첨부파일</th>
                   <td colSpan={3}>
-                    <Input
-                      name="files"
-                      type="text"
-                      value={infomation.files}
-                    />
-                    <ButtonInInput style={{marginTop: "2vh"}}>
+                    <Input name="files" type="text" value={infomation.files} />
+                    <ButtonInInput style={{ marginTop: "2vh" }}>
                       <Button
                         type={"button"}
                         onClick={onAttachmentsWndClick}
@@ -3148,9 +3205,7 @@ const BA_A0020: React.FC = () => {
               data={process(
                 subDataResult2.data.map((row) => ({
                   ...row,
-                  yyyy: row.yyyy
-                    ? new Date(dateformat(row.yyyy))
-                    : new Date(),
+                  yyyy: row.yyyy ? new Date(dateformat(row.yyyy)) : new Date(),
                   [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
                 })),
                 subDataState2
@@ -3190,7 +3245,12 @@ const BA_A0020: React.FC = () => {
                   ) === -1
                 }
               />
-              <GridColumn field="yyyy" cell={YearDateCell} title="결산년도" width="150px" />
+              <GridColumn
+                field="yyyy"
+                cell={YearDateCell}
+                title="결산년도"
+                width="150px"
+              />
               <GridColumn
                 field="totasset"
                 title="총자산"

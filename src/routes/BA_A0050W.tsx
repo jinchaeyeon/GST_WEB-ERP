@@ -1408,15 +1408,7 @@ const BA_A0050: React.FC = () => {
               themeColor={"primary"}
               icon="save"
             >
-              패턴공장도 참조
-            </Button>
-            <Button
-              onClick={onDeleteClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="delete"
-            >
-              품목삭제
+              패턴공정도 참조
             </Button>
             <Button
               onClick={onSaveClick}
@@ -1425,6 +1417,14 @@ const BA_A0050: React.FC = () => {
               icon="save"
             >
               저장
+            </Button>
+            <Button
+              onClick={onDeleteClick2}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="delete"
+            >
+              삭제
             </Button>
           </ButtonContainer>
         </GridTitleContainer>

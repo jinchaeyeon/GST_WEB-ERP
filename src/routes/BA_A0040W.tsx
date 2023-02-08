@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -244,7 +245,7 @@ const BA_A0040: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if(value != null) {
+    if (value != null) {
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
@@ -337,6 +338,7 @@ const BA_A0040: React.FC = () => {
     unitqty: 0,
     procday: "",
     files: "",
+    auto: "Y"
   });
 
   //조회조건 초기값
@@ -603,6 +605,7 @@ const BA_A0040: React.FC = () => {
           unitqty: firstRowData.unitqty,
           procday: firstRowData.procday,
           files: firstRowData.files,
+          auto: firstRowData.auto
         });
         setIfSelectFirstRow(true);
       }
@@ -647,6 +650,7 @@ const BA_A0040: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
+    setyn(true);
     setIfSelectFirstRow(false);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
@@ -699,6 +703,7 @@ const BA_A0040: React.FC = () => {
       unitqty: selectedRowData.unitqty,
       procday: selectedRowData.procday,
       files: selectedRowData.files,
+      auto: selectedRowData.auto,
     });
     if (tabSelected === 1) {
       setsubFilters((prev) => ({
@@ -821,6 +826,7 @@ const BA_A0040: React.FC = () => {
       unitqty: 0,
       procday: "",
       files: "",
+      auto: "Y"
     });
   };
 
@@ -1164,7 +1170,7 @@ const BA_A0040: React.FC = () => {
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
       "@p_snp": infomation.snp,
-      "@p_autocode": "Y",
+      "@p_autocode": infomation.auto,
       "@p_person": infomation.person,
       "@p_extra_field2": infomation.extra_field2,
       "@p_serviceid": "2207A046",
@@ -1236,7 +1242,7 @@ const BA_A0040: React.FC = () => {
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
       "@p_snp": infomation.snp,
-      "@p_autocode": "Y",
+      "@p_autocode": infomation.auto,
       "@p_person": infomation.person,
       "@p_extra_field2": infomation.extra_field2,
       "@p_serviceid": "2207A046",
@@ -1270,14 +1276,16 @@ const BA_A0040: React.FC = () => {
     let valid = true;
     try {
       subData2Result.data.map((item: any) => {
-        if (item.recdt > convertDateToStr(new Date()).substring(0,4) || 
-        item.recdt.substring(0,4)  < "1997" ||
-        item.recdt.substring(6,8) > "31" ||
-        item.recdt.substring(6,8) < "01" || item.recdt.substring(6,8).length != 2) {
+        if (
+          item.recdt > convertDateToStr(new Date()).substring(0, 4) ||
+          item.recdt.substring(0, 4) < "1997" ||
+          item.recdt.substring(6, 8) > "31" ||
+          item.recdt.substring(6, 8) < "01" ||
+          item.recdt.substring(6, 8).length != 2
+        ) {
           throw findMessage(messagesData, "BA_A0040W_003");
         }
-      })
-      
+      });
     } catch (e) {
       alert(e);
       valid = false;
@@ -1455,6 +1463,16 @@ const BA_A0040: React.FC = () => {
       fetchTodoGridSaved();
     }
   }, [paraData]);
+
+  const [yn, setyn] = useState(true);
+  const CheckChange = (event: CheckboxChangeEvent) => {
+    setyn(event.value);
+    let value = event.value == true ? "Y" : "N";
+    setInfomation((prev) => ({
+      ...prev,
+      auto: value,
+    }));
+  };
   return (
     <>
       <TitleContainer>
@@ -1595,15 +1613,7 @@ const BA_A0040: React.FC = () => {
                 themeColor={"primary"}
                 icon="file-add"
               >
-                품목생성
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                품목삭제
+                신규
               </Button>
               <Button
                 onClick={onSaveClick2}
@@ -1612,6 +1622,14 @@ const BA_A0040: React.FC = () => {
                 icon="save"
               >
                 저장
+              </Button>
+              <Button
+                onClick={onDeleteClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                삭제
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1695,14 +1713,48 @@ const BA_A0040: React.FC = () => {
               <tbody>
                 <tr>
                   <th>품목코드</th>
-                  <td>
-                    <Input
-                      name="itemcd"
-                      type="text"
-                      value={infomation.itemcd}
-                      className="readonly"
-                    />
-                  </td>
+                  {infomation.itemcd != "자동생성" && yn == true ? (
+                    <>
+                      <td colSpan={2}>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={infomation.itemcd}
+                          className="readonly"
+                        />
+                      </td>
+                      <td></td>
+                    </>
+                  ) : (
+                    <>
+                      <td colSpan={2}>
+                        {yn == true ? (
+                          <Input
+                            name="itemcd"
+                            type="text"
+                            value={"자동생성"}
+                            className="readonly"
+                          />
+                        ) : (
+                          <Input
+                            name="itemcd"
+                            type="text"
+                            value={infomation.itemcd}
+                            onChange={InputChange}
+                          />
+                        )}
+                      </td>
+                      <td>
+                        <Checkbox
+                          defaultChecked={true}
+                          value={yn}
+                          onChange={CheckChange}
+                          label={"자동생성"}
+                          style={{ marginLeft: "30px" }}
+                        />
+                      </td>
+                    </>
+                  )}
                   <th>품목명</th>
                   <td>
                     <Input
@@ -1725,22 +1777,6 @@ const BA_A0040: React.FC = () => {
                         textField={"code_name"}
                         valueField={"code_name"}
                         className="required"
-                      />
-                    )}
-                  </td>
-                  <th>사용여부</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="useyn"
-                        value={infomation.useyn}
-                        bizComponentId=""
-                        bizComponentData={undefined}
-                        data={[
-                          { label: "사용", value: "Y" },
-                          { label: "미사용", value: "N" },
-                        ]}
-                        changeData={RadioChange}
                       />
                     )}
                   </td>
@@ -1819,14 +1855,21 @@ const BA_A0040: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>규격</th>
+                  <th>사용여부</th>
                   <td>
-                    <Input
-                      name="insiz"
-                      type="text"
-                      value={infomation.insiz}
-                      onChange={InputChange}
-                    />
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
+                        name="useyn"
+                        value={infomation.useyn}
+                        bizComponentId=""
+                        bizComponentData={undefined}
+                        data={[
+                          { label: "사용", value: "Y" },
+                          { label: "미사용", value: "N" },
+                        ]}
+                        changeData={RadioChange}
+                      />
+                    )}
                   </td>
                   <th>사양</th>
                   <td>
@@ -1873,6 +1916,15 @@ const BA_A0040: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
+                  <th>규격</th>
+                  <td>
+                    <Input
+                      name="insiz"
+                      type="text"
+                      value={infomation.insiz}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>도면번호</th>
                   <td>
                     <Input
