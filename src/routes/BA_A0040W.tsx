@@ -104,7 +104,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
+    <ComboBoxCell bizComponent={bizComponent} {...props} className="editable-new-only"/>
   ) : (
     <td></td>
   );
@@ -1277,7 +1277,6 @@ const BA_A0040: React.FC = () => {
     try {
       subData2Result.data.map((item: any) => {
         if (
-          item.recdt > convertDateToStr(new Date()).substring(0, 4) ||
           item.recdt.substring(0, 4) < "1997" ||
           item.recdt.substring(6, 8) > "31" ||
           item.recdt.substring(6, 8) < "01" ||
@@ -1433,6 +1432,9 @@ const BA_A0040: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      if(data.statusCode == "P_BA_A0040_S_001") {
+        alert(data.resultMessage);
+      }
     }
     setLoading(false);
   };

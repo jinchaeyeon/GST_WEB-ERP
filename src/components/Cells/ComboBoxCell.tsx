@@ -33,6 +33,10 @@ const ComboBoxCell = (props: CustomCellProps) => {
   let isInEdit = field === dataItem.inEdit;
   if (className.includes("read-only")) {
     isInEdit = false;
+  } else if (className.includes("editable-new-only")) {
+      if (dataItem["rowstatus"] !== "N") {
+        isInEdit = false;
+      }
   }
 
   const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";

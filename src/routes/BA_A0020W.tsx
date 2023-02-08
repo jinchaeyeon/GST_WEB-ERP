@@ -492,14 +492,12 @@ const BA_A0020: React.FC = () => {
         ...item,
         rowstatus: "U",
       }));
-      if (totalRowCnt > 0) {
-        setSubDataResult((prev) => {
+      setSubDataResult((prev) => {
           return {
             data: row,
             total: totalRowCnt,
           };
         });
-      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -527,14 +525,12 @@ const BA_A0020: React.FC = () => {
         rowstatus: "U",
         yyyy: item.yyyy < "1999" ? null : item.yyyy
       }));
-      if (totalRowCnt > 0) {
-        setSubDataResult2((prev) => {
-          return {
-            data: row,
-            total: totalRowCnt,
-          };
-        });
-      }
+      setSubDataResult2((prev) => {
+        return {
+          data: row,
+          total: totalRowCnt,
+        };
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1974,9 +1970,9 @@ const BA_A0020: React.FC = () => {
     try {
       subDataResult2.data.map((item: any) => {
         if (
-          item.yyyy > convertDateToStr(new Date()).substring(0, 4) ||
-          item.yyyy < "1997" ||
-          item.yyyy.length != 4
+          item.yyyy.substring(0, 4)  > convertDateToStr(new Date()).substring(0, 4) ||
+          item.yyyy.substring(0, 4)  < "1997" ||
+          (item.yyyy.substring(0, 4)).length != 4
         ) {
           throw findMessage(messagesData, "BA_A0020W_007");
         }

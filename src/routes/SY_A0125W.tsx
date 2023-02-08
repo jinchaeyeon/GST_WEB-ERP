@@ -75,6 +75,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
+import DepartmentsWindow from "../components/Windows/CommonWindows/DepartmentsWindow";
 
 const allMenuColumns: TreeListColumnProps[] = [
   { field: "dptcd", title: "부서코드", expandable: true },
@@ -127,6 +128,8 @@ const SY_A0125W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+
+  const [departmentWindowVisible, setDepartmentWindowVisible] = useState<boolean>(false);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -262,6 +265,14 @@ const SY_A0125W: React.FC = () => {
     setInfomation((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const setDepartmentData = (data: IDepartmentData) => {
+    setInfomation((prev) => ({
+      ...prev,
+      prntdptcd: data.dptcd,
+      prntdptnm: data.dptnm,
     }));
   };
 
@@ -663,6 +674,13 @@ const SY_A0125W: React.FC = () => {
     compclass: string;
     ceonm: string;
   }
+
+  interface IDepartmentData {
+    dptcd : string;
+    dptnm : string;
+    useyn : string;
+  }
+
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -988,10 +1006,12 @@ const SY_A0125W: React.FC = () => {
       }
 
       mainDataResult.data.map((item: any) => {
-        if (
-          item.dptcd == infomation.dptcd
-        ) {
-          throw findMessage(messagesData, "SY_A0125W_003");
+        if(infomation.workType == "N"){
+          if (
+            item.dptcd == infomation.dptcd
+          ) {
+            throw findMessage(messagesData, "SY_A0125W_003");
+          }
         }
       });
     } catch (e) {
@@ -1069,7 +1089,10 @@ const SY_A0125W: React.FC = () => {
       })
     );
   };
-
+  const onDepartmentWndClick = () => {
+    setDepartmentWindowVisible(true);
+  };
+  
   return (
     <>
       <TitleContainer>
@@ -1210,7 +1233,7 @@ const SY_A0125W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    // onClick={onCustWndClick2}
+                    onClick={onDepartmentWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -1371,6 +1394,13 @@ const SY_A0125W: React.FC = () => {
           <GridColumn field="memo" title="메모" width="260px" />
         </Grid>
       </GridContainer>
+      {departmentWindowVisible && (
+        <DepartmentsWindow
+          setVisible={setDepartmentWindowVisible}
+          workType={"FILTER"}
+          setData={setDepartmentData}
+        />
+      )}
     </>
   );
 };
