@@ -64,6 +64,7 @@ import {
   UseParaPc,
   dateformat2,
   UseGetValueFromSessionItem,
+  isValidDate,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -284,7 +285,7 @@ const BA_A0020: React.FC = () => {
     }));
   };
 
-  const [infomation, setInfomation] = useState({
+  const [infomation, setInfomation] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "U",
     custcd: "자동생성",
@@ -302,7 +303,7 @@ const BA_A0020: React.FC = () => {
     bizdiv: "",
     repreregno: "",
     address_eng: "",
-    estbdt: new Date(),
+    estbdt: null, //new Date(),
     phonenum: "",
     bnkinfo: "",
     bankacntuser: "",
@@ -603,10 +604,9 @@ const BA_A0020: React.FC = () => {
                 )?.code_name,
           repreregno: firstRowData.repreregno,
           address_eng: firstRowData.address_eng,
-          estbdt:
-            firstRowData.estbdt == "        "
-              ? new Date()
-              : new Date(dateformat(firstRowData.estbdt)),
+          estbdt: isValidDate(firstRowData.estbdt)
+            ? new Date(dateformat(firstRowData.estbdt))
+            : null,
           phonenum: firstRowData.phonenum,
           bnkinfo: firstRowData.bnkinfo,
           bankacntuser: firstRowData.bankacntuser,
@@ -763,10 +763,9 @@ const BA_A0020: React.FC = () => {
       bizdiv: selectedRowData.bizdiv,
       repreregno: selectedRowData.repreregno,
       address_eng: selectedRowData.address_eng,
-      estbdt:
-        selectedRowData.estbdt == "        "
-          ? new Date()
-          : new Date(dateformat(selectedRowData.estbdt)),
+      estbdt: isValidDate(selectedRowData.estbdt)
+        ? new Date(dateformat(selectedRowData.estbdt))
+        : null,
       phonenum: selectedRowData.phonenum,
       bnkinfo: selectedRowData.bnkinfo,
       bankacntuser: selectedRowData.bankacntuser,
@@ -956,7 +955,7 @@ const BA_A0020: React.FC = () => {
       recvid: "",
       rtxisuyn: "N",
       files: "",
-      auto: "Y",
+      auto: "Y"
     });
   };
 
@@ -1474,7 +1473,7 @@ const BA_A0020: React.FC = () => {
     pc: pc,
     form_id: "BA_A0020W",
     company_code: "2207A046",
-    auto: "Y",
+    auto: "Y"
   });
 
   const para: Iparameters = {
@@ -1813,7 +1812,7 @@ const BA_A0020: React.FC = () => {
         parameters: {
           "@p_work_type": "CustPerson",
           "@p_orgdiv": "01",
-          "@p_location": infomation.auto,
+          "@p_location":infomation.auto,
           "@p_custcd": infomation.custcd,
           "@p_custnm": infomation.custnm,
           "@p_custdiv": infomation.custdiv,
@@ -1976,10 +1975,9 @@ const BA_A0020: React.FC = () => {
     try {
       subDataResult2.data.map((item: any) => {
         if (
-          item.yyyy.substring(0, 4) >
-            convertDateToStr(new Date()).substring(0, 4) ||
-          item.yyyy.substring(0, 4) < "1997" ||
-          item.yyyy.substring(0, 4).length != 4
+          item.yyyy.substring(0, 4)  > convertDateToStr(new Date()).substring(0, 4) ||
+          item.yyyy.substring(0, 4)  < "1997" ||
+          (item.yyyy.substring(0, 4)).length != 4
         ) {
           throw findMessage(messagesData, "BA_A0020W_007");
         }
@@ -2291,7 +2289,7 @@ const BA_A0020: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      if (data.statusCode == "P_BA_A0020_S_001") {
+      if(data.statusCode == "P_BA_A0020_S_001") {
         alert(data.resultMessage);
       }
     }
@@ -2354,7 +2352,7 @@ const BA_A0020: React.FC = () => {
 
   const CheckChange = (event: CheckboxChangeEvent) => {
     setyn(event.value);
-    let value = event.value == true ? "Y" : "N";
+    let value = event.value == true ? "Y" : "N"
     setInfomation((prev) => ({
       ...prev,
       auto: value,
