@@ -1563,9 +1563,9 @@ const BA_A0040: React.FC = () => {
               <th>비고</th>
               <td>
                 <Input
-                  name="custnm"
+                  name="remark"
                   type="text"
-                  value={filters.custnm}
+                  value={filters.remark}
                   onChange={filterInputChange}
                 />
               </td>

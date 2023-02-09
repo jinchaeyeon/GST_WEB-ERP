@@ -304,7 +304,7 @@ const BA_A0080: React.FC = () => {
         };
       });
 
-      if (totalRowCnt > 0) {
+      if (totalRowCnt >= 0) {
         setMainDataResult((prev) => {
           return {
             data: rows,
@@ -462,7 +462,15 @@ const BA_A0080: React.FC = () => {
     setItemWindowVisible(true);
   };
   const onCopyWndClick = () => {
-    setCopyWindowVisible(true);
+    try {
+        if(filters.itemacnt != "") {
+          setCopyWindowVisible(true);
+        } else {
+          throw findMessage(messagesData, "BA_A0080W_007");
+        }
+    } catch (e) {
+      alert(e);
+    }
   };
   const onExcelWndClick = () => {
     setExcelWindowVisible(true);
@@ -535,12 +543,87 @@ const BA_A0080: React.FC = () => {
     });
   };
 
-  const setCopyData = (data: IItemData) => {
-    // setFilters((prev) => ({
-    //   ...prev,
-    //   itemcd: data.itemcd,
-    //   itemnm: data.itemnm,
-    // }));
+  const setCopyData = (data: any) => {
+    let valid = true;
+    try {
+      data.map((item: any) => {
+        if (item.itemcd == "") {
+          throw findMessage(messagesData, "BA_A0080W_004");
+        }
+        if (item.itemnm == "") {
+          throw findMessage(messagesData, "BA_A0080W_005");
+        }
+        mainDataResult.data.map((items: any) => {
+          if (
+            items.recdt == convertDateToStr(new Date()) &&
+            item.itemcd == items.itemcd &&
+            item.itemnm == items.itemnm
+          ) {
+            throw findMessage(messagesData, "BA_A0080W_006");
+          }
+        });
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0) return false;
+    let dataArr: TdataArr = {
+      unpitem: [],
+      rowstatus: [],
+      itemcd: [],
+      unp: [],
+      itemacnt: [],
+      remark: [],
+      recdt: [],
+      amtunit: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        unpitem = "",
+        rowstatus = "",
+        itemcd = "",
+        unp = "",
+        itemacnt = "",
+        remark = "",
+        amtunit = "",
+      } = item;
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
+      dataArr.itemcd.push(itemcd);
+      dataArr.unp.push(unp);
+      dataArr.itemacnt.push(filters.itemacnt);
+      dataArr.remark.push(remark);
+      dataArr.recdt.push(convertDateToStr(new Date()));
+      dataArr.amtunit.push(amtunit == "" ? filters.amtunit : amtunit);
+    });
+  
+    setParaData((prev) => ({
+      ...prev,
+      workType: "",
+      orgdiv: "01",
+      user_id: userId,
+      form_id: "BA_A0080W",
+      pc: pc,
+      unpitem: dataArr.unpitem.join("|"),
+      rowstatus: dataArr.rowstatus.join("|"),
+      itemcd: dataArr.itemcd.join("|"),
+      unp: dataArr.unp.join("|"),
+      itemacnt: dataArr.itemacnt.join("|"),
+      remark: dataArr.remark.join("|"),
+      recdt: dataArr.recdt.join("|"),
+      amtunit: dataArr.amtunit.join("|"),
+    }));
   };
 
   const onMainSortChange = (e: any) => {
@@ -1042,11 +1125,21 @@ const BA_A0080: React.FC = () => {
               상세정보
               <Button
                 title="Export Excel"
+                // onClick={onExcelWndClick}
+                icon="upload"
+                fillMode="outline"
+                themeColor={"primary"}
+                style={{ marginLeft: "15px" }}
+              >
+                엑셀업로드
+              </Button>
+              <Button
+                title="Export Excel"
                 onClick={onExcelWndClick}
                 icon="file"
                 fillMode="outline"
                 themeColor={"primary"}
-                style={{ marginLeft: "15px" }}
+                style={{ marginLeft: "10px" }}
               >
                 엑셀양식
               </Button>
@@ -1184,6 +1277,7 @@ const BA_A0080: React.FC = () => {
           setVisible={setCopyWindowVisible}
           workType={"FILTER"}
           setData={setCopyData}
+          itemacnt={filters.itemacnt}
         />
       )}
       {excelWindowVisible && <ExcelWindow setVisible={setExcelWindowVisible} />}
