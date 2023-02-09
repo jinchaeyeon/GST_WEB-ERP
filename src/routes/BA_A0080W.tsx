@@ -71,6 +71,8 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import TopButtons from "../components/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
+import ExcelWindow from "../components/Windows/CommonWindows/ExcelWindow";
+import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "sub_code";
@@ -214,6 +216,8 @@ const BA_A0080: React.FC = () => {
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+  const [excelWindowVisible, setExcelWindowVisible] = useState<boolean>(false);
+  const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSub2PgNum] = useState(1);
 
@@ -457,6 +461,12 @@ const BA_A0080: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
+  const onCopyWndClick = () => {
+    setCopyWindowVisible(true);
+  };
+  const onExcelWndClick = () => {
+    setExcelWindowVisible(true);
+  };
 
   interface IItemData {
     itemcd: string;
@@ -523,6 +533,14 @@ const BA_A0080: React.FC = () => {
         total: prev.total,
       };
     });
+  };
+
+  const setCopyData = (data: IItemData) => {
+    // setFilters((prev) => ({
+    //   ...prev,
+    //   itemcd: data.itemcd,
+    //   itemnm: data.itemnm,
+    // }));
   };
 
   const onMainSortChange = (e: any) => {
@@ -1024,11 +1042,11 @@ const BA_A0080: React.FC = () => {
               상세정보
               <Button
                 title="Export Excel"
-                // onClick={exportExcel}
+                onClick={onExcelWndClick}
                 icon="file"
                 fillMode="outline"
                 themeColor={"primary"}
-                style={{marginLeft: "15px"}}
+                style={{ marginLeft: "15px" }}
               >
                 엑셀양식
               </Button>
@@ -1045,6 +1063,12 @@ const BA_A0080: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+              ></Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyWndClick}
+                icon="copy"
               ></Button>
               <Button
                 onClick={onSaveClick}
@@ -1155,6 +1179,14 @@ const BA_A0080: React.FC = () => {
           setData={setItemData2}
         />
       )}
+      {CopyWindowVisible && (
+        <CopyWindow
+          setVisible={setCopyWindowVisible}
+          workType={"FILTER"}
+          setData={setCopyData}
+        />
+      )}
+      {excelWindowVisible && <ExcelWindow setVisible={setExcelWindowVisible} />}
     </>
   );
 };
