@@ -1095,34 +1095,6 @@ const BA_A0050: React.FC = () => {
     }
   }, [paraData]);
 
-  const CommandCell2 = (props: GridCellProps) => {
-    const rowData = props.dataItem;
-
-    const onEditClick = () => {
-      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true });
-      setItemWindowVisible(true);
-    };
-
-    return (
-      <>
-        <td className="k-command-cell">
-          <Input
-            name="custcd"
-            type="text"
-            value={rowData.chlditemcd}
-            style={{ width: "100px" }}
-          />
-          <Button
-            onClick={onEditClick}
-            icon="more-horizontal"
-            fillMode="flat"
-          />
-        </td>
-      </>
-    );
-  };
-
   const onCopyEditClick = () => {
     //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
     setCopyWindowVisible(true);
@@ -1254,7 +1226,7 @@ const BA_A0050: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <th>사용여부</th>
+              <th>BOM 유무</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
@@ -1488,7 +1460,6 @@ const BA_A0050: React.FC = () => {
             field="chlditemcd"
             title="소요자재코드"
             width="150px"
-            cell={CommandCell2}
           />
           <GridColumn field="chlditemnm" title="소요자재명" width="120px" />
           <GridColumn field="unitqty" title="단위수량" width="120px" cell={NumberCell}/>

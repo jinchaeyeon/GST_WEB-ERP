@@ -640,7 +640,7 @@ const BA_A0080: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "itemlvl1" && field != "itemlvl2" && field != "itemlvl3") {
+    if (field == "itemcd" || field == "unp" || field == "amtunit" || field == "remark") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -702,34 +702,6 @@ const BA_A0080: React.FC = () => {
       mainDataResult,
       setMainDataResult,
       DATA_ITEM_KEY
-    );
-  };
-
-  const CommandCell2 = (props: GridCellProps) => {
-    const rowData = props.dataItem;
-
-    const onEditClick = () => {
-      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
-      setItemWindowVisible2(true);
-    };
-
-    return (
-      <>
-        <td className="k-command-cell">
-          <Input
-            name="itemcd"
-            type="text"
-            value={rowData.itemcd}
-            style={{ width: "100px" }}
-          />
-          <Button
-            onClick={onEditClick}
-            icon="more-horizontal"
-            fillMode="flat"
-          />
-        </td>
-      </>
     );
   };
 
@@ -1161,7 +1133,7 @@ const BA_A0080: React.FC = () => {
                 themeColor={"primary"}
                 fillMode="outline"
                 onClick={onCopyWndClick}
-                icon="copy"
+                icon="folder-open"
               ></Button>
               <Button
                 onClick={onSaveClick}
@@ -1226,9 +1198,9 @@ const BA_A0080: React.FC = () => {
             />
             <GridColumn
               field="itemcd"
-              title="품목코드테스트"
+              title="품목코드"
               width="250px"
-              cell={CommandCell2}
+              className="required"
             />
             <GridColumn field="itemnm" title="품목명" width="250px" />
             <GridColumn
@@ -1242,12 +1214,14 @@ const BA_A0080: React.FC = () => {
               title="단가"
               width="150px"
               cell={NumberCell}
+              className="required"
             />
             <GridColumn
               field="amtunit"
               title="화폐단위"
               width="150px"
               cell={CustomComboBoxCell}
+              className="required"
             />
             <GridColumn field="insiz" title="규격" width="150px" />
             <GridColumn field="itemlvl1" title="대분류" width="150px" />

@@ -62,6 +62,7 @@ const CustomOptionComboBox = ({
       onChange={onChangeHandle}
       id={name}
       required={required}
+      className={className}
     />
   );
 };

@@ -1753,33 +1753,6 @@ const PR_A0060: React.FC = () => {
     );
   };
 
-  const CommandCell2 = (props: GridCellProps) => {
-    const rowData = props.dataItem;
-
-    const onEditClick = () => {
-      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true });
-      setCustWindowVisible3(true);
-    };
-
-    return (
-      <>
-        <td className="k-command-cell">
-          <Input
-            name="custcd"
-            type="text"
-            value={rowData.custcd}
-            style={{ width: "100px" }}
-          />
-          <Button
-            onClick={onEditClick}
-            icon="more-horizontal"
-            fillMode="flat"
-          />
-        </td>
-      </>
-    );
-  };
   return (
     <>
       <TitleContainer>
@@ -2016,6 +1989,7 @@ const PR_A0060: React.FC = () => {
               title="입력일자"
               width="180px"
               cell={DateCell}
+              className="required"
             />
             <GridColumn
               field="makedt"
@@ -2453,9 +2427,8 @@ const PR_A0060: React.FC = () => {
               />
               <GridColumn
                 field="custcd"
-                title="업체코드조회"
+                title="업체코드"
                 width="200px"
-                cell={CommandCell2}
               />
               <GridColumn field="custnm" title="업체명" width="160px" />
               <GridColumn field="errtext" title="고장내용" width="280px" />

@@ -850,6 +850,7 @@ const SA_B2000: React.FC = () => {
                     value={filters.ymdFrdt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    className="required"
                   />
                   ~
                   <DatePicker
@@ -857,6 +858,7 @@ const SA_B2000: React.FC = () => {
                     value={filters.ymdTodt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    className="required"
                   />
                 </div>
               </td>

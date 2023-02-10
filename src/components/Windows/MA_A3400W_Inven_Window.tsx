@@ -73,7 +73,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  //UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -709,7 +709,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   return (
     <>
       <Window
-        title={"품목참조(멀티)"}
+        title={"재고참조"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -717,7 +717,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         onClose={onClose}
       >
         <TitleContainer>
-          <Title>품목참조(멀티)</Title>
+          <Title>재고참조</Title>
           <ButtonContainer>
             <Button
               onClick={() => {

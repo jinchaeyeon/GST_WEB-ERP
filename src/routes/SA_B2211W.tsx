@@ -462,6 +462,7 @@ const SA_B2211W: React.FC = () => {
                   format="yyyy"
                   onChange={filterInputChange}
                   calendar={YearCalendar}
+                  className="required"
                 />
               </td>
               <th data-control-name="lblCustcd">업체코드</th>
@@ -523,6 +524,7 @@ const SA_B2211W: React.FC = () => {
                     changeData={filterComboBoxChange}
                     textField="name"
                     valueField="code"
+                    className="required"
                   />
                 )}
               </td>

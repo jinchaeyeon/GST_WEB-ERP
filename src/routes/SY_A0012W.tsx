@@ -871,18 +871,21 @@ const SY_A0120: React.FC = () => {
               field={"user_name"}
               title={"사용자명"}
               width={"150px"}
+              className="required"
             />
             <GridColumn
               field={"password"}
               title={"비밀번호"}
               width={"120px"}
               cell={EncryptedCell}
+              className="required"
             />
             <GridColumn
               field={"temp"}
               title={"비밀번호 확인"}
               width={"120px"}
               cell={EncryptedCell}
+              className="required"
             />
             <GridColumn
               field={"location"}
@@ -901,6 +904,7 @@ const SY_A0120: React.FC = () => {
               title={"사용자구분"}
               width={"150px"}
               cell={CustomComboBoxCell}
+              className="required"
             />
             <GridColumn
               field={"postcd"}

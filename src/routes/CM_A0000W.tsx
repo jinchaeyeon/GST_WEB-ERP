@@ -647,6 +647,7 @@ const CM_A0000W: React.FC = () => {
                     changeData={filterComboBoxChange}
                     textField="기준일"
                     valueField="dtgb"
+                    className="required"
                   />
                 )}
               </td>
@@ -658,6 +659,7 @@ const CM_A0000W: React.FC = () => {
                   format="yyyy-MM-dd"
                   onChange={filterInputChange}
                   width="160px"
+                  className="required"
                 />
               </td>
 

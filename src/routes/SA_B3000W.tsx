@@ -505,6 +505,7 @@ const SA_B3000W: React.FC = () => {
                   format="yyyy"
                   onChange={filterInputChange}
                   calendar={YearCalendar}
+                  className="required"
                 />
               </td>
 

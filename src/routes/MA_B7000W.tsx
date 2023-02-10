@@ -732,6 +732,7 @@ const MA_B7000: React.FC = () => {
                   format="yyyy"
                   onChange={filterInputChange}
                   calendar={YearCalendar}
+                  className="required"
                 />
               </td>
 

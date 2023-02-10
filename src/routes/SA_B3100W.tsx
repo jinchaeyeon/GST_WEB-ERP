@@ -496,6 +496,7 @@ const SA_B3100W: React.FC = () => {
                   format="yyyy"
                   onChange={filterInputChange}
                   calendar={YearCalendar}
+                  className="required"
                 />
               </td>
               <th data-control-name="lblImcd">품목코드</th>
