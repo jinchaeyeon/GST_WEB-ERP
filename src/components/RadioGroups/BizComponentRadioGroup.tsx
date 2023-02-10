@@ -13,6 +13,7 @@ type TBizComponentRadioGroup = {
   data?: { value: any; label: string }[];
   changeData(e: any): void;
   className?: string;
+  excludedCodes?: any[]; // 제외할 코드값
 };
 
 const BizComponentRadioGroup = ({
@@ -23,6 +24,7 @@ const BizComponentRadioGroup = ({
   bizComponentData,
   changeData,
   className = "",
+  excludedCodes = [],
 }: TBizComponentRadioGroup) => {
   if (bizComponentData) {
     bizComponentData = bizComponentData.find(
@@ -38,6 +40,7 @@ const BizComponentRadioGroup = ({
     newRadioGroup = data;
   } else if (dataList) {
     newRadioGroup = dataList
+      .filter((item: any) => !excludedCodes.includes(item.code))
       // 제외 처리 (filter)
       .filter(
         (item: any) =>
