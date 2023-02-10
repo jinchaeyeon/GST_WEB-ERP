@@ -9,11 +9,13 @@ type TCustomOptionRadioGroup = {
   name: string;
   customOptionData: any;
   changeData(e: any): void;
+  excludedCodes?: any[]; // 제외할 코드값
 };
 const CustomOptionRadioGroup = ({
   name,
   customOptionData,
   changeData,
+  excludedCodes = [],
 }: TCustomOptionRadioGroup) => {
   //커스텀 옵션에 저장된 값으로 디폴트 값
   const dataList =
@@ -30,6 +32,7 @@ const CustomOptionRadioGroup = ({
     const radioGroup = dataList.find((item: any) => item.id === name).Rows;
 
     newRadioGroup = radioGroup
+      .filter((item: any) => !excludedCodes.includes(item.code))
       // 제외 처리 (filter)
       .filter(
         (item: any) =>
