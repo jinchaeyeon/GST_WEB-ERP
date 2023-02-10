@@ -31,6 +31,7 @@ import {
   ButtonInField,
   FormBox,
   FormBoxWrap,
+  GridContainerWrap,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -1249,9 +1250,9 @@ const BA_A0050: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-
+      <GridContainerWrap>
       <GridContainer
-        style={{ width: "19.2vw", float: "left", display: "inline-block" }}
+        style={{ width: "19.2vw"}}
       >
           <GridTitleContainer>
             <GridTitle>BOM구성정보</GridTitle>
@@ -1297,7 +1298,7 @@ const BA_A0050: React.FC = () => {
           </Grid>
       </GridContainer>
       <GridContainer
-        style={{ width: "19.2vw", display: "inline-block", marginLeft: "2vw" }}
+        style={{ width: "19.2vw"}}
       >
         <GridTitleContainer>
           <GridTitle>공정리스트</GridTitle>
@@ -1320,7 +1321,7 @@ const BA_A0050: React.FC = () => {
           </FormBox>
         </FormBoxWrap>
         <Grid
-          style={{ height: "71vh" }}
+          style={{ height: "69.5vh" }}
           data={process(
             subData2Result.data.map((row) => ({
               ...row,
@@ -1355,7 +1356,7 @@ const BA_A0050: React.FC = () => {
         </Grid>
       </GridContainer>
       <GridContainer
-        style={{ float: "right", width: "48vw", display: "inline-block" }}
+        style={{ width: "48vw"}}
       >
                 <ExcelExport
           data={subDataResult.data}
@@ -1481,6 +1482,7 @@ const BA_A0050: React.FC = () => {
         </Grid>
         </ExcelExport>
       </GridContainer>
+      </GridContainerWrap>
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
