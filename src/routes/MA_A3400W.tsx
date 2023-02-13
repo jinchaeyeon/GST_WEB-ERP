@@ -59,7 +59,6 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 
-
 const DATA_ITEM_KEY = "reckey";
 
 type TdataArr = {
@@ -336,7 +335,7 @@ const MA_A3400W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    cboLocation: "",
+    cboLocation: "01",
     frdt: new Date(),
     todt: new Date(),
     cboPerson: "",
@@ -400,7 +399,7 @@ const MA_A3400W: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     recdt: "",
-    seq1: 0
+    seq1: 0,
   });
 
   //삭제 프로시저 파라미터
@@ -410,7 +409,7 @@ const MA_A3400W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv":"01",
+      "@p_orgdiv": "01",
       "@p_recdt": paraDataDeleted.recdt,
       "@p_seq1": paraDataDeleted.seq1,
       "@p_location": "",
@@ -419,8 +418,8 @@ const MA_A3400W: React.FC = () => {
       "@p_custcd": "",
       "@p_custnm": "",
       "@p_remark": "",
-      "@p_attdatnum":"",
-      "@p_outuse":"",
+      "@p_attdatnum": "",
+      "@p_outuse": "",
       "@p_rowstatus_s": "",
       "@p_seq2_s": "",
       "@p_rtnyn_s": "",
@@ -431,44 +430,44 @@ const MA_A3400W: React.FC = () => {
       "@p_itemcd_s": "",
       "@p_itemnm_s": "",
       "@p_itemacnt_s": "",
-      "@p_pacmeth_s":"",
+      "@p_pacmeth_s": "",
       "@p_qty_s": "",
       "@p_qtyunit_s": "",
-      "@p_lenunit_s":"",
-      "@p_totlen_s":"",
-      "@p_unitwgt_s":"",
-      "@p_wgtunit_s":"",
+      "@p_lenunit_s": "",
+      "@p_totlen_s": "",
+      "@p_unitwgt_s": "",
+      "@p_wgtunit_s": "",
       "@p_totwgt_s": "",
       "@p_len_s": "",
-      "@p_itemthick_s":"",
+      "@p_itemthick_s": "",
       "@p_width_s": "",
-      "@p_unpcalmeth_s":"",
-      "@p_unp_s":"",
-      "@p_amt_s":"",
+      "@p_unpcalmeth_s": "",
+      "@p_unp_s": "",
+      "@p_amt_s": "",
       "@p_dlramt_s": "",
       "@p_wonamt_s": "",
-      "@p_taxamt_s":"",
+      "@p_taxamt_s": "",
       "@p_lotnum_s": "",
-      "@p_orglot_s":"",
-      "@p_heatno_s":"",
+      "@p_orglot_s": "",
+      "@p_heatno_s": "",
       "@p_pcncd_s": "",
       "@p_remark_s": "",
-      "@p_inrecdt_s":"",
+      "@p_inrecdt_s": "",
       "@p_inseq1_s": "",
       "@p_inseq2_s": "",
       "@p_gonum_s": "",
       "@p_goseq_s": "",
-      "@p_connum_s":"",
-      "@p_conseq_s":"",
+      "@p_connum_s": "",
+      "@p_conseq_s": "",
       "@p_spno_s": "",
-      "@p_boxno_s":"",
+      "@p_boxno_s": "",
       "@p_endyn_s": "",
-      "@p_reqnum_s":"",
+      "@p_reqnum_s": "",
       "@p_reqseq_s": "",
-      "@p_serialno_s":"",
+      "@p_serialno_s": "",
       "@p_load_place_s": "",
       "@p_outdt_s": "",
-      "@p_person_s":"",
+      "@p_person_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "MA_A3400",
@@ -514,7 +513,7 @@ const MA_A3400W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -679,7 +678,7 @@ const MA_A3400W: React.FC = () => {
       ...prev,
       work_type: "D",
       recdt: datas[0].recdt,
-      seq1: datas[0].seq1
+      seq1: datas[0].seq1,
     }));
   };
 
@@ -703,7 +702,7 @@ const MA_A3400W: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.recdt = "";
-    paraDataDeleted.seq1= 0;
+    paraDataDeleted.seq1 = 0;
   };
 
   interface ICustData {
@@ -946,7 +945,7 @@ const MA_A3400W: React.FC = () => {
       "@p_userid": ParaData.userid,
       "@p_pc": ParaData.pc,
       "@p_form_id": "MA_A3400",
-      "@p_serviceid": "2207A046", 
+      "@p_serviceid": "2207A046",
     },
   };
 
@@ -956,6 +955,13 @@ const MA_A3400W: React.FC = () => {
       if (data.length == 0) {
         throw findMessage(messagesData, "MA_A3400W_001");
       }
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].qty == 0) {
+          alert("수량은 필수입니다.");
+          return false;
+        }
+      }
+  
     } catch (e) {
       alert(e);
       valid = false;
@@ -1074,10 +1080,10 @@ const MA_A3400W: React.FC = () => {
         outdt = "",
         person = "",
       } = item;
-    
+
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-      dataArr.rtnyn_s.push(rtnyn == ""? "N" : rtnyn);
+      dataArr.rtnyn_s.push(rtnyn == "" ? "N" : rtnyn);
       dataArr.rtntype_s.push(rtntype);
       dataArr.ordnum_s.push(ordnum);
       dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
@@ -1086,39 +1092,39 @@ const MA_A3400W: React.FC = () => {
       dataArr.itemnm_s.push(itemnm);
       dataArr.itemacnt_s.push(itemacnt);
       dataArr.pacmeth_s.push(pacmeth);
-      dataArr.qty_s.push(qty== "" ? 0 :qty);
+      dataArr.qty_s.push(qty == "" ? 0 : qty);
       dataArr.qtyunit_s.push(qtyunit);
       dataArr.lenunit_s.push(lenunit);
-      dataArr.totlen_s.push(totlen== "" ? 0 : totlen);
-      dataArr.unitwgt_s.push(unitwgt== "" ? 0 : unitwgt);
+      dataArr.totlen_s.push(totlen == "" ? 0 : totlen);
+      dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
       dataArr.wgtunit_s.push(wgtunit);
-      dataArr.totwgt_s.push(totwgt== "" ? 0 : totwgt);
-      dataArr.len_s.push(len== "" ? 0 : len);
-      dataArr.itemthick_s.push(itemthick== "" ? 0 : itemthick);
-      dataArr.width_s.push(width== "" ? 0 : width);
+      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+      dataArr.len_s.push(len == "" ? 0 : len);
+      dataArr.itemthick_s.push(itemthick == "" ? 0 : itemthick);
+      dataArr.width_s.push(width == "" ? 0 : width);
       dataArr.unpcalmeth_s.push(unpcalmeth);
-      dataArr.unp_s.push(unp== "" ? 0 : unp);
-      dataArr.amt_s.push(amt== "" ? 0 : amt);
-      dataArr.dlramt_s.push(dlramt== "" ? 0 : dlramt);
-      dataArr.wonamt_s.push(wonamt== "" ? 0 : wonamt);
-      dataArr.taxamt_s.push(taxamt== "" ? 0 : taxamt);
+      dataArr.unp_s.push(unp == "" ? 0 : unp);
+      dataArr.amt_s.push(amt == "" ? 0 : amt);
+      dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+      dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+      dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.lotnum_s.push(lotnum);
       dataArr.orglot_s.push(orglot);
       dataArr.heatno_s.push(heatno);
       dataArr.pcncd_s.push(pcncd);
       dataArr.remark_s.push(remark);
       dataArr.inrecdt_s.push(inrecdt);
-      dataArr.inseq1_s.push(inseq1== "" ? 0 :inseq1);
-      dataArr.inseq2_s.push(inseq2== "" ? 0 :inseq2);
+      dataArr.inseq1_s.push(inseq1 == "" ? 0 : inseq1);
+      dataArr.inseq2_s.push(inseq2 == "" ? 0 : inseq2);
       dataArr.gonum_s.push(gonum);
-      dataArr.goseq_s.push(goseq== "" ? 0 : goseq);
+      dataArr.goseq_s.push(goseq == "" ? 0 : goseq);
       dataArr.connum_s.push(connum);
-      dataArr.conseq_s.push(conseq== "" ? 0 :conseq);
-      dataArr.spno_s.push(spno== "" ? 0 : spno);
+      dataArr.conseq_s.push(conseq == "" ? 0 : conseq);
+      dataArr.spno_s.push(spno == "" ? 0 : spno);
       dataArr.boxno_s.push(boxno);
       dataArr.endyn_s.push(endyn);
       dataArr.reqnum_s.push(reqnum);
-      dataArr.reqseq_s.push(reqseq== "" ? 0 : reqseq);
+      dataArr.reqseq_s.push(reqseq == "" ? 0 : reqseq);
       dataArr.serialno_s.push(serialno);
       dataArr.load_place_s.push(load_place);
       dataArr.outdt_s.push(outdt);
@@ -1178,7 +1184,7 @@ const MA_A3400W: React.FC = () => {
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-      dataArr.rtnyn_s.push(rtnyn == ""? "N" : rtnyn);
+      dataArr.rtnyn_s.push(rtnyn == "" ? "N" : rtnyn);
       dataArr.rtntype_s.push(rtntype);
       dataArr.ordnum_s.push(ordnum);
       dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
@@ -1187,39 +1193,39 @@ const MA_A3400W: React.FC = () => {
       dataArr.itemnm_s.push(itemnm);
       dataArr.itemacnt_s.push(itemacnt);
       dataArr.pacmeth_s.push(pacmeth);
-      dataArr.qty_s.push(qty== "" ? 0 :qty);
+      dataArr.qty_s.push(qty == "" ? 0 : qty);
       dataArr.qtyunit_s.push(qtyunit);
       dataArr.lenunit_s.push(lenunit);
-      dataArr.totlen_s.push(totlen== "" ? 0 : totlen);
-      dataArr.unitwgt_s.push(unitwgt== "" ? 0 : unitwgt);
+      dataArr.totlen_s.push(totlen == "" ? 0 : totlen);
+      dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
       dataArr.wgtunit_s.push(wgtunit);
-      dataArr.totwgt_s.push(totwgt== "" ? 0 : totwgt);
-      dataArr.len_s.push(len== "" ? 0 : len);
-      dataArr.itemthick_s.push(itemthick== "" ? 0 : itemthick);
-      dataArr.width_s.push(width== "" ? 0 : width);
+      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+      dataArr.len_s.push(len == "" ? 0 : len);
+      dataArr.itemthick_s.push(itemthick == "" ? 0 : itemthick);
+      dataArr.width_s.push(width == "" ? 0 : width);
       dataArr.unpcalmeth_s.push(unpcalmeth);
-      dataArr.unp_s.push(unp== "" ? 0 : unp);
-      dataArr.amt_s.push(amt== "" ? 0 : amt);
-      dataArr.dlramt_s.push(dlramt== "" ? 0 : dlramt);
-      dataArr.wonamt_s.push(wonamt== "" ? 0 : wonamt);
-      dataArr.taxamt_s.push(taxamt== "" ? 0 : taxamt);
+      dataArr.unp_s.push(unp == "" ? 0 : unp);
+      dataArr.amt_s.push(amt == "" ? 0 : amt);
+      dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+      dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+      dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.lotnum_s.push(lotnum);
       dataArr.orglot_s.push(orglot);
       dataArr.heatno_s.push(heatno);
       dataArr.pcncd_s.push(pcncd);
       dataArr.remark_s.push(remark);
       dataArr.inrecdt_s.push(inrecdt);
-      dataArr.inseq1_s.push(inseq1== "" ? 0 :inseq1);
-      dataArr.inseq2_s.push(inseq2== "" ? 0 :inseq2);
+      dataArr.inseq1_s.push(inseq1 == "" ? 0 : inseq1);
+      dataArr.inseq2_s.push(inseq2 == "" ? 0 : inseq2);
       dataArr.gonum_s.push(gonum);
-      dataArr.goseq_s.push(goseq== "" ? 0 : goseq);
+      dataArr.goseq_s.push(goseq == "" ? 0 : goseq);
       dataArr.connum_s.push(connum);
-      dataArr.conseq_s.push(conseq== "" ? 0 :conseq);
-      dataArr.spno_s.push(spno== "" ? 0 : spno);
+      dataArr.conseq_s.push(conseq == "" ? 0 : conseq);
+      dataArr.spno_s.push(spno == "" ? 0 : spno);
       dataArr.boxno_s.push(boxno);
       dataArr.endyn_s.push(endyn);
       dataArr.reqnum_s.push(reqnum);
-      dataArr.reqseq_s.push(reqseq== "" ? 0 : reqseq);
+      dataArr.reqseq_s.push(reqseq == "" ? 0 : reqseq);
       dataArr.serialno_s.push(serialno);
       dataArr.load_place_s.push(load_place);
       dataArr.outdt_s.push(outdt);
@@ -1404,6 +1410,7 @@ const MA_A3400W: React.FC = () => {
                     value={filters.cboLocation}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    className="required"
                   />
                 )}
               </td>
@@ -1514,8 +1521,8 @@ const MA_A3400W: React.FC = () => {
               cell={DateCell}
             />
             <GridColumn field="person" title="담당자" width="220px" />
-            <GridColumn field="custnm" title="업체명" width="300px" />
             <GridColumn field="remark" title="비고" width="400px" />
+            <GridColumn field="custnm" title="업체명" width="300px" />
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1565,18 +1572,21 @@ const MA_A3400W: React.FC = () => {
             width="120px"
             cell={NumberCell}
           />
+          <GridColumn field="model" title="기종" width="120px" />
           <GridColumn
             field="unp"
             title="단가"
             width="120px"
             cell={NumberCell}
           />
+          <GridColumn field="insiz" title="규격" width="120px" />
           <GridColumn
             field="amt"
             title="금액"
             width="120px"
             cell={NumberCell}
           />
+          <GridColumn field="bnatur" title="재질" width="120px" />
           <GridColumn
             field="taxamt"
             title="세액"
@@ -1585,7 +1595,24 @@ const MA_A3400W: React.FC = () => {
           />
           <GridColumn field="remark" title="비고" width="380px" />
           <GridColumn field="lotnum" title="LOT NO" width="200px" />
-          <GridColumn field="load_place" title="적재장소" width="180px" />
+          <GridColumn
+            field="len"
+            title="길이"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="itemthick"
+            title="두께"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="width"
+            title="폭"
+            width="120px"
+            cell={NumberCell}
+          />
         </Grid>
       </GridContainer>
       {custWindowVisible && (
@@ -1607,7 +1634,17 @@ const MA_A3400W: React.FC = () => {
           setVisible={setDetailWindowVisible}
           workType={workType}
           setData={setCopyData2}
-          data={mainDataResult.data.filter((item) => item.reckey == Object.getOwnPropertyNames(selectedState)[0])[0] == undefined ? "" : mainDataResult.data.filter((item) => item.reckey == Object.getOwnPropertyNames(selectedState)[0])[0]}
+          data={
+            mainDataResult.data.filter(
+              (item) =>
+                item.reckey == Object.getOwnPropertyNames(selectedState)[0]
+            )[0] == undefined
+              ? ""
+              : mainDataResult.data.filter(
+                  (item) =>
+                    item.reckey == Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+          }
         />
       )}
     </>

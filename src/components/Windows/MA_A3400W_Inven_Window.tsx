@@ -10,6 +10,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
+  GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -37,7 +38,10 @@ import {
   UseMessages,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  setDefaultDate,
+  convertDateToStr,
 } from "../CommonFunction";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
@@ -47,11 +51,30 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import CheckBoxCell from "../Cells/CheckBoxCell";
+import {
+  setExpandedState,
+  setGroupIds,
+} from "@progress/kendo-react-data-tools";
+import {
+  groupBy,
+  GroupDescriptor,
+  GroupResult,
+} from "@progress/kendo-data-query";
+
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   itemacnt?: string | number | undefined;
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+};
+
+const initialGroup: GroupDescriptor[] = [{ field: "itemacnt" }];
+
+const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
+  const newDataState = groupBy(data, group);
+  setGroupIds({ data: newDataState, group: group});
+
+  return newDataState;
 };
 
 const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
@@ -61,8 +84,8 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     width: 1600,
     height: 800,
   });
-  const DATA_ITEM_KEY = "itemcd";
-  const DATA_ITEM_KEY2 = "itemcd";
+  const DATA_ITEM_KEY = "num";
+  const DATA_ITEM_KEY2 = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
@@ -73,7 +96,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  //UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -81,10 +104,15 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
-        raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
+        zeroyn: defaultOption.find((item: any) => item.id === "zeroyn")
           .valueCode,
-        itemacnt: itemacnt == "" ? defaultOption.find((item: any) => item.id === "itemacnt")
-        .valueCode : itemacnt,
+        itemacnt:
+          itemacnt == ""
+            ? defaultOption.find((item: any) => item.id === "itemacnt")
+                .valueCode
+            : itemacnt,
       }));
     }
   }, [customOptionData]);
@@ -162,6 +190,11 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
+    group: [
+      {
+        field: "itemacnt",
+      },
+    ],
     sort: [],
   });
   const [subDataState, setSubDataState] = useState<State>({
@@ -312,46 +345,35 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
+    orgdiv: "01",
+    location: "01",
+    frdt: new Date(),
+    todt: new Date(),
     itemcd: "",
     itemnm: "",
-    bnatur: "",
     insiz: "",
-    spec: "",
     itemacnt: itemacnt,
-    raduseyn: "Y",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
-    dwgno: "",
-    custcd: "",
-    custnm: "",
-    pgmdiv: "",
-    itemno: "",
-    service_id: "2207A046",
-    row_values: null,
+    zeroyn: "%",
+    itemgrade: "",
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_BA_A0041W_Q",
+    procedureName: "P_MA_P3400W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": filters.workType,
       "@p_orgdiv": "01",
-      "@p_location": "",
+      "@p_location": "01",
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_itemacnt": filters.itemacnt,
-      "@p_bnatur": filters.bnatur,
       "@p_insiz": filters.insiz,
-      "@p_spec": filters.spec,
-      "@p_dwgno": filters.dwgno,
-      "@p_itemlvl1": filters.itemlvl1,
-      "@p_itemlvl2": filters.itemlvl2,
-      "@p_itemlvl3": filters.itemlvl3,
-      "@p_useyn": filters.raduseyn,
-      "@p_service_id": filters.service_id,
+      "@p_zeroyn": filters.zeroyn,
+      "@p_itemgrade": filters.itemgrade,
     },
   };
   //그리드 데이터 조회
@@ -364,14 +386,15 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-
+    
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
           rowstatus: "N",
           unp: row.unp == null ? 0 : row.unp,
+          groupId: row.itemacnt + "itemacnt",
         };
       });
 
@@ -389,6 +412,27 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     }
     setLoading(false);
   };
+  const [group, setGroup] = React.useState(initialGroup);
+  const [collapsedState, setCollapsedState] = React.useState<string[]>([]);
+
+  const onExpandChange = React.useCallback(
+    (event: GridExpandChangeEvent) => {
+      const item = event.dataItem;
+
+      if (item.groupId) {
+        const newCollapsedIds = !event.value
+          ? [...collapsedState, item.groupId]
+          : collapsedState.filter((groupId) => groupId !== item.groupId);
+        setCollapsedState(newCollapsedIds);
+      }
+    },
+    [collapsedState]
+  );
+
+  const newData = setExpandedState({
+    data: processWithGroups(mainDataResult.data, initialGroup),
+    collapsedIds: collapsedState,
+  });
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -409,91 +453,8 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.itemcd]: true });
+        setSelectedState({ [firstRowData.num]: true });
 
-        // setsubFilters((prev) => ({
-        //   ...prev,
-        //   workType: "UNP",
-        //   itemcd: firstRowData.itemcd,
-        //   itemnm: firstRowData.itemnm,
-        //   insiz: firstRowData.insiz,
-        //   itemacnt: firstRowData.itemacnt,
-        //   useyn: firstRowData.useyn,
-        //   custcd: firstRowData.custcd,
-        //   custnm: firstRowData.custnm,
-        //   itemcd_s: "",
-        //   spec: firstRowData.spec,
-        //   location: firstRowData.location,
-        //   remark: firstRowData.remark,
-        //   bnatur: firstRowData.bnatur,
-        //   itemlvl1: firstRowData.itemlvl1,
-        //   itemlvl2: firstRowData.itemlvl2,
-        //   itemlvl3: firstRowData.itemlvl3,
-        // }));
-        // setInfomation({
-        //   pgSize: PAGE_SIZE,
-        //   workType: "U",
-        //   itemcd: firstRowData.itemcd,
-        //   itemnm: firstRowData.itemnm,
-        //   insiz: firstRowData.insiz,
-        //   itemacnt:
-        //     itemacntListData.find(
-        //       (item: any) => item.sub_code === firstRowData.itemacnt
-        //     )?.code_name == undefined
-        //       ? firstRowData.itemacnt
-        //       : itemacntListData.find(
-        //           (item: any) => item.sub_code === firstRowData.itemacnt
-        //         )?.code_name,
-        //   useyn: firstRowData.useyn == "Y" ? "Y" : "N",
-        //   custcd: firstRowData.custcd,
-        //   custnm: firstRowData.custnm,
-        //   itemcd_s: firstRowData.itemcd_s,
-        //   spec: firstRowData.spec,
-        //   location: "01",
-        //   remark: firstRowData.remark,
-        //   bnatur: firstRowData.bnatur,
-        //   itemlvl1: firstRowData.itemlvl1,
-        //   itemlvl2: firstRowData.itemlvl2,
-        //   itemlvl3: firstRowData.itemlvl3,
-        //   itemlvl4: firstRowData.itemlvl4,
-        //   bomyn: firstRowData.bomyn,
-        //   attdatnum: firstRowData.attdatnum,
-        //   row_values: firstRowData.row_values,
-        //   safeqty: firstRowData.safeqty,
-        //   unitwgt: firstRowData.unitwgt,
-        //   invunit:
-        //     qtyunitListData.find(
-        //       (item: any) => item.sub_code === firstRowData.invunit
-        //     )?.code_name == undefined
-        //       ? firstRowData.invunit
-        //       : qtyunitListData.find(
-        //           (item: any) => item.sub_code === firstRowData.invunit
-        //         )?.code_name,
-        //   dwgno: firstRowData.dwgno,
-        //   maker: firstRowData.maker,
-        //   qcyn: firstRowData.qcyn == "Y" ? "Y" : "N",
-        //   attdatnum_img: firstRowData.attdatnum_img,
-        //   attdatnum_img2: firstRowData.attdatnum_img2,
-        //   snp: firstRowData.snp,
-        //   person: firstRowData.person,
-        //   extra_field2: firstRowData.extra_field2,
-        //   purleadtime: firstRowData.purleadtime,
-        //   len: firstRowData.len,
-        //   purqty: firstRowData.purqty,
-        //   boxqty: firstRowData.boxqty,
-        //   pac: firstRowData.pac,
-        //   bnatur_insiz: firstRowData.bnatur_insiz,
-        //   itemno: firstRowData.itemno,
-        //   itemgroup: firstRowData.itemgroup,
-        //   lenunit: firstRowData.lenunit,
-        //   hscode: firstRowData.hscode,
-        //   wgtunit: firstRowData.wgtunit,
-        //   custitemnm: firstRowData.custitemnm,
-        //   unitqty: firstRowData.unitqty,
-        //   procday: firstRowData.procday,
-        //   files: firstRowData.files,
-        //   auto: firstRowData.auto
-        // });
         setIfSelectFirstRow(true);
       }
     }
@@ -503,7 +464,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     if (ifSelectFirstRow) {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
-        setSubSelectedState({ [firstRowData.itemcd]: true });
+        setSubSelectedState({ [firstRowData.num]: true });
 
         setIfSelectFirstRow(true);
       }
@@ -522,77 +483,6 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     setIfSelectFirstRow(false);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
-    // setInfomation({
-    //   pgSize: PAGE_SIZE,
-    //   workType: "U",
-    //   itemcd: selectedRowData.itemcd,
-    //   itemnm: selectedRowData.itemnm,
-    //   insiz: selectedRowData.insiz,
-    //   itemacnt: selectedRowData.itemacnt,
-    //   useyn: selectedRowData.useyn == "Y" ? "Y" : "N",
-    //   custcd: selectedRowData.custcd,
-    //   custnm: selectedRowData.custnm,
-    //   itemcd_s: selectedRowData.itemcd_s,
-    //   spec: selectedRowData.spec,
-    //   location: "01",
-    //   remark: selectedRowData.remark,
-    //   bnatur: selectedRowData.bnatur,
-    //   itemlvl1: selectedRowData.itemlvl1,
-    //   itemlvl2: selectedRowData.itemlvl2,
-    //   itemlvl3: selectedRowData.itemlvl3,
-    //   itemlvl4: selectedRowData.itemlvl4,
-    //   bomyn: selectedRowData.bomyn,
-    //   attdatnum: selectedRowData.attdatnum,
-    //   row_values: selectedRowData.row_values,
-    //   safeqty: selectedRowData.safeqty,
-    //   unitwgt: selectedRowData.unitwgt,
-    //   invunit: selectedRowData.invunit,
-    //   dwgno: selectedRowData.dwgno,
-    //   maker: selectedRowData.maker,
-    //   qcyn: selectedRowData.qcyn == "Y" ? "Y" : "N",
-    //   attdatnum_img: selectedRowData.attdatnum_img,
-    //   attdatnum_img2: selectedRowData.attdatnum_img2,
-    //   snp: selectedRowData.snp,
-    //   person: selectedRowData.person,
-    //   extra_field2: selectedRowData.extra_field2,
-    //   purleadtime: selectedRowData.purleadtime,
-    //   len: selectedRowData.len,
-    //   purqty: selectedRowData.purqty,
-    //   boxqty: selectedRowData.boxqty,
-    //   pac: selectedRowData.pac,
-    //   bnatur_insiz: selectedRowData.bnatur_insiz,
-    //   itemno: selectedRowData.itemno,
-    //   itemgroup: selectedRowData.itemgroup,
-    //   lenunit: selectedRowData.lenunit,
-    //   hscode: selectedRowData.hscode,
-    //   wgtunit: selectedRowData.wgtunit,
-    //   custitemnm: selectedRowData.custitemnm,
-    //   unitqty: selectedRowData.unitqty,
-    //   procday: selectedRowData.procday,
-    //   files: selectedRowData.files,
-    //   auto: selectedRowData.auto,
-    // });
-    // if (tabSelected === 1) {
-    //   setsubFilters((prev) => ({
-    //     ...prev,
-    //     itemcd: selectedRowData.itemcd,
-    //     itemnm: selectedRowData.itemnm,
-    //     insiz: selectedRowData.insiz,
-    //     itemacnt: selectedRowData.itemacnt,
-    //     useyn: selectedRowData.useyn,
-    //     custcd: selectedRowData.custcd,
-    //     custnm: selectedRowData.custnm,
-    //     itemcd_s: "",
-    //     spec: selectedRowData.spec,
-    //     location: selectedRowData.location,
-    //     remark: selectedRowData.remark,
-    //     bnatur: selectedRowData.bnatur,
-    //     itemlvl1: selectedRowData.itemlvl1,
-    //     itemlvl2: selectedRowData.itemlvl2,
-    //     itemlvl3: selectedRowData.itemlvl3,
-    //   }));
-    // }
   };
 
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -673,13 +563,23 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
-    setData(subDataResult.data);
+    const datas = subDataResult.data.map((item: any) => {
+      return(
+        {
+          ...item,
+          qty: 1,
+          amt: 0,
+          taxamt: 0
+        }
+      )
+    })
+    setData(datas);
     onClose();
   };
 
   const onRowDoubleClick = (props: any) => {
     const datas = mainDataResult.data.filter(
-      (item) => item.itemcd == Object.getOwnPropertyNames(selectedState)[0]
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     );
 
     setSubDataResult((prev) => {
@@ -735,6 +635,50 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
+                <th>기준년월</th>
+                <td>
+                  <div className="filter-item-wrap">
+                    <DatePicker
+                      name="frdt"
+                      value={filters.frdt}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
+                      className="required"
+                    />
+                    <DatePicker
+                      name="todt"
+                      value={filters.todt}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
+                      className="required"
+                    />
+                  </div>
+                </td>
+                <th>품목계정</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="itemacnt"
+                      value={
+                        filters.itemacnt == undefined ? "" : filters.itemacnt
+                      }
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>재고수량</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="zeroyn"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
                 <th>품목코드</th>
                 <td>
                   <Input
@@ -760,87 +704,12 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
                     onChange={filterInputChange}
                   />
                 </td>
-                <th>품목계정</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="itemacnt"
-                      value={filters.itemacnt == undefined? "" : filters.itemacnt}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>도면번호</th>
-                <td>
-                  <Input
-                    name="dwgno"
-                    type="text"
-                    value={filters.dwgno}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>재질</th>
-                <td>
-                  <Input
-                    name="bnatur"
-                    type="text"
-                    value={filters.bnatur}
-                    onChange={filterInputChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>업체코드</th>
-                <td>
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>업체명</th>
-                <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
                 <th>규격</th>
                 <td>
                   <Input
                     name="insiz"
                     type="text"
                     value={filters.insiz}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>사용여부</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionRadioGroup
-                      name="raduseyn"
-                      customOptionData={customOptionData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
-                </td>
-                <th>사양</th>
-                <td>
-                  <Input
-                    name="spec"
-                    type="text"
-                    value={filters.spec}
                     onChange={filterInputChange}
                   />
                 </td>
@@ -851,28 +720,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         <GridContainer>
           <Grid
             style={{ height: "240px" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                itemacnt: itemacntListData.find(
-                  (items: any) => items.sub_code === row.itemacnt
-                )?.code_name,
-                itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
-                )?.code_name,
-                itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
-                )?.code_name,
-                itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
-                )?.code_name,
-                invunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.invunit
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
+            data={newData}
             onDataStateChange={onMainDataStateChange}
             {...mainDataState}
             //선택 기능
@@ -896,6 +744,10 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
             resizable={true}
             //더블클릭
             onRowDoubleClick={onRowDoubleClick}
+            groupable={true}
+            group={group}
+            onExpandChange={onExpandChange}
+            expandField="expanded"
           >
             <GridColumn
               field="itemcd"
@@ -903,48 +755,38 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
               width="200px"
               footerCell={mainTotalFooterCell}
             />
-            <GridColumn field="itemnm" title="품목명" width="200px" />
-            <GridColumn
-              field="unitwgt"
-              title="단위중량"
-              width="140px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="bomyn"
-              title="BOM유무"
-              width="100px"
-              cell={CheckBoxCell}
-            />
-            <GridColumn field="itemacnt" title="품목계정" width="140px" />
             <GridColumn field="insiz" title="규격" width="140px" />
-            <GridColumn field="bnatur" title="재질" width="140px" />
-            <GridColumn field="itemlvl1" title="대분류" width="140px" />
-            <GridColumn field="itemlvl2" title="중분류" width="140px" />
-            <GridColumn field="itemlvl3" title="소분류" width="140px" />
-            <GridColumn field="invunit" title="구매단위" width="140px" />
+            <GridColumn field="lotnum" title="LOT번호" width="160px" />
             <GridColumn
-              field="useyn"
-              title="사용여부"
-              width="100px"
-              cell={CheckBoxCell}
-            />
-            <GridColumn field="custcd" title="업체코드" width="200px" />
-            <GridColumn
-              field="basinvunp"
-              title="구매단가"
+              field="now_qty"
+              title="현재고"
               width="140px"
               cell={NumberCell}
             />
             <GridColumn
-              field="unp"
-              title="단가"
+              field="before_qty"
+              title="이전재고"
               width="140px"
               cell={NumberCell}
             />
-            <GridColumn field="remark" title="비고" width="250px" />
-            <GridColumn field="dwgno" title="도면번호" width="160px" />
-            <GridColumn field="custnm" title="업체명" width="160px" />
+            <GridColumn
+              field="in_qty"
+              title="입고량"
+              width="140px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="out_qty"
+              title="출고량"
+              width="140px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="safeqty"
+              title="안전재고량"
+              width="140px"
+              cell={NumberCell}
+            />
           </Grid>
         </GridContainer>
         <GridContainer>
@@ -1012,47 +854,15 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
               footerCell={subTotalFooterCell}
             />
             <GridColumn field="itemnm" title="품목명" width="200px" />
-            <GridColumn
-              field="unitwgt"
-              title="단위중량"
-              width="140px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="bomyn"
-              title="BOM유무"
-              width="100px"
-              cell={CheckBoxCell}
-            />
-            <GridColumn field="itemacnt" title="품목계정" width="140px" />
             <GridColumn field="insiz" title="규격" width="140px" />
-            <GridColumn field="bnatur" title="재질" width="140px" />
-            <GridColumn field="itemlvl1" title="대분류" width="140px" />
-            <GridColumn field="itemlvl2" title="중분류" width="140px" />
-            <GridColumn field="itemlvl3" title="소분류" width="140px" />
-            <GridColumn field="invunit" title="구매단위" width="140px" />
+            <GridColumn field="itemacnt" title="품목계정" width="140px" />
+            <GridColumn field="lotnum" title="LOT NO" width="140px" />
             <GridColumn
-              field="useyn"
-              title="사용여부"
-              width="100px"
-              cell={CheckBoxCell}
-            />
-            <GridColumn field="custcd" title="업체코드" width="200px" />
-            <GridColumn
-              field="basinvunp"
-              title="구매단가"
+              field="now_qty"
+              title="처리량"
               width="140px"
               cell={NumberCell}
             />
-            <GridColumn
-              field="unp"
-              title="단가"
-              width="140px"
-              cell={NumberCell}
-            />
-            <GridColumn field="remark" title="비고" width="250px" />
-            <GridColumn field="dwgno" title="도면번호" width="160px" />
-            <GridColumn field="custnm" title="업체명" width="160px" />
           </Grid>
         </GridContainer>
         <BottomContainer>

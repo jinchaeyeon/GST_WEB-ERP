@@ -487,7 +487,45 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData2= (data: any) => {
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
+    if (dataItem.length === 0) return false;
+
+    let seq = 1;
+
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+      });
+      seq++;
+    }
+
+    for (var i = 1; i < data.length; i++) {
+      if (data[0].itemcd == data[i].itemcd) {
+        alert("중복되는 품목이있습니다.");
+        return false;
+      }
+    }
+
+    try {
+      data.map((item: any) => {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, item],
+            total: prev.total + 1,
+          };
+        });
+      });
+    } catch (e) {
+      alert(e);
+    }
   };
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
@@ -939,7 +977,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           setVisible={setCopyWindowVisible2}
           workType={"FILTER"}
           setData={setCopyData2}
-          itemacnt={""}
+          itemacnt={"1"}
         />
       )}
     </>

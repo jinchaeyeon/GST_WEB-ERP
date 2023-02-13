@@ -250,11 +250,26 @@ const BA_A0040: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value != null) {
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    if(value != null){
+      if(name == "useyn" || name == "qcyn"){
+        if(value == false || value == "N") {
+          setInfomation((prev) => ({
+            ...prev,
+            [name]: "N",
+          }));
+        }else {
+          setInfomation((prev) => ({
+            ...prev,
+            [name]: "Y",
+          }));
+        }
+      }
+      else {
+        setInfomation((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
     }
   };
 
@@ -1604,7 +1619,7 @@ const BA_A0040: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer>
+        <GridContainer width="89.7vw">
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
@@ -1865,19 +1880,11 @@ const BA_A0040: React.FC = () => {
                 <tr>
                   <th>사용여부</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="useyn"
-                        value={infomation.useyn}
-                        bizComponentId=""
-                        bizComponentData={undefined}
-                        data={[
-                          { label: "사용", value: "Y" },
-                          { label: "미사용", value: "N" },
-                        ]}
-                        changeData={RadioChange}
-                      />
-                    )}
+                    <Checkbox
+                      name="useyn"
+                      value={infomation.useyn == "Y"? true: false}
+                      onChange={InputChange}
+                    />
                   </td>
                   <th>사양</th>
                   <td>
@@ -1953,19 +1960,11 @@ const BA_A0040: React.FC = () => {
                   </td>
                   <th>검사유무</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="qcyn"
-                        value={infomation.qcyn}
-                        bizComponentId=""
-                        bizComponentData={undefined}
-                        data={[
-                          { label: "검사", value: "Y" },
-                          { label: "무검사", value: "N" },
-                        ]}
-                        changeData={RadioChange}
-                      />
-                    )}
+                    <Checkbox
+                      name="qcyn"
+                      value={infomation.qcyn == "Y"? true: false}
+                      onChange={InputChange}
+                    />
                   </td>
                   <th>첨부파일</th>
                   <td>

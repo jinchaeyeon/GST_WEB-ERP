@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import { TextArea } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
@@ -225,10 +226,25 @@ const PR_A0060: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
     if (value != null) {
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      if(name == "useyn"){
+        if(value == false || value == "N") {
+          setInfomation((prev) => ({
+            ...prev,
+            [name]: "N",
+          }));
+        }else {
+          setInfomation((prev) => ({
+            ...prev,
+            [name]: "Y",
+          }));
+        }
+      }
+      else {
+        setInfomation((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
     }
   };
 
@@ -2146,15 +2162,11 @@ const PR_A0060: React.FC = () => {
                   </td>
                   <th>사용여부</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="useyn"
-                        value={infomation.useyn}
-                        bizComponentId="R_USEYN"
-                        bizComponentData={bizComponentData}
-                        changeData={RadioChange}
-                      />
-                    )}
+                  <Checkbox
+                      name="useyn"
+                      value={infomation.useyn == "Y"? true: false}
+                      onChange={InputChange}
+                    />
                   </td>
                   <th>IOT설비번호</th>
                   <td>

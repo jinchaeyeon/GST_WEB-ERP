@@ -240,10 +240,25 @@ const BA_A0020: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
     if (value != null) {
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      if(name == "useyn" || name == "scmyn" || name == "rtxisuyn"){
+        if(value == false || value == "N") {
+          setInfomation((prev) => ({
+            ...prev,
+            [name]: "N",
+          }));
+        }else {
+          setInfomation((prev) => ({
+            ...prev,
+            [name]: "Y",
+          }));
+        }
+      }
+      else {
+        setInfomation((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
     }
   };
 
@@ -2921,42 +2936,28 @@ const BA_A0020: React.FC = () => {
                     </tr>
                     <tr>
                       <th>사용여부</th>
-                      <td colSpan={3}>
-                        {bizComponentData !== null && (
-                          <BizComponentRadioGroup
-                            name="useyn"
-                            value={infomation.useyn}
-                            bizComponentId="R_USEYN"
-                            bizComponentData={bizComponentData}
-                            changeData={RadioChange}
-                          />
-                        )}
+                      <td>
+                        <Checkbox
+                          name="useyn"
+                          value={infomation.useyn == "Y" ? true : false}
+                          onChange={InputChange}
+                        />
                       </td>
                       <th>SCM사용여부</th>
-                      <td colSpan={3}>
-                        {bizComponentData !== null && (
-                          <BizComponentRadioGroup
-                            name="scmyn"
-                            value={infomation.scmyn}
-                            bizComponentId="R_USEYN"
-                            bizComponentData={bizComponentData}
-                            changeData={RadioChange}
-                          />
-                        )}
+                      <td>
+                        <Checkbox
+                          name="scmyn"
+                          value={infomation.scmyn == "Y" ? true : false}
+                          onChange={InputChange}
+                        />
                       </td>
-                    </tr>
-                    <tr>
                       <th>역발행여부</th>
-                      <td colSpan={3}>
-                        {bizComponentData !== null && (
-                          <BizComponentRadioGroup
-                            name="rtxisuyn"
-                            value={infomation.rtxisuyn}
-                            bizComponentId="R_RTXISUYN"
-                            bizComponentData={bizComponentData}
-                            changeData={RadioChange}
-                          />
-                        )}
+                      <td>
+                        <Checkbox
+                          name="rtxisuyn"
+                          value={infomation.rtxisuyn == "Y" ? true : false}
+                          onChange={InputChange}
+                        />
                       </td>
                       <th>정기/비정기</th>
                       <td>
@@ -2966,18 +2967,6 @@ const BA_A0020: React.FC = () => {
                           value={infomation.pariodyn}
                           onChange={InputChange}
                         />
-                      </td>
-                      <th>센드빌회원여부</th>
-                      <td>
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="bill_type"
-                            value={infomation.bill_type}
-                            bizComponentId="L_AC901"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
                       </td>
                     </tr>
                     <tr>
@@ -3062,8 +3051,20 @@ const BA_A0020: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
+                    <th>센드빌회원여부</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="bill_type"
+                            value={infomation.bill_type}
+                            bizComponentId="L_AC901"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
                       <th>첨부파일</th>
-                      <td colSpan={3}>
+                      <td>
                         <Input
                           name="files"
                           type="text"
