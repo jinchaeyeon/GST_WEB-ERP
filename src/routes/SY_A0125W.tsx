@@ -11,6 +11,8 @@ import {
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
 import { TextArea } from "@progress/kendo-react-inputs";
+import { gridList } from "../store/columns/SY_A0125W_C";
+import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import {
   TreeList,
   createDataTree,
@@ -246,10 +248,26 @@ const SY_A0125W: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    setInfomation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    if(name == "useyn"){
+      if(value == false || value == "N") {
+        setInfomation((prev) => ({
+          ...prev,
+          [name]: "N",
+        }));
+      }else {
+        setInfomation((prev) => ({
+          ...prev,
+          [name]: "Y",
+        }));
+      }
+    }
+    else {
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const RadioChange = (e: any) => {
@@ -1229,7 +1247,7 @@ const SY_A0125W: React.FC = () => {
                     />
                     <ButtonInInput>
                       <Button
-                        // onClick={onCustWndClick2}
+                        onClick={onDepartmentWndClick}
                         icon="more-horizontal"
                         fillMode="flat"
                       />
@@ -1281,15 +1299,11 @@ const SY_A0125W: React.FC = () => {
                   </td>
                   <th>사용여부</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="useyn"
-                        value={infomation.useyn}
-                        bizComponentId="R_USEYN"
-                        bizComponentData={bizComponentData}
-                        changeData={RadioChange}
-                      />
-                    )}
+                    <Checkbox
+                      name="useyn"
+                      value={infomation.useyn == "Y"? true: false}
+                      onChange={InputChange}
+                    />
                   </td>
                 </tr>
                 <tr>
@@ -1364,25 +1378,48 @@ const SY_A0125W: React.FC = () => {
                 ) === -1
               }
             />
-            <GridColumn
-              field="user_id"
-              title="사원명"
-              width="150px"
-              className="readonly"
-              footerCell={subTotalFooterCell}
-            />
-            <GridColumn
-              field="postcd"
-              title="직위"
-              className="readonly"
-              width="150px"
-            />
-            <GridColumn field="email" title="이메일" width="200px" />
-            <GridColumn field="mobile_no" title="핸드폰번호" width="150px" />
-            <GridColumn field="memo" title="메모" width="260px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdAllList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      className={
+                        item.sortOrder === 0 ? "readonly" : item.sortOrder === 1 ? "readonly" : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? subTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </GridContainer>
       </GridContainerWrap>
+      {departmentWindowVisible && (
+        <DepartmentsWindow
+          setVisible={setDepartmentWindowVisible}
+          workType={"FILTER"}
+          setData={setDepartmentData}
+      />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };

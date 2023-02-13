@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { gridList } from "../store/columns/BA_A0080W_C";
 import { CellRender, RowRender } from "../components/Renderers";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
@@ -30,6 +31,7 @@ import {
   ButtonInField,
   FormBox,
   FormBoxWrap,
+  GridContainerWrap,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -463,11 +465,11 @@ const BA_A0080: React.FC = () => {
   };
   const onCopyWndClick = () => {
     try {
-        if(filters.itemacnt != "") {
-          setCopyWindowVisible(true);
-        } else {
-          throw findMessage(messagesData, "BA_A0080W_007");
-        }
+      if (filters.itemacnt != "") {
+        setCopyWindowVisible(true);
+      } else {
+        throw findMessage(messagesData, "BA_A0080W_007");
+      }
     } catch (e) {
       alert(e);
     }
@@ -607,7 +609,7 @@ const BA_A0080: React.FC = () => {
       dataArr.recdt.push(convertDateToStr(new Date()));
       dataArr.amtunit.push(amtunit == "" ? filters.amtunit : amtunit);
     });
-  
+
     setParaData((prev) => ({
       ...prev,
       workType: "",
@@ -640,7 +642,12 @@ const BA_A0080: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "itemlvl1" && field != "itemlvl2" && field != "itemlvl3") {
+    if (
+      field == "itemcd" ||
+      field == "unp" ||
+      field == "amtunit" ||
+      field == "remark"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -702,34 +709,6 @@ const BA_A0080: React.FC = () => {
       mainDataResult,
       setMainDataResult,
       DATA_ITEM_KEY
-    );
-  };
-
-  const CommandCell2 = (props: GridCellProps) => {
-    const rowData = props.dataItem;
-
-    const onEditClick = () => {
-      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
-      setItemWindowVisible2(true);
-    };
-
-    return (
-      <>
-        <td className="k-command-cell">
-          <Input
-            name="itemcd"
-            type="text"
-            value={rowData.itemcd}
-            style={{ width: "100px" }}
-          />
-          <Button
-            onClick={onEditClick}
-            icon="more-horizontal"
-            fillMode="flat"
-          />
-        </td>
-      </>
     );
   };
 
@@ -1070,194 +1049,176 @@ const BA_A0080: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-
-      <GridContainer
-        style={{ width: "19.2vw", float: "left", display: "inline-block" }}
-      >
-        <GridTitleContainer>
-          <GridTitle>품목계정</GridTitle>
-        </GridTitleContainer>
-        <Grid
-          style={{ height: "80vh" }}
-          data={process(
-            subDataResult.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-            })),
-            subDataState
-          )}
-          {...subDataState}
-          onDataStateChange={onSubDataStateChange}
-          //선택 기능
-          dataItemKey={SUB_DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
-          }}
-          onSelectionChange={onSubDataSelectionChange}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={subDataResult.total}
-          //정렬기능
-          sortable={true}
-          onSortChange={onSubDataSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-        >
-          <GridColumn field="sub_code" title="코드" width="150px" />
-          <GridColumn field="code_name" title="계정명" width="200px" />
-        </Grid>
-      </GridContainer>
-      <GridContainer
-        style={{ width: "68vw", display: "inline-block", float: "right" }}
-      >
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
+      <GridContainerWrap>
+        <GridContainer style={{ width: "19.2vw" }}>
           <GridTitleContainer>
-            <GridTitle>
-              상세정보
-              <Button
-                title="Export Excel"
-                // onClick={onExcelWndClick}
-                icon="upload"
-                fillMode="outline"
-                themeColor={"primary"}
-                style={{ marginLeft: "15px" }}
-              >
-                엑셀업로드
-              </Button>
-              <Button
-                title="Export Excel"
-                onClick={onExcelWndClick}
-                icon="file"
-                fillMode="outline"
-                themeColor={"primary"}
-                style={{ marginLeft: "10px" }}
-              >
-                엑셀양식
-              </Button>
-            </GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="plus"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-              ></Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick}
-                icon="copy"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              ></Button>
-            </ButtonContainer>
+            <GridTitle>품목계정</GridTitle>
           </GridTitleContainer>
           <Grid
             style={{ height: "80vh" }}
             data={process(
-              mainDataResult.data.map((row) => ({
+              subDataResult.data.map((row) => ({
                 ...row,
-                recdt: row.recdt ? new Date(dateformat(row.recdt)) : new Date(),
-                itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
-                )?.code_name,
-                itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
-                )?.code_name,
-                itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
+                [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
               })),
-              mainDataState
+              subDataState
             )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
+            {...subDataState}
+            onDataStateChange={onSubDataStateChange}
             //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
+            dataItemKey={SUB_DATA_ITEM_KEY}
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "multiple",
+              mode: "single",
             }}
-            onSelectionChange={onSelectionChange}
+            onSelectionChange={onSubDataSelectionChange}
             //스크롤 조회 기능
             fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+            total={subDataResult.total}
             //정렬기능
             sortable={true}
-            onSortChange={onMainSortChange}
+            onSortChange={onSubDataSortChange}
             //컬럼순서조정
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
           >
-            <GridColumn
-              field="recdt"
-              title="적용일"
-              width="150px"
-              cell={DateCell}
-              footerCell={mainTotalFooterCell}
-              className="editable-new-only"
-            />
-            <GridColumn
-              field="itemcd"
-              title="품목코드테스트"
-              width="250px"
-              cell={CommandCell2}
-            />
-            <GridColumn field="itemnm" title="품목명" width="250px" />
-            <GridColumn
-              field="itemacnt"
-              title="품목계정"
-              width="150px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="unp"
-              title="단가"
-              width="150px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="amtunit"
-              title="화폐단위"
-              width="150px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn field="insiz" title="규격" width="150px" />
-            <GridColumn field="itemlvl1" title="대분류" width="150px" />
-            <GridColumn field="itemlvl2" title="중분류" width="150px" />
-            <GridColumn field="itemlvl3" title="소분류" width="150px" />
-            <GridColumn field="spec" title="사양" width="150px" />
-            <GridColumn field="remark" title="비고" width="150px" />
+            <GridColumn field="sub_code" title="코드" width="150px" />
+            <GridColumn field="code_name" title="계정명" width="200px" />
           </Grid>
-        </ExcelExport>
-      </GridContainer>
+        </GridContainer>
+        <GridContainer style={{ width: "68vw" }}>
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
+            }}
+          >
+            <GridTitleContainer>
+              <GridTitle>
+                상세정보
+                <Button
+                  title="Export Excel"
+                  // onClick={onExcelWndClick}
+                  icon="upload"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  style={{ marginLeft: "15px" }}
+                >
+                  엑셀업로드
+                </Button>
+                <Button
+                  title="Export Excel"
+                  onClick={onExcelWndClick}
+                  icon="file"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  style={{ marginLeft: "10px" }}
+                >
+                  엑셀양식
+                </Button>
+              </GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="plus"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                ></Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick}
+                  icon="folder-open"
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "80vh" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  recdt: row.recdt
+                    ? new Date(dateformat(row.recdt))
+                    : new Date(),
+                  itemlvl1: itemlvl1ListData.find(
+                    (item: any) => item.sub_code === row.itemlvl1
+                  )?.code_name,
+                  itemlvl2: itemlvl2ListData.find(
+                    (item: any) => item.sub_code === row.itemlvl2
+                  )?.code_name,
+                  itemlvl3: itemlvl3ListData.find(
+                    (item: any) => item.sub_code === row.itemlvl3
+                  )?.code_name,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "multiple",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              onScroll={onMainScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell = {
+                        item.sortOrder === 0 ? DateCell : item.sortOrder === 3 ? CustomComboBoxCell : item.sortOrder === 4 ? NumberCell : item.sortOrder === 5 ? CustomComboBoxCell : undefined
+                      }
+                      className={
+                        item.sortOrder === 0 ? "editable-new-only" : item.sortOrder === 4 ? "required" : item.sortOrder === 5 ? "required": undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
+      </GridContainerWrap>
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
@@ -1281,6 +1242,19 @@ const BA_A0080: React.FC = () => {
         />
       )}
       {excelWindowVisible && <ExcelWindow setVisible={setExcelWindowVisible} />}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };

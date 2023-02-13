@@ -14,6 +14,7 @@ import {
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
+import { gridList } from "../store/columns/BA_A0040W_C";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -37,6 +38,7 @@ import {
   ButtonInField,
   FormBoxWrap,
   FormBox,
+  GridContainerWrap,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -104,7 +106,11 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} className="editable-new-only"/>
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      {...props}
+      className="editable-new-only"
+    />
   ) : (
     <td></td>
   );
@@ -246,10 +252,24 @@ const BA_A0040: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
     if (value != null) {
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      if (name == "useyn" || name == "qcyn") {
+        if (value == false || value == "N") {
+          setInfomation((prev) => ({
+            ...prev,
+            [name]: "N",
+          }));
+        } else {
+          setInfomation((prev) => ({
+            ...prev,
+            [name]: "Y",
+          }));
+        }
+      } else {
+        setInfomation((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
     }
   };
 
@@ -338,7 +358,7 @@ const BA_A0040: React.FC = () => {
     unitqty: 0,
     procday: "",
     files: "",
-    auto: "Y"
+    auto: "Y",
   });
 
   //조회조건 초기값
@@ -605,7 +625,7 @@ const BA_A0040: React.FC = () => {
           unitqty: firstRowData.unitqty,
           procday: firstRowData.procday,
           files: firstRowData.files,
-          auto: firstRowData.auto
+          auto: firstRowData.auto,
         });
         setIfSelectFirstRow(true);
       }
@@ -826,7 +846,7 @@ const BA_A0040: React.FC = () => {
       unitqty: 0,
       procday: "",
       files: "",
-      auto: "Y"
+      auto: "Y",
     });
   };
 
@@ -1432,7 +1452,7 @@ const BA_A0040: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      if(data.statusCode == "P_BA_A0040_S_001") {
+      if (data.statusCode == "P_BA_A0040_S_001") {
         alert(data.resultMessage);
       }
     }
@@ -1598,116 +1618,109 @@ const BA_A0040: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-
-      <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                신규
-              </Button>
-              <Button
-                onClick={onSaveClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                삭제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "40vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
-                )?.code_name,
-                invunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.invunit
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+      <GridContainerWrap>
+        <GridContainer width="89.7vw">
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
           >
-            <GridColumn
-              field="itemnm"
-              title="품목명"
-              footerCell={mainTotalFooterCell}
-              width="140px"
-            />
-            <GridColumn field="itemcd" title="품목코드" width="200px" />
-            <GridColumn field="spec" title="사양" width="140px" />
-            <GridColumn field="insiz" title="규격" width="160px" />
-            <GridColumn field="itemacnt" title="품목계정" width="140px" />
-            <GridColumn field="invunit" title="수량단위" width="100px" />
-            <GridColumn
-              field="useyn"
-              title="사용여부"
-              width="100px"
-              cell={CheckBoxCell}
-            />
-            <GridColumn
-              field="safeqty"
-              title="안전재고량"
-              width="140px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="purleadtime"
-              title="구매리드타임"
-              width="140px"
-              cell={NumberCell}
-            />
-            <GridColumn field="cnt" title="첨부" width="140px" />
-            <GridColumn field="custnm" title="업체명" width="160px" />
-            <GridColumn field="remark" title="비고" width="250px" />
-            <GridColumn field="bnatur" title="재질" width="140px" />
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="file-add"
+                >
+                  신규
+                </Button>
+                <Button
+                  onClick={onSaveClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  저장
+                </Button>
+                <Button
+                  onClick={onDeleteClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                >
+                  삭제
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "40vh" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  itemacnt: itemacntListData.find(
+                    (item: any) => item.sub_code === row.itemacnt
+                  )?.code_name,
+                  invunit: qtyunitListData.find(
+                    (item: any) => item.sub_code === row.invunit
+                  )?.code_name,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              onScroll={onMainScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          item.sortOrder === 6
+                            ? CheckBoxCell
+                            : item.sortOrder === 7
+                            ? NumberCell
+                            : item.sortOrder === 8
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
+      </GridContainerWrap>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="상세정보">
           <FormBoxWrap style={{ height: "30vh" }}>
@@ -1859,19 +1872,11 @@ const BA_A0040: React.FC = () => {
                 <tr>
                   <th>사용여부</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="useyn"
-                        value={infomation.useyn}
-                        bizComponentId=""
-                        bizComponentData={undefined}
-                        data={[
-                          { label: "사용", value: "Y" },
-                          { label: "미사용", value: "N" },
-                        ]}
-                        changeData={RadioChange}
-                      />
-                    )}
+                    <Checkbox
+                      name="useyn"
+                      value={infomation.useyn == "Y" ? true : false}
+                      onChange={InputChange}
+                    />
                   </td>
                   <th>사양</th>
                   <td>
@@ -1947,19 +1952,11 @@ const BA_A0040: React.FC = () => {
                   </td>
                   <th>검사유무</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="qcyn"
-                        value={infomation.qcyn}
-                        bizComponentId=""
-                        bizComponentData={undefined}
-                        data={[
-                          { label: "검사", value: "Y" },
-                          { label: "무검사", value: "N" },
-                        ]}
-                        changeData={RadioChange}
-                      />
-                    )}
+                    <Checkbox
+                      name="qcyn"
+                      value={infomation.qcyn == "Y" ? true : false}
+                      onChange={InputChange}
+                    />
                   </td>
                   <th>첨부파일</th>
                   <td>
@@ -1990,109 +1987,115 @@ const BA_A0040: React.FC = () => {
           </FormBoxWrap>
         </TabStripTab>
         <TabStripTab title="단가">
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>단가정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="plus"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                ></Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "26vh" }}
-              data={process(
-                subData2Result.data.map((row) => ({
-                  ...row,
-                  recdt: new Date(dateformat(row.recdt)),
-                  [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
-                })),
-                subData2State
-              )}
-              {...subData2State}
-              onDataStateChange={onSubData2StateChange}
-              //선택 기능
-              dataItemKey={SUB_DATA_ITEM_KEY2}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "multiple",
-              }}
-              onSelectionChange={onSubData2SelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={subData2Result.total}
-              onScroll={onSub2ScrollHandler}
-              //정렬기능
-              sortable={true}
-              onSortChange={onSubData2SortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onSubItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn
-                field={SELECTED_FIELD}
-                width="45px"
-                headerSelectionValue={
-                  subData2Result.data.findIndex(
-                    (item: any) => !selectedsubData2State[idGetter2(item)]
-                  ) === -1
-                }
-              />
-              <GridColumn
-                field="recdt"
-                title="적용일"
-                width="260px"
-                cell={DateCell}
-                className="editable-new-only"
-              />
-              <GridColumn
-                field="unpitem"
-                title="단가항목"
-                width="370px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="amtunit"
-                title="화폐단위"
-                width="200px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="itemacnt"
-                title="품목계정"
-                width="200px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="unp"
-                title="단가"
-                width="210px"
-                cell={NumberCell}
-              />
-              <GridColumn field="remark" title="비고" width="380px" />
-            </Grid>
-          </GridContainer>
+          <GridContainerWrap>
+            <GridContainer>
+              <GridTitleContainer>
+                <GridTitle>단가정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="plus"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "26vh" }}
+                data={process(
+                  subData2Result.data.map((row) => ({
+                    ...row,
+                    recdt: new Date(dateformat(row.recdt)),
+                    [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
+                  })),
+                  subData2State
+                )}
+                {...subData2State}
+                onDataStateChange={onSubData2StateChange}
+                //선택 기능
+                dataItemKey={SUB_DATA_ITEM_KEY2}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "multiple",
+                }}
+                onSelectionChange={onSubData2SelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={subData2Result.total}
+                onScroll={onSub2ScrollHandler}
+                //정렬기능
+                sortable={true}
+                onSortChange={onSubData2SortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onSubItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn
+                  field={SELECTED_FIELD}
+                  width="45px"
+                  headerSelectionValue={
+                    subData2Result.data.findIndex(
+                      (item: any) => !selectedsubData2State[idGetter2(item)]
+                    ) === -1
+                  }
+                />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            item.sortOrder === 0
+                              ? DateCell
+                              : item.sortOrder === 1
+                              ? CustomComboBoxCell
+                              : item.sortOrder === 2
+                              ? CustomComboBoxCell
+                              : item.sortOrder === 3
+                              ? CustomComboBoxCell
+                              : item.sortOrder === 4
+                              ? NumberCell
+                              : undefined
+                          }
+                          className={
+                            item.sortOrder === 0
+                              ? "editable-new-only"
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </GridContainer>
+          </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
       {custWindowVisible && (
@@ -2122,6 +2125,19 @@ const BA_A0040: React.FC = () => {
           setData={getAttachmentsData}
           para={infomation.attdatnum}
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

@@ -18,6 +18,17 @@ export const getToday = () => {
   return year + month + day;
 };
 
+export const to_date2 = (date_str: string) =>
+{
+    var yyyyMMdd = String(date_str);
+    var sYear = yyyyMMdd.substring(0,4);
+    var sMonth = yyyyMMdd.substring(4,6);
+    var sDate = yyyyMMdd.substring(6,18);
+
+    //alert("sYear :"+sYear +"   sMonth :"+sMonth + "   sDate :"+sDate);
+    return new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+}
+
 //Date 타입 인수를 8자리 YYYYMMDD string로 날짜 변환하여 반환 (ex. => 20220101)
 export const convertDateToStr = (date: Date | null) => {
   if (date === null) return "";
