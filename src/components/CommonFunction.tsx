@@ -133,6 +133,7 @@ export const convertMilliSecondsToTimeStr = (secs: number) => {
   );
 };
 
+// 숫자 3자리마다 컴마를 추가하여 반환
 export const numberWithCommas = (num: number) => {
   if (typeof num === "number") {
     //소수점 제외
@@ -541,6 +542,7 @@ export const handleKeyPressSearch = (e: any, search: any) => {
     search();
   }
 };
+
 export const getGridItemChangedData = (
   event: GridItemChangeEvent,
   dataResult: any,
@@ -583,20 +585,6 @@ export const getGridItemChangedData = (
   });
 };
 
-// //[조회조건] queryStr 변수값 구하기
-// export const findCustomOptionQuery = (customOptionData: any, id: string) => {
-//   return customOptionData.menuCustomDefaultOptions.query.find(
-//     (item: any) => item.id === id
-//   ).query;
-// };
-
-// //[조회조건] columns 변수값 구하기
-// export const findCustomOptionColumns = (customOptionData: any, id: string) => {
-//   return customOptionData.menuCustomDefaultOptions.query.find(
-//     (item: any) => item.id === id
-//   ).bizComponentItems;
-// };
-
 //Date 디폴트 값 반환
 export const setDefaultDate = (customOptionData: any, id: string) => {
   const date = customOptionData.menuCustomDefaultOptions.query.find(
@@ -630,25 +618,7 @@ export const DDLValidator = (value: object) =>
 
 export const minValidator = (value: any) => (value > 0 ? "" : "*필수입력");
 
-export const getQueryFromCustomOptionData = (
-  customOptionData: any,
-  name: string
-) => {
-  return customOptionData.menuCustomDefaultOptions.query.find(
-    (item: any) => item.id === name
-  ).query;
-};
-
-export const getBciFromCustomOptionData = (
-  customOptionData: any,
-  name: string
-) => {
-  return customOptionData.menuCustomDefaultOptions.query.find(
-    (item: any) => item.id === name
-  ).bizComponentItems;
-};
-
-// 인수 value로부터 code 값을 반환 ()
+// 인수 value로부터 code 값을 반환
 export const getCodeFromValue = (value: any, valueField?: string) => {
   const code = !value
     ? ""
@@ -658,9 +628,12 @@ export const getCodeFromValue = (value: any, valueField?: string) => {
   return code;
 };
 
+// "Y" or "N" 반환
 export const getYn = (value: string | boolean) => {
   return value === "Y" || value === true ? "Y" : "N";
 };
+
+// true or false 반환
 export const getBooleanFromYn = (value: string | boolean) => {
   return value === "Y" || value === true ? true : false;
 };
@@ -794,7 +767,7 @@ export const UseParaPc = (setData: any) => {
   }, []);
 };
 
-//
+// 유효한 날짜인 경우 true 반환
 export const isValidDate = (value: any) => {
   if (typeof value === "string" && value.length === 8) {
     value = new Date(dateformat(value));
