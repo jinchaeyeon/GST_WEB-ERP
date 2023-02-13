@@ -96,7 +96,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  //UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -393,16 +393,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         return {
           ...row,
           rowstatus: "N",
-          amt: row.amt == null ? 0 : row.amt,
           unp: row.unp == null ? 0 : row.unp,
-          qty: row.qty == null ? 0 : row.qty,
-          wonamt: row.wonamt == null ? 0 : row.wonamt,
-          taxamt: row.taxamt == null ? 0 : row.taxamt,
-          totwgt: row.totwgt == null ? 0 : row.totwgt,
-          len: row.len == null ? 0 : row.len,
-          itemthick: row.itemthick == null ? 0 : row.itemthick,
-          width: row.width == null ? 0 : row.width,
-          pac: row.pac == null ? "A": row.pac,
           groupId: row.itemacnt + "itemacnt",
         };
       });

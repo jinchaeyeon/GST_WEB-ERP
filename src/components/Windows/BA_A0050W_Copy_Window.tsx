@@ -258,7 +258,6 @@ const KendoWindow = ({
       data = null;
     }
     
-    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -380,7 +379,7 @@ const KendoWindow = ({
       dataItemKey: FORM_DATA_INDEX,
     });
     setSelectedsubDataState2(newSelectedState);
-    console.log(newSelectedState)
+
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
   };

@@ -7,6 +7,7 @@ import {
 } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import RequiredHeader from "../RequiredHeader";
 import {
   Grid,
   GridColumn,
@@ -185,6 +186,7 @@ const FormGrid2 = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           field="custcd"
           title="업체코드"
           width="140px"
+          headerCell={RequiredHeader}
           className="required"
           editable={false}
         />
@@ -267,6 +269,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           field="user_name"
           title="성명"
           width="100px"
+          headerCell={RequiredHeader}
           className="required"
           editable={false}
         />
@@ -946,6 +949,7 @@ const KendoWindow = ({
                           (item: any) => item.id === "category"
                         ).bizComponentItems
                       }
+                      headerCell={RequiredHeader}
                       className="required"
                       onChange={changeCategory}
                     />
@@ -974,6 +978,7 @@ const KendoWindow = ({
                     name={"publish_start_date"}
                     label={"공지시작일"}
                     component={FormDatePicker}
+                    headerCell={RequiredHeader}
                     className="required"
                   />
                   <div style={{ width: "10%" }}></div>
@@ -981,6 +986,7 @@ const KendoWindow = ({
                     name={"publish_end_date"}
                     label={"공지종료일"}
                     component={FormDatePicker}
+                    headerCell={RequiredHeader}
                     className="required"
                   />
                 </FieldWrap>
@@ -988,6 +994,7 @@ const KendoWindow = ({
                   name={"title"}
                   label={"제목"}
                   component={FormInput}
+                  headerCell={RequiredHeader}
                   className="required"
                 />
                 <Field

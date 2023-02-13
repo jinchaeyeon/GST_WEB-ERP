@@ -11,6 +11,7 @@ import {
   GridCellProps,
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
+import RequiredHeader from "../components/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers";
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -790,6 +791,7 @@ const EA_A1000: React.FC = () => {
               field="user_name"
               title="성명"
               width="200px"
+              headerCell={RequiredHeader}
               className="required"
               editable={false}
             />
@@ -911,12 +913,14 @@ const EA_A1000: React.FC = () => {
                 field="appseq"
                 title="결재순서"
                 width="100px"
+                headerCell={RequiredHeader}
                 className="required"
               />
               <GridColumn
                 field="appline"
                 title="결재라인"
                 width="150px"
+                headerCell={RequiredHeader}
                 cell={CustomComboBoxCell}
                 className="required"
               />

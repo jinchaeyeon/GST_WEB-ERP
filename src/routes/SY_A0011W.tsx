@@ -802,7 +802,6 @@ const Page: React.FC = () => {
         if (result instanceof Error) throw result;
       });
 
-      console.log(dataItem);
       dataItem.forEach((item: any, idx: number) => {
         const {
           rowstatus,

@@ -83,8 +83,11 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
           .valueCode,
-        itemacnt: itemacnt == "" ? defaultOption.find((item: any) => item.id === "itemacnt")
-        .valueCode : itemacnt,
+        itemacnt:
+          itemacnt == ""
+            ? defaultOption.find((item: any) => item.id === "itemacnt")
+                .valueCode
+            : itemacnt,
       }));
     }
   }, [customOptionData]);
@@ -371,7 +374,16 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         return {
           ...row,
           rowstatus: "N",
+          amt: row.amt == null ? 0 : row.amt,
           unp: row.unp == null ? 0 : row.unp,
+          qty: row.qty == null ? 1 : row.qty,
+          wonamt: row.wonamt == null ? 0 : row.wonamt,
+          taxamt: row.taxamt == null ? 0 : row.taxamt,
+          totwgt: row.totwgt == null ? 0 : row.totwgt,
+          len: row.len == null ? 0 : row.len,
+          itemthick: row.itemthick == null ? 0 : row.itemthick,
+          width: row.width == null ? 0 : row.width,
+          pac: row.pac == null ? "A": row.pac,
         };
       });
 
@@ -411,89 +423,6 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.itemcd]: true });
 
-        // setsubFilters((prev) => ({
-        //   ...prev,
-        //   workType: "UNP",
-        //   itemcd: firstRowData.itemcd,
-        //   itemnm: firstRowData.itemnm,
-        //   insiz: firstRowData.insiz,
-        //   itemacnt: firstRowData.itemacnt,
-        //   useyn: firstRowData.useyn,
-        //   custcd: firstRowData.custcd,
-        //   custnm: firstRowData.custnm,
-        //   itemcd_s: "",
-        //   spec: firstRowData.spec,
-        //   location: firstRowData.location,
-        //   remark: firstRowData.remark,
-        //   bnatur: firstRowData.bnatur,
-        //   itemlvl1: firstRowData.itemlvl1,
-        //   itemlvl2: firstRowData.itemlvl2,
-        //   itemlvl3: firstRowData.itemlvl3,
-        // }));
-        // setInfomation({
-        //   pgSize: PAGE_SIZE,
-        //   workType: "U",
-        //   itemcd: firstRowData.itemcd,
-        //   itemnm: firstRowData.itemnm,
-        //   insiz: firstRowData.insiz,
-        //   itemacnt:
-        //     itemacntListData.find(
-        //       (item: any) => item.sub_code === firstRowData.itemacnt
-        //     )?.code_name == undefined
-        //       ? firstRowData.itemacnt
-        //       : itemacntListData.find(
-        //           (item: any) => item.sub_code === firstRowData.itemacnt
-        //         )?.code_name,
-        //   useyn: firstRowData.useyn == "Y" ? "Y" : "N",
-        //   custcd: firstRowData.custcd,
-        //   custnm: firstRowData.custnm,
-        //   itemcd_s: firstRowData.itemcd_s,
-        //   spec: firstRowData.spec,
-        //   location: "01",
-        //   remark: firstRowData.remark,
-        //   bnatur: firstRowData.bnatur,
-        //   itemlvl1: firstRowData.itemlvl1,
-        //   itemlvl2: firstRowData.itemlvl2,
-        //   itemlvl3: firstRowData.itemlvl3,
-        //   itemlvl4: firstRowData.itemlvl4,
-        //   bomyn: firstRowData.bomyn,
-        //   attdatnum: firstRowData.attdatnum,
-        //   row_values: firstRowData.row_values,
-        //   safeqty: firstRowData.safeqty,
-        //   unitwgt: firstRowData.unitwgt,
-        //   invunit:
-        //     qtyunitListData.find(
-        //       (item: any) => item.sub_code === firstRowData.invunit
-        //     )?.code_name == undefined
-        //       ? firstRowData.invunit
-        //       : qtyunitListData.find(
-        //           (item: any) => item.sub_code === firstRowData.invunit
-        //         )?.code_name,
-        //   dwgno: firstRowData.dwgno,
-        //   maker: firstRowData.maker,
-        //   qcyn: firstRowData.qcyn == "Y" ? "Y" : "N",
-        //   attdatnum_img: firstRowData.attdatnum_img,
-        //   attdatnum_img2: firstRowData.attdatnum_img2,
-        //   snp: firstRowData.snp,
-        //   person: firstRowData.person,
-        //   extra_field2: firstRowData.extra_field2,
-        //   purleadtime: firstRowData.purleadtime,
-        //   len: firstRowData.len,
-        //   purqty: firstRowData.purqty,
-        //   boxqty: firstRowData.boxqty,
-        //   pac: firstRowData.pac,
-        //   bnatur_insiz: firstRowData.bnatur_insiz,
-        //   itemno: firstRowData.itemno,
-        //   itemgroup: firstRowData.itemgroup,
-        //   lenunit: firstRowData.lenunit,
-        //   hscode: firstRowData.hscode,
-        //   wgtunit: firstRowData.wgtunit,
-        //   custitemnm: firstRowData.custitemnm,
-        //   unitqty: firstRowData.unitqty,
-        //   procday: firstRowData.procday,
-        //   files: firstRowData.files,
-        //   auto: firstRowData.auto
-        // });
         setIfSelectFirstRow(true);
       }
     }
@@ -522,77 +451,6 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     setIfSelectFirstRow(false);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
-    // setInfomation({
-    //   pgSize: PAGE_SIZE,
-    //   workType: "U",
-    //   itemcd: selectedRowData.itemcd,
-    //   itemnm: selectedRowData.itemnm,
-    //   insiz: selectedRowData.insiz,
-    //   itemacnt: selectedRowData.itemacnt,
-    //   useyn: selectedRowData.useyn == "Y" ? "Y" : "N",
-    //   custcd: selectedRowData.custcd,
-    //   custnm: selectedRowData.custnm,
-    //   itemcd_s: selectedRowData.itemcd_s,
-    //   spec: selectedRowData.spec,
-    //   location: "01",
-    //   remark: selectedRowData.remark,
-    //   bnatur: selectedRowData.bnatur,
-    //   itemlvl1: selectedRowData.itemlvl1,
-    //   itemlvl2: selectedRowData.itemlvl2,
-    //   itemlvl3: selectedRowData.itemlvl3,
-    //   itemlvl4: selectedRowData.itemlvl4,
-    //   bomyn: selectedRowData.bomyn,
-    //   attdatnum: selectedRowData.attdatnum,
-    //   row_values: selectedRowData.row_values,
-    //   safeqty: selectedRowData.safeqty,
-    //   unitwgt: selectedRowData.unitwgt,
-    //   invunit: selectedRowData.invunit,
-    //   dwgno: selectedRowData.dwgno,
-    //   maker: selectedRowData.maker,
-    //   qcyn: selectedRowData.qcyn == "Y" ? "Y" : "N",
-    //   attdatnum_img: selectedRowData.attdatnum_img,
-    //   attdatnum_img2: selectedRowData.attdatnum_img2,
-    //   snp: selectedRowData.snp,
-    //   person: selectedRowData.person,
-    //   extra_field2: selectedRowData.extra_field2,
-    //   purleadtime: selectedRowData.purleadtime,
-    //   len: selectedRowData.len,
-    //   purqty: selectedRowData.purqty,
-    //   boxqty: selectedRowData.boxqty,
-    //   pac: selectedRowData.pac,
-    //   bnatur_insiz: selectedRowData.bnatur_insiz,
-    //   itemno: selectedRowData.itemno,
-    //   itemgroup: selectedRowData.itemgroup,
-    //   lenunit: selectedRowData.lenunit,
-    //   hscode: selectedRowData.hscode,
-    //   wgtunit: selectedRowData.wgtunit,
-    //   custitemnm: selectedRowData.custitemnm,
-    //   unitqty: selectedRowData.unitqty,
-    //   procday: selectedRowData.procday,
-    //   files: selectedRowData.files,
-    //   auto: selectedRowData.auto,
-    // });
-    // if (tabSelected === 1) {
-    //   setsubFilters((prev) => ({
-    //     ...prev,
-    //     itemcd: selectedRowData.itemcd,
-    //     itemnm: selectedRowData.itemnm,
-    //     insiz: selectedRowData.insiz,
-    //     itemacnt: selectedRowData.itemacnt,
-    //     useyn: selectedRowData.useyn,
-    //     custcd: selectedRowData.custcd,
-    //     custnm: selectedRowData.custnm,
-    //     itemcd_s: "",
-    //     spec: selectedRowData.spec,
-    //     location: selectedRowData.location,
-    //     remark: selectedRowData.remark,
-    //     bnatur: selectedRowData.bnatur,
-    //     itemlvl1: selectedRowData.itemlvl1,
-    //     itemlvl2: selectedRowData.itemlvl2,
-    //     itemlvl3: selectedRowData.itemlvl3,
-    //   }));
-    // }
   };
 
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -765,7 +623,9 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
                   {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="itemacnt"
-                      value={filters.itemacnt == undefined? "" : filters.itemacnt}
+                      value={
+                        filters.itemacnt == undefined ? "" : filters.itemacnt
+                      }
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
                     />

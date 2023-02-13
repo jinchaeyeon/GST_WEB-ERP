@@ -246,7 +246,6 @@ const SA_B2221: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
     if (data.isSuccess === true && data.tables.length > 0) {
       const rows = data.tables[0].Rows;
 

@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import RequiredHeader from "../components/RequiredHeader";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -871,6 +872,7 @@ const SY_A0120: React.FC = () => {
               field={"user_name"}
               title={"사용자명"}
               width={"150px"}
+              headerCell={RequiredHeader}
               className="required"
             />
             <GridColumn
@@ -878,6 +880,7 @@ const SY_A0120: React.FC = () => {
               title={"비밀번호"}
               width={"120px"}
               cell={EncryptedCell}
+              headerCell={RequiredHeader}
               className="required"
             />
             <GridColumn
@@ -885,6 +888,7 @@ const SY_A0120: React.FC = () => {
               title={"비밀번호 확인"}
               width={"120px"}
               cell={EncryptedCell}
+              headerCell={RequiredHeader}
               className="required"
             />
             <GridColumn
@@ -904,6 +908,7 @@ const SY_A0120: React.FC = () => {
               title={"사용자구분"}
               width={"150px"}
               cell={CustomComboBoxCell}
+              headerCell={RequiredHeader}
               className="required"
             />
             <GridColumn

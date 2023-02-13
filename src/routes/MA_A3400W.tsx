@@ -1436,14 +1436,6 @@ const MA_A3400W: React.FC = () => {
               >
                 기타출고생성
               </Button>
-              {/* <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                수주저장
-              </Button> */}
               <Button
                 onClick={onDeleteClick}
                 icon="delete"

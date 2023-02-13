@@ -11,6 +11,7 @@ import {
   GridCellProps,
   GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
+import { gridList } from "../store/columns/MA_A2700W_C";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
@@ -45,7 +46,7 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A2000W_Window";
+import DetailWindow from "../components/Windows/MA_A2700W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -62,14 +63,63 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-
-const DATA_ITEM_KEY = "ordnum";
+type TdataArr = {
+  rowstatus_s: string[];
+  itemgrade_s: string[];
+  itemcd_s: string[];
+  itemnm_s: string[];
+  itemacnt_s: string[];
+  qty_s: string[];
+  qtyunit_s: string[];
+  unitwgt_s: string[];
+  wgtunit_s: string[];
+  len_s: string[];
+  itemthick_s: string[];
+  width_s: string[];
+  unpcalmeth_s: string[];
+  UNPFACTOR_s: string[];
+  unp_s: string[];
+  amt_s: string[];
+  dlramt_s: string[];
+  wonamt_s: string[];
+  taxamt_s: string[];
+  maker_s: string[];
+  usegb_s: string[];
+  spec_s: string[];
+  badcd_s: string[];
+  BADTEMP_s: string[];
+  poregnum_s: string[];
+  lcno_s: string[];
+  heatno_s: string[];
+  SONGNO_s: string[];
+  projectno_s: string[];
+  lotnum_s: string[];
+  orglot_s: string[];
+  boxno_s: string[];
+  PRTNO_s: string[];
+  account_s: string[];
+  qcnum_s: string[];
+  qcseq_s: string[];
+  APPNUM_s: string[];
+  seq2_s: string[];
+  totwgt_s: string[];
+  purnum_s: string[];
+  purseq_s: string[];
+  ordnum_s: string[];
+  ordseq_s: string[];
+  remark_s: string[];
+  load_place_s: string[];
+  pac_s: string[];
+  itemlvl1_s: string[];
+  enddt_s: string[];
+  extra_field1_s: string[];
+};
+const DATA_ITEM_KEY = "recnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
 
 const MA_A2700W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -93,8 +143,8 @@ const MA_A2700W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        frdt: setDefaultDate(customOptionData, "ymdFrdt"),
-        todt: setDefaultDate(customOptionData, "ymdTodt"),
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
         cboLocation: defaultOption.find(
           (item: any) => item.id === "cboLocation"
         ).valueCode,
@@ -112,12 +162,15 @@ const MA_A2700W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_BA016, L_MA002, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
+  const [pacListData, setPacListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -143,10 +196,14 @@ const MA_A2700W: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [inuseListData, setInuseListData] = useState([COM_CODE_DEFAULT_VALUE]);
   const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
+      const pacQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
+      );
       const ordstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
       );
@@ -175,10 +232,13 @@ const MA_A2700W: React.FC = () => {
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
+      const inuseQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_MA002")
+      );
       const finynQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
       );
-
+      fetchQuery(pacQueryStr, setPacListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(taxdivQueryStr, setTaxdivListData);
@@ -187,6 +247,7 @@ const MA_A2700W: React.FC = () => {
       fetchQuery(departmentQueryStr, setDepartmentsListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      fetchQuery(inuseQueryStr, setInuseListData);
       fetchQuery(finynQueryStr, setFinynListData);
     }
   }, [bizComponentData]);
@@ -225,12 +286,12 @@ const MA_A2700W: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.ordnum]: true });
+      setSelectedState({ [rowData.recnum]: true });
 
       setDetailFilters((prev) => ({
         ...prev,
-        location: rowData.location,
-        ordnum: rowData.ordnum,
+        recnum: rowData.recnum,
+        seq1: rowData.seq1,
       }));
 
       setIsCopy(false);
@@ -260,10 +321,6 @@ const MA_A2700W: React.FC = () => {
   );
 
   const [selectedState, setSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [detailSelectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -334,7 +391,8 @@ const MA_A2700W: React.FC = () => {
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
-    ordnum: "",
+    recdt: "",
+    seq1: 0,
   });
 
   //조회조건 파라미터
@@ -366,111 +424,324 @@ const MA_A2700W: React.FC = () => {
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_SA_A2000W_Q",
+    procedureName: "P_MA_A2700W_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
       "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
       "@p_location": filters.cboLocation,
-      "@p_dtgb": "",
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_ordnum": detailFilters.ordnum,
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_itemcd": "",
-      "@p_itemnm": "",
-      "@p_person": "",
-      "@p_finyn": "",
-      "@p_dptcd": "",
-      "@p_ordsts": "",
-      "@p_doexdiv": "",
-      "@p_ordtype": "",
-      "@p_poregnum": "",
+      "@p_position": filters.position,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_recdt": detailFilters.recdt,
+      "@p_seq1": detailFilters.seq1,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_finyn": filters.finyn,
+      "@p_doexdiv": filters.cboDoexdiv,
+      "@p_inuse": filters.inuse,
+      "@p_person": filters.cboPerson,
+      "@p_lotnum": filters.lotnum,
+      "@p_remark": filters.remark,
+      "@p_pursiz": filters.pursiz,
     },
   };
 
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "N",
+    orgdiv: "01",
+    recdt: "",
+    seq1: 0,
+    cboLocation: "01",
+    position: "",
+    doexdiv: "A",
+    amtunit: "KRW",
+    inuse: "10",
+    inoutdiv: "",
+    indt: new Date(),
+    custcd: "",
+    custnm: "",
+    rcvcustcd: "",
+    rcvcustnm: "",
+    userid: userId,
+    pc: pc,
+    taxdiv: "A",
+    taxloca: "",
+    taxtype: "",
+    taxnum: "",
+    taxdt: "",
+    cboPerson: "admin",
+    attdatnum: "",
+    remark: "",
+    baseamt: 0,
+    importnum: "",
+    auto_transfer: "A",
+    pac: "",
+    rowstatus_s: "",
+    itemgrade_s: "",
+    itemcd_s: "",
+    itemnm_s: "",
+    itemacnt_s: "",
+    qty_s: "",
+    qtyunit_s: "",
+    unitwgt_s: "",
+    wgtunit_s: "",
+    len_s: "",
+    itemthick_s: "",
+    width_s: "",
+    unpcalmeth_s: "",
+    UNPFACTOR_s: "",
+    unp_s: "",
+    amt_s: "",
+    dlramt_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+    maker_s: "",
+    usegb_s: "",
+    spec_s: "",
+    badcd_s: "",
+    BADTEMP_s: "",
+    poregnum_s: "",
+    lcno_s: "",
+    heatno_s: "",
+    SONGNO_s: "",
+    projectno_s: "",
+    lotnum_s: "",
+    orglot_s: "",
+    boxno_s: "",
+    PRTNO_s: "",
+    account_s: "",
+    qcnum_s: "",
+    qcseq_s: "",
+    APPNUM_s: "",
+    seq2_s: "",
+    totwgt_s: "",
+    purnum_s: "",
+    purseq_s: "",
+    ordnum_s: "",
+    ordseq_s: "",
+    remark_s: "",
+    load_place_s: "",
+    pac_s: "",
+    itemlvl1_s: "",
+    enddt_s: "",
+    extra_field1_s: "",
+    form_id: "MA_A2700W",
+    serviceid: "2207A046",
+    reckey: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_MA_A2700W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_recdt": ParaData.recdt,
+      "@p_seq1":ParaData.seq1,
+      "@p_location": ParaData.cboLocation,
+      "@p_position": ParaData.position,
+      "@p_doexdiv": ParaData.doexdiv,
+      "@p_amtunit": ParaData.amtunit,
+      "@p_inuse": ParaData.inuse,
+      "@p_indt": convertDateToStr(ParaData.indt),
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_taxdiv": ParaData.taxdiv,
+      "@p_taxloca": ParaData.taxloca,
+      "@p_taxtype": ParaData.taxtype,
+      "@p_taxnum": ParaData.taxnum,
+      "@p_taxdt": ParaData.taxdt,
+      "@p_uschgrat": 0,
+      "@p_person": ParaData.cboPerson,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark": ParaData.remark,
+      "@p_baseamt": ParaData.baseamt,
+      "@p_importnum": ParaData.importnum,
+      "@p_auto_transfer": ParaData.auto_transfer,
+      "@p_pac": ParaData.pac,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_itemgrade_s": ParaData.itemgrade_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemnm_s": ParaData.itemnm_s,
+      "@p_itemacnt_s": ParaData.itemacnt_s,
+      "@p_qty_s": ParaData.qty_s,
+      "@p_qtyunit_s": ParaData.qtyunit_s,
+      "@p_unitwgt_s": ParaData.unitwgt_s,
+      "@p_wgtunit_s": ParaData.wgtunit_s,
+      "@p_len_s": ParaData.len_s,
+      "@p_itemthick_s": ParaData.itemthick_s,
+      "@p_width_s": ParaData.width_s,
+      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
+      "@p_UNPFACTOR_s": ParaData.UNPFACTOR_s,
+      "@p_unp_s": ParaData.unp_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_dlramt_s": ParaData.dlramt_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_maker_s": ParaData.maker_s,
+      "@p_usegb_s": ParaData.usegb_s,
+      "@p_spec_s": ParaData.spec_s,
+      "@p_badcd_s": ParaData.badcd_s,
+      "@p_BADTEMP_s": ParaData.BADTEMP_s,
+      "@p_poregnum_s": ParaData.poregnum_s,
+      "@p_lcno_s": ParaData.lcno_s,
+      "@p_heatno_s": ParaData.heatno_s,
+      "@p_SONGNO_s": ParaData.SONGNO_s,
+      "@p_projectno_s": ParaData.projectno_s,
+      "@p_lotnum_s": ParaData.lotnum_s,
+      "@p_orglot_s": ParaData.orglot_s,
+      "@p_boxno_s": ParaData.boxno_s,
+      "@p_PRTNO_s": ParaData.PRTNO_s,
+      "@p_account_s": ParaData.account_s,
+      "@p_qcnum_s": ParaData.qcnum_s,
+      "@p_qcseq_s": ParaData.qcseq_s,
+      "@p_APPNUM_s": ParaData.APPNUM_s,
+      "@p_seq2_s": ParaData.seq2_s,
+      "@p_totwgt_s": ParaData.totwgt_s,
+      "@p_purnum_s": ParaData.purnum_s,
+      "@p_purseq_s": ParaData.purseq_s,
+      "@p_ordnum_s": ParaData.ordnum_s,
+      "@p_ordseq_s": ParaData.ordseq_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_load_place_s": ParaData.load_place_s,
+      "@p_pac_s": ParaData.pac_s,
+      "@p_itemlvl1_s": ParaData.itemlvl1_s,
+      "@p_enddt_s": ParaData.enddt_s,
+      "@p_extra_field1_s": ParaData.extra_field1_s,
+      "@p_form_id": "MA_A2700W",
+      "@p_service_id": "2207A046",
+      "@p_wonchgrat": "0",
+      "@p_indt_s": "",
+      "@p_person_s": "",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.itemcd_s != null) {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
-    work_type: "",
-    ordnum: "",
+    work_type: "D",
+    recdt: "",
+    seq1: 0,
   });
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_SA_A2000W_S",
+    procedureName: "P_MA_A2700W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_service_id": "",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": "",
-      "@p_ordnum": paraDataDeleted.ordnum,
-      "@p_poregnum": "",
-      "@p_project": "",
-      "@p_ordtype": "",
-      "@p_ordsts": "",
-      "@p_taxdiv": "",
-      "@p_orddt": "",
-      "@p_dlvdt": "",
-      "@p_dptcd": "",
-      "@p_person": "",
-      "@p_amtunit": "",
-      "@p_portnm": "",
-      "@p_finaldes": "",
-      "@p_paymeth": "",
-      "@p_prcterms": "",
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_rcvcustcd": "",
-      "@p_rcvcustnm": "",
-      "@p_wonchgrat": "0",
-      "@p_uschgrat": "0",
-      "@p_doexdiv": "",
-      "@p_remark": "",
-      "@p_attdatnum": "",
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_recdt": paraDataDeleted.recdt,
+      "@p_seq1":paraDataDeleted.seq1,
+      "@p_location": ParaData.cboLocation,
+      "@p_position": ParaData.position,
+      "@p_doexdiv": ParaData.doexdiv,
+      "@p_amtunit": ParaData.amtunit,
+      "@p_inuse": ParaData.inuse,
+      "@p_indt": convertDateToStr(ParaData.indt),
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_ship_method": "",
-      "@p_dlv_method": "",
-      "@p_hullno": "",
-      "@p_rowstatus_s": "",
-      "@p_chk_s": "",
-      "@p_ordseq_s": "",
-      "@p_poregseq_s": "",
-      "@p_itemcd_s": "",
-      "@p_itemnm_s": "",
-      "@p_itemacnt_s": "",
-      "@p_insiz_s": "",
-      "@p_bnatur_s": "",
-      "@p_qty_s": "",
-      "@p_qtyunit_s": "",
-      "@p_totwgt_s": "",
-      "@p_wgtunit_s": "",
-      "@p_len_s": "",
-      "@p_totlen_s": "",
-      "@p_lenunit_s": "",
-      "@p_thickness_s": "",
-      "@p_width_s": "",
-      "@p_length_s": "",
-      "@p_unpcalmeth_s": "",
-      "@p_unp_s": "",
-      "@p_amt_s": "",
-      "@p_taxamt_s": "",
-      "@p_dlramt_s": "",
-      "@p_wonamt_s": "",
-      "@p_remark_s": "",
-      "@p_pac_s": "",
-      "@p_finyn_s": "",
-      "@p_specialunp_s": "",
-      "@p_lotnum_s": "",
-      "@p_dlvdt_s": "",
-      "@p_specialamt_s": "",
-      "@p_heatno_s": "",
-      "@p_bf_qty_s": "",
-      "@p_form_id": "",
+      "@p_taxdiv": ParaData.taxdiv,
+      "@p_taxloca": ParaData.taxloca,
+      "@p_taxtype": ParaData.taxtype,
+      "@p_taxnum": ParaData.taxnum,
+      "@p_taxdt": ParaData.taxdt,
+      "@p_uschgrat": 0,
+      "@p_person": ParaData.cboPerson,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark": ParaData.remark,
+      "@p_baseamt": ParaData.baseamt,
+      "@p_importnum": ParaData.importnum,
+      "@p_auto_transfer": ParaData.auto_transfer,
+      "@p_pac": ParaData.pac,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_itemgrade_s": ParaData.itemgrade_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemnm_s": ParaData.itemnm_s,
+      "@p_itemacnt_s": ParaData.itemacnt_s,
+      "@p_qty_s": ParaData.qty_s,
+      "@p_qtyunit_s": ParaData.qtyunit_s,
+      "@p_unitwgt_s": ParaData.unitwgt_s,
+      "@p_wgtunit_s": ParaData.wgtunit_s,
+      "@p_len_s": ParaData.len_s,
+      "@p_itemthick_s": ParaData.itemthick_s,
+      "@p_width_s": ParaData.width_s,
+      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
+      "@p_UNPFACTOR_s": ParaData.UNPFACTOR_s,
+      "@p_unp_s": ParaData.unp_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_dlramt_s": ParaData.dlramt_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_maker_s": ParaData.maker_s,
+      "@p_usegb_s": ParaData.usegb_s,
+      "@p_spec_s": ParaData.spec_s,
+      "@p_badcd_s": ParaData.badcd_s,
+      "@p_BADTEMP_s": ParaData.BADTEMP_s,
+      "@p_poregnum_s": ParaData.poregnum_s,
+      "@p_lcno_s": ParaData.lcno_s,
+      "@p_heatno_s": ParaData.heatno_s,
+      "@p_SONGNO_s": ParaData.SONGNO_s,
+      "@p_projectno_s": ParaData.projectno_s,
+      "@p_lotnum_s": ParaData.lotnum_s,
+      "@p_orglot_s": ParaData.orglot_s,
+      "@p_boxno_s": ParaData.boxno_s,
+      "@p_PRTNO_s": ParaData.PRTNO_s,
+      "@p_account_s": ParaData.account_s,
+      "@p_qcnum_s": ParaData.qcnum_s,
+      "@p_qcseq_s": ParaData.qcseq_s,
+      "@p_APPNUM_s": ParaData.APPNUM_s,
+      "@p_seq2_s": ParaData.seq2_s,
+      "@p_totwgt_s": ParaData.totwgt_s,
+      "@p_purnum_s": ParaData.purnum_s,
+      "@p_purseq_s": ParaData.purseq_s,
+      "@p_ordnum_s": ParaData.ordnum_s,
+      "@p_ordseq_s": ParaData.ordseq_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_load_place_s": ParaData.load_place_s,
+      "@p_pac_s": ParaData.pac_s,
+      "@p_itemlvl1_s": ParaData.itemlvl1_s,
+      "@p_enddt_s": ParaData.enddt_s,
+      "@p_extra_field1_s": ParaData.extra_field1_s,
+      "@p_form_id": "MA_A2700W",
+      "@p_service_id": "2207A046",
+      "@p_wonchgrat": "0",
+      "@p_indt_s": "",
+      "@p_person_s": "",
     },
   };
 
@@ -486,7 +757,7 @@ const MA_A2700W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       resetAllGrid();
 
@@ -512,9 +783,9 @@ const MA_A2700W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data);
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -554,7 +825,7 @@ const MA_A2700W: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.seq1 !== 0) fetchToDelete();
   }, [paraDataDeleted]);
 
   //메인 그리드 데이터 변경 되었을 때
@@ -562,12 +833,12 @@ const MA_A2700W: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.ordnum]: true });
+        setSelectedState({ [firstRowData.recnum]: true });
 
         setDetailFilters((prev) => ({
           ...prev,
-          location: firstRowData.location,
-          ordnum: firstRowData.ordnum,
+          recdt: firstRowData.recdt,
+          seq1: firstRowData.seq1,
         }));
 
         setIfSelectFirstRow(true);
@@ -602,8 +873,8 @@ const MA_A2700W: React.FC = () => {
 
     setDetailFilters((prev) => ({
       ...prev,
-      location: selectedRowData.location,
-      ordnum: selectedRowData.ordnum,
+      recdt: selectedRowData.recdt,
+      seq1: selectedRowData.seq1,
     }));
   };
 
@@ -661,21 +932,19 @@ const MA_A2700W: React.FC = () => {
     );
   };
 
-  const calculateWidth = (field: any) => {
-    let maxWidth = 0;
-    mainDataResult.data.forEach((item) => {
-      const size = calculateSize(item[field], {
-        font: "Source Sans Pro",
-        fontSize: "16px",
-      }); // pass the font properties based on the application
-      if (size.width > maxWidth) {
-        maxWidth = size.width;
-      }
-    });
-
-    return maxWidth;
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    detailDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    );
   };
-
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -698,35 +967,17 @@ const MA_A2700W: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-  const onCopyClick = () => {
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
-
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item.ordnum === ordnum
-    );
-
-    setDetailFilters((prev) => ({
-      ...prev,
-      location: selectedRowData.location,
-      ordnum: selectedRowData.ordnum,
-    }));
-
-    setIsCopy(true);
-    setWorkType("N");
-    setDetailWindowVisible(true);
-  };
-
   const onDeleteClick = (e: any) => {
-    if (!window.confirm(findMessage(messagesData, "SA_A2000W_001"))) {
-      return false;
-    }
-
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
+    const datas = mainDataResult.data.filter(
+      (item) =>
+        item.recnum == Object.getOwnPropertyNames(selectedState)[0]
+    )[0]
 
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      ordnum: ordnum,
+      recdt: datas.recdt,
+      seq1: datas.seq1
     }));
   };
 
@@ -749,20 +1000,8 @@ const MA_A2700W: React.FC = () => {
     }
 
     paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.ordnum = "";
-  };
-
-  const reloadData = (workType: string) => {
-    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
-    if (workType === "U") {
-      setIfSelectFirstRow(false);
-    } else {
-      setIfSelectFirstRow(true);
-    }
-
-    resetAllGrid();
-    fetchMainGrid();
-    fetchDetailGrid();
+    paraDataDeleted.recdt = "";
+    paraDataDeleted.seq1 = 0;
   };
 
   interface ICustData {
@@ -856,11 +1095,354 @@ const MA_A2700W: React.FC = () => {
         newSelectedState[idGetter(item)] = checked;
       });
 
-      setDetailSelectedState(newSelectedState);
     },
     []
   );
 
+  const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
+    let valid = true;
+    try {
+      if (data.length == 0) {
+        throw findMessage(messagesData, "MA_A2700W_001");
+      }
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].qty == 0) {
+          alert("수량은 필수입니다.");
+          return false;
+        }
+      }
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0) return false;
+    setParaData(filter);
+
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      itemgrade_s: [],
+      itemcd_s: [],
+      itemnm_s: [],
+      itemacnt_s: [],
+      qty_s: [],
+      qtyunit_s: [],
+      unitwgt_s: [],
+      wgtunit_s: [],
+      len_s: [],
+      itemthick_s: [],
+      width_s: [],
+      unpcalmeth_s: [],
+      UNPFACTOR_s: [],
+      unp_s: [],
+      amt_s: [],
+      dlramt_s: [],
+      wonamt_s: [],
+      taxamt_s: [],
+      maker_s: [],
+      usegb_s: [],
+      spec_s: [],
+      badcd_s: [],
+      BADTEMP_s: [],
+      poregnum_s: [],
+      lcno_s: [],
+      heatno_s: [],
+      SONGNO_s: [],
+      projectno_s: [],
+      lotnum_s: [],
+      orglot_s: [],
+      boxno_s: [],
+      PRTNO_s: [],
+      account_s: [],
+      qcnum_s: [],
+      qcseq_s: [],
+      APPNUM_s: [],
+      seq2_s: [],
+      totwgt_s: [],
+      purnum_s: [],
+      purseq_s: [],
+      ordnum_s: [],
+      ordseq_s: [],
+      remark_s: [],
+      load_place_s: [],
+      pac_s: [],
+      itemlvl1_s: [],
+      enddt_s: [],
+      extra_field1_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus="",
+        itemgrade="",
+        itemcd="",
+        itemnm="",
+        itemacnt="",
+        qty="",
+        qtyunit="",
+        unitwgt="",
+        wgtunit="",
+        len="",
+        itemthick="",
+        width="",
+        unpcalmeth="",
+        UNPFACTOR="",
+        unp="",
+        amt="",
+        dlramt="",
+        wonamt="",
+        taxamt="",
+        maker="",
+        usegb="",
+        spec="",
+        badcd="",
+        BADTEMP="",
+        poregnum="",
+        lcno="",
+        heatno="",
+        SONGNO="",
+        projectno="",
+        lotnum="",
+        orglot="",
+        boxno="",
+        PRTNO="",
+        account="",
+        qcnum="",
+        qcseq="",
+        APPNUM="",
+        seq2="",
+        totwgt="",
+        purnum="",
+        purseq="",
+        ordnum="",
+        ordseq="",
+        remark="",
+        load_place="",
+        pac="",
+        itemlvl1="",
+        enddt="",
+        extra_field1="",
+        indt=""
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.itemgrade_s.push(itemgrade);
+      dataArr.itemcd_s.push(itemcd);
+      dataArr.itemnm_s.push(itemnm);
+      dataArr.itemacnt_s.push(itemacnt);
+      dataArr.qty_s.push(qty== "" ? 0 :qty);
+      dataArr.qtyunit_s.push(qtyunit);
+      dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
+      dataArr.wgtunit_s.push(wgtunit);
+      dataArr.len_s.push(len== "" ? 0 :len);
+      dataArr.itemthick_s.push(itemthick== "" ? 0 :itemthick);
+      dataArr.width_s.push(width== "" ? 0 :width);
+      dataArr.unpcalmeth_s.push(unpcalmeth == "" ? "Q" : unpcalmeth);
+      dataArr.UNPFACTOR_s.push(UNPFACTOR == "" ? 0 : UNPFACTOR);
+      dataArr.unp_s.push(unp);
+      dataArr.amt_s.push(amt);
+      dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+      dataArr.wonamt_s.push(wonamt== "" ? 0 :wonamt);
+      dataArr.taxamt_s.push(taxamt== "" ? 0 :taxamt);
+      dataArr.maker_s.push(maker);
+      dataArr.usegb_s.push(usegb);
+      dataArr.spec_s.push(spec);
+      dataArr.badcd_s.push(badcd);
+      dataArr.BADTEMP_s.push(BADTEMP);
+      dataArr.poregnum_s.push(poregnum);
+      dataArr.lcno_s.push(lcno);
+      dataArr.heatno_s.push(heatno);
+      dataArr.SONGNO_s.push(SONGNO);
+      dataArr.projectno_s.push(projectno);
+      dataArr.lotnum_s.push(lotnum);
+      dataArr.orglot_s.push(orglot);
+      dataArr.boxno_s.push(boxno);
+      dataArr.PRTNO_s.push(PRTNO);
+      dataArr.account_s.push(account);
+      dataArr.qcnum_s.push(qcnum);
+      dataArr.qcseq_s.push(qcseq  == "" ? 0 : qcseq);
+      dataArr.APPNUM_s.push(APPNUM);
+      dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
+      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+      dataArr.purnum_s.push(purnum);
+      dataArr.purseq_s.push(purseq== "" ? 0 : purseq);
+      dataArr.ordnum_s.push(ordnum);
+      dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
+      dataArr.remark_s.push(remark);
+      dataArr.load_place_s.push(load_place);
+      dataArr.pac_s.push(pac);
+      dataArr.itemlvl1_s.push(itemlvl1);
+      dataArr.enddt_s.push(enddt);
+      dataArr.extra_field1_s.push(extra_field1== "" ? 0 : extra_field1);
+    });
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const {
+        rowstatus="",
+        itemgrade="",
+        itemcd="",
+        itemnm="",
+        itemacnt="",
+        qty="",
+        qtyunit="",
+        unitwgt="",
+        wgtunit="",
+        len="",
+        itemthick="",
+        width="",
+        unpcalmeth="",
+        UNPFACTOR="",
+        unp="",
+        amt="",
+        dlramt="",
+        wonamt="",
+        taxamt="",
+        maker="",
+        usegb="",
+        spec="",
+        badcd="",
+        BADTEMP="",
+        poregnum="",
+        lcno="",
+        heatno="",
+        SONGNO="",
+        projectno="",
+        lotnum="",
+        orglot="",
+        boxno="",
+        PRTNO="",
+        account="",
+        qcnum="",
+        qcseq="",
+        APPNUM="",
+        seq2="",
+        totwgt="",
+        purnum="",
+        purseq="",
+        ordnum="",
+        ordseq="",
+        remark="",
+        load_place="",
+        pac="",
+        itemlvl1="",
+        enddt="",
+        extra_field1="",
+        indt=""
+      } = item;
+
+      
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.itemgrade_s.push(itemgrade);
+      dataArr.itemcd_s.push(itemcd);
+      dataArr.itemnm_s.push(itemnm);
+      dataArr.itemacnt_s.push(itemacnt);
+      dataArr.qty_s.push(qty== "" ? 0 :qty);
+      dataArr.qtyunit_s.push(qtyunit);
+      dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
+      dataArr.wgtunit_s.push(wgtunit);
+      dataArr.len_s.push(len== "" ? 0 :len);
+      dataArr.itemthick_s.push(itemthick== "" ? 0 :itemthick);
+      dataArr.width_s.push(width== "" ? 0 :width);
+      dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
+      dataArr.UNPFACTOR_s.push(UNPFACTOR == "" ? 0 : UNPFACTOR);
+      dataArr.unp_s.push(unp);
+      dataArr.amt_s.push(amt);
+      dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+      dataArr.wonamt_s.push(wonamt== "" ? 0 :wonamt);
+      dataArr.taxamt_s.push(taxamt== "" ? 0 :taxamt);
+      dataArr.maker_s.push(maker);
+      dataArr.usegb_s.push(usegb);
+      dataArr.spec_s.push(spec);
+      dataArr.badcd_s.push(badcd);
+      dataArr.BADTEMP_s.push(BADTEMP);
+      dataArr.poregnum_s.push(poregnum);
+      dataArr.lcno_s.push(lcno);
+      dataArr.heatno_s.push(heatno);
+      dataArr.SONGNO_s.push(SONGNO);
+      dataArr.projectno_s.push(projectno);
+      dataArr.lotnum_s.push(lotnum);
+      dataArr.orglot_s.push(orglot);
+      dataArr.boxno_s.push(boxno);
+      dataArr.PRTNO_s.push(PRTNO);
+      dataArr.account_s.push(account);
+      dataArr.qcnum_s.push(qcnum);
+      dataArr.qcseq_s.push(qcseq  == "" ? 0 : qcseq);
+      dataArr.APPNUM_s.push(APPNUM);
+      dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
+      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+      dataArr.purnum_s.push(purnum);
+      dataArr.purseq_s.push(purseq== "" ? 0 : purseq);
+      dataArr.ordnum_s.push(ordnum);
+      dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
+      dataArr.remark_s.push(remark);
+      dataArr.load_place_s.push(load_place);
+      dataArr.pac_s.push(pac);
+      dataArr.itemlvl1_s.push(itemlvl1);
+      dataArr.enddt_s.push(enddt);
+      dataArr.extra_field1_s.push(extra_field1== "" ? 0 : extra_field1);
+    });
+    setParaData((prev) => ({
+      ...prev,
+      workType: workType,
+      outdt: filter.outdt,
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      itemgrade_s: dataArr.itemgrade_s.join("|"),
+      itemcd_s: dataArr.itemcd_s.join("|"),
+      itemnm_s: dataArr.itemnm_s.join("|"),
+      itemacnt_s: dataArr.itemacnt_s.join("|"),
+      qty_s: dataArr.qty_s.join("|"),
+      qtyunit_s: dataArr.qtyunit_s.join("|"),
+      unitwgt_s: dataArr.unitwgt_s.join("|"),
+      wgtunit_s: dataArr.wgtunit_s.join("|"),
+      len_s: dataArr.len_s.join("|"),
+      itemthick_s: dataArr.itemthick_s.join("|"),
+      width_s: dataArr.width_s.join("|"),
+      unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
+      UNPFACTOR_s: dataArr.UNPFACTOR_s.join("|"),
+      unp_s: dataArr.unp_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
+      dlramt_s: dataArr.dlramt_s.join("|"),
+      wonamt_s: dataArr.wonamt_s.join("|"),
+      taxamt_s: dataArr.taxamt_s.join("|"),
+      maker_s: dataArr.maker_s.join("|"),
+      usegb_s: dataArr.usegb_s.join("|"),
+      spec_s: dataArr.spec_s.join("|"),
+      badcd_s: dataArr.badcd_s.join("|"),
+      BADTEMP_s: dataArr.BADTEMP_s.join("|"),
+      poregnum_s: dataArr.poregnum_s.join("|"),
+      lcno_s: dataArr.lcno_s.join("|"),
+      heatno_s: dataArr.heatno_s.join("|"),
+      SONGNO_s: dataArr.SONGNO_s.join("|"),
+      projectno_s: dataArr.projectno_s.join("|"),
+      lotnum_s: dataArr.lotnum_s.join("|"),
+      orglot_s: dataArr.orglot_s.join("|"),
+      boxno_s: dataArr.boxno_s.join("|"),
+      PRTNO_s: dataArr.PRTNO_s.join("|"),
+      account_s: dataArr.account_s.join("|"),
+      qcnum_s: dataArr.qcnum_s.join("|"),
+      qcseq_s: dataArr.qcseq_s.join("|"),
+      APPNUM_s: dataArr.APPNUM_s.join("|"),
+      seq2_s: dataArr.seq2_s.join("|"),
+      totwgt_s: dataArr.totwgt_s.join("|"),
+      purnum_s: dataArr.purnum_s.join("|"),
+      purseq_s: dataArr.purseq_s.join("|"),
+      ordnum_s: dataArr.ordnum_s.join("|"),
+      ordseq_s: dataArr.ordseq_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      load_place_s: dataArr.load_place_s.join("|"),
+      pac_s: dataArr.pac_s.join("|"),
+      itemlvl1_s: dataArr.itemlvl1_s.join("|"),
+      enddt_s: dataArr.enddt_s.join("|"),
+      extra_field1_s: dataArr.extra_field1_s.join("|"),
+    }));
+  };
   return (
     <>
       <TitleContainer>
@@ -1065,21 +1647,13 @@ const MA_A2700W: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
-            {/* <ButtonContainer>
+            <ButtonContainer>
               <Button
                 onClick={onAddClick}
                 themeColor={"primary"}
                 icon="file-add"
               >
-                수주생성
-              </Button>
-              <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                수주복사
+                직접입고생성
               </Button>
               <Button
                 onClick={onDeleteClick}
@@ -1087,9 +1661,9 @@ const MA_A2700W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
               >
-                수주삭제
+                직접입고삭제
               </Button>
-            </ButtonContainer> */}
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "36vh" }}
@@ -1117,6 +1691,9 @@ const MA_A2700W: React.FC = () => {
                 finyn: finynListData.find(
                   (item: any) => item.code === row.finyn
                 )?.name,
+                inuse: inuseListData.find(
+                  (item: any) => item.sub_code === row.inuse
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1143,49 +1720,46 @@ const MA_A2700W: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              field="reckey"
-              title="입고일자"
-              width="150px"
-              cell={DateCell}
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="recnum" title="입고번호" width="200px" />
-            <GridColumn field="custcd" title="업체코드" width="200px" />
-            <GridColumn field="custnm" title="업체명" width="250px" />
-            <GridColumn field="inuse" title="입고용도" width="150px" />
-            <GridColumn field="person" title="담당자" width="150px" />
-            <GridColumn field="doexdiv" title="내수구분" width="150px" />
-            <GridColumn field="taxdiv" title="과세구분" width="150px" />
-            <GridColumn
-              field="qty"
-              title="수량"
-              width="120px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="wonamt"
-              title="원화금액"
-              width="120px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="taxamt"
-              title="세액"
-              width="120px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="totamt"
-              title="합계금액"
-              width="120px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn field="remark" title="비고" width="300px" />
+            <GridColumn cell={CommandCell} width="60px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        item.sortOrder === 0
+                          ? DateCell
+                          : item.sortOrder === 8
+                          ? NumberCell
+                          : item.sortOrder === 9
+                          ? NumberCell
+                          : item.sortOrder === 10
+                          ? NumberCell
+                          : item.sortOrder === 11
+                          ? NumberCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : item.sortOrder === 8
+                          ? gridSumQtyFooterCell
+                          : item.sortOrder === 9
+                          ? gridSumQtyFooterCell
+                          : item.sortOrder === 10
+                          ? gridSumQtyFooterCell
+                          : item.sortOrder === 11
+                          ? gridSumQtyFooterCell
+                          : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1205,6 +1779,9 @@ const MA_A2700W: React.FC = () => {
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
+              pac: pacListData.find(
+                (item: any) => item.sub_code === row.pac
+              )?.code_name,
             })),
             detailDataState
           )}
@@ -1223,58 +1800,77 @@ const MA_A2700W: React.FC = () => {
           //컬럼너비조정
           resizable={true}
         >
-          <GridColumn
-            field="itemcd"
-            title="품목코드"
-            width="200px"
-            footerCell={detailTotalFooterCell}
-          />
-          <GridColumn field="itemnm" title="품목명" width="250px" />
-          <GridColumn field="itemlvl1" title="대분류" width="150px" />
-          <GridColumn field="itemacnt" title="품목계정" width="200px" />
-          <GridColumn field="insiz" title="규격" width="200px" />
-          <GridColumn field="lotnum" title="LOT NO" width="200px" />
-          <GridColumn
-            field="qty"
-            title="수량"
-            width="120px"
-            cell={NumberCell}
-            footerCell={gridSumQtyFooterCell}
-          />
-          <GridColumn field="qtyunit" title="수량단위" width="150px" />
-          <GridColumn
-            field="unp"
-            title="단가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="wonamt"
-            title="원화금액"
-            width="120px"
-            cell={NumberCell}
-            footerCell={gridSumQtyFooterCell}
-          />
-          <GridColumn
-            field="taxamt"
-            title="세액"
-            width="120px"
-            cell={NumberCell}
-            footerCell={gridSumQtyFooterCell}
-          />
-          <GridColumn field="remark" title="비고" width="300px" />
-          <GridColumn field="load_place" title="적재장소" width="150px" />
-          <GridColumn field="pac" title="도/사급구분" width="150px" />
+          {customOptionData !== null &&
+            customOptionData.menuCustomColumnOptions["grdList2"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 && (
+                  <GridColumn
+                    key={idx}
+                    id={item.id}
+                    field={item.fieldName}
+                    title={item.caption}
+                    width={item.width}
+                    cell={
+                      item.sortOrder === 8
+                        ? NumberCell
+                        : item.sortOrder === 10
+                        ? NumberCell
+                        : item.sortOrder === 11
+                        ? NumberCell
+                        : item.sortOrder === 12
+                        ? NumberCell
+                        : item.sortOrder === 14
+                        ? NumberCell
+                        : item.sortOrder === 15
+                        ? NumberCell
+                        : item.sortOrder === 17
+                        ? NumberCell
+                        : item.sortOrder === 18
+                        ? NumberCell
+                        : undefined
+                    }
+                    footerCell={
+                      item.sortOrder === 1
+                        ? detailTotalFooterCell
+                        : item.sortOrder === 8
+                        ? gridSumQtyFooterCell2
+                        : item.sortOrder === 10
+                        ? gridSumQtyFooterCell2
+                        : item.sortOrder === 11
+                        ? gridSumQtyFooterCell2
+                        : item.sortOrder === 12
+                        ? gridSumQtyFooterCell2
+                        : item.sortOrder === 14
+                        ? gridSumQtyFooterCell2
+                        : item.sortOrder === 15
+                        ? gridSumQtyFooterCell2
+                        : item.sortOrder === 17
+                        ? gridSumQtyFooterCell2
+                        : item.sortOrder === 18
+                        ? gridSumQtyFooterCell2
+                        : undefined
+                    }
+                  />
+                )
+            )}
         </Grid>
       </GridContainer>
       {detailWindowVisible && (
         <DetailWindow
-          getVisible={setDetailWindowVisible}
+          setVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
-          ordnum={detailFilters.ordnum}
-          isCopy={isCopy}
-          reloadData={reloadData}
-          para={detailParameters}
+          setData={setCopyData}
+          data={
+            mainDataResult.data.filter(
+              (item) =>
+                item.recnum == Object.getOwnPropertyNames(selectedState)[0]
+            )[0] == undefined
+              ? ""
+              : mainDataResult.data.filter(
+                  (item) =>
+                    item.recnum == Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+          }
         />
       )}
       {custWindowVisible && (
@@ -1290,6 +1886,19 @@ const MA_A2700W: React.FC = () => {
           workType={"FILTER"}
           setData={setItemData}
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );
