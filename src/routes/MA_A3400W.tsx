@@ -13,6 +13,7 @@ import {
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
+import { gridList } from "../store/columns/MA_A3400W_C";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
@@ -961,7 +962,6 @@ const MA_A3400W: React.FC = () => {
           return false;
         }
       }
-  
     } catch (e) {
       alert(e);
       valid = false;
@@ -1507,22 +1507,23 @@ const MA_A3400W: React.FC = () => {
             resizable={true}
           >
             <GridColumn cell={CommandCell} width="60px" />
-            <GridColumn
-              field="reckey"
-              title="출고번호"
-              width="250px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="outuse" title="출고용도" width="250px" />
-            <GridColumn
-              field="outdt"
-              title="출고일자"
-              width="200px"
-              cell={DateCell}
-            />
-            <GridColumn field="person" title="담당자" width="220px" />
-            <GridColumn field="remark" title="비고" width="400px" />
-            <GridColumn field="custnm" title="업체명" width="300px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={item.sortOrder === 2 ? DateCell : undefined}
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1559,60 +1560,39 @@ const MA_A3400W: React.FC = () => {
           //컬럼너비조정
           resizable={true}
         >
-          <GridColumn
-            field="itemcd"
-            title="품목코드"
-            width="250px"
-            footerCell={detailTotalFooterCell}
-          />
-          <GridColumn field="itemnm" title="품목명" width="200px" />
-          <GridColumn
-            field="qty"
-            title="수량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="model" title="기종" width="120px" />
-          <GridColumn
-            field="unp"
-            title="단가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="insiz" title="규격" width="120px" />
-          <GridColumn
-            field="amt"
-            title="금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="bnatur" title="재질" width="120px" />
-          <GridColumn
-            field="taxamt"
-            title="세액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="remark" title="비고" width="380px" />
-          <GridColumn field="lotnum" title="LOT NO" width="200px" />
-          <GridColumn
-            field="len"
-            title="길이"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="itemthick"
-            title="두께"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="width"
-            title="폭"
-            width="120px"
-            cell={NumberCell}
-          />
+          {customOptionData !== null &&
+            customOptionData.menuCustomColumnOptions["grdList2"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 && (
+                  <GridColumn
+                    key={idx}
+                    id={item.id}
+                    field={item.fieldName}
+                    title={item.caption}
+                    width={item.width}
+                    cell={
+                      item.sortOrder === 2
+                        ? NumberCell
+                        : item.sortOrder === 4
+                        ? NumberCell
+                        : item.sortOrder === 6
+                        ? NumberCell
+                        : item.sortOrder === 8
+                        ? NumberCell
+                        : item.sortOrder === 11
+                        ? NumberCell
+                        : item.sortOrder === 12
+                        ? NumberCell
+                        : item.sortOrder === 13
+                        ? NumberCell
+                        : undefined
+                    }
+                    footerCell={
+                      item.sortOrder === 0 ? detailTotalFooterCell : undefined
+                    }
+                  />
+                )
+            )}
         </Grid>
       </GridContainer>
       {custWindowVisible && (
@@ -1646,6 +1626,19 @@ const MA_A3400W: React.FC = () => {
                 )[0]
           }
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

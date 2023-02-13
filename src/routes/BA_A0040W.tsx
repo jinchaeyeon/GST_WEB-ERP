@@ -14,6 +14,7 @@ import {
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers";
+import { gridList } from "../store/columns/BA_A0040W_C";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -37,7 +38,7 @@ import {
   ButtonInField,
   FormBoxWrap,
   FormBox,
-  GridContainerWrap
+  GridContainerWrap,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -250,21 +251,20 @@ const BA_A0040: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if(value != null){
-      if(name == "useyn" || name == "qcyn"){
-        if(value == false || value == "N") {
+    if (value != null) {
+      if (name == "useyn" || name == "qcyn") {
+        if (value == false || value == "N") {
           setInfomation((prev) => ({
             ...prev,
             [name]: "N",
           }));
-        }else {
+        } else {
           setInfomation((prev) => ({
             ...prev,
             [name]: "Y",
           }));
         }
-      }
-      else {
+      } else {
         setInfomation((prev) => ({
           ...prev,
           [name]: value,
@@ -1692,39 +1692,31 @@ const BA_A0040: React.FC = () => {
               //컬럼너비조정
               resizable={true}
             >
-              <GridColumn
-                field="itemnm"
-                title="품목명"
-                footerCell={mainTotalFooterCell}
-                width="140px"
-              />
-              <GridColumn field="itemcd" title="품목코드" width="200px" />
-              <GridColumn field="spec" title="사양" width="140px" />
-              <GridColumn field="insiz" title="규격" width="160px" />
-              <GridColumn field="itemacnt" title="품목계정" width="140px" />
-              <GridColumn field="invunit" title="수량단위" width="100px" />
-              <GridColumn
-                field="useyn"
-                title="사용여부"
-                width="100px"
-                cell={CheckBoxCell}
-              />
-              <GridColumn
-                field="safeqty"
-                title="안전재고량"
-                width="140px"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="purleadtime"
-                title="구매리드타임"
-                width="140px"
-                cell={NumberCell}
-              />
-              <GridColumn field="cnt" title="첨부" width="140px" />
-              <GridColumn field="custnm" title="업체명" width="160px" />
-              <GridColumn field="remark" title="비고" width="250px" />
-              <GridColumn field="bnatur" title="재질" width="140px" />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          item.sortOrder === 6
+                            ? CheckBoxCell
+                            : item.sortOrder === 7
+                            ? NumberCell
+                            : item.sortOrder === 8
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1882,7 +1874,7 @@ const BA_A0040: React.FC = () => {
                   <td>
                     <Checkbox
                       name="useyn"
-                      value={infomation.useyn == "Y"? true: false}
+                      value={infomation.useyn == "Y" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
@@ -1962,7 +1954,7 @@ const BA_A0040: React.FC = () => {
                   <td>
                     <Checkbox
                       name="qcyn"
-                      value={infomation.qcyn == "Y"? true: false}
+                      value={infomation.qcyn == "Y" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
@@ -2065,38 +2057,42 @@ const BA_A0040: React.FC = () => {
                     ) === -1
                   }
                 />
-                <GridColumn
-                  field="recdt"
-                  title="적용일"
-                  width="260px"
-                  cell={DateCell}
-                  className="editable-new-only"
-                />
-                <GridColumn
-                  field="unpitem"
-                  title="단가항목"
-                  width="370px"
-                  cell={CustomComboBoxCell}
-                />
-                <GridColumn
-                  field="amtunit"
-                  title="화폐단위"
-                  width="200px"
-                  cell={CustomComboBoxCell}
-                />
-                <GridColumn
-                  field="itemacnt"
-                  title="품목계정"
-                  width="200px"
-                  cell={CustomComboBoxCell}
-                />
-                <GridColumn
-                  field="unp"
-                  title="단가"
-                  width="210px"
-                  cell={NumberCell}
-                />
-                <GridColumn field="remark" title="비고" width="380px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            item.sortOrder === 0
+                              ? DateCell
+                              : item.sortOrder === 1
+                              ? CustomComboBoxCell
+                              : item.sortOrder === 2
+                              ? CustomComboBoxCell
+                              : item.sortOrder === 3
+                              ? CustomComboBoxCell
+                              : item.sortOrder === 4
+                              ? NumberCell
+                              : undefined
+                          }
+                          className={
+                            item.sortOrder === 0
+                              ? "editable-new-only"
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
               </Grid>
             </GridContainer>
           </GridContainerWrap>
@@ -2129,6 +2125,19 @@ const BA_A0040: React.FC = () => {
           setData={getAttachmentsData}
           para={infomation.attdatnum}
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

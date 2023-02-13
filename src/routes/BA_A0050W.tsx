@@ -37,6 +37,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
+import { gridList } from "../store/columns/BA_A0050W_C";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
@@ -1288,13 +1289,22 @@ const BA_A0050: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              field="itemnm"
-              title="품목명"
-              footerCell={mainTotalFooterCell}
-              width="150px"
-            />
-            <GridColumn field="itemcd" title="품목코드" width="200px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
       </GridContainer>
       <GridContainer
@@ -1351,8 +1361,22 @@ const BA_A0050: React.FC = () => {
           //컬럼너비조정
           resizable={true}
         >
-          <GridColumn field="sub_code" title="공정코드" width="150px" footerCell={sub2TotalFooterCell}/>
-          <GridColumn field="code_name" title="공정명" width="200px" />
+          {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList2"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      footerCell={
+                        item.sortOrder === 0 ? sub2TotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
         </Grid>
       </GridContainer>
       <GridContainer
@@ -1436,49 +1460,41 @@ const BA_A0050: React.FC = () => {
           rowRender={customRowRender}
           editField={EDIT_FIELD}
         >
-          <GridColumn
-            field="proccd"
-            title="공정"
-            width="120px"
-            cell={CustomComboBoxCell}
-            footerCell={subTotalFooterCell}
-          />
-          <GridColumn field="procseq" title="공정순서" width="100px" cell={NumberCell}/>
-          <GridColumn
-            field="outprocyn"
-            title="외주구분"
-            width="100px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn
-            field="prodemp"
-            title="작업자"
-            width="150px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn field="prodmac" title="설비" width="150px" />
-          <GridColumn
-            field="chlditemcd"
-            title="소요자재코드"
-            width="150px"
-          />
-          <GridColumn field="chlditemnm" title="소요자재명" width="120px" />
-          <GridColumn field="unitqty" title="단위수량" width="120px" cell={NumberCell}/>
-          <GridColumn
-            field="qtyunit"
-            title="수량단위"
-            width="120px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn field="outgb" title="불출구분" width="120px" />
-          <GridColumn field="procqty" title="재공생산량" width="120px" cell={NumberCell}/>
-          <GridColumn
-            field="procunit"
-            title="생산량단위"
-            width="120px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn field="remark" title="비고" width="200px" />
+                      {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList3"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        item.sortOrder === 0 
+                        ? CustomComboBoxCell 
+                        :item.sortOrder === 1 
+                        ? NumberCell
+                        : item.sortOrder === 2
+                        ? CustomComboBoxCell 
+                        : item.sortOrder === 3
+                        ? CustomComboBoxCell 
+                        : item.sortOrder === 7
+                        ? NumberCell 
+                        : item.sortOrder === 8
+                        ? CustomComboBoxCell 
+                        : item.sortOrder === 10
+                        ? NumberCell 
+                        : item.sortOrder === 11
+                        ? CustomComboBoxCell 
+                        : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? subTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
         </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1513,6 +1529,19 @@ const BA_A0050: React.FC = () => {
           )}
           setData={reloadData2}
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

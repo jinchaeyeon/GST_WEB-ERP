@@ -12,6 +12,7 @@ import {
   GridCellProps,
 } from "@progress/kendo-react-grid";
 import YearDateCell from "../components/Cells/YearDateCell";
+import { gridList } from "../store/columns/BA_A0020W_C";
 import {
   TextArea,
   Checkbox,
@@ -240,20 +241,19 @@ const BA_A0020: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
     if (value != null) {
-      if(name == "useyn" || name == "scmyn" || name == "rtxisuyn"){
-        if(value == false || value == "N") {
+      if (name == "useyn" || name == "scmyn" || name == "rtxisuyn") {
+        if (value == false || value == "N") {
           setInfomation((prev) => ({
             ...prev,
             [name]: "N",
           }));
-        }else {
+        } else {
           setInfomation((prev) => ({
             ...prev,
             [name]: "Y",
           }));
         }
-      }
-      else {
+      } else {
         setInfomation((prev) => ({
           ...prev,
           [name]: value,
@@ -2526,32 +2526,23 @@ const BA_A0020: React.FC = () => {
               //컬럼너비조정
               resizable={true}
             >
-              <GridColumn
-                field="custcd"
-                title="업체코드"
-                footerCell={mainTotalFooterCell}
-                width="140px"
-              />
-              <GridColumn field="custnm" title="업체명" width="200px" />
-              <GridColumn field="custdiv" title="업체구분" width="140px" />
-              <GridColumn field="bizdiv" title="사업자구분" width="120px" />
-              <GridColumn field="ceonm" title="대표자명" width="100px" />
-              <GridColumn
-                field="bizregnum"
-                title="사업자등록번호"
-                width="180px"
-              />
-              <GridColumn field="address" title="주소" width="400px" />
-              <GridColumn field="email" title="이메일" width="180px" />
-              <GridColumn field="phonenum" title="전화번호" width="150px" />
-              <GridColumn field="faxnum" title="팩스번호" width="150px" />
-              <GridColumn
-                field="useyn"
-                title="사용여부"
-                width="100px"
-                cell={CheckBoxCell}
-              />
-              <GridColumn field="remark" title="비고" width="300px" />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={item.sortOrder === 10 ? CheckBoxCell : undefined}
+                        footerCell={
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -3051,7 +3042,7 @@ const BA_A0020: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                    <th>센드빌회원여부</th>
+                      <th>센드빌회원여부</th>
                       <td>
                         {bizComponentData !== null && (
                           <BizComponentComboBox
@@ -3162,45 +3153,32 @@ const BA_A0020: React.FC = () => {
                       ) === -1
                     }
                   />
-                  <GridColumn
-                    field="sort_seq"
-                    title="정렬순서"
-                    width="80px"
-                    cell={NumberCell}
-                  />
-                  <GridColumn
-                    field="custprsncd"
-                    title="업체담당자"
-                    width="150px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="prsnnm"
-                    title="성명"
-                    width="150px"
-                    className="required"
-                  />
-                  <GridColumn field="dptnm" title="부서명" width="200px" />
-                  <GridColumn field="telno" title="전화번호" width="150px" />
-                  <GridColumn
-                    field="phoneno"
-                    title="휴대폰번호"
-                    width="180px"
-                  />
-                  <GridColumn field="email" title="이메일" width="200px" />
-                  <GridColumn field="remark" title="비고" width="290px" />
-                  <GridColumn
-                    field="rtrchk"
-                    title="퇴사"
-                    width="80px"
-                    cell={CheckBoxCell}
-                  />
-                  <GridColumn
-                    field="attdatnum"
-                    title="첨부파일"
-                    width="160px"
-                    cell={CommandCell}
-                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            className={
+                              item.sortOrder === 2 ? "required" : undefined
+                            }
+                            editable={item.sortOrder === 1 ? false : undefined}
+                            cell={
+                              item.sortOrder === 0
+                                ? NumberCell
+                                : item.sortOrder === 8
+                                ? CheckBoxCell
+                                : item.sortOrder === 9
+                                ? CommandCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
                 </Grid>
               </GridContainer>
             </TabStripTab>
@@ -3276,63 +3254,58 @@ const BA_A0020: React.FC = () => {
                       ) === -1
                     }
                   />
-                  <GridColumn
-                    field="yyyy"
-                    cell={YearDateCell}
-                    title="결산년도"
-                    width="150px"
-                    className="required"
-                  />
-                  <GridColumn
-                    field="totasset"
-                    title="총자산"
-                    width="160px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="paid_up_capital"
-                    title="납입자본"
-                    width="160px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="totcapital"
-                    title="자본총계"
-                    width="160px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="salesmoney"
-                    title="매출액"
-                    width="200px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="operating_profits"
-                    title="영업이익"
-                    width="200px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="current_income"
-                    title="당기순이익"
-                    width="160px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="dedt_ratio"
-                    title="부채비율"
-                    width="160px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn field="remark" title="비고" width="290px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            className={
+                              item.sortOrder === 0 ? "required" : undefined
+                            }
+                            cell={
+                              item.sortOrder === 0
+                                ? YearDateCell
+                                : item.sortOrder === 1
+                                ? NumberCell
+                                : item.sortOrder === 2
+                                ? NumberCell
+                                : item.sortOrder === 3
+                                ? NumberCell
+                                : item.sortOrder === 4
+                                ? NumberCell
+                                : item.sortOrder === 5
+                                ? NumberCell
+                                : item.sortOrder === 6
+                                ? NumberCell
+                                : item.sortOrder === 7
+                                ? NumberCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 1
+                                ? gridSumQtyFooterCell
+                                : item.sortOrder === 2
+                                ? gridSumQtyFooterCell
+                                : item.sortOrder === 3
+                                ? gridSumQtyFooterCell
+                                : item.sortOrder === 4
+                                ? gridSumQtyFooterCell
+                                : item.sortOrder === 5
+                                ? gridSumQtyFooterCell
+                                : item.sortOrder === 6
+                                ? gridSumQtyFooterCell
+                                : item.sortOrder === 7
+                                ? gridSumQtyFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
                 </Grid>
               </GridContainer>
             </TabStripTab>
@@ -3366,6 +3339,19 @@ const BA_A0020: React.FC = () => {
           setData={getAttachmentsData2}
           para={subDataResult.data[rows - 1].attdatnum}
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

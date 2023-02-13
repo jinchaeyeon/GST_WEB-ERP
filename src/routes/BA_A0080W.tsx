@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { gridList } from "../store/columns/BA_A0080W_C";
 import { CellRender, RowRender } from "../components/Renderers";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
@@ -1192,47 +1193,28 @@ const BA_A0080: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn
-                field="recdt"
-                title="적용일"
-                width="150px"
-                cell={DateCell}
-                footerCell={mainTotalFooterCell}
-                className="editable-new-only"
-              />
-              <GridColumn
-                field="itemcd"
-                title="품목코드"
-                width="250px"
-                className="required"
-              />
-              <GridColumn field="itemnm" title="품목명" width="250px" />
-              <GridColumn
-                field="itemacnt"
-                title="품목계정"
-                width="150px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="unp"
-                title="단가"
-                width="150px"
-                cell={NumberCell}
-                className="required"
-              />
-              <GridColumn
-                field="amtunit"
-                title="화폐단위"
-                width="150px"
-                cell={CustomComboBoxCell}
-                className="required"
-              />
-              <GridColumn field="insiz" title="규격" width="150px" />
-              <GridColumn field="itemlvl1" title="대분류" width="150px" />
-              <GridColumn field="itemlvl2" title="중분류" width="150px" />
-              <GridColumn field="itemlvl3" title="소분류" width="150px" />
-              <GridColumn field="spec" title="사양" width="150px" />
-              <GridColumn field="remark" title="비고" width="150px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell = {
+                        item.sortOrder === 0 ? DateCell : item.sortOrder === 3 ? CustomComboBoxCell : item.sortOrder === 4 ? NumberCell : item.sortOrder === 5 ? CustomComboBoxCell : undefined
+                      }
+                      className={
+                        item.sortOrder === 0 ? "editable-new-only" : item.sortOrder === 4 ? "required" : item.sortOrder === 5 ? "required": undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1260,6 +1242,19 @@ const BA_A0080: React.FC = () => {
         />
       )}
       {excelWindowVisible && <ExcelWindow setVisible={setExcelWindowVisible} />}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };

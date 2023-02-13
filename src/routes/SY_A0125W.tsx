@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
 import { TextArea } from "@progress/kendo-react-inputs";
+import { gridList } from "../store/columns/SY_A0125W_C";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import {
   TreeList,
@@ -1377,22 +1378,25 @@ const SY_A0125W: React.FC = () => {
                 ) === -1
               }
             />
-            <GridColumn
-              field="user_id"
-              title="사원명"
-              width="150px"
-              className="readonly"
-              footerCell={subTotalFooterCell}
-            />
-            <GridColumn
-              field="postcd"
-              title="직위"
-              className="readonly"
-              width="150px"
-            />
-            <GridColumn field="email" title="이메일" width="200px" />
-            <GridColumn field="mobile_no" title="핸드폰번호" width="150px" />
-            <GridColumn field="memo" title="메모" width="260px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdAllList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      className={
+                        item.sortOrder === 0 ? "readonly" : item.sortOrder === 1 ? "readonly" : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? subTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </GridContainer>
       </GridContainerWrap>
@@ -1402,6 +1406,19 @@ const SY_A0125W: React.FC = () => {
           workType={"FILTER"}
           setData={setDepartmentData}
       />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

@@ -11,6 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
+import { gridList } from "../store/columns/PR_A0060W_C";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import { TextArea } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
@@ -226,20 +227,19 @@ const PR_A0060: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
     if (value != null) {
-      if(name == "useyn"){
-        if(value == false || value == "N") {
+      if (name == "useyn") {
+        if (value == false || value == "N") {
           setInfomation((prev) => ({
             ...prev,
             [name]: "N",
           }));
-        }else {
+        } else {
           setInfomation((prev) => ({
             ...prev,
             [name]: "Y",
           }));
         }
-      }
-      else {
+      } else {
         setInfomation((prev) => ({
           ...prev,
           [name]: value,
@@ -1168,8 +1168,7 @@ const PR_A0060: React.FC = () => {
           work_type: "D",
           fxcode: items,
         }));
-      }
-      else if (items == item.fxcode && item.useyn == "Y"){
+      } else if (items == item.fxcode && item.useyn == "Y") {
         alert(findMessage(messagesData, "PR_A0060W_005"));
       }
     });
@@ -1441,7 +1440,7 @@ const PR_A0060: React.FC = () => {
     try {
       subDataResult.data.map((item: any) => {
         subDataResult.data.map((items: any) => {
-          if(item.fxdt == items.fxdt) {
+          if (item.fxdt == items.fxdt) {
             throw findMessage(messagesData, "PR_A0060W_004");
           }
         });
@@ -1761,7 +1760,7 @@ const PR_A0060: React.FC = () => {
               onClick={onEditClick}
               icon="more-horizontal"
               fillMode="flat"
-              style={{float: "right"}}
+              style={{ float: "right" }}
             />
           </td>
         )}
@@ -1988,68 +1987,44 @@ const PR_A0060: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              field="fxnum"
-              title="설비번호"
-              footerCell={mainTotalFooterCell}
-              width="140px"
-            />
-            <GridColumn field="fxnm" title="설비명" width="200px" />
-            <GridColumn field="fxno" title="설비호기" width="140px" />
-            <GridColumn field="spec" title="사양" width="120px" />
-            <GridColumn field="dptcd" title="담당부서" width="100px" />
-            <GridColumn field="person" title="책임자" width="180px" />
-            <GridColumn field="place" title="장소" width="400px" />
-            <GridColumn
-              field="recdt"
-              title="입력일자"
-              width="180px"
-              cell={DateCell}
-              className="required"
-            />
-            <GridColumn
-              field="makedt"
-              title="제조일자"
-              width="150px"
-              cell={DateCell}
-            />
-            <GridColumn field="maker" title="제조사" width="150px" />
-            <GridColumn
-              field="indt"
-              title="구입일자"
-              width="100px"
-              cell={DateCell}
-            />
-            <GridColumn field="custnm" title="업체명" width="300px" />
-            <GridColumn field="kind" title="설비종류" width="150px" />
-            <GridColumn field="classnm1" title="이더넷1" width="150px" />
-            <GridColumn field="classnm2" title="분류2" width="100px" />
-            <GridColumn field="classnm3" title="분류3" width="300px" />
-            <GridColumn
-              field="uph"
-              title="시간당생산수량"
-              width="300px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="cnt"
-              title="설비이력"
-              width="150px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="useyn"
-              title="사용여부"
-              width="150px"
-              cell={CheckBoxCell}
-            />
-            <GridColumn
-              field="IOT_TER_ID"
-              title="IOT설비번호"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn field="iotserialno" title="IOT I/F No" width="300px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      className={item.sortOrder === 7 ? "required" : undefined}
+                      cell={
+                        item.sortOrder === 7
+                          ? DateCell
+                          : item.sortOrder === 8
+                          ? DateCell
+                          : item.sortOrder === 10
+                          ? DateCell
+                          : item.sortOrder === 16
+                          ? NumberCell
+                          : item.sortOrder === 17
+                          ? NumberCell
+                          : item.sortOrder === 18
+                          ? CheckBoxCell
+                          : item.sortOrder === 19
+                          ? NumberCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : item.sortOrder === 5
+                          ? gridSumQtyFooterCell
+                          : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -2162,9 +2137,9 @@ const PR_A0060: React.FC = () => {
                   </td>
                   <th>사용여부</th>
                   <td>
-                  <Checkbox
+                    <Checkbox
                       name="useyn"
-                      value={infomation.useyn == "Y"? true: false}
+                      value={infomation.useyn == "Y" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
@@ -2429,37 +2404,38 @@ const PR_A0060: React.FC = () => {
                   ) === -1
                 }
               />
-              <GridColumn
-                field="fxdt"
-                title="처리일자"
-                width="150px"
-                cell={DateCell}
-                footerCell={subTotalFooterCell}
-                className="editable-new-only"
-              />
-              <GridColumn
-                field="custcd"
-                title="업체코드"
-                width="200px"
-              />
-              <GridColumn field="custnm" title="업체명" width="160px" />
-              <GridColumn field="errtext" title="고장내용" width="280px" />
-              <GridColumn field="protext" title="조치내용" width="280px" />
-              <GridColumn
-                field="fxcost"
-                title="수리비용"
-                width="120px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn field="remark1" title="비고" width="290px" />
-              <GridColumn
-                field="attdatnum"
-                title="첨부파일"
-                width="140px"
-                cell={CommandCell}
-
-              />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          item.sortOrder === 0
+                            ? DateCell
+                            : item.sortOrder === 5
+                            ? NumberCell
+                            : item.sortOrder === 7
+                            ? CommandCell
+                            : undefined
+                        }
+                        className={
+                          item.sortOrder === 0 ? "editable-new-only" : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0
+                            ? subTotalFooterCell
+                            : item.sortOrder === 5
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </GridContainer>
         </TabStripTab>
@@ -2505,6 +2481,19 @@ const PR_A0060: React.FC = () => {
           setData={getAttachmentsData2}
           para={subDataResult.data[rows].attdatnum}
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );
