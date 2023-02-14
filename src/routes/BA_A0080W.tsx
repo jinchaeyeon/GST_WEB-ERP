@@ -56,6 +56,7 @@ import {
   UseGetValueFromSessionItem,
   getCodeFromValue,
   getSelectedFirstData,
+  getItemQuery,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -76,6 +77,7 @@ import { isLoading } from "../store/atoms";
 import ExcelWindow from "../components/Windows/CommonWindows/ExcelWindow";
 import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
 import RequiredHeader from "../components/RequiredHeader";
+import NameCell from "../components/Cells/NameCell";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "sub_code";
@@ -118,6 +120,8 @@ const BA_A0080: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -147,7 +151,7 @@ const BA_A0080: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061, L_BA171, L_BA172, L_BA173,L_BA030T",
+    "L_BA061, L_BA171, L_BA172, L_BA173",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -160,10 +164,7 @@ const BA_A0080: React.FC = () => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [itemListData, setItemListData] = React.useState([
-   {
-    품목코드 : "", 품목명: ""
-   }]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
@@ -175,13 +176,10 @@ const BA_A0080: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
-      const itemQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA030T")
-      );
+
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
-      fetchQuery(itemQueryStr, setItemListData);
     }
   }, [bizComponentData]);
 
@@ -680,7 +678,7 @@ const BA_A0080: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
-
+      if (field) setEditedField(field);
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -697,6 +695,10 @@ const BA_A0080: React.FC = () => {
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);
+
+    // if (editedField === "itemcd") {
+    //   getItemData(datas.itemcd)
+    // }
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -704,6 +706,40 @@ const BA_A0080: React.FC = () => {
       };
     });
   };
+
+  const getItemData = (itemcd: string) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData(queryStr);
+  };
+
+  const fetchData = React.useCallback(
+    async (queryStr: string) => {
+      let data: any;
+
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+        if (rowCount > 0) {
+          setItemData2(rows[0]);
+        }
+      }
+    },
+    []
+  );
 
   const customCellRender = (td: any, props: any) => (
     <CellRender
@@ -765,12 +801,14 @@ const BA_A0080: React.FC = () => {
           unp: 0,
           rowstatus: "N",
         };
+        setSelectedState({ [newDataItem.num]: true})
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, newDataItem],
             total: prev.total + 1,
           };
         });
+
       } else {
         throw findMessage(messagesData, "BA_A0080W_001");
       }
@@ -943,54 +981,12 @@ const BA_A0080: React.FC = () => {
       amtunit: dataArr.amtunit.join("|"),
     }));
   };
-
-  const handleBlurBorder = (itemcd : string) => {
-    console.log(itemcd)
-    const newData = mainDataResult.data.map((item) =>
-    item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-      ? {
-          ...item,
-          itemnm: itemListData.find(
-            (item: any) => item.품목코드 == itemcd
-          )?.품목명,
-        }
-      : {
-          ...item,
-        }
-  );
-  setMainDataResult((prev) => {
-    return {
-      data: newData,
-      total: prev.total,
-    };
+  const [datas, setdatas] = useState({
+    itemcd: ""
   });
-  };
-
   const ColumnCommandCell = (props: GridCellProps) => {
     const selectedData = props.dataItem;
-    return selectedData.rowstatus == "N" ? (
-      <td className="k-command-cell">
-        <Input
-          name="itemcd"
-          type="text"
-          value={selectedData.itemcd}
-          onChange={setItems}
-          onBlur={() => handleBlurBorder(selectedData.itemcd)}
-          style={{width : "70%"}}
-        />
-        {/* <input
-                  name="itemcd"
-                  onChange={setItems}
-                  onBlur={() => handleBlurBorder(text != "" ? text : selectedData.itemcd)}
-        >
-        </input> */}
-        <Button
-          onClick={onItemWndClick2}
-          icon="more-horizontal"
-          fillMode="flat"
-        />
-      </td>
-    ) : (
+    return selectedData.rowstatus == "U" ? (
       <td className="k-command-cell">
         {selectedData.itemcd}
         <Button
@@ -999,28 +995,33 @@ const BA_A0080: React.FC = () => {
           fillMode="flat"
         />
       </td>
+    ) : (
+      <td className="k-command-cell">
+      {/* <Input
+        name="itemcd"
+        type="text"
+        value={datas.itemcd}
+        onChange={setItems}
+        style={{width : "70%"}}
+      /> */}
+      <Button
+        name="itemcd"
+        onClick={onItemWndClick2}
+        icon="more-horizontal"
+        fillMode="flat"
+      />
+    </td>
     );
   };
 
   const setItems = (e: any) => {
     const { value, name } = e.target;
-    const newData = mainDataResult.data.map((item) =>
-    item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-      ? {
-          ...item,
-          itemcd: value
-        }
-      : {
-          ...item,
-        }
-  );
-  setMainDataResult((prev) => {
-    return {
-      data: newData,
-      total: prev.total,
-    };
-  });
+    setdatas((prev: any) => ({
+      ...prev,
+      itemcd: value
+    }));
   };
+
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);

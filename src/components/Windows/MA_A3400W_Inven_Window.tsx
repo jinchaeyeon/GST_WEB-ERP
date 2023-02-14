@@ -68,15 +68,6 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
-const initialGroup: GroupDescriptor[] = [{ field: "itemacnt" }];
-
-const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
-  const newDataState = groupBy(data, group);
-  setGroupIds({ data: newDataState, group: group});
-
-  return newDataState;
-};
-
 const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -204,6 +195,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+
   const [subDataResult, setSubDataResult] = useState<DataResult>(
     process([], subDataState)
   );
@@ -421,28 +413,17 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     }
     setLoading(false);
   };
-  const [group, setGroup] = React.useState(initialGroup);
-  const [collapsedState, setCollapsedState] = React.useState<string[]>([]);
 
-  const onExpandChange = React.useCallback(
-    (event: GridExpandChangeEvent) => {
-      const item = event.dataItem;
+  const onExpandChange = (event: any) => {
+    const isExpanded =
+      event.dataItem.expanded === undefined
+        ? event.dataItem.aggregates
+        : event.dataItem.expanded;
+    event.dataItem.expanded = !isExpanded;
 
-      if (item.groupId) {
-        const newCollapsedIds = !event.value
-          ? [...collapsedState, item.groupId]
-          : collapsedState.filter((groupId) => groupId !== item.groupId);
-        setCollapsedState(newCollapsedIds);
-      }
-    },
-    [collapsedState]
-  );
-
-  const newData = setExpandedState({
-    data: processWithGroups(mainDataResult.data, initialGroup),
-    collapsedIds: collapsedState,
-  });
-
+    setMainDataState((prev) => ({ ...prev }));
+  };
+  
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (customOptionData !== null && isInitSearch === false) {
@@ -735,8 +716,17 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         </FilterBoxWrap>
         <GridContainer>
           <Grid
-            style={{ height: "240px" }}
-            data={newData}
+            style={{ height: "300px" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                itemacnt: itemacntListData.find(
+                  (item: any) => item.sub_code === row.itemacnt
+                )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)],
+              })),
+              mainDataState
+            )}
             onDataStateChange={onMainDataStateChange}
             {...mainDataState}
             //선택 기능
@@ -761,7 +751,6 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
             //더블클릭
             onRowDoubleClick={onRowDoubleClick}
             groupable={true}
-            group={group}
             onExpandChange={onExpandChange}
             expandField="expanded"
           >
@@ -817,7 +806,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "240px" }}
+            style={{ height: "180px" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

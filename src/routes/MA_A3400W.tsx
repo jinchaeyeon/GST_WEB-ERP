@@ -164,12 +164,15 @@ const MA_A3400W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn, L_SA014",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
+  const [outuseListData, setOutuseListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -199,6 +202,9 @@ const MA_A3400W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
+      const outuseQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA014")
+      );
       const ordstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
       );
@@ -230,7 +236,8 @@ const MA_A3400W: React.FC = () => {
       const finynQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
       );
-
+      
+      fetchQuery(outuseQueryStr, setOutuseListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(taxdivQueryStr, setTaxdivListData);
@@ -1485,6 +1492,9 @@ const MA_A3400W: React.FC = () => {
                 finyn: finynListData.find(
                   (item: any) => item.code === row.finyn
                 )?.name,
+                outuse: outuseListData.find(
+                  (item: any) => item.sub_code === row.outuse
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState

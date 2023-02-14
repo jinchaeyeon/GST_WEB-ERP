@@ -1294,7 +1294,7 @@ const MA_A2700W: React.FC = () => {
       dataArr.load_place_s.push(load_place);
       dataArr.pac_s.push(pac);
       dataArr.itemlvl1_s.push(itemlvl1);
-      dataArr.enddt_s.push(enddt);
+      dataArr.enddt_s.push(convertDateToStr(enddt));
       dataArr.extra_field1_s.push(extra_field1== "" ? 0 : extra_field1);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
@@ -1399,7 +1399,7 @@ const MA_A2700W: React.FC = () => {
       dataArr.load_place_s.push(load_place);
       dataArr.pac_s.push(pac);
       dataArr.itemlvl1_s.push(itemlvl1);
-      dataArr.enddt_s.push(enddt);
+      dataArr.enddt_s.push(convertDateToStr(enddt));
       dataArr.extra_field1_s.push(extra_field1== "" ? 0 : extra_field1);
     });
     setParaData((prev) => ({

@@ -10,7 +10,9 @@ import {
   getSelectedState,
   GridDataStateChangeEvent,
   GridItemChangeEvent,
+  GridCellProps,
 } from "@progress/kendo-react-grid";
+import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -47,14 +49,18 @@ import {
 import { CellRender, RowRender } from "../Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { loginResultState } from "../../store/atoms";
-import { IWindowPosition } from "../../hooks/interfaces";
+import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
-
+import DateCell from "../Cells/DateCell";
+import {
+  FormComboBoxCell,
+  FormComboBox,
+} from "../Editors";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -91,8 +97,41 @@ type Idata = {
   auto_transfer: string;
   pac: string;
   reckey: string;
+  files: string;
 };
 let deletedMainRows: object[] = [];
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_dptcd_001, L_HU005", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "dptcd" ? "L_dptcd_001" : field === "postcd" ? "L_HU005" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  if (bizComponentIdVal == "L_dptcd_001") {
+    return bizComponent ? (
+      <FormComboBoxCell
+        bizComponent={bizComponent}
+        valueField="dptcd"
+        textField="dptnm"
+        {...props}
+      />
+    ) : (
+      <td />
+    );
+  } else {
+    return bizComponent ? (
+      <FormComboBoxCell bizComponent={bizComponent} {...props} />
+    ) : (
+      <td />
+    );
+  }
+};
 
 const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -197,9 +236,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [pacListData, setPacListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+  const [pacListData, setPacListData] = useState([COM_CODE_DEFAULT_VALUE]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
@@ -266,7 +303,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible2, setCopyWindowVisible2] = useState<boolean>(false);
-
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
   const [isInitSearch, setIsInitSearch] = useState(false);
   const [mainPgNum, setMainPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -309,7 +347,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
-
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
   interface ICustData {
     custcd: string;
     custnm: string;
@@ -415,6 +455,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     form_id: "MA_A2700W",
     serviceid: "2207A046",
     reckey: "",
+    files: ""
   });
 
   const parameters: Iparameters = {
@@ -523,6 +564,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         auto_transfer: data.auto_transfer,
         pac: data.pac,
         reckey: data.reckey,
+        files: data.files,
       }));
     }
   }, []);
@@ -575,6 +617,18 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const onCopyWndClick2 = () => {
     setCopyWindowVisible2(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
   };
 
   const setCopyData2 = (data: any) => {
@@ -638,11 +692,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       });
       seq++;
     }
-
-
-    // mainDataResult.data.map((item)=>{
-    //   item.seq2 = seq;
-    // })
 
     for (var i = 1; i < data.length; i++) {
       if (data[0].itemcd == data[i].itemcd) {
@@ -712,14 +761,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
-    if (workType == "U") {
       getGridItemChangedData(
         event,
         mainDataResult,
         setMainDataResult,
         DATA_ITEM_KEY
       );
-    }
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -741,34 +788,31 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (workType == "U") {
-      if (field != "itemcd" && field != "itemnm") {
-        const newData = mainDataResult.data.map((item) =>
-          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
-                [EDIT_FIELD]: field,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-        );
+    if(field != "insiz"){
+      const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: field,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
 
-        setIfSelectFirstRow(false);
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      }
+    setIfSelectFirstRow(false);
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
     }
   };
 
   const exitEdit = () => {
-    if (workType == "U") {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
         [EDIT_FIELD]: undefined,
@@ -780,7 +824,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           total: prev.total,
         };
       });
-    }
+    
   };
 
   return (
@@ -991,8 +1035,15 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     type="text"
                     value={filters.attdatnum}
                     onChange={filterInputChange}
-                    className="readonly"
                   />
+                  <ButtonInInput style={{ marginTop: "30px" }}>
+                    <Button
+                      type={"button"}
+                      onClick={onAttachmentsWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
                 </td>
                 <th>비고</th>
                 <td colSpan={7}>
@@ -1055,9 +1106,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.invunit
                 )?.code_name,
-                pac: pacListData.find(
-                  (item: any) => item.sub_code === row.pac
-                )?.code_name,
+                pac: pacListData.find((item: any) => item.sub_code === row.pac)
+                  ?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -1088,7 +1138,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-           <GridColumn field="pac" title="도/사급" width="150px" />
+            <GridColumn field="pac" title="도/사급" width="150px" />
             <GridColumn
               field="itemcd"
               title="품목코드"
@@ -1127,11 +1177,31 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
               cell={NumberCell}
             />
             <GridColumn field="remark" title="비고" width="300px" />
-            <GridColumn field="totwgt" title="전체중량" width="150px" cell={NumberCell}/>
-            <GridColumn field="len" title="길이" width="150px" cell={NumberCell}/>
-            <GridColumn field="enddt" title="소비기한" width="150px"/>
-            <GridColumn field="itemthick" title="두께" width="150px" cell={NumberCell}/>
-            <GridColumn field="width" title="폭" width="150px" cell={NumberCell}/>
+            <GridColumn
+              field="totwgt"
+              title="전체중량"
+              width="150px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="len"
+              title="길이"
+              width="150px"
+              cell={NumberCell}
+            />
+            <GridColumn field="enddt" title="소비기한" width="150px" cell={DateCell}/>
+            <GridColumn
+              field="itemthick"
+              title="두께"
+              width="150px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="width"
+              title="폭"
+              width="150px"
+              cell={NumberCell}
+            />
           </Grid>
         </GridContainer>
         <BottomContainer>
@@ -1170,6 +1240,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           workType={"FILTER"}
           setData={setCopyData2}
           itemacnt={"1"}
+        />
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={filters.attdatnum}
         />
       )}
     </>

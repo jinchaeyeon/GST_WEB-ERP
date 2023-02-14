@@ -8,13 +8,13 @@ export const gridList: Array<TGrid> = [
         id: "col_reckey",
         field: "reckey",
         caption: "출고번호",
-        width: 250,
+        width: 200,
       },
       {
         id: "col_outuse",
         field: "outuse",
         caption: "출고용도",
-        width: 250,
+        width: 200,
       },
       {
         id: "col_outdt",

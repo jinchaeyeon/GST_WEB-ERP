@@ -33,7 +33,7 @@ import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
-  setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(data: object, event?: any): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
 const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {

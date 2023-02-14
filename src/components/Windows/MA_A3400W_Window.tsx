@@ -17,6 +17,7 @@ import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import CopyWindow3 from "./MA_A3400W_Inven_Window";
 import CopyWindow2 from "./BA_A0080W_Copy_Window";
+import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
@@ -47,7 +48,7 @@ import {
 import { CellRender, RowRender } from "../Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { loginResultState } from "../../store/atoms";
-import { IWindowPosition } from "../../hooks/interfaces";
+import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
@@ -74,6 +75,7 @@ type Idata = {
   outuse: string;
   reckey: string;
   seq1 : number;
+  files: string;
 };
 let deletedMainRows: object[] = [];
 
@@ -130,7 +132,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN",
+    "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN, L_BA002",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -152,11 +154,16 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [locationListData, setLocationListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+      );
+      const locationQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
@@ -175,6 +182,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      fetchQuery(itemacntQueryStr, setLocationListData);
     }
   }, [bizComponentData]);
 
@@ -215,7 +223,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible2, setCopyWindowVisible2] = useState<boolean>(false);
-
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
   const [isInitSearch, setIsInitSearch] = useState(false);
   const [mainPgNum, setMainPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -259,6 +268,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     setCustWindowVisible(true);
   };
 
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
   interface ICustData {
     custcd: string;
     custnm: string;
@@ -347,6 +359,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     form_id: "MA_A3400",
     serviceid: "2207A046",
     reckey: "",
+    files: "",
   });
 
   const Parameters: Iparameters = {
@@ -432,6 +445,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         outuse: data.outuse,
         reckey: data.reckey,
         seq1: data.seq1,
+        files: data.files,
       }));
     }
   }, []);
@@ -484,6 +498,18 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const onCopyWndClick2 = () => {
     setCopyWindowVisible2(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setFilters((prev :any) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
   };
 
   const setCopyData2= (data: any) => {
@@ -697,22 +723,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <TitleContainer>
-          <Title>{workType === "N" ? "기타출고생성" : "기타출고정보"}</Title>
-          <ButtonContainer>
-            <Button
-              onClick={() => {
-                resetAllGrid();
-                fetchMainGrid();
-              }}
-              icon="search"
-              themeColor={"primary"}
-            >
-              조회
-            </Button>
-          </ButtonContainer>
-        </TitleContainer>
-        <FormBoxWrap style={{ paddingRight: "50px" }}>
+        <FormBoxWrap style={{ width: "1250px", marginLeft: "-70px" }}>
           <FormBox>
             <tbody>
               <tr>
@@ -774,21 +785,21 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     name="custnm"
                     type="text"
                     value={filters.custnm}
-                    onChange={filterInputChange}
                     className="readonly"
                   />
                 </td>
                 <th>사업장</th>
                 <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="cboLocation"
-                      value={filters.cboLocation}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      className="readonly"
-                    />
-                  )}
+                  <Input
+                    name="cboLocation"
+                    type="text"
+                    value={locationListData.find(
+                      (items: any) => items.sub_code === filters.cboLocation
+                    )?.code_name == undefined ? "본사": locationListData.find(
+                      (items: any) => items.sub_code === filters.cboLocation
+                    )?.code_name}
+                    className="readonly"
+                  />
                 </td>
               </tr>
               <tr>
@@ -817,12 +828,19 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 <th>첨부파일</th>
                 <td colSpan={3}>
                   <Input
-                    name="attdatnum"
+                    name="files"
                     type="text"
-                    value={filters.attdatnum}
+                    value={filters.files}
                     onChange={filterInputChange}
-                    className="readonly"
                   />
+                  <ButtonInInput>
+                      <Button
+                        type={"button"}
+                        onClick={onAttachmentsWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
                 </td>
               </tr>
             </tbody>
@@ -978,6 +996,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           workType={"FILTER"}
           setData={setCopyData2}
           itemacnt={"1"}
+        />
+      )}
+       {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={filters.attdatnum}
         />
       )}
     </>
