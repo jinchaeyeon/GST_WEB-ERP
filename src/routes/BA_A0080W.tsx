@@ -75,11 +75,21 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import ExcelWindow from "../components/Windows/CommonWindows/ExcelWindow";
 import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
+import RequiredHeader from "../components/RequiredHeader";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "sub_code";
 let deletedMainRows: object[] = [];
 
+const DateField = ["recdt"];
+const CommandField = ["itemcd"];
+const NumberField = ["unp"];
+
+const CustomComboField = ["itemacnt", "amtunit"];
+
+const editableField = ["recdt"];
+
+const requiredField = ["unp", "amtunit"];
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
@@ -137,7 +147,7 @@ const BA_A0080: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061, L_BA171, L_BA172, L_BA173",
+    "L_BA061, L_BA171, L_BA172, L_BA173,L_BA030T",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -150,7 +160,10 @@ const BA_A0080: React.FC = () => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [itemListData, setItemListData] = React.useState([
+   {
+    품목코드 : "", 품목명: ""
+   }]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
@@ -162,9 +175,13 @@ const BA_A0080: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
+      const itemQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA030T")
+      );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      fetchQuery(itemQueryStr, setItemListData);
     }
   }, [bizComponentData]);
 
@@ -462,6 +479,9 @@ const BA_A0080: React.FC = () => {
 
   const onItemWndClick = () => {
     setItemWindowVisible(true);
+  };
+  const onItemWndClick2 = () => {
+    setItemWindowVisible2(true);
   };
   const onCopyWndClick = () => {
     try {
@@ -924,6 +944,83 @@ const BA_A0080: React.FC = () => {
     }));
   };
 
+  const handleBlurBorder = (itemcd : string) => {
+    console.log(itemcd)
+    const newData = mainDataResult.data.map((item) =>
+    item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      ? {
+          ...item,
+          itemnm: itemListData.find(
+            (item: any) => item.품목코드 == itemcd
+          )?.품목명,
+        }
+      : {
+          ...item,
+        }
+  );
+  setMainDataResult((prev) => {
+    return {
+      data: newData,
+      total: prev.total,
+    };
+  });
+  };
+
+  const ColumnCommandCell = (props: GridCellProps) => {
+    const selectedData = props.dataItem;
+    return selectedData.rowstatus == "N" ? (
+      <td className="k-command-cell">
+        <Input
+          name="itemcd"
+          type="text"
+          value={selectedData.itemcd}
+          onChange={setItems}
+          onBlur={() => handleBlurBorder(selectedData.itemcd)}
+          style={{width : "70%"}}
+        />
+        {/* <input
+                  name="itemcd"
+                  onChange={setItems}
+                  onBlur={() => handleBlurBorder(text != "" ? text : selectedData.itemcd)}
+        >
+        </input> */}
+        <Button
+          onClick={onItemWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </td>
+    ) : (
+      <td className="k-command-cell">
+        {selectedData.itemcd}
+        <Button
+          onClick={onItemWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </td>
+    );
+  };
+
+  const setItems = (e: any) => {
+    const { value, name } = e.target;
+    const newData = mainDataResult.data.map((item) =>
+    item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      ? {
+          ...item,
+          itemcd: value
+        }
+      : {
+          ...item,
+        }
+  );
+  setMainDataResult((prev) => {
+    return {
+      data: newData,
+      total: prev.total,
+    };
+  });
+  };
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
@@ -1193,28 +1290,45 @@ const BA_A0080: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell = {
-                        item.sortOrder === 0 ? DateCell : item.sortOrder === 3 ? CustomComboBoxCell : item.sortOrder === 4 ? NumberCell : item.sortOrder === 5 ? CustomComboBoxCell : undefined
-                      }
-                      className={
-                        item.sortOrder === 0 ? "editable-new-only" : item.sortOrder === 4 ? "required" : item.sortOrder === 5 ? "required": undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          DateField.includes(item.fieldName)
+                            ? DateCell
+                            : CustomComboField.includes(item.fieldName)
+                            ? CustomComboBoxCell
+                            : NumberField.includes(item.fieldName)
+                            ? NumberCell
+                            : CommandField.includes(item.fieldName)
+                            ? ColumnCommandCell
+                            : undefined
+                        }
+                        className={
+                          editableField.includes(item.fieldName)
+                            ? "editable-new-only"
+                            : requiredField.includes(item.fieldName)
+                            ? "required"
+                            : undefined
+                        }
+                        headerCell={
+                          requiredField.includes(item.fieldName)
+                            ? RequiredHeader
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>

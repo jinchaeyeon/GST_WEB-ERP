@@ -197,7 +197,7 @@ export const gridList: Array<TGrid> = [
       },
       {
         id: "col_width",
-        field: " width",
+        field: "width",
         caption: "폭",
         width: 150,
       },

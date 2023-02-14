@@ -249,20 +249,19 @@ const SY_A0125W: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if(name == "useyn"){
-      if(value == false || value == "N") {
+    if (name == "useyn") {
+      if (value == false || value == "N") {
         setInfomation((prev) => ({
           ...prev,
           [name]: "N",
         }));
-      }else {
+      } else {
         setInfomation((prev) => ({
           ...prev,
           [name]: "Y",
         }));
       }
-    }
-    else {
+    } else {
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
@@ -1301,7 +1300,7 @@ const SY_A0125W: React.FC = () => {
                   <td>
                     <Checkbox
                       name="useyn"
-                      value={infomation.useyn == "Y"? true: false}
+                      value={infomation.useyn == "Y" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
@@ -1389,7 +1388,11 @@ const SY_A0125W: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       className={
-                        item.sortOrder === 0 ? "readonly" : item.sortOrder === 1 ? "readonly" : undefined
+                        item.sortOrder === 0
+                          ? "readonly"
+                          : item.sortOrder === 1
+                          ? "readonly"
+                          : undefined
                       }
                       footerCell={
                         item.sortOrder === 0 ? subTotalFooterCell : undefined
@@ -1405,7 +1408,7 @@ const SY_A0125W: React.FC = () => {
           setVisible={setDepartmentWindowVisible}
           workType={"FILTER"}
           setData={setDepartmentData}
-      />
+        />
       )}
       {gridList.map((grid: any) =>
         grid.columns.map((column: any) => (

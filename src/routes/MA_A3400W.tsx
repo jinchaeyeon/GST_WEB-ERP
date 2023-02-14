@@ -62,6 +62,19 @@ import { isLoading } from "../store/atoms";
 
 const DATA_ITEM_KEY = "reckey";
 
+const DateField =[
+  "outdt"
+]
+
+const NumberField =[
+  "qty",
+  "unp",
+  "amt",
+  "taxamt",
+  "len",
+  "itemthick",
+  "width"
+]
 type TdataArr = {
   rowstatus_s: string[];
   seq2_s: string[];
@@ -1509,7 +1522,7 @@ const MA_A3400W: React.FC = () => {
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      cell={item.sortOrder === 2 ? DateCell : undefined}
+                      cell={DateField.includes(item.fieldName) ? DateCell : undefined}
                       footerCell={
                         item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }
@@ -1563,19 +1576,7 @@ const MA_A3400W: React.FC = () => {
                     title={item.caption}
                     width={item.width}
                     cell={
-                      item.sortOrder === 2
-                        ? NumberCell
-                        : item.sortOrder === 4
-                        ? NumberCell
-                        : item.sortOrder === 6
-                        ? NumberCell
-                        : item.sortOrder === 8
-                        ? NumberCell
-                        : item.sortOrder === 11
-                        ? NumberCell
-                        : item.sortOrder === 12
-                        ? NumberCell
-                        : item.sortOrder === 13
+                      NumberField.includes(item.fieldName)
                         ? NumberCell
                         : undefined
                     }

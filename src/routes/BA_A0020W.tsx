@@ -88,6 +88,7 @@ import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import { FormReadOnly } from "../components/Editors";
+import RequiredHeader from "../components/RequiredHeader";
 
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
@@ -95,6 +96,38 @@ const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
 
+const checkboxField =[
+  "useyn",
+  "rtrchk"
+]
+
+const NumberField =[
+"sort_seq",
+"totasset",
+"paid_up_capital",
+"totcapital",
+"salesmoney",
+"operating_profits",
+"current_income",
+"dedt_ratio"
+]
+
+const requiredField =[
+"prsnnm",
+"yyyy"
+]
+
+const commandField =[
+"attdatnum"
+]
+
+const editField = [
+"custprsncd"
+]
+
+const YearDateField =[
+  "yyyy"
+]
 const BA_A0020: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -2536,7 +2569,7 @@ const BA_A0020: React.FC = () => {
                         field={item.fieldName}
                         title={item.caption}
                         width={item.width}
-                        cell={item.sortOrder === 10 ? CheckBoxCell : undefined}
+                        cell={checkboxField.includes(item.fieldName) ? CheckBoxCell : undefined}
                         footerCell={
                           item.sortOrder === 0 ? mainTotalFooterCell : undefined
                         }
@@ -3164,15 +3197,16 @@ const BA_A0020: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             className={
-                              item.sortOrder === 2 ? "required" : undefined
+                              requiredField.includes(item.fieldName) ? "required" : undefined
                             }
-                            editable={item.sortOrder === 1 ? false : undefined}
+                            headerCell={ requiredField.includes(item.fieldName) ? RequiredHeader: undefined }
+                            editable={editField.includes(item.fieldName)? false : undefined}
                             cell={
-                              item.sortOrder === 0
+                              NumberField.includes(item.fieldName)
                                 ? NumberCell
-                                : item.sortOrder === 8
+                                :  checkboxField.includes(item.fieldName)
                                 ? CheckBoxCell
-                                : item.sortOrder === 9
+                                : commandField.includes(item.fieldName)
                                 ? CommandCell
                                 : undefined
                             }
@@ -3265,41 +3299,18 @@ const BA_A0020: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             className={
-                              item.sortOrder === 0 ? "required" : undefined
+                              requiredField.includes(item.fieldName) ? "required" : undefined
                             }
+                            headerCell={requiredField.includes(item.fieldName) ? RequiredHeader : undefined}
                             cell={
-                              item.sortOrder === 0
+                              YearDateField.includes(item.fieldName)
                                 ? YearDateCell
-                                : item.sortOrder === 1
-                                ? NumberCell
-                                : item.sortOrder === 2
-                                ? NumberCell
-                                : item.sortOrder === 3
-                                ? NumberCell
-                                : item.sortOrder === 4
-                                ? NumberCell
-                                : item.sortOrder === 5
-                                ? NumberCell
-                                : item.sortOrder === 6
-                                ? NumberCell
-                                : item.sortOrder === 7
+                                : NumberField.includes(item.fieldName)
                                 ? NumberCell
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
-                                ? gridSumQtyFooterCell
-                                : item.sortOrder === 2
-                                ? gridSumQtyFooterCell
-                                : item.sortOrder === 3
-                                ? gridSumQtyFooterCell
-                                : item.sortOrder === 4
-                                ? gridSumQtyFooterCell
-                                : item.sortOrder === 5
-                                ? gridSumQtyFooterCell
-                                : item.sortOrder === 6
-                                ? gridSumQtyFooterCell
-                                : item.sortOrder === 7
+                                NumberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
                                 : undefined
                             }

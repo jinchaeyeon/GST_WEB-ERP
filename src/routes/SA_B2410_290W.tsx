@@ -589,49 +589,17 @@ const SA_B2410: React.FC = () => {
       </td>
     );
   };
-  const mainqtyooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.qty;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
 
-  const mainwonamtFooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.wonamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
+const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+   mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
     );
-  };
-
-  const maintaxamtFooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.taxamt;
-    });
+    var parts = sum.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
-  const maintotamtFooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.totamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
       </td>
     );
   };
@@ -643,61 +611,16 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-  const detailSumFooterCell = (props: GridFooterCellProps) => {
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
-    detail1DataResult.data.map((item) => {
-      sum = sum += item.qty;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
+    detail1DataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
     );
-  };
-
-  const detailunpFooterCell = (props: GridFooterCellProps) => {
-    var sum = 0;
-    detail1DataResult.data.map((item) => {
-      sum = sum += item.unp;
-    });
+    var parts = sum.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
-
-  const detailwonamtFooterCell = (props: GridFooterCellProps) => {
-    var sum = 0;
-    detail1DataResult.data.map((item) => {
-      sum = sum += item.wonamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
-
-  const detailtaxamtFooterCell = (props: GridFooterCellProps) => {
-    var sum = 0;
-    detail1DataResult.data.map((item) => {
-      sum = sum += item.taxamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
-  const detailtotamtFooterCell = (props: GridFooterCellProps) => {
-    var sum = 0;
-    detail1DataResult.data.map((item) => {
-      sum = sum += item.totamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
       </td>
     );
   };
@@ -710,29 +633,20 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-  const subqtyFooterCell = (props: GridFooterCellProps) => {
-    var sum = 0;
-    detail2DataResult.data.map((item) => {
-      sum = sum += item.outqty;
-    });
+  const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    detail1DataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
       </td>
     );
   };
 
-  const suboutamtFooterCell = (props: GridFooterCellProps) => {
-    var sum = 0;
-    detail2DataResult.data.map((item) => {
-      sum = sum += item.outamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
 
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
@@ -1090,14 +1004,8 @@ const SA_B2410: React.FC = () => {
                               footerCell={
                                 item.sortOrder === 0
                                   ? mainTotalFooterCell
-                                  : item.sortOrder === 3
-                                  ? mainqtyooterCell
-                                  : item.sortOrder === 4
-                                  ? mainwonamtFooterCell
-                                  : item.sortOrder === 5
-                                  ? maintaxamtFooterCell
-                                  : item.sortOrder === 6
-                                  ? maintotamtFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell
                                   : undefined
                               }
                               locked={item.fixed === "None" ? false : true}
@@ -1171,14 +1079,8 @@ const SA_B2410: React.FC = () => {
                               footerCell={
                                 item.sortOrder === 0
                                   ? mainTotalFooterCell
-                                  : item.sortOrder === 5
-                                  ? mainqtyooterCell
-                                  : item.sortOrder === 7
-                                  ? mainwonamtFooterCell
-                                  : item.sortOrder === 8
-                                  ? maintaxamtFooterCell
-                                  : item.sortOrder === 9
-                                  ? maintotamtFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell
                                   : undefined
                               }
                               locked={item.fixed === "None" ? false : true}
@@ -1249,14 +1151,8 @@ const SA_B2410: React.FC = () => {
                               footerCell={
                                 item.sortOrder === 0
                                   ? mainTotalFooterCell
-                                  : item.sortOrder === 3
-                                  ? mainqtyooterCell
-                                  : item.sortOrder === 4
-                                  ? mainwonamtFooterCell
-                                  : item.sortOrder === 5
-                                  ? maintaxamtFooterCell
-                                  : item.sortOrder === 6
-                                  ? maintotamtFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell
                                   : undefined
                               }
                               locked={item.fixed === "None" ? false : true}
@@ -1323,10 +1219,8 @@ const SA_B2410: React.FC = () => {
                               footerCell={
                                 item.sortOrder === 0
                                   ? subTotalFooterCell
-                                  : item.sortOrder === 2
-                                  ? subqtyFooterCell
-                                  : item.sortOrder === 3
-                                  ? suboutamtFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell3
                                   : undefined
                               }
                               locked={item.fixed === "None" ? false : true}
@@ -1390,7 +1284,7 @@ const SA_B2410: React.FC = () => {
               title="수량"
               width="80px"
               cell={NumberCell}
-              footerCell={detailSumFooterCell}
+              footerCell={gridSumQtyFooterCell2}
             />
             <GridColumn field="qtyunit" title="수량단위" width="80px" />
             <GridColumn
@@ -1398,28 +1292,28 @@ const SA_B2410: React.FC = () => {
               title="단가"
               width="80px"
               cell={NumberCell}
-              footerCell={detailunpFooterCell}
+              footerCell={gridSumQtyFooterCell2}
             />
             <GridColumn
               field="wonamt"
               title="원화금액"
               width="100px"
               cell={NumberCell}
-              footerCell={detailwonamtFooterCell}
+              footerCell={gridSumQtyFooterCell2}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="100px"
               cell={NumberCell}
-              footerCell={detailtaxamtFooterCell}
+              footerCell={gridSumQtyFooterCell2}
             />
             <GridColumn
               field="totamt"
               title="합계금액"
               width="130px"
               cell={NumberCell}
-              footerCell={detailtotamtFooterCell}
+              footerCell={gridSumQtyFooterCell2}
             />
             <GridColumn field="itemcd" title="품목코드" width="200px" />
             <GridColumn field="recdt" title="매출번호" width="120px" />

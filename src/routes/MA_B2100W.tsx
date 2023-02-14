@@ -389,58 +389,16 @@ const MA_B2100W: React.FC = () => {
       </td>
     );
   };
-  const mainSumFooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.qty;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+   mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
     );
-  };
-  const mainamtFooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.amt;
-    });
+    var parts = sum.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
-  const mainwonamtFooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.wonamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
-  const maintaxamtFooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.taxamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
-    );
-  };
-  const maintotamtFooterCell = (props: GridFooterCellProps, index: number) => {
-    var sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.totamt;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
       </td>
     );
   };
@@ -818,16 +776,8 @@ const MA_B2100W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            : item.sortOrder === 11
-                            ? mainSumFooterCell
-                            : item.sortOrder === 15
-                            ? mainamtFooterCell
-                            : item.sortOrder === 16
-                            ? mainwonamtFooterCell
-                            : item.sortOrder === 17
-                            ? maintaxamtFooterCell
-                            : item.sortOrder === 18
-                            ? maintotamtFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
                             : undefined
                         }
                         locked={item.fixed === "None" ? false : true}

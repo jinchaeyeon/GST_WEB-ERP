@@ -62,7 +62,21 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
+const DateField =[
+"recdt"
+]
+
+const NumberField =[
+"qty",
+"wonamt",
+"taxamt",
+"totamt",
+"unp",
+"totwgt",
+"len",
+"itemthick",
+"width"
+]
 type TdataArr = {
   rowstatus_s: string[];
   itemgrade_s: string[];
@@ -1732,28 +1746,16 @@ const MA_A2700W: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       cell={
-                        item.sortOrder === 0
+                        DateField.includes(item.fieldName)
                           ? DateCell
-                          : item.sortOrder === 8
-                          ? NumberCell
-                          : item.sortOrder === 9
-                          ? NumberCell
-                          : item.sortOrder === 10
-                          ? NumberCell
-                          : item.sortOrder === 11
+                          : NumberField.includes(item.fieldName)
                           ? NumberCell
                           : undefined
                       }
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          : item.sortOrder === 8
-                          ? gridSumQtyFooterCell
-                          : item.sortOrder === 9
-                          ? gridSumQtyFooterCell
-                          : item.sortOrder === 10
-                          ? gridSumQtyFooterCell
-                          : item.sortOrder === 11
+                          : NumberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell
                           : undefined
                       }
@@ -1811,42 +1813,14 @@ const MA_A2700W: React.FC = () => {
                     title={item.caption}
                     width={item.width}
                     cell={
-                      item.sortOrder === 8
-                        ? NumberCell
-                        : item.sortOrder === 10
-                        ? NumberCell
-                        : item.sortOrder === 11
-                        ? NumberCell
-                        : item.sortOrder === 12
-                        ? NumberCell
-                        : item.sortOrder === 14
-                        ? NumberCell
-                        : item.sortOrder === 15
-                        ? NumberCell
-                        : item.sortOrder === 17
-                        ? NumberCell
-                        : item.sortOrder === 18
+                      NumberField.includes(item.fieldName)
                         ? NumberCell
                         : undefined
                     }
                     footerCell={
                       item.sortOrder === 1
                         ? detailTotalFooterCell
-                        : item.sortOrder === 8
-                        ? gridSumQtyFooterCell2
-                        : item.sortOrder === 10
-                        ? gridSumQtyFooterCell2
-                        : item.sortOrder === 11
-                        ? gridSumQtyFooterCell2
-                        : item.sortOrder === 12
-                        ? gridSumQtyFooterCell2
-                        : item.sortOrder === 14
-                        ? gridSumQtyFooterCell2
-                        : item.sortOrder === 15
-                        ? gridSumQtyFooterCell2
-                        : item.sortOrder === 17
-                        ? gridSumQtyFooterCell2
-                        : item.sortOrder === 18
+                        : NumberField.includes(item.fieldName)
                         ? gridSumQtyFooterCell2
                         : undefined
                     }

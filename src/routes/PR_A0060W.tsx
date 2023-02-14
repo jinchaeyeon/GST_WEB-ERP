@@ -83,10 +83,41 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import { FormReadOnly } from "../components/Editors";
 import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
+import RequiredHeader from "../components/RequiredHeader";
 
 const DATA_ITEM_KEY = "fxcode";
 const SUB_DATA_ITEM_KEY = "fxseq";
 let deletedMainRows: any[] = [];
+
+const DateField =[
+"recdt",
+"makedt",
+"indt",
+"fxdt"
+]
+
+const NumberField =[
+"uph",
+"cnt",
+"IOT_TER_ID",
+"fxcost"
+]
+
+const CheckField =[
+"useyn",
+]
+
+const requiredField =[
+"recdt"
+]
+
+const editField =[
+  "fxdt"
+]
+
+const commandField =[
+  "attdatnum"
+]
 const PR_A0060: React.FC = () => {
   const [rows, setrows] = useState<number>(0);
   const setLoading = useSetRecoilState(isLoading);
@@ -1997,28 +2028,25 @@ const PR_A0060: React.FC = () => {
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      className={item.sortOrder === 7 ? "required" : undefined}
+                      className={requiredField.includes(item.fieldName) ? "required" : undefined}
+                      headerCell={
+                        requiredField.includes(item.fieldName)
+                          ? RequiredHeader
+                          : undefined
+                      }
                       cell={
-                        item.sortOrder === 7
+                        DateField.includes(item.fieldName)
                           ? DateCell
-                          : item.sortOrder === 8
-                          ? DateCell
-                          : item.sortOrder === 10
-                          ? DateCell
-                          : item.sortOrder === 16
+                          : NumberField.includes(item.fieldName)
                           ? NumberCell
-                          : item.sortOrder === 17
-                          ? NumberCell
-                          : item.sortOrder === 18
+                          : CheckField.includes(item.fieldName)
                           ? CheckBoxCell
-                          : item.sortOrder === 19
-                          ? NumberCell
                           : undefined
                       }
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          : item.sortOrder === 5
+                          : NumberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell
                           : undefined
                       }
@@ -2415,21 +2443,21 @@ const PR_A0060: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         cell={
-                          item.sortOrder === 0
+                          DateField.includes(item.fieldName)
                             ? DateCell
-                            : item.sortOrder === 5
+                            : NumberField.includes(item.fieldName)
                             ? NumberCell
-                            : item.sortOrder === 7
+                            : commandField.includes(item.fieldName)
                             ? CommandCell
                             : undefined
                         }
                         className={
-                          item.sortOrder === 0 ? "editable-new-only" : undefined
+                          editField.includes(item.fieldName) ? "editable-new-only" : undefined
                         }
                         footerCell={
                           item.sortOrder === 0
                             ? subTotalFooterCell
-                            : item.sortOrder === 5
+                            : NumberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell
                             : undefined
                         }

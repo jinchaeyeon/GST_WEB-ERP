@@ -86,6 +86,29 @@ const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: object[] = [];
 
+const NumberField = [
+"safeqty",
+"purleadtime"
+]
+
+const CheckField = [
+"useyn"
+]
+
+const DateField =[
+"recdt"
+]
+
+const CustomComboField =[
+"unpitem",
+"amtunit",
+"itemacnt",
+"unp"
+]
+
+const editableField =[
+  "recdt"
+]
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
@@ -1703,11 +1726,9 @@ const BA_A0040: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         cell={
-                          item.sortOrder === 6
+                          CheckField.includes(item.fieldName)
                             ? CheckBoxCell
-                            : item.sortOrder === 7
-                            ? NumberCell
-                            : item.sortOrder === 8
+                            : NumberField.includes(item.fieldName)
                             ? NumberCell
                             : undefined
                         }
@@ -2068,20 +2089,16 @@ const BA_A0040: React.FC = () => {
                           title={item.caption}
                           width={item.width}
                           cell={
-                            item.sortOrder === 0
+                            DateField.includes(item.fieldName)
                               ? DateCell
-                              : item.sortOrder === 1
+                              :  CustomComboField.includes(item.fieldName)
                               ? CustomComboBoxCell
-                              : item.sortOrder === 2
-                              ? CustomComboBoxCell
-                              : item.sortOrder === 3
-                              ? CustomComboBoxCell
-                              : item.sortOrder === 4
+                              : NumberField.includes(item.fieldName)
                               ? NumberCell
                               : undefined
                           }
                           className={
-                            item.sortOrder === 0
+                            editableField.includes(item.fieldName)
                               ? "editable-new-only"
                               : undefined
                           }

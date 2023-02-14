@@ -83,6 +83,19 @@ const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "sub_code";
 let deletedMainRows: object[] = [];
 
+const CustomComboField =[
+"proccd",
+"outprocyn",
+"prodemp",
+"qtyunit",
+"procunit"
+]
+
+const NumberField =[
+"procseq",
+"unitqty",
+"procqty"
+]
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
@@ -1471,22 +1484,10 @@ const BA_A0050: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       cell={
-                        item.sortOrder === 0 
+                        CustomComboField.includes(item.fieldName)
                         ? CustomComboBoxCell 
-                        :item.sortOrder === 1 
+                        :NumberField.includes(item.fieldName)
                         ? NumberCell
-                        : item.sortOrder === 2
-                        ? CustomComboBoxCell 
-                        : item.sortOrder === 3
-                        ? CustomComboBoxCell 
-                        : item.sortOrder === 7
-                        ? NumberCell 
-                        : item.sortOrder === 8
-                        ? CustomComboBoxCell 
-                        : item.sortOrder === 10
-                        ? NumberCell 
-                        : item.sortOrder === 11
-                        ? CustomComboBoxCell 
                         : undefined
                       }
                       footerCell={
