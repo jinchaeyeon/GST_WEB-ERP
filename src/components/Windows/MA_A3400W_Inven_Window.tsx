@@ -566,7 +566,8 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
           len: item.len == null ? 0 : item.len,
           itemthick: item.itemthick == null ? 0 : item.itemthick,
           width: item.width == null ? 0 : item.width,
-          pac: item.pac == null ? "B": item.pac
+          pac: item.pac == null ? "B": item.pac,
+          enddt: item.enddt == null ? new Date(): item.enddt
         }
       )
     })

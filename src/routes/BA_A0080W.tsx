@@ -760,6 +760,7 @@ const BA_A0080: React.FC = () => {
   );
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
       event,
       mainDataResult,

@@ -1,7 +1,7 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { GridCellProps } from "@progress/kendo-react-grid";
 import { convertDateToStr, dateformat2 } from "../CommonFunction";
-
+import Calendars from "../Calendars/Calendar";
 const DateCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange,
     className = "", } =
@@ -44,7 +44,7 @@ const DateCell = (props: GridCellProps) => {
           }
           format={"yyyy-MM-dd"}
           onChange={onDateChange}
-          //calendar={YearCalendar}
+          calendar={Calendars}
         />
       ) : typeof value === "object" ? (
         dateformat2(convertDateToStr(value))

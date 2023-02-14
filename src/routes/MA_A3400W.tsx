@@ -975,7 +975,14 @@ const MA_A3400W: React.FC = () => {
     try {
       if (data.length == 0) {
         throw findMessage(messagesData, "MA_A3400W_001");
-      }
+      }else if (
+        convertDateToStr(filter.outdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filter.outdt).substring(6, 8) > "31" ||
+        convertDateToStr(filter.outdt).substring(6, 8) < "01" ||
+        convertDateToStr(filter.outdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_A3400W_003");
+      } 
       for (var i = 0; i < data.length; i++) {
         if (data[i].qty == 0) {
           alert("수량은 필수입니다.");

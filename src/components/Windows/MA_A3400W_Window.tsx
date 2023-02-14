@@ -540,6 +540,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       }
     }
 
+    for (var i = 0; i < data.length; i++) {
+      data[i].num = seq;
+      seq++;
+    }
+
     try {
       data.map((item: any) => {
         setMainDataResult((prev) => {
@@ -581,6 +586,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       }
     }
 
+    
+    for (var i = 0; i < data.length; i++) {
+      data[i].num = seq;
+      seq++;
+    }
+
+    
     try {
       data.map((item: any) => {
         setMainDataResult((prev) => {
@@ -642,6 +654,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
     if (workType == "U") {
       getGridItemChangedData(
         event,

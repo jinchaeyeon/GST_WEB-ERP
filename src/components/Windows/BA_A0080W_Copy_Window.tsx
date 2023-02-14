@@ -384,6 +384,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
           itemthick: row.itemthick == null ? 0 : row.itemthick,
           width: row.width == null ? 0 : row.width,
           pac: row.pac == null ? "A": row.pac,
+          enddt: row.enddt == null ? new Date(): row.enddt
         };
       });
 

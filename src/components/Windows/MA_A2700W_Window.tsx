@@ -57,10 +57,8 @@ import { isLoading } from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import DateCell from "../Cells/DateCell";
-import {
-  FormComboBoxCell,
-  FormComboBox,
-} from "../Editors";
+import { FormComboBoxCell, FormComboBox } from "../Editors";
+import ComboBoxCell from "../Cells/ComboBoxCell";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -103,34 +101,29 @@ let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_dptcd_001, L_HU005", setBizComponentData);
+  UseBizComponent("L_BA016, L_BA171, L_BA061,L_BA015", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "dptcd" ? "L_dptcd_001" : field === "postcd" ? "L_HU005" : "";
+    field === "pac"
+      ? "L_BA016"
+      : field === "itemlvl1"
+      ? "L_BA171"
+      : field === "qtyunit"
+      ? "L_BA015"
+      : field === "itemacnt"
+      ? "L_BA061"
+      : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
-  if (bizComponentIdVal == "L_dptcd_001") {
-    return bizComponent ? (
-      <FormComboBoxCell
-        bizComponent={bizComponent}
-        valueField="dptcd"
-        textField="dptnm"
-        {...props}
-      />
-    ) : (
-      <td />
-    );
-  } else {
-    return bizComponent ? (
-      <FormComboBoxCell bizComponent={bizComponent} {...props} />
-    ) : (
-      <td />
-    );
-  }
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
 };
 
 const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
@@ -455,7 +448,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     form_id: "MA_A2700W",
     serviceid: "2207A046",
     reckey: "",
-    files: ""
+    files: "",
   });
 
   const parameters: Iparameters = {
@@ -517,6 +510,158 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       console.log(data);
     }
     setLoading(false);
+  };
+  
+  const onCopyClick = () => {
+    let seq = 1;
+
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+
+      });
+      seq++;
+    }
+
+    const selectRow = mainDataResult.data.filter(
+      (item) =>
+        item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+
+    const newDataItem = {
+      [DATA_ITEM_KEY]: seq+1,
+      itemgrade: selectRow.itemnm == undefined ? "" : selectRow.itemgrade,
+      itemcd: selectRow.itemcd,
+      itemnm: selectRow.itemnm == undefined ? "" : selectRow.itemnm,
+      itemacnt: selectRow.itemacnt,
+      qty: selectRow.itemnm == undefined? selectRow.now_qty: selectRow.qty,
+      qtyunit: selectRow.itemnm == undefined? selectRow.qtyunit: "",
+      unitwgt: 0,
+      wgtunit: selectRow.itemnm == undefined? "": selectRow.wgtunit,
+      len: selectRow.len,
+      itemthick: selectRow.itemthick,
+      width: selectRow.width,
+      unpcalmeth: "Q",
+      UNPFACTOR: 0,
+      unp: selectRow.unp,
+      amt: selectRow.amt,
+      dlramt: 0,
+      wonamt: selectRow.wonamt,
+      taxamt: selectRow.taxamt,
+      maker: selectRow.itemnm == undefined? "": selectRow.maker,
+      usegb: "",
+      spec: selectRow.itemnm == undefined? "": selectRow.spec,
+      badcd: "",
+      BADTEMP: "",
+      poregnum: "",
+      lcno: "",
+      heatno: "",
+      SONGNO: "",
+      projectno: "",
+      lotnum: selectRow.itemnm == undefined ? "" : selectRow.lotnum,
+      orglot: selectRow.itemnm == undefined ? "" : selectRow.orglot,
+      boxno: "",
+      PRTNO: "",
+      account: "",
+      qcnum: "",
+      qcseq: 0,
+      APPNUM: "",
+      seq2: 0,
+      totwgt: selectRow.totwgt,
+      purnum: "",
+      purseq: 0,
+      ordnum: "",
+      ordseq: 0,
+      remark: selectRow.itemnm  == undefined? "": selectRow.remark,
+      load_place: selectRow.load_place,
+      pac: selectRow.pac,
+      itemlvl1: selectRow.itemlvl1,
+      enddt: selectRow.enddt,
+      extra_field1: "",
+      rowstatus: "N",
+    };
+
+    setMainDataResult((prev) => {
+      return {
+        data: [...prev.data, newDataItem],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onAddClick = () => {
+    let seq = 1;
+
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+      });
+      seq++;
+    }
+
+    const newDataItem = {
+      [DATA_ITEM_KEY]: seq,
+      itemgrade: "",
+      itemcd: "",
+      itemnm: "",
+      itemacnt: "",
+      qty: 1,
+      qtyunit: "",
+      unitwgt: 0,
+      wgtunit: "",
+      len: 0,
+      itemthick: 0,
+      width: 0,
+      unpcalmeth: "Q",
+      UNPFACTOR: 0,
+      unp: 0,
+      amt: 0,
+      dlramt: 0,
+      wonamt: 0,
+      taxamt: 0,
+      maker: "",
+      usegb: "",
+      spec: "",
+      badcd: "",
+      BADTEMP: "",
+      poregnum: "",
+      lcno: "",
+      heatno: "",
+      SONGNO: "",
+      projectno: "",
+      lotnum: "",
+      orglot: "",
+      boxno: "",
+      PRTNO: "",
+      account: "",
+      qcnum: "",
+      qcseq: 0,
+      APPNUM: "",
+      seq2: 0,
+      totwgt: 0,
+      purnum: "",
+      purseq: 0,
+      ordnum: "",
+      ordseq: 0,
+      remark: "",
+      load_place: "",
+      pac: "A",
+      itemlvl1: "",
+      enddt: new Date(),
+      extra_field1: "",
+      rowstatus: "N",
+    };
+
+    setMainDataResult((prev) => {
+      return {
+        data: [...prev.data, newDataItem],
+        total: prev.total + 1,
+      };
+    });
   };
 
   useEffect(() => {
@@ -659,6 +804,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       }
     }
 
+    for (var i = 0; i < data.length; i++) {
+      data[i].num = seq;
+      seq++;
+    }
+
     try {
       data.map((item: any) => {
         setMainDataResult((prev) => {
@@ -700,6 +850,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       }
     }
 
+    for (var i = 0; i < data.length; i++) {
+      data[i].num = seq;
+      seq++;
+    }
+
     try {
       data.map((item: any) => {
         setMainDataResult((prev) => {
@@ -733,8 +888,19 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
-    setData(mainDataResult.data, filters, deletedMainRows);
-    onClose();
+    let valid = true;
+    mainDataResult.data.map((item) => {
+      if (item.itemcd == "" || item.itemnm == "" || item.qty == 0) {
+        alert("필수항목(품목코드, 품목명, 수량을 채워주세요.");
+        valid = false;
+        return false;
+      }
+    });
+
+    if (valid == true) {
+      setData(mainDataResult.data, filters, deletedMainRows);
+      onClose();
+    }
   };
 
   const onDeleteClick = (e: any) => {
@@ -761,12 +927,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
-      getGridItemChangedData(
-        event,
-        mainDataResult,
-        setMainDataResult,
-        DATA_ITEM_KEY
-      );
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -788,35 +955,20 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if(field != "insiz"){
+    if (field != "insiz") {
       const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-    }
-  };
-
-  const exitEdit = () => {
-      const newData = mainDataResult.data.map((item) => ({
-        ...item,
-        [EDIT_FIELD]: undefined,
-      }));
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -824,7 +976,21 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           total: prev.total,
         };
       });
-    
+    }
+  };
+
+  const exitEdit = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+    setIfSelectFirstRow(false);
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   };
 
   return (
@@ -1063,10 +1229,22 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
               <Button
+                onClick={onAddClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="plus"
+              ></Button>
+              <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+              ></Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyClick}
+                icon="copy"
               ></Button>
               <Button
                 themeColor={"primary"}
@@ -1091,23 +1269,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                itemacnt: itemacntListData.find(
-                  (items: any) => items.sub_code === row.itemacnt
-                )?.code_name,
-                itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
-                )?.code_name,
-                itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
-                )?.code_name,
-                itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
-                )?.code_name,
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.invunit
-                )?.code_name,
-                pac: pacListData.find((item: any) => item.sub_code === row.pac)
-                  ?.code_name,
+                enddt: row.enddt ? row.enddt : new Date(),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -1138,7 +1300,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-            <GridColumn field="pac" title="도/사급" width="150px" />
+            <GridColumn
+              field="pac"
+              title="도/사급"
+              width="150px"
+              cell={CustomComboBoxCell}
+            />
             <GridColumn
               field="itemcd"
               title="품목코드"
@@ -1146,8 +1313,18 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
               footerCell={mainTotalFooterCell}
             />
             <GridColumn field="itemnm" title="품목명" width="250px" />
-            <GridColumn field="itemlvl1" title="대분류" width="150px" />
-            <GridColumn field="itemacnt" title="품목계정" width="200px" />
+            <GridColumn
+              field="itemlvl1"
+              title="대분류"
+              width="150px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="itemacnt"
+              title="품목계정"
+              width="200px"
+              cell={CustomComboBoxCell}
+            />
             <GridColumn field="insiz" title="규격" width="200px" />
             <GridColumn field="lotnum" title="LOT NO" width="200px" />
             <GridColumn field="heatno" title="HEAT NO" width="200px" />
@@ -1157,7 +1334,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
               width="120px"
               cell={NumberCell}
             />
-            <GridColumn field="qtyunit" title="단위" width="150px" />
+            <GridColumn
+              field="qtyunit"
+              title="단위"
+              width="150px"
+              cell={CustomComboBoxCell}
+            />
             <GridColumn
               field="unp"
               title="단가"
@@ -1189,7 +1371,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
               width="150px"
               cell={NumberCell}
             />
-            <GridColumn field="enddt" title="소비기한" width="150px" cell={DateCell}/>
+            <GridColumn
+              field="enddt"
+              title="소비기한"
+              width="150px"
+              cell={DateCell}
+            />
             <GridColumn
               field="itemthick"
               title="두께"
