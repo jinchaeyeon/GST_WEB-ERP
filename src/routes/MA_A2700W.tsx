@@ -1612,7 +1612,22 @@ const MA_A2700W: React.FC = () => {
   };
 
   const onPrint = () => {
-    onBarcodeWndClick();
+    const datas = detailDataResult.data.filter(
+      (item) =>
+        item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0]
+    try {
+      if (
+        datas == null || datas == undefined
+      ) {
+        throw findMessage(messagesData, "MA_A2700W_006");
+      } else {
+          onBarcodeWndClick();
+      }
+    } catch (e) {
+      alert(e);
+    }
+
   };
 
   return (

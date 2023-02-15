@@ -1358,7 +1358,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "240px" }}
+            style={{ height: "200px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
