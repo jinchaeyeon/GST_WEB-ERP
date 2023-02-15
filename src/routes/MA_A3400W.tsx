@@ -801,8 +801,28 @@ const MA_A3400W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2 ||
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_A3400W_003");
+      } else if(filters.cboLocation == null || filters.cboLocation == undefined || filters.cboLocation ==""){
+        throw findMessage(messagesData, "MA_A3400W_004");
+      }
+        else {
+        resetAllGrid();
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const [ParaData, setParaData] = useState({

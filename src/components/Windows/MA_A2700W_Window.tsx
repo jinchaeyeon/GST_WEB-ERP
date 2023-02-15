@@ -17,6 +17,8 @@ import { TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import CopyWindow5 from "./MA_A2700W_BOM_Window";
+import CopyWindow4 from "./MA_A2700W_Orders_Window";
 import CopyWindow3 from "./MA_A3400W_Inven_Window";
 import CopyWindow2 from "./BA_A0080W_Copy_Window";
 import { useApi } from "../../hooks/api";
@@ -44,7 +46,10 @@ import {
   getQueryFromBizComponent,
   UseParaPc,
   to_date2,
+  convertDateToStr,
   getGridItemChangedData,
+  dateformat,
+  isValidDate,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -77,7 +82,7 @@ type Idata = {
   intype: string;
   inuse: string;
   inoutdiv: string;
-  indt: Date;
+  indt: string;
   custcd: string;
   custnm: string;
   rcvcustcd: string;
@@ -94,7 +99,7 @@ type Idata = {
   importnum: string;
   auto_transfer: string;
   pac: string;
-  reckey: string;
+  recnum: string;
   files: string;
 };
 let deletedMainRows: object[] = [];
@@ -152,54 +157,30 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
-    if (customOptionData !== null) {
+    if (customOptionData !== null && workType != "U") {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
         position:
-          defaultOption.find((item: any) => item.id === "position").valueCode ==
-          ""
-            ? ""
-            : defaultOption.find((item: any) => item.id === "position")
+          defaultOption.find((item: any) => item.id === "position")
                 .valueCode,
-        cboLocation:
-          defaultOption.find((item: any) => item.id === "cboLocation")
-            .valueCode == ""
-            ? "01"
-            : defaultOption.find((item: any) => item.id === "cboLocation")
+        location:
+          defaultOption.find((item: any) => item.id === "location")
                 .valueCode,
-        cboPerson:
-          defaultOption.find((item: any) => item.id === "cboPerson")
-            .valueCode == ""
-            ? "admin"
-            : defaultOption.find((item: any) => item.id === "cboPerson")
+        person:
+          defaultOption.find((item: any) => item.id === "person")
                 .valueCode,
         doexdiv:
-          defaultOption.find((item: any) => item.id === "doexdiv").valueCode ==
-          ""
-            ? "A"
-            : defaultOption.find((item: any) => item.id === "doexdiv")
+          defaultOption.find((item: any) => item.id === "doexdiv")
                 .valueCode,
         taxdiv:
-          defaultOption.find((item: any) => item.id === "taxdiv").valueCode ==
-          ""
-            ? "A"
-            : defaultOption.find((item: any) => item.id === "taxdiv").valueCode,
+          defaultOption.find((item: any) => item.id === "taxdiv").valueCode,
         auto_transfer:
-          defaultOption.find((item: any) => item.id === "auto_transfer")
-            .valueCode == ""
-            ? "A"
-            : defaultOption.find((item: any) => item.id === "auto_transfer")
+         defaultOption.find((item: any) => item.id === "auto_transfer")
                 .valueCode,
         inuse:
-          defaultOption.find((item: any) => item.id === "inuse").valueCode == ""
-            ? "10"
-            : defaultOption.find((item: any) => item.id === "inuse").valueCode,
-        amtunit:
-          defaultOption.find((item: any) => item.id === "amtunit").valueCode ==
-          ""
-            ? "KRW"
-            : defaultOption.find((item: any) => item.id === "amtunit")
+          defaultOption.find((item: any) => item.id === "inuse").valueCode,
+        amtunit: defaultOption.find((item: any) => item.id === "amtunit")
                 .valueCode,
       }));
     }
@@ -207,7 +188,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA016,L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN",
+    "L_BA002,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -219,7 +200,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [locationListData, setLocationListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [itemlvl1ListData, setItemlvl1ListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -247,9 +230,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
+      const locationQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+      );
       const pacQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
       );
+      fetchQuery(locationQueryStr, setLocationListData);
       fetchQuery(pacQueryStr, setPacListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -296,6 +283,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible2, setCopyWindowVisible2] = useState<boolean>(false);
+  const [CopyWindowVisible3, setCopyWindowVisible3] = useState<boolean>(false);
+  const [CopyWindowVisible4, setCopyWindowVisible4] = useState<boolean>(false);
+
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
   const [isInitSearch, setIsInitSearch] = useState(false);
@@ -368,9 +358,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    recdt: "",
+    recdt: new Date(),
     seq1: 0,
-    cboLocation: "01",
+    location: "01",
     position: "",
     doexdiv: "A",
     amtunit: "KRW",
@@ -389,7 +379,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     taxtype: "",
     taxnum: "",
     taxdt: "",
-    cboPerson: "admin",
+    person: "admin",
     attdatnum: "",
     remark: "",
     baseamt: 0,
@@ -458,20 +448,20 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     parameters: {
       "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.cboLocation,
+      "@p_location": filters.location,
       "@p_position": filters.position,
       "@p_frdt": "",
       "@p_todt": "",
-      "@p_recdt": filters.recdt,
+      "@p_recdt": convertDateToStr(filters.recdt),
       "@p_seq1": filters.seq1,
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
       "@p_itemcd": "",
       "@p_itemnm": "",
       "@p_finyn": "",
-      "@p_doexdiv": "",
+      "@p_doexdiv": filters.doexdiv,
       "@p_inuse": filters.inuse,
-      "@p_person": filters.cboPerson,
+      "@p_person": filters.person,
       "@p_lotnum": "",
       "@p_remark": filters.remark,
       "@p_pursiz": "",
@@ -504,6 +494,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             total: totalRowCnt,
           };
         });
+        setIsInitSearch(true);
       }
     } else {
       console.log("[오류 발생]");
@@ -578,7 +569,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       load_place: selectRow.load_place,
       pac: selectRow.pac,
       itemlvl1: selectRow.itemlvl1,
-      enddt: selectRow.enddt,
+      enddt: null,
       extra_field1: "",
       rowstatus: "N",
     };
@@ -651,7 +642,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       load_place: "",
       pac: "A",
       itemlvl1: "",
-      enddt: new Date(),
+      enddt: null,
       extra_field1: "",
       rowstatus: "N",
     };
@@ -665,9 +656,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
+    if (workType != "N" && isInitSearch === false) {
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters]);
 
@@ -682,16 +672,16 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       setFilters((prev) => ({
         ...prev,
         orgdiv: data.orgdiv,
-        recdt: data.recdt,
+        recdt: to_date2(data.recdt),
         seq1: data.seq1,
-        cboLocation: data.location,
+        location: data.location,
         position: data.position,
         doexdiv: data.doexdiv,
         amtunit: data.amtunit,
         intype: data.intype,
         inuse: data.inuse,
         inoutdiv: data.inoutdiv,
-        indt: data.indt,
+        indt: to_date2(data.indt),
         custcd: data.custcd,
         custnm: data.custnm,
         rcvcustcd: data.rcvcustcd,
@@ -701,14 +691,14 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         taxtype: data.taxtype,
         taxnum: data.taxnum,
         taxdt: data.taxdt,
-        cboPerson: data.person,
+        person: data.person,
         attdatnum: data.attdatnum,
         remark: data.remark,
         baseamt: data.baseamt,
         importnum: data.importnum,
         auto_transfer: data.auto_transfer,
         pac: data.pac,
-        reckey: data.reckey,
+        reckey: data.recnum,
         files: data.files,
       }));
     }
@@ -764,6 +754,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     setCopyWindowVisible2(true);
   };
 
+  const onCopyWndClick3 = () => {
+    setCopyWindowVisible3(true);
+  };
+  const onCopyWndClick4 = () => {
+    setCopyWindowVisible4(true);
+  };
   const getAttachmentsData = (data: IAttachmentData) => {
     setFilters((prev: any) => {
       return {
@@ -822,6 +818,102 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       alert(e);
     }
   };
+  const setCopyData3 = (data: any) => {
+    console.log(data)
+    // const dataItem = data.filter((item: any) => {
+    //   return (
+    //     (item.rowstatus === "N" || item.rowstatus === "U") &&
+    //     item.rowstatus !== undefined
+    //   );
+    // });
+
+    // if (dataItem.length === 0) return false;
+
+    // let seq = 1;
+
+    // if (mainDataResult.total > 0) {
+    //   mainDataResult.data.forEach((item) => {
+    //     if (item[DATA_ITEM_KEY] > seq) {
+    //       seq = item[DATA_ITEM_KEY];
+    //     }
+    //   });
+    //   seq++;
+    // }
+
+    // for (var i = 1; i < data.length; i++) {
+    //   if (data[0].itemcd == data[i].itemcd) {
+    //     alert("중복되는 품목이있습니다.");
+    //     return false;
+    //   }
+    // }
+
+    // for (var i = 0; i < data.length; i++) {
+    //   data[i].num = seq;
+    //   seq++;
+    // }
+
+    // try {
+    //   data.map((item: any) => {
+    //     setMainDataResult((prev) => {
+    //       return {
+    //         data: [...prev.data, item],
+    //         total: prev.total + 1,
+    //       };
+    //     });
+    //   });
+    // } catch (e) {
+    //   alert(e);
+    // }
+  };
+
+  const setCopyData4 = (data: any) => {
+    console.log(data)
+    // const dataItem = data.filter((item: any) => {
+    //   return (
+    //     (item.rowstatus === "N" || item.rowstatus === "U") &&
+    //     item.rowstatus !== undefined
+    //   );
+    // });
+
+    // if (dataItem.length === 0) return false;
+
+    // let seq = 1;
+
+    // if (mainDataResult.total > 0) {
+    //   mainDataResult.data.forEach((item) => {
+    //     if (item[DATA_ITEM_KEY] > seq) {
+    //       seq = item[DATA_ITEM_KEY];
+    //     }
+    //   });
+    //   seq++;
+    // }
+
+    // for (var i = 1; i < data.length; i++) {
+    //   if (data[0].itemcd == data[i].itemcd) {
+    //     alert("중복되는 품목이있습니다.");
+    //     return false;
+    //   }
+    // }
+
+    // for (var i = 0; i < data.length; i++) {
+    //   data[i].num = seq;
+    //   seq++;
+    // }
+
+    // try {
+    //   data.map((item: any) => {
+    //     setMainDataResult((prev) => {
+    //       return {
+    //         data: [...prev.data, item],
+    //         total: prev.total + 1,
+    //       };
+    //     });
+    //   });
+    // } catch (e) {
+    //   alert(e);
+    // }
+  };
+
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
@@ -1003,21 +1095,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <TitleContainer>
-          <Title>{workType === "N" ? "직접입고생성" : "직접입고정보"}</Title>
-          <ButtonContainer>
-            <Button
-              onClick={() => {
-                resetAllGrid();
-                fetchMainGrid();
-              }}
-              icon="search"
-              themeColor={"primary"}
-            >
-              조회
-            </Button>
-          </ButtonContainer>
-        </TitleContainer>
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
             <tbody>
@@ -1047,8 +1124,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
-                      name="cboLocation"
-                      value={filters.cboLocation}
+                      name="location"
+                      value={filters.location}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
                       className="required"
@@ -1070,8 +1147,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
-                      name="cboPerson"
-                      value={filters.cboPerson}
+                      name="person"
+                      value={filters.person}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
                       textField="user_name"
@@ -1197,9 +1274,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 <th>첨부파일</th>
                 <td colSpan={3}>
                   <Input
-                    name="attdatnum"
+                    name="files"
                     type="text"
-                    value={filters.attdatnum}
+                    value={filters.files}
                     onChange={filterInputChange}
                   />
                   <ButtonInInput style={{ marginTop: "30px" }}>
@@ -1257,6 +1334,22 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
               <Button
                 themeColor={"primary"}
                 fillMode="outline"
+                onClick={onCopyWndClick3}
+                icon="folder-open"
+              >
+                수주참조
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyWndClick4}
+                icon="folder-open"
+              >
+                수주BOM
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
                 onClick={onCopyWndClick2}
                 icon="folder-open"
               >
@@ -1269,7 +1362,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                enddt: row.enddt ? row.enddt : new Date(),
+                enddt: workType == "U" && isValidDate(row.enddt) ? new Date(dateformat(row.enddt)) : new Date(),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -1427,6 +1520,20 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           workType={"FILTER"}
           setData={setCopyData2}
           itemacnt={"1"}
+        />
+      )}
+      {CopyWindowVisible3 && (
+        <CopyWindow4
+          setVisible={setCopyWindowVisible3}
+          workType={"FILTER"}
+          setData={setCopyData3}
+        />
+      )}
+      {CopyWindowVisible4 && (
+        <CopyWindow5
+          setVisible={setCopyWindowVisible4}
+          workType={"FILTER"}
+          setData={setCopyData4}
         />
       )}
       {attachmentsWindowVisible && (

@@ -26,7 +26,6 @@ const ComboBoxCell = (props: CustomCellProps) => {
     valueField = "sub_code",
     textField = "code_name",
   } = props;
-
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
 

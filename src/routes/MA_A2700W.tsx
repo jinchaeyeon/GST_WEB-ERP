@@ -127,11 +127,12 @@ type TdataArr = {
   extra_field1_s: string[];
 };
 const DATA_ITEM_KEY = "recnum";
-const DETAIL_DATA_ITEM_KEY = "ordseq";
+const DETAIL_DATA_ITEM_KEY = "num";
 
 const MA_A2700W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -157,12 +158,11 @@ const MA_A2700W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
-        ).valueCode,
-        cboPerson: defaultOption.find((item: any) => item.id === "cboPerson")
+        location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
-        cboDoexdiv: defaultOption.find((item: any) => item.id === "cboDoexdiv")
+        person: defaultOption.find((item: any) => item.id === "person")
+          .valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
           .valueCode,
         position: defaultOption.find((item: any) => item.id === "position")
           .valueCode,
@@ -174,7 +174,7 @@ const MA_A2700W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA016, L_MA002, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_BA016, L_BA171, L_MA002, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -206,6 +206,9 @@ const MA_A2700W: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [itemlvl1ListData, setItemlvl1ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [inuseListData, setInuseListData] = useState([COM_CODE_DEFAULT_VALUE]);
   const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
@@ -230,6 +233,9 @@ const MA_A2700W: React.FC = () => {
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
+      );
+      const itemlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
       );
       const departmentQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
@@ -259,6 +265,7 @@ const MA_A2700W: React.FC = () => {
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(inuseQueryStr, setInuseListData);
       fetchQuery(finynQueryStr, setFinynListData);
+      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
     }
   }, [bizComponentData]);
 
@@ -334,6 +341,10 @@ const MA_A2700W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
+  const [detailselectedState, setDetailSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
@@ -380,7 +391,7 @@ const MA_A2700W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    cboLocation: "01",
+    location: "01",
     position: "",
     frdt: new Date(),
     todt: new Date(),
@@ -391,9 +402,9 @@ const MA_A2700W: React.FC = () => {
     itemcd: "",
     itemnm: "",
     finyn: "%",
-    cboDoexdiv: "",
+    doexdiv: "",
     inuse: "",
-    cboPerson: "",
+    person: "",
     lotnum: "",
     remark: "",
     pursiz: "",
@@ -405,6 +416,13 @@ const MA_A2700W: React.FC = () => {
     seq1: 0,
   });
 
+  const [barcodeFilters, setBarCodeFilters] = useState({
+    pgSize: PAGE_SIZE,
+    recdt: "",
+    seq1: 0,
+    lotnum: "",
+  });
+
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_MA_A2700W_Q",
@@ -413,7 +431,7 @@ const MA_A2700W: React.FC = () => {
     parameters: {
       "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.cboLocation,
+      "@p_location": filters.location,
       "@p_position": filters.position,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
@@ -424,9 +442,9 @@ const MA_A2700W: React.FC = () => {
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_finyn": filters.finyn,
-      "@p_doexdiv": filters.cboDoexdiv,
+      "@p_doexdiv": filters.doexdiv,
       "@p_inuse": filters.inuse,
-      "@p_person": filters.cboPerson,
+      "@p_person": filters.person,
       "@p_lotnum": filters.lotnum,
       "@p_remark": filters.remark,
       "@p_pursiz": filters.pursiz,
@@ -440,7 +458,7 @@ const MA_A2700W: React.FC = () => {
     parameters: {
       "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.cboLocation,
+      "@p_location": filters.location,
       "@p_position": filters.position,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
@@ -451,9 +469,36 @@ const MA_A2700W: React.FC = () => {
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_finyn": filters.finyn,
-      "@p_doexdiv": filters.cboDoexdiv,
+      "@p_doexdiv": filters.doexdiv,
       "@p_inuse": filters.inuse,
-      "@p_person": filters.cboPerson,
+      "@p_person": filters.person,
+      "@p_lotnum": filters.lotnum,
+      "@p_remark": filters.remark,
+      "@p_pursiz": filters.pursiz,
+    },
+  };
+
+  const BarCodeParameters: Iparameters = {
+    procedureName: "P_MA_A2700W_Q",
+    pageNumber: detailPgNum,
+    pageSize: barcodeFilters.pgSize,
+    parameters: {
+      "@p_work_type": "BARCODE",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": filters.location,
+      "@p_position": filters.position,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_recdt": barcodeFilters.recdt,
+      "@p_seq1": barcodeFilters.seq1,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_finyn": filters.finyn,
+      "@p_doexdiv": filters.doexdiv,
+      "@p_inuse": filters.inuse,
+      "@p_person": filters.person,
       "@p_lotnum": filters.lotnum,
       "@p_remark": filters.remark,
       "@p_pursiz": filters.pursiz,
@@ -464,9 +509,9 @@ const MA_A2700W: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "N",
     orgdiv: "01",
-    recdt: "",
+    recdt: new Date(),
     seq1: 0,
-    cboLocation: "01",
+    location: "01",
     position: "",
     doexdiv: "A",
     amtunit: "KRW",
@@ -484,7 +529,7 @@ const MA_A2700W: React.FC = () => {
     taxtype: "",
     taxnum: "",
     taxdt: "",
-    cboPerson: "admin",
+    person: "admin",
     attdatnum: "",
     remark: "",
     baseamt: 0,
@@ -552,9 +597,9 @@ const MA_A2700W: React.FC = () => {
     parameters: {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": ParaData.orgdiv,
-      "@p_recdt": ParaData.recdt,
+      "@p_recdt": convertDateToStr(ParaData.recdt),
       "@p_seq1": ParaData.seq1,
-      "@p_location": ParaData.cboLocation,
+      "@p_location": ParaData.location,
       "@p_position": ParaData.position,
       "@p_doexdiv": ParaData.doexdiv,
       "@p_amtunit": ParaData.amtunit,
@@ -570,7 +615,7 @@ const MA_A2700W: React.FC = () => {
       "@p_taxnum": ParaData.taxnum,
       "@p_taxdt": ParaData.taxdt,
       "@p_uschgrat": 0,
-      "@p_person": ParaData.cboPerson,
+      "@p_person": ParaData.person,
       "@p_attdatnum": ParaData.attdatnum,
       "@p_remark": ParaData.remark,
       "@p_baseamt": ParaData.baseamt,
@@ -675,7 +720,7 @@ const MA_A2700W: React.FC = () => {
       "@p_orgdiv": ParaData.orgdiv,
       "@p_recdt": paraDataDeleted.recdt,
       "@p_seq1": paraDataDeleted.seq1,
-      "@p_location": ParaData.cboLocation,
+      "@p_location": ParaData.location,
       "@p_position": ParaData.position,
       "@p_doexdiv": ParaData.doexdiv,
       "@p_amtunit": ParaData.amtunit,
@@ -691,7 +736,7 @@ const MA_A2700W: React.FC = () => {
       "@p_taxnum": ParaData.taxnum,
       "@p_taxdt": ParaData.taxdt,
       "@p_uschgrat": 0,
-      "@p_person": ParaData.cboPerson,
+      "@p_person": ParaData.person,
       "@p_attdatnum": ParaData.attdatnum,
       "@p_remark": ParaData.remark,
       "@p_baseamt": ParaData.baseamt,
@@ -809,6 +854,31 @@ const MA_A2700W: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchBarcordGrid = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", BarCodeParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    console.log(BarCodeParameters);
+    console.log(data);
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+
+      // if (totalRowCnt > 0)
+      // setDetailDataResult((prev) => {
+      //   return {
+      //     data: [...prev.data, ...rows],
+      //     total: totalRowCnt,
+      //   };
+      // });
+    }
+    setLoading(false);
+  };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
@@ -833,6 +903,13 @@ const MA_A2700W: React.FC = () => {
       fetchDetailGrid();
     }
   }, [detailFilters]);
+
+  useEffect(() => {
+    resetDetailGrid();
+    if (customOptionData !== null) {
+      fetchBarcordGrid();
+    }
+  }, [barcodeFilters]);
 
   useEffect(() => {
     if (paraDataDeleted.seq1 !== 0) fetchToDelete();
@@ -886,6 +963,18 @@ const MA_A2700W: React.FC = () => {
       recdt: selectedRowData.recdt,
       seq1: selectedRowData.seq1,
     }));
+  };
+
+  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DETAIL_DATA_ITEM_KEY,
+    });
+    setDetailSelectedState(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   //엑셀 내보내기
@@ -1088,8 +1177,28 @@ const MA_A2700W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2 ||
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_A2700W_002");
+      } else if(filters.location == null || filters.location == undefined || filters.location ==""){
+        throw findMessage(messagesData, "MA_A2700W_003");
+      }
+        else {
+        resetAllGrid();
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const onDetailHeaderSelectionChange = useCallback(
@@ -1121,9 +1230,9 @@ const MA_A2700W: React.FC = () => {
       ) {
         throw findMessage(messagesData, "MA_A2700W_002");
       } else if (
-        filter.cboLocation == "" ||
-        filter.cboLocation == null ||
-        filter.cboLocation == undefined
+        filter.location == "" ||
+        filter.location == null ||
+        filter.location == undefined
       ) {
         throw findMessage(messagesData, "MA_A2700W_003");
       } else if (
@@ -1267,6 +1376,7 @@ const MA_A2700W: React.FC = () => {
         extra_field1 = "",
         indt = "",
       } = item;
+
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.itemgrade_s.push(itemgrade);
       dataArr.itemcd_s.push(itemcd);
@@ -1476,6 +1586,27 @@ const MA_A2700W: React.FC = () => {
       extra_field1_s: dataArr.extra_field1_s.join("|"),
     }));
   };
+
+  const onPrint = () => {
+    try {
+      const data = detailDataResult.data.filter(
+        (item) => item.num == Object.getOwnPropertyNames(detailselectedState)[0]
+      )[0];
+      if (data == undefined) {
+        throw findMessage(messagesData, "MA_A2700W_006");
+      } else {
+        setBarCodeFilters((prev) => ({
+          ...prev,
+          recdt: data.recdt,
+          seq1: data.seq1,
+          lotnum: data.lotnum,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1554,7 +1685,6 @@ const MA_A2700W: React.FC = () => {
                 )}
               </td>
             </tr>
-
             <tr>
               <th>LOT NO</th>
               <td>
@@ -1605,10 +1735,11 @@ const MA_A2700W: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="cboLocation"
-                    value={filters.cboLocation}
+                    name="location"
+                    value={filters.location}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    className="required"
                   />
                 )}
               </td>
@@ -1636,8 +1767,8 @@ const MA_A2700W: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="cboPerson"
-                    value={filters.cboPerson}
+                    name="person"
+                    value={filters.person}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                     textField="user_name"
@@ -1649,8 +1780,8 @@ const MA_A2700W: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="cboDoexdiv"
-                    value={filters.cboDoexdiv}
+                    name="doexdiv"
+                    value={filters.doexdiv}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
@@ -1784,10 +1915,19 @@ const MA_A2700W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>상세정보</GridTitle>
+          <ButtonContainer>
+            <Button
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onPrint}
+              icon="print"
+            >
+              바코드출력
+            </Button>
+          </ButtonContainer>
         </GridTitleContainer>
         <Grid
           style={{ height: "34vh" }}
@@ -1797,17 +1937,28 @@ const MA_A2700W: React.FC = () => {
               itemacnt: itemacntListData.find(
                 (item: any) => item.sub_code === row.itemacnt
               )?.code_name,
+              itemlvl1: itemlvl1ListData.find(
+                (item: any) => item.sub_code === row.itemlvl1
+              )?.code_name,
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
               pac: pacListData.find((item: any) => item.sub_code === row.pac)
                 ?.code_name,
+              [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
             })),
             detailDataState
           )}
           {...detailDataState}
           onDataStateChange={onDetailDataStateChange}
           onHeaderSelectionChange={onDetailHeaderSelectionChange}
+          dataItemKey={DETAIL_DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onDetailSelectionChange}
           //스크롤 조회 기능
           fixedScroll={true}
           total={detailDataResult.total}
