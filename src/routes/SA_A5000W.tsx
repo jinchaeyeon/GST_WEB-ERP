@@ -44,6 +44,7 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
+  to_date2
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -63,8 +64,8 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
-const DATA_ITEM_KEY = "ordnum";
-const DETAIL_DATA_ITEM_KEY = "ordseq";
+const DATA_ITEM_KEY = "num";
+const DETAIL_DATA_ITEM_KEY = "num";
 
 const SA_A5000: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -93,8 +94,8 @@ const SA_A5000: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        frdt: setDefaultDate(customOptionData, "ymdFrdt"),
-        todt: setDefaultDate(customOptionData, "ymdTodt"),
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
         cboLocation: defaultOption.find(
           (item: any) => item.id === "cboLocation"
         ).valueCode,
@@ -227,12 +228,12 @@ const SA_A5000: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.ordnum]: true });
+      setSelectedState({ [rowData.num]: true });
 
       setDetailFilters((prev) => ({
         ...prev,
-        location: rowData.location,
-        ordnum: rowData.ordnum,
+        seq1: rowData.seq1,
+        recdt: to_date2(rowData.recdt),
       }));
 
       setIsCopy(false);
@@ -338,7 +339,8 @@ const SA_A5000: React.FC = () => {
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
-    ordnum: "",
+    recdt: new Date(),
+    seq1: 0,
   });
 
   //조회조건 파라미터
@@ -372,28 +374,31 @@ const SA_A5000: React.FC = () => {
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_SA_A2000W_Q",
+    procedureName: "P_SA_A5000W_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
       "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
       "@p_location": filters.cboLocation,
-      "@p_dtgb": "",
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_ordnum": detailFilters.ordnum,
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_itemcd": "",
-      "@p_itemnm": "",
-      "@p_person": "",
-      "@p_finyn": "",
-      "@p_dptcd": "",
-      "@p_ordsts": "",
-      "@p_doexdiv": "",
-      "@p_ordtype": "",
-      "@p_poregnum": "",
+      "@p_position": filters.position,
+      "@p_dtgb": filters.dtgb,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_person": filters.cboPerson,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_rcvcustcd": filters.rcvcustcd,
+      "@p_rcvcustnm": filters.rcvcustnm,
+      "@p_doexdiv": filters.cboDoexdiv,
+      "@p_taxdiv": filters.taxdiv,
+      "@p_taxyn": filters.taxyn,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_ordkey": filters.ordkey,
+      "@p_recdt": convertDateToStr(detailFilters.recdt),
+      "@p_seq1": detailFilters.seq1,
+      "@p_company_code": filters.company_code,
     },
   };
 
@@ -491,8 +496,9 @@ const SA_A5000: React.FC = () => {
       data = null;
     }
 
+    console.log(data)
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       resetAllGrid();
 
@@ -518,9 +524,9 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data)
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -568,12 +574,12 @@ const SA_A5000: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.ordnum]: true });
+        setSelectedState({ [firstRowData.num]: true });
 
         setDetailFilters((prev) => ({
           ...prev,
-          location: firstRowData.location,
-          ordnum: firstRowData.ordnum,
+          seq1: firstRowData.seq1,
+          recdt: to_date2(firstRowData.recdt),
         }));
 
         setIfSelectFirstRow(true);
@@ -608,8 +614,8 @@ const SA_A5000: React.FC = () => {
 
     setDetailFilters((prev) => ({
       ...prev,
-      location: selectedRowData.location,
-      ordnum: selectedRowData.ordnum,
+      seq1: selectedRowData.seq1,
+      recdt: to_date2(selectedRowData.recdt),
     }));
   };
 
@@ -711,10 +717,11 @@ const SA_A5000: React.FC = () => {
       (item) => item.ordnum === ordnum
     );
 
+
     setDetailFilters((prev) => ({
       ...prev,
-      location: selectedRowData.location,
-      ordnum: selectedRowData.ordnum,
+      seq1: selectedRowData.seq1,
+      recdt: to_date2(selectedRowData.recdt),
     }));
 
     setIsCopy(true);
@@ -1264,15 +1271,6 @@ const SA_A5000: React.FC = () => {
           resizable={true}
         >
           <GridColumn
-            field={SELECTED_FIELD}
-            width="45px"
-            headerSelectionValue={
-                detailDataResult.data.findIndex(
-                (item: any) => !detailSelectedState[idGetter(item)]
-              ) === -1
-            }
-          />
-          <GridColumn
             field="sort_seq"
             title="정렬순서"
             width="80px"
@@ -1351,7 +1349,7 @@ const SA_A5000: React.FC = () => {
         <DetailWindow
           getVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
-          ordnum={detailFilters.ordnum}
+          ordnum={""}
           isCopy={isCopy}
           reloadData={reloadData}
           para={detailParameters}

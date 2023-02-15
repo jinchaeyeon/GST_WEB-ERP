@@ -136,7 +136,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1600,
-    height: 720,
+    height: 670,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -1047,7 +1047,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "insiz") {
+    if (field != "insiz" && field != "qtyunit") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {

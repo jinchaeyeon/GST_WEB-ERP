@@ -90,6 +90,11 @@ div.k-animation-container {
   min-height: 19cm;
   width: 27.7cm;
 }
+
+.printable.barcode {
+  width: 5.7cm;
+  min-height: 2.7cm;
+}
 body {
   -webkit-print-color-adjust: exact;
 }

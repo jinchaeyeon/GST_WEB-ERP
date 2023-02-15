@@ -49,6 +49,7 @@ import {
 import DetailWindow from "../components/Windows/MA_A2700W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import BarcodeWindow from "../components/Windows/MA_A2700W_Barcode_Window";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -294,6 +295,11 @@ const MA_A2700W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
+
+  const [barcordDataState, setBarcodeDataState] = useState<State>({
+    sort: [],
+  });
+
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
@@ -337,6 +343,10 @@ const MA_A2700W: React.FC = () => {
     process([], detailDataState)
   );
 
+  const [barcodeDataResult, setBarcodeDateResult] = useState<DataResult>(
+    process([], barcordDataState)
+  );
+
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -349,6 +359,7 @@ const MA_A2700W: React.FC = () => {
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [barcodeWindowVisible, setBarcodeWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -421,6 +432,7 @@ const MA_A2700W: React.FC = () => {
     recdt: "",
     seq1: 0,
     lotnum: "",
+    seq2: "",
   });
 
   //조회조건 파라미터
@@ -448,6 +460,7 @@ const MA_A2700W: React.FC = () => {
       "@p_lotnum": filters.lotnum,
       "@p_remark": filters.remark,
       "@p_pursiz": filters.pursiz,
+      "@p_seq2_s": "",
     },
   };
 
@@ -475,6 +488,7 @@ const MA_A2700W: React.FC = () => {
       "@p_lotnum": filters.lotnum,
       "@p_remark": filters.remark,
       "@p_pursiz": filters.pursiz,
+      "@p_seq2_s": "",
     },
   };
 
@@ -502,6 +516,7 @@ const MA_A2700W: React.FC = () => {
       "@p_lotnum": filters.lotnum,
       "@p_remark": filters.remark,
       "@p_pursiz": filters.pursiz,
+      "@p_seq2_s": barcodeFilters.seq2,
     },
   };
 
@@ -863,19 +878,17 @@ const MA_A2700W: React.FC = () => {
       data = null;
     }
 
-    console.log(BarCodeParameters);
-    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
-      // if (totalRowCnt > 0)
-      // setDetailDataResult((prev) => {
-      //   return {
-      //     data: [...prev.data, ...rows],
-      //     total: totalRowCnt,
-      //   };
-      // });
+      if (totalRowCnt > 0)
+      setBarcodeDateResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt,
+        };
+      });
     }
     setLoading(false);
   };
@@ -905,7 +918,6 @@ const MA_A2700W: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    resetDetailGrid();
     if (customOptionData !== null) {
       fetchBarcordGrid();
     }
@@ -975,6 +987,14 @@ const MA_A2700W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+
+    setBarCodeFilters((prev) => ({
+      ...prev,
+      recdt: selectedRowData.recdt,
+      seq1: selectedRowData.seq1,
+      lotnum: selectedRowData.lotnum,
+      seq2: selectedRowData.seq2,
+    }))
   };
 
   //엑셀 내보내기
@@ -1064,6 +1084,10 @@ const MA_A2700W: React.FC = () => {
 
   const onItemWndClick = () => {
     setItemWindowVisible(true);
+  };
+
+  const onBarcodeWndClick = () => {
+    setBarcodeWindowVisible(true);
   };
 
   const onDeleteClick = (e: any) => {
@@ -1588,23 +1612,7 @@ const MA_A2700W: React.FC = () => {
   };
 
   const onPrint = () => {
-    try {
-      const data = detailDataResult.data.filter(
-        (item) => item.num == Object.getOwnPropertyNames(detailselectedState)[0]
-      )[0];
-      if (data == undefined) {
-        throw findMessage(messagesData, "MA_A2700W_006");
-      } else {
-        setBarCodeFilters((prev) => ({
-          ...prev,
-          recdt: data.recdt,
-          seq1: data.seq1,
-          lotnum: data.lotnum,
-        }));
-      }
-    } catch (e) {
-      alert(e);
-    }
+    onBarcodeWndClick();
   };
 
   return (
@@ -2030,6 +2038,12 @@ const MA_A2700W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+        />
+      )}
+      {barcodeWindowVisible && (
+        <BarcodeWindow
+          setVisible={setBarcodeWindowVisible}
+          data={barcodeDataResult.data[0]}
         />
       )}
       {gridList.map((grid: any) =>
