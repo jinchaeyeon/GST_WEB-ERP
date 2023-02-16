@@ -45,7 +45,7 @@ import {
   to_date2,
   UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A2000W_Window";
+import DetailWindow from "../components/Windows/SA_A2300W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -61,9 +61,39 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
+
+type TdataArr = {
+  rowstatus: string[];
+  seq2: string[];
+  ordnum: string[];
+  ordseq: string[];
+  portcd: string[];
+  portnm: string[];
+  prcterms: string[];
+  poregnum: string[];
+  itemcd: string[];
+  itemnm: string[];
+  itemacnt: string[];
+  qty: string[];
+  qtyunit: string[];
+  unp: string[];
+  amt: string[];
+  dlramt: string[];
+  wonamt: string[];
+  taxamt: string[];
+  lotnum: string[];
+  remark_s: string[];
+  inrecdt: string[];
+  reqnum: string[];
+  reqseq: string[];
+  serialno: string[];
+  outlot: string[];
+  unitqty: string[];
+};
 
 const SA_A2300: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -224,13 +254,7 @@ const SA_A2300: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.ordnum]: true });
-
-      setDetailFilters((prev) => ({
-        ...prev,
-        reckey: rowData.reckey,
-        recdt: to_date2(rowData.recdt),
-      }));
+      setSelectedState({ [rowData.num]: true });
 
       setIsCopy(false);
       setWorkType("U");
@@ -337,6 +361,7 @@ const SA_A2300: React.FC = () => {
     pgSize: PAGE_SIZE,
     recdt: new Date(),
     reckey: "",
+    seq1: 0,
   });
 
   //조회조건 파라미터
@@ -383,7 +408,7 @@ const SA_A2300: React.FC = () => {
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
       "@p_recdt": convertDateToStr(detailFilters.recdt),
-      "@p_seq1": filters.seq1,
+      "@p_seq1": detailFilters.seq1,
       "@p_gubun1": filters.gubun1,
       "@p_gubun2": filters.gubun2,
       "@p_doexdiv": filters.cboDoexdiv,
@@ -401,83 +426,73 @@ const SA_A2300: React.FC = () => {
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
-    ordnum: "",
+    recdt: "",
+    seq1: 0,
   });
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_SA_A2000W_S",
+    procedureName: "P_SA_A2300W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_service_id": "",
-      "@p_orgdiv": filters.orgdiv,
+      "@p_orgdiv": "01",
+      "@p_recdt": paraDataDeleted.recdt,
+      "@p_seq1": paraDataDeleted.seq1,
       "@p_location": "",
-      "@p_ordnum": paraDataDeleted.ordnum,
-      "@p_poregnum": "",
-      "@p_project": "",
-      "@p_ordtype": "",
-      "@p_ordsts": "",
-      "@p_taxdiv": "",
-      "@p_orddt": "",
-      "@p_dlvdt": "",
-      "@p_dptcd": "",
+      "@p_doexdiv": "",
+      "@p_outtype": "",
+      "@p_outdt": "",
+      "@p_shipdt": "",
       "@p_person": "",
-      "@p_amtunit": "",
-      "@p_portnm": "",
-      "@p_finaldes": "",
-      "@p_paymeth": "",
-      "@p_prcterms": "",
       "@p_custcd": "",
       "@p_custnm": "",
       "@p_rcvcustcd": "",
       "@p_rcvcustnm": "",
-      "@p_wonchgrat": "0",
-      "@p_uschgrat": "0",
-      "@p_doexdiv": "",
+      "@p_taxdiv": "",
+      "@p_amtunit": "",
+      "@p_baseamt": 0,
+      "@p_wonchgrat": 0,
+      "@p_uschgrat": 0,
       "@p_remark": "",
+      "@p_carno": "",
+      "@p_cargocd": "",
+      "@p_dvnm": "",
+      "@p_dvnum": "",
+      "@p_trcost": 0,
+      "@p_portnm": "",
+      "@p_finaldes": "",
       "@p_attdatnum": "",
+      "@p_outuse": "",
+      "@p_rowstatus": "",
+      "@p_seq2": "",
+      "@p_ordnum": "",
+      "@p_ordseq": "",
+      "@p_portcd": "",
+      "@p_prcterms": "",
+      "@p_poregnum": "",
+      "@p_itemcd": "",
+      "@p_itemnm": "",
+      "@p_itemacnt": "",
+      "@p_qty": "",
+      "@p_qtyunit": "",
+      "@p_unp": "",
+      "@p_amt": "",
+      "@p_dlramt": "",
+      "@p_wonamt": "",
+      "@p_taxamt": "",
+      "@p_lotnum": "",
+      "@p_remark_s": "",
+      "@p_inrecdt": "",
+      "@p_reqnum": "",
+      "@p_reqseq": "",
+      "@p_serialno": "",
+      "@p_outlot": "",
+      "@p_unitqty": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_ship_method": "",
-      "@p_dlv_method": "",
-      "@p_hullno": "",
-      "@p_rowstatus_s": "",
-      "@p_chk_s": "",
-      "@p_ordseq_s": "",
-      "@p_poregseq_s": "",
-      "@p_itemcd_s": "",
-      "@p_itemnm_s": "",
-      "@p_itemacnt_s": "",
-      "@p_insiz_s": "",
-      "@p_bnatur_s": "",
-      "@p_qty_s": "",
-      "@p_qtyunit_s": "",
-      "@p_totwgt_s": "",
-      "@p_wgtunit_s": "",
-      "@p_len_s": "",
-      "@p_totlen_s": "",
-      "@p_lenunit_s": "",
-      "@p_thickness_s": "",
-      "@p_width_s": "",
-      "@p_length_s": "",
-      "@p_unpcalmeth_s": "",
-      "@p_unp_s": "",
-      "@p_amt_s": "",
-      "@p_taxamt_s": "",
-      "@p_dlramt_s": "",
-      "@p_wonamt_s": "",
-      "@p_remark_s": "",
-      "@p_pac_s": "",
-      "@p_finyn_s": "",
-      "@p_specialunp_s": "",
-      "@p_lotnum_s": "",
-      "@p_dlvdt_s": "",
-      "@p_specialamt_s": "",
-      "@p_heatno_s": "",
-      "@p_bf_qty_s": "",
-      "@p_form_id": "",
+      "@p_form_id": "P_SA_A2300W",
     },
   };
 
@@ -518,8 +533,7 @@ const SA_A2300: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(detailParameters);
-    console.log(data)
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -570,11 +584,12 @@ const SA_A2300: React.FC = () => {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.num]: true });
-        console.log(firstRowData)
+
         setDetailFilters((prev) => ({
           ...prev,
           reckey: firstRowData.recdtfind,
           recdt: to_date2(firstRowData.recdt),
+          seq1: firstRowData.seq1,
         }));
 
         setIfSelectFirstRow(true);
@@ -611,6 +626,7 @@ const SA_A2300: React.FC = () => {
       ...prev,
       reckey: selectedRowData.recdtfind,
       recdt: to_date2(selectedRowData.recdt),
+      seq1: selectedRowData.seq1,
     }));
   };
 
@@ -705,18 +721,16 @@ const SA_A2300: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-
   const onDeleteClick = (e: any) => {
-    if (!window.confirm(findMessage(messagesData, "SA_A2000W_001"))) {
-      return false;
-    }
-
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
+    const data = mainDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
 
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      ordnum: ordnum,
+      recdt: data.recdt,
+      seq1: data.seq1,
     }));
   };
 
@@ -739,7 +753,8 @@ const SA_A2300: React.FC = () => {
     }
 
     paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.ordnum = "";
+    paraDataDeleted.recdt = "";
+    paraDataDeleted.seq1 = 0;
   };
 
   const reloadData = (workType: string) => {
@@ -830,9 +845,391 @@ const SA_A2300: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A2300W_004");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A2300W_004");
+      } else if (
+        filters.cboLocation == null ||
+        filters.cboLocation == "" ||
+        filters.cboLocation == undefined
+      ) {
+        throw findMessage(messagesData, "SA_A2300W_006");
+      } else {
+        resetAllGrid();
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
+
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "N",
+    orgdiv: "01",
+    recdt: new Date(),
+    seq1: 0,
+    location: "01",
+    doexdiv: "A",
+    outtype: "",
+    outdt: new Date(),
+    shipdt: new Date(),
+    person: "admin",
+    custcd: "",
+    rcvcustcd: "",
+    taxdiv: "",
+    userid: userId,
+    pc: pc,
+    amtunit: "",
+    baseamt: 0,
+    wonchgrat: 0,
+    uschgrat: 0,
+    remark: "",
+    carno: "",
+    cargocd: "",
+    cargb: "",
+    dvnm: "",
+    dvnum: "",
+    trcost: 0,
+    portnm: "",
+    finaldes: "",
+    attdatnum: "",
+    outuse: "",
+    rowstatus: "",
+    seq2: "",
+    ordnum: "",
+    ordseq: "",
+    portcd: "",
+    prcterms: "",
+    poregnum: "",
+    itemcd: "",
+    itemnm: "",
+    itemacnt: "",
+    qty: "",
+    qtyunit: "",
+    unp: "",
+    amt: "",
+    dlramt: "",
+    wonamt: "",
+    taxamt: "",
+    lotnum: "",
+    remark_s: "",
+    inrecdt: "",
+    reqnum: "",
+    reqseq: "",
+    serialno: "",
+    outlot: "",
+    custnm: "",
+    rcvcustnm: "",
+    unitqty: "",
+    form_id: "SA_A2300W",
+    serviceid: "2207A046",
+  });
+
+  const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
+    let valid = true;
+
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0) return false;
+    setParaData((prev) => ({
+      ...prev,
+      amtunit: filter.amtunit,
+      attdatnum: filter.attdatnum,
+      custcd: filter.custcd,
+      custnm: filter.custnm,
+      carno: filter.carno,
+      cargocd: filter.cargocd,
+      trcost: parseInt(filter.trcost),
+      doexdiv: filter.doexdiv,
+      dvnm: filter.dvnm,
+      dvnum: filter.dvnum,
+      finaldes: filter.finaldes,
+      custprsncd: filter.custprsncd,
+      location: "01",
+      orgdiv: "01",
+      outdt: filter.outdt,
+      outtype: filter.outtype,
+      person: filter.person,
+      rcvcustcd: filter.rcvcustcd,
+      rcvcustnm: filter.rcvcustnm,
+      recdt: filter.recdt,
+      remark: filter.remark,
+      seq1: filter.seq1,
+      shipdt: filter.shipdt,
+      wonchgrat: filter.wonchgrat,
+      userid: userId,
+      pc: pc,
+      form_id: "SA_A2300W",
+      serviceid: "2207A046",
+      files: filter.files,
+    }));
+
+    let dataArr: TdataArr = {
+      rowstatus: [],
+      seq2: [],
+      ordnum: [],
+      ordseq: [],
+      portcd: [],
+      portnm: [],
+      prcterms: [],
+      poregnum: [],
+      itemcd: [],
+      itemnm: [],
+      itemacnt: [],
+      qty: [],
+      qtyunit: [],
+      unp: [],
+      amt: [],
+      dlramt: [],
+      wonamt: [],
+      taxamt: [],
+      lotnum: [],
+      remark_s: [],
+      inrecdt: [],
+      reqnum: [],
+      reqseq: [],
+      serialno: [],
+      outlot: [],
+      unitqty: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        amt = "",
+        itemacnt = "",
+        itemcd = "",
+        itemnm = "",
+        lotnum = "",
+        ordnum = "",
+        ordseq = "",
+        poregnum = "",
+        rowstatus = "",
+        seq2 = "",
+        taxamt = "",
+        unp = "",
+        qty = "",
+        qtyunit = "",
+        wonamt = "",
+        dlramt = "",
+        unitqty = "",
+        reqseq = "",
+        remark = "",
+      } = item;
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.seq2.push(seq2 == "" ? 0 : seq2);
+      dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
+      dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+      dataArr.portcd.push("");
+      dataArr.portnm.push("");
+      dataArr.prcterms.push("");
+      dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
+      dataArr.itemcd.push(itemcd);
+      dataArr.itemnm.push(itemnm);
+      dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
+      dataArr.qty.push(qty == "" ? 0 : qty);
+      dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
+      dataArr.unp.push(unp == "" ? 0 : unp);
+      dataArr.amt.push(amt == "" ? 0 : amt);
+      dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
+      dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
+      dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
+      dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
+      dataArr.remark_s.push(remark == undefined ? "" : remark);
+      dataArr.inrecdt.push("");
+      dataArr.reqnum.push("");
+      dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+      dataArr.outlot.push("");
+      dataArr.serialno.push("");
+      dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
+    });
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const {
+        amt = "",
+        itemacnt = "",
+        itemcd = "",
+        itemnm = "",
+        lotnum = "",
+        ordnum = "",
+        ordseq = "",
+        poregnum = "",
+        rowstatus = "",
+        seq2 = "",
+        taxamt = "",
+        unp = "",
+        qty = "",
+        qtyunit = "",
+        wonamt = "",
+        dlramt = "",
+        unitqty = "",
+        reqseq = "",
+        remark = "",
+      } = item;
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.seq2.push(seq2 == "" ? 0 : seq2);
+      dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
+      dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+      dataArr.portcd.push("");
+      dataArr.portnm.push("");
+      dataArr.prcterms.push("");
+      dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
+      dataArr.itemcd.push(itemcd);
+      dataArr.itemnm.push(itemnm);
+      dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
+      dataArr.qty.push(qty == "" ? 0 : qty);
+      dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
+      dataArr.unp.push(unp == "" ? 0 : unp);
+      dataArr.amt.push(amt == "" ? 0 : amt);
+      dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
+      dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
+      dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
+      dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
+      dataArr.remark_s.push(remark == undefined ? "" : remark);
+      dataArr.inrecdt.push("");
+      dataArr.reqnum.push("");
+      dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+      dataArr.outlot.push("");
+      dataArr.serialno.push("");
+      dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
+    });
+    setParaData((prev) => ({
+      ...prev,
+      workType: workType,
+      rowstatus: dataArr.rowstatus.join("|"),
+      seq2: dataArr.seq2.join("|"),
+      ordnum: dataArr.ordnum.join("|"),
+      ordseq: dataArr.ordseq.join("|"),
+      portcd: dataArr.portcd.join("|"),
+      portnm: dataArr.portnm.join("|"),
+      prcterms: dataArr.prcterms.join("|"),
+      poregnum: dataArr.poregnum.join("|"),
+      itemcd: dataArr.itemcd.join("|"),
+      itemnm: dataArr.itemnm.join("|"),
+      itemacnt: dataArr.itemacnt.join("|"),
+      qty: dataArr.qty.join("|"),
+      qtyunit: dataArr.qtyunit.join("|"),
+      unp: dataArr.unp.join("|"),
+      amt: dataArr.amt.join("|"),
+      dlramt: dataArr.dlramt.join("|"),
+      wonamt: dataArr.wonamt.join("|"),
+      taxamt: dataArr.taxamt.join("|"),
+      lotnum: dataArr.lotnum.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      inrecdt: dataArr.inrecdt.join("|"),
+      reqnum: dataArr.reqnum.join("|"),
+      reqseq: dataArr.reqseq.join("|"),
+      serialno: dataArr.serialno.join("|"),
+      outlot: dataArr.outlot.join("|"),
+      unitqty: dataArr.unitqty.join("|"),
+    }));
+  };
+
+  const para: Iparameters = {
+    procedureName: "P_SA_A2300W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_recdt": convertDateToStr(ParaData.recdt),
+      "@p_seq1": ParaData.seq1,
+      "@p_location": ParaData.location,
+      "@p_doexdiv": ParaData.doexdiv,
+      "@p_outtype": ParaData.outtype,
+      "@p_outdt": convertDateToStr(ParaData.outdt),
+      "@p_shipdt": convertDateToStr(ParaData.shipdt),
+      "@p_person": ParaData.person,
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_rcvcustcd": ParaData.rcvcustcd,
+      "@p_rcvcustnm": ParaData.rcvcustnm,
+      "@p_taxdiv": ParaData.taxdiv,
+      "@p_amtunit": ParaData.amtunit,
+      "@p_baseamt": ParaData.baseamt,
+      "@p_wonchgrat": ParaData.wonchgrat,
+      "@p_uschgrat": ParaData.uschgrat,
+      "@p_remark": ParaData.remark,
+      "@p_carno": ParaData.carno,
+      "@p_cargocd": ParaData.cargocd,
+      "@p_dvnm": ParaData.dvnm,
+      "@p_dvnum": ParaData.dvnum,
+      "@p_trcost": ParaData.trcost,
+      "@p_finaldes": ParaData.finaldes,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_outuse": ParaData.outuse,
+      "@p_rowstatus": ParaData.rowstatus,
+      "@p_seq2": ParaData.seq2,
+      "@p_ordnum": ParaData.ordnum,
+      "@p_ordseq": ParaData.ordseq,
+      "@p_portcd": ParaData.portcd,
+      "@p_prcterms": ParaData.prcterms,
+      "@p_poregnum": ParaData.poregnum,
+      "@p_itemcd": ParaData.itemcd,
+      "@p_itemnm": ParaData.itemnm,
+      "@p_itemacnt": ParaData.itemacnt,
+      "@p_qty": ParaData.qty,
+      "@p_qtyunit": ParaData.qtyunit,
+      "@p_unp": ParaData.unp,
+      "@p_amt": ParaData.amt,
+      "@p_dlramt": ParaData.dlramt,
+      "@p_wonamt": ParaData.wonamt,
+      "@p_taxamt": ParaData.taxamt,
+      "@p_lotnum": ParaData.lotnum,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_inrecdt": ParaData.inrecdt,
+      "@p_reqnum": ParaData.reqnum,
+      "@p_reqseq": ParaData.reqseq,
+      "@p_serialno": ParaData.serialno,
+      "@p_outlot": ParaData.outlot,
+      "@p_unitqty": ParaData.unitqty,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "P_SA_A2300W",
+      "@p_portnm": ParaData.portnm,
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.itemcd != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   return (
     <>
       <TitleContainer>
@@ -1012,21 +1409,13 @@ const SA_A2300: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
-            {/* <ButtonContainer>
+            <ButtonContainer>
               <Button
                 onClick={onAddClick}
                 themeColor={"primary"}
                 icon="file-add"
               >
-                수주생성
-              </Button>
-              <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                수주복사
+                출하처리생성
               </Button>
               <Button
                 onClick={onDeleteClick}
@@ -1034,9 +1423,9 @@ const SA_A2300: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
               >
-                수주삭제
+                출하처리삭제
               </Button>
-            </ButtonContainer> */}
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "36vh" }}
@@ -1171,12 +1560,20 @@ const SA_A2300: React.FC = () => {
       </GridContainer>
       {detailWindowVisible && (
         <DetailWindow
-          getVisible={setDetailWindowVisible}
+          setVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
-          ordnum={detailFilters.reckey}
-          isCopy={isCopy}
-          reloadData={reloadData}
-          para={detailParameters}
+          setData={setCopyData}
+          data={
+            mainDataResult.data.filter(
+              (item: any) =>
+                item.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0] == undefined
+              ? ""
+              : mainDataResult.data.filter(
+                  (item: any) =>
+                    item.num == Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+          }
         />
       )}
       {custWindowVisible && (

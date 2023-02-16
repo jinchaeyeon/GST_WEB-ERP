@@ -702,9 +702,7 @@ const MA_A2700W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
-    console.log(para);
-    console.log(data);
+    
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
