@@ -46,7 +46,7 @@ import {
   UseGetValueFromSessionItem,
   to_date2
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A2000W_Window";
+import DetailWindow from "../components/Windows/SA_A5000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -334,7 +334,7 @@ const SA_A5000: React.FC = () => {
     ordkey: "",
     recdt: new Date(),
     seq1: 0,
-    company_code: "",
+    company_code: "2207A046",
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -405,83 +405,64 @@ const SA_A5000: React.FC = () => {
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
-    ordnum: "",
+    recdt: "",
+    seq1: 0,
   });
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_SA_A2000W_S",
+    procedureName: "P_SA_A5000W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_service_id": "",
       "@p_orgdiv": filters.orgdiv,
+      "@p_recdt": paraDataDeleted.recdt,
+      "@p_seq1": paraDataDeleted.seq1,
       "@p_location": "",
-      "@p_ordnum": paraDataDeleted.ordnum,
-      "@p_poregnum": "",
-      "@p_project": "",
-      "@p_ordtype": "",
-      "@p_ordsts": "",
+      "@p_position": "",
+      "@p_outdt": "",
+      "@p_shipdt": "",
+      "@p_doexdiv": "",
       "@p_taxdiv": "",
-      "@p_orddt": "",
-      "@p_dlvdt": "",
-      "@p_dptcd": "",
-      "@p_person": "",
       "@p_amtunit": "",
-      "@p_portnm": "",
-      "@p_finaldes": "",
-      "@p_paymeth": "",
-      "@p_prcterms": "",
+      "@p_baseamt": 0,
+      "@p_wonchgrat": 0,
+      "@p_uschgrat": 0,
+      "@p_person": "",
       "@p_custcd": "",
       "@p_custnm": "",
       "@p_rcvcustcd": "",
       "@p_rcvcustnm": "",
-      "@p_wonchgrat": "0",
-      "@p_uschgrat": "0",
-      "@p_doexdiv": "",
-      "@p_remark": "",
       "@p_attdatnum": "",
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_ship_method": "",
-      "@p_dlv_method": "",
-      "@p_hullno": "",
+      "@p_remark": "",
       "@p_rowstatus_s": "",
-      "@p_chk_s": "",
-      "@p_ordseq_s": "",
-      "@p_poregseq_s": "",
+      "@p_seq2_s": "",
       "@p_itemcd_s": "",
-      "@p_itemnm_s": "",
       "@p_itemacnt_s": "",
-      "@p_insiz_s": "",
-      "@p_bnatur_s": "",
       "@p_qty_s": "",
       "@p_qtyunit_s": "",
-      "@p_totwgt_s": "",
-      "@p_wgtunit_s": "",
-      "@p_len_s": "",
-      "@p_totlen_s": "",
-      "@p_lenunit_s": "",
-      "@p_thickness_s": "",
-      "@p_width_s": "",
-      "@p_length_s": "",
       "@p_unpcalmeth_s": "",
       "@p_unp_s": "",
       "@p_amt_s": "",
+      "@p_wonamt_s": "",
       "@p_taxamt_s": "",
       "@p_dlramt_s": "",
-      "@p_wonamt_s": "",
+      "@p_unitwgt_s": "",
+      "@p_totwgt_s": "",
+      "@p_wgtunit_s":"",
       "@p_remark_s": "",
-      "@p_pac_s": "",
-      "@p_finyn_s": "",
-      "@p_specialunp_s": "",
-      "@p_lotnum_s": "",
-      "@p_dlvdt_s": "",
-      "@p_specialamt_s": "",
-      "@p_heatno_s": "",
-      "@p_bf_qty_s": "",
-      "@p_form_id": "",
+      "@p_poregnum_s": "",
+      "@p_ordnum_s":"",
+      "@p_ordseq_s": "",
+      "@p_outrecdt_s": "",
+      "@p_outseq1_s": "",
+      "@p_outseq2_s": "",
+      "@p_sort_seq_s": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "P_SA_A2300W",
+      "@p_company_code": "2207A046"
     },
   };
 
@@ -495,8 +476,7 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
-
+    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -505,7 +485,7 @@ const SA_A5000: React.FC = () => {
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -532,7 +512,7 @@ const SA_A5000: React.FC = () => {
       if (totalRowCnt > 0)
         setDetailDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -730,16 +710,14 @@ const SA_A5000: React.FC = () => {
   };
 
   const onDeleteClick = (e: any) => {
-    if (!window.confirm(findMessage(messagesData, "SA_A2000W_001"))) {
-      return false;
-    }
-
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
-
+    const data = mainDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      ordnum: ordnum,
+      recdt: data.recdt,
+      seq1: data.seq1,
     }));
   };
 
@@ -762,7 +740,8 @@ const SA_A5000: React.FC = () => {
     }
 
     paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.ordnum = "";
+    paraDataDeleted.recdt = "";
+    paraDataDeleted.seq1=0;
   };
 
   const reloadData = (workType: string) => {
@@ -853,8 +832,237 @@ const SA_A5000: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A5000W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A5000W_001");
+      } else if (
+        filters.dtgb == null ||
+        filters.dtgb == "" ||
+        filters.dtgb == undefined
+      ) {
+        throw findMessage(messagesData, "SA_A5000W_002");
+      } else {
+        resetAllGrid();
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
+    let valid = true;
+
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    // if (dataItem.length === 0) return false;
+    // setParaData((prev) => ({
+    //   ...prev,
+    //   amtunit: filter.amtunit,
+    //   attdatnum: filter.attdatnum,
+    //   custcd: filter.custcd,
+    //   custnm: filter.custnm,
+    //   carno: filter.carno,
+    //   cargocd: filter.cargocd,
+    //   trcost: parseInt(filter.trcost),
+    //   doexdiv: filter.doexdiv,
+    //   dvnm: filter.dvnm,
+    //   dvnum: filter.dvnum,
+    //   finaldes: filter.finaldes,
+    //   custprsncd: filter.custprsncd,
+    //   location: "01",
+    //   orgdiv: "01",
+    //   outdt: filter.outdt,
+    //   outtype: filter.outtype,
+    //   person: filter.person,
+    //   rcvcustcd: filter.rcvcustcd,
+    //   rcvcustnm: filter.rcvcustnm,
+    //   recdt: filter.recdt,
+    //   remark: filter.remark,
+    //   seq1: filter.seq1,
+    //   shipdt: filter.shipdt,
+    //   wonchgrat: filter.wonchgrat,
+    //   userid: userId,
+    //   pc: pc,
+    //   form_id: "SA_A2300W",
+    //   serviceid: "2207A046",
+    //   files: filter.files,
+    // }));
+
+    // let dataArr: TdataArr = {
+    //   rowstatus: [],
+    //   seq2: [],
+    //   ordnum: [],
+    //   ordseq: [],
+    //   portcd: [],
+    //   portnm: [],
+    //   prcterms: [],
+    //   poregnum: [],
+    //   itemcd: [],
+    //   itemnm: [],
+    //   itemacnt: [],
+    //   qty: [],
+    //   qtyunit: [],
+    //   unp: [],
+    //   amt: [],
+    //   dlramt: [],
+    //   wonamt: [],
+    //   taxamt: [],
+    //   lotnum: [],
+    //   remark_s: [],
+    //   inrecdt: [],
+    //   reqnum: [],
+    //   reqseq: [],
+    //   serialno: [],
+    //   outlot: [],
+    //   unitqty: [],
+    // };
+
+    // dataItem.forEach((item: any, idx: number) => {
+    //   const {
+    //     amt = "",
+    //     itemacnt = "",
+    //     itemcd = "",
+    //     itemnm = "",
+    //     lotnum = "",
+    //     ordnum = "",
+    //     ordseq = "",
+    //     poregnum = "",
+    //     rowstatus = "",
+    //     seq2 = "",
+    //     taxamt = "",
+    //     unp = "",
+    //     qty = "",
+    //     qtyunit = "",
+    //     wonamt = "",
+    //     dlramt = "",
+    //     unitqty = "",
+    //     reqseq = "",
+    //     remark = "",
+    //   } = item;
+    //   dataArr.rowstatus.push(rowstatus);
+    //   dataArr.seq2.push(seq2 == "" ? 0 : seq2);
+    //   dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
+    //   dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+    //   dataArr.portcd.push("");
+    //   dataArr.portnm.push("");
+    //   dataArr.prcterms.push("");
+    //   dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
+    //   dataArr.itemcd.push(itemcd);
+    //   dataArr.itemnm.push(itemnm);
+    //   dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
+    //   dataArr.qty.push(qty == "" ? 0 : qty);
+    //   dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
+    //   dataArr.unp.push(unp == "" ? 0 : unp);
+    //   dataArr.amt.push(amt == "" ? 0 : amt);
+    //   dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
+    //   dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
+    //   dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
+    //   dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
+    //   dataArr.remark_s.push(remark == undefined ? "" : remark);
+    //   dataArr.inrecdt.push("");
+    //   dataArr.reqnum.push("");
+    //   dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+    //   dataArr.outlot.push("");
+    //   dataArr.serialno.push("");
+    //   dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
+    // });
+    // deletedMainRows.forEach((item: any, idx: number) => {
+    //   const {
+    //     amt = "",
+    //     itemacnt = "",
+    //     itemcd = "",
+    //     itemnm = "",
+    //     lotnum = "",
+    //     ordnum = "",
+    //     ordseq = "",
+    //     poregnum = "",
+    //     rowstatus = "",
+    //     seq2 = "",
+    //     taxamt = "",
+    //     unp = "",
+    //     qty = "",
+    //     qtyunit = "",
+    //     wonamt = "",
+    //     dlramt = "",
+    //     unitqty = "",
+    //     reqseq = "",
+    //     remark = "",
+    //   } = item;
+    //   dataArr.rowstatus.push(rowstatus);
+    //   dataArr.seq2.push(seq2 == "" ? 0 : seq2);
+    //   dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
+    //   dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+    //   dataArr.portcd.push("");
+    //   dataArr.portnm.push("");
+    //   dataArr.prcterms.push("");
+    //   dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
+    //   dataArr.itemcd.push(itemcd);
+    //   dataArr.itemnm.push(itemnm);
+    //   dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
+    //   dataArr.qty.push(qty == "" ? 0 : qty);
+    //   dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
+    //   dataArr.unp.push(unp == "" ? 0 : unp);
+    //   dataArr.amt.push(amt == "" ? 0 : amt);
+    //   dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
+    //   dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
+    //   dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
+    //   dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
+    //   dataArr.remark_s.push(remark == undefined ? "" : remark);
+    //   dataArr.inrecdt.push("");
+    //   dataArr.reqnum.push("");
+    //   dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+    //   dataArr.outlot.push("");
+    //   dataArr.serialno.push("");
+    //   dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
+    // });
+    // setParaData((prev) => ({
+    //   ...prev,
+    //   workType: workType,
+    //   rowstatus: dataArr.rowstatus.join("|"),
+    //   seq2: dataArr.seq2.join("|"),
+    //   ordnum: dataArr.ordnum.join("|"),
+    //   ordseq: dataArr.ordseq.join("|"),
+    //   portcd: dataArr.portcd.join("|"),
+    //   portnm: dataArr.portnm.join("|"),
+    //   prcterms: dataArr.prcterms.join("|"),
+    //   poregnum: dataArr.poregnum.join("|"),
+    //   itemcd: dataArr.itemcd.join("|"),
+    //   itemnm: dataArr.itemnm.join("|"),
+    //   itemacnt: dataArr.itemacnt.join("|"),
+    //   qty: dataArr.qty.join("|"),
+    //   qtyunit: dataArr.qtyunit.join("|"),
+    //   unp: dataArr.unp.join("|"),
+    //   amt: dataArr.amt.join("|"),
+    //   dlramt: dataArr.dlramt.join("|"),
+    //   wonamt: dataArr.wonamt.join("|"),
+    //   taxamt: dataArr.taxamt.join("|"),
+    //   lotnum: dataArr.lotnum.join("|"),
+    //   remark_s: dataArr.remark_s.join("|"),
+    //   inrecdt: dataArr.inrecdt.join("|"),
+    //   reqnum: dataArr.reqnum.join("|"),
+    //   reqseq: dataArr.reqseq.join("|"),
+    //   serialno: dataArr.serialno.join("|"),
+    //   outlot: dataArr.outlot.join("|"),
+    //   unitqty: dataArr.unitqty.join("|"),
+    // }));
   };
 
   const onDetailHeaderSelectionChange = useCallback(
@@ -1102,31 +1310,23 @@ const SA_A5000: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
-            {/* <ButtonContainer>
-              <Button
+            <ButtonContainer>
+            <Button
                 onClick={onAddClick}
                 themeColor={"primary"}
                 icon="file-add"
               >
-                수주생성
+                판매처리생성
               </Button>
-              <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                수주복사
-              </Button>
-              <Button
+            <Button
                 onClick={onDeleteClick}
                 icon="delete"
                 fillMode="outline"
                 themeColor={"primary"}
               >
-                수주삭제
+                판매처리삭제
               </Button>
-            </ButtonContainer> */}
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "36vh" }}
@@ -1347,13 +1547,21 @@ const SA_A5000: React.FC = () => {
       </GridContainer>
       {detailWindowVisible && (
         <DetailWindow
-          getVisible={setDetailWindowVisible}
-          workType={workType} //신규 : N, 수정 : U
-          ordnum={""}
-          isCopy={isCopy}
-          reloadData={reloadData}
-          para={detailParameters}
-        />
+        setVisible={setDetailWindowVisible}
+        workType={workType} //신규 : N, 수정 : U
+        setData={setCopyData}
+        data={
+          mainDataResult.data.filter(
+            (item: any) =>
+              item.num == Object.getOwnPropertyNames(selectedState)[0]
+          )[0] == undefined
+            ? ""
+            : mainDataResult.data.filter(
+                (item: any) =>
+                  item.num == Object.getOwnPropertyNames(selectedState)[0]
+              )[0]
+        }
+      />
       )}
       {custWindowVisible && (
         <CustomersWindow

@@ -358,73 +358,31 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    amt: 0,
-    amtunit: "",
-    attdatnum: "",
-    chk: "",
+    orgdiv: "01",
+    location: "01",
+    reckey: "",
+    outdt: new Date(),
+    shipdt: new Date(),
+    position: "",
     custcd: "",
     custnm: "",
-    carno: "",
-    cargocd: "",
-    trcost: 0,
-    doexdiv: "",
-    dvnm: "",
-    dvnum: "",
-    finaldes: "",
-    custprsncd: "",
-    dlramt: 0,
-    inredt: new Date(),
-    insiz: "",
-    itemacnt: "",
-    itemcd: "",
-    itemnm: "",
-    itemno: "",
-    location: "01",
-    lotnum: "",
-    num: 0,
-    recdtfind: "",
-    ordnum: "",
-    ordseq: 0,
-    orgdiv: "01",
-    orglot: "",
-    outdt: new Date(),
-    outkind: "",
-    outlot: "",
-    outtype: "",
-    pacmeth: "",
     person: "",
-    portnm: "",
-    qty: 0,
-    qtyunit: "",
+    amtunit: "",
+    taxnum: "",
     rcvcustcd: "",
     rcvcustnm: "",
-    recdt: new Date(),
-    remark: "",
-    reqnum: "",
-    reqseq: 0,
-    seq1: 0,
-    seq2: 0,
-    serialno: "",
-    shipdt: new Date(),
-    taxamt: 0,
-    totwgt: 0,
-    unitqty: 0,
-    unitwgt: 0,
-    unp: 0,
-    unpcalmeth: "",
-    uschgrat: 0,
-    wgtunit: "",
-    wonamt: 0,
+    doexdiv: "",
     wonchgrat: 0,
-    userid: userId,
-    pc: pc,
-    form_id: "SA_A2300W",
-    serviceid: "2207A046",
+    invoiceno: "",
+    taxdiv: "",
+    uschgrat: 0,
     files: "",
+    attdatnum: "",
+    remark: ""
   });
 
   const parameters: Iparameters = {
-    procedureName: "P_SA_A2300W_Q",
+    procedureName: "P_SA_A5000W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -436,8 +394,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       "@p_person": "",
       "@p_custcd": "",
       "@p_custnm": "",
-      "@p_recdt": convertDateToStr(filters.recdt),
-      "@p_seq1": filters.seq1,
+      // "@p_recdt": convertDateToStr(filters.recdt),
+      // "@p_seq1": filters.seq1,
       "@p_gubun1": "",
       "@p_gubun2": "",
       "@p_doexdiv": "",
@@ -448,7 +406,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       "@p_ordnum": "",
       "@p_orglot": "",
       "@p_reqnum": "",
-      "@p_reckey": filters.recdtfind,
+      // "@p_reckey": filters.recdtfind,
     },
   };
 
@@ -938,7 +896,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   return (
     <>
       <Window
-        title={workType === "N" ? "출하처리생성" : "출하처리정보"}
+        title={workType === "N" ? "판매처리생성" : "판매처리정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -949,16 +907,16 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           <FormBox>
             <tbody>
               <tr>
-                <th>출하번호</th>
+                <th>판매번호</th>
                 <td>
                   <Input
-                    name="recdtfind"
+                    name="reckey"
                     type="text"
-                    value={filters.recdtfind}
+                    value={filters.reckey}
                     className="readonly"
                   />
                 </td>
-                <th>출하일자</th>
+                <th>판매일자</th>
                 <td>
                   <div className="filter-item-wrap">
                     <DatePicker
@@ -966,8 +924,63 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                       value={filters.outdt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
+                      className="required"
                     />
                   </div>
+                </td>
+                <th>선적일자</th>
+                <td>
+                  <div className="filter-item-wrap">
+                    <DatePicker
+                      name="shipdt"
+                      value={filters.shipdt}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
+                    />
+                  </div>
+                </td>
+                <th>사업장</th>
+                <td>
+                {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="location"
+                      value={filters.location}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                      className="required"
+                    />
+                  )}
+                </td>
+                <th>사업부</th>
+                <td>
+                {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="position"
+                      value={filters.position}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <th>업체코드</th>
+                <td>
+                  <Input
+                    name="custcd"
+                    type="text"
+                    value={filters.custcd}
+                    className="readonly"
+                  />
+                </td>
+                <th>업체명</th>
+                <td>
+                  <Input
+                    name="custnm"
+                    type="text"
+                    value={filters.custnm}
+                    className="readonly"
+                  />
                 </td>
                 <th>담당자</th>
                 <td>
@@ -983,56 +996,27 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     />
                   )}
                 </td>
-                <th>내수구분</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="doexdiv"
-                      value={filters.doexdiv}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      className="required"
-                    />
-                  )}
-                </td>
-                <th>사업장</th>
+                <th>화폐단위</th>
                 <td>
                   <Input
-                    name="location"
+                    name="amtunit"
                     type="text"
-                    value={filters.location}
+                    value={filters.amtunit}
+                    className="readonly"
+                  />
+                </td>
+                <th>계산서NO</th>
+                <td>
+                  <Input
+                    name="taxnum"
+                    type="text"
+                    value={filters.taxnum}
                     className="readonly"
                   />
                 </td>
               </tr>
               <tr>
-                <th>출하처코드</th>
-                <td>
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
-                    className="required"
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>출하처명</th>
-                <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
-                    className="readonly"
-                  />
-                </td>
-                <th>인수처코드</th>
+              <th>인수처코드</th>
                 <td>
                   <Input
                     name="rcvcustcd"
@@ -1058,106 +1042,60 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     onChange={filterInputChange}
                   />
                 </td>
-                <th>업체담당자</th>
+                <th>내수구분</th>
                 <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="custprsncd"
-                      value={filters.custprsncd}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      textField="prsnnm"
-                      valueField="custprsncd"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>차량번호</th>
-                <td>
-                  <Input
-                    name="carno"
+                <Input
+                    name="doexdiv"
                     type="text"
-                    value={filters.carno}
-                    onChange={filterInputChange}
+                    value={filters.doexdiv}
+                    className="readonly"
                   />
                 </td>
-                <th>도착지</th>
+                <th>원화환율</th>
                 <td>
-                  <Input
-                    name="finaldes"
+                <Input
+                    name="wonchgrat"
                     type="text"
-                    value={filters.finaldes}
-                    onChange={filterInputChange}
+                    value={filters.wonchgrat}
+                    className="readonly"
                   />
                 </td>
-                <th>선적지</th>
+                <th>Invoice No</th>
                 <td>
-                  <Input
-                    name="portnm"
+                <Input
+                    name="invoiceno"
                     type="text"
-                    value={filters.portnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>운전자명</th>
-                <td>
-                  <Input
-                    name="dvnm"
-                    type="text"
-                    value={filters.dvnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>운전자연락처</th>
-                <td>
-                  <Input
-                    name="dvnum"
-                    type="text"
-                    value={filters.dvnum}
-                    onChange={filterInputChange}
+                    value={filters.invoiceno}
+                    className="readonly"
                   />
                 </td>
               </tr>
               <tr>
-                <th>선적일자</th>
+              <th>과세구분</th>
                 <td>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="shipdt"
-                      value={filters.shipdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                    />
-                  </div>
+                <Input
+                    name="taxdiv"
+                    type="text"
+                    value={filters.taxdiv}
+                    className="readonly"
+                  />
                 </td>
-                <th>운송사</th>
+                <th>미화환율</th>
                 <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="cargocd"
-                      value={filters.cargocd}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>운송비</th>
-                <td>
-                  <Input
-                    name="trcost"
-                    type="number"
-                    value={filters.trcost}
-                    onChange={filterInputChange}
+                <Input
+                    name="uschgrat"
+                    type="text"
+                    value={filters.uschgrat}
+                    className="readonly"
                   />
                 </td>
                 <th>첨부파일</th>
-                <td colSpan={3}>
+                <td>
                   <Input
                     name="files"
                     type="text"
                     value={filters.files}
-                    onChange={filterInputChange}
+                    className="readonly"
                   />
                   <ButtonInInput>
                     <Button
@@ -1168,10 +1106,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     />
                   </ButtonInInput>
                 </td>
-              </tr>
-              <tr>
                 <th>비고</th>
-                <td colSpan={9}>
+                <td colSpan={3}>
                   <TextArea
                     value={filters.remark}
                     name="remark"
@@ -1183,7 +1119,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <GridContainer>
+        {/* <GridContainer>
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
@@ -1268,7 +1204,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             <GridColumn field="remark" title="비고" width="300px" />
             <GridColumn field="lotnum" title="LOT NO" width="200px" />
           </Grid>
-        </GridContainer>
+        </GridContainer> */}
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
