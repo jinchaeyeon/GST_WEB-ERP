@@ -703,6 +703,8 @@ const MA_A2700W: React.FC = () => {
       data = null;
     }
 
+    console.log(para);
+    console.log(data);
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -834,7 +836,7 @@ const MA_A2700W: React.FC = () => {
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -861,7 +863,7 @@ const MA_A2700W: React.FC = () => {
       if (totalRowCnt > 0)
         setDetailDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -1448,7 +1450,7 @@ const MA_A2700W: React.FC = () => {
       dataArr.load_place_s.push(load_place);
       dataArr.pac_s.push(pac);
       dataArr.itemlvl1_s.push(itemlvl1);
-      dataArr.enddt_s.push(enddt.length == 8 ? enddt : convertDateToStr(enddt));
+      dataArr.enddt_s.push(enddt.length == undefined ? convertDateToStr(enddt) : enddt);
       dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
@@ -1552,7 +1554,7 @@ const MA_A2700W: React.FC = () => {
       dataArr.load_place_s.push(load_place);
       dataArr.pac_s.push(pac);
       dataArr.itemlvl1_s.push(itemlvl1);
-      dataArr.enddt_s.push(enddt.length == 8 ? enddt : convertDateToStr(enddt));
+      dataArr.enddt_s.push(enddt.length == undefined ? convertDateToStr(enddt) : enddt);
       dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
     });
     setParaData((prev) => ({
@@ -1614,7 +1616,7 @@ const MA_A2700W: React.FC = () => {
   const onPrint = () => {
     const datas = detailDataResult.data.filter(
       (item) =>
-        item.num == Object.getOwnPropertyNames(selectedState)[0]
+        item.num == Object.getOwnPropertyNames(detailselectedState)[0]
     )[0]
     try {
       if (

@@ -541,12 +541,24 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
       (item) => item.itemcd == Object.getOwnPropertyNames(selectedState)[0]
     );
 
-    setSubDataResult((prev) => {
-      return {
-        data: [...prev.data, datas[0]],
-        total: prev.total + 1,
-      };
-    });
+    let valid = true;
+
+    for (var i = 0; i < subDataResult.data.length; i++) {
+      if (datas[0].itemcd == subDataResult.data[i].itemcd) {
+        alert("중복되는 품목이있습니다.");
+        valid = false;
+        return false;
+      }
+    }
+
+    if(valid == true){
+      setSubDataResult((prev) => {
+        return {
+          data: [...prev.data, datas[0]],
+          total: prev.total + 1,
+        };
+      });
+    }
   };
 
   const onDeleteClick = (e: any) => {

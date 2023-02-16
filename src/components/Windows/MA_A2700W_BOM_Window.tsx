@@ -72,7 +72,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const DATA_ITEM_KEY3 = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
-  const idGetter3= getter(DATA_ITEM_KEY3);
+  const idGetter3 = getter(DATA_ITEM_KEY3);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const pathname: string = window.location.pathname.replace("/", "");
@@ -365,7 +365,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     person: "",
     finyn: "",
     remark: "",
-    pac: "" 
+    pac: "",
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -442,8 +442,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       data = null;
     }
 
-    console.log(parameters)
-    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -455,7 +453,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -467,7 +465,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     setLoading(false);
   };
 
-
   const fetchDetailGrid = async () => {
     //if (!permissions?.view) return;
     let data: any;
@@ -478,24 +475,32 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       data = null;
     }
 
-    console.log(detailParameters)
-    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
+          rowstatus: "N",
+          amt: row.amt == null ? 0 : row.amt,
+          unp: row.unp == null ? 0 : row.unp,
+          qty: row.qty == null ? 1 : row.qty,
+          wonamt: row.wonamt == null ? 0 : row.wonamt,
+          taxamt: row.taxamt == null ? 0 : row.taxamt,
+          totwgt: row.totwgt == null ? 0 : row.totwgt,
+          len: row.len == null ? 0 : row.len,
+          itemthick: row.itemthick == null ? 0 : row.itemthick,
+          width: row.width == null ? 0 : row.width,
+          pac: row.pac == null ? "A": row.pac,
+          enddt: row.enddt == null ? new Date(): row.enddt
         };
       });
 
-      if (totalRowCnt > 0) {
-        setDetailDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
-      }
+      setDetailDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt,
+        };
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -510,8 +515,10 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       setIsInitSearch(true);
     }
   }, [filters]);
-  
+
   useEffect(() => {
+    setDetailPgNum(1);
+    setDetailDataResult(process([], detailDataState));
     if (customOptionData !== null) {
       fetchDetailGrid();
     }
@@ -523,7 +530,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     }
   }, [mainPgNum]);
 
-  
   useEffect(() => {
     if (customOptionData !== null) {
       fetchDetailGrid();
@@ -538,10 +544,10 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         setSelectedState({ [firstRowData.num]: true });
 
         setDetailFilters((prev) => ({
-            ...prev,
-            itemcd: firstRowData.itemcd,
-            ordnum: firstRowData.ordnum
-        }))
+          ...prev,
+          itemcd: firstRowData.itemcd,
+          ordnum: firstRowData.ordnum,
+        }));
         setIfSelectFirstRow(true);
       }
     }
@@ -583,20 +589,20 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     setDetailFilters((prev) => ({
-        ...prev,
-        itemcd: selectedRowData.itemcd,
-        ordnum: selectedRowData.ordnum
-    }))
+      ...prev,
+      itemcd: selectedRowData.itemcd,
+      ordnum: selectedRowData.ordnum,
+    }));
   };
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: detailselectedState,
       dataItemKey: DATA_ITEM_KEY3,
     });
     setDetailSelectedState(newSelectedState);
-    // setyn(true);
+
     setIfSelectFirstRow(false);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
@@ -720,33 +726,72 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
-    const datas = subDataResult.data.map((item: any) => {
-      return {
-        ...item,
-        amt: item.amt == null ? 0 : item.amt,
-        unp: item.unp == null ? 0 : item.unp,
-        qty: item.now_qty == null ? 1 : item.now_qty,
-        wonamt: item.wonamt == null ? 0 : item.wonamt,
-        taxamt: item.taxamt == null ? 0 : item.taxamt,
-        totwgt: item.totwgt == null ? 0 : item.totwgt,
-        len: item.len == null ? 0 : item.len,
-        itemthick: item.itemthick == null ? 0 : item.itemthick,
-        width: item.width == null ? 0 : item.width,
-        pac: item.pac == null ? "B" : item.pac,
-      };
-    });
-    setData(datas);
+    setData(subDataResult.data);
     onClose();
   };
 
   const onRowDoubleClick = (props: any) => {
-    const datas = detailDataResult.data.filter(
-      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    );
-
+    const datas = props.dataItem;
+    let seq = 1;
+    if (subDataResult.total > 0) {
+      subDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+      });
+      seq++;
+    }
+    const selectRow = detailDataResult.data.filter(
+      (item: any) =>
+        item.num == Object.getOwnPropertyNames(detailselectedState)[0]
+    )[0];
+    const newDataItem = {
+      [DATA_ITEM_KEY]: seq+1,
+      amt: selectRow.amt,
+      amtunit: selectRow.amtunit,
+      chk: selectRow.chk,
+      custcd: selectRow.custcd,
+      custnm: selectRow.custnm,
+      insiz: selectRow.insiz,
+      itemacnt: selectRow.itemacnt,
+      itemcd: selectRow.itemcd,
+      itemlvl1: selectRow.itemlvl1,
+      itemlvl2: selectRow.itemlvl2,
+      itemlvl3: selectRow.itemlvl3,
+      itemnm: selectRow.itemnm,
+      itemno: selectRow.itemno,
+      itemthick: selectRow.itemthick,
+      len: selectRow.len,
+      lev: selectRow.lev,
+      lotnum: selectRow.lotnum,
+      need_qty: selectRow.need_qty,
+      needqty: selectRow.needqty,
+      nowqty: selectRow.nowqty,
+      ordkey: selectRow.ordkey,
+      ordnum: selectRow.ordnum,
+      ordseq: selectRow.ordseq,
+      pac: selectRow.pac,
+      poregnum: selectRow.poregnum,
+      project: selectRow.project,
+      qty: selectRow.qty,
+      qtyunit: selectRow.qtyunit,
+      rowstatus: "N",
+      safeqty: selectRow.safeqty,
+      selected: selectRow.selected,
+      singular: selectRow.singular,
+      spec: selectRow.spec,
+      taxamt: selectRow.taxamt,
+      taxdiv: selectRow.taxdiv,
+      totwgt: selectRow.totwgt,
+      unitwgt: selectRow.unitwgt,
+      unp: selectRow.unp,
+      wgtunit: selectRow.wgtunit,
+      width: selectRow.width,
+      wonamt: selectRow.wonamt,
+    };
     setSubDataResult((prev) => {
       return {
-        data: [...prev.data, datas[0]],
+        data: [...prev.data, newDataItem],
         total: prev.total + 1,
       };
     });
@@ -999,7 +1044,12 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn field="ordnum" title="수주번호" width="150px" footerCell={mainTotalFooterCell}/>
+            <GridColumn
+              field="ordnum"
+              title="수주번호"
+              width="150px"
+              footerCell={mainTotalFooterCell}
+            />
             <GridColumn
               field="orddt"
               title="수주일자"
@@ -1052,11 +1102,11 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               detailDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.invunit
+                  (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
-                  )?.code_name,
+                  (item: any) => item.sub_code === row.itemacnt
+                )?.code_name,
                 [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
               })),
               detailDataState
@@ -1085,7 +1135,12 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             //더블클릭
             onRowDoubleClick={onRowDoubleClick}
           >
-            <GridColumn field="itemcd" title="품목코드" width="200px" footerCell={detailTotalFooterCell} />
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              width="200px"
+              footerCell={detailTotalFooterCell}
+            />
             <GridColumn field="itemnm" title="품목명" width="250px" />
             <GridColumn field="insiz" title="규격" width="250px" />
             <GridColumn field="itemacnt" title="품목계정" width="200px" />
@@ -1095,7 +1150,12 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               width="120px"
               cell={NumberCell}
             />
-            <GridColumn field="now_qty" title="재고수량" cell={NumberCell} width="120px" />
+            <GridColumn
+              field="now_qty"
+              title="재고수량"
+              cell={NumberCell}
+              width="120px"
+            />
             <GridColumn
               field="need_qty"
               title="부족수량"
@@ -1108,11 +1168,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               width="120px"
               cell={NumberCell}
             />
-            <GridColumn
-              field="qtyunit"
-              title="수량단위"
-              width="150px"
-            />
+            <GridColumn field="qtyunit" title="수량단위" width="150px" />
           </Grid>
         </GridContainer>
         <GridContainer>
@@ -1132,11 +1188,11 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               subDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.invunit
+                  (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
-                  )?.code_name,
+                  (item: any) => item.sub_code === row.itemacnt
+                )?.code_name,
                 [SELECTED_FIELD]: subselectedState[idGetter2(row)], //선택된 데이터
               })),
               subDataState
@@ -1163,20 +1219,19 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn field="itemcd" title="품목코드" width="200px" footerCell={subTotalFooterCell} />
-            <GridColumn field="itemnm" title="품목명" width="250px" />
-            <GridColumn field="insiz" title="규격" width="250px" />
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              width="200px"
+              footerCell={subTotalFooterCell}
+            />
+            <GridColumn field="itemnm" title="품목명" width="200px" />
+            <GridColumn field="insiz" title="규격" width="200px" />
             <GridColumn field="itemacnt" title="품목계정" width="200px" />
+            <GridColumn field="lotnum" title="LOT NO" width="200px" />
             <GridColumn
               field="needqty"
               title="단위소요량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn field="now_qty" title="재고수량" cell={NumberCell} width="120px" />
-            <GridColumn
-              field="need_qty"
-              title="부족수량"
               width="120px"
               cell={NumberCell}
             />
@@ -1186,11 +1241,8 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               width="120px"
               cell={NumberCell}
             />
-            <GridColumn
-              field="qtyunit"
-              title="수량단위"
-              width="150px"
-            />
+            <GridColumn field="qtyunit" title="수량단위" width="150px" />
+            <GridColumn field="singular" title="일품여부" width="80px" cell={CheckBoxCell}/>
           </Grid>
         </GridContainer>
         <BottomContainer>

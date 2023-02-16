@@ -465,6 +465,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       "@p_lotnum": "",
       "@p_remark": filters.remark,
       "@p_pursiz": "",
+      "@p_seq2_s": ""
     },
   };
 
@@ -523,55 +524,47 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq+1,
-      itemgrade: selectRow.itemnm == undefined ? "" : selectRow.itemgrade,
-      itemcd: selectRow.itemcd,
-      itemnm: selectRow.itemnm == undefined ? "" : selectRow.itemnm,
-      itemacnt: selectRow.itemacnt,
-      qty: selectRow.itemnm == undefined? selectRow.now_qty: selectRow.qty,
-      qtyunit: selectRow.itemnm == undefined? selectRow.qtyunit: "",
-      unitwgt: 0,
-      wgtunit: selectRow.itemnm == undefined? "": selectRow.wgtunit,
-      len: selectRow.len,
-      itemthick: selectRow.itemthick,
-      width: selectRow.width,
-      unpcalmeth: "Q",
-      UNPFACTOR: 0,
-      unp: selectRow.unp,
       amt: selectRow.amt,
-      dlramt: 0,
-      wonamt: selectRow.wonamt,
-      taxamt: selectRow.taxamt,
-      maker: selectRow.itemnm == undefined? "": selectRow.maker,
-      usegb: "",
-      spec: selectRow.itemnm == undefined? "": selectRow.spec,
-      badcd: "",
-      BADTEMP: "",
-      poregnum: "",
-      lcno: "",
-      heatno: "",
-      SONGNO: "",
-      projectno: "",
-      lotnum: selectRow.itemnm == undefined ? "" : selectRow.lotnum,
-      orglot: selectRow.itemnm == undefined ? "" : selectRow.orglot,
-      boxno: "",
-      PRTNO: "",
-      account: "",
-      qcnum: "",
-      qcseq: 0,
-      APPNUM: "",
-      seq2: 0,
-      totwgt: selectRow.totwgt,
-      purnum: "",
-      purseq: 0,
-      ordnum: "",
-      ordseq: 0,
-      remark: selectRow.itemnm  == undefined? "": selectRow.remark,
-      load_place: selectRow.load_place,
-      pac: selectRow.pac,
+      amtunit: selectRow.amtunit,
+      chk: selectRow.chk,
+      custcd: selectRow.custcd,
+      custnm: selectRow.custnm,
+      insiz: selectRow.insiz,
+      itemacnt: selectRow.itemacnt,
+      itemcd: selectRow.itemcd,
       itemlvl1: selectRow.itemlvl1,
-      enddt: null,
-      extra_field1: "",
+      itemlvl2: selectRow.itemlvl2,
+      itemlvl3: selectRow.itemlvl3,
+      itemnm: selectRow.itemnm,
+      itemno: selectRow.itemno,
+      itemthick: selectRow.itemthick,
+      len: selectRow.len,
+      lev: selectRow.lev,
+      lotnum: selectRow.lotnum,
+      need_qty: selectRow.need_qty,
+      needqty: selectRow.needqty,
+      nowqty: selectRow.nowqty,
+      ordkey: selectRow.ordkey,
+      ordnum: selectRow.ordnum,
+      ordseq: selectRow.ordseq,
+      pac: selectRow.pac,
+      poregnum: selectRow.poregnum,
+      project: selectRow.project,
+      qty: selectRow.qty,
+      qtyunit: selectRow.qtyunit,
       rowstatus: "N",
+      safeqty: selectRow.safeqty,
+      selected: selectRow.selected,
+      singular: selectRow.singular,
+      spec: selectRow.spec,
+      taxamt: selectRow.taxamt,
+      taxdiv: selectRow.taxdiv,
+      totwgt: selectRow.totwgt,
+      unitwgt: selectRow.unitwgt,
+      unp: selectRow.unp,
+      wgtunit: selectRow.wgtunit,
+      width: selectRow.width,
+      wonamt: selectRow.wonamt,
     };
 
     setMainDataResult((prev) => {
@@ -819,99 +812,83 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
   };
   const setCopyData3 = (data: any) => {
-    console.log(data)
-    // const dataItem = data.filter((item: any) => {
-    //   return (
-    //     (item.rowstatus === "N" || item.rowstatus === "U") &&
-    //     item.rowstatus !== undefined
-    //   );
-    // });
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
-    // if (dataItem.length === 0) return false;
+    if (dataItem.length === 0) return false;
 
-    // let seq = 1;
+    let seq = 1;
 
-    // if (mainDataResult.total > 0) {
-    //   mainDataResult.data.forEach((item) => {
-    //     if (item[DATA_ITEM_KEY] > seq) {
-    //       seq = item[DATA_ITEM_KEY];
-    //     }
-    //   });
-    //   seq++;
-    // }
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+      });
+      seq++;
+    }
 
-    // for (var i = 1; i < data.length; i++) {
-    //   if (data[0].itemcd == data[i].itemcd) {
-    //     alert("중복되는 품목이있습니다.");
-    //     return false;
-    //   }
-    // }
+    for (var i = 0; i < data.length; i++) {
+      data[i].num = seq;
+      seq++;
+    }
 
-    // for (var i = 0; i < data.length; i++) {
-    //   data[i].num = seq;
-    //   seq++;
-    // }
-
-    // try {
-    //   data.map((item: any) => {
-    //     setMainDataResult((prev) => {
-    //       return {
-    //         data: [...prev.data, item],
-    //         total: prev.total + 1,
-    //       };
-    //     });
-    //   });
-    // } catch (e) {
-    //   alert(e);
-    // }
+    try {
+      data.map((item: any) => {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, item],
+            total: prev.total + 1,
+          };
+        });
+      });
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const setCopyData4 = (data: any) => {
-    console.log(data)
-    // const dataItem = data.filter((item: any) => {
-    //   return (
-    //     (item.rowstatus === "N" || item.rowstatus === "U") &&
-    //     item.rowstatus !== undefined
-    //   );
-    // });
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
-    // if (dataItem.length === 0) return false;
+    if (dataItem.length === 0) return false;
 
-    // let seq = 1;
+    let seq = 1;
 
-    // if (mainDataResult.total > 0) {
-    //   mainDataResult.data.forEach((item) => {
-    //     if (item[DATA_ITEM_KEY] > seq) {
-    //       seq = item[DATA_ITEM_KEY];
-    //     }
-    //   });
-    //   seq++;
-    // }
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+      });
+      seq++;
+    }
 
-    // for (var i = 1; i < data.length; i++) {
-    //   if (data[0].itemcd == data[i].itemcd) {
-    //     alert("중복되는 품목이있습니다.");
-    //     return false;
-    //   }
-    // }
+    for (var i = 0; i < data.length; i++) {
+      data[i].num = seq;
+      seq++;
+    }
 
-    // for (var i = 0; i < data.length; i++) {
-    //   data[i].num = seq;
-    //   seq++;
-    // }
-
-    // try {
-    //   data.map((item: any) => {
-    //     setMainDataResult((prev) => {
-    //       return {
-    //         data: [...prev.data, item],
-    //         total: prev.total + 1,
-    //       };
-    //     });
-    //   });
-    // } catch (e) {
-    //   alert(e);
-    // }
+    try {
+      data.map((item: any) => {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, item],
+            total: prev.total + 1,
+          };
+        });
+      });
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const setCopyData = (data: any) => {

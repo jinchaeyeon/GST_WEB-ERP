@@ -398,11 +398,11 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
           groupId: row.itemacnt + "itemacnt",
         };
       });
-
+      console.log(rows);
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -553,25 +553,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
-    const datas = subDataResult.data.map((item: any) => {
-      return(
-        {
-          ...item,
-          amt: item.amt == null ? 0 : item.amt,
-          unp: item.unp == null ? 0 : item.unp,
-          qty: item.now_qty == null ? 1 : item.now_qty,
-          wonamt: item.wonamt == null ? 0 : item.wonamt,
-          taxamt: item.taxamt == null ? 0 : item.taxamt,
-          totwgt: item.totwgt == null ? 0 : item.totwgt,
-          len: item.len == null ? 0 : item.len,
-          itemthick: item.itemthick == null ? 0 : item.itemthick,
-          width: item.width == null ? 0 : item.width,
-          pac: item.pac == null ? "B": item.pac,
-          enddt: item.enddt == null ? new Date(): item.enddt
-        }
-      )
-    })
-    setData(datas);
+    setData(subDataResult.data);
     onClose();
   };
 
@@ -580,12 +562,23 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     );
 
-    setSubDataResult((prev) => {
-      return {
-        data: [...prev.data, datas[0]],
-        total: prev.total + 1,
-      };
-    });
+    let valid = true;
+    for (var i = 0; i < subDataResult.data.length; i++) {
+      if (datas[0].num == subDataResult.data[i].num) {
+        alert("중복되는 품목이있습니다.");
+        valid = false;
+        return false;
+    } 
+    }
+
+    if(valid == true) {
+      setSubDataResult((prev) => {
+        return {
+          data: [...prev.data, datas[0]],
+          total: prev.total + 1,
+        };
+      });
+    }
   };
 
   const onDeleteClick = (e: any) => {

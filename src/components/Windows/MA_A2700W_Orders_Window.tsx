@@ -397,6 +397,18 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
+          rowstatus: "N",
+          amt: row.amt == null ? 0 : row.amt,
+          unp: row.unp == null ? 0 : row.unp,
+          qty: row.qty == null ? 1 : row.qty,
+          wonamt: row.wonamt == null ? 0 : row.wonamt,
+          taxamt: row.taxamt == null ? 0 : row.taxamt,
+          totwgt: row.totwgt == null ? 0 : row.totwgt,
+          len: row.len == null ? 0 : row.len,
+          itemthick: row.itemthick == null ? 0 : row.itemthick,
+          width: row.width == null ? 0 : row.width,
+          pac: row.pac == null ? "A": row.pac,
+          enddt: row.enddt == null ? new Date(): row.enddt
         };
       });
 
@@ -581,13 +593,23 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     const datas = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     );
+    let valid = true;
+    for (var i = 0; i < subDataResult.data.length; i++) {
+      if (datas[0].itemcd == subDataResult.data[i].itemcd) {
+        alert("중복되는 품목이있습니다.");
+        valid = false;
+        return false;
+    } 
+    }
 
-    setSubDataResult((prev) => {
-      return {
-        data: [...prev.data, datas[0]],
-        total: prev.total + 1,
-      };
-    });
+    if(valid == true) {
+      setSubDataResult((prev) => {
+        return {
+          data: [...prev.data, datas[0]],
+          total: prev.total + 1,
+        };
+      });
+    }
   };
 
   const onDeleteClick = (e: any) => {
@@ -822,7 +844,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         </FilterBoxWrap>
         <GridContainer>
           <Grid
-            style={{ height: "240px" }}
+            style={{ height: "200px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -957,7 +979,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "240px" }}
+            style={{ height: "200px" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
