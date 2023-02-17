@@ -36,6 +36,7 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import { bytesToBase64 } from "byte-base64";
 
 type IKendoWindow = {
@@ -319,7 +320,7 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
               <th>업체구분</th>
               <td>
                 {bizComponentData !== null && (
-                  <BizComponentRadioGroup
+                  <BizComponentComboBox
                     name="custdiv"
                     value={filters.custdiv}
                     bizComponentId="L_BA026"
