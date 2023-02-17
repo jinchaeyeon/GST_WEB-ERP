@@ -535,7 +535,7 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -1007,8 +1007,7 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para)
-    console.log(data);
+ 
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -1053,6 +1052,7 @@ const SA_A5000: React.FC = () => {
       rcvcustnm: filter.rcvcustnm,
       attdatnum: filter.attdatnum,
       remark: filter.remark,
+      seq1: filter.seq1,
       userid: userId,
       pc: pc,
       form_id: "SA_A2300W",
@@ -1085,7 +1085,7 @@ const SA_A5000: React.FC = () => {
       outseq2_s :  [],
       sort_seq_s :  [],
     };
-    console.log(dataItem)
+
     dataItem.forEach((item: any, idx: number) => {
       const {
         rowstatus = "",
@@ -1111,6 +1111,7 @@ const SA_A5000: React.FC = () => {
         outseq1 = "",
         outseq2 = "",
         sort_seq = "",
+        outrecdt= "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
@@ -1131,7 +1132,7 @@ const SA_A5000: React.FC = () => {
       dataArr.poregnum_s.push(poregnum == undefined ? "" : poregnum);
       dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
       dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
-      dataArr.outrecdt_s.push(outdt == undefined ? "" : outdt);
+      dataArr.outrecdt_s.push(outdt == "" ? outrecdt == "" ? "" : outrecdt : outdt);
       dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
       dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
       dataArr.sort_seq_s.push(sort_seq == "" ? 0 : sort_seq);
@@ -1161,6 +1162,7 @@ const SA_A5000: React.FC = () => {
         outseq1 = "",
         outseq2 = "",
         sort_seq = "",
+        outrecdt = ""
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
@@ -1181,7 +1183,7 @@ const SA_A5000: React.FC = () => {
       dataArr.poregnum_s.push(poregnum == undefined ? "" : poregnum);
       dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
       dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
-      dataArr.outrecdt_s.push(outdt == undefined ? "" : outdt);
+      dataArr.outrecdt_s.push(outdt == "" ? outrecdt == "" ? "" : outrecdt : outdt);
       dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
       dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
       dataArr.sort_seq_s.push(sort_seq == "" ? 0 : sort_seq);

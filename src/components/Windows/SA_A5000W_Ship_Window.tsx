@@ -598,7 +598,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         });
         seq++;
       }
-      console.log(selectRow)
+
       const newDataItem = {
         [DATA_ITEM_KEY]: seq + 1,
         amt: selectRow.amt,

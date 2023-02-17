@@ -115,9 +115,15 @@ type Idata = {
   taxtype: string;
   totamt: number;
   trcost: number;
+  invoiceno: string;
+  position: string;
+  taxnum: string;
+  reckey: string;
+  wonamt: number;
   uschgrat: number;
   wonchgrat: number;
 };
+
 let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -379,6 +385,14 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     files: "",
     attdatnum: "",
     remark: "",
+    amt: 0,
+    qty: 0,
+    taxamt: 0,
+    wonamt: 0,
+    baseamt: 0,
+    recdt: new Date(),
+    seq1: 0,
+
   });
 
   const parameters: Iparameters = {
@@ -388,25 +402,25 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     parameters: {
       "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
+      "@p_location": "",
+      "@p_position": "",
+      "@p_dtgb": "",
       "@p_frdt": "",
       "@p_todt": "",
       "@p_person": "",
       "@p_custcd": "",
       "@p_custnm": "",
-      // "@p_recdt": convertDateToStr(filters.recdt),
-      // "@p_seq1": filters.seq1,
-      "@p_gubun1": "",
-      "@p_gubun2": "",
+      "@p_rcvcustcd": "",
+      "@p_rcvcustnm": "",
       "@p_doexdiv": "",
+      "@p_taxdiv": "",
+      "@p_taxyn": "",
       "@p_itemcd": "",
       "@p_itemnm": "",
-      "@p_lotnum": "",
-      "@p_remark": "",
-      "@p_ordnum": "",
-      "@p_orglot": "",
-      "@p_reqnum": "",
-      // "@p_reckey": filters.recdtfind,
+      "@p_ordkey": "",
+      "@p_recdt": convertDateToStr(filters.recdt),
+      "@p_seq1": filters.seq1,
+      "@p_company_code": "2207A046"
     },
   };
 
@@ -617,29 +631,33 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     if (workType === "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
-        recdt: to_date2(data.recdt),
-        seq1: data.seq1,
-        recdtfind: data.recdtfind,
-        outdt: to_date2(data.outdt),
-        person: data.person,
-        doexdiv: data.doexdiv,
-        location: data.location,
+        amt: data.amt,
+        amtunit: data.amtunit,
+        attdatnum: data.attdatnum,
+        baseamt: data.baseamt,
         custcd: data.custcd,
         custnm: data.custnm,
+        doexdiv: data.doexdiv,
+        files: data.files,
+        invoiceno: data.invoiceno,
+        location: data.location,
+        outdt: to_date2(data.outdt),
+        person: data.person,
+        position: data.position,
+        qty: data.qty,
         rcvcustcd: data.rcvcustcd,
         rcvcustnm: data.rcvcustnm,
-        custprsncd: data.custprsncd,
-        carno: data.carno,
-        finaldes: data.finaldes,
-        portnm: data.portnm,
-        dvnm: data.dvnm,
-        dvnum: data.dvnum,
-        shipdt: to_date2(data.shipdt),
-        cargocd: data.cargocd,
-        trcost: data.trcost,
-        files: data.files,
-        attdatnum: data.attdatnum,
+        recdt: to_date2(data.recdt),
+        reckey: data.reckey,
         remark: data.remark,
+        seq1: data.seq1,
+        shipdt: to_date2(data.shipdt),
+        taxamt: data.taxamt,
+        taxdiv: data.taxdiv,
+        taxnum: data.taxnum,
+        uschgrat: data.uschgrat,
+        wonamt: data.wonamt,
+        wonchgrat: data.wonchgrat
       }));
     }
   }, []);
@@ -1242,10 +1260,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                enddt:
-                  workType == "U" && isValidDate(row.enddt)
-                    ? new Date(dateformat(row.enddt))
-                    : new Date(),
                 itemacnt: itemacntListData.find(
                   (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,

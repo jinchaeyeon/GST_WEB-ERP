@@ -652,7 +652,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         poregnum: selectRow.poregnum,
         portnm: selectRow.portnm,
         project: selectRow.project,
-        qty: selectRow.qty,
+        qty: selectRow.ordqty,
         qtyunit: selectRow.qtyunit,
         qtyunp: selectRow.qtyunp,
         rcvcustcd: selectRow.rcvcustcd,
@@ -677,7 +677,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         wgtunit: selectRow.wgtunit,
         width: selectRow.width,
         wonamt: selectRow.wonamt,
-        wonchgrat: selectRow.wonchgrat
+        wonchgrat: selectRow.wonchgrat,
       };
   
         setSubDataResult((prev) => {
