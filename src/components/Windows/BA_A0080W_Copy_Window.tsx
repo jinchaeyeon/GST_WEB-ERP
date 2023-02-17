@@ -59,7 +59,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1600,
-    height: 800,
+    height: 900,
   });
   const DATA_ITEM_KEY = "itemcd";
   const DATA_ITEM_KEY2 = "itemcd";
@@ -723,7 +723,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         </FilterBoxWrap>
         <GridContainer>
           <Grid
-            style={{ height: "240px" }}
+            style={{ height: "290px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -832,7 +832,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "240px" }}
+            style={{ height: "290px" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

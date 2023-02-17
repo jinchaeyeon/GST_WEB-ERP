@@ -962,7 +962,6 @@ const SA_A2300: React.FC = () => {
       dvnm: filter.dvnm,
       dvnum: filter.dvnum,
       finaldes: filter.finaldes,
-      custprsncd: filter.custprsncd,
       location: "01",
       orgdiv: "01",
       outdt: filter.outdt,

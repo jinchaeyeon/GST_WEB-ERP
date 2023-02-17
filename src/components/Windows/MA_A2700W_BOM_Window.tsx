@@ -491,7 +491,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           itemthick: row.itemthick == null ? 0 : row.itemthick,
           width: row.width == null ? 0 : row.width,
           pac: row.pac == null ? "A": row.pac,
-          enddt: row.enddt == null ? new Date(): row.enddt
+          enddt: row.enddt == null ? new Date(): row.enddt,
+          singular: "N"
+
         };
       });
 
@@ -1222,7 +1224,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             <GridColumn
               field="itemcd"
               title="품목코드"
-              width="200px"
+              width="300px"
               footerCell={subTotalFooterCell}
             />
             <GridColumn field="itemnm" title="품목명" width="200px" />
@@ -1242,7 +1244,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               cell={NumberCell}
             />
             <GridColumn field="qtyunit" title="수량단위" width="150px" />
-            <GridColumn field="singular" title="일품여부" width="80px" cell={CheckBoxCell}/>
           </Grid>
         </GridContainer>
         <BottomContainer>

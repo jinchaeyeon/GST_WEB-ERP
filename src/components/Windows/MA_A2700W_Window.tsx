@@ -136,7 +136,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1600,
-    height: 670,
+    height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -1335,7 +1335,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "450px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

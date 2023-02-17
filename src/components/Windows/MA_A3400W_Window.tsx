@@ -44,6 +44,8 @@ import {
   UseParaPc,
   to_date2,
   getGridItemChangedData,
+  findMessage,
+  convertDateToStr,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -60,7 +62,7 @@ type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object,deletedMainRows : object ): void; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(data: object, filter: object, deletedMainRows: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
 type Idata = {
@@ -74,7 +76,7 @@ type Idata = {
   attdatnum: string;
   outuse: string;
   reckey: string;
-  seq1 : number;
+  seq1: number;
   files: string;
 };
 let deletedMainRows: object[] = [];
@@ -84,13 +86,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1200,
-    height: 700,
+    height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const DATA_ITEM_KEY = "itemcd";
+  const DATA_ITEM_KEY = "num";
 
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
@@ -501,7 +503,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    setFilters((prev :any) => {
+    setFilters((prev: any) => {
       return {
         ...prev,
         attdatnum: data.attdatnum,
@@ -512,7 +514,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     });
   };
 
-  const setCopyData2= (data: any) => {
+  const setCopyData2 = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -559,6 +561,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
   };
   const setCopyData = (data: any) => {
+    console.log(data);
     const dataItem = data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -579,20 +582,31 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       seq++;
     }
 
-    for (var i = 1; i < data.length; i++) {
-      if (data[0].itemcd == data[i].itemcd) {
-        alert("중복되는 품목이있습니다.");
-        return false;
+    if (data[0].now_qty != undefined) {
+      for (var i = 1; i < data.length; i++) {
+        if (
+          data[0].itemcd == data[i].itemcd &&
+          data[0].lotnum == data[i].lotnum
+        ) {
+          alert("중복되는 품목이있습니다.");
+          data[i].num = seq;
+          data[i].type = "재고";
+          seq++;
+          return false;
+        }
+      }
+    } else {
+      for (var i = 1; i < data.length; i++) {
+        if (data[0].itemcd == data[i].itemcd) {
+          alert("중복되는 품목이있습니다.");
+          data[i].num = seq;
+          data[i].type = "품목";
+          seq++;
+          return false;
+        }
       }
     }
 
-    
-    for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
-    }
-
-    
     try {
       data.map((item: any) => {
         setMainDataResult((prev) => {
@@ -606,7 +620,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       alert(e);
     }
   };
-
+  console.log(mainDataResult.data);
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -626,8 +640,33 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
-    setData(mainDataResult.data, filters, deletedMainRows);
-    onClose();
+    let valid = true;
+    try {
+      if (mainDataResult.data.length == 0) {
+        throw findMessage(messagesData, "MA_A3400W_001");
+      } else if (
+        convertDateToStr(filters.outdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.outdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.outdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.outdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_A3400W_003");
+      }
+      for (var i = 0; i < mainDataResult.data.length; i++) {
+        if (mainDataResult.data[i].qty == 0) {
+          alert("수량은 필수입니다.");
+          return false;
+        }
+      }
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (valid == true) {
+      setData(mainDataResult.data, filters, deletedMainRows);
+      onClose();
+    }
   };
 
   const onDeleteClick = (e: any) => {
@@ -655,14 +694,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
-    if (workType == "U") {
-      getGridItemChangedData(
-        event,
-        mainDataResult,
-        setMainDataResult,
-        DATA_ITEM_KEY
-      );
-    }
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -684,38 +721,20 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (workType == "U") {
-      if (field != "itemcd" && field != "itemnm") {
-        const newData = mainDataResult.data.map((item) =>
-          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
-                [EDIT_FIELD]: field,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-        );
+    if (field != "itemcd" && field != "itemnm") {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-        setIfSelectFirstRow(false);
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      }
-    }
-  };
-
-  const exitEdit = () => {
-    if (workType == "U") {
-      const newData = mainDataResult.data.map((item) => ({
-        ...item,
-        [EDIT_FIELD]: undefined,
-      }));
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -724,6 +743,20 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         };
       });
     }
+  };
+
+  const exitEdit = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+    setIfSelectFirstRow(false);
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   };
 
   return (
@@ -736,7 +769,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <FormBoxWrap style={{ width: "1250px", marginLeft: "-70px" }}>
+        <FormBoxWrap style={{ width: "1230px", marginLeft: "-70px" }}>
           <FormBox>
             <tbody>
               <tr>
@@ -806,11 +839,16 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                   <Input
                     name="cboLocation"
                     type="text"
-                    value={locationListData.find(
-                      (items: any) => items.sub_code === filters.cboLocation
-                    )?.code_name == undefined ? "본사": locationListData.find(
-                      (items: any) => items.sub_code === filters.cboLocation
-                    )?.code_name}
+                    value={
+                      locationListData.find(
+                        (items: any) => items.sub_code === filters.cboLocation
+                      )?.code_name == undefined
+                        ? "본사"
+                        : locationListData.find(
+                            (items: any) =>
+                              items.sub_code === filters.cboLocation
+                          )?.code_name
+                    }
                     className="readonly"
                   />
                 </td>
@@ -847,13 +885,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     onChange={filterInputChange}
                   />
                   <ButtonInInput>
-                      <Button
-                        type={"button"}
-                        onClick={onAttachmentsWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
+                    <Button
+                      type={"button"}
+                      onClick={onAttachmentsWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
                 </td>
               </tr>
             </tbody>
@@ -888,7 +926,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "240px" }}
+            style={{ height: "450px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1011,7 +1049,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           itemacnt={"1"}
         />
       )}
-       {attachmentsWindowVisible && (
+      {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}

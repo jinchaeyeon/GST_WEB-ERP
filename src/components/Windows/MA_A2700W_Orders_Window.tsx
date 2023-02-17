@@ -64,7 +64,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1600,
-    height: 800,
+    height: 900,
   });
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
@@ -979,7 +979,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "300px" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

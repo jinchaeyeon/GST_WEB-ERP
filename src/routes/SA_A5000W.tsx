@@ -44,7 +44,7 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
-  to_date2
+  to_date2,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A5000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -66,6 +66,31 @@ import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
+type TdataArr = {
+  rowstatus_s: string[];
+  seq2_s: string[];
+  itemcd_s: string[];
+  itemacnt_s: string[];
+  qty_s: string[];
+  qtyunit_s: string[];
+  unpcalmeth_s: string[];
+  unp_s: string[];
+  amt_s: string[];
+  wonamt_s: string[];
+  taxamt_s: string[];
+  dlramt_s: string[];
+  unitwgt_s: string[];
+  totwgt_s: string[];
+  wgtunit_s: string[];
+  remark_s: string[];
+  poregnum_s: string[];
+  ordnum_s: string[];
+  ordseq_s: string[];
+  outrecdt_s: string[];
+  outseq1_s: string[];
+  outseq2_s: string[];
+  sort_seq_s: string[];
+};
 
 const SA_A5000: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -115,7 +140,7 @@ const SA_A5000: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_BA019, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -146,12 +171,18 @@ const SA_A5000: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [unpcalmethListData, setUnpcalmethListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
       const ordstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+      );
+      const unpcalmethQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
@@ -181,7 +212,7 @@ const SA_A5000: React.FC = () => {
       const finynQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
       );
-
+      fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(taxdivQueryStr, setTaxdivListData);
@@ -450,10 +481,10 @@ const SA_A5000: React.FC = () => {
       "@p_dlramt_s": "",
       "@p_unitwgt_s": "",
       "@p_totwgt_s": "",
-      "@p_wgtunit_s":"",
+      "@p_wgtunit_s": "",
       "@p_remark_s": "",
       "@p_poregnum_s": "",
-      "@p_ordnum_s":"",
+      "@p_ordnum_s": "",
       "@p_ordseq_s": "",
       "@p_outrecdt_s": "",
       "@p_outseq1_s": "",
@@ -461,8 +492,8 @@ const SA_A5000: React.FC = () => {
       "@p_sort_seq_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "P_SA_A2300W",
-      "@p_company_code": "2207A046"
+      "@p_form_id": "P_SA_A5000W",
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -476,7 +507,7 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data)
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -504,7 +535,7 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -697,7 +728,6 @@ const SA_A5000: React.FC = () => {
       (item) => item.ordnum === ordnum
     );
 
-
     setDetailFilters((prev) => ({
       ...prev,
       seq1: selectedRowData.seq1,
@@ -741,7 +771,7 @@ const SA_A5000: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.recdt = "";
-    paraDataDeleted.seq1=0;
+    paraDataDeleted.seq1 = 0;
   };
 
   const reloadData = (workType: string) => {
@@ -862,6 +892,138 @@ const SA_A5000: React.FC = () => {
     }
   };
 
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "N",
+    orgdiv: "01",
+    recdt: new Date(),
+    seq1: 0,
+    location: "01",
+    position: "",
+    outdt: new Date(),
+    shipdt: new Date(),
+    doexdiv: "A",
+    taxdiv: "A",
+    amtunit: "",
+    baseamt: 0,
+    wonchgrat: 0,
+    uschgrat: 0,
+    person: "admin",
+    custcd: "",
+    custnm: "",
+    rcvcustcd: "",
+    rcvcustnm: "",
+    attdatnum: "",
+    remark: "",
+    rowstatus_s: "",
+    seq2_s: "",
+    itemcd_s: "",
+    itemacnt_s: "",
+    qty_s: "",
+    qtyunit_s: "",
+    unpcalmeth_s: "",
+    unp_s: "",
+    amt_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+    dlramt_s: "",
+    unitwgt_s: "",
+    totwgt_s: "",
+    wgtunit_s: "",
+    remark_s: "",
+    poregnum_s: "",
+    ordnum_s: "",
+    ordseq_s: "",
+    outrecdt_s: "",
+    outseq1_s: "",
+    outseq2_s: "",
+    sort_seq_s: "",
+    userid: userId,
+    pc: pc,
+    files: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_SA_A5000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_recdt": convertDateToStr(ParaData.recdt),
+      "@p_seq1": ParaData.seq1,
+      "@p_location": ParaData.location,
+      "@p_position": ParaData.position,
+      "@p_outdt": convertDateToStr(ParaData.outdt),
+      "@p_shipdt": convertDateToStr(ParaData.shipdt),
+      "@p_doexdiv": ParaData.doexdiv,
+      "@p_taxdiv": ParaData.taxdiv,
+      "@p_amtunit": ParaData.amtunit,
+      "@p_baseamt": ParaData.baseamt,
+      "@p_wonchgrat": ParaData.wonchgrat,
+      "@p_uschgrat": ParaData.uschgrat,
+      "@p_person": ParaData.person,
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_rcvcustcd": ParaData.rcvcustcd,
+      "@p_rcvcustnm": ParaData.rcvcustnm,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark": ParaData.remark,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_seq2_s": ParaData.seq2_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemacnt_s": ParaData.itemacnt_s,
+      "@p_qty_s": ParaData.qty_s,
+      "@p_qtyunit_s": ParaData.qtyunit_s,
+      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
+      "@p_unp_s": ParaData.unp_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_dlramt_s": ParaData.dlramt_s,
+      "@p_unitwgt_s": ParaData.unitwgt_s,
+      "@p_totwgt_s": ParaData.totwgt_s,
+      "@p_wgtunit_s": ParaData.wgtunit_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_poregnum_s": ParaData.poregnum_s,
+      "@p_ordnum_s": ParaData.ordnum_s,
+      "@p_ordseq_s": ParaData.ordseq_s,
+      "@p_outrecdt_s": ParaData.outrecdt_s,
+      "@p_outseq1_s": ParaData.outseq1_s,
+      "@p_outseq2_s": ParaData.outseq2_s,
+      "@p_sort_seq_s": ParaData.sort_seq_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "P_SA_A5000W",
+      "@p_company_code": "2207A046",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+    console.log(para)
+    console.log(data);
+    if (data.isSuccess === true) {
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.custcd != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
     let valid = true;
 
@@ -872,197 +1034,185 @@ const SA_A5000: React.FC = () => {
       );
     });
 
-    // if (dataItem.length === 0) return false;
-    // setParaData((prev) => ({
-    //   ...prev,
-    //   amtunit: filter.amtunit,
-    //   attdatnum: filter.attdatnum,
-    //   custcd: filter.custcd,
-    //   custnm: filter.custnm,
-    //   carno: filter.carno,
-    //   cargocd: filter.cargocd,
-    //   trcost: parseInt(filter.trcost),
-    //   doexdiv: filter.doexdiv,
-    //   dvnm: filter.dvnm,
-    //   dvnum: filter.dvnum,
-    //   finaldes: filter.finaldes,
-    //   custprsncd: filter.custprsncd,
-    //   location: "01",
-    //   orgdiv: "01",
-    //   outdt: filter.outdt,
-    //   outtype: filter.outtype,
-    //   person: filter.person,
-    //   rcvcustcd: filter.rcvcustcd,
-    //   rcvcustnm: filter.rcvcustnm,
-    //   recdt: filter.recdt,
-    //   remark: filter.remark,
-    //   seq1: filter.seq1,
-    //   shipdt: filter.shipdt,
-    //   wonchgrat: filter.wonchgrat,
-    //   userid: userId,
-    //   pc: pc,
-    //   form_id: "SA_A2300W",
-    //   serviceid: "2207A046",
-    //   files: filter.files,
-    // }));
+    if (dataItem.length === 0) return false;
+    setParaData((prev) => ({
+      ...prev,
+      location: filter.location,
+      position: filter.position,
+      outdt: filter.outdt,
+      shipdt: filter.shipdt,
+      doexdiv: filter.doexdiv,
+      taxdiv: filter.taxdiv,
+      amtunit: filter.amtunit,
+      wonchgrat: filter.wonchgrat,
+      uschgrat: filter.uschgrat,
+      person: filter.person,
+      custcd: filter.custcd,
+      custnm: filter.custnm,
+      rcvcustcd: filter.rcvcustcd,
+      rcvcustnm: filter.rcvcustnm,
+      attdatnum: filter.attdatnum,
+      remark: filter.remark,
+      userid: userId,
+      pc: pc,
+      form_id: "SA_A2300W",
+      serviceid: "2207A046",
+      files: filter.files,
+    }));
 
-    // let dataArr: TdataArr = {
-    //   rowstatus: [],
-    //   seq2: [],
-    //   ordnum: [],
-    //   ordseq: [],
-    //   portcd: [],
-    //   portnm: [],
-    //   prcterms: [],
-    //   poregnum: [],
-    //   itemcd: [],
-    //   itemnm: [],
-    //   itemacnt: [],
-    //   qty: [],
-    //   qtyunit: [],
-    //   unp: [],
-    //   amt: [],
-    //   dlramt: [],
-    //   wonamt: [],
-    //   taxamt: [],
-    //   lotnum: [],
-    //   remark_s: [],
-    //   inrecdt: [],
-    //   reqnum: [],
-    //   reqseq: [],
-    //   serialno: [],
-    //   outlot: [],
-    //   unitqty: [],
-    // };
-
-    // dataItem.forEach((item: any, idx: number) => {
-    //   const {
-    //     amt = "",
-    //     itemacnt = "",
-    //     itemcd = "",
-    //     itemnm = "",
-    //     lotnum = "",
-    //     ordnum = "",
-    //     ordseq = "",
-    //     poregnum = "",
-    //     rowstatus = "",
-    //     seq2 = "",
-    //     taxamt = "",
-    //     unp = "",
-    //     qty = "",
-    //     qtyunit = "",
-    //     wonamt = "",
-    //     dlramt = "",
-    //     unitqty = "",
-    //     reqseq = "",
-    //     remark = "",
-    //   } = item;
-    //   dataArr.rowstatus.push(rowstatus);
-    //   dataArr.seq2.push(seq2 == "" ? 0 : seq2);
-    //   dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
-    //   dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
-    //   dataArr.portcd.push("");
-    //   dataArr.portnm.push("");
-    //   dataArr.prcterms.push("");
-    //   dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
-    //   dataArr.itemcd.push(itemcd);
-    //   dataArr.itemnm.push(itemnm);
-    //   dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
-    //   dataArr.qty.push(qty == "" ? 0 : qty);
-    //   dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
-    //   dataArr.unp.push(unp == "" ? 0 : unp);
-    //   dataArr.amt.push(amt == "" ? 0 : amt);
-    //   dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
-    //   dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
-    //   dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
-    //   dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
-    //   dataArr.remark_s.push(remark == undefined ? "" : remark);
-    //   dataArr.inrecdt.push("");
-    //   dataArr.reqnum.push("");
-    //   dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
-    //   dataArr.outlot.push("");
-    //   dataArr.serialno.push("");
-    //   dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
-    // });
-    // deletedMainRows.forEach((item: any, idx: number) => {
-    //   const {
-    //     amt = "",
-    //     itemacnt = "",
-    //     itemcd = "",
-    //     itemnm = "",
-    //     lotnum = "",
-    //     ordnum = "",
-    //     ordseq = "",
-    //     poregnum = "",
-    //     rowstatus = "",
-    //     seq2 = "",
-    //     taxamt = "",
-    //     unp = "",
-    //     qty = "",
-    //     qtyunit = "",
-    //     wonamt = "",
-    //     dlramt = "",
-    //     unitqty = "",
-    //     reqseq = "",
-    //     remark = "",
-    //   } = item;
-    //   dataArr.rowstatus.push(rowstatus);
-    //   dataArr.seq2.push(seq2 == "" ? 0 : seq2);
-    //   dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
-    //   dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
-    //   dataArr.portcd.push("");
-    //   dataArr.portnm.push("");
-    //   dataArr.prcterms.push("");
-    //   dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
-    //   dataArr.itemcd.push(itemcd);
-    //   dataArr.itemnm.push(itemnm);
-    //   dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
-    //   dataArr.qty.push(qty == "" ? 0 : qty);
-    //   dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
-    //   dataArr.unp.push(unp == "" ? 0 : unp);
-    //   dataArr.amt.push(amt == "" ? 0 : amt);
-    //   dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
-    //   dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
-    //   dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
-    //   dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
-    //   dataArr.remark_s.push(remark == undefined ? "" : remark);
-    //   dataArr.inrecdt.push("");
-    //   dataArr.reqnum.push("");
-    //   dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
-    //   dataArr.outlot.push("");
-    //   dataArr.serialno.push("");
-    //   dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
-    // });
-    // setParaData((prev) => ({
-    //   ...prev,
-    //   workType: workType,
-    //   rowstatus: dataArr.rowstatus.join("|"),
-    //   seq2: dataArr.seq2.join("|"),
-    //   ordnum: dataArr.ordnum.join("|"),
-    //   ordseq: dataArr.ordseq.join("|"),
-    //   portcd: dataArr.portcd.join("|"),
-    //   portnm: dataArr.portnm.join("|"),
-    //   prcterms: dataArr.prcterms.join("|"),
-    //   poregnum: dataArr.poregnum.join("|"),
-    //   itemcd: dataArr.itemcd.join("|"),
-    //   itemnm: dataArr.itemnm.join("|"),
-    //   itemacnt: dataArr.itemacnt.join("|"),
-    //   qty: dataArr.qty.join("|"),
-    //   qtyunit: dataArr.qtyunit.join("|"),
-    //   unp: dataArr.unp.join("|"),
-    //   amt: dataArr.amt.join("|"),
-    //   dlramt: dataArr.dlramt.join("|"),
-    //   wonamt: dataArr.wonamt.join("|"),
-    //   taxamt: dataArr.taxamt.join("|"),
-    //   lotnum: dataArr.lotnum.join("|"),
-    //   remark_s: dataArr.remark_s.join("|"),
-    //   inrecdt: dataArr.inrecdt.join("|"),
-    //   reqnum: dataArr.reqnum.join("|"),
-    //   reqseq: dataArr.reqseq.join("|"),
-    //   serialno: dataArr.serialno.join("|"),
-    //   outlot: dataArr.outlot.join("|"),
-    //   unitqty: dataArr.unitqty.join("|"),
-    // }));
+    let dataArr: TdataArr = {
+      rowstatus_s :  [],
+      seq2_s :  [],
+      itemcd_s :  [],
+      itemacnt_s :  [],
+      qty_s :  [],
+      qtyunit_s :  [],
+      unpcalmeth_s :  [],
+      unp_s :  [],
+      amt_s :  [],
+      wonamt_s :  [],
+      taxamt_s :  [],
+      dlramt_s :  [],
+      unitwgt_s :  [],
+      totwgt_s :  [],
+      wgtunit_s :  [],
+      remark_s :  [],
+      poregnum_s :  [],
+      ordnum_s :  [],
+      ordseq_s :  [],
+      outrecdt_s :  [],
+      outseq1_s :  [],
+      outseq2_s :  [],
+      sort_seq_s :  [],
+    };
+    console.log(dataItem)
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        seq2 = "",
+        itemcd = "",
+        itemacnt = "",
+        qty = "",
+        qtyunit = "",
+        unpcalmeth = "",
+        unp = "",
+        amt = "",
+        wonamt = "",
+        taxamt = "",
+        dlramt = "",
+        unitwgt = "",
+        totwgt = "",
+        wgtunit = "",
+        remark = "",
+        poregnum = "",
+        ordnum = "",
+        ordseq = "",
+        outdt = "",
+        outseq1 = "",
+        outseq2 = "",
+        sort_seq = "",
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
+      dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+      dataArr.itemacnt_s.push(itemacnt == "" ? "" : itemacnt);
+      dataArr.qty_s.push(qty == "" ? 0 : qty);
+      dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+      dataArr.unpcalmeth_s.push(unpcalmeth == undefined ? "Q" : unpcalmeth);
+      dataArr.unp_s.push(unp == "" ? 0 : unp);
+      dataArr.amt_s.push(amt == "" ? 0 : amt);
+      dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+      dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+      dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+      dataArr.unitwgt_s.push(unitwgt== "" ? 0 : unitwgt)
+      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+      dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+      dataArr.remark_s.push(remark == undefined ? "" : remark);
+      dataArr.poregnum_s.push(poregnum == undefined ? "" : poregnum);
+      dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
+      dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
+      dataArr.outrecdt_s.push(outdt == undefined ? "" : outdt);
+      dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
+      dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
+      dataArr.sort_seq_s.push(sort_seq == "" ? 0 : sort_seq);
+    });
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        seq2 = "",
+        itemcd = "",
+        itemacnt = "",
+        qty = "",
+        qtyunit = "",
+        unpcalmeth = "",
+        unp = "",
+        amt = "",
+        wonamt = "",
+        taxamt = "",
+        dlramt = "",
+        unitwgt = "",
+        totwgt = "",
+        wgtunit = "",
+        remark = "",
+        poregnum = "",
+        ordnum = "",
+        ordseq = "",
+        outdt = "",
+        outseq1 = "",
+        outseq2 = "",
+        sort_seq = "",
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
+      dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+      dataArr.itemacnt_s.push(itemacnt == "" ? "" : itemacnt);
+      dataArr.qty_s.push(qty == "" ? 0 : qty);
+      dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+      dataArr.unpcalmeth_s.push(unpcalmeth == undefined ? "Q" : unpcalmeth);
+      dataArr.unp_s.push(unp == "" ? 0 : unp);
+      dataArr.amt_s.push(amt == "" ? 0 : amt);
+      dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+      dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+      dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+      dataArr.unitwgt_s.push(unitwgt== "" ? 0 : unitwgt)
+      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+      dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+      dataArr.remark_s.push(remark == undefined ? "" : remark);
+      dataArr.poregnum_s.push(poregnum == undefined ? "" : poregnum);
+      dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
+      dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
+      dataArr.outrecdt_s.push(outdt == undefined ? "" : outdt);
+      dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
+      dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
+      dataArr.sort_seq_s.push(sort_seq == "" ? 0 : sort_seq);
+    });
+    setParaData((prev) => ({
+      ...prev,
+      workType: workType,
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      seq2_s: dataArr.seq2_s.join("|"),
+      itemcd_s: dataArr.itemcd_s.join("|"),
+      itemacnt_s: dataArr.itemacnt_s.join("|"),
+      qty_s: dataArr.qty_s.join("|"),
+      qtyunit_s: dataArr.qtyunit_s.join("|"),
+      unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
+      unp_s: dataArr.unp_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
+      dlramt_s: dataArr.dlramt_s.join("|"),
+      wonamt_s: dataArr.wonamt_s.join("|"),
+      taxamt_s: dataArr.taxamt_s.join("|"),
+      unitwgt_s: dataArr.unitwgt_s.join("|"),
+      totwgt_s: dataArr.totwgt_s.join("|"),
+      wgtunit_s: dataArr.wgtunit_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      poregnum_s: dataArr.poregnum_s.join("|"),
+      ordnum_s: dataArr.ordnum_s.join("|"),
+      ordseq_s: dataArr.ordseq_s.join("|"),
+      outrecdt_s: dataArr.outrecdt_s.join("|"),
+      outseq1_s: dataArr.outseq1_s.join("|"),
+      outseq2_s: dataArr.outseq2_s.join("|"),
+      sort_seq_s: dataArr.sort_seq_s.join("|"),
+    }));
   };
 
   const onDetailHeaderSelectionChange = useCallback(
@@ -1311,14 +1461,14 @@ const SA_A5000: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
             <ButtonContainer>
-            <Button
+              <Button
                 onClick={onAddClick}
                 themeColor={"primary"}
                 icon="file-add"
               >
                 판매처리생성
               </Button>
-            <Button
+              <Button
                 onClick={onDeleteClick}
                 icon="delete"
                 fillMode="outline"
@@ -1452,6 +1602,9 @@ const SA_A5000: React.FC = () => {
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
+              unpcalmeth: unpcalmethListData.find(
+                (item: any) => item.sub_code === row.unpcalmeth
+              )?.code_name,
             })),
             detailDataState
           )}
@@ -1487,7 +1640,7 @@ const SA_A5000: React.FC = () => {
             width="120px"
             cell={NumberCell}
           />
-          <GridColumn field="qty" title="수량단위" width="150px" />
+          <GridColumn field="qtyunit" title="수량단위" width="150px" />
           <GridColumn field="unpcalmeth" title="단가산정방법" width="150px" />
           <GridColumn
             field="unp"
@@ -1547,21 +1700,21 @@ const SA_A5000: React.FC = () => {
       </GridContainer>
       {detailWindowVisible && (
         <DetailWindow
-        setVisible={setDetailWindowVisible}
-        workType={workType} //신규 : N, 수정 : U
-        setData={setCopyData}
-        data={
-          mainDataResult.data.filter(
-            (item: any) =>
-              item.num == Object.getOwnPropertyNames(selectedState)[0]
-          )[0] == undefined
-            ? ""
-            : mainDataResult.data.filter(
-                (item: any) =>
-                  item.num == Object.getOwnPropertyNames(selectedState)[0]
-              )[0]
-        }
-      />
+          setVisible={setDetailWindowVisible}
+          workType={workType} //신규 : N, 수정 : U
+          setData={setCopyData}
+          data={
+            mainDataResult.data.filter(
+              (item: any) =>
+                item.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0] == undefined
+              ? ""
+              : mainDataResult.data.filter(
+                  (item: any) =>
+                    item.num == Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+          }
+        />
       )}
       {custWindowVisible && (
         <CustomersWindow

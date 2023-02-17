@@ -273,7 +273,7 @@ const MA_A3400W: React.FC = () => {
   }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
+    sort: [{field: "outdt", dir: "desc"}],
   });
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
@@ -991,31 +991,6 @@ const MA_A3400W: React.FC = () => {
   };
 
   const setCopyData2 = (data: any, filter: any, deletedMainRows: any) => {
-    let valid = true;
-    try {
-      if (data.length == 0) {
-        throw findMessage(messagesData, "MA_A3400W_001");
-      }else if (
-        convertDateToStr(filter.outdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filter.outdt).substring(6, 8) > "31" ||
-        convertDateToStr(filter.outdt).substring(6, 8) < "01" ||
-        convertDateToStr(filter.outdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "MA_A3400W_003");
-      } 
-      for (var i = 0; i < data.length; i++) {
-        if (data[i].qty == 0) {
-          alert("수량은 필수입니다.");
-          return false;
-        }
-      }
-    } catch (e) {
-      alert(e);
-      valid = false;
-    }
-
-    if (!valid) return false;
-
     const dataItem = data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&

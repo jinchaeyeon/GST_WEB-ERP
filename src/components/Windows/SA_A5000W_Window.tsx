@@ -17,7 +17,8 @@ import { TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
-import CopyWindow2 from "./SA_A2300W_Inven_Window";
+import CopyWindow2 from "./SA_A5000W_Orders_Window";
+import CopyWindow3 from "./SA_A5000W_Ship_Window";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
@@ -73,7 +74,7 @@ type IWindow = {
 type Idata = {
   amt: number;
   amtunit: string;
-  attdatnum:string;
+  attdatnum: string;
   baseamt: number;
   busadiv: string;
   cargocd: string;
@@ -110,7 +111,7 @@ type Idata = {
   taxamt: number;
   taxdiv: string;
   taxdt: string;
-  taxnu:string;
+  taxnu: string;
   taxtype: string;
   totamt: number;
   trcost: number;
@@ -121,14 +122,14 @@ let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_BA005,L_BA061", setBizComponentData);
+  UseBizComponent("L_BA015,L_BA019", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "doexdiv" ? "L_BA005" : field === "itemacnt"? "L_BA061": "";
+  const bizComponentIdVal =
+    field === "qtyunit" ? "L_BA015" : field === "unpcalmeth" ? "L_BA019" : "";
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
-
   return bizComponent ? (
     <ComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
@@ -141,7 +142,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1600,
-    height: 670,
+    height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -168,11 +169,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         ...prev,
         person: defaultOption.find((item: any) => item.id === "person")
           .valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+        location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
-        custprsncd: defaultOption.find((item: any) => item.id === "custprsncd")
-          .valueCode,
-        cargocd: defaultOption.find((item: any) => item.id === "cargocd")
+        position: defaultOption.find((item: any) => item.id === "position")
           .valueCode,
       }));
     }
@@ -180,7 +179,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA002,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN",
+    "L_BA020,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA005,L_BA029,L_BA173,R_QCYN",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -192,13 +191,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [locationListData, setLocationListData] = useState([
+  const [amtunitListData, setAmtunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [itemlvl1ListData, setItemlvl1ListData] = useState([
+  const [doexdivListData, setDoexdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
+  const [taxdivListData, setTaxdivListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
@@ -213,25 +212,25 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+      const doexdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
       );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+      const taxdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+      const amtunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
       );
       const pacQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
       );
-      fetchQuery(locationQueryStr, setLocationListData);
+      fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(pacQueryStr, setPacListData);
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
+      fetchQuery(doexdivQueryStr, setDoexdivListData);
+      fetchQuery(taxdivQueryStr, setTaxdivListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
@@ -275,6 +274,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
+  const [CopyWindowVisible2, setCopyWindowVisible2] = useState<boolean>(false);
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -372,13 +372,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     rcvcustcd: "",
     rcvcustnm: "",
     doexdiv: "",
-    wonchgrat: 0,
+    wonchgrat: 1,
     invoiceno: "",
     taxdiv: "",
     uschgrat: 0,
     files: "",
     attdatnum: "",
-    remark: ""
+    remark: "",
   });
 
   const parameters: Iparameters = {
@@ -599,34 +599,48 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
   }, [mainPgNum]);
 
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    );
+  };
+
   useEffect(() => {
-    if (workType === "U" && data!= undefined) {
-        setFilters((prev) => ({
-          ...prev,
-          recdt: to_date2(data.recdt),
-          seq1: data.seq1,
-          recdtfind: data.recdtfind,
-          outdt: to_date2(data.outdt),
-          person: data.person,
-          doexdiv: data.doexdiv,
-          location: data.location,
-          custcd: data.custcd,
-          custnm: data.custnm,
-          rcvcustcd: data.rcvcustcd,
-          rcvcustnm: data.rcvcustnm,
-          custprsncd: data.custprsncd,
-          carno: data.carno,
-          finaldes: data.finaldes,
-          portnm: data.portnm,
-          dvnm: data.dvnm,
-          dvnum: data.dvnum,
-          shipdt: to_date2(data.shipdt),
-          cargocd: data.cargocd,
-          trcost: data.trcost,
-          files: data.files,
-          attdatnum: data.attdatnum,
-          remark: data.remark,
-        }))
+    if (workType === "U" && data != undefined) {
+      setFilters((prev) => ({
+        ...prev,
+        recdt: to_date2(data.recdt),
+        seq1: data.seq1,
+        recdtfind: data.recdtfind,
+        outdt: to_date2(data.outdt),
+        person: data.person,
+        doexdiv: data.doexdiv,
+        location: data.location,
+        custcd: data.custcd,
+        custnm: data.custnm,
+        rcvcustcd: data.rcvcustcd,
+        rcvcustnm: data.rcvcustnm,
+        custprsncd: data.custprsncd,
+        carno: data.carno,
+        finaldes: data.finaldes,
+        portnm: data.portnm,
+        dvnm: data.dvnm,
+        dvnum: data.dvnum,
+        shipdt: to_date2(data.shipdt),
+        cargocd: data.cargocd,
+        trcost: data.trcost,
+        files: data.files,
+        attdatnum: data.attdatnum,
+        remark: data.remark,
+      }));
     }
   }, []);
 
@@ -676,6 +690,10 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     setCopyWindowVisible(true);
   };
 
+  const onCopyWndClick2 = () => {
+    setCopyWindowVisible2(true);
+  };
+
   const getAttachmentsData = (data: IAttachmentData) => {
     setFilters((prev: any) => {
       return {
@@ -723,12 +741,68 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           };
         });
       });
+      setFilters((prev) => ({
+        ...prev,
+        custcd: data[0].custcd,
+        custnm: data[0].custnm,
+        amtunit: data[0].amtunit,
+        doexdiv: data[0].doexdiv,
+        taxdiv: data[0].taxdiv,
+      }));
     } catch (e) {
       alert(e);
     }
   };
 
-  //그리드 푸터
+  const setCopyData2 = (data: any) => {
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0) return false;
+
+    let seq = 1;
+
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+      });
+      seq++;
+    }
+
+    for (var i = 0; i < data.length; i++) {
+      data[i].num = seq;
+      seq++;
+    }
+
+    try {
+      data.map((item: any) => {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, item],
+            total: prev.total + 1,
+          };
+        });
+      });
+      setFilters((prev) => ({
+        ...prev,
+        custcd: data[0].custcd,
+        custnm: data[0].custnm,
+        amtunit: data[0].amtunit == undefined ? "KRW": data[0].amtunit,
+        doexdiv: data[0].doexdiv == "" ? "A": data[0].doexdiv,
+        taxdiv: data[0].taxdiv == undefined ? "A": data[0].taxdiv,
+      }));
+    } catch (e) {
+      alert(e);
+    }
+  };
+ 
+  //그리드 푸터selectData
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
@@ -748,50 +822,47 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
-    mainDataResult.data.map((item) => {
-      if (item.qty == 0) {
+ 
+    for (var i = 0; i < mainDataResult.data.length; i++) {
+      if (mainDataResult.data[i].qty == 0 && valid == true) {
         alert("수량을 채워주세요.");
         valid = false;
         return false;
       }
-    });
+      for (var j = i + 1; j < mainDataResult.data.length; j++) {
+        if (
+          mainDataResult.data[i].sort_seq == mainDataResult.data[j].sort_seq &&
+          valid == true
+        ) {
+          alert("정렬순서가 겹칩니다. 수정해주세요.");
+          valid = false;
+          return false;
+        }
+      }
+    }
 
     try {
       if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "SA_A2300W_005");
-      }
-      else if (
-        filters.doexdiv == null ||
-        filters.doexdiv == "" ||
-        filters.doexdiv == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A2300W_002");
-      } else if (
-        filters.person == null ||
-        filters.person == "" ||
-        filters.person == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A2300W_001");
-      } else if (
-        filters.custcd == null ||
-        filters.custcd == "" ||
-        filters.custcd == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A2300W_003");
+        throw findMessage(messagesData, "SA_A5000W_003");
       } else if (
         convertDateToStr(filters.outdt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.outdt).substring(6, 8) > "31" ||
         convertDateToStr(filters.outdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.outdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A2300W_004");
+        throw findMessage(messagesData, "SA_A5000W_001");
       } else if (
-        convertDateToStr(filters.shipdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.shipdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.shipdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.shipdt).substring(6, 8).length != 2
+        filters.person == null ||
+        filters.person == "" ||
+        filters.person == undefined
       ) {
-        throw findMessage(messagesData, "SA_A2300W_004");
+        throw findMessage(messagesData, "SA_A5000W_004");
+      } else if (
+        filters.location == null ||
+        filters.location == "" ||
+        filters.location == undefined
+      ) {
+        throw findMessage(messagesData, "SA_A5000W_005");
       } else {
         if (valid == true) {
           setData(mainDataResult.data, filters, deletedMainRows);
@@ -855,7 +926,19 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "insiz" && field != "qtyunit" && field != "itemcd" && field != "itemnm") {
+    if (
+      field != "insiz" &&
+      field != "itemcd" &&
+      field != "itemnm" &&
+      field != "itemacnt" &&
+      field != "poregnum" &&
+      field != "ordkey" &&
+      field != "outreckey" &&
+      field != "reckey" &&
+      field != "totamt" &&
+      field != "dlramt" &&
+      field != "wgtunit"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -941,7 +1024,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 </td>
                 <th>사업장</th>
                 <td>
-                {customOptionData !== null && (
+                  {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="location"
                       value={filters.location}
@@ -953,7 +1036,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 </td>
                 <th>사업부</th>
                 <td>
-                {customOptionData !== null && (
+                  {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="position"
                       value={filters.position}
@@ -1001,7 +1084,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                   <Input
                     name="amtunit"
                     type="text"
-                    value={filters.amtunit}
+                    value={
+                      amtunitListData.find(
+                        (item: any) => item.sub_code === filters.amtunit
+                      )?.code_name
+                    }
                     className="readonly"
                   />
                 </td>
@@ -1016,7 +1103,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 </td>
               </tr>
               <tr>
-              <th>인수처코드</th>
+                <th>인수처코드</th>
                 <td>
                   <Input
                     name="rcvcustcd"
@@ -1044,16 +1131,20 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 </td>
                 <th>내수구분</th>
                 <td>
-                <Input
+                  <Input
                     name="doexdiv"
                     type="text"
-                    value={filters.doexdiv}
+                    value={
+                      doexdivListData.find(
+                        (item: any) => item.sub_code === filters.doexdiv
+                      )?.code_name
+                    }
                     className="readonly"
                   />
                 </td>
                 <th>원화환율</th>
                 <td>
-                <Input
+                  <Input
                     name="wonchgrat"
                     type="text"
                     value={filters.wonchgrat}
@@ -1062,7 +1153,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 </td>
                 <th>Invoice No</th>
                 <td>
-                <Input
+                  <Input
                     name="invoiceno"
                     type="text"
                     value={filters.invoiceno}
@@ -1071,18 +1162,22 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 </td>
               </tr>
               <tr>
-              <th>과세구분</th>
+                <th>과세구분</th>
                 <td>
-                <Input
+                  <Input
                     name="taxdiv"
                     type="text"
-                    value={filters.taxdiv}
+                    value={
+                      taxdivListData.find(
+                        (item: any) => item.sub_code === filters.taxdiv
+                      )?.code_name
+                    }
                     className="readonly"
                   />
                 </td>
                 <th>미화환율</th>
                 <td>
-                <Input
+                  <Input
                     name="uschgrat"
                     type="text"
                     value={filters.uschgrat}
@@ -1091,13 +1186,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 </td>
                 <th>첨부파일</th>
                 <td>
-                  <Input
-                    name="files"
-                    type="text"
-                    value={filters.files}
-                    className="readonly"
-                  />
-                  <ButtonInInput>
+                  <Input name="files" type="text" value={filters.files} />
+                  <ButtonInInput style={{ marginTop: "1vh" }}>
                     <Button
                       type={"button"}
                       onClick={onAttachmentsWndClick}
@@ -1119,7 +1209,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        {/* <GridContainer>
+        <GridContainer>
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
@@ -1135,12 +1225,20 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 onClick={onCopyWndClick}
                 icon="folder-open"
               >
-                재고참조
+                수주참조
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyWndClick2}
+                icon="folder-open"
+              >
+                출하참조
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "500px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1148,8 +1246,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                   workType == "U" && isValidDate(row.enddt)
                     ? new Date(dateformat(row.enddt))
                     : new Date(),
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                itemacnt: itemacntListData.find(
+                  (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
@@ -1182,29 +1280,97 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             editField={EDIT_FIELD}
           >
             <GridColumn
-              field="itemcd"
-              title="품목코드"
-              width="250px"
+              field="sort_seq"
+              title="정렬순서"
+              width="100px"
+              cell={NumberCell}
               footerCell={mainTotalFooterCell}
             />
+            <GridColumn field="itemcd" title="품목코드" width="250px" />
             <GridColumn field="itemnm" title="품목명" width="250px" />
-            <GridColumn field="itemacnt" title="품목계정" width="200px" cell={CustomComboBoxCell}/>
+            <GridColumn field="itemacnt" title="품목계정" width="200px" />
+            <GridColumn field="insiz" title="규격" width="200px" />
             <GridColumn
               field="qty"
               title="수량"
-              width="180px"
+              width="100px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="qtyunit"
               title="수량단위"
-              width="150px"
+              width="100px"
               cell={CustomComboBoxCell}
             />
+            <GridColumn
+              field="unpcalmeth"
+              title="단가산정방법"
+              width="200px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="unp"
+              title="단가"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="amt"
+              title="금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="wonamt"
+              title="원화금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="taxamt"
+              title="세액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="totamt"
+              title="합계금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="dlramt"
+              title="달러금액"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="unitwgt"
+              title="단량"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="totwgt"
+              title="총중량"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn field="wgtunit" title="중량단위" width="100px" />
             <GridColumn field="remark" title="비고" width="300px" />
-            <GridColumn field="lotnum" title="LOT NO" width="200px" />
+            <GridColumn field="poregnum" title="PO사업자" width="200px" />
+            <GridColumn field="ordkey" title="수주번호" width="200px" />
+            <GridColumn field="outreckey" title="출하번호" width="200px" />
+            <GridColumn field="reckey" title="판매번호" width="200px" />
           </Grid>
-        </GridContainer> */}
+        </GridContainer>
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
@@ -1239,6 +1405,13 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           setVisible={setCopyWindowVisible}
           workType={"FILTER"}
           setData={setCopyData}
+        />
+      )}
+      {CopyWindowVisible2 && (
+        <CopyWindow3
+          setVisible={setCopyWindowVisible2}
+          workType={"FILTER"}
+          setData={setCopyData2}
         />
       )}
       {attachmentsWindowVisible && (

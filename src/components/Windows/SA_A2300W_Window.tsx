@@ -81,7 +81,6 @@ type Idata = {
   chk: string;
   custcd: string;
   custnm: string;
-  custprsncd: string;
   doexdiv: string;
   dvnm: string;
   dvnum: string;
@@ -141,7 +140,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1600,
-    height: 670,
+    height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -169,8 +168,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         person: defaultOption.find((item: any) => item.id === "person")
           .valueCode,
         doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
-          .valueCode,
-        custprsncd: defaultOption.find((item: any) => item.id === "custprsncd")
           .valueCode,
         cargocd: defaultOption.find((item: any) => item.id === "cargocd")
           .valueCode,
@@ -371,7 +368,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     dvnm: "",
     dvnum: "",
     finaldes: "",
-    custprsncd: "",
     dlramt: 0,
     inredt: new Date(),
     insiz: "",
@@ -656,7 +652,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           custnm: data.custnm,
           rcvcustcd: data.rcvcustcd,
           rcvcustnm: data.rcvcustnm,
-          custprsncd: data.custprsncd,
           carno: data.carno,
           finaldes: data.finaldes,
           portnm: data.portnm,
@@ -1058,18 +1053,16 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     onChange={filterInputChange}
                   />
                 </td>
-                <th>업체담당자</th>
+                <th>선적일자</th>
                 <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="custprsncd"
-                      value={filters.custprsncd}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      textField="prsnnm"
-                      valueField="custprsncd"
+                  <div className="filter-item-wrap">
+                    <DatePicker
+                      name="shipdt"
+                      value={filters.shipdt}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
                     />
-                  )}
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -1120,17 +1113,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 </td>
               </tr>
               <tr>
-                <th>선적일자</th>
-                <td>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="shipdt"
-                      value={filters.shipdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                    />
-                  </div>
-                </td>
                 <th>운송사</th>
                 <td>
                   {customOptionData !== null && (
@@ -1152,7 +1134,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                   />
                 </td>
                 <th>첨부파일</th>
-                <td colSpan={3}>
+                <td colSpan={5}>
                   <Input
                     name="files"
                     type="text"
@@ -1204,7 +1186,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "450px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
