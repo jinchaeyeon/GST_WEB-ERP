@@ -147,6 +147,7 @@ const sessionItemTypeColumn = [
 const typeData = [
   { sub_code: "QUERY", code_name: "조회조건" },
   { sub_code: "NEW", code_name: "신규" },
+  { sub_code: "ADD", code_name: "행 추가" },
 ];
 
 const typeColumn = [
