@@ -6,7 +6,6 @@ import {
   GridColumn,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridFooterCellProps,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -35,9 +34,6 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
-import { loginResultState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
-
 const SUB_DATA_ITEM_KEY = "pattern_id";
 
 // Create React.Context to pass props to the Form Field components from the main component

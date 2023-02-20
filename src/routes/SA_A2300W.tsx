@@ -50,6 +50,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import { gridList } from "../store/columns/SA_A2300W_C";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
@@ -61,11 +62,11 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
-
+const dateField = ["outdt"];
+const numberField = ["qty"];
 type TdataArr = {
   rowstatus: string[];
   seq2: string[];
@@ -682,21 +683,6 @@ const SA_A2300: React.FC = () => {
           (parts[1] ? "." + parts[1] : "")}
       </td>
     );
-  };
-
-  const calculateWidth = (field: any) => {
-    let maxWidth = 0;
-    mainDataResult.data.forEach((item) => {
-      const size = calculateSize(item[field], {
-        font: "Source Sans Pro",
-        fontSize: "16px",
-      }); // pass the font properties based on the application
-      if (size.width > maxWidth) {
-        maxWidth = size.width;
-      }
-    });
-
-    return maxWidth;
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -1479,30 +1465,32 @@ const SA_A2300: React.FC = () => {
             resizable={true}
           >
             <GridColumn cell={CommandCell} width="60px" />
-            <GridColumn
-              field="outdt"
-              title="출하일자"
-              cell={DateCell}
-              width="180px"
-            />
-            <GridColumn
-              field="recdtfind"
-              title="출하처리번호"
-              width="200px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="custcd" title="업체코드" width="280px" />
-            <GridColumn field="custnm" title="업체명" width="240px" />
-            <GridColumn
-              field="qty"
-              title="수량"
-              width="130px"
-              footerCell={gridSumQtyFooterCell}
-              cell={NumberCell}
-            />
-            <GridColumn field="doexdiv" title="내수구분" width="150px" />
-            <GridColumn field="person" title="담당자" width="150px" />
-            <GridColumn field="remark" title="비고" width="300px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
+                          : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1539,22 +1527,30 @@ const SA_A2300: React.FC = () => {
           //컬럼너비조정
           resizable={true}
         >
-          <GridColumn
-            field="itemcd"
-            title="품목코드"
-            width="250px"
-            footerCell={detailTotalFooterCell}
-          />
-          <GridColumn field="itemnm" title="품목명" width="300px" />
-          <GridColumn field="itemacnt" title="품목계정" width="250px" />
-          <GridColumn
-            field="qty"
-            title="수량"
-            width="180px"
-            cell={NumberCell}
-          />
-          <GridColumn field="remark" title="비고" width="400px" />
-          <GridColumn field="lotnum" title="LOT NO" width="300px" />
+          {customOptionData !== null &&
+            customOptionData.menuCustomColumnOptions["grdList2"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 && (
+                  <GridColumn
+                    key={idx}
+                    field={item.fieldName}
+                    title={item.caption}
+                    width={item.width}
+                    cell={
+                      numberField.includes(item.fieldName)
+                        ? NumberCell
+                        : undefined
+                    }
+                    footerCell={
+                      item.sortOrder === 0
+                        ? detailTotalFooterCell
+                        : numberField.includes(item.fieldName)
+                        ? gridSumQtyFooterCell
+                        : undefined
+                    }
+                  />
+                )
+            )}
         </Grid>
       </GridContainer>
       {detailWindowVisible && (
@@ -1588,6 +1584,19 @@ const SA_A2300: React.FC = () => {
           workType={"FILTER"}
           setData={setItemData}
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

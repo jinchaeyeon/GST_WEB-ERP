@@ -23,8 +23,6 @@ import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
-  Title,
-  TitleContainer,
   ButtonInInput,
   GridTitleContainer,
   FormBoxWrap,
@@ -183,6 +181,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
+      fetchQuery(locationQueryStr, setLocationListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(itemacntQueryStr, setLocationListData);
     }

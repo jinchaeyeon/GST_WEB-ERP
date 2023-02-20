@@ -5,12 +5,10 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridCellProps,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
-  GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -52,7 +50,7 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import CheckBoxCell from "../Cells/CheckBoxCell";
-import ComboBoxCell from "../Cells/ComboBoxCell";
+
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
@@ -110,20 +108,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   );
 
   //공통코드 리스트 조회 ()
-  const [itemacntListData, setItemacntListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [qtyunitListData, setQtyunitListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
-  const [itemlvl1ListData, setItemlvl1ListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [personListData, setPersonListData] = useState([
@@ -131,9 +116,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
-      );
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
@@ -142,19 +124,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
-      );
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
+     
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(personQueryStr, setPersonListData);
     }

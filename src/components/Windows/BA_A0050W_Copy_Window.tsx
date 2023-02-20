@@ -7,15 +7,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridEvent,
-  GridFooterCellProps,
-  GridCellProps,
 } from "@progress/kendo-react-grid";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
-import { isLoading } from "../../store/atoms";
 import {
   BottomContainer,
   ButtonContainer,
@@ -43,12 +39,7 @@ import {
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
-import { loginResultState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
-import ComboBoxCell from "../Cells/ComboBoxCell";
-import { useSetRecoilState } from "recoil";
-import CheckBoxCell from "../Cells/CheckBoxCell";
+import { FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
 import { FormCheckBoxCell } from "../Editors";
 import NumberCell from "../Cells/NumberCell";
 
@@ -74,7 +65,6 @@ type TKendoWindow = {
 
 const KendoWindow = ({
   getVisible,
-  setData,
   para = { user_id: "", user_name: "" },
 }: TKendoWindow) => {
   const { user_id, user_name } = para;
@@ -268,15 +258,6 @@ const KendoWindow = ({
           total: totalRowCnt,
         };
       });
-
-      // const totalRowCnt2 = data.tables[1].RowCount;
-      // const rows2 = data.tables[1].Rows;
-      // setDetailDataResult3(() => {
-      //   return {
-      //     data: rows2,
-      //     total: totalRowCnt2,
-      //   };
-      // });
     }
   };
 

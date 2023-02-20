@@ -23,8 +23,6 @@ import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
-  Title,
-  TitleContainer,
   ButtonInInput,
   GridTitleContainer,
   FormBoxWrap,
@@ -59,10 +57,8 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
-import { FormComboBoxCell, FormComboBox } from "../Editors";
 import ComboBoxCell from "../Cells/ComboBoxCell";
-import { NumberInput } from "adaptivecards";
+
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -183,54 +179,15 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   //공통코드 리스트 조회 ()
-  const [itemacntListData, setItemacntListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl1ListData, setItemlvl1ListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [pacListData, setPacListData] = useState([COM_CODE_DEFAULT_VALUE]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
-      );
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
-      );
-      const pacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
-      );
-      fetchQuery(locationQueryStr, setLocationListData);
-      fetchQuery(pacQueryStr, setPacListData);
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
+      
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
     }
   }, [bizComponentData]);
@@ -483,148 +440,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     setLoading(false);
   };
 
-  const onCopyClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    const selectRow = mainDataResult.data.filter(
-      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-
-    const newDataItem = {
-      [DATA_ITEM_KEY]: seq + 1,
-      amt: selectRow.amt,
-      amtunit: selectRow.amtunit,
-      chk: selectRow.chk,
-      custcd: selectRow.custcd,
-      custnm: selectRow.custnm,
-      insiz: selectRow.insiz,
-      itemacnt: selectRow.itemacnt,
-      itemcd: selectRow.itemcd,
-      itemlvl1: selectRow.itemlvl1,
-      itemlvl2: selectRow.itemlvl2,
-      itemlvl3: selectRow.itemlvl3,
-      itemnm: selectRow.itemnm,
-      itemno: selectRow.itemno,
-      itemthick: selectRow.itemthick,
-      len: selectRow.len,
-      lev: selectRow.lev,
-      lotnum: selectRow.lotnum,
-      need_qty: selectRow.need_qty,
-      needqty: selectRow.needqty,
-      nowqty: selectRow.nowqty,
-      ordkey: selectRow.ordkey,
-      ordnum: selectRow.ordnum,
-      ordseq: selectRow.ordseq,
-      pac: selectRow.pac,
-      poregnum: selectRow.poregnum,
-      project: selectRow.project,
-      qty: selectRow.qty,
-      qtyunit: selectRow.qtyunit,
-      rowstatus: "N",
-      safeqty: selectRow.safeqty,
-      selected: selectRow.selected,
-      singular: selectRow.singular,
-      spec: selectRow.spec,
-      taxamt: selectRow.taxamt,
-      taxdiv: selectRow.taxdiv,
-      totwgt: selectRow.totwgt,
-      unitwgt: selectRow.unitwgt,
-      unp: selectRow.unp,
-      wgtunit: selectRow.wgtunit,
-      width: selectRow.width,
-      wonamt: selectRow.wonamt,
-    };
-
-    setMainDataResult((prev) => {
-      return {
-        data: [...prev.data, newDataItem],
-        total: prev.total + 1,
-      };
-    });
-  };
-
-  const onAddClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
-      itemgrade: "",
-      itemcd: "",
-      itemnm: "",
-      itemacnt: "",
-      qty: 1,
-      qtyunit: "",
-      unitwgt: 0,
-      wgtunit: "",
-      len: 0,
-      itemthick: 0,
-      width: 0,
-      unpcalmeth: "Q",
-      UNPFACTOR: 0,
-      unp: 0,
-      amt: 0,
-      dlramt: 0,
-      wonamt: 0,
-      taxamt: 0,
-      maker: "",
-      usegb: "",
-      spec: "",
-      badcd: "",
-      BADTEMP: "",
-      poregnum: "",
-      lcno: "",
-      heatno: "",
-      SONGNO: "",
-      projectno: "",
-      lotnum: "",
-      orglot: "",
-      boxno: "",
-      PRTNO: "",
-      account: "",
-      qcnum: "",
-      qcseq: 0,
-      APPNUM: "",
-      seq2: 0,
-      totwgt: 0,
-      purnum: "",
-      purseq: 0,
-      ordnum: "",
-      ordseq: 0,
-      remark: "",
-      load_place: "",
-      pac: "A",
-      itemlvl1: "",
-      enddt: null,
-      extra_field1: "",
-      rowstatus: "N",
-    };
-
-    setMainDataResult((prev) => {
-      return {
-        data: [...prev.data, newDataItem],
-        total: prev.total + 1,
-      };
-    });
-  };
-
   useEffect(() => {
     if (workType != "N" && isInitSearch === false) {
       fetchMainGrid();
@@ -691,12 +506,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     setIfSelectFirstRow(false);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-  };
-
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
   };
 
   //스크롤 핸들러

@@ -50,16 +50,6 @@ import { isLoading } from "../../store/atoms";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
-import CheckBoxCell from "../Cells/CheckBoxCell";
-import {
-  setExpandedState,
-  setGroupIds,
-} from "@progress/kendo-react-data-tools";
-import {
-  groupBy,
-  GroupDescriptor,
-  GroupResult,
-} from "@progress/kendo-data-query";
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";

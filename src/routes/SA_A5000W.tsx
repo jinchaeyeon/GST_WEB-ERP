@@ -15,7 +15,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import calculateSize from "calculate-size";
+import { gridList } from "../store/columns/SA_A5000W_C";
 import {
   Title,
   FilterBoxWrap,
@@ -62,10 +62,22 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
+const dateField = ["outdt", "shipdt"];
+const numberField = [
+  "qty",
+  "amt",
+  "wonamt",
+  "taxamt",
+  "totamt",
+  "sort_seq",
+  "dlramt",
+  "unitwgt",
+  "NumberCell",
+];
+
 type TdataArr = {
   rowstatus_s: string[];
   seq2_s: string[];
@@ -684,21 +696,6 @@ const SA_A5000: React.FC = () => {
     );
   };
 
-  const calculateWidth = (field: any) => {
-    let maxWidth = 0;
-    mainDataResult.data.forEach((item) => {
-      const size = calculateSize(item[field], {
-        font: "Source Sans Pro",
-        fontSize: "16px",
-      }); // pass the font properties based on the application
-      if (size.width > maxWidth) {
-        maxWidth = size.width;
-      }
-    });
-
-    return maxWidth;
-  };
-
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -1007,7 +1004,7 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -1061,29 +1058,29 @@ const SA_A5000: React.FC = () => {
     }));
 
     let dataArr: TdataArr = {
-      rowstatus_s :  [],
-      seq2_s :  [],
-      itemcd_s :  [],
-      itemacnt_s :  [],
-      qty_s :  [],
-      qtyunit_s :  [],
-      unpcalmeth_s :  [],
-      unp_s :  [],
-      amt_s :  [],
-      wonamt_s :  [],
-      taxamt_s :  [],
-      dlramt_s :  [],
-      unitwgt_s :  [],
-      totwgt_s :  [],
-      wgtunit_s :  [],
-      remark_s :  [],
-      poregnum_s :  [],
-      ordnum_s :  [],
-      ordseq_s :  [],
-      outrecdt_s :  [],
-      outseq1_s :  [],
-      outseq2_s :  [],
-      sort_seq_s :  [],
+      rowstatus_s: [],
+      seq2_s: [],
+      itemcd_s: [],
+      itemacnt_s: [],
+      qty_s: [],
+      qtyunit_s: [],
+      unpcalmeth_s: [],
+      unp_s: [],
+      amt_s: [],
+      wonamt_s: [],
+      taxamt_s: [],
+      dlramt_s: [],
+      unitwgt_s: [],
+      totwgt_s: [],
+      wgtunit_s: [],
+      remark_s: [],
+      poregnum_s: [],
+      ordnum_s: [],
+      ordseq_s: [],
+      outrecdt_s: [],
+      outseq1_s: [],
+      outseq2_s: [],
+      sort_seq_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
@@ -1111,7 +1108,7 @@ const SA_A5000: React.FC = () => {
         outseq1 = "",
         outseq2 = "",
         sort_seq = "",
-        outrecdt= "",
+        outrecdt = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
@@ -1125,14 +1122,16 @@ const SA_A5000: React.FC = () => {
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
-      dataArr.unitwgt_s.push(unitwgt== "" ? 0 : unitwgt)
+      dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
       dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
       dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
       dataArr.remark_s.push(remark == undefined ? "" : remark);
       dataArr.poregnum_s.push(poregnum == undefined ? "" : poregnum);
       dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
       dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
-      dataArr.outrecdt_s.push(outdt == "" ? outrecdt == "" ? "" : outrecdt : outdt);
+      dataArr.outrecdt_s.push(
+        outdt == "" ? (outrecdt == "" ? "" : outrecdt) : outdt
+      );
       dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
       dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
       dataArr.sort_seq_s.push(sort_seq == "" ? 0 : sort_seq);
@@ -1162,7 +1161,7 @@ const SA_A5000: React.FC = () => {
         outseq1 = "",
         outseq2 = "",
         sort_seq = "",
-        outrecdt = ""
+        outrecdt = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
@@ -1176,14 +1175,16 @@ const SA_A5000: React.FC = () => {
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
-      dataArr.unitwgt_s.push(unitwgt== "" ? 0 : unitwgt)
+      dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
       dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
       dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
       dataArr.remark_s.push(remark == undefined ? "" : remark);
       dataArr.poregnum_s.push(poregnum == undefined ? "" : poregnum);
       dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
       dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
-      dataArr.outrecdt_s.push(outdt == "" ? outrecdt == "" ? "" : outrecdt : outdt);
+      dataArr.outrecdt_s.push(
+        outdt == "" ? (outrecdt == "" ? "" : outrecdt) : outdt
+      );
       dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
       dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
       dataArr.sort_seq_s.push(sort_seq == "" ? 0 : sort_seq);
@@ -1533,58 +1534,32 @@ const SA_A5000: React.FC = () => {
             resizable={true}
           >
             <GridColumn cell={CommandCell} width="60px" />
-            <GridColumn
-              field="outdt"
-              title="매출일자"
-              cell={DateCell}
-              width="150px"
-            />
-            <GridColumn
-              field="shipdt"
-              title="선적일자"
-              cell={DateCell}
-              width="150px"
-            />
-            <GridColumn field="person" title="담당자" width="150px" />
-            <GridColumn field="custcd" title="업체코드" width="200px" />
-            <GridColumn field="custnm" title="업체명" width="250px" />
-            <GridColumn
-              field="qty"
-              title="수량"
-              width="150px"
-              footerCell={gridSumQtyFooterCell}
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="amt"
-              title="금액"
-              width="150px"
-              footerCell={gridSumQtyFooterCell}
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="wonamt"
-              title="원화금액"
-              width="150px"
-              footerCell={gridSumQtyFooterCell}
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="taxamt"
-              title="세액"
-              width="150px"
-              footerCell={gridSumQtyFooterCell}
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="totamt"
-              title="합계금액"
-              width="150px"
-              footerCell={gridSumQtyFooterCell}
-              cell={NumberCell}
-            />
-            <GridColumn field="taxnum" title="계산서NO" width="250px" />
-            <GridColumn field="reckey" title="판매번호" width="250px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
+                          : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1625,79 +1600,28 @@ const SA_A5000: React.FC = () => {
           //컬럼너비조정
           resizable={true}
         >
-          <GridColumn
-            field="sort_seq"
-            title="정렬순서"
-            width="80px"
-            footerCell={detailTotalFooterCell}
-            cell={NumberCell}
-          />
-          <GridColumn field="itemcd" title="품목코드" width="250px" />
-          <GridColumn field="itemnm" title="품목명" width="200px" />
-          <GridColumn field="itemacnt" title="품목계정" width="150px" />
-          <GridColumn field="insiz" title="규격" width="200px" />
-          <GridColumn
-            field="qty"
-            title="수량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="qtyunit" title="수량단위" width="150px" />
-          <GridColumn field="unpcalmeth" title="단가산정방법" width="150px" />
-          <GridColumn
-            field="unp"
-            title="단가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="amt"
-            title="금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="wonamt"
-            title="원화금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="taxamt"
-            title="세액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="totamt"
-            title="합계금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="dlramt"
-            title="달러금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="unitwgt"
-            title="단량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="totwgt"
-            title="총중량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="wgtunit" title="중량단위" width="120px" />
-          <GridColumn field="remark" title="비고" width="400px" />
-          <GridColumn field="poregnum" title="PO사업자" width="250px" />
-          <GridColumn field="ordkey" title="수주번호" width="250px" />
-          <GridColumn field="outreckey" title="출하번호" width="250px" />
-          <GridColumn field="reckey" title="판매번호" width="250px" />
+          {customOptionData !== null &&
+            customOptionData.menuCustomColumnOptions["grdList2"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 && (
+                  <GridColumn
+                    key={idx}
+                    field={item.fieldName}
+                    title={item.caption}
+                    width={item.width}
+                    cell={
+                      numberField.includes(item.fieldName)
+                        ? NumberCell
+                        : dateField.includes(item.fieldName)
+                        ? DateCell
+                        : undefined
+                    }
+                    footerCell={
+                      item.sortOrder === 0 ? detailTotalFooterCell : undefined
+                    }
+                  />
+                )
+            )}
         </Grid>
       </GridContainer>
       {detailWindowVisible && (
@@ -1731,6 +1655,19 @@ const SA_A5000: React.FC = () => {
           workType={"FILTER"}
           setData={setItemData}
         />
+      )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

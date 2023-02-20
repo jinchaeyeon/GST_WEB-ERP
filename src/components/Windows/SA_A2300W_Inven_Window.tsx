@@ -5,13 +5,11 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridCellProps,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
   GridItemChangeEvent,
-  GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
 import { CellRender, RowRender } from "../Renderers";
 import { bytesToBase64 } from "byte-base64";
@@ -57,8 +55,7 @@ import { isLoading } from "../../store/atoms";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
-import CheckBoxCell from "../Cells/CheckBoxCell";
-import ComboBoxCell from "../Cells/ComboBoxCell";
+
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
@@ -118,15 +115,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     COM_CODE_DEFAULT_VALUE,
   ]);
 
-  const [itemlvl1ListData, setItemlvl1ListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [personListData, setPersonListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -155,18 +143,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       const taxdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
       );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
-      );
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(personQueryStr, setPersonListData);

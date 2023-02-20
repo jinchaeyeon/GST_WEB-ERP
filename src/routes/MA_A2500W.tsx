@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -8,13 +9,13 @@ import {
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
-  GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import { gridList } from "../store/columns/MA_A2700W_C";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import calculateSize from "calculate-size";
+import { gridList } from "../store/columns/MA_A2500W_C";
 import {
   Title,
   FilterBoxWrap,
@@ -42,12 +43,12 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  to_date2,
   UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/MA_A2700W_Window";
+import DetailWindow from "../components/Windows/MA_A2500W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import BarcodeWindow from "../components/Windows/MA_A2700W_Barcode_Window";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -61,77 +62,46 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-const DateField = ["recdt", "enddt"];
 
-const NumberField = [
-  "qty",
+const DATA_ITEM_KEY = "num";
+const DETAIL_DATA_ITEM_KEY = "num";
+const dateField = ["purdt", "indt"];
+const numberField = [
+  "inqty",
+  "amt",
   "wonamt",
   "taxamt",
   "totamt",
-  "unp",
+  "qty",
   "totwgt",
-  "len",
-  "itemthick",
-  "width",
+  "unp",
 ];
 type TdataArr = {
   rowstatus_s: string[];
-  itemgrade_s: string[];
+  purseq_s: string[];
   itemcd_s: string[];
   itemnm_s: string[];
-  itemacnt_s: string[];
+  insiz_s: string[];
   qty_s: string[];
   qtyunit_s: string[];
   unitwgt_s: string[];
+  wgt_s: string[];
   wgtunit_s: string[];
-  len_s: string[];
-  itemthick_s: string[];
-  width_s: string[];
+  proccd_s: string[];
+  planno_s: string[];
+  planseq_s: string[];
   unpcalmeth_s: string[];
-  UNPFACTOR_s: string[];
   unp_s: string[];
   amt_s: string[];
-  dlramt_s: string[];
   wonamt_s: string[];
   taxamt_s: string[];
-  maker_s: string[];
-  usegb_s: string[];
-  spec_s: string[];
-  badcd_s: string[];
-  BADTEMP_s: string[];
-  poregnum_s: string[];
-  lcno_s: string[];
-  heatno_s: string[];
-  SONGNO_s: string[];
-  projectno_s: string[];
-  lotnum_s: string[];
-  orglot_s: string[];
-  boxno_s: string[];
-  PRTNO_s: string[];
-  account_s: string[];
-  qcnum_s: string[];
-  qcseq_s: string[];
-  APPNUM_s: string[];
-  seq2_s: string[];
-  totwgt_s: string[];
-  purnum_s: string[];
-  purseq_s: string[];
-  ordnum_s: string[];
-  ordseq_s: string[];
   remark_s: string[];
-  load_place_s: string[];
-  pac_s: string[];
-  itemlvl1_s: string[];
-  enddt_s: string[];
-  extra_field1_s: string[];
 };
-const DATA_ITEM_KEY = "recnum";
-const DETAIL_DATA_ITEM_KEY = "num";
 
-const MA_A2700W: React.FC = () => {
+const MA_A2500W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
+  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -162,24 +132,25 @@ const MA_A2700W: React.FC = () => {
         person: defaultOption.find((item: any) => item.id === "person")
           .valueCode,
         doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
-          .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
-          .valueCode,
-        inuse: defaultOption.find((item: any) => item.id === "inuse").valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        .valueCode,
       }));
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA016, L_BA171, L_MA002, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_BA019, L_MA036,L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [pacListData, setPacListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [unpcalmethListData, setUnpcalmethListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [purstsListData, setPurstsListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -205,16 +176,15 @@ const MA_A2700W: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [itemlvl1ListData, setItemlvl1ListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [inuseListData, setInuseListData] = useState([COM_CODE_DEFAULT_VALUE]);
   const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const pacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
+      const purstsQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_MA036")
+      );
+      const unpcalmethQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
       );
       const ordstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
@@ -233,9 +203,6 @@ const MA_A2700W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
-      );
       const departmentQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_dptcd_001"
@@ -247,13 +214,11 @@ const MA_A2700W: React.FC = () => {
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const inuseQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_MA002")
-      );
       const finynQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
       );
-      fetchQuery(pacQueryStr, setPacListData);
+      fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
+      fetchQuery(purstsQueryStr, setPurstsListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(taxdivQueryStr, setTaxdivListData);
@@ -262,9 +227,7 @@ const MA_A2700W: React.FC = () => {
       fetchQuery(departmentQueryStr, setDepartmentsListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(inuseQueryStr, setInuseListData);
       fetchQuery(finynQueryStr, setFinynListData);
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
     }
   }, [bizComponentData]);
 
@@ -293,11 +256,6 @@ const MA_A2700W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
-  const [barcordDataState, setBarcodeDataState] = useState<State>({
-    sort: [],
-  });
-
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
@@ -307,13 +265,7 @@ const MA_A2700W: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.recnum]: true });
-
-      setDetailFilters((prev) => ({
-        ...prev,
-        recnum: rowData.recnum,
-        seq1: rowData.seq1,
-      }));
+      setSelectedState({ [rowData.num]: true });
 
       setIsCopy(false);
       setWorkType("U");
@@ -341,15 +293,11 @@ const MA_A2700W: React.FC = () => {
     process([], detailDataState)
   );
 
-  const [barcodeDataResult, setBarcodeDateResult] = useState<DataResult>(
-    process([], barcordDataState)
-  );
-
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  const [detailselectedState, setDetailSelectedState] = useState<{
+  const [detailSelectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -357,7 +305,6 @@ const MA_A2700W: React.FC = () => {
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [barcodeWindowVisible, setBarcodeWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -400,416 +347,137 @@ const MA_A2700W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    location: "01",
-    position: "",
+    location: "",
     frdt: new Date(),
     todt: new Date(),
-    recdt: new Date(),
-    seq1: 0,
-    custcd: "",
-    custnm: "",
+    purnum: "",
     itemcd: "",
     itemnm: "",
-    finyn: "%",
-    doexdiv: "",
-    inuse: "",
+    custcd: "",
+    custnm: "",
     person: "",
-    lotnum: "",
-    remark: "",
-    pursiz: "",
+    doexdiv: "",
+    recdt: new Date(),
+    seq1: 0,
   });
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
-    recdt: "",
+    recdt: new Date(),
     seq1: 0,
-  });
-
-  const [barcodeFilters, setBarCodeFilters] = useState({
-    pgSize: PAGE_SIZE,
-    recdt: "",
-    seq1: 0,
-    lotnum: "",
-    seq2: "",
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_MA_A2700W_Q",
+    procedureName: "P_MA_A2500W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
       "@p_location": filters.location,
-      "@p_position": filters.position,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
-      "@p_recdt": convertDateToStr(filters.recdt),
-      "@p_seq1": filters.seq1,
+      "@p_purnum": filters.purnum,
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
-      "@p_finyn": filters.finyn,
-      "@p_doexdiv": filters.doexdiv,
-      "@p_inuse": filters.inuse,
       "@p_person": filters.person,
-      "@p_lotnum": filters.lotnum,
-      "@p_remark": filters.remark,
-      "@p_pursiz": filters.pursiz,
-      "@p_seq2_s": "",
+      "@p_doexdiv": filters.doexdiv,
+      "@p_recdt": convertDateToStr(filters.recdt),
+      "@p_seq1": filters.seq1,
+      "@p_company_code": "2207A046",
     },
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_MA_A2700W_Q",
+    procedureName: "P_MA_A2500W_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_position": filters.position,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_recdt": detailFilters.recdt,
-      "@p_seq1": detailFilters.seq1,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_finyn": filters.finyn,
-      "@p_doexdiv": filters.doexdiv,
-      "@p_inuse": filters.inuse,
-      "@p_person": filters.person,
-      "@p_lotnum": filters.lotnum,
-      "@p_remark": filters.remark,
-      "@p_pursiz": filters.pursiz,
-      "@p_seq2_s": "",
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_purnum": filters.purnum,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_person": filters.person,
+        "@p_doexdiv": filters.doexdiv,
+        "@p_recdt": convertDateToStr(detailFilters.recdt),
+        "@p_seq1": detailFilters.seq1,
+        "@p_company_code": "2207A046",
     },
   };
-
-  const BarCodeParameters: Iparameters = {
-    procedureName: "P_MA_A2700W_Q",
-    pageNumber: detailPgNum,
-    pageSize: barcodeFilters.pgSize,
-    parameters: {
-      "@p_work_type": "BARCODE",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_position": filters.position,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_recdt": barcodeFilters.recdt,
-      "@p_seq1": barcodeFilters.seq1,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_finyn": filters.finyn,
-      "@p_doexdiv": filters.doexdiv,
-      "@p_inuse": filters.inuse,
-      "@p_person": filters.person,
-      "@p_lotnum": filters.lotnum,
-      "@p_remark": filters.remark,
-      "@p_pursiz": filters.pursiz,
-      "@p_seq2_s": barcodeFilters.seq2,
-    },
-  };
-
-  const [ParaData, setParaData] = useState({
-    pgSize: PAGE_SIZE,
-    workType: "N",
-    orgdiv: "01",
-    recdt: new Date(),
-    seq1: 0,
-    location: "01",
-    position: "",
-    doexdiv: "A",
-    amtunit: "KRW",
-    inuse: "10",
-    inoutdiv: "",
-    indt: new Date(),
-    custcd: "",
-    custnm: "",
-    rcvcustcd: "",
-    rcvcustnm: "",
-    userid: userId,
-    pc: pc,
-    taxdiv: "A",
-    taxloca: "",
-    taxtype: "",
-    taxnum: "",
-    taxdt: "",
-    person: "admin",
-    attdatnum: "",
-    remark: "",
-    baseamt: 0,
-    importnum: "",
-    auto_transfer: "A",
-    pac: "",
-    rowstatus_s: "",
-    itemgrade_s: "",
-    itemcd_s: "",
-    itemnm_s: "",
-    itemacnt_s: "",
-    qty_s: "",
-    qtyunit_s: "",
-    unitwgt_s: "",
-    wgtunit_s: "",
-    len_s: "",
-    itemthick_s: "",
-    width_s: "",
-    unpcalmeth_s: "",
-    UNPFACTOR_s: "",
-    unp_s: "",
-    amt_s: "",
-    dlramt_s: "",
-    wonamt_s: "",
-    taxamt_s: "",
-    maker_s: "",
-    usegb_s: "",
-    spec_s: "",
-    badcd_s: "",
-    BADTEMP_s: "",
-    poregnum_s: "",
-    lcno_s: "",
-    heatno_s: "",
-    SONGNO_s: "",
-    projectno_s: "",
-    lotnum_s: "",
-    orglot_s: "",
-    boxno_s: "",
-    PRTNO_s: "",
-    account_s: "",
-    qcnum_s: "",
-    qcseq_s: "",
-    APPNUM_s: "",
-    seq2_s: "",
-    totwgt_s: "",
-    purnum_s: "",
-    purseq_s: "",
-    ordnum_s: "",
-    ordseq_s: "",
-    remark_s: "",
-    load_place_s: "",
-    pac_s: "",
-    itemlvl1_s: "",
-    enddt_s: "",
-    extra_field1_s: "",
-    form_id: "MA_A2700W",
-    serviceid: "2207A046",
-    reckey: "",
-  });
-
-  const para: Iparameters = {
-    procedureName: "P_MA_A2700W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": ParaData.workType,
-      "@p_orgdiv": ParaData.orgdiv,
-      "@p_recdt": convertDateToStr(ParaData.recdt),
-      "@p_seq1": ParaData.seq1,
-      "@p_location": ParaData.location,
-      "@p_position": ParaData.position,
-      "@p_doexdiv": ParaData.doexdiv,
-      "@p_amtunit": ParaData.amtunit,
-      "@p_inuse": ParaData.inuse,
-      "@p_indt": convertDateToStr(ParaData.indt),
-      "@p_custcd": ParaData.custcd,
-      "@p_custnm": ParaData.custnm,
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_taxdiv": ParaData.taxdiv,
-      "@p_taxloca": ParaData.taxloca,
-      "@p_taxtype": ParaData.taxtype,
-      "@p_taxnum": ParaData.taxnum,
-      "@p_taxdt": ParaData.taxdt,
-      "@p_uschgrat": 0,
-      "@p_person": ParaData.person,
-      "@p_attdatnum": ParaData.attdatnum,
-      "@p_remark": ParaData.remark,
-      "@p_baseamt": ParaData.baseamt,
-      "@p_importnum": ParaData.importnum,
-      "@p_auto_transfer": ParaData.auto_transfer,
-      "@p_pac": ParaData.pac,
-      "@p_rowstatus_s": ParaData.rowstatus_s,
-      "@p_itemgrade_s": ParaData.itemgrade_s,
-      "@p_itemcd_s": ParaData.itemcd_s,
-      "@p_itemnm_s": ParaData.itemnm_s,
-      "@p_itemacnt_s": ParaData.itemacnt_s,
-      "@p_qty_s": ParaData.qty_s,
-      "@p_qtyunit_s": ParaData.qtyunit_s,
-      "@p_unitwgt_s": ParaData.unitwgt_s,
-      "@p_wgtunit_s": ParaData.wgtunit_s,
-      "@p_len_s": ParaData.len_s,
-      "@p_itemthick_s": ParaData.itemthick_s,
-      "@p_width_s": ParaData.width_s,
-      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
-      "@p_UNPFACTOR_s": ParaData.UNPFACTOR_s,
-      "@p_unp_s": ParaData.unp_s,
-      "@p_amt_s": ParaData.amt_s,
-      "@p_dlramt_s": ParaData.dlramt_s,
-      "@p_wonamt_s": ParaData.wonamt_s,
-      "@p_taxamt_s": ParaData.taxamt_s,
-      "@p_maker_s": ParaData.maker_s,
-      "@p_usegb_s": ParaData.usegb_s,
-      "@p_spec_s": ParaData.spec_s,
-      "@p_badcd_s": ParaData.badcd_s,
-      "@p_BADTEMP_s": ParaData.BADTEMP_s,
-      "@p_poregnum_s": ParaData.poregnum_s,
-      "@p_lcno_s": ParaData.lcno_s,
-      "@p_heatno_s": ParaData.heatno_s,
-      "@p_SONGNO_s": ParaData.SONGNO_s,
-      "@p_projectno_s": ParaData.projectno_s,
-      "@p_lotnum_s": ParaData.lotnum_s,
-      "@p_orglot_s": ParaData.orglot_s,
-      "@p_boxno_s": ParaData.boxno_s,
-      "@p_PRTNO_s": ParaData.PRTNO_s,
-      "@p_account_s": ParaData.account_s,
-      "@p_qcnum_s": ParaData.qcnum_s,
-      "@p_qcseq_s": ParaData.qcseq_s,
-      "@p_APPNUM_s": ParaData.APPNUM_s,
-      "@p_seq2_s": ParaData.seq2_s,
-      "@p_totwgt_s": ParaData.totwgt_s,
-      "@p_purnum_s": ParaData.purnum_s,
-      "@p_purseq_s": ParaData.purseq_s,
-      "@p_ordnum_s": ParaData.ordnum_s,
-      "@p_ordseq_s": ParaData.ordseq_s,
-      "@p_remark_s": ParaData.remark_s,
-      "@p_load_place_s": ParaData.load_place_s,
-      "@p_pac_s": ParaData.pac_s,
-      "@p_itemlvl1_s": ParaData.itemlvl1_s,
-      "@p_enddt_s": ParaData.enddt_s,
-      "@p_extra_field1_s": ParaData.extra_field1_s,
-      "@p_form_id": "MA_A2700W",
-      "@p_service_id": "2207A046",
-      "@p_wonchgrat": "0",
-      "@p_indt_s": "",
-      "@p_person_s": "",
-    },
-  };
-
-  const fetchTodoGridSaved = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", para);
-    } catch (error) {
-      data = null;
-    }
-    
-    if (data.isSuccess === true) {
-      fetchMainGrid();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (ParaData.itemcd_s != null) {
-      fetchTodoGridSaved();
-    }
-  }, [ParaData]);
 
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
-    work_type: "D",
-    recdt: "",
+    work_type: "",
+    recdt: new Date(),
     seq1: 0,
   });
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_MA_A2700W_S",
+    procedureName: "P_MA_A2500W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": ParaData.orgdiv,
-      "@p_recdt": paraDataDeleted.recdt,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_recdt": convertDateToStr(paraDataDeleted.recdt),
       "@p_seq1": paraDataDeleted.seq1,
-      "@p_location": ParaData.location,
-      "@p_position": ParaData.position,
-      "@p_doexdiv": ParaData.doexdiv,
-      "@p_amtunit": ParaData.amtunit,
-      "@p_inuse": ParaData.inuse,
-      "@p_indt": convertDateToStr(ParaData.indt),
-      "@p_custcd": ParaData.custcd,
-      "@p_custnm": ParaData.custnm,
+      "@p_indt": "",
+      "@p_purdt": "",
+      "@p_custcd": "",
+      "@p_custnm": "",
+      "@p_person": "",
+      "@p_doexdiv": "",
+      "@p_taxdiv": "",
+      "@p_amtunit": "",
+      "@p_baseamt": 0,
+      "@p_wonchgrat": 0,
+      "@p_uschgrat": 0,
+      "@p_remark": "",
+      "@p_attdatnum": "",
+      "@p_rowstatus_s": "",
+      "@p_recdt_s": "",
+      "@p_seq1_s": "",
+      "@p_seq2_s": "",
+      "@p_itemcd_s": "",
+      "@p_itemacnt_s": "",
+      "@p_qty_s": "",
+      "@p_qtyunit_s": "",
+      "@p_purnum_s": "",
+      "@p_purseq_s": "",
+      "@p_planno_s": "",
+      "@p_planseq_s": "",
+      "@p_totwgt_s": "",
+      "@p_wgtunit_s": "",
+      "@p_unpcalmeth_s": "",
+      "@p_unp_s": "",
+      "@p_amt_s": "",
+      "@p_wonamt_s": "",
+      "@p_taxamt_s": "",
+      "@p_remark_s": "",
+      "@p_num_s": "",
+      "@p_findkey_s": "",
+      "@p_div_s": "",
+      "@p_outrecdt_s": "",
+      "@p_outseq1_s": "",
+      "@p_outseq2_s": "",
+      "@p_keycode_s": "",
+      "@p_keyseq_s": "",
+      "@p_useqyt_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_taxdiv": ParaData.taxdiv,
-      "@p_taxloca": ParaData.taxloca,
-      "@p_taxtype": ParaData.taxtype,
-      "@p_taxnum": ParaData.taxnum,
-      "@p_taxdt": ParaData.taxdt,
-      "@p_uschgrat": 0,
-      "@p_person": ParaData.person,
-      "@p_attdatnum": ParaData.attdatnum,
-      "@p_remark": ParaData.remark,
-      "@p_baseamt": ParaData.baseamt,
-      "@p_importnum": ParaData.importnum,
-      "@p_auto_transfer": ParaData.auto_transfer,
-      "@p_pac": ParaData.pac,
-      "@p_rowstatus_s": ParaData.rowstatus_s,
-      "@p_itemgrade_s": ParaData.itemgrade_s,
-      "@p_itemcd_s": ParaData.itemcd_s,
-      "@p_itemnm_s": ParaData.itemnm_s,
-      "@p_itemacnt_s": ParaData.itemacnt_s,
-      "@p_qty_s": ParaData.qty_s,
-      "@p_qtyunit_s": ParaData.qtyunit_s,
-      "@p_unitwgt_s": ParaData.unitwgt_s,
-      "@p_wgtunit_s": ParaData.wgtunit_s,
-      "@p_len_s": ParaData.len_s,
-      "@p_itemthick_s": ParaData.itemthick_s,
-      "@p_width_s": ParaData.width_s,
-      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
-      "@p_UNPFACTOR_s": ParaData.UNPFACTOR_s,
-      "@p_unp_s": ParaData.unp_s,
-      "@p_amt_s": ParaData.amt_s,
-      "@p_dlramt_s": ParaData.dlramt_s,
-      "@p_wonamt_s": ParaData.wonamt_s,
-      "@p_taxamt_s": ParaData.taxamt_s,
-      "@p_maker_s": ParaData.maker_s,
-      "@p_usegb_s": ParaData.usegb_s,
-      "@p_spec_s": ParaData.spec_s,
-      "@p_badcd_s": ParaData.badcd_s,
-      "@p_BADTEMP_s": ParaData.BADTEMP_s,
-      "@p_poregnum_s": ParaData.poregnum_s,
-      "@p_lcno_s": ParaData.lcno_s,
-      "@p_heatno_s": ParaData.heatno_s,
-      "@p_SONGNO_s": ParaData.SONGNO_s,
-      "@p_projectno_s": ParaData.projectno_s,
-      "@p_lotnum_s": ParaData.lotnum_s,
-      "@p_orglot_s": ParaData.orglot_s,
-      "@p_boxno_s": ParaData.boxno_s,
-      "@p_PRTNO_s": ParaData.PRTNO_s,
-      "@p_account_s": ParaData.account_s,
-      "@p_qcnum_s": ParaData.qcnum_s,
-      "@p_qcseq_s": ParaData.qcseq_s,
-      "@p_APPNUM_s": ParaData.APPNUM_s,
-      "@p_seq2_s": ParaData.seq2_s,
-      "@p_totwgt_s": ParaData.totwgt_s,
-      "@p_purnum_s": ParaData.purnum_s,
-      "@p_purseq_s": ParaData.purseq_s,
-      "@p_ordnum_s": ParaData.ordnum_s,
-      "@p_ordseq_s": ParaData.ordseq_s,
-      "@p_remark_s": ParaData.remark_s,
-      "@p_load_place_s": ParaData.load_place_s,
-      "@p_pac_s": ParaData.pac_s,
-      "@p_itemlvl1_s": ParaData.itemlvl1_s,
-      "@p_enddt_s": ParaData.enddt_s,
-      "@p_extra_field1_s": ParaData.extra_field1_s,
-      "@p_form_id": "MA_A2700W",
-      "@p_service_id": "2207A046",
-      "@p_wonchgrat": "0",
-      "@p_indt_s": "",
-      "@p_person_s": "",
+      "@p_form_id": "P_MA_A2500W",
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -827,7 +495,6 @@ const MA_A2700W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
-      resetAllGrid();
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
@@ -867,29 +534,6 @@ const MA_A2700W: React.FC = () => {
     setLoading(false);
   };
 
-  const fetchBarcordGrid = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", BarCodeParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows;
-
-      if (totalRowCnt > 0)
-      setBarcodeDateResult((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt,
-        };
-      });
-    }
-    setLoading(false);
-  };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
@@ -916,13 +560,7 @@ const MA_A2700W: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchBarcordGrid();
-    }
-  }, [barcodeFilters]);
-
-  useEffect(() => {
-    if (paraDataDeleted.seq1 !== 0) fetchToDelete();
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   //메인 그리드 데이터 변경 되었을 때
@@ -930,11 +568,11 @@ const MA_A2700W: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.recnum]: true });
+        setSelectedState({ [firstRowData.num]: true });
 
         setDetailFilters((prev) => ({
           ...prev,
-          recdt: firstRowData.recdt,
+          recdt: to_date2(firstRowData.recdt),
           seq1: firstRowData.seq1,
         }));
 
@@ -969,30 +607,10 @@ const MA_A2700W: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     setDetailFilters((prev) => ({
-      ...prev,
-      recdt: selectedRowData.recdt,
-      seq1: selectedRowData.seq1,
-    }));
-  };
-
-  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: DETAIL_DATA_ITEM_KEY,
-    });
-    setDetailSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-
-    setBarCodeFilters((prev) => ({
-      ...prev,
-      recdt: selectedRowData.recdt,
-      seq1: selectedRowData.seq1,
-      lotnum: selectedRowData.lotnum,
-      seq2: selectedRowData.seq2,
-    }))
+        ...prev,
+        recdt: to_date2(selectedRowData.recdt),
+        seq1: selectedRowData.seq1,
+      }));
   };
 
   //엑셀 내보내기
@@ -1062,6 +680,7 @@ const MA_A2700W: React.FC = () => {
       </td>
     );
   };
+
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -1084,20 +703,16 @@ const MA_A2700W: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-  const onBarcodeWndClick = () => {
-    setBarcodeWindowVisible(true);
-  };
-
   const onDeleteClick = (e: any) => {
-    const datas = mainDataResult.data.filter(
-      (item) => item.recnum == Object.getOwnPropertyNames(selectedState)[0]
+    const data = mainDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      recdt: datas.recdt,
-      seq1: datas.seq1,
+      recdt: data.recdt,
+      seq1: data.seq1,
     }));
   };
 
@@ -1120,8 +735,8 @@ const MA_A2700W: React.FC = () => {
     }
 
     paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.recdt = "";
-    paraDataDeleted.seq1 = 0;
+    paraDataDeleted.recdt = new Date();
+    paraDataDeleted.seq1= 0;
   };
 
   interface ICustData {
@@ -1204,17 +819,23 @@ const MA_A2700W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.frdt).substring(6, 8).length != 2 ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_A2500W_001");
+      } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A2700W_002");
-      } else if(filters.location == null || filters.location == undefined || filters.location ==""){
-        throw findMessage(messagesData, "MA_A2700W_003");
-      }
-        else {
+        throw findMessage(messagesData, "MA_A2500W_001");
+      } else if (
+        filters.location == null ||
+        filters.location == "" ||
+        filters.location == undefined
+      ) {
+        throw findMessage(messagesData, "MA_A2500W_002");
+      } else {
         resetAllGrid();
         fetchMainGrid();
       }
@@ -1223,65 +844,52 @@ const MA_A2700W: React.FC = () => {
     }
   };
 
-  const onDetailHeaderSelectionChange = useCallback(
-    (event: GridHeaderSelectionChangeEvent) => {
-      const checkboxElement: any = event.syntheticEvent.target;
-      const checked = checkboxElement.checked;
-      const newSelectedState: {
-        [id: string]: boolean | number[];
-      } = {};
-
-      event.dataItems.forEach((item) => {
-        newSelectedState[idGetter(item)] = checked;
-      });
-    },
-    []
-  );
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "N",
+    orgdiv: "01",
+    location: "01",
+    purnum: "",
+    purdt: new Date(),
+    pursts: "",
+    inexpdt: new Date(),
+    custcd: "",
+    custnm: "",
+    custprsncd: "",
+    person: "admin",
+    doexdiv: "A",
+    taxdiv: "A",
+    amtunit: "",
+    baseamt: 0,
+    wonchgrat: 0,
+    uschgrat: 0,
+    attdatnum: "",
+    remark: "",
+    rowstatus_s: "",
+    purseq_s: "",
+    itemcd_s: "",
+    itemnm_s: "",
+    insiz_s: "",
+    qty_s: "",
+    qtyunit_s: "",
+    unitwgt_s: "",
+    wgt_s: "",
+    wgtunit_s: "",
+    proccd_s: "",
+    planno_s: "",
+    planseq_s: "",
+    unpcalmeth_s: "",
+    unp_s: "",
+    amt_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+    remark_s: "",
+    form_id: "MA_A2400W",
+    serviceid: "2207A046",
+  });
 
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
     let valid = true;
-
-    try {
-      if (data.length == 0) {
-        throw findMessage(messagesData, "MA_A2700W_001");
-      } else if (
-        convertDateToStr(filter.indt).substring(0, 4) < "1997" ||
-        convertDateToStr(filter.indt).substring(6, 8) > "31" ||
-        convertDateToStr(filter.indt).substring(6, 8) < "01" ||
-        convertDateToStr(filter.indt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_002");
-      } else if (
-        filter.location == "" ||
-        filter.location == null ||
-        filter.location == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_003");
-      } else if (
-        filter.inuse == "" ||
-        filter.inuse == null ||
-        filter.inuse == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_004");
-      } else if (
-        filter.doexdiv == "" ||
-        filter.doexdiv == null ||
-        filter.doexdiv == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_005");
-      }
-      for (var i = 0; i < data.length; i++) {
-        if (data[i].qty == 0) {
-          alert("수량은 필수입니다.");
-          return false;
-        }
-      }
-    } catch (e) {
-      alert(e);
-      valid = false;
-    }
-
-    if (!valid) return false;
 
     const dataItem = data.filter((item: any) => {
       return (
@@ -1291,347 +899,243 @@ const MA_A2700W: React.FC = () => {
     });
 
     if (dataItem.length === 0) return false;
-    setParaData(filter);
+    setParaData((prev) => ({
+      ...prev,
+      amt: filter.amt,
+      amtunit: filter.amtunit,
+      attdatnum: filter.attdatnum,
+      baseamt: filter.baseamt,
+      custcd: filter.custcd,
+      custnm: filter.custnm,
+      custprsncd: filter.custprsncd,
+      doexdiv: filter.doexdiv,
+      files: filter.files,
+      inexpdt: filter.inexpdt,
+      location: "01",
+      orgdiv: "01",
+      person: filter.person,
+      purdt: filter.purdt,
+      pursts: filter.pursts,
+      purnum: filter.purnum,
+      remark: filter.remark,
+      taxdiv: filter.taxdiv,
+      uschgrat: filter.uschgrat,
+      wonchgrat: filter.wonchgrat,
+      userid: userId,
+      pc: pc,
+      form_id: "MA_A2400W",
+      serviceid: "2207A046",
+    }));
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
-      itemgrade_s: [],
+      purseq_s: [],
       itemcd_s: [],
       itemnm_s: [],
-      itemacnt_s: [],
+      insiz_s: [],
       qty_s: [],
       qtyunit_s: [],
       unitwgt_s: [],
+      wgt_s: [],
       wgtunit_s: [],
-      len_s: [],
-      itemthick_s: [],
-      width_s: [],
+      proccd_s: [],
+      planno_s: [],
+      planseq_s: [],
       unpcalmeth_s: [],
-      UNPFACTOR_s: [],
       unp_s: [],
       amt_s: [],
-      dlramt_s: [],
       wonamt_s: [],
       taxamt_s: [],
-      maker_s: [],
-      usegb_s: [],
-      spec_s: [],
-      badcd_s: [],
-      BADTEMP_s: [],
-      poregnum_s: [],
-      lcno_s: [],
-      heatno_s: [],
-      SONGNO_s: [],
-      projectno_s: [],
-      lotnum_s: [],
-      orglot_s: [],
-      boxno_s: [],
-      PRTNO_s: [],
-      account_s: [],
-      qcnum_s: [],
-      qcseq_s: [],
-      APPNUM_s: [],
-      seq2_s: [],
-      totwgt_s: [],
-      purnum_s: [],
-      purseq_s: [],
-      ordnum_s: [],
-      ordseq_s: [],
       remark_s: [],
-      load_place_s: [],
-      pac_s: [],
-      itemlvl1_s: [],
-      enddt_s: [],
-      extra_field1_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
       const {
-        rowstatus = "",
-        itemgrade = "",
+        amt = "",
         itemcd = "",
         itemnm = "",
-        itemacnt = "",
+        rowstatus = "",
+        taxamt = "",
+        unp = "",
         qty = "",
         qtyunit = "",
-        unitwgt = "",
-        wgtunit = "",
-        len = "",
-        itemthick = "",
-        width = "",
-        unpcalmeth = "",
-        UNPFACTOR = "",
-        unp = "",
-        amt = "",
-        dlramt = "",
         wonamt = "",
-        taxamt = "",
-        maker = "",
-        usegb = "",
-        spec = "",
-        badcd = "",
-        BADTEMP = "",
-        poregnum = "",
-        lcno = "",
-        heatno = "",
-        SONGNO = "",
-        projectno = "",
-        lotnum = "",
-        orglot = "",
-        boxno = "",
-        PRTNO = "",
-        account = "",
-        qcnum = "",
-        qcseq = "",
-        APPNUM = "",
-        seq2 = "",
-        totwgt = "",
-        purnum = "",
-        purseq = "",
-        ordnum = "",
-        ordseq = "",
         remark = "",
-        load_place = "",
-        pac = "",
-        itemlvl1 = "",
-        enddt = "",
-        extra_field1 = "",
-        indt = "",
+        purseq = "",
+        insiz = "",
+        unitwgt = "",
+        wgt = "",
+        wgtunit = "",
+        proccd = "",
+        planno = "",
+        planseq = "",
+        unpcalmeth = "",
       } = item;
-
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.itemgrade_s.push(itemgrade);
+      dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
       dataArr.itemcd_s.push(itemcd);
       dataArr.itemnm_s.push(itemnm);
-      dataArr.itemacnt_s.push(itemacnt);
+      dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
       dataArr.qty_s.push(qty == "" ? 0 : qty);
-      dataArr.qtyunit_s.push(qtyunit);
+      dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
       dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-      dataArr.wgtunit_s.push(wgtunit);
-      dataArr.len_s.push(len == "" ? 0 : len);
-      dataArr.itemthick_s.push(itemthick == "" ? 0 : itemthick);
-      dataArr.width_s.push(width == "" ? 0 : width);
-      dataArr.unpcalmeth_s.push(unpcalmeth == "" ? "Q" : unpcalmeth);
-      dataArr.UNPFACTOR_s.push(UNPFACTOR == "" ? 0 : UNPFACTOR);
-      dataArr.unp_s.push(unp);
-      dataArr.amt_s.push(amt);
-      dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+      dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
+      dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+      dataArr.proccd_s.push(proccd == undefined ? "" : proccd);
+      dataArr.planno_s.push(planno == undefined ? "" : planno);
+      dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
+      dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
+      dataArr.unp_s.push(unp == "" ? 0 : unp);
+      dataArr.amt_s.push(amt == "" ? 0 : amt);
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-      dataArr.maker_s.push(maker);
-      dataArr.usegb_s.push(usegb);
-      dataArr.spec_s.push(spec);
-      dataArr.badcd_s.push(badcd);
-      dataArr.BADTEMP_s.push(BADTEMP);
-      dataArr.poregnum_s.push(poregnum);
-      dataArr.lcno_s.push(lcno);
-      dataArr.heatno_s.push(heatno);
-      dataArr.SONGNO_s.push(SONGNO);
-      dataArr.projectno_s.push(projectno);
-      dataArr.lotnum_s.push(lotnum);
-      dataArr.orglot_s.push(orglot);
-      dataArr.boxno_s.push(boxno);
-      dataArr.PRTNO_s.push(PRTNO);
-      dataArr.account_s.push(account);
-      dataArr.qcnum_s.push(qcnum);
-      dataArr.qcseq_s.push(qcseq == "" ? 0 : qcseq);
-      dataArr.APPNUM_s.push(APPNUM);
-      dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
-      dataArr.purnum_s.push(purnum);
-      dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
-      dataArr.ordnum_s.push(ordnum);
-      dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
-      dataArr.remark_s.push(remark);
-      dataArr.load_place_s.push(load_place);
-      dataArr.pac_s.push(pac);
-      dataArr.itemlvl1_s.push(itemlvl1);
-      dataArr.enddt_s.push(enddt.length == undefined ? convertDateToStr(enddt) : enddt);
-      dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
+      dataArr.remark_s.push(remark == undefined ? "" : remark);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
       const {
-        rowstatus = "",
-        itemgrade = "",
+        amt = "",
         itemcd = "",
         itemnm = "",
-        itemacnt = "",
+        rowstatus = "",
+        taxamt = "",
+        unp = "",
         qty = "",
         qtyunit = "",
-        unitwgt = "",
-        wgtunit = "",
-        len = "",
-        itemthick = "",
-        width = "",
-        unpcalmeth = "",
-        UNPFACTOR = "",
-        unp = "",
-        amt = "",
-        dlramt = "",
         wonamt = "",
-        taxamt = "",
-        maker = "",
-        usegb = "",
-        spec = "",
-        badcd = "",
-        BADTEMP = "",
-        poregnum = "",
-        lcno = "",
-        heatno = "",
-        SONGNO = "",
-        projectno = "",
-        lotnum = "",
-        orglot = "",
-        boxno = "",
-        PRTNO = "",
-        account = "",
-        qcnum = "",
-        qcseq = "",
-        APPNUM = "",
-        seq2 = "",
-        totwgt = "",
-        purnum = "",
-        purseq = "",
-        ordnum = "",
-        ordseq = "",
         remark = "",
-        load_place = "",
-        pac = "",
-        itemlvl1 = "",
-        enddt = "",
-        extra_field1 = "",
-        indt = "",
+        purseq = "",
+        insiz = "",
+        unitwgt = "",
+        wgt = "",
+        wgtunit = "",
+        proccd = "",
+        planno = "",
+        planseq = "",
+        unpcalmeth = "",
       } = item;
-
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.itemgrade_s.push(itemgrade);
+      dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
       dataArr.itemcd_s.push(itemcd);
       dataArr.itemnm_s.push(itemnm);
-      dataArr.itemacnt_s.push(itemacnt);
+      dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
       dataArr.qty_s.push(qty == "" ? 0 : qty);
-      dataArr.qtyunit_s.push(qtyunit);
+      dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
       dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-      dataArr.wgtunit_s.push(wgtunit);
-      dataArr.len_s.push(len == "" ? 0 : len);
-      dataArr.itemthick_s.push(itemthick == "" ? 0 : itemthick);
-      dataArr.width_s.push(width == "" ? 0 : width);
+      dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
+      dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+      dataArr.proccd_s.push(proccd == undefined ? "" : proccd);
+      dataArr.planno_s.push(planno == undefined ? "" : planno);
+      dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
       dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
-      dataArr.UNPFACTOR_s.push(UNPFACTOR == "" ? 0 : UNPFACTOR);
-      dataArr.unp_s.push(unp);
-      dataArr.amt_s.push(amt);
-      dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+      dataArr.unp_s.push(unp == "" ? 0 : unp);
+      dataArr.amt_s.push(amt == "" ? 0 : amt);
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-      dataArr.maker_s.push(maker);
-      dataArr.usegb_s.push(usegb);
-      dataArr.spec_s.push(spec);
-      dataArr.badcd_s.push(badcd);
-      dataArr.BADTEMP_s.push(BADTEMP);
-      dataArr.poregnum_s.push(poregnum);
-      dataArr.lcno_s.push(lcno);
-      dataArr.heatno_s.push(heatno);
-      dataArr.SONGNO_s.push(SONGNO);
-      dataArr.projectno_s.push(projectno);
-      dataArr.lotnum_s.push(lotnum);
-      dataArr.orglot_s.push(orglot);
-      dataArr.boxno_s.push(boxno);
-      dataArr.PRTNO_s.push(PRTNO);
-      dataArr.account_s.push(account);
-      dataArr.qcnum_s.push(qcnum);
-      dataArr.qcseq_s.push(qcseq == "" ? 0 : qcseq);
-      dataArr.APPNUM_s.push(APPNUM);
-      dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
-      dataArr.purnum_s.push(purnum);
-      dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
-      dataArr.ordnum_s.push(ordnum);
-      dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
-      dataArr.remark_s.push(remark);
-      dataArr.load_place_s.push(load_place);
-      dataArr.pac_s.push(pac);
-      dataArr.itemlvl1_s.push(itemlvl1);
-      dataArr.enddt_s.push(enddt.length == undefined ? convertDateToStr(enddt) : enddt);
-      dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
+      dataArr.remark_s.push(remark == undefined ? "" : remark);
     });
     setParaData((prev) => ({
       ...prev,
       workType: workType,
-      outdt: filter.outdt,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
-      itemgrade_s: dataArr.itemgrade_s.join("|"),
+      purseq_s: dataArr.purseq_s.join("|"),
       itemcd_s: dataArr.itemcd_s.join("|"),
       itemnm_s: dataArr.itemnm_s.join("|"),
-      itemacnt_s: dataArr.itemacnt_s.join("|"),
+      insiz_s: dataArr.insiz_s.join("|"),
       qty_s: dataArr.qty_s.join("|"),
       qtyunit_s: dataArr.qtyunit_s.join("|"),
       unitwgt_s: dataArr.unitwgt_s.join("|"),
+      wgt_s: dataArr.wgt_s.join("|"),
       wgtunit_s: dataArr.wgtunit_s.join("|"),
-      len_s: dataArr.len_s.join("|"),
-      itemthick_s: dataArr.itemthick_s.join("|"),
-      width_s: dataArr.width_s.join("|"),
+      proccd_s: dataArr.proccd_s.join("|"),
+      planno_s: dataArr.planno_s.join("|"),
+      planseq_s: dataArr.planseq_s.join("|"),
       unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
-      UNPFACTOR_s: dataArr.UNPFACTOR_s.join("|"),
       unp_s: dataArr.unp_s.join("|"),
       amt_s: dataArr.amt_s.join("|"),
-      dlramt_s: dataArr.dlramt_s.join("|"),
       wonamt_s: dataArr.wonamt_s.join("|"),
       taxamt_s: dataArr.taxamt_s.join("|"),
-      maker_s: dataArr.maker_s.join("|"),
-      usegb_s: dataArr.usegb_s.join("|"),
-      spec_s: dataArr.spec_s.join("|"),
-      badcd_s: dataArr.badcd_s.join("|"),
-      BADTEMP_s: dataArr.BADTEMP_s.join("|"),
-      poregnum_s: dataArr.poregnum_s.join("|"),
-      lcno_s: dataArr.lcno_s.join("|"),
-      heatno_s: dataArr.heatno_s.join("|"),
-      SONGNO_s: dataArr.SONGNO_s.join("|"),
-      projectno_s: dataArr.projectno_s.join("|"),
-      lotnum_s: dataArr.lotnum_s.join("|"),
-      orglot_s: dataArr.orglot_s.join("|"),
-      boxno_s: dataArr.boxno_s.join("|"),
-      PRTNO_s: dataArr.PRTNO_s.join("|"),
-      account_s: dataArr.account_s.join("|"),
-      qcnum_s: dataArr.qcnum_s.join("|"),
-      qcseq_s: dataArr.qcseq_s.join("|"),
-      APPNUM_s: dataArr.APPNUM_s.join("|"),
-      seq2_s: dataArr.seq2_s.join("|"),
-      totwgt_s: dataArr.totwgt_s.join("|"),
-      purnum_s: dataArr.purnum_s.join("|"),
-      purseq_s: dataArr.purseq_s.join("|"),
-      ordnum_s: dataArr.ordnum_s.join("|"),
-      ordseq_s: dataArr.ordseq_s.join("|"),
       remark_s: dataArr.remark_s.join("|"),
-      load_place_s: dataArr.load_place_s.join("|"),
-      pac_s: dataArr.pac_s.join("|"),
-      itemlvl1_s: dataArr.itemlvl1_s.join("|"),
-      enddt_s: dataArr.enddt_s.join("|"),
-      extra_field1_s: dataArr.extra_field1_s.join("|"),
     }));
   };
 
-  const onPrint = () => {
-    const datas = detailDataResult.data.filter(
-      (item) =>
-        item.num == Object.getOwnPropertyNames(detailselectedState)[0]
-    )[0]
+  const para: Iparameters = {
+    procedureName: "P_MA_A2400W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_purnum": ParaData.purnum,
+      "@p_purdt": convertDateToStr(ParaData.purdt),
+      "@p_pursts": ParaData.pursts,
+      "@p_inexpdt": convertDateToStr(ParaData.inexpdt),
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_custprsncd": ParaData.custprsncd,
+      "@p_person": ParaData.person,
+      "@p_doexdiv": ParaData.doexdiv,
+      "@p_taxdiv": ParaData.taxdiv,
+      "@p_amtunit": ParaData.amtunit,
+      "@p_baseamt": ParaData.baseamt,
+      "@p_wonchgrat": ParaData.wonchgrat,
+      "@p_uschgrat": ParaData.uschgrat,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark": ParaData.remark,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_purseq_s": ParaData.purseq_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemnm_s": ParaData.itemnm_s,
+      "@p_insiz_s": ParaData.insiz_s,
+      "@p_qty_s": ParaData.qty_s,
+      "@p_qtyunit_s": ParaData.qtyunit_s,
+      "@p_unitwgt_s": ParaData.unitwgt_s,
+      "@p_wgt_s": ParaData.wgt_s,
+      "@p_wgtunit_s": ParaData.wgtunit_s,
+      "@p_proccd_s": ParaData.proccd_s,
+      "@p_planno_s": ParaData.planno_s,
+      "@p_planseq_s": ParaData.planseq_s,
+      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
+      "@p_unp_s": ParaData.unp_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "P_MA_A2400W",
+      "@p_company_code": "2207A046",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
     try {
-      if (
-        datas == null || datas == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_006");
-      } else {
-          onBarcodeWndClick();
-      }
-    } catch (e) {
-      alert(e);
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
     }
 
+    if (data.isSuccess === true) {
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    if (ParaData.rowstatus_s.length != 0) {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
 
   return (
     <>
       <TitleContainer>
-        <Title>직접입고</Title>
+        <Title>외주입고</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -1694,27 +1198,40 @@ const MA_A2700W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>입고용도</th>
+              <th>발주번호</th>
+              <td>
+                <Input
+                  name="purnum"
+                  type="text"
+                  value={filters.purnum}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+            <th>담당자</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="inuse"
-                    value={filters.inuse}
+                    name="person"
+                    value={filters.person}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="user_name"
+                    valueField="user_id"
+                  />
+                )}
+              </td>
+              <th>내수구분</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="doexdiv"
+                    value={filters.doexdiv}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
                 )}
-              </td>
-            </tr>
-            <tr>
-              <th>LOT NO</th>
-              <td>
-                <Input
-                  name="lotnum"
-                  type="text"
-                  value={filters.lotnum}
-                  onChange={filterInputChange}
-                />
               </td>
               <th>품목코드</th>
               <td>
@@ -1741,17 +1258,6 @@ const MA_A2700W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>사업부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="position"
-                    value={filters.position}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (
@@ -1765,64 +1271,9 @@ const MA_A2700W: React.FC = () => {
                 )}
               </td>
             </tr>
-            <tr>
-              <th>비고</th>
-              <td>
-                <Input
-                  name="remark"
-                  type="text"
-                  value={filters.remark}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>발주규격</th>
-              <td>
-                <Input
-                  name="pursiz"
-                  type="text"
-                  value={filters.pursiz}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>담당자</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="person"
-                    value={filters.person}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="user_name"
-                    valueField="user_id"
-                  />
-                )}
-              </td>
-              <th>내수구분</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="doexdiv"
-                    value={filters.doexdiv}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>완료여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="finyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -1838,7 +1289,7 @@ const MA_A2700W: React.FC = () => {
                 themeColor={"primary"}
                 icon="file-add"
               >
-                직접입고생성
+                외주발주생성
               </Button>
               <Button
                 onClick={onDeleteClick}
@@ -1846,7 +1297,7 @@ const MA_A2700W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
               >
-                직접입고삭제
+                외주발주삭제
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1876,8 +1327,8 @@ const MA_A2700W: React.FC = () => {
                 finyn: finynListData.find(
                   (item: any) => item.code === row.finyn
                 )?.name,
-                inuse: inuseListData.find(
-                  (item: any) => item.sub_code === row.inuse
+                pursts: purstsListData.find(
+                  (item: any) => item.sub_code === row.pursts
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1912,21 +1363,20 @@ const MA_A2700W: React.FC = () => {
                   item.sortOrder !== -1 && (
                     <GridColumn
                       key={idx}
-                      id={item.id}
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
                       cell={
-                        DateField.includes(item.fieldName)
-                          ? DateCell
-                          : NumberField.includes(item.fieldName)
+                        numberField.includes(item.fieldName)
                           ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
                           : undefined
                       }
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          : NumberField.includes(item.fieldName)
+                          : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell
                           : undefined
                       }
@@ -1936,19 +1386,10 @@ const MA_A2700W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
+
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>상세정보</GridTitle>
-          <ButtonContainer>
-            <Button
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onPrint}
-              icon="print"
-            >
-              바코드출력
-            </Button>
-          </ButtonContainer>
         </GridTitleContainer>
         <Grid
           style={{ height: "34vh" }}
@@ -1958,28 +1399,17 @@ const MA_A2700W: React.FC = () => {
               itemacnt: itemacntListData.find(
                 (item: any) => item.sub_code === row.itemacnt
               )?.code_name,
-              itemlvl1: itemlvl1ListData.find(
-                (item: any) => item.sub_code === row.itemlvl1
-              )?.code_name,
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
-              pac: pacListData.find((item: any) => item.sub_code === row.pac)
-                ?.code_name,
-              [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
+              unpcalmeth: unpcalmethListData.find(
+                (item: any) => item.sub_code === row.unpcalmeth
+              )?.code_name,
             })),
             detailDataState
           )}
           {...detailDataState}
           onDataStateChange={onDetailDataStateChange}
-          onHeaderSelectionChange={onDetailHeaderSelectionChange}
-          dataItemKey={DETAIL_DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
-          }}
-          onSelectionChange={onDetailSelectionChange}
           //스크롤 조회 기능
           fixedScroll={true}
           total={detailDataResult.total}
@@ -1998,21 +1428,18 @@ const MA_A2700W: React.FC = () => {
                 item.sortOrder !== -1 && (
                   <GridColumn
                     key={idx}
-                    id={item.id}
                     field={item.fieldName}
                     title={item.caption}
                     width={item.width}
                     cell={
-                      NumberField.includes(item.fieldName)
+                      numberField.includes(item.fieldName)
                         ? NumberCell
-                        : DateField.includes(item.fieldName)
-                        ? DateCell
                         : undefined
                     }
                     footerCell={
-                      item.sortOrder === 1
+                      item.sortOrder === 0
                         ? detailTotalFooterCell
-                        : NumberField.includes(item.fieldName)
+                        : numberField.includes(item.fieldName)
                         ? gridSumQtyFooterCell2
                         : undefined
                     }
@@ -2028,13 +1455,13 @@ const MA_A2700W: React.FC = () => {
           setData={setCopyData}
           data={
             mainDataResult.data.filter(
-              (item) =>
-                item.recnum == Object.getOwnPropertyNames(selectedState)[0]
+              (item: any) =>
+                item.num == Object.getOwnPropertyNames(selectedState)[0]
             )[0] == undefined
               ? ""
               : mainDataResult.data.filter(
-                  (item) =>
-                    item.recnum == Object.getOwnPropertyNames(selectedState)[0]
+                  (item: any) =>
+                    item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
         />
@@ -2051,12 +1478,6 @@ const MA_A2700W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
-        />
-      )}
-      {barcodeWindowVisible && (
-        <BarcodeWindow
-          setVisible={setBarcodeWindowVisible}
-          data={barcodeDataResult.data[0]}
         />
       )}
       {gridList.map((grid: any) =>
@@ -2076,4 +1497,4 @@ const MA_A2700W: React.FC = () => {
   );
 };
 
-export default MA_A2700W;
+export default MA_A2500W;
