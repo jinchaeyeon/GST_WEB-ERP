@@ -17,7 +17,7 @@ import { TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
-import CopyWindow2 from "./MA_A2400W_Plan_Window";
+import CopyWindow2 from "./MA_A2500W_Order_Window";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
@@ -85,7 +85,6 @@ type Idata = {
   num: number;
   orgdiv: string;
   person: string;
-  purdt: string;
   purnum: string;
   purqty: number;
   pursts: string;
@@ -96,6 +95,11 @@ type Idata = {
   uschgrat: number;
   wonamt: number;
   wonchgrat: number;
+  reckey: string;
+  purdt: string;
+  indt: string;
+  seq1: number;
+  recdt: string;
 };
 let deletedMainRows: object[] = [];
 
@@ -145,7 +149,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
-      console.log(defaultOption);
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id === "person")
@@ -272,10 +275,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     pc: pc,
     form_id: "MA_A2400W",
     serviceid: "2207A046",
+    recdt: new Date(),
+    seq1: 0,
   });
 
   const parameters: Iparameters = {
-    procedureName: "P_MA_A2400W_Q",
+    procedureName: "P_MA_A2500W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -284,15 +289,15 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       "@p_location": filters.location,
       "@p_frdt": "",
       "@p_todt": "",
-      "@p_purnum": filters.purnum,
-      "@p_purseq": 0,
+      "@p_purnum": "",
       "@p_custcd": "",
       "@p_custnm": "",
       "@p_itemcd": "",
       "@p_itemnm": "",
       "@p_person": "",
-      "@p_pursts": "",
-      "@p_finyn": "",
+      "@p_doexdiv": "",
+      "@p_recdt": convertDateToStr(filters.recdt),
+      "@p_seq1": filters.seq1,
       "@p_company_code": "2207A046",
     },
   };
@@ -348,17 +353,17 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     if (workType === "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
-        purnum: data.purnum,
+        reckey: data.reckey,
+        recdt: to_date2(data.recdt),
+        seq1: data.seq1,
+        indt: to_date2(data.indt),
         purdt: to_date2(data.purdt),
-        inexpdt: to_date2(data.inexpdt),
         person: data.person,
         doexdiv: data.doexdiv,
         location: data.location,
         custcd: data.custcd,
         custnm: data.custnm,
-        custprsncd: data.custprsncd,
         taxdiv: data.taxdiv,
-        pursts: data.pursts,
         amtunit: data.amtunit,
         files: data.files,
         attdatnum: data.attdatnum,
@@ -461,6 +466,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       seq++;
     }
 
+    setFilters((prev) => ({
+      ...prev,
+      custcd: data[0].custcd,
+      custnm: data[0].custnm,
+    }));
     try {
       data.map((item: any) => {
         setMainDataResult((prev) => {
@@ -495,14 +505,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
-    mainDataResult.data.map((item) => {
-      if (item.qty == 0) {
-        alert("수량을 채워주세요.");
-        valid = false;
-        return false;
-      }
-    });
-
     try {
       if (mainDataResult.data.length == 0) {
         throw findMessage(messagesData, "MA_A2400W_003");
@@ -583,11 +585,14 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const enterEdit = (dataItem: any, field: string) => {
     if (
-      field != "proccd" &&
+      field != "reckey" &&
       field != "itemcd" &&
       field != "itemnm" &&
-      field != "insiz" &&
-      field != "totamt"
+      field != "totamt" &&
+      field != "purnum" &&
+      field != "qty" &&
+      field != "lotnum" &&
+      field != "insiz"
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -772,16 +777,15 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     name="custcd"
                     type="text"
                     value={filters.custcd}
-                    onChange={filterInputChange}
-                    className="required"
+                    className="readonly"
                   />
-                  <ButtonInInput>
+                  {/* <ButtonInInput>
                     <Button
                       onClick={onCustWndClick}
                       icon="more-horizontal"
                       fillMode="flat"
                     />
-                  </ButtonInInput>
+                  </ButtonInInput> */}
                 </td>
                 <th>업체명</th>
                 <td>
@@ -789,8 +793,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                     name="custnm"
                     type="text"
                     value={filters.custnm}
-                    onChange={filterInputChange}
-                    className="required"
+                    className="readonly"
                   />
                 </td>
                 <th>담당자</th>
@@ -943,7 +946,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-            <GridColumn field="itemcd" title="품목코드" width="250px"footerCell={mainTotalFooterCell} />
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              width="250px"
+              footerCell={mainTotalFooterCell}
+            />
             <GridColumn field="itemnm" title="품목명" width="200px" />
             <GridColumn field="insiz" title="규격" width="200px" />
             <GridColumn field="lotnum" title="LOT NO" width="200px" />

@@ -78,24 +78,34 @@ const numberField = [
 ];
 type TdataArr = {
   rowstatus_s: string[];
-  purseq_s: string[];
+  recdt_s: string[];
+  seq1_s: string[];
+  seq2_s: string[];
   itemcd_s: string[];
-  itemnm_s: string[];
-  insiz_s: string[];
+  itemacnt_s: string[];
   qty_s: string[];
   qtyunit_s: string[];
-  unitwgt_s: string[];
-  wgt_s: string[];
-  wgtunit_s: string[];
-  proccd_s: string[];
+  purnum_s: string[];
+  purseq_s: string[];
   planno_s: string[];
   planseq_s: string[];
+  totwgt_s: string[];
+  wgtunit_s: string[];
   unpcalmeth_s: string[];
   unp_s: string[];
   amt_s: string[];
   wonamt_s: string[];
   taxamt_s: string[];
   remark_s: string[];
+  num_s: string[];
+  findkey_s: string[];
+  div_s: string[];
+  outrecdt_s: string[];
+  outseq1_s: string[];
+  outseq2_s: string[];
+  keycode_s: string[];
+  keyseq_s: string[];
+  useqty_s: string[];
 };
 
 const MA_A2500W: React.FC = () => {
@@ -132,7 +142,7 @@ const MA_A2500W: React.FC = () => {
         person: defaultOption.find((item: any) => item.id === "person")
           .valueCode,
         doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
-        .valueCode,
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -396,21 +406,21 @@ const MA_A2500W: React.FC = () => {
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
-        "@p_work_type": "DETAIL",
-        "@p_orgdiv": filters.orgdiv,
-        "@p_location": filters.location,
-        "@p_frdt": convertDateToStr(filters.frdt),
-        "@p_todt": convertDateToStr(filters.todt),
-        "@p_purnum": filters.purnum,
-        "@p_custcd": filters.custcd,
-        "@p_custnm": filters.custnm,
-        "@p_itemcd": filters.itemcd,
-        "@p_itemnm": filters.itemnm,
-        "@p_person": filters.person,
-        "@p_doexdiv": filters.doexdiv,
-        "@p_recdt": convertDateToStr(detailFilters.recdt),
-        "@p_seq1": detailFilters.seq1,
-        "@p_company_code": "2207A046",
+      "@p_work_type": "DETAIL",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": filters.location,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_purnum": filters.purnum,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_person": filters.person,
+      "@p_doexdiv": filters.doexdiv,
+      "@p_recdt": convertDateToStr(detailFilters.recdt),
+      "@p_seq1": detailFilters.seq1,
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -473,7 +483,7 @@ const MA_A2500W: React.FC = () => {
       "@p_outseq2_s": "",
       "@p_keycode_s": "",
       "@p_keyseq_s": "",
-      "@p_useqyt_s": "",
+      "@p_useqty_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_MA_A2500W",
@@ -607,10 +617,10 @@ const MA_A2500W: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     setDetailFilters((prev) => ({
-        ...prev,
-        recdt: to_date2(selectedRowData.recdt),
-        seq1: selectedRowData.seq1,
-      }));
+      ...prev,
+      recdt: to_date2(selectedRowData.recdt),
+      seq1: selectedRowData.seq1,
+    }));
   };
 
   //엑셀 내보내기
@@ -711,7 +721,7 @@ const MA_A2500W: React.FC = () => {
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      recdt: data.recdt,
+      recdt: to_date2(data.recdt),
       seq1: data.seq1,
     }));
   };
@@ -736,7 +746,7 @@ const MA_A2500W: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.recdt = new Date();
-    paraDataDeleted.seq1= 0;
+    paraDataDeleted.seq1 = 0;
   };
 
   interface ICustData {
@@ -849,13 +859,12 @@ const MA_A2500W: React.FC = () => {
     workType: "N",
     orgdiv: "01",
     location: "01",
-    purnum: "",
+    recdt: new Date(),
+    seq1: 0,
+    indt: new Date(),
     purdt: new Date(),
-    pursts: "",
-    inexpdt: new Date(),
     custcd: "",
     custnm: "",
-    custprsncd: "",
     person: "admin",
     doexdiv: "A",
     taxdiv: "A",
@@ -866,24 +875,34 @@ const MA_A2500W: React.FC = () => {
     attdatnum: "",
     remark: "",
     rowstatus_s: "",
-    purseq_s: "",
+    recdt_s: "",
+    seq1_s: "",
+    seq2_s: "",
     itemcd_s: "",
-    itemnm_s: "",
-    insiz_s: "",
+    itemacnt_s: "",
     qty_s: "",
     qtyunit_s: "",
-    unitwgt_s: "",
-    wgt_s: "",
-    wgtunit_s: "",
-    proccd_s: "",
+    purnum_s: "",
+    purseq_s: "",
     planno_s: "",
     planseq_s: "",
+    totwgt_s: "",
+    wgtunit_s: "",
     unpcalmeth_s: "",
     unp_s: "",
     amt_s: "",
     wonamt_s: "",
     taxamt_s: "",
     remark_s: "",
+    num_s: "",
+    findkey_s: "",
+    div_s: "",
+    outrecdt_s: "",
+    outseq1_s: "",
+    outseq2_s: "",
+    keycode_s: "",
+    keyseq_s: "",
+    useqty_s: "",
     form_id: "MA_A2400W",
     serviceid: "2207A046",
   });
@@ -910,17 +929,24 @@ const MA_A2500W: React.FC = () => {
       custprsncd: filter.custprsncd,
       doexdiv: filter.doexdiv,
       files: filter.files,
+      indt: filter.indt,
       inexpdt: filter.inexpdt,
       location: "01",
       orgdiv: "01",
       person: filter.person,
       purdt: filter.purdt,
-      pursts: filter.pursts,
       purnum: filter.purnum,
+      purqty: filter.purqty,
+      pursts: filter.pursts,
+      reckey: filter.reckey,
       remark: filter.remark,
+      taxamt: filter.taxamt,
       taxdiv: filter.taxdiv,
+      totamt: filter.totamt,
       uschgrat: filter.uschgrat,
       wonchgrat: filter.wonchgrat,
+      wonamt: filter.wonamt,
+      seq1: filter.seq1,
       userid: userId,
       pc: pc,
       form_id: "MA_A2400W",
@@ -929,150 +955,212 @@ const MA_A2500W: React.FC = () => {
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
-      purseq_s: [],
+      recdt_s: [],
+      seq1_s: [],
+      seq2_s: [],
       itemcd_s: [],
-      itemnm_s: [],
-      insiz_s: [],
+      itemacnt_s: [],
       qty_s: [],
       qtyunit_s: [],
-      unitwgt_s: [],
-      wgt_s: [],
-      wgtunit_s: [],
-      proccd_s: [],
+      purnum_s: [],
+      purseq_s: [],
       planno_s: [],
       planseq_s: [],
+      totwgt_s: [],
+      wgtunit_s: [],
       unpcalmeth_s: [],
       unp_s: [],
       amt_s: [],
       wonamt_s: [],
       taxamt_s: [],
       remark_s: [],
+      num_s: [],
+      findkey_s: [],
+      div_s: [],
+      outrecdt_s: [],
+      outseq1_s: [],
+      outseq2_s: [],
+      keycode_s: [],
+      keyseq_s: [],
+      useqty_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
       const {
-        amt = "",
-        itemcd = "",
-        itemnm = "",
         rowstatus = "",
-        taxamt = "",
-        unp = "",
+        recdt = "",
+        seq1 = "",
+        seq2 = "",
+        outseq1 = "",
+        outseq2 = "",
+        itemcd = "",
+        itemacnt = "",
         qty = "",
         qtyunit = "",
-        wonamt = "",
-        remark = "",
+        purnum = "",
         purseq = "",
-        insiz = "",
-        unitwgt = "",
-        wgt = "",
-        wgtunit = "",
-        proccd = "",
         planno = "",
         planseq = "",
+        totwgt = "",
+        wgtunit = "", //필요
         unpcalmeth = "",
+        unp = "",
+        amt = "",
+        wonamt = "",
+        taxamt = "",
+        remark = "",
+        num = "",
+        reckey = "", //필요
+        div = "",
+        purdt = "", // outrecdt
+        keycode = "",
+        keyseq = "",
+        useqty="",
+        outrecdt=""
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
+      dataArr.recdt_s.push(recdt);
+      dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
+      dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
       dataArr.itemcd_s.push(itemcd);
-      dataArr.itemnm_s.push(itemnm);
-      dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
+      dataArr.itemacnt_s.push(itemacnt);
       dataArr.qty_s.push(qty == "" ? 0 : qty);
       dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-      dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-      dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
-      dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
-      dataArr.proccd_s.push(proccd == undefined ? "" : proccd);
+      dataArr.purnum_s.push(purnum == undefined ? "" : purnum);
+      dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
       dataArr.planno_s.push(planno == undefined ? "" : planno);
       dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
+      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+      dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
       dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
       dataArr.unp_s.push(unp == "" ? 0 : unp);
       dataArr.amt_s.push(amt == "" ? 0 : amt);
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.remark_s.push(remark == undefined ? "" : remark);
+      dataArr.num_s.push(num == "" ? 0 : num);
+      if(rowstatus == "N"){
+        dataArr.findkey_s.push(reckey == undefined ? "" : reckey);
+        dataArr.div_s.push(div == undefined ? "" : div);
+        dataArr.outrecdt_s.push(purdt);
+        dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
+        dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
+        dataArr.keycode_s.push(keycode == undefined ? "" : keycode);
+        dataArr.keyseq_s.push(keyseq == "" ? 0 : keyseq);
+        dataArr.useqty_s.push(useqty == "" ? 0 : useqty);
+      }      
     });
     deletedMainRows.forEach((item: any, idx: number) => {
       const {
-        amt = "",
-        itemcd = "",
-        itemnm = "",
         rowstatus = "",
-        taxamt = "",
-        unp = "",
+        recdt = "",
+        seq1 = "",
+        seq2 = "",
+        outseq1 = "",
+        outseq2 = "",
+        itemcd = "",
+        itemacnt = "",
         qty = "",
         qtyunit = "",
-        wonamt = "",
-        remark = "",
+        purnum = "",
         purseq = "",
-        insiz = "",
-        unitwgt = "",
-        wgt = "",
-        wgtunit = "",
-        proccd = "",
         planno = "",
         planseq = "",
+        totwgt = "",
+        wgtunit = "", //필요
         unpcalmeth = "",
+        unp = "",
+        amt = "",
+        wonamt = "",
+        taxamt = "",
+        remark = "",
+        num = "",
+        findkey = "", //필요
+        div = "",
+        purdt = "", // outrecdt
+        keycode = "",
+        keyseq = "",
+        useqty=""
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
+      dataArr.recdt_s.push(recdt);
+      dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
+      dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
       dataArr.itemcd_s.push(itemcd);
-      dataArr.itemnm_s.push(itemnm);
-      dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
+      dataArr.itemacnt_s.push(itemacnt);
       dataArr.qty_s.push(qty == "" ? 0 : qty);
       dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-      dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-      dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
-      dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
-      dataArr.proccd_s.push(proccd == undefined ? "" : proccd);
+      dataArr.purnum_s.push(purnum == undefined ? "" : purnum);
+      dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
       dataArr.planno_s.push(planno == undefined ? "" : planno);
       dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
+      dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+      dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
       dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
       dataArr.unp_s.push(unp == "" ? 0 : unp);
       dataArr.amt_s.push(amt == "" ? 0 : amt);
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.remark_s.push(remark == undefined ? "" : remark);
+      dataArr.num_s.push(num == "" ? 0 : num);
+      dataArr.findkey_s.push(findkey == undefined ? "" : findkey);
+      dataArr.div_s.push(div == undefined ? "" : div);
+      dataArr.outrecdt_s.push(purdt);
+      dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
+      dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
+      dataArr.keycode_s.push(keycode == undefined ? "" : keycode);
+      dataArr.keyseq_s.push(keyseq == "" ? 0 : keyseq);
+      dataArr.useqty_s.push(useqty == "" ? 0 : useqty);
     });
     setParaData((prev) => ({
       ...prev,
       workType: workType,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
-      purseq_s: dataArr.purseq_s.join("|"),
+      recdt_s: dataArr.recdt_s.join("|"),
+      seq1_s: dataArr.seq1_s.join("|"),
+      seq2_s: dataArr.seq2_s.join("|"),
       itemcd_s: dataArr.itemcd_s.join("|"),
-      itemnm_s: dataArr.itemnm_s.join("|"),
-      insiz_s: dataArr.insiz_s.join("|"),
+      itemacnt_s: dataArr.itemacnt_s.join("|"),
       qty_s: dataArr.qty_s.join("|"),
       qtyunit_s: dataArr.qtyunit_s.join("|"),
-      unitwgt_s: dataArr.unitwgt_s.join("|"),
-      wgt_s: dataArr.wgt_s.join("|"),
-      wgtunit_s: dataArr.wgtunit_s.join("|"),
-      proccd_s: dataArr.proccd_s.join("|"),
+      purnum_s: dataArr.purnum_s.join("|"),
+      purseq_s: dataArr.purseq_s.join("|"),
       planno_s: dataArr.planno_s.join("|"),
       planseq_s: dataArr.planseq_s.join("|"),
+      totwgt_s: dataArr.totwgt_s.join("|"),
+      wgtunit_s: dataArr.wgtunit_s.join("|"),
       unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
       unp_s: dataArr.unp_s.join("|"),
       amt_s: dataArr.amt_s.join("|"),
       wonamt_s: dataArr.wonamt_s.join("|"),
       taxamt_s: dataArr.taxamt_s.join("|"),
       remark_s: dataArr.remark_s.join("|"),
+      num_s: dataArr.num_s.join("|"),
+      findkey_s: dataArr.findkey_s.join("|"),
+      div_s: dataArr.div_s.join("|"),
+      outrecdt_s: dataArr.outrecdt_s.join("|"),
+      outseq1_s: dataArr.outseq1_s.join("|"),
+      outseq2_s: dataArr.outseq2_s.join("|"),
+      keycode_s: dataArr.keycode_s.join("|"),
+      keyseq_s: dataArr.keyseq_s.join("|"),
+      useqty_s: dataArr.useqty_s.join("|"),
     }));
   };
 
   const para: Iparameters = {
-    procedureName: "P_MA_A2400W_S",
+    procedureName: "P_MA_A2500W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": "01",
       "@p_location": "01",
-      "@p_purnum": ParaData.purnum,
+      "@p_recdt": convertDateToStr(ParaData.recdt),
+      "@p_seq1": ParaData.seq1,
+      "@p_indt": convertDateToStr(ParaData.indt),
       "@p_purdt": convertDateToStr(ParaData.purdt),
-      "@p_pursts": ParaData.pursts,
-      "@p_inexpdt": convertDateToStr(ParaData.inexpdt),
       "@p_custcd": ParaData.custcd,
       "@p_custnm": ParaData.custnm,
-      "@p_custprsncd": ParaData.custprsncd,
       "@p_person": ParaData.person,
       "@p_doexdiv": ParaData.doexdiv,
       "@p_taxdiv": ParaData.taxdiv,
@@ -1083,27 +1171,37 @@ const MA_A2500W: React.FC = () => {
       "@p_attdatnum": ParaData.attdatnum,
       "@p_remark": ParaData.remark,
       "@p_rowstatus_s": ParaData.rowstatus_s,
-      "@p_purseq_s": ParaData.purseq_s,
+      "@p_recdt_s": ParaData.recdt_s,
+      "@p_seq1_s": ParaData.seq1_s,
+      "@p_seq2_s": ParaData.seq2_s,
       "@p_itemcd_s": ParaData.itemcd_s,
-      "@p_itemnm_s": ParaData.itemnm_s,
-      "@p_insiz_s": ParaData.insiz_s,
+      "@p_itemacnt_s": ParaData.itemacnt_s,
       "@p_qty_s": ParaData.qty_s,
       "@p_qtyunit_s": ParaData.qtyunit_s,
-      "@p_unitwgt_s": ParaData.unitwgt_s,
-      "@p_wgt_s": ParaData.wgt_s,
-      "@p_wgtunit_s": ParaData.wgtunit_s,
-      "@p_proccd_s": ParaData.proccd_s,
+      "@p_purnum_s": ParaData.purnum_s,
+      "@p_purseq_s": ParaData.purseq_s,
       "@p_planno_s": ParaData.planno_s,
       "@p_planseq_s": ParaData.planseq_s,
+      "@p_totwgt_s": ParaData.totwgt_s,
+      "@p_wgtunit_s": ParaData.wgtunit_s,
       "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
       "@p_unp_s": ParaData.unp_s,
       "@p_amt_s": ParaData.amt_s,
       "@p_wonamt_s": ParaData.wonamt_s,
       "@p_taxamt_s": ParaData.taxamt_s,
       "@p_remark_s": ParaData.remark_s,
+      "@p_num_s": ParaData.num_s,
+      "@p_findkey_s": ParaData.findkey_s,
+      "@p_div_s": ParaData.div_s,
+      "@p_outrecdt_s": ParaData.outrecdt_s,
+      "@p_outseq1_s": ParaData.outseq1_s,
+      "@p_outseq2_s": ParaData.outseq2_s,
+      "@p_keycode_s": ParaData.keycode_s,
+      "@p_keyseq_s": ParaData.keyseq_s,
+      "@p_useqty_s": ParaData.useqty_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "P_MA_A2400W",
+      "@p_form_id": "P_MA_A2500W",
       "@p_company_code": "2207A046",
     },
   };
@@ -1209,7 +1307,7 @@ const MA_A2500W: React.FC = () => {
               </td>
             </tr>
             <tr>
-            <th>담당자</th>
+              <th>담당자</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
