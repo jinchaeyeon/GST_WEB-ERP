@@ -664,8 +664,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <TitleContainer>
-          <Title>출하참조</Title>
+   <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {

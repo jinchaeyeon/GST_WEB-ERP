@@ -164,7 +164,49 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       }));
     }
   }, [customOptionData]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_PR010",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    setBizComponentData
+  );
 
+  //공통코드 리스트 조회 ()
+  const [proccdListData, setProccdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
+      
+      fetchQuery(proccdQueryStr, setProccdListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -623,7 +665,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       field != "itemcd" &&
       field != "itemnm" &&
       field != "insiz" &&
-      field != "totamt"
+      field != "totamt" &&
+      field != "rowstatus"
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -769,8 +812,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                       value={filters.custprsncd}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
-                      textField="user_name"
-                      valueField="user_id"
+                      textField="prsnnm"
+                      valueField="custprsncd"
                     />
                   )}
                 </td>
@@ -904,6 +947,10 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                   workType == "U" && isValidDate(row.enddt)
                     ? new Date(dateformat(row.enddt))
                     : new Date(),
+                  proccd: proccdListData.find(
+                      (item: any) => item.sub_code === row.proccd
+                    )?.code_name,
+                    rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -934,6 +981,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
+            <GridColumn field="rowstatus" title="상태" width="50px" />
             <GridColumn
               field="proccd"
               title="공정"
@@ -1017,7 +1065,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
-              확인
+              저장
             </Button>
             <Button
               themeColor={"primary"}

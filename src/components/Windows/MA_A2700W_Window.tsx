@@ -933,7 +933,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "insiz" && field != "qtyunit") {
+    if (field != "insiz" && field != "qtyunit" && field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1248,6 +1248,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
+                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                 enddt: workType == "U" && isValidDate(row.enddt) ? new Date(dateformat(row.enddt)) : new Date(),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
@@ -1279,6 +1280,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
+            <GridColumn field="rowstatus" title="상태" width="50px" />
             <GridColumn
               field="pac"
               title="도/사급"

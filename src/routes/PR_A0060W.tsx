@@ -1110,7 +1110,8 @@ const PR_A0060: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = subDataResult.data.map((item) =>
+    if(field != "rowstatus"){
+      const newData = subDataResult.data.map((item) =>
       item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
         ? {
             ...item,
@@ -1129,6 +1130,7 @@ const PR_A0060: React.FC = () => {
         total: prev.total,
       };
     });
+    }
   };
 
   const exitEdit = () => {
@@ -2393,6 +2395,7 @@ const PR_A0060: React.FC = () => {
                 subDataResult.data.map((row) => ({
                   ...row,
                   fxdt: new Date(dateformat(row.fxdt)),
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                   [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                 })),
                 subDataState
@@ -2423,15 +2426,7 @@ const PR_A0060: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn
-                field={SELECTED_FIELD}
-                width="45px"
-                headerSelectionValue={
-                  subDataResult.data.findIndex(
-                    (item: any) => !selectedsubDataState[idGetter2(item)]
-                  ) === -1
-                }
-              />
+<GridColumn field="rowstatus" title="상태" width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList2"].map(
                   (item: any, idx: number) =>

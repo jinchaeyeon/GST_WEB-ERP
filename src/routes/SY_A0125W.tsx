@@ -1338,6 +1338,7 @@ const SY_A0125W: React.FC = () => {
                 postcd: postcdListData.find(
                   (item: any) => item.sub_code === row.postcd
                 )?.code_name,
+                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                 [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
               })),
               subDataState
@@ -1368,15 +1369,7 @@ const SY_A0125W: React.FC = () => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-            <GridColumn
-              field={SELECTED_FIELD}
-              width="45px"
-              headerSelectionValue={
-                subDataResult.data.findIndex(
-                  (item: any) => !selectedsubDataState[idGetter2(item)]
-                ) === -1
-              }
-            />
+ <GridColumn field="rowstatus" title="상태" width="50px" />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdAllList"].map(
                 (item: any, idx: number) =>

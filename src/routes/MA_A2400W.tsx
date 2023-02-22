@@ -142,7 +142,7 @@ const MA_A2400W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA019, L_MA036,L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_BA019, L_MA036,L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn, L_PR010",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -164,6 +164,9 @@ const MA_A2400W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [locationListData, setLocationListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [proccdListData, setProccdListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [usersListData, setUsersListData] = useState([
@@ -195,6 +198,9 @@ const MA_A2400W: React.FC = () => {
       const doexdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
       );
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
       const taxdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
       );
@@ -220,6 +226,8 @@ const MA_A2400W: React.FC = () => {
       const finynQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
       );
+      
+      fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
       fetchQuery(purstsQueryStr, setPurstsListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
@@ -1532,6 +1540,9 @@ const MA_A2400W: React.FC = () => {
                 )?.code_name,
                 unpcalmeth: unpcalmethListData.find(
                   (item: any) => item.sub_code === row.unpcalmeth
+                )?.code_name,
+                proccd: proccdListData.find(
+                  (item: any) => item.sub_code === row.proccd
                 )?.code_name,
                 [SELECTED_FIELD]: detailselectedState[detailIdGetter(row)],
               })),

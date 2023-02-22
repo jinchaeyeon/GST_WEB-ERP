@@ -83,7 +83,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
+    width: 1600,
     height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
@@ -720,7 +720,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "itemcd" && field != "itemnm") {
+    if (field != "itemcd" && field != "itemnm" && field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -768,7 +768,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <FormBoxWrap style={{ width: "1230px", marginLeft: "-70px" }}>
+        <FormBoxWrap style={{ width: "1530px", marginLeft: "-70px" }}>
           <FormBox>
             <tbody>
               <tr>
@@ -944,6 +944,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 invunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.invunit
                 )?.code_name,
+                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -973,7 +974,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             cellRender={customCellRender}
             rowRender={customRowRender}
             editField={EDIT_FIELD}
-          >
+          ><GridColumn field="rowstatus" title="상태" width="50px" />
             <GridColumn
               field="itemcd"
               title="품목코드"

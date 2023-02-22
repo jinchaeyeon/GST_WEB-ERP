@@ -15,7 +15,7 @@ import { CellRender, RowRender } from "../components/Renderers";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import CopyWindow from '../components/Windows/BA_A0050W_Copy_Window';
+import CopyWindow from "../components/Windows/BA_A0050W_Copy_Window";
 import CopyWindow2 from "../components/Windows/BA_A0050W_Patterns_Window";
 import {
   Title,
@@ -83,19 +83,15 @@ const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "sub_code";
 let deletedMainRows: object[] = [];
 
-const CustomComboField =[
-"proccd",
-"outprocyn",
-"prodemp",
-"qtyunit",
-"procunit"
-]
+const CustomComboField = [
+  "proccd",
+  "outprocyn",
+  "prodemp",
+  "qtyunit",
+  "procunit",
+];
 
-const NumberField =[
-"procseq",
-"unitqty",
-"procqty"
-]
+const NumberField = ["procseq", "unitqty", "procqty"];
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
@@ -180,7 +176,6 @@ const BA_A0050: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-
     }
   }, [bizComponentData]);
 
@@ -624,7 +619,7 @@ const BA_A0050: React.FC = () => {
       remark: "",
       seq: 0,
       unitqty: 0,
-      rowstatus: "N"
+      rowstatus: "N",
     };
 
     setSubDataResult((prev) => {
@@ -696,7 +691,6 @@ const BA_A0050: React.FC = () => {
     );
   };
 
-  
   const sub2TotalFooterCell = (props: GridFooterCellProps) => {
     var parts = subData2Result.total.toString().split(".");
     return (
@@ -756,7 +750,7 @@ const BA_A0050: React.FC = () => {
     seq_s: String[];
     chlditemcd_s: String[];
     procitemcd_s: String[];
-    recdt_s:String[];
+    recdt_s: String[];
     proccd_s: String[];
     prodemp_s: String[];
     prodmac_s: String[];
@@ -771,14 +765,14 @@ const BA_A0050: React.FC = () => {
     custnm_s: String[];
     procseq_s: String[];
   };
-  
+
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
-        ...prev,
-        itemcd: data.itemcd,
-        itemnm: data.itemnm,
-      }));
+      ...prev,
+      itemcd: data.itemcd,
+      itemnm: data.itemnm,
+    }));
   };
 
   const onMainSortChange = (e: any) => {
@@ -811,7 +805,8 @@ const BA_A0050: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = subDataResult.data.map((item) =>
+    if(field != "rowstatus") {
+      const newData = subDataResult.data.map((item) =>
       item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
         ? {
             ...item,
@@ -830,6 +825,7 @@ const BA_A0050: React.FC = () => {
         total: prev.total,
       };
     });
+    }
   };
 
   const exitEdit = () => {
@@ -896,7 +892,7 @@ const BA_A0050: React.FC = () => {
     seq_s: "",
     chlditemcd_s: "",
     procitemcd_s: "",
-    recdt_s:"",
+    recdt_s: "",
     proccd_s: "",
     prodemp_s: "",
     prodmac_s: "",
@@ -910,10 +906,10 @@ const BA_A0050: React.FC = () => {
     custcd_s: "",
     custnm_s: "",
     procseq_s: "",
-    userid : userId,
+    userid: userId,
     pc: pc,
     form_id: "BA_A0050W",
-    company_code: "2207A046"
+    company_code: "2207A046",
   });
 
   const para: Iparameters = {
@@ -921,31 +917,31 @@ const BA_A0050: React.FC = () => {
     pageNumber: 0,
     pageSize: 0,
     parameters: {
-        "@p_work_type": paraData.workType,
-        "@p_orgdiv": paraData.orgdiv,
-        "@p_prntitemcd": paraData.prntitemcd,
-        "@p_rowstatus_s": paraData.rowstatus_s,
-        "@p_seq_s": paraData.seq_s,
-        "@p_chlditemcd_s": paraData.chlditemcd_s,
-        "@p_procitemcd_s": paraData.procitemcd_s,
-        "@p_recdt_s": paraData.recdt_s,
-        "@p_proccd_s": paraData.proccd_s,
-        "@p_prodemp_s": paraData.prodemp_s,
-        "@p_prodmac_s": paraData.prodmac_s,
-        "@p_outprocyn_s": paraData.outprocyn_s,
-        "@p_unitqty_s": paraData.unitqty_s,
-        "@p_qtyunit_s": paraData.qtyunit_s,
-        "@p_outgb_s": paraData.outgb_s,
-        "@p_remark_s": paraData.remark_s,
-        "@p_procqty_s": paraData.procqty_s,
-        "@p_procunit_s": paraData.procunit_s,
-        "@p_custcd_s": paraData.custcd_s,
-        "@p_custnm_s": paraData.custnm_s,
-        "@p_procseq_s": paraData.procseq_s,
-        "@p_userid": paraData.userid,
-        "@p_pc": paraData.pc,
-        "@p_form_id": paraData.form_id,
-        "@p_company_code": paraData.company_code
+      "@p_work_type": paraData.workType,
+      "@p_orgdiv": paraData.orgdiv,
+      "@p_prntitemcd": paraData.prntitemcd,
+      "@p_rowstatus_s": paraData.rowstatus_s,
+      "@p_seq_s": paraData.seq_s,
+      "@p_chlditemcd_s": paraData.chlditemcd_s,
+      "@p_procitemcd_s": paraData.procitemcd_s,
+      "@p_recdt_s": paraData.recdt_s,
+      "@p_proccd_s": paraData.proccd_s,
+      "@p_prodemp_s": paraData.prodemp_s,
+      "@p_prodmac_s": paraData.prodmac_s,
+      "@p_outprocyn_s": paraData.outprocyn_s,
+      "@p_unitqty_s": paraData.unitqty_s,
+      "@p_qtyunit_s": paraData.qtyunit_s,
+      "@p_outgb_s": paraData.outgb_s,
+      "@p_remark_s": paraData.remark_s,
+      "@p_procqty_s": paraData.procqty_s,
+      "@p_procunit_s": paraData.procunit_s,
+      "@p_custcd_s": paraData.custcd_s,
+      "@p_custnm_s": paraData.custnm_s,
+      "@p_procseq_s": paraData.procseq_s,
+      "@p_userid": paraData.userid,
+      "@p_pc": paraData.pc,
+      "@p_form_id": paraData.form_id,
+      "@p_company_code": paraData.company_code,
     },
   };
 
@@ -959,45 +955,45 @@ const BA_A0050: React.FC = () => {
 
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
     let dataArr: TdataArr = {
-        rowstatus_s: [],
-        seq_s: [],
-        chlditemcd_s: [],
-        procitemcd_s: [],
-        recdt_s:[],
-        proccd_s: [],
-        prodemp_s: [],
-        prodmac_s: [],
-        outprocyn_s: [],
-        unitqty_s: [],
-        qtyunit_s: [],
-        outgb_s: [],
-        remark_s: [],
-        procqty_s: [],
-        procunit_s: [],
-        custcd_s: [],
-        custnm_s: [],
-        procseq_s: [],
+      rowstatus_s: [],
+      seq_s: [],
+      chlditemcd_s: [],
+      procitemcd_s: [],
+      recdt_s: [],
+      proccd_s: [],
+      prodemp_s: [],
+      prodmac_s: [],
+      outprocyn_s: [],
+      unitqty_s: [],
+      qtyunit_s: [],
+      outgb_s: [],
+      remark_s: [],
+      procqty_s: [],
+      procunit_s: [],
+      custcd_s: [],
+      custnm_s: [],
+      procseq_s: [],
     };
     dataItem.forEach((item: any, idx: number) => {
       const {
-        rowstatus="",
-        seq="",
-        chlditemcd="",
-        procitemcd="",
-        recdt="",
-        proccd="",
-        prodemp="",
-        prodmac="",
-        outprocyn="",
-        unitqty="",
-        qtyunit="",
-        outgb="",
-        remark="",
-        procqty="",
-        procunit="",
-        custcd="",
-        custnm="",
-        procseq="",
+        rowstatus = "",
+        seq = "",
+        chlditemcd = "",
+        procitemcd = "",
+        recdt = "",
+        proccd = "",
+        prodemp = "",
+        prodmac = "",
+        outprocyn = "",
+        unitqty = "",
+        qtyunit = "",
+        outgb = "",
+        remark = "",
+        procqty = "",
+        procunit = "",
+        custcd = "",
+        custnm = "",
+        procseq = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq_s.push(seq);
@@ -1019,44 +1015,44 @@ const BA_A0050: React.FC = () => {
       dataArr.procseq_s.push(procseq);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
-        const {
-            rowstatus="",
-            seq="",
-            chlditemcd="",
-            procitemcd="",
-            recdt="",
-            proccd="",
-            prodemp="",
-            prodmac="",
-            outprocyn="",
-            unitqty="",
-            qtyunit="",
-            outgb="",
-            remark="",
-            procqty="",
-            procunit="",
-            custcd="",
-            custnm="",
-            procseq="",
-          } = item;
-          dataArr.rowstatus_s.push(rowstatus);
-          dataArr.seq_s.push(seq);
-          dataArr.chlditemcd_s.push(chlditemcd);
-          dataArr.procitemcd_s.push(procitemcd);
-          dataArr.recdt_s.push(recdt);
-          dataArr.proccd_s.push(proccd);
-          dataArr.prodemp_s.push(getCodeFromValue(prodemp));
-          dataArr.prodmac_s.push(prodmac);
-          dataArr.outprocyn_s.push(outprocyn);
-          dataArr.unitqty_s.push(unitqty);
-          dataArr.qtyunit_s.push(qtyunit);
-          dataArr.outgb_s.push(outgb);
-          dataArr.remark_s.push(remark);
-          dataArr.procqty_s.push(procqty);
-          dataArr.procunit_s.push(procunit);
-          dataArr.custcd_s.push(custcd);
-          dataArr.custnm_s.push(custnm);
-          dataArr.procseq_s.push(procseq);
+      const {
+        rowstatus = "",
+        seq = "",
+        chlditemcd = "",
+        procitemcd = "",
+        recdt = "",
+        proccd = "",
+        prodemp = "",
+        prodmac = "",
+        outprocyn = "",
+        unitqty = "",
+        qtyunit = "",
+        outgb = "",
+        remark = "",
+        procqty = "",
+        procunit = "",
+        custcd = "",
+        custnm = "",
+        procseq = "",
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.seq_s.push(seq);
+      dataArr.chlditemcd_s.push(chlditemcd);
+      dataArr.procitemcd_s.push(procitemcd);
+      dataArr.recdt_s.push(recdt);
+      dataArr.proccd_s.push(proccd);
+      dataArr.prodemp_s.push(getCodeFromValue(prodemp));
+      dataArr.prodmac_s.push(prodmac);
+      dataArr.outprocyn_s.push(outprocyn);
+      dataArr.unitqty_s.push(unitqty);
+      dataArr.qtyunit_s.push(qtyunit);
+      dataArr.outgb_s.push(outgb);
+      dataArr.remark_s.push(remark);
+      dataArr.procqty_s.push(procqty);
+      dataArr.procunit_s.push(procunit);
+      dataArr.custcd_s.push(custcd);
+      dataArr.custnm_s.push(custnm);
+      dataArr.procseq_s.push(procseq);
     });
 
     setParaData((prev) => ({
@@ -1066,7 +1062,7 @@ const BA_A0050: React.FC = () => {
       seq_s: dataArr.seq_s.join("|"),
       chlditemcd_s: dataArr.chlditemcd_s.join("|"),
       procitemcd_s: dataArr.procitemcd_s.join("|"),
-      recdt_s:dataArr.recdt_s.join("|"),
+      recdt_s: dataArr.recdt_s.join("|"),
       proccd_s: dataArr.proccd_s.join("|"),
       prodemp_s: dataArr.prodemp_s.join("|"),
       prodmac_s: dataArr.prodmac_s.join("|"),
@@ -1120,62 +1116,59 @@ const BA_A0050: React.FC = () => {
     setCopyWindowVisible2(true);
   };
 
-
   const reloadData = () => {
     // const key = Object.getOwnPropertyNames(selectedState)[0];
     // selectedRowIdx = mainDataResult.data.findIndex(
     //   (item) => item["idx"] === Number(key)
     // );
-
     // resetAllGrid();
     // fetchMainGrid();
   };
 
   const reloadData2 = (data: any) => {
-
-    for(var i = 0; i< data.length; i++) {
-        let seq = 1;
-        if (subDataResult.total > 0) {
-          subDataResult.data.forEach((item) => {
-            if (item[SUB_DATA_ITEM_KEY] > seq) {
-              seq = item[SUB_DATA_ITEM_KEY];
-            }
-          });
-          seq++;
-        }
-    
-        const newDataItem = {
-          [SUB_DATA_ITEM_KEY]: seq,
-          chlditemcd: "",
-          chlditemnm: "",
-          custcd: "",
-          custnm: "",
-          orgdiv: "01",
-          outgb: "",
-          outprocyn: data[i].outprocyn,
-          prntitemcd: Object.getOwnPropertyNames(selectedState)[0],
-          proccd: data[i].proccd,
-          procitemcd: Object.getOwnPropertyNames(selectedState)[0],
-          procqty: 1,
-          procseq: data[i].procseq,
-          procunit: "",
-          prodemp: "",
-          prodmac: "",
-          qtyunit: "",
-          recdt: "",
-          remark: "",
-          seq: 0,
-          unitqty: 0,
-          rowstatus: "N"
-        };
-
-        setSubDataResult((prev) => {
-          return {
-            data: [...prev.data, newDataItem],
-            total: prev.total + 1,
-          };
+    for (var i = 0; i < data.length; i++) {
+      let seq = 1;
+      if (subDataResult.total > 0) {
+        subDataResult.data.forEach((item) => {
+          if (item[SUB_DATA_ITEM_KEY] > seq) {
+            seq = item[SUB_DATA_ITEM_KEY];
+          }
         });
-    } 
+        seq++;
+      }
+
+      const newDataItem = {
+        [SUB_DATA_ITEM_KEY]: seq,
+        chlditemcd: "",
+        chlditemnm: "",
+        custcd: "",
+        custnm: "",
+        orgdiv: "01",
+        outgb: "",
+        outprocyn: data[i].outprocyn,
+        prntitemcd: Object.getOwnPropertyNames(selectedState)[0],
+        proccd: data[i].proccd,
+        procitemcd: Object.getOwnPropertyNames(selectedState)[0],
+        procqty: 1,
+        procseq: data[i].procseq,
+        procunit: "",
+        prodemp: "",
+        prodmac: "",
+        qtyunit: "",
+        recdt: "",
+        remark: "",
+        seq: 0,
+        unitqty: 0,
+        rowstatus: "N",
+      };
+
+      setSubDataResult((prev) => {
+        return {
+          data: [...prev.data, newDataItem],
+          total: prev.total + 1,
+        };
+      });
+    }
   };
 
   interface IProccdData {
@@ -1265,9 +1258,7 @@ const BA_A0050: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-      <GridContainer
-        style={{ width: "19.2vw"}}
-      >
+        <GridContainer style={{ width: "19.2vw" }}>
           <GridTitleContainer>
             <GridTitle>BOM구성정보</GridTitle>
           </GridTitleContainer>
@@ -1319,62 +1310,60 @@ const BA_A0050: React.FC = () => {
                   )
               )}
           </Grid>
-      </GridContainer>
-      <GridContainer
-        style={{ width: "19.2vw"}}
-      >
-        <GridTitleContainer>
-          <GridTitle>공정리스트</GridTitle>
-        </GridTitleContainer>
-        <FormBoxWrap>
-          <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-            <tbody>
-              <tr>
-                <th>공정</th>
-                <td>
-                  <Input
-                    name="proccd"
-                    type="text"
-                    value={subfilters.proccd}
-                    onChange={InputChange}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <Grid
-          style={{ height: "69.5vh" }}
-          data={process(
-            subData2Result.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
-            })),
-            subData2State
-          )}
-          {...subData2State}
-          onDataStateChange={onSubData2StateChange}
-          //선택 기능
-          dataItemKey={SUB_DATA_ITEM_KEY2}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "multiple",
-          }}
-          onSelectionChange={onSubData2SelectionChange}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={subData2Result.total}
-          onScroll={onSub2ScrollHandler}
-          //정렬기능
-          sortable={true}
-          onSortChange={onSubData2SortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-        >
-          {customOptionData !== null &&
+        </GridContainer>
+        <GridContainer style={{ width: "19.2vw" }}>
+          <GridTitleContainer>
+            <GridTitle>공정리스트</GridTitle>
+          </GridTitleContainer>
+          <FormBoxWrap>
+            <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>공정</th>
+                  <td>
+                    <Input
+                      name="proccd"
+                      type="text"
+                      value={subfilters.proccd}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FormBox>
+          </FormBoxWrap>
+          <Grid
+            style={{ height: "69.5vh" }}
+            data={process(
+              subData2Result.data.map((row) => ({
+                ...row,
+                [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
+              })),
+              subData2State
+            )}
+            {...subData2State}
+            onDataStateChange={onSubData2StateChange}
+            //선택 기능
+            dataItemKey={SUB_DATA_ITEM_KEY2}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "multiple",
+            }}
+            onSelectionChange={onSubData2SelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={subData2Result.total}
+            onScroll={onSub2ScrollHandler}
+            //정렬기능
+            sortable={true}
+            onSortChange={onSubData2SortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+          >
+            {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList2"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
@@ -1390,115 +1379,115 @@ const BA_A0050: React.FC = () => {
                     />
                   )
               )}
-        </Grid>
-      </GridContainer>
-      <GridContainer
-        style={{ width: "48vw"}}
-      >
-                <ExcelExport
-          data={subDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-        <GridTitleContainer>
-          <GridTitle>BOM 상세</GridTitle>
-          <ButtonContainer>
-            <Button
-              onClick={onCopyEditClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-            >
-              BOM복사
-            </Button>
-            <Button
-              onClick={onCopyEditClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-            >
-              패턴공정도 참조
-            </Button>
-            <Button
-              onClick={onSaveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-            >
-              저장
-            </Button>
-            <Button
-              onClick={onDeleteClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="delete"
-            >
-              삭제
-            </Button>
-          </ButtonContainer>
-        </GridTitleContainer>
-        <Grid
-          style={{ height: "77vh" }}
-          data={process(
-            subDataResult.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedsubDataState[idGetter3(row)],
-            })),
-            subDataState
-          )}
-          {...subDataState}
-          onDataStateChange={onSubDataStateChange}
-          //선택 기능
-          dataItemKey={SUB_DATA_ITEM_KEY2}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "multiple",
-          }}
-          onSelectionChange={onSubDataSelectionChange}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={subDataResult.total}
-          onScroll={onSubScrollHandler}
-          //정렬기능
-          sortable={true}
-          onSortChange={onSubDataSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-          onItemChange={onSubItemChange}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          editField={EDIT_FIELD}
-        >
-                      {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList3"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        CustomComboField.includes(item.fieldName)
-                        ? CustomComboBoxCell 
-                        :NumberField.includes(item.fieldName)
-                        ? NumberCell
-                        : undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 0 ? subTotalFooterCell : undefined
-                      }
-                    />
-                  )
+          </Grid>
+        </GridContainer>
+        <GridContainer style={{ width: "48vw" }}>
+          <ExcelExport
+            data={subDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
+            }}
+          >
+            <GridTitleContainer>
+              <GridTitle>BOM 상세</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onCopyEditClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  BOM복사
+                </Button>
+                <Button
+                  onClick={onCopyEditClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  패턴공정도 참조
+                </Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  저장
+                </Button>
+                <Button
+                  onClick={onDeleteClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                >
+                  삭제
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "77vh" }}
+              data={process(
+                subDataResult.data.map((row) => ({
+                  ...row,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+                  [SELECTED_FIELD]: selectedsubDataState[idGetter3(row)],
+                })),
+                subDataState
               )}
-        </Grid>
-        </ExcelExport>
-      </GridContainer>
+              {...subDataState}
+              onDataStateChange={onSubDataStateChange}
+              //선택 기능
+              dataItemKey={SUB_DATA_ITEM_KEY2}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "multiple",
+              }}
+              onSelectionChange={onSubDataSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={subDataResult.total}
+              onScroll={onSubScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onSubDataSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onSubItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title="상태" width="50px" />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          CustomComboField.includes(item.fieldName)
+                            ? CustomComboBoxCell
+                            : NumberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0 ? subTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
       </GridContainerWrap>
       {itemWindowVisible && (
         <ItemsWindow
@@ -1507,7 +1496,7 @@ const BA_A0050: React.FC = () => {
           setData={setItemData}
         />
       )}
-      
+
       {CopyWindowVisible && (
         <CopyWindow
           getVisible={setCopyWindowVisible}
@@ -1520,7 +1509,7 @@ const BA_A0050: React.FC = () => {
         />
       )}
 
-    {CopyWindowVisible2 && (
+      {CopyWindowVisible2 && (
         <CopyWindow2
           getVisible={setCopyWindowVisible2}
           para={getSelectedFirstData(

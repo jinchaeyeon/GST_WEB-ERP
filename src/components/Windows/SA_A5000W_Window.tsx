@@ -762,7 +762,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       field != "reckey" &&
       field != "totamt" &&
       field != "dlramt" &&
-      field != "wgtunit"
+      field != "wgtunit" &&
+      field != "rowstatus"
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -1070,6 +1071,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 itemacnt: itemacntListData.find(
                   (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,
+                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -1100,6 +1102,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
+            <GridColumn field="rowstatus" title="상태" width="50px" />
             <GridColumn
               field="sort_seq"
               title="정렬순서"

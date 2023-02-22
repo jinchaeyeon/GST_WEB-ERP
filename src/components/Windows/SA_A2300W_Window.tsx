@@ -701,7 +701,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "insiz" && field != "qtyunit" && field != "itemcd" && field != "itemnm") {
+    if (field != "rowstatus" && field != "insiz" && field != "qtyunit" && field != "itemcd" && field != "itemnm") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1006,6 +1006,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
+                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -1036,6 +1037,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
+            <GridColumn field="rowstatus" title="상태" width="50px" />
             <GridColumn
               field="itemcd"
               title="품목코드"
@@ -1047,7 +1049,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             <GridColumn
               field="qty"
               title="수량"
-              width="180px"
+              width="130px"
               cell={NumberCell}
             />
             <GridColumn

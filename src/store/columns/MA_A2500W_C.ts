@@ -115,7 +115,7 @@ export const gridList: Array<TGrid> = [
         id: "col_insiz",
         field: "insiz",
         caption: "규격",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_lotnum",
@@ -127,13 +127,13 @@ export const gridList: Array<TGrid> = [
         id: "col_qty",
         field: "qty",
         caption: "수량",
-        width: 180,
+        width: 120,
       },
       {
         id: "col_qtyunit",
         field: "qtyunit",
         caption: "수량단위",
-        width: 180,
+        width: 120,
       },
       {
         id: "col_totwgt",

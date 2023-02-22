@@ -108,12 +108,15 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA005,L_BA029, L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN,L_sysUserMaster_001",
+    "L_BA005,L_BA029, L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN,L_sysUserMaster_001,L_PR010",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
+  const [proccdListData, setProccdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -167,6 +170,11 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
+
+      fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
@@ -447,17 +455,17 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           ...row,
           rowstatus: "N",
           qty: row.qty == null ? 1 : row.qty,
-          qtyunit: row.qtyunit == null? "001": row.qtyunit,
-          unitwgt: row.unitwgt == null? 0 : row.unitwgt,
-          wgt: row.wgt == null? 0: row.wgt,
-          wgtunit: row.wgtunit == null? "": row.wgtunit,
-          unpcalmeth: row.unpcalmeth == null? "Q": row.unpcalmeth,
+          qtyunit: row.qtyunit == null ? "001" : row.qtyunit,
+          unitwgt: row.unitwgt == null ? 0 : row.unitwgt,
+          wgt: row.wgt == null ? 0 : row.wgt,
+          wgtunit: row.wgtunit == null ? "" : row.wgtunit,
+          unpcalmeth: row.unpcalmeth == null ? "Q" : row.unpcalmeth,
           amt: row.amt == null ? 0 : row.amt,
           unp: row.unp == null ? 0 : row.unp,
           wonamt: row.wonamt == null ? 0 : row.wonamt,
           taxamt: row.taxamt == null ? 0 : row.taxamt,
           totamt: row.totamt == null ? 0 : row.totamt,
-          jangqty: row.jangqty == null? 0: row.jangqty,
+          jangqty: row.jangqty == null ? 0 : row.jangqty,
         };
       });
 
@@ -893,8 +901,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <TitleContainer>
-          <Title>계획참조</Title>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {
@@ -1046,6 +1053,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                   qtyunit: qtyunitListData.find(
                     (item: any) => item.sub_code === row.qtyunit
                   )?.code_name,
+                  proccd: proccdListData.find(
+                    (item: any) => item.sub_code === row.proccd
+                  )?.code_name,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1137,6 +1147,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                   itemacnt: itemacntListData.find(
                     (item: any) => item.sub_code === row.itemacnt
                   )?.code_name,
+                  proccd: proccdListData.find(
+                    (item: any) => item.sub_code === row.proccd
+                  )?.code_name,
                   [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
                 })),
                 detailDataState
@@ -1164,7 +1177,12 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               resizable={true}
               //더블클릭
             >
-              <GridColumn field="proccd" title="공정" width="150px" footerCell={detailTotalFooterCell}/>
+              <GridColumn
+                field="proccd"
+                title="공정"
+                width="150px"
+                footerCell={detailTotalFooterCell}
+              />
               <GridColumn
                 field="procseq"
                 title="공정순서"
@@ -1190,6 +1208,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         </GridContainerWrap>
         <GridContainer>
           <GridTitleContainer>
+            <GridTitleContainer>
+              <GridTitle>Keeping</GridTitle>
+            </GridTitleContainer>
             <ButtonContainer>
               <Button
                 onClick={onDeleteClick}
@@ -1219,6 +1240,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                 reqdt: isValidDate(row.reqdt)
                   ? new Date(dateformat(row.reqdt))
                   : new Date(),
+                proccd: proccdListData.find(
+                  (item: any) => item.sub_code === row.proccd
+                )?.code_name,
                 [SELECTED_FIELD]: subselectedState[idGetter2(row)], //선택된 데이터
               })),
               subDataState

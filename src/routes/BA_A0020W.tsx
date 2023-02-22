@@ -96,38 +96,26 @@ const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
 
-const checkboxField =[
-  "useyn",
-  "rtrchk"
-]
+const checkboxField = ["useyn", "rtrchk"];
 
-const NumberField =[
-"sort_seq",
-"totasset",
-"paid_up_capital",
-"totcapital",
-"salesmoney",
-"operating_profits",
-"current_income",
-"dedt_ratio"
-]
+const NumberField = [
+  "sort_seq",
+  "totasset",
+  "paid_up_capital",
+  "totcapital",
+  "salesmoney",
+  "operating_profits",
+  "current_income",
+  "dedt_ratio",
+];
 
-const requiredField =[
-"prsnnm",
-"yyyy"
-]
+const requiredField = ["prsnnm", "yyyy"];
 
-const commandField =[
-"attdatnum"
-]
+const commandField = ["attdatnum"];
 
-const editField = [
-"custprsncd"
-]
+const editField = ["custprsncd"];
 
-const YearDateField =[
-  "yyyy"
-]
+const YearDateField = ["yyyy"];
 const BA_A0020: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1285,47 +1273,51 @@ const BA_A0020: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = subDataResult.data.map((item) =>
-      item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+    if (field != "rowstatus") {
+      const newData = subDataResult.data.map((item) =>
+        item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setSubDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const enterEdit2 = (dataItem: any, field: string) => {
-    const newData = subDataResult2.data.map((item) =>
-      item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+    if (field != "rowstatus") {
+      const newData = subDataResult2.data.map((item) =>
+        item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setSubDataResult2((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setSubDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit = () => {
@@ -2569,7 +2561,11 @@ const BA_A0020: React.FC = () => {
                         field={item.fieldName}
                         title={item.caption}
                         width={item.width}
-                        cell={checkboxField.includes(item.fieldName) ? CheckBoxCell : undefined}
+                        cell={
+                          checkboxField.includes(item.fieldName)
+                            ? CheckBoxCell
+                            : undefined
+                        }
                         footerCell={
                           item.sortOrder === 0 ? mainTotalFooterCell : undefined
                         }
@@ -3147,6 +3143,12 @@ const BA_A0020: React.FC = () => {
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? "U"
+                          : row.rowstatus,
                       [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                     })),
                     subDataState
@@ -3177,15 +3179,7 @@ const BA_A0020: React.FC = () => {
                   rowRender={customRowRender}
                   editField={EDIT_FIELD}
                 >
-                  <GridColumn
-                    field={SELECTED_FIELD}
-                    width="45px"
-                    headerSelectionValue={
-                      subDataResult.data.findIndex(
-                        (item: any) => !selectedsubDataState[idGetter2(item)]
-                      ) === -1
-                    }
-                  />
+                  <GridColumn field="rowstatus" title="상태" width="50px" />
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList2"].map(
                       (item: any, idx: number) =>
@@ -3197,14 +3191,24 @@ const BA_A0020: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             className={
-                              requiredField.includes(item.fieldName) ? "required" : undefined
+                              requiredField.includes(item.fieldName)
+                                ? "required"
+                                : undefined
                             }
-                            headerCell={ requiredField.includes(item.fieldName) ? RequiredHeader: undefined }
-                            editable={editField.includes(item.fieldName)? false : undefined}
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            editable={
+                              editField.includes(item.fieldName)
+                                ? false
+                                : undefined
+                            }
                             cell={
                               NumberField.includes(item.fieldName)
                                 ? NumberCell
-                                :  checkboxField.includes(item.fieldName)
+                                : checkboxField.includes(item.fieldName)
                                 ? CheckBoxCell
                                 : commandField.includes(item.fieldName)
                                 ? CommandCell
@@ -3249,6 +3253,12 @@ const BA_A0020: React.FC = () => {
                       yyyy: row.yyyy
                         ? new Date(dateformat(row.yyyy))
                         : new Date(),
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? "U"
+                          : row.rowstatus,
                       [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
                     })),
                     subDataState2
@@ -3279,15 +3289,7 @@ const BA_A0020: React.FC = () => {
                   rowRender={customRowRender2}
                   editField={EDIT_FIELD}
                 >
-                  <GridColumn
-                    field={SELECTED_FIELD}
-                    width="45px"
-                    headerSelectionValue={
-                      subDataResult.data.findIndex(
-                        (item: any) => !selectedsubDataState[idGetter2(item)]
-                      ) === -1
-                    }
-                  />
+                  <GridColumn field="rowstatus" title="상태" width="50px" />
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList3"].map(
                       (item: any, idx: number) =>
@@ -3299,9 +3301,15 @@ const BA_A0020: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             className={
-                              requiredField.includes(item.fieldName) ? "required" : undefined
+                              requiredField.includes(item.fieldName)
+                                ? "required"
+                                : undefined
                             }
-                            headerCell={requiredField.includes(item.fieldName) ? RequiredHeader : undefined}
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
                             cell={
                               YearDateField.includes(item.fieldName)
                                 ? YearDateCell
@@ -3310,7 +3318,7 @@ const BA_A0020: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                                NumberField.includes(item.fieldName)
+                              NumberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
                                 : undefined
                             }

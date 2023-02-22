@@ -86,29 +86,15 @@ const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: object[] = [];
 
-const NumberField = [
-"safeqty",
-"purleadtime"
-]
+const NumberField = ["safeqty", "purleadtime"];
 
-const CheckField = [
-"useyn"
-]
+const CheckField = ["useyn"];
 
-const DateField =[
-"recdt"
-]
+const DateField = ["recdt"];
 
-const CustomComboField =[
-"unpitem",
-"amtunit",
-"itemacnt",
-"unp"
-]
+const CustomComboField = ["unpitem", "amtunit", "itemacnt", "unp"];
 
-const editableField =[
-  "recdt"
-]
+const editableField = ["recdt"];
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
@@ -1051,25 +1037,27 @@ const BA_A0040: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = subData2Result.data.map((item) =>
-      item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+    if (field != "rowstatus") {
+      const newData = subData2Result.data.map((item) =>
+        item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setSubData2Result((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setSubData2Result((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit = () => {
@@ -2039,6 +2027,12 @@ const BA_A0040: React.FC = () => {
                   subData2Result.data.map((row) => ({
                     ...row,
                     recdt: new Date(dateformat(row.recdt)),
+                    rowstatus:
+                      row.rowstatus == null ||
+                      row.rowstatus == "" ||
+                      row.rowstatus == undefined
+                        ? "U"
+                        : row.rowstatus,
                     [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
                   })),
                   subData2State
@@ -2069,15 +2063,7 @@ const BA_A0040: React.FC = () => {
                 rowRender={customRowRender}
                 editField={EDIT_FIELD}
               >
-                <GridColumn
-                  field={SELECTED_FIELD}
-                  width="45px"
-                  headerSelectionValue={
-                    subData2Result.data.findIndex(
-                      (item: any) => !selectedsubData2State[idGetter2(item)]
-                    ) === -1
-                  }
-                />
+                <GridColumn field="rowstatus" title="상태" width="50px" />
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList2"].map(
                     (item: any, idx: number) =>
@@ -2091,7 +2077,7 @@ const BA_A0040: React.FC = () => {
                           cell={
                             DateField.includes(item.fieldName)
                               ? DateCell
-                              :  CustomComboField.includes(item.fieldName)
+                              : CustomComboField.includes(item.fieldName)
                               ? CustomComboBoxCell
                               : NumberField.includes(item.fieldName)
                               ? NumberCell

@@ -592,7 +592,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       field != "purnum" &&
       field != "qty" &&
       field != "lotnum" &&
-      field != "insiz"
+      field != "insiz" &&
+      field != "rowstatus"
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -916,6 +917,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                   workType == "U" && isValidDate(row.enddt)
                     ? new Date(dateformat(row.enddt))
                     : new Date(),
+                    rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -946,6 +948,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
+            <GridColumn field="rowstatus" title="상태" width="50px" />
             <GridColumn
               field="itemcd"
               title="품목코드"
@@ -1024,7 +1027,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
-              확인
+              저장
             </Button>
             <Button
               themeColor={"primary"}

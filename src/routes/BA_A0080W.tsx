@@ -660,11 +660,16 @@ const BA_A0080: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
+    const datas = mainDataResult.data.filter(
+      (item) => item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+    )[0];
     if (
       field == "itemcd" ||
       field == "unp" ||
       field == "amtunit" ||
-      field == "remark"
+      field == "remark" ||
+      (field == "recdt" && datas.rowstatus == "N") ||
+      field != "rowstatus"
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -713,33 +718,30 @@ const BA_A0080: React.FC = () => {
     fetchData(queryStr);
   };
 
-  const fetchData = React.useCallback(
-    async (queryStr: string) => {
-      let data: any;
+  const fetchData = React.useCallback(async (queryStr: string) => {
+    let data: any;
 
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
-      let query = {
-        query: convertedQueryStr,
-      };
+    let query = {
+      query: convertedQueryStr,
+    };
 
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].RowCount;
+      if (rowCount > 0) {
+        setItemData2(rows[0]);
       }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        const rowCount = data.tables[0].RowCount;
-        if (rowCount > 0) {
-          setItemData2(rows[0]);
-        }
-      }
-    },
-    []
-  );
+    }
+  }, []);
 
   const customCellRender = (td: any, props: any) => (
     <CellRender
@@ -802,14 +804,13 @@ const BA_A0080: React.FC = () => {
           unp: 0,
           rowstatus: "N",
         };
-        setSelectedState({ [newDataItem.num]: true})
+        setSelectedState({ [newDataItem.num]: true });
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, newDataItem],
             total: prev.total + 1,
           };
         });
-
       } else {
         throw findMessage(messagesData, "BA_A0080W_001");
       }
@@ -983,7 +984,7 @@ const BA_A0080: React.FC = () => {
     }));
   };
   const [datas, setdatas] = useState({
-    itemcd: ""
+    itemcd: "",
   });
   const ColumnCommandCell = (props: GridCellProps) => {
     const selectedData = props.dataItem;
@@ -998,20 +999,20 @@ const BA_A0080: React.FC = () => {
       </td>
     ) : (
       <td className="k-command-cell">
-      {/* <Input
+        {/* <Input
         name="itemcd"
         type="text"
         value={datas.itemcd}
         onChange={setItems}
         style={{width : "70%"}}
       /> */}
-      <Button
-        name="itemcd"
-        onClick={onItemWndClick2}
-        icon="more-horizontal"
-        fillMode="flat"
-      />
-    </td>
+        <Button
+          name="itemcd"
+          onClick={onItemWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </td>
     );
   };
 
@@ -1019,7 +1020,7 @@ const BA_A0080: React.FC = () => {
     const { value, name } = e.target;
     setdatas((prev: any) => ({
       ...prev,
-      itemcd: value
+      itemcd: value,
     }));
   };
 
@@ -1068,6 +1069,7 @@ const BA_A0080: React.FC = () => {
 
     setMainDataState({});
   };
+
   return (
     <>
       <TitleContainer>
@@ -1262,6 +1264,7 @@ const BA_A0080: React.FC = () => {
                   itemlvl3: itemlvl3ListData.find(
                     (item: any) => item.sub_code === row.itemlvl3
                   )?.code_name,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1292,6 +1295,7 @@ const BA_A0080: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
+              <GridColumn field="rowstatus" title="상태" width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList"].map(
                   (item: any, idx: number) =>
@@ -1314,11 +1318,12 @@ const BA_A0080: React.FC = () => {
                             : undefined
                         }
                         className={
-                          editableField.includes(item.fieldName)
-                            ? "editable-new-only"
-                            : requiredField.includes(item.fieldName)
+                          requiredField.includes(item.fieldName)
                             ? "required"
                             : undefined
+                          // editableField.includes(item.fieldName)
+                          // ? "editable-new-only"
+                          // :
                         }
                         headerCell={
                           requiredField.includes(item.fieldName)

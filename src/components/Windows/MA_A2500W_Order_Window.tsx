@@ -1007,8 +1007,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <TitleContainer>
-          <Title>발주참조</Title>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {
@@ -1401,6 +1400,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         </GridContainerWrap>
         <GridContainer>
           <GridTitleContainer>
+            <GridTitle>Keeping</GridTitle>
             <ButtonContainer>
               <Button
                 onClick={onDeleteClick}

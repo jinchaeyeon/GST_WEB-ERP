@@ -67,7 +67,7 @@ let deletedMainRows: object[] = [];
 const headerField = ["user_name", "appseq", "appline"];
 const editableField = ["user_name", "dptcd", "postcd", "resno", "appgb"];
 const checkboxField = ["chooses", "arbitragb"];
-const requiredField = ["user_name", "appseq", "appline"];
+const requiredField = ["appseq", "appline"];
 const numberField = ["appseq"];
 const customField = ["appline"];
 type TdataArr = {
@@ -666,13 +666,13 @@ const EA_A1000: React.FC = () => {
       }
 
       var idx = mainDataResult.data.length;
-
+      let counts = mainDataResult.total;
       rows.map((item) => {
         const newDataItem = {
           aftergb: "N",
           appgb: "S",
           appline: "",
-          appseq: 0,
+          appseq: counts + 1,
           arbitragb: "N",
           dptcd: item.dptcd,
           insert_pc: pc,
@@ -681,7 +681,7 @@ const EA_A1000: React.FC = () => {
           userid: user_id,
           num: idx + 1,
           orgdiv: "01",
-          person: user_id,
+          person: filters.resno,
           pgmgb: "A",
           postcd: item.postcd,
           resno: item.user_id,
@@ -693,6 +693,7 @@ const EA_A1000: React.FC = () => {
         };
         idx++;
         count++;
+        counts++;
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, newDataItem],
@@ -725,13 +726,13 @@ const EA_A1000: React.FC = () => {
       }
 
       var idx = mainData3Result.data.length;
-
+      let counts = mainDataResult.total;
       rows.map((item) => {
         const newDataItem = {
           aftergb: "N",
           appgb: "T",
           appline: "",
-          appseq: 0,
+          appseq:counts + 1,
           arbitragb: "N",
           dptcd: item.dptcd,
           insert_pc: pc,
@@ -740,7 +741,7 @@ const EA_A1000: React.FC = () => {
           userid: user_id,
           num: idx + 1,
           orgdiv: "01",
-          person: user_id,
+          person: filters.resno,
           pgmgb: "A",
           postcd: item.postcd,
           resno: item.user_id,
@@ -752,6 +753,7 @@ const EA_A1000: React.FC = () => {
         };
         idx++;
         count++;
+        counts++;
         setMainData3Result((prev) => {
           return {
             data: [...prev.data, newDataItem],
@@ -784,13 +786,13 @@ const EA_A1000: React.FC = () => {
       }
 
       var idx = mainDataResult.data.length;
-
+      let counts = mainDataResult.total;
       rows.map((item) => {
         const newDataItem = {
           aftergb: "N",
           appgb: "H",
           appline: "",
-          appseq: 0,
+          appseq: counts + 1,
           arbitragb: "N",
           dptcd: item.dptcd,
           insert_pc: pc,
@@ -799,7 +801,7 @@ const EA_A1000: React.FC = () => {
           userid: user_id,
           num: idx + 1,
           orgdiv: "01",
-          person: user_id,
+          person: filters.resno,
           pgmgb: "A",
           postcd: item.postcd,
           resno: item.user_id,
@@ -811,6 +813,7 @@ const EA_A1000: React.FC = () => {
         };
         idx++;
         count++;
+        counts++;
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, newDataItem],
@@ -843,13 +846,13 @@ const EA_A1000: React.FC = () => {
       }
 
       var idx = mainData2Result.data.length;
-
+      let counts = mainDataResult.total;
       rows.map((item) => {
         const newDataItem = {
           aftergb: "N",
           appgb: "J",
           appline: "",
-          appseq: 0,
+          appseq: counts + 1,
           arbitragb: "N",
           dptcd: item.dptcd,
           insert_pc: pc,
@@ -858,7 +861,7 @@ const EA_A1000: React.FC = () => {
           userid: user_id,
           num: idx + 1,
           orgdiv: "01",
-          person: user_id,
+          person: filters.resno,
           pgmgb: "A",
           postcd: item.postcd,
           resno: item.user_id,
@@ -870,6 +873,7 @@ const EA_A1000: React.FC = () => {
         };
         idx++;
         count++;
+        counts++;
         setMainData2Result((prev) => {
           return {
             data: [...prev.data, newDataItem],
@@ -931,18 +935,20 @@ const EA_A1000: React.FC = () => {
   const onSaveClick = async () => {
     let isValid = true;
 
-    for (var i = count; i > 0; i--) {
-      if (mainDataResult.data[mainDataResult.data.length - i].appseq == 0) {
-        alert("결재순서를 입력해주세요.");
-        isValid = false;
-      } else if (
-        mainDataResult.data[mainDataResult.data.length - i].appline == ""
-      ) {
-        alert("결재라인을 선택해주세요.");
-        isValid = false;
+    if(mainDataResult.total != 0){
+      for (var i = count; i > 0; i--) {
+        if (mainDataResult.data[mainDataResult.total - i].appseq == 0) {
+          alert("결재순서를 입력해주세요.");
+          isValid = false;
+        } else if (
+          mainDataResult.data[mainDataResult.total - i].appline == ""
+        ) {
+          alert("결재라인을 선택해주세요.");
+          isValid = false;
+        }
       }
     }
-
+    
     if (!isValid) {
       return false;
     } else {
@@ -1098,6 +1104,7 @@ const EA_A1000: React.FC = () => {
       });
       setParaData((prev) => ({
         ...prev,
+        person: filters.resno,
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         postcd: dataArr.postcd.join("|"),
         resno: dataArr.resno.join("|"),
@@ -1121,7 +1128,8 @@ const EA_A1000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(para);
+    console.log(data)
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -1205,6 +1213,118 @@ const EA_A1000: React.FC = () => {
     }));
 
     setMainData2State({});
+  };
+
+  type TDataInfo = {
+    DATA_ITEM_KEY: string;
+    selectedState: {
+      [id: string]: boolean | number[];
+    };
+    dataResult: DataResult;
+    setDataResult: (p: any) => any;
+  };
+
+  type TArrowBtnClick = {
+    direction: string;
+    dataInfo: TDataInfo;
+  };
+
+  const onArrowsBtnClick = (para: TArrowBtnClick) => {
+    const { direction, dataInfo } = para;
+    const { DATA_ITEM_KEY, selectedState, dataResult, setDataResult } =
+      dataInfo;
+    const selectedField = Object.getOwnPropertyNames(selectedState)[0];
+
+    const rowData = dataResult.data.find(
+      (row) => row[DATA_ITEM_KEY] == selectedField
+    );
+
+    const rowIndex = dataResult.data.findIndex(
+      (row) => row[DATA_ITEM_KEY] == selectedField
+    );
+
+    if (rowIndex === -1) {
+      alert("이동시킬 행을 선택해주세요.");
+      return false;
+    }
+    if(filters.resno == rowData.resno) {
+      alert("작성자의 행은 이동 불가능합니다.");
+      return false;
+    }
+
+    const newData = dataResult.data.map((item: any) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+    let replaceData = 0;
+    if (direction === "UP" && rowIndex != 0) {
+      replaceData = dataResult.data[rowIndex - 1].appseq;
+    } else {
+      replaceData = dataResult.data[rowIndex + 1].appseq;
+    }
+
+    newData.splice(rowIndex, 1);
+    newData.splice(rowIndex + (direction === "UP" ? -1 : 1), 0, rowData);
+    if (direction === "UP" && rowIndex != 0) {
+      const newDatas = newData.map((item) =>
+      item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+        ? {
+            ...item,
+            appseq: replaceData,
+            [EDIT_FIELD]: undefined,
+          }
+        : item[DATA_ITEM_KEY] === dataResult.data[rowIndex - 1].num
+        ? {
+            ...item,
+            appseq: rowData.appseq,
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+
+    setDataResult((prev: any) => {
+      return {
+        data: newDatas,
+        total: prev.total,
+      };
+    });
+    } else {
+      const newDatas = newData.map((item) =>
+      item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+        ? {
+            ...item,
+            appseq: replaceData,
+            [EDIT_FIELD]: undefined,
+          }
+        : item[DATA_ITEM_KEY] === dataResult.data[rowIndex + 1].num
+        ? {
+            ...item,
+            appseq: rowData.appseq,
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+
+    setDataResult((prev: any) => {
+      return {
+        data: newDatas,
+        total: prev.total,
+      };
+    });
+    }
+  };
+
+  const arrowBtnClickPara = {
+    DATA_ITEM_KEY: DATA_ITEM_KEY,
+    selectedState: selectedState,
+    dataResult: mainDataResult,
+    setDataResult: setMainDataResult,
   };
 
   return (
@@ -1347,11 +1467,6 @@ const EA_A1000: React.FC = () => {
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      headerCell={
-                        headerField.includes(item.fieldName)
-                          ? RequiredHeader
-                          : undefined
-                      }
                       editable={
                         editableField.includes(item.fieldName) ? false : true
                       }
@@ -1389,6 +1504,28 @@ const EA_A1000: React.FC = () => {
                   icon="minus"
                 ></Button>
                 <Button
+                  onClick={() =>
+                    onArrowsBtnClick({
+                      direction: "UP",
+                      dataInfo: arrowBtnClickPara,
+                    })
+                  }
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="chevron-up"
+                ></Button>
+                <Button
+                  onClick={() =>
+                    onArrowsBtnClick({
+                      direction: "DOWN",
+                      dataInfo: arrowBtnClickPara,
+                    })
+                  }
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="chevron-down"
+                ></Button>
+                <Button
                   onClick={onSaveClick}
                   fillMode="outline"
                   themeColor={"primary"}
@@ -1414,6 +1551,7 @@ const EA_A1000: React.FC = () => {
                   appgb: appgbListData.find(
                     (item: any) => item.sub_code === row.appgb
                   )?.code_name,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1446,6 +1584,7 @@ const EA_A1000: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
+              <GridColumn field="rowstatus" title="상태" width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList2"].map(
                   (item: any, idx: number) =>
@@ -1509,6 +1648,10 @@ const EA_A1000: React.FC = () => {
                   appgb: appgbListData.find(
                     (item: any) => item.sub_code === row.appgb
                   )?.code_name,
+                  dptcd: dptcdListData.find(
+                    (item: any) => item.dptcd === row.dptcd
+                  )?.dptnm,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                   [SELECTED_FIELD]: selected3State[idGetter(row)],
                 })),
                 mainData3State
@@ -1541,6 +1684,7 @@ const EA_A1000: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
+              <GridColumn field="rowstatus" title="상태" width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList3"].map(
                   (item: any, idx: number) =>
@@ -1583,6 +1727,10 @@ const EA_A1000: React.FC = () => {
                   appgb: appgbListData.find(
                     (item: any) => item.sub_code === row.appgb
                   )?.code_name,
+                  dptcd: dptcdListData.find(
+                    (item: any) => item.dptcd === row.dptcd
+                  )?.dptnm,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
                   [SELECTED_FIELD]: selected2State[idGetter(row)],
                 })),
                 mainData2State
@@ -1615,6 +1763,7 @@ const EA_A1000: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
+              <GridColumn field="rowstatus" title="상태" width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList4"].map(
                   (item: any, idx: number) =>
