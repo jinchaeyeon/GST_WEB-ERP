@@ -204,18 +204,21 @@ axiosInstance.interceptors.response.use(
   },
   async (error: {
     config: any;
+    request: { responseURL: string };
     response: { status: any };
     message: string;
   }) => {
     // res에서 error가 발생했을 경우 catch로 넘어가기 전에 처리하는 부분
     let errResponseStatus = null;
+    let errResponseURL = "";
     const originalRequest = error.config;
 
     try {
       errResponseStatus = error.response.status;
+      errResponseURL = error.request.responseURL;
     } catch (e) {}
 
-    if (errResponseStatus === 401) {
+    if (errResponseStatus === 401 && !errResponseURL.includes("auth/login")) {
       if (!isTokenRefreshing) {
         let token = localStorage.getItem("accessToken");
         let refreshToken = localStorage.getItem("refreshToken");
