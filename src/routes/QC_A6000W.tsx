@@ -854,7 +854,7 @@ const QC_A6000: React.FC = () => {
             item.rowstatus !== undefined
           );
         });
-
+        if (dataItem.length === 0) return false;
         let dataArr: TdataArr = {
           rowstatus_s: [],
           renum_s: [],
@@ -999,13 +999,7 @@ const QC_A6000: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-          <GridTitleContainer>
+      <GridTitleContainer>
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
               <Button
@@ -1016,6 +1010,12 @@ const QC_A6000: React.FC = () => {
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
+          }}
+        >
           <Grid
             style={{ height: "80vh" }}
             data={process(

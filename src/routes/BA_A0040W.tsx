@@ -1500,10 +1500,19 @@ const BA_A0040: React.FC = () => {
   const CheckChange = (event: CheckboxChangeEvent) => {
     setyn(event.value);
     let value = event.value == true ? "Y" : "N";
-    setInfomation((prev) => ({
-      ...prev,
-      auto: value,
-    }));
+    if (value == "Y") {
+      setInfomation((prev) => ({
+        ...prev,
+        auto: value,
+        itemcd: "자동생성",
+      }));
+    } else {
+      setInfomation((prev) => ({
+        ...prev,
+        auto: value,
+        itemcd: "",
+      }));
+    }
   };
   return (
     <>

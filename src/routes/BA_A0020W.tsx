@@ -2356,8 +2356,10 @@ const BA_A0020: React.FC = () => {
     if (data.isSuccess === true) {
       setSubPgNum(1);
       setSubDataResult(process([], subDataState));
-
+      setSubPgNum2(2);
+      setSubDataResult2(process([], subDataState2));
       fetchSubGrid();
+      fetchSubGrid2();
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -2401,11 +2403,19 @@ const BA_A0020: React.FC = () => {
   const CheckChange = (event: CheckboxChangeEvent) => {
     setyn(event.value);
     let value = event.value == true ? "Y" : "N";
-    setInfomation((prev) => ({
-      ...prev,
-      auto: value,
-      custcd: "",
-    }));
+    if (value == "Y") {
+      setInfomation((prev) => ({
+        ...prev,
+        auto: value,
+        custcd: "자동생성",
+      }));
+    } else {
+      setInfomation((prev) => ({
+        ...prev,
+        auto: value,
+        custcd: "",
+      }));
+    }
   };
 
   return (
@@ -2498,10 +2508,7 @@ const BA_A0020: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer
-          // style={{ display: "inline-block", float: "left", width: "26vw" }}
-          width="26vw"
-        >
+        <GridContainer width="26vw">
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
@@ -2573,32 +2580,38 @@ const BA_A0020: React.FC = () => {
           </ExcelExport>
         </GridContainer>
         <div>
-          <ButtonContainer style={{ float: "right" }}>
-            <Button
-              onClick={onAddClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="file-add"
-            >
-              신규
-            </Button>
-            <Button
-              onClick={onSaveClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-            >
-              저장
-            </Button>
-            <Button
-              onClick={onDeleteClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="delete"
-            >
-              삭제
-            </Button>
+          {tabSelected == 0 ? (
+            <ButtonContainer style={{ float: "right" }}>
+              <Button
+                onClick={onAddClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                신규
+              </Button>
+              <Button
+                onClick={onSaveClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              >
+                저장
+              </Button>
+              <Button
+                onClick={onDeleteClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                삭제
+              </Button>
+            </ButtonContainer>
+          ) : (
+            <ButtonContainer style={{ float: "right", width: "250px", height: "30px" }}>
+
           </ButtonContainer>
+          )}
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}

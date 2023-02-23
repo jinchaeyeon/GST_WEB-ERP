@@ -274,7 +274,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           field="user_name"
           title="성명"
           width="100px"
-          headerCell={RequiredHeader}
           className="required"
           editable={false}
         />

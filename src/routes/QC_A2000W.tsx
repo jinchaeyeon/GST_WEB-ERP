@@ -111,7 +111,21 @@ type TdataArr2 = {
   badseq_s: string[];
   badqty_s: string[];
 };
-
+type TdataArr3 = {
+  rowstatus_s: string[];
+  qcdt_s: string[];
+  person_s: string[];
+  purnum_s: string[];
+  purseq_s: string[];
+  remark_s: string[];
+  attdatnum_s: string[];
+  qcqty_s: string[];
+  qcnum_s: string[];
+  badnum_s: string[];
+  badcd_s: string[];
+  badseq_s: string[];
+  badqty_s: string[];
+};
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_QC002 ", setBizComponentData);
@@ -952,7 +966,7 @@ const QC_A2000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    
     if (data.isSuccess === true) {
       fetchMainGrid();
       fetchDetailGrid();
@@ -1132,7 +1146,7 @@ const QC_A2000: React.FC = () => {
     }
   };
   const enterEdit3 = (dataItem: any, field: string) => {
-    if (field == "doqty" || field == "remark" || field ==" files") {
+    if (field == "doqty" || field == "remark" || field == " files") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1205,20 +1219,8 @@ const QC_A2000: React.FC = () => {
         footerCell={mainTotalFooterCell}
       />
     );
-    array.push(
-      <GridColumn
-        field={"remark"}
-        title={"비고"}
-        width="200px"
-      />
-    );
-    array.push(
-      <GridColumn
-        field={"files"}
-        title={"첨부파일"}
-        width="200px"
-      />
-    );
+    array.push(<GridColumn field={"remark"} title={"비고"} width="200px" />);
+    array.push(<GridColumn field={"files"} title={"첨부파일"} width="200px" />);
     return array;
   };
 
@@ -1307,6 +1309,7 @@ const QC_A2000: React.FC = () => {
         qcqty = "",
         qcnum = "",
       } = item;
+
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.qcdt_s.push(qcdt == "" ? "" : qcdt);
       dataArr.person_s.push(person == undefined ? "" : person);
@@ -1369,7 +1372,7 @@ const QC_A2000: React.FC = () => {
       badseq_s: [],
       badqty_s: [],
     };
-  
+
     detailDataResult2.data.forEach((item: any, idx: number) => {
       const {
         rowstatus = "",
@@ -1378,6 +1381,7 @@ const QC_A2000: React.FC = () => {
         badseq = "",
         qty = "",
       } = item;
+
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.purnum_s.push(datas.purnum == "" ? "" : datas.purnum);
       dataArr.purseq_s.push(datas.purseq == "" ? 0 : datas.purseq);
@@ -1419,31 +1423,76 @@ const QC_A2000: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
-    const datas = mainDataResult.data.filter(
-      (item: any) =>
-        item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-      if(datas.doqty != 0){
-        setParaData((prev) => ({
-          ...prev,
-          workType: "N",
-          rowstatus_s: "U",
-          qcdt_s: "",
-          person_s: "",
-          purnum_s: datas.purnum,
-          purseq_s: datas.purseq,
-          remark_s: datas.remark,
-          attdatnum_s: datas.attdatnum,
-          qcqty_s:datas.qcqty, 
-          qcnum_s: "",
-          badnum_s: "",
-          badcd_s: "",
-          badseq_s: "",
-          badqty_s: "",
-        }));
-      } else {
-        alert("검사수량을 입력해주세요.");
+    const datas = Object.getOwnPropertyNames(selectedState).map((item) => {
+      return mainDataResult.data.filter((items: any) => items.num == item)[0];
+    });
+
+    let valid = true;
+
+    datas.map((item) => {
+      if (item.doqty == 0) {
+        valid = false;
+        return false;
       }
+    });
+    if (valid == true) {
+      let dataArr: TdataArr3 = {
+        rowstatus_s: [],
+        qcdt_s: [],
+        person_s: [],
+        purnum_s: [],
+        purseq_s: [],
+        remark_s: [],
+        attdatnum_s: [],
+        qcqty_s: [],
+        qcnum_s: [],
+        badnum_s: [],
+        badcd_s: [],
+        badseq_s: [],
+        badqty_s: [],
+      };
+
+      datas.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          purnum = "",
+          purseq = "",
+          remark = "",
+          attdatnum = "",
+          qcqty = "",
+        } = item;
+
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.qcdt_s.push("");
+        dataArr.person_s.push("");
+        dataArr.purnum_s.push(purnum == undefined ? "" : purnum);
+        dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
+        dataArr.remark_s.push(remark == undefined ? "" : remark);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+        dataArr.qcqty_s.push(qcqty == "" ? 0 : qcqty);
+        dataArr.qcnum_s.push("");
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "N",
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        qcdt_s: dataArr.qcdt_s.join("|"),
+        person_s: dataArr.person_s.join("|"),
+        purnum_s: dataArr.purnum_s.join("|"),
+        purseq_s: dataArr.purseq_s.join("|"),
+        remark_s: dataArr.remark_s.join("|"),
+        attdatnum_s: dataArr.attdatnum_s.join("|"),
+        qcqty_s: dataArr.qcqty_s.join("|"),
+        qcnum_s: dataArr.qcnum_s.join("|"),
+        badnum_s: dataArr.badnum_s.join("|"),
+        badcd_s: dataArr.badcd_s.join("|"),
+        badseq_s: dataArr.badseq_s.join("|"),
+        badqty_s: dataArr.badqty_s.join("|"),
+      }));
+    } else {
+      alert("검사수량을 입력해주세요.");
+    }
   };
 
   const ColumnCommandCell = (props: GridCellProps) => {
@@ -1669,8 +1718,8 @@ const QC_A2000: React.FC = () => {
         <TabStripTab title="발주정보">
           <GridContainerWrap>
             <GridContainer width="87.5vw">
-            <GridTitleContainer>
-            <GridTitle>발주상세정보</GridTitle>
+              <GridTitleContainer>
+                <GridTitle>발주상세정보</GridTitle>
                 <ButtonContainer>
                   <Button
                     onClick={onSaveClick3}
@@ -1695,11 +1744,11 @@ const QC_A2000: React.FC = () => {
                         (items: any) => items.sub_code === row.proccd
                       )?.code_name,
                       rowstatus:
-                      row.rowstatus == null ||
-                      row.rowstatus == "" ||
-                      row.rowstatus == undefined
-                        ? ""
-                        : row.rowstatus,
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
                     mainDataState
@@ -1711,7 +1760,7 @@ const QC_A2000: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "single",
+                    mode: "multiple",
                   }}
                   onSelectionChange={onSelectionChange}
                   //스크롤 조회 기능
@@ -1730,7 +1779,16 @@ const QC_A2000: React.FC = () => {
                   rowRender={customRowRender3}
                   editField={EDIT_FIELD}
                 >
-                             <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field={SELECTED_FIELD}
+                    width="45px"
+                    headerSelectionValue={
+                      mainDataResult.data.findIndex(
+                        (item: any) => !selectedState[idGetter(item)]
+                      ) === -1
+                    }
+                  />
                   <GridColumn title="검사입력정보">{createColumn()}</GridColumn>
                   <GridColumn title="발주상세정보">
                     {createColumn2()}
