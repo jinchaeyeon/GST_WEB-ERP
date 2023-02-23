@@ -592,6 +592,7 @@ const EA_A1000: React.FC = () => {
     );
   };
   const enterEdit = (dataItem: any, field: string) => {
+    if (field != "rowstatus") {
     const newData = mainDataResult.data.map((item) =>
       item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
         ? {
@@ -611,6 +612,7 @@ const EA_A1000: React.FC = () => {
         total: prev.total,
       };
     });
+  }
   };
 
   const exitEdit = () => {

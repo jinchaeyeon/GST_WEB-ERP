@@ -991,12 +991,10 @@ const MA_A3400W: React.FC = () => {
   };
 
   const setCopyData2 = (data: any, filter: any, deletedMainRows: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
 
     if (dataItem.length === 0) return false;
     setParaData(filter);

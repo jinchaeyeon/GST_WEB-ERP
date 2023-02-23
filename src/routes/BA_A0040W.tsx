@@ -86,13 +86,13 @@ const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: object[] = [];
 
-const NumberField = ["safeqty", "purleadtime"];
+const NumberField = ["safeqty", "purleadtime", "unp"];
 
 const CheckField = ["useyn"];
 
 const DateField = ["recdt"];
 
-const CustomComboField = ["unpitem", "amtunit", "itemacnt", "unp"];
+const CustomComboField = ["unpitem", "amtunit", "itemacnt"];
 
 const editableField = ["recdt"];
 const CustomComboBoxCell = (props: GridCellProps) => {

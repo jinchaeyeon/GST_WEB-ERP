@@ -1016,13 +1016,10 @@ const MA_A2400W: React.FC = () => {
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
     let valid = true;
 
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
     if (dataItem.length === 0) return false;
     setParaData((prev) => ({
       ...prev,

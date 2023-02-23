@@ -674,12 +674,10 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData2 = (data: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
 
     if (dataItem.length === 0) return false;
 
@@ -720,12 +718,10 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
   };
   const setCopyData3 = (data: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
 
     if (dataItem.length === 0) return false;
 
@@ -760,13 +756,10 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData4 = (data: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
     if (dataItem.length === 0) return false;
 
     let seq = 1;
@@ -800,13 +793,10 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData = (data: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
     if (dataItem.length === 0) return false;
 
     let seq = 1;
@@ -867,7 +857,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const selectData = (selectedData: any) => {
     let valid = true;
     mainDataResult.data.map((item) => {
-      if (item.itemcd == "" || item.itemnm == "" || item.qty == 0) {
+      if ((item.itemcd == "" || item.itemnm == "" || item.qty == 0) && valid == true) {
         alert("필수항목(품목코드, 품목명, 수량을 채워주세요.");
         valid = false;
         return false;
@@ -876,7 +866,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
     if (valid == true) {
       setData(mainDataResult.data, filters, deletedMainRows);
-      onClose();
+      if(workType == "N") {
+        onClose();
+      }
     }
   };
 

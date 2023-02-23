@@ -513,12 +513,10 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData2 = (data: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
 
     if (dataItem.length === 0) return false;
 
@@ -559,13 +557,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
   };
   const setCopyData = (data: any) => {
-    console.log(data);
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+  
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
 
     if (dataItem.length === 0) return false;
 
@@ -663,7 +659,9 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
     if (valid == true) {
       setData(mainDataResult.data, filters, deletedMainRows);
-      onClose();
+      if(workType == "N") {
+        onClose();
+      }
     }
   };
 

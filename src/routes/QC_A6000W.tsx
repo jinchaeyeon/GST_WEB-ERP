@@ -72,6 +72,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import RadioGroupCell from "../components/Cells/RadioGroupCell";
 
 const DATA_ITEM_KEY = "num";
 
@@ -120,16 +121,16 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
 const CustomRadioCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_MA034 ", setBizComponentData);
+  UseBizComponent("R_MA034", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field == "qcdecision" ? "L_MA034": "";
+  const bizComponentIdVal = field == "qcdecision" ? "R_MA034": "";
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
   return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
+    <RadioGroupCell bizComponentData={bizComponent} {...props} />
   ) : (
     <td />
   );
@@ -355,8 +356,6 @@ const QC_A6000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(parameters);
-    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -720,8 +719,7 @@ const QC_A6000: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    console.log(field)
-    if (field != "proddt" && field != "itemnm"&& field != "lotnum" && field != "insiz" && field != "proccd" && field != "qty"&& field != "prodemp"&& field != "itemcd") {
+    if (field != "qcdecision" && field != "proddt" && field != "itemnm"&& field != "lotnum" && field != "insiz" && field != "proccd" && field != "qty"&& field != "prodemp"&& field != "itemcd") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {

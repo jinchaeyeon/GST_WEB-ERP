@@ -1004,7 +1004,8 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(para);
+    console.log(data);
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -1030,7 +1031,6 @@ const SA_A5000: React.FC = () => {
       );
     });
 
-    if (dataItem.length === 0) return false;
     setParaData((prev) => ({
       ...prev,
       location: filter.location,

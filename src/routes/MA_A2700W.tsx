@@ -1283,12 +1283,10 @@ const MA_A2700W: React.FC = () => {
 
     if (!valid) return false;
 
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
 
     if (dataItem.length === 0) return false;
     setParaData(filter);

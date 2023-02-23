@@ -910,12 +910,10 @@ const MA_A2500W: React.FC = () => {
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
     let valid = true;
 
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
 
     if (dataItem.length === 0) return false;
     setParaData((prev) => ({
@@ -1015,9 +1013,10 @@ const MA_A2500W: React.FC = () => {
         purdt = "", // outrecdt
         keycode = "",
         keyseq = "",
-        useqty="",
-        outrecdt=""
+        useqty = "",
+        outrecdt = "",
       } = item;
+
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.recdt_s.push(recdt);
       dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
@@ -1039,16 +1038,14 @@ const MA_A2500W: React.FC = () => {
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.remark_s.push(remark == undefined ? "" : remark);
       dataArr.num_s.push(num == "" ? 0 : num);
-      if(rowstatus == "N"){
-        dataArr.findkey_s.push(reckey == undefined ? "" : reckey);
-        dataArr.div_s.push(div == undefined ? "" : div);
-        dataArr.outrecdt_s.push(purdt);
-        dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
-        dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
-        dataArr.keycode_s.push(keycode == undefined ? "" : keycode);
-        dataArr.keyseq_s.push(keyseq == "" ? 0 : keyseq);
-        dataArr.useqty_s.push(useqty == "" ? 0 : useqty);
-      }      
+      dataArr.findkey_s.push(reckey == undefined ? "" : reckey);
+      dataArr.div_s.push(div == undefined ? "" : div);
+      dataArr.outrecdt_s.push(purdt);
+      dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
+      dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
+      dataArr.keycode_s.push(keycode == undefined ? "" : keycode);
+      dataArr.keyseq_s.push(keyseq == "" ? 0 : keyseq);
+      dataArr.useqty_s.push(useqty == "" ? 0 : useqty);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
       const {
@@ -1080,7 +1077,7 @@ const MA_A2500W: React.FC = () => {
         purdt = "", // outrecdt
         keycode = "",
         keyseq = "",
-        useqty=""
+        useqty = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.recdt_s.push(recdt);
@@ -1214,7 +1211,8 @@ const MA_A2500W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(para);
+    console.log(data);
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {

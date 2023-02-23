@@ -927,12 +927,10 @@ const SA_A2300: React.FC = () => {
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
     let valid = true;
 
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+    const dataItem = data.map((item: any) => ({
+      ...item,
+      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
+    }));
 
     if (dataItem.length === 0) return false;
     setParaData((prev) => ({
@@ -1205,6 +1203,7 @@ const SA_A2300: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage)
     }
     setLoading(false);
   };
