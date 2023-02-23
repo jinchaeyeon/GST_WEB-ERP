@@ -393,6 +393,7 @@ const CM_A0000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -400,7 +401,7 @@ const CM_A0000W: React.FC = () => {
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -461,8 +462,8 @@ const CM_A0000W: React.FC = () => {
 
         setDetailFilters((prev) => ({
           ...prev,
-          location: firstRowData.location,
           datnum: firstRowData.datnum,
+          category: firstRowData.category,
         }));
 
         setIfSelectFirstRow(true);
@@ -491,8 +492,8 @@ const CM_A0000W: React.FC = () => {
 
     setDetailFilters((prev) => ({
       ...prev,
-      location: selectedRowData.location,
       datnum: selectedRowData.datnum,
+      category: selectedRowData.category,
     }));
   };
 
@@ -820,6 +821,8 @@ const CM_A0000W: React.FC = () => {
           datnum={detailFilters.datnum}
           categories={
             categoryListData.find(
+              (item: any) => item.code_name === detailFilters.category
+            )?.sub_code == undefined ? "100" : categoryListData.find(
               (item: any) => item.code_name === detailFilters.category
             )?.sub_code
           }

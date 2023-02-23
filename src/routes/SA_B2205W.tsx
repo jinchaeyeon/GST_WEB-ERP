@@ -893,7 +893,6 @@ const SA_B2205: React.FC = () => {
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
                 .map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
@@ -910,7 +909,7 @@ const SA_B2205: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.fieldName == "dlvdt" ? mainTotalFooterCell : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>

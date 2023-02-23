@@ -100,7 +100,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN",
+    "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_YESNOALL",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );

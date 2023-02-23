@@ -58,7 +58,8 @@ type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(data: object, filter: object, deletedMainRows: object): void;
+  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
 type Idata = {
@@ -133,7 +134,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
+const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -141,7 +142,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     height: 900,
   });
   const DATA_ITEM_KEY = "num";
-
+  useEffect(()=> {
+    setMainPgNum(1);
+    setMainDataResult(process([], mainDataState))
+    fetchMainGrid();
+  },[reload])
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -171,7 +176,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA020,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA005,L_BA029,L_BA173,R_QCYN",
+    "L_BA020,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA005,L_BA029,L_BA173,R_YESNOALL",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -1195,7 +1200,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
-              확인
+              저장
             </Button>
             <Button
               themeColor={"primary"}
