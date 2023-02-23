@@ -43,6 +43,7 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
+  useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/MA_A3400W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -689,8 +690,12 @@ const MA_A3400W: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
     const key = Object.getOwnPropertyNames(selectedState)[0];
 
     const datas = mainDataResult.data.filter((item) => item.reckey == key);

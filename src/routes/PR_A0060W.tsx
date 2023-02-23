@@ -60,6 +60,7 @@ import {
   UseParaPc,
   dateformat2,
   UseGetValueFromSessionItem,
+  useSysMessage,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -1190,8 +1191,12 @@ const PR_A0060: React.FC = () => {
 
     setSubDataState({});
   };
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
     const items = Object.getOwnPropertyNames(selectedState)[0];
     mainDataResult.data.forEach((item: any, index: number) => {
       if (items == item.fxcode && (item.useyn == "N" || item.useyn == "")) {

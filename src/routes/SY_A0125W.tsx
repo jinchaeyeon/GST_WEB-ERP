@@ -63,6 +63,7 @@ import {
   getGridItemChangedData,
   UseParaPc,
   UseGetValueFromSessionItem,
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -826,8 +827,13 @@ const SY_A0125W: React.FC = () => {
     work_type: "",
     dptcd: "",
   });
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
     const item = Object.getOwnPropertyNames(selectedState)[0];
     setParaDataDeleted((prev) => ({
       ...prev,

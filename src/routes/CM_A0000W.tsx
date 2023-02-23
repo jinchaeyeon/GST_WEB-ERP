@@ -40,6 +40,7 @@ import {
   handleKeyPressSearch,
   UseGetValueFromSessionItem,
   UseParaPc,
+  useSysMessage,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -244,9 +245,10 @@ const CM_A0000W: React.FC = () => {
     work_type: "",
     datnum: "",
   });
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
-    if (!window.confirm(findMessage(messagesData, "CM_A0000W_001"))) {
+    if (!window.confirm(questionToDelete)) {
       return false;
     }
 

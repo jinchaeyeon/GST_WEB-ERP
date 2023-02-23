@@ -66,6 +66,7 @@ import {
   dateformat2,
   UseGetValueFromSessionItem,
   isValidDate,
+  useSysMessage,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -1430,8 +1431,13 @@ const BA_A0020: React.FC = () => {
 
     setSubDataState2({});
   };
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
     const item = Object.getOwnPropertyNames(selectedState)[0];
     setParaDataDeleted((prev) => ({
       ...prev,

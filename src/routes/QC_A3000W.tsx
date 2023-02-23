@@ -54,6 +54,7 @@ import {
   to_date2,
   getGridItemChangedData,
   convertDateToStrWithTime2,
+  useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A5000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -941,8 +942,12 @@ const QC_A3000: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
     const data = detailDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(detailSelectedState)[0]
     )[0];

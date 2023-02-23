@@ -43,6 +43,7 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
+  useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/MA_A2700W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -1087,8 +1088,13 @@ const MA_A2700W: React.FC = () => {
   const onBarcodeWndClick = () => {
     setBarcodeWindowVisible(true);
   };
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
     const datas = mainDataResult.data.filter(
       (item) => item.recnum == Object.getOwnPropertyNames(selectedState)[0]
     )[0];

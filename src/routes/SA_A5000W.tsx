@@ -45,6 +45,7 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
   to_date2,
+  useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A5000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -735,8 +736,12 @@ const SA_A5000: React.FC = () => {
     setWorkType("N");
     setDetailWindowVisible(true);
   };
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
     const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];

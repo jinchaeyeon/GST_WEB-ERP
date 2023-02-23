@@ -45,6 +45,7 @@ import {
   UseParaPc,
   to_date2,
   UseGetValueFromSessionItem,
+  useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/MA_A2500W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -712,8 +713,11 @@ const MA_A2500W: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-
+  const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
     const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
@@ -1390,7 +1394,7 @@ const MA_A2500W: React.FC = () => {
                 themeColor={"primary"}
                 icon="file-add"
               >
-                외주발주생성
+                외주입고생성
               </Button>
               <Button
                 onClick={onDeleteClick}
@@ -1398,7 +1402,7 @@ const MA_A2500W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
               >
-                외주발주삭제
+                외주입고삭제
               </Button>
             </ButtonContainer>
           </GridTitleContainer>

@@ -57,6 +57,7 @@ import {
   UseGetValueFromSessionItem,
   getCodeFromValue,
   getSelectedFirstData,
+  useSysMessage,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -858,8 +859,13 @@ const BA_A0050: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
+    const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+    
     let newData: any[] = [];
 
     subDataResult.data.forEach((item: any, index: number) => {

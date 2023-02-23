@@ -46,6 +46,7 @@ import {
   UseParaPc,
   to_date2,
   UseGetValueFromSessionItem,
+  useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/MA_A2400W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -825,8 +826,11 @@ const MA_A2400W: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-
+  const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
     const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
