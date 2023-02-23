@@ -169,7 +169,7 @@ const BA_A0050: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_QCYN,L_PR010,L_sysUserMaster_001",
+    "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_YESNOALL,L_PR010,L_sysUserMaster_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );

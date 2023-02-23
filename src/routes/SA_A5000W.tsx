@@ -995,7 +995,7 @@ const SA_A5000: React.FC = () => {
       "@p_company_code": "2207A046",
     },
   };
-
+  const [reload, setreload] = useState<boolean>(false);
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
@@ -1004,9 +1004,9 @@ const SA_A5000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data);
+
     if (data.isSuccess === true) {
+      setreload(!reload);
       fetchMainGrid();
     } else {
       console.log("[오류 발생]");
@@ -1640,6 +1640,7 @@ const SA_A5000: React.FC = () => {
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
+          reload={reload}
         />
       )}
       {custWindowVisible && (

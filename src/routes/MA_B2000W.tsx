@@ -59,7 +59,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const dateField = ["purdt"];
 const DATA_ITEM_KEY = "purno";
-const numberField = ["qty", "unp", "amt", "taxamt", "totamt", "ordnum"];
+const numberField = ["qty", "unp", "amt", "taxamt", "totamt"];
 const checkboxField = ["finyn"];
 
 const MA_B2000W: React.FC = () => {

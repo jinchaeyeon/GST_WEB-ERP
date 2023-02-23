@@ -578,7 +578,7 @@ const SA_A2300: React.FC = () => {
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
-
+  const [reload, setreload] = useState<boolean>(false);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
@@ -741,19 +741,6 @@ const SA_A2300: React.FC = () => {
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.recdt = "";
     paraDataDeleted.seq1 = 0;
-  };
-
-  const reloadData = (workType: string) => {
-    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
-    if (workType === "U") {
-      setIfSelectFirstRow(false);
-    } else {
-      setIfSelectFirstRow(true);
-    }
-
-    resetAllGrid();
-    fetchMainGrid();
-    fetchDetailGrid();
   };
 
   interface ICustData {
@@ -931,7 +918,7 @@ const SA_A2300: React.FC = () => {
       ...item,
       rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
     }));
-
+   
     if (dataItem.length === 0) return false;
     setParaData((prev) => ({
       ...prev,
@@ -1199,6 +1186,7 @@ const SA_A2300: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setreload(!reload);
       fetchMainGrid();
     } else {
       console.log("[오류 발생]");
@@ -1209,7 +1197,7 @@ const SA_A2300: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.itemcd != "") {
+    if (ParaData.itemcd !=  "") {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
@@ -1568,6 +1556,7 @@ const SA_A2300: React.FC = () => {
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
+          reload={reload}
         />
       )}
       {custWindowVisible && (

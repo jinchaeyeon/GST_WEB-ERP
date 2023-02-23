@@ -2024,8 +2024,6 @@ const BA_A0020: React.FC = () => {
     try {
       subDataResult2.data.map((item: any) => {
         if (
-          item.yyyy.substring(0, 4) >
-            convertDateToStr(new Date()).substring(0, 4) ||
           item.yyyy.substring(0, 4) < "1997" ||
           item.yyyy.substring(0, 4).length != 4
         ) {
@@ -2078,7 +2076,7 @@ const BA_A0020: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(yyyy);
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2406,6 +2404,7 @@ const BA_A0020: React.FC = () => {
     setInfomation((prev) => ({
       ...prev,
       auto: value,
+      custcd: "",
     }));
   };
 

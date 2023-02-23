@@ -406,6 +406,7 @@ const QC_A2000: React.FC = () => {
     } catch (error) {
       data = null;
     }
+    console.log(parameters);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -698,6 +699,14 @@ const QC_A2000: React.FC = () => {
     );
   };
 
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {mainDataResult.total}건
+      </td>
+    );
+  };
+
   const onAddClick = () => {
     let seq = 1;
 
@@ -943,10 +952,11 @@ const QC_A2000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data);
+
     if (data.isSuccess === true) {
       fetchMainGrid();
+      fetchDetailGrid();
+      fetchDetailGrid2();
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1016,6 +1026,15 @@ const QC_A2000: React.FC = () => {
       DATA_ITEM_KEY
     );
   };
+  const onMainItemChange3 = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
   const customCellRender = (td: any, props: any) => (
     <CellRender
       originalProps={props}
@@ -1032,7 +1051,14 @@ const QC_A2000: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-
+  const customCellRender3 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
   const customRowRender = (tr: any, props: any) => (
     <RowRender
       originalProps={props}
@@ -1046,6 +1072,14 @@ const QC_A2000: React.FC = () => {
       originalProps={props}
       tr={tr}
       exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender3 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit3}
       editField={EDIT_FIELD}
     />
   );
@@ -1097,6 +1131,30 @@ const QC_A2000: React.FC = () => {
       });
     }
   };
+  const enterEdit3 = (dataItem: any, field: string) => {
+    if (field == "doqty" || field == "remark" || field ==" files") {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setIfSelectFirstRow(false);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
   const exitEdit = () => {
     const newData = detailDataResult.data.map((item) => ({
       ...item,
@@ -1123,16 +1181,28 @@ const QC_A2000: React.FC = () => {
       };
     });
   };
-
+  const exitEdit3 = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+    setIfSelectFirstRow(false);
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
   const createColumn = () => {
     const array = [];
     array.push(
       <GridColumn
-        field={"count"}
+        field={"doqty"}
         title={"검사수량"}
         width="100px"
         cell={NumberCell}
-        className="readonly"
+        footerCell={mainTotalFooterCell}
       />
     );
     array.push(
@@ -1140,15 +1210,13 @@ const QC_A2000: React.FC = () => {
         field={"remark"}
         title={"비고"}
         width="200px"
-        className="readonly"
       />
     );
     array.push(
       <GridColumn
-        field={"attdatnum"}
+        field={"files"}
         title={"첨부파일"}
         width="200px"
-        className="readonly"
       />
     );
     return array;
@@ -1301,7 +1369,7 @@ const QC_A2000: React.FC = () => {
       badseq_s: [],
       badqty_s: [],
     };
-    console.log(detailDataResult2);
+  
     detailDataResult2.data.forEach((item: any, idx: number) => {
       const {
         rowstatus = "",
@@ -1348,6 +1416,34 @@ const QC_A2000: React.FC = () => {
       badseq_s: dataArr.badseq_s.join("|"),
       badqty_s: dataArr.badqty_s.join("|"),
     }));
+  };
+
+  const onSaveClick3 = () => {
+    const datas = mainDataResult.data.filter(
+      (item: any) =>
+        item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+      if(datas.doqty != 0){
+        setParaData((prev) => ({
+          ...prev,
+          workType: "N",
+          rowstatus_s: "U",
+          qcdt_s: "",
+          person_s: "",
+          purnum_s: datas.purnum,
+          purseq_s: datas.purseq,
+          remark_s: datas.remark,
+          attdatnum_s: datas.attdatnum,
+          qcqty_s:datas.qcqty, 
+          qcnum_s: "",
+          badnum_s: "",
+          badcd_s: "",
+          badseq_s: "",
+          badqty_s: "",
+        }));
+      } else {
+        alert("검사수량을 입력해주세요.");
+      }
   };
 
   const ColumnCommandCell = (props: GridCellProps) => {
@@ -1573,6 +1669,17 @@ const QC_A2000: React.FC = () => {
         <TabStripTab title="발주정보">
           <GridContainerWrap>
             <GridContainer width="87.5vw">
+            <GridTitleContainer>
+            <GridTitle>발주상세정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onSaveClick3}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
@@ -1580,14 +1687,19 @@ const QC_A2000: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: "68vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
                       proccd: proccdListData.find(
                         (items: any) => items.sub_code === row.proccd
                       )?.code_name,
-                      count: row.count == undefined ? 0 : row.count,
+                      rowstatus:
+                      row.rowstatus == null ||
+                      row.rowstatus == "" ||
+                      row.rowstatus == undefined
+                        ? ""
+                        : row.rowstatus,
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
                     mainDataState
@@ -1613,7 +1725,12 @@ const QC_A2000: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  onItemChange={onMainItemChange3}
+                  cellRender={customCellRender3}
+                  rowRender={customRowRender3}
+                  editField={EDIT_FIELD}
                 >
+                             <GridColumn field="rowstatus" title=" " width="50px" />
                   <GridColumn title="검사입력정보">{createColumn()}</GridColumn>
                   <GridColumn title="발주상세정보">
                     {createColumn2()}
@@ -1625,7 +1742,7 @@ const QC_A2000: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="검사내역">
           <GridContainerWrap>
-            <GridContainer style={{ width: "72vw" }}>
+            <GridContainer style={{ width: "70vw" }}>
               <GridTitleContainer>
                 <GridTitle>검사상세정보</GridTitle>
                 <ButtonContainer>
@@ -1746,7 +1863,7 @@ const QC_A2000: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "65vh" }}
+                style={{ height: "67vh" }}
                 data={process(
                   detailDataResult2.data.map((row) => ({
                     ...row,

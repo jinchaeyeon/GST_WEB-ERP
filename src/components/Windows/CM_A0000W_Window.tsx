@@ -25,6 +25,7 @@ import {
   ButtonInFieldWrap,
   FieldWrap,
   GridContainer,
+  GridTitle,
 } from "../../CommonStyled";
 import {
   Form,
@@ -246,9 +247,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         marginLeft: "3%",
         width: "37%",
         float: "right",
-        height: "500px",
+        height: "500px"
       }}
     >
+      <GridTitle>
+        참조
+      </GridTitle>
       <Grid
         data={dataWithIndexes.map((item: any) => ({
           ...item,
@@ -264,6 +268,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         }}
         onSelectionChange={onSelectionChange}
         total={dataWithIndexes.total}
+        style={{height: "500px"}}
       >
         <GridColumn
           field="user_name"
@@ -452,16 +457,16 @@ const KendoWindow = ({
   const parameters: Iparameters = {
     procedureName: "P_CM_A0000W_Q",
     pageNumber: 1,
-    pageSize: 1,
+    pageSize: initialVal.pgSize,
     parameters: {
       "@p_work_type": "Q",
       "@p_orgdiv": "01",
       "@p_datnum": datnum,
-      "@p_dtgb": initialVal.dtgb,
-      "@p_frdt": convertDateToStr(initialVal.publish_start_date),
-      "@p_category": categories,
-      "@p_title": initialVal.title,
-      "@p_yn": initialVal.publish_yn,
+      "@p_dtgb": "C",
+      "@p_frdt": "",
+      "@p_category": "",
+      "@p_title": "",
+      "@p_yn": "%",
       "@p_attdatnum": "",
       "@p_userid": initialVal.user_id,
       "@p_newDiv": "N",
@@ -497,13 +502,14 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess === true && data.tables[0].Rows.length > 0) {
       const row = data.tables[0].Rows[0];
 
+      fetchfilesGrid(row.attdatnum);
       setInitialVal((prev) => {
         return {
           ...prev,
-          datnum: row.datnum,
+          datnum: row.datnum == undefined ? "" : row.datnum,
           orgdiv: row.orgdiv,
           category: row.category,
           location: row.location,
@@ -593,6 +599,7 @@ const KendoWindow = ({
       } catch (error) {
         data = null;
       }
+  
       if (data.isSuccess === true) {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows;
@@ -612,7 +619,55 @@ const KendoWindow = ({
       };
     });
   };
+  
+  let result: IAttachmentData = {
+    attdatnum: "",
+    original_name: "",
+    rowCount: 0,
+  };
 
+  const fetchfilesGrid = async (attach: string) => {
+    let data: any;
+
+    if (attach === "") return false;
+    const parameters = {
+      attached: "list?attachmentNumber=" + attach,
+    };
+
+    try {
+      data = await processApi<any>("file-list", parameters);
+    } catch (error) {
+      data = null;
+    }
+ 
+    if (data !== null) {
+      const totalRowCnt = data.tables[0].RowCount;
+
+      if (totalRowCnt > 0) {
+        const rows = data.tables[0].Rows;
+       
+        result = {
+          attdatnum: rows[0].attdatnum,
+          original_name: rows[0].original_name +
+          (totalRowCnt > 1 ? " 등 " + String(totalRowCnt - 1) + "건" : ""),
+          rowCount: totalRowCnt,
+        };
+      } else {
+        result = {
+          attdatnum: attach,
+          original_name: "",
+          rowCount: 0,
+        };
+      }
+
+      setInitialVal((prev) => {
+        return {
+          ...prev,
+          files: result.original_name
+        };
+      });
+    }
+  };
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -892,6 +947,7 @@ const KendoWindow = ({
             form_id: initialVal.form_id,
             orderDetails: detailDataResult.data, //detailDataResult.data,
             orderDetails2: detailDataResult2.data,
+            files: initialVal.files,
           }}
           render={(formRenderProps: FormRenderProps) => (
             <FormElement>
@@ -927,8 +983,6 @@ const KendoWindow = ({
                       component={FormReadOnly}
                       className="readonly"
                       queryStr={userId}
-                      // valueField={"user_id"}
-                      // textField={"user_name"}
                       columns={userId}
                     />
                   )}
@@ -958,7 +1012,7 @@ const KendoWindow = ({
                   {customOptionData !== null && (
                     <Field
                       name={"publish_yn"}
-                      label={"사용여부"}
+                      label={"공지게시여부"}
                       component={FormCheckBox}
                       queryStr={
                         customOptionData.menuCustomDefaultOptions.new.find(
@@ -995,7 +1049,6 @@ const KendoWindow = ({
                   label={"제목"}
                   component={FormInput}
                   headerCell={RequiredHeader}
-                  className="required"
                 />
                 <Field
                   name={"contents"}
@@ -1005,7 +1058,7 @@ const KendoWindow = ({
                 />
                 <FieldWrap fieldWidth="100%">
                   <Field
-                    name={"att"}
+                    name={"files"}
                     component={FormReadOnly}
                     label={"첨부파일"}
                   />
