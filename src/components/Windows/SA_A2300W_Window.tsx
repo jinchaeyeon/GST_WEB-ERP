@@ -547,10 +547,12 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
   };
 
   const setCopyData = (data: any) => {
-    const dataItem = data.map((item: any) => ({
-      ...item,
-      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
-    }));
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
     if (dataItem.length === 0) return false;
 

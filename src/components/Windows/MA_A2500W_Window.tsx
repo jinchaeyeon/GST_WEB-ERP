@@ -67,7 +67,8 @@ type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(data: object, filter: object, deletedMainRows: object): void;
+  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
 type Idata = {
@@ -121,7 +122,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
+const CopyWindow = ({ workType, data, setVisible, setData, reload}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -157,6 +158,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
   }, [customOptionData]);
 
+  useEffect(()=> {
+    setMainPgNum(1);
+    setMainDataResult(process([], mainDataState))
+    fetchMainGrid();
+  },[reload])
+  
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -440,10 +447,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData = (data: any) => {
-    const dataItem = data.map((item: any) => ({
-      ...item,
-      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
-    }));
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
     if (dataItem.length === 0) return false;
 
     let seq = 1;

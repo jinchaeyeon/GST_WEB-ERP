@@ -406,7 +406,7 @@ const QC_A2000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(parameters);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;

@@ -674,11 +674,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData2 = (data: any) => {
-    const dataItem = data.map((item: any) => ({
-      ...item,
-      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
-    }));
-
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
     if (dataItem.length === 0) return false;
 
     let seq = 1;
@@ -718,10 +719,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
   };
   const setCopyData3 = (data: any) => {
-    const dataItem = data.map((item: any) => ({
-      ...item,
-      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
-    }));
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
     if (dataItem.length === 0) return false;
 
@@ -756,10 +759,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData4 = (data: any) => {
-    const dataItem = data.map((item: any) => ({
-      ...item,
-      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
-    }));
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
     if (dataItem.length === 0) return false;
 
     let seq = 1;
@@ -793,10 +798,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   };
 
   const setCopyData = (data: any) => {
-    const dataItem = data.map((item: any) => ({
-      ...item,
-      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
-    }));
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
     if (dataItem.length === 0) return false;
 
     let seq = 1;

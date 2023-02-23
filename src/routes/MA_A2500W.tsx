@@ -725,7 +725,7 @@ const MA_A2500W: React.FC = () => {
       seq1: data.seq1,
     }));
   };
-
+  const [reload, setreload] = useState<boolean>(false);
   const fetchToDelete = async () => {
     let data: any;
 
@@ -910,14 +910,16 @@ const MA_A2500W: React.FC = () => {
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
     let valid = true;
 
-    const dataItem = data.map((item: any) => ({
-      ...item,
-      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
-    }));
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
-    if (dataItem.length === 0) return false;
     setParaData((prev) => ({
       ...prev,
+      workType: workType,
       amt: filter.amt,
       amtunit: filter.amtunit,
       attdatnum: filter.attdatnum,
@@ -937,6 +939,7 @@ const MA_A2500W: React.FC = () => {
       purqty: filter.purqty,
       pursts: filter.pursts,
       reckey: filter.reckey,
+      recdt: filter.recdt,
       remark: filter.remark,
       taxamt: filter.taxamt,
       taxdiv: filter.taxdiv,
@@ -951,6 +954,8 @@ const MA_A2500W: React.FC = () => {
       serviceid: "2207A046",
     }));
 
+    if (dataItem.length === 0) return false;
+    
     let dataArr: TdataArr = {
       rowstatus_s: [],
       recdt_s: [],
@@ -1211,9 +1216,9 @@ const MA_A2500W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data);
+  
     if (data.isSuccess === true) {
+      setreload(!reload);
       fetchMainGrid();
     } else {
       console.log("[오류 발생]");
@@ -1223,7 +1228,7 @@ const MA_A2500W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s.length != 0) {
+    if (ParaData.indt != undefined) {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
@@ -1560,6 +1565,7 @@ const MA_A2500W: React.FC = () => {
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
+          reload={reload}
         />
       )}
       {custWindowVisible && (

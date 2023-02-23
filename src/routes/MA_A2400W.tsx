@@ -1016,11 +1016,12 @@ const MA_A2400W: React.FC = () => {
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
     let valid = true;
 
-    const dataItem = data.map((item: any) => ({
-      ...item,
-      rowstatus: item.rowstatus == undefined ? "U" : item.rowstatus,
-    }));
-    if (dataItem.length === 0) return false;
+    const dataItem = data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
     setParaData((prev) => ({
       ...prev,
       amt: filter.amt,
@@ -1048,7 +1049,8 @@ const MA_A2400W: React.FC = () => {
       form_id: "MA_A2400W",
       serviceid: "2207A046",
     }));
-
+    if (dataItem.length === 0) return false;
+    
     let dataArr: TdataArr = {
       rowstatus_s: [],
       purseq_s: [],
@@ -1229,7 +1231,7 @@ const MA_A2400W: React.FC = () => {
       "@p_company_code": "2207A046",
     },
   };
-
+  const [reload, setreload] = useState<boolean>(false);
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
@@ -1240,6 +1242,7 @@ const MA_A2400W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setreload(!reload);
       fetchMainGrid();
     } else {
       console.log("[오류 발생]");
@@ -1670,6 +1673,7 @@ const MA_A2400W: React.FC = () => {
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
+          reload={reload}
         />
       )}
       {custWindowVisible && (

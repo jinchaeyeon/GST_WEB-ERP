@@ -78,28 +78,21 @@ const DATA_ITEM_KEY = "num";
 
 type TdataArr = {
   rowstatus_s: string[];
-  seq2_s: string[];
+  renum_s: string[];
+  reseq_s: string[];
   itemcd_s: string[];
-  itemacnt_s: string[];
-  qty_s: string[];
-  qtyunit_s: string[];
-  unpcalmeth_s: string[];
-  unp_s: string[];
-  amt_s: string[];
-  wonamt_s: string[];
-  taxamt_s: string[];
-  dlramt_s: string[];
-  unitwgt_s: string[];
-  totwgt_s: string[];
-  wgtunit_s: string[];
+  person_s: string[];
+  lotnum_s: string[];
+  badqty_s: string[];
+  qcdecision: string[];
+  qcdt_s: string[];
+  qcnum_s: string[];
+  badcd_s: string[];
+  badnum_s: string[];
+  badseq_s: string[];
+  eyeqc_s: string[];
+  chkqty_s: string[];
   remark_s: string[];
-  poregnum_s: string[];
-  ordnum_s: string[];
-  ordseq_s: string[];
-  outrecdt_s: string[];
-  outseq1_s: string[];
-  outseq2_s: string[];
-  sort_seq_s: string[];
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -113,7 +106,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} textField={"user_name"} valueField={"user_id"} {...props} />
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      textField={"user_name"}
+      valueField={"user_id"}
+      {...props}
+    />
   ) : (
     <td />
   );
@@ -124,7 +122,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   UseBizComponent("R_MA034", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field == "qcdecision" ? "R_MA034": "";
+  const bizComponentIdVal = field == "qcdecision" ? "R_MA034" : "";
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
@@ -170,7 +168,7 @@ const QC_A6000: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001, L_fxcode, L_PR010, L_QCYN,L_QC006,L_QC100",
+    "L_PR010, L_sysUserMaster_001, L_fxcode, L_PR010, L_QCYN,L_QC006,L_QC100",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -193,7 +191,10 @@ const QC_A6000: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
+      fetchQuery(proccdQueryStr, setProccdListData);
     }
   }, [bizComponentData]);
 
@@ -315,9 +316,6 @@ const QC_A6000: React.FC = () => {
       "@p_work_type": paraDataDeleted.work_type,
       "@p_orgdiv": filters.orgdiv,
       "@p_location": "01",
-      // "@p_renum": detailFilters.renum,
-      // "@p_reseq": detailFilters.reseq,
-      // "@p_qcnum": detailFilters2.qcnum,
       "@p_qcdt": "",
       "@p_person": "",
       "@p_qcno": paraDataDeleted.qcno,
@@ -358,8 +356,12 @@ const QC_A6000: React.FC = () => {
     }
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows;
-      resetAllGrid();
+      const rows = data.tables[0].Rows.map((row: any) => {
+        return {
+          ...row,
+          qcdt: to_date2(row.qcdt),
+        };
+      });
 
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
@@ -378,10 +380,7 @@ const QC_A6000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      customOptionData !== null &&
-      isInitSearch === false 
-    ) {
+    if (customOptionData !== null && isInitSearch === false) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
@@ -463,7 +462,6 @@ const QC_A6000: React.FC = () => {
     const data = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
-   
   };
 
   const onCustWndClick = () => {
@@ -566,7 +564,7 @@ const QC_A6000: React.FC = () => {
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
- 
+
   const search = () => {
     try {
       if (
@@ -599,70 +597,55 @@ const QC_A6000: React.FC = () => {
     workType: "N",
     orgdiv: "01",
     location: "01",
-    renum: "",
-    reseq: 0,
-    qcnum: "",
-    qcdt: new Date(),
-    person: "admin",
-    qcno: "",
-    qcqty: 0,
-    badqty: 0,
-    strtime: "",
-    endtime: "",
-    qcdecision: "",
-    attdatnum: "",
-    remark: "",
-    itemcd: "",
+    badrenum: "",
     rowstatus_s: "",
-    qcseq_s: "",
-    stdnum_s: "",
-    stdrev_s: "",
-    stdseq_s: "",
-    qc_sort_s: "",
-    inspeccd_s: "",
-    qc_spec_s: "",
-    qcvalue1_s: "",
-    qcresult1_s: "",
+    renum_s: "",
+    reseq_s: "",
+    itemcd_s: "",
+    person_s: "",
+    lotnum_s: "",
+    badqty_s: "",
+    qcdecision: "",
+    qcdt_s: "",
+    qcnum_s: "",
+    badcd_s: "",
+    badnum_s: "",
+    badseq_s: "",
+    eyeqc_s: "",
+    chkqty_s: "",
+    remark_s: "",
     userid: userId,
     pc: pc,
   });
 
   const para: Iparameters = {
-    procedureName: "P_QC_A3000W_S",
+    procedureName: "P_QC_A6000W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": ParaData.orgdiv,
       "@p_location": ParaData.location,
-      "@p_renum": ParaData.renum,
-      "@p_reseq": ParaData.reseq,
-      "@p_qcnum": ParaData.qcnum,
-      "@p_qcdt": convertDateToStr(ParaData.qcdt),
-      "@p_person": ParaData.person,
-      "@p_qcno": ParaData.qcno,
-      "@p_qcqty": ParaData.qcqty,
-      "@p_badqty": ParaData.badqty,
-      "@p_strtime": ParaData.strtime,
-      "@p_endtime": ParaData.endtime,
-      "@p_qcdecision": ParaData.qcdecision,
-      "@p_remark": ParaData.remark,
-      "@p_attdatnum": ParaData.attdatnum,
-      "@p_itemcd": ParaData.itemcd,
-      "@p_rowstatus_s": ParaData.rowstatus_s,
-      "@p_qcseq_s": ParaData.qcseq_s,
-      "@p_stdnum_s": ParaData.stdnum_s,
-      "@p_stdrev_s": ParaData.stdrev_s,
-      "@p_stdseq_s": ParaData.stdseq_s,
-      "@p_qc_sort_s": ParaData.qc_sort_s,
-      "@p_inspeccd_s": ParaData.inspeccd_s,
-      "@p_qc_spec_s": ParaData.qcseq_s,
-      "@p_qcvalue1_s": ParaData.qcvalue1_s,
-      "@p_qcresult1_s": ParaData.qcresult1_s,
+      "@p_badrenum": ParaData.badrenum,
+      "@p_row_status_s": ParaData.rowstatus_s,
+      "@p_renum_s": ParaData.renum_s,
+      "@p_reseq_s": ParaData.reseq_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_person_s": ParaData.person_s,
+      "@p_lotnum_s": ParaData.lotnum_s,
+      "@p_badqty_s": ParaData.badqty_s,
+      "@p_qcdecision_s": ParaData.qcdecision,
+      "@p_qcdt_s": ParaData.qcdt_s,
+      "@p_qcnum_s": ParaData.qcnum_s,
+      "@p_badcd_s": ParaData.badcd_s,
+      "@p_badnum_s": ParaData.badnum_s,
+      "@p_badseq_s": ParaData.badseq_s,
+      "@p_eyeqc_s": ParaData.eyeqc_s,
+      "@p_chkqty_s": ParaData.chkqty_s,
+      "@p_remark_s": ParaData.remark_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "P_QC_A3000W",
-      "@p_company_code": "2207A046",
+      "@p_form_id": "P_QC_A6000W",
     },
   };
 
@@ -685,7 +668,7 @@ const QC_A6000: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.qcno != "") {
+    if (ParaData.qcdecision != "") {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
@@ -719,7 +702,12 @@ const QC_A6000: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "qcdecision" && field != "proddt" && field != "itemnm"&& field != "lotnum" && field != "insiz" && field != "proccd" && field != "qty"&& field != "prodemp"&& field != "itemcd") {
+    if (
+      field == "qcdt" ||
+      field == "qcdecision" ||
+      field == "person" ||
+      field == "badqty"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -767,34 +755,12 @@ const QC_A6000: React.FC = () => {
         cell={DateCell}
       />
     );
+    array.push(<GridColumn field={"itemnm"} title={"품목명"} width="150px" />);
+    array.push(<GridColumn field={"custnm"} title={"업체명"} width="150px" />);
     array.push(
-      <GridColumn
-        field={"itemnm"}
-        title={"품목명"}
-        width="150px"
-      />
+      <GridColumn field={"rcvcustnm"} title={"인수처"} width="150px" />
     );
-    array.push(
-      <GridColumn
-        field={"custnm"}
-        title={"업체명"}
-        width="150px"
-      />
-    );
-    array.push(
-      <GridColumn
-        field={"rcvcustnm"}
-        title={"인수처"}
-        width="150px"
-      />
-    );
-    array.push(
-      <GridColumn
-        field={"project"}
-        title={"공사명"}
-        width="150px"
-      />
-    );
+    array.push(<GridColumn field={"project"} title={"공사명"} width="150px" />);
     array.push(
       <GridColumn
         field={"extra_field1"}
@@ -819,13 +785,8 @@ const QC_A6000: React.FC = () => {
         cell={NumberCell}
       />
     );
-    array.push(
-      <GridColumn
-        field={"insiz"}
-        title={"규격"}
-        width="150px"
-      />
-    );
+    array.push(<GridColumn field={"insiz"} title={"규격"} width="150px" />);
+    array.push(<GridColumn field={"proccd"} title={"공정"} width="150px" />);
     array.push(
       <GridColumn
         field={"qty"}
@@ -834,26 +795,10 @@ const QC_A6000: React.FC = () => {
         cell={NumberCell}
       />
     );
+    array.push(<GridColumn field={"lotnum"} title={"LOT NO"} width="150px" />);
+    array.push(<GridColumn field={"prodemp"} title={"작업자"} width="120px" />);
     array.push(
-      <GridColumn
-        field={"lotnum"}
-        title={"LOT NO"}
-        width="150px"
-      />
-    );
-    array.push(
-      <GridColumn
-        field={"prodemp"}
-        title={"작업자"}
-        width="120px"
-      />
-    );
-    array.push(
-      <GridColumn
-        field={"itemcd"}
-        title={"품목코드"}
-        width="150px"
-      />
+      <GridColumn field={"itemcd"} title={"품목코드"} width="150px" />
     );
     return array;
   };
@@ -895,63 +840,95 @@ const QC_A6000: React.FC = () => {
     return array;
   };
 
-  // const onSaveClick = () => {
-  //   const data = mainDataResult.data.filter(
-  //     (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-  //   )[0];
-  //   let valid = true;
-  //   detailDataResult.data.map((item) => {
-  //     if (information.qcno == item.qcno) {
-  //       valid = false;
-  //     }
-  //   });
+  const onSaveClick = () => {
+    const data = mainDataResult.data.filter(
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+    try {
+      if (data.qcdecision == "") {
+        throw findMessage(messagesData, "QC_A6000W_002");
+      } else {
+        const dataItem = mainDataResult.data.filter((item: any) => {
+          return (
+            (item.rowstatus === "N" || item.rowstatus === "U") &&
+            item.rowstatus !== undefined
+          );
+        });
 
-  //   try {
-  //     if (valid != true && information.workType == "N") {
-  //       throw findMessage(messagesData, "QC_A3000W_003");
-  //     } else if (
-  //       convertDateToStr(information.qcdt).substring(0, 4) < "1997" ||
-  //       convertDateToStr(information.qcdt).substring(6, 8) > "31" ||
-  //       convertDateToStr(information.qcdt).substring(6, 8) < "01" ||
-  //       convertDateToStr(information.qcdt).substring(6, 8).length != 2
-  //     ) {
-  //       throw findMessage(messagesData, "QC_A3000W_006");
-  //     } else if (
-  //       information.person == null ||
-  //       information.person == "" ||
-  //       information.person == undefined
-  //     ) {
-  //       throw findMessage(messagesData, "QC_A3000W_004");
-  //     } else if (
-  //       information.qcno == null ||
-  //       information.qcno == "" ||
-  //       information.qcno == undefined
-  //     ) {
-  //       throw findMessage(messagesData, "QC_A3000W_005");
-  //     } else {
-  //       setParaData((prev) => ({
-  //         ...prev,
-  //         workType: information.workType,
-  //         renum: data.renum,
-  //         reseq: data.reseq,
-  //         qcnum: information.qcnum,
-  //         qcdt: information.qcdt,
-  //         person: information.person,
-  //         qcno: information.qcno,
-  //         qcqty: information.qcqty,
-  //         badqty: information.badqty,
-  //         strtime: information.strtime,
-  //         endtime: information.endtime,
-  //         qcdecision: information.qcdecision,
-  //         attdatnum: information.attdatnum,
-  //         remark: information.remark,
-  //         itemcd: data.itemcd,
-  //       }));
-  //     }
-  //   } catch (e) {
-  //     alert(e);
-  //   }
-  // };
+        let dataArr: TdataArr = {
+          rowstatus_s: [],
+          renum_s: [],
+          reseq_s: [],
+          itemcd_s: [],
+          person_s: [],
+          lotnum_s: [],
+          badqty_s: [],
+          qcdecision: [],
+          qcdt_s: [],
+          qcnum_s: [],
+          badcd_s: [],
+          badnum_s: [],
+          badseq_s: [],
+          eyeqc_s: [],
+          chkqty_s: [],
+          remark_s: [],
+        };
+        dataItem.forEach((item: any, idx: number) => {
+          const {
+            renum = "",
+            rowstatus = "",
+            reseq = "",
+            itemcd = "",
+            prodemp = "",
+            lotnum = "",
+            badqty = "",
+            qcdecision = "",
+            qcdt = "",
+            qcnum = "",
+            eyeqc = "",
+            chkqty = "",
+            remark = "",
+          } = item;
+          dataArr.rowstatus_s.push(rowstatus);
+          dataArr.renum_s.push(renum);
+          dataArr.reseq_s.push(reseq);
+          dataArr.itemcd_s.push(itemcd);
+          dataArr.person_s.push(prodemp);
+          dataArr.lotnum_s.push(lotnum);
+          dataArr.badqty_s.push(badqty);
+          dataArr.qcdecision.push(qcdecision);
+          dataArr.qcdt_s.push(convertDateToStr(qcdt));
+          dataArr.qcnum_s.push(qcnum);
+          dataArr.eyeqc_s.push(eyeqc == undefined ? "" : eyeqc);
+          dataArr.chkqty_s.push(chkqty == undefined ? "" : chkqty);
+          dataArr.remark_s.push(remark == undefined ? "" : remark);
+        });
+
+        setParaData((prev) => ({
+          ...prev,
+          badrenum: dataArr.renum_s.join("|"),
+          rowstatus_s: dataArr.rowstatus_s.join("|"),
+          renum_s: dataArr.renum_s.join("|"),
+          reseq_s: dataArr.reseq_s.join("|"),
+          itemcd_s: dataArr.itemcd_s.join("|"),
+          person_s: dataArr.person_s.join("|"),
+          lotnum_s: dataArr.lotnum_s.join("|"),
+          badqty_s: dataArr.badqty_s.join("|"),
+          qcdecision: dataArr.qcdecision.join("|"),
+          qcdt_s: dataArr.qcdt_s.join("|"),
+          qcnum_s: dataArr.qcnum_s.join("|"),
+          badcd_s: "",
+          badnum_s: "",
+          badseq_s: "",
+          eyeqc_s: dataArr.eyeqc_s.join("|"),
+          chkqty_s: dataArr.chkqty_s.join("|"),
+          remark_s: dataArr.remark_s.join("|"),
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
 
   return (
     <>
@@ -1030,30 +1007,29 @@ const QC_A6000: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>기본정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              ></Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "80vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                prodemp: usersListData.find(
-                  (item: any) => item.user_id === row.prodemp
-                )?.user_name,
-                prodmac: prodmacListData.find(
-                  (item: any) => item.fxcode === row.prodmac
-                )?.fxfull,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
-                )?.code_name,
-                qcyn: qcynListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 rowstatus:
-                row.rowstatus == null ||
-                row.rowstatus == "" ||
-                row.rowstatus == undefined
-                  ? " "
-                  : row.rowstatus,
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1084,11 +1060,9 @@ const QC_A6000: React.FC = () => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-                            <GridColumn field="rowstatus" title=" " width="50px" />
-                             <GridColumn title="생산실적정보">{createColumn()}</GridColumn>
-                  <GridColumn title="검사정보">
-                    {createColumn2()}
-                  </GridColumn>
+            <GridColumn field="rowstatus" title=" " width="50px" />
+            <GridColumn title="생산실적정보">{createColumn()}</GridColumn>
+            <GridColumn title="검사정보">{createColumn2()}</GridColumn>
           </Grid>
         </ExcelExport>
       </GridContainer>

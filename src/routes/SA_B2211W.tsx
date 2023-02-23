@@ -88,7 +88,7 @@ const numberField: string[] = [
   "qty12",
 ];
 const dateField = ["recdt", "time"];
-const DATA_ITEM_KEY = "num";
+const DATA_ITEM_KEY = "custcd";
 
 const SA_B2211W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);

@@ -1030,7 +1030,7 @@ const SA_A5000: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-
+    
     setParaData((prev) => ({
       ...prev,
       location: filter.location,
@@ -1045,6 +1045,7 @@ const SA_A5000: React.FC = () => {
       person: filter.person,
       custcd: filter.custcd,
       custnm: filter.custnm,
+      recdt: filter.recdt,
       rcvcustcd: filter.rcvcustcd,
       rcvcustnm: filter.rcvcustnm,
       attdatnum: filter.attdatnum,
@@ -1056,7 +1057,7 @@ const SA_A5000: React.FC = () => {
       serviceid: "2207A046",
       files: filter.files,
     }));
-
+    if (dataItem.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       seq2_s: [],
