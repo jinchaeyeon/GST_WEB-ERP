@@ -26,7 +26,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 600,
+    width: 350,
     height: 520,
   });
 
@@ -208,7 +208,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
           notifyBeforePeriodDays: initialVal.notifyBeforePeriodDays,
         }}
         render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true}>
+          <FormElement horizontal={true} className="sys-opt-wnd-form-elem">
             <fieldset className={"k-form-fieldset"}>
               <button
                 id="valueChanged"
