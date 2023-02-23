@@ -32,7 +32,12 @@ import {
   TopTitle,
   Wrapper,
 } from "../CommonStyled";
-import { getBrowser, getToday, UseGetIp } from "./CommonFunction";
+import {
+  getBrowser,
+  getToday,
+  resetLocalStorage,
+  UseGetIp,
+} from "./CommonFunction";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -302,9 +307,7 @@ const PanelBarNavContainer = (props: any) => {
 
   const logout = useCallback(() => {
     fetchLogout();
-
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    resetLocalStorage();
     window.location.href = "/";
   }, []);
 

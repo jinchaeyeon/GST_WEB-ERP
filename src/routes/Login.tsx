@@ -11,12 +11,6 @@ import { UseGetIp } from "../components/CommonFunction";
 import { isLoading } from "../store/atoms";
 import Loading from "../components/Loading";
 
-const allowedIpAddress = {
-  "gst-busan": "222.96.157.66",
-  "gst-seoul": "125.141.105.80",
-  "gst-vpn": "10.212.134.206",
-};
-
 interface IFormData {
   langCode: string;
   companyCode: string | { company_code: string };
@@ -30,7 +24,7 @@ const Login: React.FC = () => {
   const setLoginResult = useSetRecoilState(loginResultState);
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
-  const [isAllowedIpAddress, setIsAllowedIpAddress] = useState(false);
+  const [ifShowCompanyList, setIfShowCompanyList] = useState(false);
   const [ip, setIp] = useState("");
   UseGetIp(setIp);
 
@@ -75,6 +69,7 @@ const Login: React.FC = () => {
           companyCode,
           serviceName,
           customerName,
+          defaultCulture,
           loginKey,
           passwordExpirationInfo,
         } = response;
@@ -83,7 +78,7 @@ const Login: React.FC = () => {
         localStorage.setItem("refreshToken", refreshToken);
 
         setLoginResult({
-          langCode: formData.langCode,
+          langCode: defaultCulture,
           userId,
           userName,
           role,
@@ -107,12 +102,8 @@ const Login: React.FC = () => {
   );
 
   const companyCodeKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (
-      e.ctrlKey &&
-      e.key === "'" &&
-      Object.values(allowedIpAddress).includes(ip)
-    ) {
-      setIsAllowedIpAddress((prev) => !prev);
+    if (e.ctrlKey && e.key === "'") {
+      setIfShowCompanyList((prev) => !prev);
     }
   };
 
@@ -128,7 +119,7 @@ const Login: React.FC = () => {
                 label={"언어설정"}
                 component={FormInput}
               />
-              {isAllowedIpAddress ? (
+              {ifShowCompanyList ? (
                 <Field
                   name={"companyCode"}
                   label={"업체코드"}
