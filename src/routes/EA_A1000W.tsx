@@ -332,7 +332,6 @@ const EA_A1000: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
-          rowstatus: "U",
         };
       });
 
@@ -648,7 +647,8 @@ const EA_A1000: React.FC = () => {
   const onAddClick = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     if (rows.length == 0) {
-      alert("반영할 결재자가 선택되지 않았습니다.");
+        alert("반영할 결재자가 선택되지 않았습니다.");
+        return false;
     } else {
       let isValid = true;
       rows.map((item) => {
@@ -708,7 +708,8 @@ const EA_A1000: React.FC = () => {
   const onAddClick2 = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     if (rows.length == 0) {
-      alert("반영할 참조자가 선택되지 않았습니다.");
+        alert("반영할 참조자가 선택되지 않았습니다.");
+        return false;
     } else {
       let isValid = true;
       rows.map((item) => {
@@ -768,7 +769,8 @@ const EA_A1000: React.FC = () => {
   const onAddClick3 = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     if (rows.length == 0) {
-      alert("반영할 합의자가 선택되지 않았습니다.");
+        alert("반영할 합의자가 선택되지 않았습니다.");
+        return false;
     } else {
       let isValid = true;
       rows.map((item) => {
@@ -828,7 +830,8 @@ const EA_A1000: React.FC = () => {
   const onAddClick4 = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     if (rows.length == 0) {
-      alert("반영할 시행자가 선택되지 않았습니다.");
+        alert("반영할 시행자가 선택되지 않았습니다.");
+        return false;
     } else {
       let isValid = true;
       rows.map((item) => {
@@ -940,11 +943,13 @@ const EA_A1000: React.FC = () => {
         if (mainDataResult.data[mainDataResult.total - i].appseq == 0) {
           alert("결재순서를 입력해주세요.");
           isValid = false;
+          return false;
         } else if (
           mainDataResult.data[mainDataResult.total - i].appline == ""
         ) {
           alert("결재라인을 선택해주세요.");
           isValid = false;
+          return false;
         }
       }
     }
@@ -1551,7 +1556,7 @@ const EA_A1000: React.FC = () => {
                   appgb: appgbListData.find(
                     (item: any) => item.sub_code === row.appgb
                   )?.code_name,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1584,7 +1589,7 @@ const EA_A1000: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn field="rowstatus" title="상태" width="50px" />
+              <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList2"].map(
                   (item: any, idx: number) =>
@@ -1651,7 +1656,7 @@ const EA_A1000: React.FC = () => {
                   dptcd: dptcdListData.find(
                     (item: any) => item.dptcd === row.dptcd
                   )?.dptnm,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
                   [SELECTED_FIELD]: selected3State[idGetter(row)],
                 })),
                 mainData3State
@@ -1684,7 +1689,7 @@ const EA_A1000: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn field="rowstatus" title="상태" width="50px" />
+              <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList3"].map(
                   (item: any, idx: number) =>
@@ -1730,7 +1735,7 @@ const EA_A1000: React.FC = () => {
                   dptcd: dptcdListData.find(
                     (item: any) => item.dptcd === row.dptcd
                   )?.dptnm,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
                   [SELECTED_FIELD]: selected2State[idGetter(row)],
                 })),
                 mainData2State
@@ -1763,7 +1768,7 @@ const EA_A1000: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn field="rowstatus" title="상태" width="50px" />
+              <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList4"].map(
                   (item: any, idx: number) =>

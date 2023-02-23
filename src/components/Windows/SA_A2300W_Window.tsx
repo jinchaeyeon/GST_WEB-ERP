@@ -421,7 +421,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
-          rowstatus: "U",
         };
       });
       if (totalRowCnt > 0) {
@@ -1006,7 +1005,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
-                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -1037,7 +1036,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-            <GridColumn field="rowstatus" title="상태" width="50px" />
+            <GridColumn field="rowstatus" title=" " width="50px" />
             <GridColumn
               field="itemcd"
               title="품목코드"

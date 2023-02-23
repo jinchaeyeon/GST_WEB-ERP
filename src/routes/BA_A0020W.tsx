@@ -527,7 +527,6 @@ const BA_A0020: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        rowstatus: "U",
       }));
       setSubDataResult((prev) => {
         return {
@@ -559,7 +558,6 @@ const BA_A0020: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        rowstatus: "U",
         yyyy: item.yyyy < "1999" ? null : item.yyyy,
       }));
       setSubDataResult2((prev) => {
@@ -3147,7 +3145,7 @@ const BA_A0020: React.FC = () => {
                         row.rowstatus == null ||
                         row.rowstatus == "" ||
                         row.rowstatus == undefined
-                          ? "U"
+                          ? ""
                           : row.rowstatus,
                       [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                     })),
@@ -3179,7 +3177,7 @@ const BA_A0020: React.FC = () => {
                   rowRender={customRowRender}
                   editField={EDIT_FIELD}
                 >
-                  <GridColumn field="rowstatus" title="상태" width="50px" />
+                  <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList2"].map(
                       (item: any, idx: number) =>
@@ -3257,7 +3255,7 @@ const BA_A0020: React.FC = () => {
                         row.rowstatus == null ||
                         row.rowstatus == "" ||
                         row.rowstatus == undefined
-                          ? "U"
+                          ? ""
                           : row.rowstatus,
                       [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
                     })),
@@ -3289,7 +3287,7 @@ const BA_A0020: React.FC = () => {
                   rowRender={customRowRender2}
                   editField={EDIT_FIELD}
                 >
-                  <GridColumn field="rowstatus" title="상태" width="50px" />
+                  <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList3"].map(
                       (item: any, idx: number) =>

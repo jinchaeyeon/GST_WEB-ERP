@@ -317,7 +317,6 @@ const BA_A0080: React.FC = () => {
       const rows = data.tables[1].Rows.map((row: any) => {
         return {
           ...row,
-          rowstatus: "U",
         };
       });
 
@@ -668,8 +667,7 @@ const BA_A0080: React.FC = () => {
       field == "unp" ||
       field == "amtunit" ||
       field == "remark" ||
-      (field == "recdt" && datas.rowstatus == "N") ||
-      field != "rowstatus"
+      (field == "recdt" && datas.rowstatus == "N")
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -1264,7 +1262,7 @@ const BA_A0080: React.FC = () => {
                   itemlvl3: itemlvl3ListData.find(
                     (item: any) => item.sub_code === row.itemlvl3
                   )?.code_name,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1295,7 +1293,7 @@ const BA_A0080: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn field="rowstatus" title="상태" width="50px" />
+              <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList"].map(
                   (item: any, idx: number) =>

@@ -407,7 +407,6 @@ const BA_A0050: React.FC = () => {
       const rows = data.tables[0].Rows;
       const row = rows.map((item: any) => ({
         ...item,
-        rowstatus: "U",
       }));
 
       if (totalRowCnt > 0) {
@@ -1430,7 +1429,7 @@ const BA_A0050: React.FC = () => {
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
                   [SELECTED_FIELD]: selectedsubDataState[idGetter3(row)],
                 })),
                 subDataState
@@ -1461,7 +1460,7 @@ const BA_A0050: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn field="rowstatus" title="상태" width="50px" />
+              <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList3"].map(
                   (item: any, idx: number) =>

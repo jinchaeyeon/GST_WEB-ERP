@@ -364,7 +364,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
-          rowstatus: "U",
         };
       });
       if (totalRowCnt > 0) {
@@ -950,7 +949,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                   proccd: proccdListData.find(
                       (item: any) => item.sub_code === row.proccd
                     )?.code_name,
-                    rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+                    rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -981,27 +980,27 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-            <GridColumn field="rowstatus" title="상태" width="50px" />
+            <GridColumn field="rowstatus" title=" " width="50px" />
             <GridColumn
               field="proccd"
               title="공정"
-              width="250px"
+              width="150px"
               footerCell={mainTotalFooterCell}
             />
-            <GridColumn field="itemcd" title="품목코드" width="250px" />
-            <GridColumn field="itemnm" title="품목명" width="200px" />
-            <GridColumn field="insiz" title="규격" width="200px" />
+            <GridColumn field="itemcd" title="품목코드" width="150px" />
+            <GridColumn field="itemnm" title="품목명" width="150px" />
+            <GridColumn field="insiz" title="규격" width="120px" />
             <GridColumn
               field="qty"
               title="수량"
-              width="180px"
+              width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="qtyunit"
               title="수량단위"
-              width="180px"
+              width="120px"
               cell={CustomComboBoxCell}
             />
             <GridColumn
@@ -1022,7 +1021,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             <GridColumn
               field="unpcalmeth"
               title="계산방법"
-              width="200px"
+              width="120px"
               cell={CustomComboBoxCell}
             />
             <GridColumn
@@ -1059,7 +1058,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
-            <GridColumn field="remark" title="비고" width="400px" />
+            <GridColumn field="remark" title="비고" width="300px" />
           </Grid>
         </GridContainer>
         <BottomContainer>

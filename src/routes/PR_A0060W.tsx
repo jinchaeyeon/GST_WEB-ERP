@@ -356,7 +356,7 @@ const PR_A0060: React.FC = () => {
     viewyn: "",
     insert_form_id: "PR_A0060W",
     update_form_id: "",
-    rowstatus_s: "U",
+    rowstatus_s: "N",
     fxseq_s: 0,
     fxdt_s: new Date(),
     custcd_s: "", //한글
@@ -510,7 +510,6 @@ const PR_A0060: React.FC = () => {
       const row = rows.map((item: any) => ({
         ...item,
         inEdit: "fxdt",
-        rowstatus: "U",
       }));
       if (totalRowCnt > 0) {
         setSubDataResult((prev) => {
@@ -2395,7 +2394,7 @@ const PR_A0060: React.FC = () => {
                 subDataResult.data.map((row) => ({
                   ...row,
                   fxdt: new Date(dateformat(row.fxdt)),
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "U" : row.rowstatus,
+                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
                   [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                 })),
                 subDataState
@@ -2426,7 +2425,7 @@ const PR_A0060: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-<GridColumn field="rowstatus" title="상태" width="50px" />
+<GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList2"].map(
                   (item: any, idx: number) =>

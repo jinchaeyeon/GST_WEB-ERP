@@ -507,7 +507,6 @@ const BA_A0040: React.FC = () => {
       const row = rows.map((item: any) => ({
         ...item,
         inEdit: "recdt",
-        rowstatus: "U",
       }));
       if (totalRowCnt > 0) {
         setSubData2Result((prev) => {
@@ -2031,7 +2030,7 @@ const BA_A0040: React.FC = () => {
                       row.rowstatus == null ||
                       row.rowstatus == "" ||
                       row.rowstatus == undefined
-                        ? "U"
+                        ? ""
                         : row.rowstatus,
                     [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
                   })),
@@ -2063,7 +2062,7 @@ const BA_A0040: React.FC = () => {
                 rowRender={customRowRender}
                 editField={EDIT_FIELD}
               >
-                <GridColumn field="rowstatus" title="상태" width="50px" />
+                <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList2"].map(
                     (item: any, idx: number) =>
