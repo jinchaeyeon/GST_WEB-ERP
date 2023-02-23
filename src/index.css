@@ -49,6 +49,17 @@ div.k-animation-container {
 .visible-mobile-only {
   display: none;
 }
+
+/*시스템 옵션*/
+.sys-opt-wnd-form-elem .k-form-field > .k-label,
+.sys-opt-wnd-form-elem .k-form-field > kendo-label,
+.sys-opt-wnd-form-elem .k-form-field > .k-form-label {
+  width: 70% !important;
+}
+.sys-opt-wnd-form-elem .k-form-field-wrap {
+  max-width: calc(30% - 10px) !important;
+}
+
 /* 모바일 결재문서 숨김 처리 */
 @media (max-width: 768px) {
   .visible-mobile-only {
