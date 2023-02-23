@@ -75,6 +75,7 @@ const Login: React.FC = () => {
           companyCode,
           serviceName,
           customerName,
+          defaultCulture,
           loginKey,
           passwordExpirationInfo,
         } = response;
@@ -83,7 +84,7 @@ const Login: React.FC = () => {
         localStorage.setItem("refreshToken", refreshToken);
 
         setLoginResult({
-          langCode: formData.langCode,
+          langCode: defaultCulture,
           userId,
           userName,
           role,

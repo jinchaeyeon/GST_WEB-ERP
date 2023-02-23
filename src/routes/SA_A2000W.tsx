@@ -43,6 +43,7 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
+  useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -696,8 +697,10 @@ const SA_B2000: React.FC = () => {
     setDetailWindowVisible(true);
   };
 
+  const questionToDelete = useSysMessage("QuestionToDelete");
+
   const onDeleteClick = (e: any) => {
-    if (!window.confirm(findMessage(messagesData, "SA_A2000W_001"))) {
+    if (!window.confirm(questionToDelete)) {
       return false;
     }
 

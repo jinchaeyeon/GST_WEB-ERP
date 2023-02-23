@@ -1,13 +1,23 @@
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, loginResultState } from "../store/atoms";
 import { COM_CODE_DEFAULT_VALUE } from "./CommonString";
 import { detect } from "detect-browser";
 import { bytesToBase64 } from "byte-base64";
-import { TSessionItemCode } from "../store/types";
+import {
+  TSessionItemCode,
+  TSysCaptionKey,
+  TSysMessageKey,
+} from "../store/types";
 import calculateSize from "calculate-size";
+import captionEnUs from "../store/cultures/Captions.en-US.json";
+import captionKoKr from "../store/cultures/Captions.ko-KR.json";
+import captionJaJp from "../store/cultures/Captions.ja-JP.json";
+import captionZhCn from "../store/cultures/Captions.zh-CN.json";
+import messageEnUs from "../store/cultures/Messages.en-US.json";
+import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
@@ -803,4 +813,44 @@ export const calculateGridColumnWidth = (
     }
   });
   return maxWidth;
+};
+
+// key 입력 시 언어 코드에 맞는 메시지 반환
+export const useSysMessage = (key: TSysMessageKey) => {
+  const [loginResult] = useRecoilState(loginResultState);
+
+  if (loginResult) {
+    if (loginResult.langCode === "ko-KR") {
+      return messageKoKr[key];
+    } else {
+      return messageEnUs[key];
+    }
+  }
+
+  console.log("[useSysMessage 오류발생] loginResult를 찾을 수 없습니다.");
+  return "";
+};
+
+// key 입력 시 언어 코드에 맞는 캡션 반환
+export const useSysCaption = (key: TSysCaptionKey) => {
+  const [loginResult] = useRecoilState(loginResultState);
+
+  if (loginResult) {
+    if (loginResult.langCode === "ko-KR") {
+      return captionKoKr[key];
+    } else {
+      return captionEnUs[key];
+    }
+  }
+  console.log("[useSysCaption 오류발생] loginResult를 찾을 수 없습니다.");
+  return "";
+};
+
+export const resetLocalStorage = () => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("passwordExpirationInfo");
+  localStorage.removeItem("loginResult");
+  localStorage.removeItem("menus");
+  localStorage.removeItem("sessionItem");
 };

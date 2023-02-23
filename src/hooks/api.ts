@@ -1,6 +1,7 @@
 import { useRecoilState } from "recoil";
 import { loginResultState } from "../store/atoms";
 import axios from "axios";
+import { resetLocalStorage } from "../components/CommonFunction";
 
 let BASE_URL = process.env.REACT_APP_API_URL;
 const cachios = require("cachios");
@@ -247,8 +248,7 @@ axiosInstance.interceptors.response.use(
           onTokenRefreshed(token);
         }).catch((err: any) => {
           // access token을 받아오지 못하는 오류 발생시 logout 처리
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+          resetLocalStorage();
           window.location.href = "/";
 
           return false;
