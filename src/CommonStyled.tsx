@@ -389,6 +389,13 @@ export const ButtonInInput = styled.div`
   top: 5px;
   right: 5px;
 `;
+
+export const ButtonInGridInput = styled.div`
+  position: absolute;
+  top: 3px;
+  right: 12px;
+`;
+
 export const ButtonInFieldWrap = styled.div`
   position: relative;
 `;

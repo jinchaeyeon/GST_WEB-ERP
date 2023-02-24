@@ -32,9 +32,10 @@ import {
   FormBox,
   FormBoxWrap,
   GridContainerWrap,
+  ButtonInGridInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -89,9 +90,9 @@ const NumberField = ["unp"];
 
 const CustomComboField = ["itemacnt", "amtunit"];
 
-const editableField = ["recdt"];
+const editableField = ["recdt", "itemcd", "unp", "amtunit", "remark"];
 
-const requiredField = ["unp", "amtunit"];
+const requiredField = ["itemcd", "unp", "amtunit"];
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
@@ -110,6 +111,61 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   ) : (
     <td></td>
   );
+};
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={() => {
+            alert(1);
+          }}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return render === undefined
+    ? null
+    : render?.call(undefined, defaultRendering, props);
 };
 
 const BA_A0080: React.FC = () => {
@@ -662,34 +718,29 @@ const BA_A0080: React.FC = () => {
     const datas = mainDataResult.data.filter(
       (item) => item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
     )[0];
-    if (
-      field == "itemcd" ||
-      field == "unp" ||
-      field == "amtunit" ||
-      field == "remark" ||
-      (field == "recdt" && datas.rowstatus == "N")
-    ) {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
-              [EDIT_FIELD]: field,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-      if (field) setEditedField(field);
-      setIfSelectFirstRow(false);
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+    if (field === "recdt" && datas.rowstatus !== "N") {
+      return false;
     }
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: field,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    if (field) setEditedField(field);
+    setIfSelectFirstRow(false);
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   };
 
   const exitEdit = () => {
@@ -981,46 +1032,6 @@ const BA_A0080: React.FC = () => {
       amtunit: dataArr.amtunit.join("|"),
     }));
   };
-  const [datas, setdatas] = useState({
-    itemcd: "",
-  });
-  const ColumnCommandCell = (props: GridCellProps) => {
-    const selectedData = props.dataItem;
-    return selectedData.rowstatus == "U" ? (
-      <td className="k-command-cell">
-        {selectedData.itemcd}
-        <Button
-          onClick={onItemWndClick2}
-          icon="more-horizontal"
-          fillMode="flat"
-        />
-      </td>
-    ) : (
-      <td className="k-command-cell">
-        {/* <Input
-        name="itemcd"
-        type="text"
-        value={datas.itemcd}
-        onChange={setItems}
-        style={{width : "70%"}}
-      /> */}
-        <Button
-          name="itemcd"
-          onClick={onItemWndClick2}
-          icon="more-horizontal"
-          fillMode="flat"
-        />
-      </td>
-    );
-  };
-
-  const setItems = (e: any) => {
-    const { value, name } = e.target;
-    setdatas((prev: any) => ({
-      ...prev,
-      itemcd: value,
-    }));
-  };
 
   const fetchTodoGridSaved = async () => {
     let data: any;
@@ -1262,7 +1273,12 @@ const BA_A0080: React.FC = () => {
                   itemlvl3: itemlvl3ListData.find(
                     (item: any) => item.sub_code === row.itemlvl3
                   )?.code_name,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1288,12 +1304,18 @@ const BA_A0080: React.FC = () => {
               reorderable={true}
               //컬럼너비조정
               resizable={true}
+              //incell 수정 기능
               onItemChange={onMainItemChange}
               cellRender={customCellRender}
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn
+                field="rowstatus"
+                title=" "
+                width="50px"
+                editable={false}
+              />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList"].map(
                   (item: any, idx: number) =>
@@ -1313,15 +1335,14 @@ const BA_A0080: React.FC = () => {
                             ? NumberCell
                             : CommandField.includes(item.fieldName)
                             ? ColumnCommandCell
-                            : undefined
+                            : NameCell
                         }
                         className={
                           requiredField.includes(item.fieldName)
                             ? "required"
+                            : !editableField.includes(item.fieldName)
+                            ? "read-only"
                             : undefined
-                          // editableField.includes(item.fieldName)
-                          // ? "editable-new-only"
-                          // :
                         }
                         headerCell={
                           requiredField.includes(item.fieldName)
