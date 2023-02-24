@@ -2309,10 +2309,6 @@ const BA_A0020: React.FC = () => {
         throw findMessage(messagesData, "BA_A0020W_005");
       }
 
-      if (!infomation.rtxisuyn) {
-        throw findMessage(messagesData, "BA_A0020W_006");
-      }
-
       if (
         convertDateToStr(infomation.estbdt).length != 8 ||
         convertDateToStr(infomation.estbdt).substring(0, 4) >

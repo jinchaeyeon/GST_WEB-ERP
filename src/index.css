@@ -251,6 +251,70 @@ body {
   clear: both;
 }
 
+/**************** 직접입고 ********************/
+#BarcodePrint table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#BarcodePrint td,
+#BarcodePrint th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#BarcodePrint .title_container {
+  display: flex;
+  justify-content: space-between;
+}
+#BarcodePrint .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 3em;
+  width: 100%;
+}
+#BarcodePrint table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#BarcodePrint table.tb_approval th {
+  height: 0.7cm;
+}
+
+#BarcodePrint table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#BarcodePrint table.main_tb .center {
+  text-align: center;
+}
+#BarcodePrint table.main_tb .number {
+  text-align: right;
+}
+
+#BarcodePrint table.main_tb th,
+#BarcodePrint table.main_tb td {
+  padding: 0 0.1cm;
+  line-height: 0.6cm;
+  height: 1.2cm;
+  word-wrap: break-word;
+  font-size: 0.85em;
+}
+
+#BarcodePrint .right {
+  float: right;
+  clear: both;
+}
 /**************** 근태허가신청 ****************/
 
 #AbsenceRequest table {

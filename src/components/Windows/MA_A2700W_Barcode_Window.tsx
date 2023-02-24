@@ -80,7 +80,7 @@ const CopyWindow = ({ setVisible, data }: IWindow) => {
             />
           </ButtonContainer>
           <div
-            id="WorkDailyReport"
+            id="BarcodePrint"
             className="printable barcode"
             ref={componentRef}
           >

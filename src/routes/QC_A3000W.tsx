@@ -532,7 +532,7 @@ const QC_A3000: React.FC = () => {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       resetAllGrid();
-
+  
       if (totalRowCnt > 0) {
         setInformation((prev) => ({
           ...prev,
@@ -571,7 +571,7 @@ const QC_A3000: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
-
+      
       if (totalRowCnt > 0) {
         setInformation((prev) => ({
           ...prev,
@@ -700,10 +700,10 @@ const QC_A3000: React.FC = () => {
         }));
         setInformation((prev) => ({
           ...prev,
-          attdatnum: firstRowData.attdatnum,
-          badqty: firstRowData.badqty,
+          attdatnum: firstRowData.attdatnum== undefined ? "" : firstRowData.attdatnum,
+          badqty: firstRowData.badqty== undefined ? 0 : firstRowData.badqty,
           endtime: firstRowData.endtime,
-          files: firstRowData.files,
+          files: firstRowData.files== undefined ? "" : firstRowData.files,
           person: firstRowData.person,
           qcdecision: firstRowData.qcdecision,
           qcdt:
@@ -712,8 +712,8 @@ const QC_A3000: React.FC = () => {
               : to_date2(firstRowData.qcdt),
           qcno: firstRowData.qcno,
           qcnum: firstRowData.qcnum,
-          qcqty: firstRowData.qcqty,
-          remark: firstRowData.remark,
+          qcqty: firstRowData.qcqty== undefined ? 0 : firstRowData.qcqty,
+          remark: firstRowData.remark == undefined ? "" : firstRowData.remark,
           strtime: firstRowData.strtime,
         }));
         setIfSelectFirstRow(true);
@@ -754,7 +754,7 @@ const QC_A3000: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    console.log(selectedRowData)
     setDetailFilters((prev) => ({
       ...prev,
       itemcd: selectedRowData.itemcd,
@@ -775,24 +775,29 @@ const QC_A3000: React.FC = () => {
       workType: "U",
       itemcd: selectedRowData.itemcd,
       itemnm: selectedRowData.itemnm,
-      attdatnum: selectedRowData.attdatnum,
-      badqty: selectedRowData.badqty== "" ? 0 : selectedRowData.badqty,
+      attdatnum: selectedRowData.attdatnum == undefined
+      ? "": selectedRowData.attdatnum,
+      badqty: selectedRowData.badqty== undefined ? 0 : selectedRowData.badqty,
       endtime: selectedRowData.endtime == "" || selectedRowData.endtime == undefined
-      ? ""
+      ? convertDateToStrWithTime2(new Date())
       : convertDateToStrWithTime2(selectedRowData.endtime),
-      files: selectedRowData.files,
+      files: selectedRowData.files == undefined
+      ? "": selectedRowData.files,
       person: user == undefined ? "" : user,
-      qcdecision: selectedRowData.qcdecision,
+      qcdecision: selectedRowData.qcdecision == undefined
+      ? "": selectedRowData.qcdecision,
       qcdt:
         selectedRowData.qcdt == "" || selectedRowData.qcdt == undefined
           ? new Date()
           : to_date2(selectedRowData.qcdt),
       qcno: qcno == undefined ? "" : qcno,
-      qcnum: selectedRowData.qcnum,
-      qcqty: selectedRowData.qcqty == "" ? 0 : selectedRowData.qcqty,
-      remark: selectedRowData.remark,
+      qcnum: selectedRowData.qcnum == undefined
+      ? "": selectedRowData.qcnum,
+      qcqty: selectedRowData.qcqty == undefined ? 0 : selectedRowData.qcqty,
+      remark: selectedRowData.remark == undefined
+      ? "": selectedRowData.remark,
       strtime: selectedRowData.strtime == "" || selectedRowData.strtime == undefined
-      ? ""
+      ? convertDateToStrWithTime2(new Date())
       : convertDateToStrWithTime2(selectedRowData.strtime),
     }));
   };
@@ -1365,17 +1370,17 @@ const QC_A3000: React.FC = () => {
           workType: information.workType,
           renum: data.renum,
           reseq: data.reseq,
-          qcnum: information.qcnum,
+          qcnum: information.qcnum == undefined ? "": information.qcnum,
           qcdt: information.qcdt,
           person: information.person,
           qcno: information.qcno,
-          qcqty: information.qcqty,
-          badqty: information.badqty,
+          qcqty: information.qcqty == undefined ? 0 : information.qcqty,
+          badqty: information.badqty== undefined ? 0 : information.badqty,
           strtime: information.strtime,
           endtime: information.endtime,
-          qcdecision: information.qcdecision,
-          attdatnum: information.attdatnum,
-          remark: information.remark,
+          qcdecision: information.qcdecision == undefined ? "" : information.qcdecision,
+          attdatnum: information.attdatnum == undefined ? "" : information.attdatnum,
+          remark: information.remark == undefined ? "" : information.remark,
           itemcd: data.itemcd,
         }));
       }
