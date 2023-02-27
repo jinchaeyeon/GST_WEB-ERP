@@ -17,6 +17,7 @@ import { TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 import CopyWindow2 from "./MA_A2500W_Order_Window";
 import { useApi } from "../../hooks/api";
 import {
@@ -42,7 +43,7 @@ import {
   UseMessages,
   getQueryFromBizComponent,
   UseParaPc,
-  to_date2,
+  toDate,
   convertDateToStr,
   getGridItemChangedData,
   dateformat,
@@ -64,7 +65,7 @@ import { FormComboBoxCell, FormComboBox } from "../Editors";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import { NumberInput } from "adaptivecards";
 import RequiredHeader from "../RequiredHeader";
-import CenterCell from "../Cells/CenterCell";
+
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -244,12 +245,56 @@ const CopyWindow = ({
     compclass: string;
     ceonm: string;
   }
-
+  interface IItemData {
+    itemcd: string;
+    itemno: string;
+    itemnm: string;
+    insiz: string;
+    model: string;
+    itemacnt: string;
+    itemacntnm: string;
+    bnatur: string;
+    spec: string;
+    invunit: string;
+    invunitnm: string;
+    unitwgt: string;
+    wgtunit: string;
+    wgtunitnm: string;
+    maker: string;
+    dwgno: string;
+    remark: string;
+    itemlvl1: string;
+    itemlvl2: string;
+    itemlvl3: string;
+    extra_field1: string;
+    extra_field2: string;
+    extra_field7: string;
+    extra_field6: string;
+    extra_field8: string;
+    packingsiz: string;
+    unitqty: string;
+    color: string;
+    gubun: string;
+    qcyn: string;
+    outside: string;
+    itemthick: string;
+    itemlvl4: string;
+    itemlvl5: string;
+    custitemnm: string;
+  }
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
       ...prev,
       custcd: data.custcd,
       custnm: data.custnm,
+    }));
+  };
+
+  const setItemData = (data: IItemData) => {
+    setFilters((prev) => ({
+      ...prev,
+      itemcd: data.itemcd,
+      itemnm: data.itemnm,
     }));
   };
 
@@ -310,6 +355,7 @@ const CopyWindow = ({
           ...row,
         };
       });
+
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
@@ -344,7 +390,7 @@ const CopyWindow = ({
         ...prev,
         mngnum: data.mngnum,
         stdrev: data.stdrev,
-        recdt: to_date2(data.recdt),
+        recdt: toDate(data.recdt),
         location: data.location,
         itemcd: data.itemcd,
         itemnm: data.itemnm,
@@ -491,9 +537,23 @@ const CopyWindow = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
+
+    for (var i = 0; i < mainDataResult.data.length; i++) {
+      for (var j = i + 1; j < mainDataResult.data.length; j++) {
+        if (
+          mainDataResult.data[i].qc_sort == mainDataResult.data[j].qc_sort &&
+          valid == true
+        ) {
+          alert("정렬순서가 겹칩니다. 수정해주세요.");
+          valid = false;
+          return false;
+        }
+      }
+    }
+
     try {
       if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "MA_A2400W_003");
+        throw findMessage(messagesData, "QC_A0060W_005");
       } else if (
         convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
@@ -519,9 +579,18 @@ const CopyWindow = ({
         filters.proccd == undefined
       ) {
         throw findMessage(messagesData, "QC_A0060W_004");
+      } else if (
+        mainDataResult.data.filter((item) => item.inspeccd == "").length > 0
+      ) {
+        throw findMessage(messagesData, "QC_A0060W_006");
+      } else if (
+        mainDataResult.data.filter((item) => item.qc_gubun == "").length > 0
+      ) {
+        throw findMessage(messagesData, "QC_A0060W_007");
       } else {
         if (valid == true) {
           setData(mainDataResult.data, filters, deletedMainRows);
+          deletedMainRows = [];
           if (workType == "N") {
             onClose();
           }
@@ -584,33 +653,169 @@ const CopyWindow = ({
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "qc_spec" && field != "rowstatus") {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
-              [EDIT_FIELD]: field,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+    let valid = true;
+    const datas = mainDataResult.data.filter(
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+    if (field != "rowstatus" && field != "qc_min" && field != "qc_max") {
+      if (field == "qc_base") {
+        if (datas.qc_gubun == "11" || datas.qc_gubun == "") {
+          valid = false;
+        }
+      } else if (field == "qc_scope1") {
+        if (
+          datas.qc_gubun == "02" ||
+          datas.qc_gubun == "03" ||
+          datas.qc_gubun == "10" ||
+          datas.qc_gubun == "11" ||
+          datas.qc_gubun == ""
+        ) {
+          valid = false;
+        }
+      } else if (field == "qc_scope2") {
+        if (
+          datas.qc_gubun == "01" ||
+          datas.qc_gubun == "04" ||
+          datas.qc_gubun == "05" ||
+          datas.qc_gubun == "06" ||
+          datas.qc_gubun == "02" ||
+          datas.qc_gubun == "03" ||
+          datas.qc_gubun == "10" ||
+          datas.qc_gubun == "11" ||
+          datas.qc_gubun == ""
+        ) {
+          valid = false;
+        }
+      } else if (field == "qc_spec") {
+        if (
+          datas.qc_gubun == "01" ||
+          datas.qc_gubun == "04" ||
+          datas.qc_gubun == "05" ||
+          datas.qc_gubun == "06" ||
+          datas.qc_gubun == "02" ||
+          datas.qc_gubun == "03" ||
+          datas.qc_gubun == "10" ||
+          datas.qc_gubun == "" ||
+          datas.qc_gubun == "07" ||
+          datas.qc_gubun == "08" ||
+          datas.qc_gubun == "09"
+        ) {
+          valid = false;
+        }
+      }
 
-      setIfSelectFirstRow(false);
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+      if (valid == true) {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus === "N" ? "N" : "U",
+                [EDIT_FIELD]: field,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setIfSelectFirstRow(false);
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     }
   };
 
   const exitEdit = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
+      qc_scope1:
+        item.qc_gubun == "02" || item.qc_gubun == "03" || item.qc_gubun == "10"
+          ? 0
+          : item.qc_scope1,
+      qc_scope2:
+        item.qc_gubun == "01" ||
+        item.qc_gubun == "02" ||
+        item.qc_gubun == "03" ||
+        item.qc_gubun == "04" ||
+        item.qc_gubun == "05" ||
+        item.qc_gubun == "06" ||
+        item.qc_gubun == "10"
+          ? 0
+          : item.qc_scope2,
+      qc_min:
+        item.qc_gubun == "01"
+          ? item.qc_base - item.qc_scope1
+          : item.qc_gubun == "03"
+          ? item.qc_base
+          : item.qc_gubun == "04"
+          ? item.qc_base
+          : item.qc_gubun == "05"
+          ? item.qc_base - item.qc_scope1
+          : item.qc_gubun == "06"
+          ? item.qc_base
+          : item.qc_gubun == "07"
+          ? item.qc_base - item.qc_scope1
+          : item.qc_gubun == "08"
+          ? item.qc_base - item.qc_scope1
+          : item.qc_gubun == "09"
+          ? item.qc_base + item.qc_scope1
+          : 0,
+      qc_max:
+        item.qc_gubun == "01"
+          ? item.qc_base + item.qc_scope1
+          : item.qc_gubun == "02"
+          ? item.qc_base
+          : item.qc_gubun == "04"
+          ? item.qc_base + item.qc_scope1
+          : item.qc_gubun == "05"
+          ? item.qc_base
+          : item.qc_gubun == "06"
+          ? item.qc_scope1
+          : item.qc_gubun == "07"
+          ? item.qc_base + item.qc_scope2
+          : item.qc_gubun == "08"
+          ? item.qc_base - item.qc_scope2
+          : item.qc_gubun == "09"
+          ? item.qc_base + item.qc_scope2
+          : 0,
+      qc_spec:
+        item.qc_gubun == "01"
+          ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
+              item.qc_base + item.qc_scope1
+            }${item.qc_unit}`
+          : item.qc_gubun == "02"
+          ? `${item.qc_base}${item.qc_unit} 이하`
+          : item.qc_gubun == "03"
+          ? `${item.qc_base}${item.qc_unit} 이상`
+          : item.qc_gubun == "04"
+          ? `${item.qc_base}${item.qc_unit} - ${item.qc_base + item.qc_scope1}${
+              item.qc_unit
+            }`
+          : item.qc_gubun == "05"
+          ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${item.qc_base}${
+              item.qc_unit
+            }`
+          : item.qc_gubun == "06"
+          ? `${item.qc_base}${item.qc_unit} - ${item.qc_scope1}${item.qc_unit}`
+          : item.qc_gubun == "07"
+          ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
+              item.qc_base + item.qc_scope2
+            }${item.qc_unit}`
+          : item.qc_gubun == "08"
+          ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
+              item.qc_base - item.qc_scope2
+            }${item.qc_unit}`
+          : item.qc_gubun == "09"
+          ? `${item.qc_base + item.qc_scope1}${item.qc_unit} - ${
+              item.qc_base + item.qc_scope2
+            }${item.qc_unit}`
+          : item.qc_gubun == "10"
+          ? `${item.qc_base}${item.qc_unit} 고정`
+          : item.qc_spec,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);
@@ -630,16 +835,14 @@ const CopyWindow = ({
   );
 
   //공통코드 리스트 조회 ()
-  const [qcgbListData, setQcgbListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+  const [qcgbListData, setQcgbListData] = useState([COM_CODE_DEFAULT_VALUE]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
       const qcgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_QC003")
       );
- 
+
       fetchQuery(qcgbQueryStr, setQcgbListData);
     }
   }, [bizComponentData]);
@@ -810,9 +1013,11 @@ const CopyWindow = ({
                     <Input
                       name="qcgb"
                       type="text"
-                      value={qcgbListData.find(
-                        (item: any) => item.sub_code === filters.qcgb
-                      )?.code_name}
+                      value={
+                        qcgbListData.find(
+                          (item: any) => item.sub_code === filters.qcgb
+                        )?.code_name
+                      }
                       className="readonly"
                     />
                   </td>
@@ -937,7 +1142,12 @@ const CopyWindow = ({
               width="50px"
               footerCell={mainTotalFooterCell}
             />
-            <GridColumn field="qc_sort" title="검사순번" width="100px" cell={CenterCell}/>
+            <GridColumn
+              field="qc_sort"
+              title="검사순번"
+              width="100px"
+              cell={NumberCell}
+            />
             <GridColumn
               field="inspeccd"
               title="검사항목"
@@ -1033,6 +1243,13 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+        />
+      )}
+      {itemWindowVisible && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible}
+          workType={"FILTER"}
+          setData={setItemData}
         />
       )}
     </>

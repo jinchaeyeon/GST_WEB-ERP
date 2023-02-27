@@ -42,7 +42,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  to_date2,
+  toDate,
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -590,7 +590,7 @@ const SA_A2300: React.FC = () => {
         setDetailFilters((prev) => ({
           ...prev,
           reckey: firstRowData.recdtfind,
-          recdt: to_date2(firstRowData.recdt),
+          recdt: toDate(firstRowData.recdt),
           seq1: firstRowData.seq1,
         }));
 
@@ -627,7 +627,7 @@ const SA_A2300: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       reckey: selectedRowData.recdtfind,
-      recdt: to_date2(selectedRowData.recdt),
+      recdt: toDate(selectedRowData.recdt),
       seq1: selectedRowData.seq1,
     }));
   };

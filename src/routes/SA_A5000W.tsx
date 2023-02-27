@@ -44,7 +44,7 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
-  to_date2,
+  toDate,
   useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A5000W_Window";
@@ -277,7 +277,7 @@ const SA_A5000: React.FC = () => {
       setDetailFilters((prev) => ({
         ...prev,
         seq1: rowData.seq1,
-        recdt: to_date2(rowData.recdt),
+        recdt: toDate(rowData.recdt),
       }));
 
       setIsCopy(false);
@@ -603,7 +603,7 @@ const SA_A5000: React.FC = () => {
         setDetailFilters((prev) => ({
           ...prev,
           seq1: firstRowData.seq1,
-          recdt: to_date2(firstRowData.recdt),
+          recdt: toDate(firstRowData.recdt),
         }));
 
         setIfSelectFirstRow(true);
@@ -639,7 +639,7 @@ const SA_A5000: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       seq1: selectedRowData.seq1,
-      recdt: to_date2(selectedRowData.recdt),
+      recdt: toDate(selectedRowData.recdt),
     }));
   };
 
@@ -729,7 +729,7 @@ const SA_A5000: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       seq1: selectedRowData.seq1,
-      recdt: to_date2(selectedRowData.recdt),
+      recdt: toDate(selectedRowData.recdt),
     }));
 
     setIsCopy(true);

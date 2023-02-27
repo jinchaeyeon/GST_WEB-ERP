@@ -52,7 +52,6 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
-  to_date2,
   getGridItemChangedData,
   convertDateToStrWithTime2,
 } from "../components/CommonFunction";

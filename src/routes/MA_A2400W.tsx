@@ -44,7 +44,6 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  to_date2,
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";

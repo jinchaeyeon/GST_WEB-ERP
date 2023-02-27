@@ -43,7 +43,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  to_date2,
+  toDate,
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -583,7 +583,7 @@ const MA_A2500W: React.FC = () => {
 
         setDetailFilters((prev) => ({
           ...prev,
-          recdt: to_date2(firstRowData.recdt),
+          recdt: toDate(firstRowData.recdt),
           seq1: firstRowData.seq1,
         }));
 
@@ -619,7 +619,7 @@ const MA_A2500W: React.FC = () => {
 
     setDetailFilters((prev) => ({
       ...prev,
-      recdt: to_date2(selectedRowData.recdt),
+      recdt: toDate(selectedRowData.recdt),
       seq1: selectedRowData.seq1,
     }));
   };
@@ -725,7 +725,7 @@ const MA_A2500W: React.FC = () => {
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      recdt: to_date2(data.recdt),
+      recdt: toDate(data.recdt),
       seq1: data.seq1,
     }));
   };

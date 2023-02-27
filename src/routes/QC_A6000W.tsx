@@ -50,7 +50,7 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
-  to_date2,
+  toDate,
   getGridItemChangedData,
   convertDateToStrWithTime2,
 } from "../components/CommonFunction";
@@ -359,7 +359,7 @@ const QC_A6000: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
-          qcdt: to_date2(row.qcdt),
+          qcdt: toDate(row.qcdt),
         };
       });
 

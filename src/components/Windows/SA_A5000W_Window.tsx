@@ -39,7 +39,7 @@ import {
   UseCustomOption,
   UseMessages,
   getQueryFromBizComponent,
-  to_date2,
+  toDate,
   convertDateToStr,
   getGridItemChangedData,
   findMessage,
@@ -458,17 +458,17 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
         files: data.files,
         invoiceno: data.invoiceno,
         location: data.location,
-        outdt: to_date2(data.outdt),
+        outdt: toDate(data.outdt),
         person: data.person,
         position: data.position,
         qty: data.qty,
         rcvcustcd: data.rcvcustcd,
         rcvcustnm: data.rcvcustnm,
-        recdt: to_date2(data.recdt),
+        recdt: toDate(data.recdt),
         reckey: data.reckey,
         remark: data.remark,
         seq1: data.seq1,
-        shipdt: to_date2(data.shipdt),
+        shipdt: toDate(data.shipdt),
         taxamt: data.taxamt,
         taxdiv: data.taxdiv,
         taxnum: data.taxnum,
@@ -695,6 +695,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
       } else {
         if (valid == true) {
           setData(mainDataResult.data, filters, deletedMainRows);
+          deletedMainRows = [];
           if(workType == "N") {
             onClose();
           }

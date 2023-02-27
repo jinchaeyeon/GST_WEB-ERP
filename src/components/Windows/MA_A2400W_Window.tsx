@@ -42,7 +42,7 @@ import {
   UseMessages,
   getQueryFromBizComponent,
   UseParaPc,
-  to_date2,
+  toDate,
   convertDateToStr,
   getGridItemChangedData,
   dateformat,
@@ -405,8 +405,8 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
       setFilters((prev) => ({
         ...prev,
         purnum: data.purnum,
-        purdt: to_date2(data.purdt),
-        inexpdt: to_date2(data.inexpdt),
+        purdt: toDate(data.purdt),
+        inexpdt: toDate(data.inexpdt),
         person: data.person,
         doexdiv: data.doexdiv,
         location: data.location,
@@ -605,6 +605,7 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
       } else {
         if (valid == true) {
           setData(mainDataResult.data, filters, deletedMainRows);
+          deletedMainRows = [];
           if(workType == "N") {
             onClose();
           }

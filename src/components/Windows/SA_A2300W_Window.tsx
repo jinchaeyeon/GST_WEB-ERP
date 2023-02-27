@@ -40,7 +40,7 @@ import {
   UseMessages,
   getQueryFromBizComponent,
   UseParaPc,
-  to_date2,
+  toDate,
   convertDateToStr,
   getGridItemChangedData,
   dateformat,
@@ -468,10 +468,10 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
     if (workType === "U" && data!= undefined) {
         setFilters((prev) => ({
           ...prev,
-          recdt: to_date2(data.recdt),
+          recdt: toDate(data.recdt),
           seq1: data.seq1,
           recdtfind: data.recdtfind,
-          outdt: to_date2(data.outdt),
+          outdt: toDate(data.outdt),
           person: data.person,
           doexdiv: data.doexdiv,
           location: data.location,
@@ -484,7 +484,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
           portnm: data.portnm,
           dvnm: data.dvnm,
           dvnum: data.dvnum,
-          shipdt: to_date2(data.shipdt),
+          shipdt: toDate(data.shipdt),
           cargocd: data.cargocd,
           trcost: data.trcost,
           files: data.files,
@@ -653,6 +653,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
       } else {
         if (valid == true) {
           setData(mainDataResult.data, filters, deletedMainRows);
+          deletedMainRows = [];
           if(workType == "N") {
             onClose();
           }
