@@ -362,7 +362,7 @@ const MA_A2700W: React.FC = () => {
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
-
+  const [reload, setreload] = useState<boolean>(false);
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [isCopy, setIsCopy] = useState(false);
@@ -703,6 +703,7 @@ const MA_A2700W: React.FC = () => {
     }
     
     if (data.isSuccess === true) {
+      setreload(!reload);
       fetchMainGrid();
     } else {
       console.log("[오류 발생]");
@@ -2043,6 +2044,7 @@ const MA_A2700W: React.FC = () => {
                     item.recnum == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
+          reload={reload}
         />
       )}
       {custWindowVisible && (

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useContext, createContext } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -80,6 +80,16 @@ import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
 import RequiredHeader from "../components/RequiredHeader";
 import NameCell from "../components/Cells/NameCell";
 
+export const FormContext = createContext<{
+  itemcd: string;
+  itemnm: string;
+  setItemcd: (d: any) => void;
+  setItemnm: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "sub_code";
 let deletedMainRows: object[] = [];
@@ -112,7 +122,43 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td></td>
   );
 };
-
+interface IItemData {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
+}
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
     ariaColumnIndex,
@@ -123,7 +169,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-
+  const { itemcd, itemnm, setItemcd, setItemnm, mainDataState, setMainDataState } =
+    useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -136,6 +183,18 @@ const ColumnCommandCell = (props: GridCellProps) => {
         syntheticEvent: e.syntheticEvent,
         value: e.target.value ?? "",
       });
+    }
+  };
+  const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+  const onItemWndClick2 = () => {
+    setItemWindowVisible2(true);
+  };
+  const setItemData2 = (data: IItemData) => {
+    if(dataItem["rowstatus"] == "N"){
+      setItemcd(data.itemcd);
+      setItemnm(data.itemnm);
+    } else {
+      alert("품목코드와 품목명은 수정이 불가합니다.")
     }
   };
   const defaultRendering = (
@@ -153,9 +212,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       <ButtonInGridInput>
         <Button
           name="itemcd"
-          onClick={() => {
-            alert(1);
-          }}
+          onClick={onItemWndClick2}
           icon="more-horizontal"
           fillMode="flat"
         />
@@ -163,9 +220,20 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </td>
   );
 
-  return render === undefined
-    ? null
-    : render?.call(undefined, defaultRendering, props);
+  return(
+  <>
+    {render === undefined
+      ? null
+      : render?.call(undefined, defaultRendering, props)}
+    {itemWindowVisible2 && (
+      <ItemsWindow
+        setVisible={setItemWindowVisible2}
+        workType={"FILTER"}
+        setData={setItemData2}
+      />
+    )}
+  </>
+  )
 };
 
 const BA_A0080: React.FC = () => {
@@ -181,6 +249,8 @@ const BA_A0080: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [itemcd, setItemcd] = useState<string>("");
+  const [itemnm, setItemnm] = useState<string>("");
   UsePermissions(setPermissions);
 
   //메시지 조회
@@ -288,7 +358,7 @@ const BA_A0080: React.FC = () => {
   }>({});
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+
   const [excelWindowVisible, setExcelWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
   const [mainPgNum, setMainPgNum] = useState(1);
@@ -446,6 +516,26 @@ const BA_A0080: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            itemcd: itemcd,
+            itemnm: itemnm,
+          }
+        : {
+            ...item,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemcd, itemnm]);
+
+  useEffect(() => {
     if (ifSelectFirstRow) {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
@@ -533,9 +623,7 @@ const BA_A0080: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-  const onItemWndClick2 = () => {
-    setItemWindowVisible2(true);
-  };
+
   const onCopyWndClick = () => {
     try {
       if (filters.itemacnt != "") {
@@ -551,44 +639,6 @@ const BA_A0080: React.FC = () => {
     setExcelWindowVisible(true);
   };
 
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
-
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
@@ -596,26 +646,6 @@ const BA_A0080: React.FC = () => {
       itemcd: data.itemcd,
       itemnm: data.itemnm,
     }));
-  };
-
-  const setItemData2 = (data: IItemData) => {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-            itemcd: data.itemcd,
-            itemnm: data.itemnm,
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
   };
 
   const setCopyData = (data: any) => {
@@ -972,7 +1002,7 @@ const BA_A0080: React.FC = () => {
         amtunit = "",
       } = item;
       dataArr.rowstatus.push(rowstatus);
-      dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
+      dataArr.unpitem.push(unpitem == ""||unpitem == undefined ? filters.unpitem : unpitem);
       dataArr.itemcd.push(itemcd);
       dataArr.unp.push(unp);
       dataArr.itemacnt.push(itemacnt);
@@ -1007,7 +1037,8 @@ const BA_A0080: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(para)
+    console.log(data);
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -1164,6 +1195,17 @@ const BA_A0080: React.FC = () => {
             <GridColumn field="code_name" title="계정명" width="200px" />
           </Grid>
         </GridContainer>
+        <FormContext.Provider
+        value={{
+          itemcd,
+          itemnm,
+          setItemcd,
+          setItemnm,
+          mainDataState,
+          setMainDataState,
+          // fetchGrid,
+        }}
+      >
         <GridContainer style={{ width: "68vw" }}>
           <ExcelExport
             data={mainDataResult.data}
@@ -1324,19 +1366,13 @@ const BA_A0080: React.FC = () => {
             </Grid>
           </ExcelExport>
         </GridContainer>
+        </FormContext.Provider>
       </GridContainerWrap>
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
-        />
-      )}
-      {itemWindowVisible2 && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible2}
-          workType={"FILTER"}
-          setData={setItemData2}
         />
       )}
       {CopyWindowVisible && (

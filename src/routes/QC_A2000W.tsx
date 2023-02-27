@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+} from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -34,9 +40,14 @@ import {
   GridContainerWrap,
   FormBoxWrap,
   FormBox,
+  ButtonInGridInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
+import {
+  Input,
+  TextArea,
+  InputChangeEvent,
+} from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -75,6 +86,16 @@ import { isLoading } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
+
+export const FormContext = createContext<{
+  attdatnum: string;
+  files: string;
+  setAttdatnum: (d: any) => void;
+  setFiles: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
 const dateField = ["proddt", "qcdt"];
@@ -125,6 +146,89 @@ type TdataArr3 = {
   badseq_s: string[];
   badqty_s: string[];
 };
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    attdatnum,
+    files,
+    setAttdatnum,
+    setFiles,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum(data.attdatnum);
+    setFiles(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+        />
+      )}
+    </>
+  );
+};
+
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_QC002 ", setBizComponentData);
@@ -152,7 +256,8 @@ const QC_A2000: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [attdatnum, setAttdatnum] = useState<string>("");
+  const [files, setFiles] = useState<string>("");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -965,7 +1070,7 @@ const QC_A2000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       fetchMainGrid();
       fetchDetailGrid();
@@ -1219,7 +1324,7 @@ const QC_A2000: React.FC = () => {
       />
     );
     array.push(<GridColumn field={"remark"} title={"비고"} width="200px" />);
-    array.push(<GridColumn field={"files"} title={"첨부파일"} width="200px" />);
+    array.push(<GridColumn field={"files"} title={"첨부파일"} width="350px" cell={ColumnCommandCell}/>);
     return array;
   };
 
@@ -1494,47 +1599,65 @@ const QC_A2000: React.FC = () => {
     }
   };
 
-  const ColumnCommandCell = (props: GridCellProps) => {
-    const selectedData = props.dataItem;
+  // const ColumnCommandCell = (props: GridCellProps) => {
+  //   const selectedData = props.dataItem;
 
-    const datas = detailDataResult.data.filter(
-      (item: any) =>
-        item.num == Object.getOwnPropertyNames(detailSelectedState)[0]
-    )[0];
-    if (datas != undefined) {
-      const find3 = detailDataResult.data.findIndex(
-        (e: any) => e.num == datas.num
-      );
-      setrows(find3);
-    }
+  //   const datas = detailDataResult.data.filter(
+  //     (item: any) =>
+  //       item.num == Object.getOwnPropertyNames(detailSelectedState)[0]
+  //   )[0];
+  //   if (datas != undefined) {
+  //     const find3 = detailDataResult.data.findIndex(
+  //       (e: any) => e.num == datas.num
+  //     );
+  //     setrows(find3);
+  //   }
 
-    return selectedData.rowstatus == "U" ? (
-      <td className="k-command-cell">
-        {selectedData.files}
-        <Button
-          onClick={onAttachmentsWndClick}
-          icon="more-horizontal"
-          fillMode="flat"
-        />
-      </td>
-    ) : (
-      <td className="k-command-cell">
-        {/* <Input
-        name="itemcd"
-        type="text"
-        value={datas.itemcd}
-        onChange={setItems}
-        style={{width : "70%"}}
-      /> */}
-        <Button
-          name="itemcd"
-          onClick={onAttachmentsWndClick}
-          icon="more-horizontal"
-          fillMode="flat"
-        />
-      </td>
+  //   return selectedData.rowstatus == "U" ? (
+  //     <td className="k-command-cell">
+  //       {selectedData.files}
+  //       <Button
+  //         onClick={onAttachmentsWndClick}
+  //         icon="more-horizontal"
+  //         fillMode="flat"
+  //       />
+  //     </td>
+  //   ) : (
+  //     <td className="k-command-cell">
+  //       {/* <Input
+  //       name="itemcd"
+  //       type="text"
+  //       value={datas.itemcd}
+  //       onChange={setItems}
+  //       style={{width : "70%"}}
+  //     /> */}
+  //       <Button
+  //         name="itemcd"
+  //         onClick={onAttachmentsWndClick}
+  //         icon="more-horizontal"
+  //         fillMode="flat"
+  //       />
+  //     </td>
+  //   );
+  // };
+  useEffect(() => {
+    const datas = mainDataResult.data.map((item: any) =>
+      item.num == mainDataResult.data[rows].num
+        ? {
+            ...item,
+            attdatnum: attdatnum,
+            files: files,
+          }
+        : { ...item }
     );
-  };
+
+    setMainDataResult((prev) => {
+      return {
+        data: datas,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum, files]);
 
   return (
     <>
@@ -1716,85 +1839,99 @@ const QC_A2000: React.FC = () => {
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="발주정보">
           <GridContainerWrap>
-            <GridContainer width="87.5vw">
-              <GridTitleContainer>
-                <GridTitle>발주상세정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onSaveClick3}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-              >
-                <Grid
-                  style={{ height: "68vh" }}
-                  data={process(
-                    mainDataResult.data.map((row) => ({
-                      ...row,
-                      proccd: proccdListData.find(
-                        (items: any) => items.sub_code === row.proccd
-                      )?.code_name,
-                      rowstatus:
-                        row.rowstatus == null ||
-                        row.rowstatus == "" ||
-                        row.rowstatus == undefined
-                          ? ""
-                          : row.rowstatus,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)],
-                    })),
-                    mainDataState
-                  )}
-                  {...mainDataState}
-                  onDataStateChange={onMainDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "multiple",
+            <FormContext.Provider
+              value={{
+                attdatnum,
+                files,
+                setAttdatnum,
+                setFiles,
+                mainDataState,
+                setMainDataState,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer width="87.5vw">
+                <GridTitleContainer>
+                  <GridTitle>발주상세정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onSaveClick3}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
                   }}
-                  onSelectionChange={onSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult.total}
-                  onScroll={onMainScrollHandler}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onMainItemChange3}
-                  cellRender={customCellRender3}
-                  rowRender={customRowRender3}
-                  editField={EDIT_FIELD}
                 >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  <GridColumn
-                    field={SELECTED_FIELD}
-                    width="45px"
-                    headerSelectionValue={
-                      mainDataResult.data.findIndex(
-                        (item: any) => !selectedState[idGetter(item)]
-                      ) === -1
-                    }
-                  />
-                  <GridColumn title="검사입력정보">{createColumn()}</GridColumn>
-                  <GridColumn title="발주상세정보">
-                    {createColumn2()}
-                  </GridColumn>
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
+                  <Grid
+                    style={{ height: "68vh" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        proccd: proccdListData.find(
+                          (items: any) => items.sub_code === row.proccd
+                        )?.code_name,
+                        rowstatus:
+                          row.rowstatus == null ||
+                          row.rowstatus == "" ||
+                          row.rowstatus == undefined
+                            ? ""
+                            : row.rowstatus,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "multiple",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    onScroll={onMainScrollHandler}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange3}
+                    cellRender={customCellRender3}
+                    rowRender={customRowRender3}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    <GridColumn
+                      field={SELECTED_FIELD}
+                      width="45px"
+                      headerSelectionValue={
+                        mainDataResult.data.findIndex(
+                          (item: any) => !selectedState[idGetter(item)]
+                        ) === -1
+                      }
+                    />
+                    <GridColumn title="검사입력정보">
+                      {createColumn()}
+                    </GridColumn>
+                    <GridColumn title="발주상세정보">
+                      {createColumn2()}
+                    </GridColumn>
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </FormContext.Provider>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="검사내역">
@@ -2003,13 +2140,6 @@ const QC_A2000: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
-        />
-      )}
-      {attachmentsWindowVisible && (
-        <AttachmentsWindow
-          setVisible={setAttachmentsWindowVisible}
-          setData={getAttachmentsData}
-          para={detailDataResult.data[rows].attdatnum}
         />
       )}
       {gridList.map((grid: any) =>

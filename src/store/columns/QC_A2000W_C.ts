@@ -74,7 +74,7 @@ export const gridList: Array<TGrid> = [
         id: "col_files",
         field: "files",
         caption: "첨부파일",
-        width: 150,
+        width: 350,
       },
     ],
   },

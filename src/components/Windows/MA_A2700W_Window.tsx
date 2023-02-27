@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext, createContext } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -13,10 +13,11 @@ import {
   GridCellProps,
 } from "@progress/kendo-react-grid";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { TextArea } from "@progress/kendo-react-inputs";
+import { TextArea, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 import CopyWindow5 from "./MA_A2700W_BOM_Window";
 import CopyWindow4 from "./MA_A2700W_Orders_Window";
 import CopyWindow3 from "./MA_A3400W_Inven_Window";
@@ -31,6 +32,7 @@ import {
   FormBoxWrap,
   FormBox,
   GridTitle,
+  ButtonInGridInput,
 } from "../../CommonStyled";
 import { useRecoilState } from "recoil";
 import { Input } from "@progress/kendo-react-inputs";
@@ -65,8 +67,19 @@ type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(data: object, filter: object, deletedMainRows: object): void;
+  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
 };
+
+export const FormContext = createContext<{
+  itemcd: string;
+  itemnm: string;
+  setItemcd: (d: any) => void;
+  setItemnm: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
 
 type Idata = {
   orgdiv: string;
@@ -99,6 +112,43 @@ type Idata = {
   recnum: string;
   files: string;
 };
+interface IItemData {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
+}
 let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -128,7 +178,79 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { itemcd, itemnm, setItemcd, setItemnm, mainDataState, setMainDataState } =
+    useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+  const onItemWndClick2 = () => {
+    setItemWindowVisible2(true);
+  };
+  const setItemData2 = (data: IItemData) => {
+    setItemcd(data.itemcd);
+    setItemnm(data.itemnm);
+  };
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onItemWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+   
+  return(
+  <>
+    {render === undefined
+      ? null
+      : render?.call(undefined, defaultRendering, props)}
+    {itemWindowVisible2 && (
+      <ItemsWindow
+        setVisible={setItemWindowVisible2}
+        workType={"FILTER"}
+        setData={setItemData2}
+      />
+    )}
+  </>
+  )
+};
+const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -140,7 +262,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const DATA_ITEM_KEY = "num";
-
+  const [itemcd, setItemcd] = useState<string>("");
+  const [itemnm, setItemnm] = useState<string>("");
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -151,7 +274,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
+  useEffect(()=> {
+    setMainPgNum(1);
+    setMainDataResult(process([], mainDataState))
+    fetchMainGrid();
+  },[reload])
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
@@ -931,7 +1058,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "insiz" && field != "qtyunit" && field != "rowstatus") {
+    if (field != "insiz" && field != "qtyunit" && field != "rowstatus" && field != "itemnm") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -944,7 +1071,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
               [EDIT_FIELD]: undefined,
             }
       );
-
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -968,7 +1094,25 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       };
     });
   };
-
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            itemcd: itemcd,
+            itemnm: itemnm,
+          }
+        : {
+            ...item,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemcd, itemnm]);
   return (
     <>
       <Window
@@ -1185,6 +1329,17 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             </tbody>
           </FormBox>
         </FormBoxWrap>
+        <FormContext.Provider
+        value={{
+          itemcd,
+          itemnm,
+          setItemcd,
+          setItemnm,
+          mainDataState,
+          setMainDataState,
+          // fetchGrid,
+        }}
+      >
         <GridContainer>
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
@@ -1290,6 +1445,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
               title="품목코드"
               width="200px"
               footerCell={mainTotalFooterCell}
+              cell={ColumnCommandCell}
             />
             <GridColumn field="itemnm" title="품목명" width="250px" />
             <GridColumn
@@ -1370,6 +1526,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             />
           </Grid>
         </GridContainer>
+        </FormContext.Provider>
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
