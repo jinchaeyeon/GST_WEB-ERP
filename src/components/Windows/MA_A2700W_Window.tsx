@@ -1101,6 +1101,7 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
             ...item,
             itemcd: itemcd,
             itemnm: itemnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
           }
         : {
             ...item,

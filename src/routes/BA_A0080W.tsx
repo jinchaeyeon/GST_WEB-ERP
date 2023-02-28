@@ -522,6 +522,7 @@ const BA_A0080: React.FC = () => {
             ...item,
             itemcd: itemcd,
             itemnm: itemnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1037,8 +1038,7 @@ const BA_A0080: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para)
-    console.log(data);
+
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {

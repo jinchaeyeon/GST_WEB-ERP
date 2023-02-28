@@ -807,7 +807,7 @@ export const calculateGridColumnWidth = (
       font: "'Source Snas Pro', sans-serif",
       fontSize: "14px",
     }); // pass the font properties based on the application
-    console.log(size);
+
     if (size.width > maxWidth) {
       maxWidth = size.width;
     }

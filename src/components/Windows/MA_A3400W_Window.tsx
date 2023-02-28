@@ -618,7 +618,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       alert(e);
     }
   };
-  console.log(mainDataResult.data);
+  
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");

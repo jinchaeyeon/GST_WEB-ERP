@@ -614,9 +614,15 @@ const QC_A0060W: React.FC = () => {
   const onAddClick = () => {
     setIsCopy(false);
     setWorkType("N");
+    setrev(false);
     setDetailWindowVisible(true);
   };
-
+  const onAddClick2 = () => {
+    setIsCopy(false);
+    setWorkType("N");
+    setrev(true);
+    setDetailWindowVisible(true);
+  };
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -641,6 +647,7 @@ const QC_A0060W: React.FC = () => {
     }));
   };
   const [reload, setreload] = useState<boolean>(false);
+  const [rev, setrev] = useState<boolean>(false);
   const fetchToDelete = async () => {
     let data: any;
 
@@ -1111,6 +1118,13 @@ const QC_A0060W: React.FC = () => {
                 검사표준서생성
               </Button>
               <Button
+                onClick={onAddClick2}
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                리비전
+              </Button>
+              <Button
                 onClick={onDeleteClick}
                 icon="delete"
                 fillMode="outline"
@@ -1268,6 +1282,7 @@ const QC_A0060W: React.FC = () => {
                 )[0]
           }
           reload={reload}
+          rev={rev}
         />
       )}
       {custWindowVisible && (

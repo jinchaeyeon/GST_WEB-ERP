@@ -1105,26 +1105,6 @@ const QC_A2000: React.FC = () => {
     []
   );
   const [rows, setrows] = useState<number>(0);
-  const getAttachmentsData = (data: IAttachmentData) => {
-    const datas = detailDataResult.data.map((item: any) =>
-      item.num == detailDataResult.data[rows].num
-        ? {
-            ...item,
-            attdatnum: data.attdatnum,
-            files:
-              data.original_name +
-              (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-          }
-        : { ...item }
-    );
-
-    setDetailDataResult((prev) => {
-      return {
-        data: datas,
-        total: prev.total,
-      };
-    });
-  };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setDetailDataState((prev) => ({ ...prev, sort: [] }));
@@ -1647,6 +1627,7 @@ const QC_A2000: React.FC = () => {
             ...item,
             attdatnum: attdatnum,
             files: files,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
           }
         : { ...item }
     );

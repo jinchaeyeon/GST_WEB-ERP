@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, createContext, useContext } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -32,9 +32,10 @@ import {
   GridContainerWrap,
   FormBoxWrap,
   FormBox,
+  ButtonInGridInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
+import { Input, TextArea, NumericTextBoxChangeEvent, NumericTextBox } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -73,6 +74,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
+import Badwindow from "../components/Windows/CommonWindows/BadWindow";
 
 const DATA_ITEM_KEY = "num";
 
@@ -117,6 +119,77 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+export const FormContext = createContext<{
+  bool: boolean;
+  setBool: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    bool,
+    setBool,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : 0;
+
+  const [badWindowVisible, setBadWindowVisible] =
+    useState<boolean>(false);
+  const onAttWndClick= () => {
+    setBadWindowVisible(true);
+  };
+  const getBadData = () => {
+    setBool(!bool)
+  };
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {
+        value
+      }
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {badWindowVisible && (
+        <Badwindow
+          setVisible={setBadWindowVisible}
+          setData={getBadData}
+          workType={"FILTER"}
+          renum={dataItem.renum}
+        />
+      )}
+    </>
+  );
+};
+
 const CustomRadioCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("R_MA034", setBizComponentData);
@@ -144,7 +217,7 @@ const QC_A6000: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [bool, setBool] = useState<boolean>(false);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -177,24 +250,21 @@ const QC_A6000: React.FC = () => {
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-  const [prodmacListData, setProdmacListData] = useState([
-    { fxcode: "", fxfull: "" },
-  ]);
 
   const [proccdListData, setProccdListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [qcynListData, setQcynListData] = useState([COM_CODE_DEFAULT_VALUE]);
-  const [qcnoListData, setQcnoListData] = useState([{ code: "", name: "" }]);
-  const [inspeccdListData, setInspeccdListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
       );
+      const userQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_sysUserMaster_001")
+      );
       fetchQuery(proccdQueryStr, setProccdListData);
+      fetchQuery(userQueryStr, setUsersListData);
     }
   }, [bizComponentData]);
 
@@ -377,6 +447,10 @@ const QC_A6000: React.FC = () => {
     }
     setLoading(false);
   };
+  
+  useEffect(() => {
+        fetchMainGrid();
+  }, [bool]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -657,7 +731,7 @@ const QC_A6000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+   
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -834,7 +908,7 @@ const QC_A6000: React.FC = () => {
         field={"badqty"}
         title={"불량수량"}
         width="100px"
-        cell={NumberCell}
+        cell={ColumnCommandCell}
       />
     );
     return array;
@@ -882,6 +956,7 @@ const QC_A6000: React.FC = () => {
             prodemp = "",
             lotnum = "",
             badqty = "",
+            badcd = "",
             qcdecision = "",
             qcdt = "",
             qcnum = "",
@@ -895,6 +970,7 @@ const QC_A6000: React.FC = () => {
           dataArr.itemcd_s.push(itemcd);
           dataArr.person_s.push(prodemp);
           dataArr.lotnum_s.push(lotnum);
+          dataArr.badcd_s.push(badcd== undefined ? "" : badcd);
           dataArr.badqty_s.push(badqty);
           dataArr.qcdecision.push(qcdecision);
           dataArr.qcdt_s.push(convertDateToStr(qcdt));
@@ -917,7 +993,7 @@ const QC_A6000: React.FC = () => {
           qcdecision: dataArr.qcdecision.join("|"),
           qcdt_s: dataArr.qcdt_s.join("|"),
           qcnum_s: dataArr.qcnum_s.join("|"),
-          badcd_s: "",
+          badcd_s: dataArr.badcd_s.join("|"),
           badnum_s: "",
           badseq_s: "",
           eyeqc_s: dataArr.eyeqc_s.join("|"),
@@ -998,6 +1074,15 @@ const QC_A6000: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
+      <FormContext.Provider
+              value={{
+                bool,
+                setBool,
+                mainDataState,
+                setMainDataState,
+                // fetchGrid,
+              }}
+            >
       <GridContainer>
       <GridTitleContainer>
             <GridTitle>기본정보</GridTitle>
@@ -1030,6 +1115,9 @@ const QC_A6000: React.FC = () => {
                   row.rowstatus == undefined
                     ? ""
                     : row.rowstatus,
+                prodemp: usersListData.find(
+                  (item: any) => item.user_id === row.prodemp
+                )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1066,6 +1154,7 @@ const QC_A6000: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
+      </FormContext.Provider>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

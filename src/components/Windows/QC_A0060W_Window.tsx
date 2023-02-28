@@ -49,6 +49,7 @@ import {
   dateformat,
   isValidDate,
   findMessage,
+  setDefaultDate
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -72,6 +73,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object, filter: object, deletedMainRows: object): void;
   reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
+  rev: boolean;
 };
 
 type Idata = {
@@ -126,6 +128,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   reload,
+  rev
 }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -153,7 +156,7 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = customOptionData.menuCustomDefaultOptions.new;
       setFilters((prev) => ({
         ...prev,
         proccd: defaultOption.find((item: any) => item.id === "proccd")
@@ -161,6 +164,7 @@ const CopyWindow = ({
         qcgb: defaultOption.find((item: any) => item.id === "qcgb").valueCode,
         location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
+        recdt: setDefaultDate(customOptionData, "recdt"),
       }));
     }
   }, [customOptionData]);
@@ -1059,7 +1063,8 @@ const CopyWindow = ({
                     name="rev_reason"
                     type="text"
                     value={filters.rev_reason}
-                    className="readonly"
+                    onChange={rev == false ? undefined : filterInputChange}
+                    className={rev == false ? "readonly" : ""}
                   />
                 </td>
               </tr>
@@ -1096,7 +1101,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "450px" }}
+            style={{ height: "510px" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
