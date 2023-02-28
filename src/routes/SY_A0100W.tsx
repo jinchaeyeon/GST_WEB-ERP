@@ -187,7 +187,7 @@ const App: React.FC = () => {
 
   //조회조건 파라미터
   const dataParameters: Iparameters = {
-    procedureName: "web_sel_data_entry_log",
+    procedureName: "sys_sel_data_entry_log_web",
     pageNumber: filters.pgNum,
     pageSize: PAGE_SIZE,
     parameters: {

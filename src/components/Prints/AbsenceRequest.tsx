@@ -18,7 +18,7 @@ const AbsenceRequest = (data: any) => {
     let data: any;
 
     const parameters: Iparameters = {
-      procedureName: "web_sel_prints",
+      procedureName: "sys_sel_prints_web",
       pageNumber: 0,
       pageSize: 0,
       parameters: {
