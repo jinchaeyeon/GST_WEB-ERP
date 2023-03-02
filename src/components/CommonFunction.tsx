@@ -846,6 +846,7 @@ export const useSysCaption = (key: TSysCaptionKey) => {
   return "";
 };
 
+// 로컬 스토리지 아이템 삭제
 export const resetLocalStorage = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
