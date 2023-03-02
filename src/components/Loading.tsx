@@ -13,7 +13,7 @@ function Loading() {
             width: "100%",
             height: "100%",
             position: "fixed",
-            zIndex: "999",
+            zIndex: "99999",
             top: "0",
             left: "0",
           }}

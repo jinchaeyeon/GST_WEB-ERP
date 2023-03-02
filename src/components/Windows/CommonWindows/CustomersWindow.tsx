@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -25,19 +25,12 @@ import { Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
-import {
-  chkScrollHandler,
-  getQueryFromBizComponent,
-  UseBizComponent,
-} from "../../CommonFunction";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../../CommonString";
+import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
+import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
-import { bytesToBase64 } from "byte-base64";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../../../store/atoms";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -56,52 +49,14 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
     height: 800,
   });
 
+  const setLoading = useSetRecoilState(isLoading);
+
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA026,R_USEYN",
     //업체구분, 사용여부,
     setBizComponentData
   );
-
-  //공통코드 리스트 조회
-  const [custdivListData, setCustdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [useynListData, setUseynListData] = useState([COM_CODE_DEFAULT_VALUE]);
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
-      );
-      const useynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "R_USEYN")
-      );
-
-      fetchQuery(custdivQueryStr, setCustdivListData);
-      fetchQuery(useynQueryStr, setUseynListData);
-    }
-  }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -167,22 +122,25 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
     custcd: "",
     custnm: "",
     custdiv: "",
-    useyn: "%",
+    useyn: "Y",
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_WEB_CUST_POPUP",
-    pageNumber: mainPgNum,
-    pageSize: PAGE_SIZE,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_custdiv": filters.custdiv,
-      "@p_useyn": filters.useyn,
-    },
+  //팝업 조회 파라미터
+  const parameters = {
+    para:
+      "popup-data?id=" +
+      "P_CUSTCD" +
+      "&page=" +
+      mainPgNum +
+      "&pageSize=" +
+      PAGE_SIZE,
+    custcd: filters.custcd,
+    custnm: filters.custnm,
+    custdiv: filters.custdiv,
+    useyn:
+      filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
   };
+
   useEffect(() => {
     fetchMainGrid();
   }, [mainPgNum]);
@@ -190,27 +148,30 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
   //요약정보 조회
   const fetchMainGrid = async () => {
     let data: any;
+    setLoading(true);
 
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("popup-data", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+    if (data !== null) {
+      const totalRowCnt = data.data.TotalRowCount;
+      const rows = data.data.Rows;
 
-      setMainDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt) {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+      }
     } else {
-      console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   //그리드 리셋
@@ -345,9 +306,9 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-      <GridContainer>
+      <GridContainer height="calc(100% - 170px)">
         <Grid
-          style={{ height: "550px" }}
+          style={{ height: "100%" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -389,7 +350,7 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
           <GridColumn field="custnm" title="업체명" width="200px" />
           <GridColumn field="custabbr" title="업체약어" width="120px" />
           <GridColumn field="bizregnum" title="사업자등록번호" width="140px" />
-          <GridColumn field="custdivnm" title="업체구분" width="120px" />
+          <GridColumn field="custdiv" title="업체구분" width="120px" />
           <GridColumn field="useyn" title="사용유무" width="120px" />
           <GridColumn field="compclass" title="업태" width="120px" />
           <GridColumn field="ceonm" title="대표자명" width="120px" />

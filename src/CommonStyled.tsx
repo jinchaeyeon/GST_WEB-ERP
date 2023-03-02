@@ -262,6 +262,7 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
 type TGridContainer = {
   maxWidth?: string;
   clientWidth?: number;
+  height?: string;
   width?: string;
   inTab?: boolean;
   margin?: TMargin;
@@ -288,6 +289,7 @@ export const GridContainer = styled.div<TGridContainer>`
         "px - 150px)" //150: 기본 마진
       : ""};
 
+  height: ${(props) => props.height};
   margin-top: ${(props) => (props.margin ? props.margin.top ?? "" : "")};
   margin-bottom: ${(props) => (props.margin ? props.margin.bottom ?? "" : "")};
   margin-left: ${(props) => (props.margin ? props.margin.left ?? "" : "")};

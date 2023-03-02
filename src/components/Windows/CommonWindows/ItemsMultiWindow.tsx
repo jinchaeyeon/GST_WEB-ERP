@@ -32,11 +32,15 @@ import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
 import { IItemData, IWindowPosition } from "../../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../../../store/atoms";
 
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: IItemData[]): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
+const DATA_ITEM_KEY = "itemcd";
+const KEEPING_DATA_ITEM_KEY = "idx";
 
 const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -45,8 +49,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     width: 1200,
     height: 850,
   });
-  const DATA_ITEM_KEY = "itemcd";
-  const KEEPING_DATA_ITEM_KEY = "idx";
+  const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const keepingIdGetter = getter(KEEPING_DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -131,27 +134,20 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     useyn: "Y",
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_WEB_ITEM_POPUP",
-    pageNumber: mainPgNum,
-    pageSize: PAGE_SIZE,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_bnatur": filters.bnatur,
-      "@p_spec": filters.spec,
-      "@p_itemacnt": filters.itemacnt,
-      "@p_itemlvl1": filters.itemlvl1,
-      "@p_itemlvl2": filters.itemlvl2,
-      "@p_itemlvl3": filters.itemlvl3,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_dwgno": filters.dwgno,
-      "@p_useyn": filters.useyn,
-    },
+  //팝업 조회 파라미터
+  const parameters = {
+    para:
+      "popup-data?id=" +
+      "P_ITEMCD" +
+      "&page=" +
+      mainPgNum +
+      "&pageSize=" +
+      PAGE_SIZE,
+    itemcd: filters.itemcd,
+    itemnm: filters.itemnm,
+    insiz: filters.insiz,
+    useyn:
+      filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
   };
   useEffect(() => {
     fetchMainGrid();
@@ -160,24 +156,28 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
   //그리드 조회
   const fetchMainGrid = async () => {
     let data: any;
+    setLoading(true);
 
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("popup-data", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+    if (data !== null) {
+      const totalRowCnt = data.data.TotalRowCount;
+      const rows = data.data.Rows;
 
-      setMainDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt) {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+      }
     }
+    setLoading(false);
   };
 
   //그리드 리셋
@@ -351,7 +351,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
                 )}
               </td>
             </tr>
-            <tr>
+            {/* <tr>
               <th>사양</th>
               <td>
                 <Input
@@ -383,17 +383,17 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
               </td>
               <th></th>
               <td></td>
-            </tr>
+            </tr> */}
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-      <GridContainer>
+      <GridContainer height="calc(100% - 470px)">
         <GridTitleContainer>
           <GridTitle>품목리스트</GridTitle>
           <PrimaryP>※ 더블 클릭하여 품목 Keeping</PrimaryP>
         </GridTitleContainer>
         <Grid
-          style={{ height: "250px" }}
+          style={{ height: "calc(100% - 42px)" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
