@@ -220,7 +220,7 @@ const QC_A0060W: React.FC = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.num]: true });
-
+      setrev(false);
       setIsCopy(false);
       setWorkType("U");
       setDetailWindowVisible(true);
@@ -263,7 +263,7 @@ const QC_A0060W: React.FC = () => {
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
 
-  const [workType, setWorkType] = useState<"N" | "U">("N");
+  const [workType, setWorkType] = useState<"N" | "U" | "R">("N");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [isCopy, setIsCopy] = useState(false);
 
@@ -619,10 +619,11 @@ const QC_A0060W: React.FC = () => {
   };
   const onAddClick2 = () => {
     setIsCopy(false);
-    setWorkType("N");
+    setWorkType("R");
     setrev(true);
     setDetailWindowVisible(true);
   };
+
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -786,7 +787,7 @@ const QC_A0060W: React.FC = () => {
 
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
     let valid = true;
-
+    setrev(false);
     const dataItem = data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -796,7 +797,7 @@ const QC_A0060W: React.FC = () => {
   
     setParaData((prev) => ({
       ...prev,
-      workType: workType,
+      workType: workType == "R" ? "REV" : workType,
       dptcd: "",
       stdnum: filter.stdnum,
       stdrev: filter.stdrev,
@@ -852,8 +853,8 @@ const QC_A0060W: React.FC = () => {
           qty = "",
           remark = "",
         } = item;
-  
-        dataArr.rowstatus_d.push(rowstatus);
+
+        dataArr.rowstatus_d.push(workType == "R" ? "N" : rowstatus);
         dataArr.stdseq_d.push(stdseq);
         dataArr.inspeccd_d.push(inspeccd);
         dataArr.qc_gubun_d.push(qc_gubun);
@@ -892,7 +893,7 @@ const QC_A0060W: React.FC = () => {
           remark = "",
         } = item;
   
-        dataArr.rowstatus_d.push(rowstatus);
+        dataArr.rowstatus_d.push(workType == "R" ? "N" : rowstatus);
         dataArr.stdseq_d.push(stdseq);
         dataArr.inspeccd_d.push(inspeccd);
         dataArr.qc_gubun_d.push(qc_gubun);
@@ -993,7 +994,7 @@ const QC_A0060W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.itemcd != "") {
+    if (ParaData.rowstatus_d != "") {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
@@ -1120,7 +1121,8 @@ const QC_A0060W: React.FC = () => {
               <Button
                 onClick={onAddClick2}
                 themeColor={"primary"}
-                icon="file-add"
+                fillMode="outline"
+                icon="track-changes"
               >
                 리비전
               </Button>

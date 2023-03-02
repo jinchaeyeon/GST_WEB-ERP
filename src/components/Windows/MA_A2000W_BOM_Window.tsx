@@ -11,8 +11,27 @@ import {
   getSelectedState,
   GridDataStateChangeEvent,
   GridExpandChangeEvent,
+  GridItemChangeEvent
 } from "@progress/kendo-react-grid";
+import {
+    TreeList,
+    createDataTree,
+    mapTree,
+    TreeListToolbar,
+    extendDataItem,
+    TreeListExpandChangeEvent,
+    TreeListColumnProps,
+    filterBy,
+    orderBy,
+    treeToFlat,
+    TreeListSelectionChangeEvent,
+    TreeListCellProps,
+    TreeListHeaderSelectionCell,
+    TreeListHeaderSelectionChangeEvent,
+    TreeListSelectionCell
+  } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
+import { CellRender, RowRender } from "../Renderers";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -42,22 +61,87 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   convertDateToStr,
+  getGridItemChangedData
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import { PAGE_SIZE, SELECTED_FIELD, EDIT_FIELD,  EXPANDED_FIELD, } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
+import ComboBoxTreeListCell from "../Cells/ComboBoxTreeListCell";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import NumberTreeCell from "../Cells/NumberTreeCell";
+import { FilterDescriptor, SortDescriptor } from "@progress/kendo-data-query";
+import CheckBoxTreeListCell from "../Cells/CheckBoxTreeListCell";
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+    const [bizComponentData, setBizComponentData] = useState([]);
+    UseBizComponent("L_BA171,L_BA172,L_BA173", setBizComponentData);
+  
+    const field = props.field ?? "";
+    const bizComponentIdVal =
+      field === "itemlvl1"
+        ? "L_BA171"
+        : field === "itemlvl2"
+        ? "L_BA172"
+        : field === "itemlvl3"
+        ? "L_BA173"
+        : "";
+    const bizComponent = bizComponentData.find(
+      (item: any) => item.bizComponentId === bizComponentIdVal
+    );
+  
+    return bizComponent ? (
+      <ComboBoxCell bizComponent={bizComponent} {...props} />
+    ) : (
+      <td />
+    );
+  };
+
+  interface AppState {
+    data: lev[];
+    dataState: DataState;
+    expanded: number[];
+    selected: number[];
+  }
+
+  export interface lev {
+    ID: string;
+    ItemCD: string;
+    ItemNM: string;
+    LEV: number;
+    ParentID: string;
+    bnatur: string;
+    chk: string;
+    insiz: string;
+    itemacnt: string;
+    itemlvl1: string;
+    itemlvl2: string;
+    itemlvl3: string;
+    itemno: string;
+    jeagoqty: number;
+    num: number;
+    qty: number;
+    qtyunit: string;
+    rowstatus: string;
+    spec: string;
+    unitqty: number;
+  }
+  export interface DataState {
+    sort: SortDescriptor[];
+    filter: FilterDescriptor[];
+  }
+
 
 const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -69,9 +153,12 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
   const DATA_ITEM_KEY3 = "num";
+  const SUB_ITEMS_FIELD: string = "menus";
+  const ALL_MENU_DATA_ITEM_KEY = "ItemCD";
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
+  const idGetter4 = getter(ALL_MENU_DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const pathname: string = window.location.pathname.replace("/", "");
@@ -99,7 +186,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
         ordsts: defaultOption.find((item: any) => item.id === "ordsts")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id === "finyn2").valueCode,
         dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
       }));
     }
@@ -123,6 +210,18 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [personListData, setPersonListData] = useState([
     { user_id: "", user_name: "" },
   ]);
+
+  
+  const [itemlvl1ListData, setItemlvl1ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
@@ -136,7 +235,18 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-
+      const itemlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+      );
+      const itemlvl2QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+      );
+      const itemlvl3QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+      );
+      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
+      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
+      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(personQueryStr, setPersonListData);
@@ -185,7 +295,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [subDataResult, setSubDataResult] = useState<DataResult>(
     process([], subDataState)
   );
-
+  const [allMenuDataResult, setAllMenuDataResult] = useState<any>([]);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -325,89 +435,58 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    workType: "Q",
+    workType: "ITEM",
     orgdiv: "01",
-    location: "01",
-    dtgb: "A",
-    frdt: new Date(),
-    todt: new Date(),
     itemcd: "",
     itemnm: "",
-    custcd: "",
-    custnm: "",
+    insiz: "",
     itemacnt: "",
-    ordnum: "",
-    ordseq: 0,
-    poregnum: "",
-    doexdiv: "",
-    ordsts: "",
-    person: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
     finyn: "",
-    remark: "",
-    pac: "",
   });
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     itemcd: "",
-    ordnum: "",
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_MA_P2030W_Q",
+    procedureName: "P_MA_A2000W_Sub1_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": filters.workType,
       "@p_orgdiv": "01",
-      "@p_location": filters.location,
-      "@p_dtgb": filters.dtgb,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
+      "@p_insiz": filters.insiz,
       "@p_itemacnt": filters.itemacnt,
-      "@p_ordnum": filters.ordnum,
-      "@p_ordseq": filters.ordseq,
-      "@p_poregnum": filters.poregnum,
-      "@p_ordsts": filters.ordsts,
-      "@p_doexdiv": filters.doexdiv,
-      "@p_person": filters.person,
+      "@p_itemlvl1": filters.itemlvl1,
+      "@p_itemlvl2": filters.itemlvl2,
+      "@p_itemlvl3": filters.itemlvl3,
       "@p_finyn": filters.finyn,
-      "@p_remark": filters.remark,
-      "@p_pac": filters.pac,
     },
   };
 
   //조회조건 파라미터
   const detailParameters: Iparameters = {
-    procedureName: "P_MA_P2030W_Q",
+    procedureName: "P_MA_A2000W_Sub1_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
-      "@p_work_type": "BOM",
-      "@p_orgdiv": "01",
-      "@p_location": filters.location,
-      "@p_dtgb": filters.dtgb,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_itemcd": detailFilters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_itemacnt": filters.itemacnt,
-      "@p_ordnum": detailFilters.ordnum,
-      "@p_ordseq": filters.ordseq,
-      "@p_poregnum": filters.poregnum,
-      "@p_ordsts": filters.ordsts,
-      "@p_doexdiv": filters.doexdiv,
-      "@p_person": filters.person,
-      "@p_finyn": filters.finyn,
-      "@p_remark": filters.remark,
-      "@p_pac": filters.pac,
+        "@p_work_type": "BOM",
+        "@p_orgdiv": "01",
+        "@p_itemcd": detailFilters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_insiz": filters.insiz,
+        "@p_itemacnt": filters.itemacnt,
+        "@p_itemlvl1": filters.itemlvl1,
+        "@p_itemlvl2": filters.itemlvl2,
+        "@p_itemlvl3": filters.itemlvl3,
+        "@p_finyn": filters.finyn,
     },
   };
   //그리드 데이터 조회
@@ -428,7 +507,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           ...row,
         };
       });
-
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
@@ -460,28 +538,43 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         return {
           ...row,
           rowstatus: "N",
-          amt: row.amt == null ? 0 : row.amt,
-          unp: row.unp == null ? 0 : row.unp,
-          qty: row.qty == null ? 1 : row.qty,
-          wonamt: row.wonamt == null ? 0 : row.wonamt,
-          taxamt: row.taxamt == null ? 0 : row.taxamt,
-          totwgt: row.totwgt == null ? 0 : row.totwgt,
-          len: row.len == null ? 0 : row.len,
-          itemthick: row.itemthick == null ? 0 : row.itemthick,
-          width: row.width == null ? 0 : row.width,
-          pac: row.pac == null ? "A": row.pac,
-          enddt: row.enddt == null ? new Date(): row.enddt,
-          singular: "N"
-
-        };
+          itemacnt: itemacntListData.find(
+            (item: any) => item.sub_code === row.itemacnt
+          )?.code_name,
+          itemlvl1: itemlvl1ListData.find(
+            (item: any) => item.sub_code === row.itemlvl1
+          )?.code_name,
+          itemlvl2: itemlvl2ListData.find(
+            (item: any) => item.sub_code === row.itemlvl2
+          )?.code_name,
+          itemlvl3: itemlvl3ListData.find(
+            (item: any) => item.sub_code === row.itemlvl3
+          )?.code_name,
+        }
       });
 
-      setDetailDataResult((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt,
-        };
-      });
+     if (totalRowCnt > 0) {
+        const dataTree: any = createDataTree(
+          rows,
+          (i: any) => i.ItemCD,
+          (i: any) => i.ParentID,
+          SUB_ITEMS_FIELD
+        );
+
+        setAllMenuDataResult(dataTree);
+        setState((prev) => {
+          return {
+            ...prev,
+            data: dataTree,
+          };
+        });
+        setDetailDataResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -527,7 +620,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         setDetailFilters((prev) => ({
           ...prev,
           itemcd: firstRowData.itemcd,
-          ordnum: firstRowData.ordnum,
         }));
         setIfSelectFirstRow(true);
       }
@@ -572,21 +664,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     setDetailFilters((prev) => ({
       ...prev,
       itemcd: selectedRowData.itemcd,
-      ordnum: selectedRowData.ordnum,
     }));
-  };
-
-  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: detailselectedState,
-      dataItemKey: DATA_ITEM_KEY3,
-    });
-    setDetailSelectedState(newSelectedState);
-
-    setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -600,6 +678,110 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
   };
+
+  const [allMenuExpanded, setAllMenuExpanded] = React.useState<string[]>([]);
+
+  const allMenuCallback = (item: any) =>
+    allMenuExpanded.includes(item[ALL_MENU_DATA_ITEM_KEY])
+      ? extendDataItem(item, SUB_ITEMS_FIELD, { [EXPANDED_FIELD]: true })
+      : item;
+
+  const onAllMenuExpandChange = (e: TreeListExpandChangeEvent) => {
+    setState({
+      ...state,
+      expanded: e.value
+        ? state.expanded.filter(
+            (id) => id !== e.dataItem[ALL_MENU_DATA_ITEM_KEY]
+          )
+        : [...state.expanded, e.dataItem[ALL_MENU_DATA_ITEM_KEY]],
+    });
+  };
+
+  const [selectedState2, setSelectedState2] = React.useState<{[ItemCD: string]: number[] | boolean}>({});
+  const [state, setState] = React.useState<AppState>({
+    data: [...allMenuDataResult],
+    dataState: {
+      sort: [{ field: "ItemCD", dir: "asc" }],
+      filter: [],
+    },
+    expanded: [],
+    selected: [],
+  });
+  
+  const onDetailSelectionChange = React.useCallback(
+    (event: TreeListSelectionChangeEvent) => {
+        const newSelectedState = getSelectedState({
+            event,
+            selectedState: selectedState2,
+            dataItemKey: ALL_MENU_DATA_ITEM_KEY
+        });
+        setSelectedState2(newSelectedState);
+    },
+    [selectedState2]
+);
+  const headerSelectionValue = (data: any, selectedState2: any) => {
+    let allSelected = false;
+  
+    mapTree(data, SUB_ITEMS_FIELD, (item) => {
+      allSelected = allSelected && selectedState2[idGetter4(item)];
+      return item;
+    });
+  
+    return allSelected;
+  };
+
+  const allMenuColumns: TreeListColumnProps[] = [
+    {
+        field: "selected",
+        width: "7%",
+        headerSelectionValue: headerSelectionValue(state.data, selectedState2),
+        cell: TreeListSelectionCell,
+        headerCell: TreeListHeaderSelectionCell,
+      },
+    { field: "LEV", title: "LEV", expandable: true },
+    { field: "ItemCD", title: "품목코드", expandable: false},
+    { field: "ItemNM", title: "품목명", expandable: false},
+    { field: "itemlvl1", title: "대분류", expandable: false},
+    { field: "itemlvl2", title: "중분류", expandable: false},
+    { field: "itemlvl3", title: "소분류", expandable: false},
+    { field: "insiz", title: "규격", expandable: false},
+    { field: "itemacnt", title: "품목계정", expandable: false},
+    { field: "unitqty", title: "단위수량", expandable: false, cell: NumberTreeCell},
+    { field: "jeagoqty", title: "재고량", expandable: false,  cell: NumberTreeCell},
+    { field: "qty", title: "처리량", expandable: false,  cell: NumberTreeCell},
+  ];
+
+  const processData = () => {
+    let { data, dataState } = state;
+    let filteredData = filterBy(data, dataState.filter, SUB_ITEMS_FIELD);
+    let sortedData = orderBy(filteredData, dataState.sort, SUB_ITEMS_FIELD);
+    return addExpandField(sortedData);
+  };
+
+  const addExpandField = (dataTree: TreeListColumnProps[]) => {
+    const expanded = state.expanded;
+    return mapTree(dataTree, SUB_ITEMS_FIELD, (item) =>
+      extendDataItem(item, SUB_ITEMS_FIELD, {
+        [EXPANDED_FIELD]: expanded.includes(item.ItemCD),
+        selected: selectedState2[idGetter4(item)],
+      })
+    );
+  };
+
+  const onHeaderSelectionChange = React.useCallback(
+    (event: TreeListHeaderSelectionChangeEvent) => {
+
+        const checkboxElement: any = event.syntheticEvent.target
+        const checked: boolean = checkboxElement.checked;
+        const newSelectedState:any = {};
+    
+        event.dataItems.forEach((item:any) => {
+            newSelectedState[idGetter4(item)] = checked;
+          });
+          setSelectedState2(newSelectedState);
+        },
+        []
+);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -780,10 +962,81 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     setSubDataState({});
   };
 
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    setSubDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      subDataResult,
+      setSubDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const enterEdit = (dataItem: any, field: string) => {
+    if (
+      field != "itemcd" &&
+      field != "insiz" &&
+      field != "itemnm" 
+    ) {
+      const newData = subDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setIfSelectFirstRow(false);
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = () => {
+    const newData = subDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+    setIfSelectFirstRow(false);
+    setSubDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+  
   return (
     <>
       <Window
-        title={"수주BOM참조"}
+        title={"BOM참조"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -808,133 +1061,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th colSpan={2}>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="dtgb"
-                      value={filters.dtgb}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      textField="name"
-                      valueField="code"
-                      className="required"
-                    />
-                  )}
-                </th>
-                <td colSpan={2}>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                    />
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                    />
-                  </div>
-                </td>
-                <th>내수구분</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="doexdiv"
-                      value={filters.doexdiv}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>수주상태</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="ordsts"
-                      value={filters.ordsts}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>수주번호</th>
-                <td>
-                  <Input
-                    name="ordnum"
-                    type="text"
-                    value={filters.ordnum}
-                    onChange={filterInputChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>업체코드</th>
-                <td>
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>업체명</th>
-                <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>담당자</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="person"
-                      value={filters.person}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      textField="user_name"
-                      valueField="user_id"
-                    />
-                  )}
-                </td>
-                <th>사업장</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="location"
-                      value={filters.location}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      className="required"
-                    />
-                  )}
-                </td>
-                <th>완료구분</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionRadioGroup
-                      name="finyn"
-                      customOptionData={customOptionData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>품목코드</th>
+              <th>품목코드</th>
                 <td>
                   <Input
                     name="itemcd"
@@ -959,14 +1086,70 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                     onChange={filterInputChange}
                   />
                 </td>
-                <th>비고</th>
-                <td colSpan={5}>
+                <th>규격</th>
+                <td>
                   <Input
-                    name="remark"
+                    name="insiz"
                     type="text"
-                    value={filters.remark}
+                    value={filters.insiz}
                     onChange={filterInputChange}
                   />
+                </td>
+                <th>등록여부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="finyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
+              </tr>
+              <tr>
+                <th>대분류</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="itemlvl1"
+                      value={filters.itemlvl1}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>중분류</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="itemlvl2"
+                      value={filters.itemlvl2}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>소분류</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="itemlvl3"
+                      value={filters.itemlvl3}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>품목계정</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="itemacnt"
+                      value={filters.itemacnt}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>
@@ -978,12 +1161,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                person: personListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
-                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1010,132 +1187,33 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              field="ordnum"
-              title="수주번호"
-              width="150px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn
-              field="orddt"
-              title="수주일자"
-              cell={DateCell}
-              width="100px"
-            />
-            <GridColumn
-              field="dlvdt"
-              title="납기일자"
-              cell={DateCell}
-              width="100px"
-            />
-            <GridColumn field="custcd" title="업체코드" width="200px" />
-            <GridColumn field="custnm" title="업체명" width="200px" />
-            <GridColumn field="itemcd" title="품목코드" width="200px" />
-            <GridColumn field="itemnm" title="품목명" width="200px" />
-            <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn field="lotnum" title="LOT NO" width="200px" />
-            <GridColumn field="qtyunit" title="단위" width="120px" />
-            <GridColumn
-              field="ordqty"
-              title="수주량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="inqty"
-              title="입고량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="janqty"
-              title="잔량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn field="rcvcustnm" title="인수처명" width="200px" />
-            <GridColumn field="poregnum" title="PO번호" width="120px" />
-            <GridColumn field="remark" title="비고" width="300px" />
+            <GridColumn field="itemcd" title="품목코드" width="540px" footerCell={mainTotalFooterCell}/>
+            <GridColumn field="itemnm" title="품목명" width="500px" />
+            <GridColumn field="insiz" title="규격" width="500px" />
           </Grid>
         </GridContainer>
         <GridContainer>
           <GridTitleContainer>
-            <GridTitle>BOM 제품하위자재조회</GridTitle>
+            <GridTitle>BOM</GridTitle>
           </GridTitleContainer>
-          <Grid
-            style={{ height: "200px" }}
-            data={process(
-              detailDataResult.data.map((row) => ({
-                ...row,
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
-                )?.code_name,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
-                )?.code_name,
-                [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
-              })),
-              detailDataState
-            )}
-            onDataStateChange={onDetailDataStateChange}
-            {...detailDataState}
-            //선택 subDataState
-            dataItemKey={DATA_ITEM_KEY3}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onDetailSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={detailDataResult.total}
-            onScroll={onDetailScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onDetailSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            //더블클릭
-            onRowDoubleClick={onRowDoubleClick}
-          >
-            <GridColumn
-              field="itemcd"
-              title="품목코드"
-              width="200px"
-              footerCell={detailTotalFooterCell}
+          <TreeList
+              style={{ height: "200px", overflow: "auto" }}
+              data={processData()}
+              expandField={EXPANDED_FIELD}
+              subItemsField={SUB_ITEMS_FIELD}
+              onExpandChange={onAllMenuExpandChange}
+              //선택 기능
+              dataItemKey={ALL_MENU_DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              onSelectionChange={onDetailSelectionChange}
+              onHeaderSelectionChange={onHeaderSelectionChange}
+              {...state.dataState}
+              sortable={{ mode: "multiple" }}
+              //드래그용 행
+              columns={allMenuColumns}
+              toolbar={<TreeListToolbar />}
+              onRowDoubleClick={onRowDoubleClick}
             />
-            <GridColumn field="itemnm" title="품목명" width="250px" />
-            <GridColumn field="insiz" title="규격" width="250px" />
-            <GridColumn field="itemacnt" title="품목계정" width="200px" />
-            <GridColumn
-              field="needqty"
-              title="단위소요량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="now_qty"
-              title="재고수량"
-              cell={NumberCell}
-              width="120px"
-            />
-            <GridColumn
-              field="need_qty"
-              title="부족수량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="qty"
-              title="수량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn field="qtyunit" title="수량단위" width="150px" />
-          </Grid>
         </GridContainer>
         <GridContainer>
           <GridTitleContainer>
@@ -1184,6 +1262,10 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender}
+            rowRender={customRowRender}
+            editField={EDIT_FIELD}
           >
             <GridColumn
               field="itemcd"
@@ -1192,22 +1274,17 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               footerCell={subTotalFooterCell}
             />
             <GridColumn field="itemnm" title="품목명" width="200px" />
+            <GridColumn field="itemlvl1" title="대분류" width="170px" cell={CustomComboBoxCell}/>
+            <GridColumn field="itemlvl2" title="중분류" width="170px" cell={CustomComboBoxCell}/>
+            <GridColumn field="itemlvl3" title="소분류" width="170px" cell={CustomComboBoxCell}/>
             <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn field="itemacnt" title="품목계정" width="200px" />
-            <GridColumn field="lotnum" title="LOT NO" width="200px" />
-            <GridColumn
-              field="needqty"
-              title="단위소요량"
-              width="120px"
-              cell={NumberCell}
-            />
             <GridColumn
               field="qty"
-              title="수량"
+              title="처리량"
               width="120px"
               cell={NumberCell}
             />
-            <GridColumn field="qtyunit" title="수량단위" width="150px" />
+            <GridColumn field="itemacnt" title="품목계정" width="200px" />
           </Grid>
         </GridContainer>
         <BottomContainer>
