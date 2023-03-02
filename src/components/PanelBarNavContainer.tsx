@@ -27,6 +27,7 @@ import {
   ButtonContainer,
   Content,
   Gnv,
+  Logo,
   Modal,
   PageWrap,
   TopTitle,
@@ -401,7 +402,10 @@ const PanelBarNavContainer = (props: any) => {
     <Wrapper isMenuOpend={isMenuOpend}>
       <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
       <Gnv isMenuOpend={isMenuOpend}>
-        <AppName>GST ERP</AppName>
+        <AppName>
+          <Logo size="32px" />
+          GST ERP
+        </AppName>
         {paths.length > 0 && (
           <PanelBar
             selected={selected}
@@ -498,7 +502,9 @@ const PanelBarNavContainer = (props: any) => {
       <Content CLIENT_WIDTH={clientWidth}>
         <TopTitle>
           <div style={{ width: "30px" }}></div>
-          <AppName>GST ERP</AppName>
+          <AppName>
+            <Logo size="32px" />
+          </AppName>
           <Button
             icon="menu"
             themeColor={"primary"}

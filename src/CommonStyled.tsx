@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { GNV_WIDTH } from "./components/CommonString";
+import logoSrc from "./img/logo.png";
 
 export const TitleContainer = styled.div`
   display: flex;
@@ -40,8 +41,8 @@ export const MainWorkStartEndContainer = styled.div`
 
 export const TextContainer = styled.div`
   display: flex;
-  border: solid 1px #ff6358;
-  color: #ff6358;
+  border: solid 1px #2289c3;
+  color: #2289c3;
   border-radius: 50px;
   width: 180px;
   line-height: 30px;
@@ -52,6 +53,7 @@ export const TextContainer = styled.div`
 export const Title = styled.h3`
   font-size: 22px;
   font-weight: 600;
+  color: #424242;
 `;
 type TButtonContainer = {
   flexDirection?: "column" | "row";
@@ -117,12 +119,12 @@ export const FilterBox = styled.table`
     min-height: 40px;
   }
   tr th {
-    background-color: #f5f5f8;
+    background-color: #fafafa;
     border: solid 1px #d7d7d7;
     width: 120px;
     color: #333333;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
     vertical-align: middle;
   }
@@ -202,7 +204,7 @@ export const FormBox = styled.table`
     min-width: 120px;
     color: #333333;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 13px;
     text-align: right;
     vertical-align: middle;
     padding-right: 10px;
@@ -332,10 +334,11 @@ export const GridContainer = styled.div<TGridContainer>`
 export const GridTitle = styled.h3`
   font-size: 16px;
   font-weight: 600;
+  color: #424242;
 `;
 
 export const PrimaryP = styled.p`
-  color: #ff6358;
+  color: #2289c3;
 `;
 
 export const PortraitPrint = styled.div`
@@ -452,7 +455,16 @@ export const LoginBox = styled.div`
   }
   .k-button.login-btn {
     width: 100%;
-    margin-top: 15px;
+    margin-top: 40px;
+  }
+  .k-form-horizontal .k-form-field > .k-label,
+  .k-form-horizontal .k-form-field > kendo-label,
+  .k-form-horizontal .k-form-field > .k-form-label {
+    align-items: flex-start;
+    width: 25% !important;
+  }
+  .k-form-horizontal .k-form-field-wrap {
+    max-width: calc(75% - 10px) !important;
   }
 `;
 
@@ -538,9 +550,9 @@ export const InfoList = styled.ul`
 
   .big-input {
     height: 50px;
-    border: solid 1px #ff6358;
+    border: solid 1px #2289c3;
     border-radius: 10px;
-    color: #ff6358;
+    color: #2289c3;
     text-align: right;
     padding-left: 15px;
     font-size: 18px;
@@ -574,8 +586,8 @@ export const NumberKeypadRow = styled.div`
   justify-content: space-between;
 `;
 export const NumberKeypadCell = styled.div`
-  border: solid 1px #ff6358;
-  color: #ff6358;
+  border: solid 1px #2289c3;
+  color: #2289c3;
   font-size: 20px;
   text-align: center;
   border-radius: 5px;
@@ -587,15 +599,15 @@ export const NumberKeypadCell = styled.div`
   justify-content: center;
   cursor: pointer;
   :hover {
-    background-color: #ff6358;
+    background-color: #2289c3;
     color: #ffffff;
   }
   :focus {
-    background-color: #ff6358;
+    background-color: #2289c3;
     color: #ffffff;
   }
   :active {
-    background-color: #ff6358;
+    background-color: #2289c3;
     color: #ffffff;
   }
 `;
@@ -630,7 +642,7 @@ export const Gnv = styled.div<TGnv>`
   }
 
   .k-panelbar-item-icon.k-icon.k-i-gear {
-    color: #ff6358;
+    color: #2289c3;
   }
 
   /*=========================================================================
@@ -671,24 +683,24 @@ export const PageWrap = styled.div`
 `;
 
 export const AppName = styled.h1`
-  font-size: 26px;
-  color: #ff6358;
+  font-size: 20px;
+  color: #2289c3;
   font-weight: 400;
   /* padding: 10px 0; */
   height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 3px;
+  background-color: #fff;
   border-right: 1px solid #ebebeb;
+`;
 
-  /*=========================================================================
-  미디어 쿼리
-  ##Device = 모바일
-  ##Screen = 768px 이하 해상도 모바일
-  =========================================================================*/
-  @media (max-width: 768px) {
-    border: none;
-  }
+export const LoginAppName = styled(AppName)`
+  border-right: none;
+  background-color: transparent;
+  font-size: 22px;
+  gap: 5px;
 `;
 
 export const TopTitle = styled.div`
@@ -727,3 +739,13 @@ export const Modal = styled.div<TModal>`
 /*=========================================================================
 	// PanelBarNavContainer 종료
 =========================================================================*/
+type TLogo = { size: string };
+
+export const Logo = styled.div<TLogo>`
+  background: url(${logoSrc});
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: ${(props) => props.size};
+  height: ${(props) => props.size};
+  background-position: center;
+`;

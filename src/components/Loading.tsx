@@ -26,7 +26,7 @@ function Loading() {
               transform: "translate(-50%, -50%)",
             }}
           >
-            <ClipLoader color="#ff6358" size={100} loading={loading} />
+            <ClipLoader color="#2184bb" size={100} loading={loading} />
           </div>
         </div>
       )}
