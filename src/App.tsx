@@ -128,6 +128,9 @@ a {
   justify-content: center; /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
 }
 
+.k-window{
+  z-index: 10100 !important; /* 버그 : 메뉴바가 window 위로 올라오는 현상 수정  */
+}
 
 ul.required,
 ul.required:hover,
