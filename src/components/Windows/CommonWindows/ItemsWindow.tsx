@@ -5,7 +5,6 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridCellProps,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
@@ -23,18 +22,21 @@ import {
   TitleContainer,
 } from "../../../CommonStyled";
 import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../../../store/atoms";
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
-  setData(data: object, event?: any): void; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(data: object): void; // 선택한 품목 데이터를 전달하는 함수
 };
+
+const DATA_ITEM_KEY = "itemcd";
 
 const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -43,7 +45,8 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
     width: 1200,
     height: 800,
   });
-  const DATA_ITEM_KEY = "itemcd";
+
+  const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -118,28 +121,22 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
     useyn: "Y",
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_WEB_ITEM_POPUP",
-    pageNumber: mainPgNum,
-    pageSize: PAGE_SIZE,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_bnatur": filters.bnatur,
-      "@p_spec": filters.spec,
-      "@p_itemacnt": filters.itemacnt,
-      "@p_itemlvl1": filters.itemlvl1,
-      "@p_itemlvl2": filters.itemlvl2,
-      "@p_itemlvl3": filters.itemlvl3,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_dwgno": filters.dwgno,
-      "@p_useyn": filters.useyn,
-    },
+  //팝업 조회 파라미터
+  const parameters = {
+    para:
+      "popup-data?id=" +
+      "P_ITEMCD" +
+      "&page=" +
+      mainPgNum +
+      "&pageSize=" +
+      PAGE_SIZE,
+    itemcd: filters.itemcd,
+    itemnm: filters.itemnm,
+    insiz: filters.insiz,
+    useyn:
+      filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
   };
+
   useEffect(() => {
     fetchMainGrid();
   }, [mainPgNum]);
@@ -147,24 +144,30 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
   //그리드 조회
   const fetchMainGrid = async () => {
     let data: any;
+    setLoading(true);
 
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("popup-data", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+    if (data !== null) {
+      const totalRowCnt = data.data.TotalRowCount;
+      const rows = data.data.Rows;
 
-      setMainDataResult((prev) => {
-        return {
-          data: [...prev.data, ...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt) {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+      }
+    } else {
+      console.log(data);
     }
+    setLoading(false);
   };
 
   //그리드 리셋
@@ -188,27 +191,6 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const CommandCell = (props: GridCellProps) => {
-    const onSelectClick = () => {
-      // 부모로 데이터 전달, 창 닫기
-      const selectedData = props.dataItem;
-      setData(selectedData);
-      if (workType === "ROW_ADD") onClose();
-    };
-
-    return (
-      <td className="k-command-cell">
-        <Button
-          className="k-grid-edit-command"
-          themeColor={"primary"}
-          fillMode="outline"
-          onClick={onSelectClick}
-          icon="check"
-        ></Button>
-      </td>
-    );
-  };
-
   const onRowDoubleClick = (props: any) => {
     const selectedData = props.dataItem;
     selectData(selectedData);
@@ -221,10 +203,10 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
     selectData(selectedData);
   };
 
-  // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
+  // 부모로 데이터 전달, 창 닫기 (여러 행을 추가하는 경우 Close 제외)
   const selectData = (selectedData: any) => {
     setData(selectedData);
-    if (workType === "ROW_ADD") onClose();
+    if (workType !== "ROWS_ADD") onClose();
   };
 
   //메인 그리드 선택 이벤트
@@ -317,7 +299,7 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
                 )}
               </td>
             </tr>
-            <tr>
+            {/* <tr>
               <th>사양</th>
               <td>
                 <Input
@@ -349,13 +331,18 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
               </td>
               <th></th>
               <td></td>
-            </tr>
+            </tr> */}
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-      <GridContainer>
+      {/* **Grid Height를 Window Height에 맞춰 동적으로 세팅하기
+      ...<GridContainer height="calc(100% - {그리드 높이를 제외한 나머지 요소의 높이값})" >
+            <Grid
+          style={{ height: "100%" }}...
+       */}
+      <GridContainer height="calc(100% - 170px)">
         <Grid
-          style={{ height: "500px" }}
+          style={{ height: "100%" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -410,9 +397,11 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          {/* <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
-            확인
-          </Button> */}
+          {workType !== "ROWS_ADD" && (
+            <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
+              확인
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

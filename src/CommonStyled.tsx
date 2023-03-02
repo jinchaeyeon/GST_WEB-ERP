@@ -243,8 +243,8 @@ export const FormBox = styled.table`
 `;
 
 type TGridContainerWrap = {
-  flexDirection?: string;
-  maxWidth?: string;
+  flexDirection?: "column" | "row" | "row-reverse" | "column-reverse";
+  maxWidth?: string | number;
 };
 
 export const GridContainerWrap = styled.div<TGridContainerWrap>`
@@ -252,7 +252,10 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
   gap: ${(props) => (props.flexDirection === "column" ? "0" : "15px")};
   justify-content: space-between;
   flex-direction: ${(props) => props.flexDirection};
-  max-width: ${(props) => props.maxWidth};
+  max-width: ${(props) =>
+    typeof props.maxWidth === "number"
+      ? props.maxWidth + "px"
+      : props.maxWidth};
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -262,6 +265,7 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
 type TGridContainer = {
   maxWidth?: string;
   clientWidth?: number;
+  height?: string;
   width?: string;
   inTab?: boolean;
   margin?: TMargin;
@@ -288,6 +292,7 @@ export const GridContainer = styled.div<TGridContainer>`
         "px - 150px)" //150: 기본 마진
       : ""};
 
+  height: ${(props) => props.height};
   margin-top: ${(props) => (props.margin ? props.margin.top ?? "" : "")};
   margin-bottom: ${(props) => (props.margin ? props.margin.bottom ?? "" : "")};
   margin-left: ${(props) => (props.margin ? props.margin.left ?? "" : "")};

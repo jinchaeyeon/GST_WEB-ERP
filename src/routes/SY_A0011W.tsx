@@ -51,12 +51,10 @@ import {
   UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import {
-  CLIENT_WIDTH,
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   EXPANDED_FIELD,
-  GNV_WIDTH,
-  GRID_MARGIN,
+  GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -1280,7 +1278,7 @@ const Page: React.FC = () => {
       </FilterBoxWrap>
 
       <GridContainerWrap>
-        <GridContainer width={"500px"}>
+        <GridContainer width={`30%`}>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
@@ -1353,7 +1351,7 @@ const Page: React.FC = () => {
               <GridColumn
                 field={"user_group_id"}
                 title={"사용자그룹ID"}
-                width={"100px"}
+                width={"120px"}
                 footerCell={mainTotalFooterCell}
               />
               <GridColumn
@@ -1365,9 +1363,7 @@ const Page: React.FC = () => {
             </Grid>
           </ExcelExport>
         </GridContainer>
-        <GridContainer
-          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 500 - 300 + "px"}
-        >
+        <GridContainer width={`calc(45% - ${GAP}px)`}>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
@@ -1440,7 +1436,7 @@ const Page: React.FC = () => {
             ></TreeList> */}
           </ExcelExport>
         </GridContainer>
-        <GridContainer width={"300px"}>
+        <GridContainer width={`calc(35% - ${GAP}px)`}>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
