@@ -74,6 +74,8 @@ import {
 import { CellRender, RowRender } from "../Renderers";
 import { bytesToBase64 } from "byte-base64";
 import RequiredHeader from "../RequiredHeader";
+import { isLoading } from "../../store/atoms";
+import { useSetRecoilState } from "recoil";
 
 const requiredField = ["sub_code", "code_name"];
 const numberField = [
@@ -109,8 +111,7 @@ const idGetter = getter(FORM_DATA_INDEX);
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
-  reloadData(workType: string): void;
-  setGroupCode(groupCode: string): void;
+  reloadData(workType: string, groupCode?: string): void;
   workType: string;
   group_code?: string;
   isCopy: boolean;
@@ -481,7 +482,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 const KendoWindow = ({
   setVisible,
   reloadData,
-  setGroupCode,
   workType,
   group_code = "",
   isCopy,
@@ -490,6 +490,7 @@ const KendoWindow = ({
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 
+  const setLoading = useSetRecoilState(isLoading);
   const [dataState, setDataState] = useState<State>({
     sort: [],
   });
@@ -620,20 +621,21 @@ const KendoWindow = ({
     pageSize: 1,
     parameters: {
       "@p_work_type": "LIST",
-      "@p_group_category": "",
       "@p_group_code": group_code,
       "@p_group_name": "",
+      "@p_group_category": "",
+      "@p_field_caption": "",
       "@p_memo": "",
-      "@p_userid": userId,
       "@p_sub_code": "",
-      "@p_subcode_name": "",
-      "@p_comment": "",
+      "@p_code_name": "",
+      "@p_find_row_value": "",
     },
   };
 
   //요약정보 조회
   const fetchMain = async () => {
     let data: any;
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -666,6 +668,7 @@ const KendoWindow = ({
         };
       });
     }
+    setLoading(false);
   };
 
   //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
@@ -682,6 +685,7 @@ const KendoWindow = ({
   const fetchGrid = async (pgNum: number) => {
     let data: any;
     let result = [];
+    setLoading(true);
 
     const detailParameters: Iparameters = {
       procedureName: "P_SY_A0010W_Q",
@@ -689,14 +693,14 @@ const KendoWindow = ({
       pageSize: PAGE_SIZE,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_group_category": "",
         "@p_group_code": group_code,
         "@p_group_name": "",
+        "@p_group_category": "",
+        "@p_field_caption": "",
         "@p_memo": "",
-        "@p_userid": userId,
         "@p_sub_code": "",
-        "@p_subcode_name": "",
-        "@p_comment": "",
+        "@p_code_name": "",
+        "@p_find_row_value": "",
       },
     };
     try {
@@ -739,6 +743,7 @@ const KendoWindow = ({
         });
       }
     }
+    setLoading(false);
     return result;
   };
 
@@ -776,8 +781,8 @@ const KendoWindow = ({
   //프로시저 파라미터
   const paraSaved: Iparameters = {
     procedureName: "P_SY_A0010W_S",
-    pageNumber: 1,
-    pageSize: 10,
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
       "@p_work_type": paraData.work_type,
       "@p_group_code": paraData.group_code,
@@ -826,8 +831,7 @@ const KendoWindow = ({
         fetchGrid(1);
       } else {
         setVisible(false);
-        setGroupCode(paraData.group_code);
-        reloadData("N");
+        reloadData("N", paraData.group_code);
       }
     } else {
       console.log("[오류 발생]");
