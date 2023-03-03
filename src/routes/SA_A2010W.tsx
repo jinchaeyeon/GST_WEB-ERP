@@ -245,6 +245,7 @@ const SA_B2000: React.FC = () => {
           fillMode="outline"
           onClick={onEditClick}
           icon="edit"
+          size={"small"}
         ></Button>
       </td>
     );
