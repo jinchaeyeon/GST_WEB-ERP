@@ -12,6 +12,7 @@ import BA_A0040W from "./routes/BA_A0040W";
 import BA_A0050W from "./routes/BA_A0050W";
 import BA_A0080W from "./routes/BA_A0080W";
 import MA_A2000W from "./routes/MA_A2000W";
+import MA_A2300W from "./routes/MA_A2300W";
 import MA_A2400W from "./routes/MA_A2400W";
 import MA_A2500W from "./routes/MA_A2500W";
 import MA_A2700W from "./routes/MA_A2700W";
@@ -195,6 +196,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
             {/* 물류관리 */}
             <AuthRoute path="/MA_A2000W" component={MA_A2000W} exact />
+            <AuthRoute path="/MA_A2300W" component={MA_A2300W} exact />
             <AuthRoute path="/MA_A2400W" component={MA_A2400W} exact />
             <AuthRoute path="/MA_A2500W" component={MA_A2500W} exact />
             <AuthRoute path="/MA_A2700W" component={MA_A2700W} exact />

@@ -73,6 +73,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     width: 1600,
     height: 900,
   });
+
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
   const DATA_ITEM_KEY3 = "num";
