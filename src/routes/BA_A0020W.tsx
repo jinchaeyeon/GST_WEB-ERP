@@ -2511,7 +2511,7 @@ const BA_A0020: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer width={`29%`} >
+        <GridContainer width={`30%`}>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
@@ -2582,7 +2582,7 @@ const BA_A0020: React.FC = () => {
             </Grid>
           </ExcelExport>
         </GridContainer>
-        <div>
+        <GridContainer width={`calc(70% - ${GAP}px)`}>
           {tabSelected == 0 ? (
             <ButtonContainer style={{ float: "right" }}>
               <Button
@@ -2611,14 +2611,14 @@ const BA_A0020: React.FC = () => {
               </Button>
             </ButtonContainer>
           ) : (
-            <ButtonContainer style={{ float: "right", width: "250px", height: "30px" }}>
-
-          </ButtonContainer>
+            <ButtonContainer
+              style={{ float: "right", width: "250px", height: "30px" }}
+            ></ButtonContainer>
           )}
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
-            style={{ display: "inline-block", float: "right", width: "62vw" }}
+            style={{ width: "100%" }}
           >
             <TabStripTab title="상세정보">
               <FormBoxWrap style={{ height: "67.5vh" }}>
@@ -3127,7 +3127,7 @@ const BA_A0020: React.FC = () => {
               </FormBoxWrap>
             </TabStripTab>
             <TabStripTab title="업체담당자">
-              <GridContainer width="60vw">
+              <GridContainer>
                 <GridTitleContainer>
                   <GridTitle>업체담당자</GridTitle>
                   <ButtonContainer>
@@ -3234,7 +3234,7 @@ const BA_A0020: React.FC = () => {
               </GridContainer>
             </TabStripTab>
             <TabStripTab title="재무현황">
-              <GridContainer width="60vw">
+              <GridContainer>
                 <GridTitleContainer>
                   <GridTitle>재무현황</GridTitle>
                   <ButtonContainer>
@@ -3342,7 +3342,7 @@ const BA_A0020: React.FC = () => {
               </GridContainer>
             </TabStripTab>
           </TabStrip>
-        </div>
+        </GridContainer>
       </GridContainerWrap>
       {custWindowVisible && (
         <CustomersWindow

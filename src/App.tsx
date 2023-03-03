@@ -166,6 +166,12 @@ input.readonly {
   padding-top: 0;
   padding-bottom: 0;
 }
+
+.k-tabstrip > .k-content.k-active,
+.k-tabstrip > .k-content.k-active > div.k-animation-container{
+  width: inherit;
+}
+
 `;
 
 const App: React.FC = () => {

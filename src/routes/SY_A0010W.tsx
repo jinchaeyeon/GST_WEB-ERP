@@ -33,7 +33,6 @@ import {
   getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
@@ -47,12 +46,15 @@ import {
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
+import { isLoading } from "../store/atoms";
+import { useSetRecoilState } from "recoil";
 
 const numberField = [
   "sort_seq",
@@ -64,25 +66,24 @@ const numberField = [
   "numref5",
 ];
 const checkBoxField = ["system_yn", "use_yn"];
+const DATA_ITEM_KEY = "group_code";
+const DETAIL_DATA_ITEM_KEY = "sub_code";
 
 const Page: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
-  const DATA_ITEM_KEY = "group_code";
-  const DETAIL_DATA_ITEM_KEY = "sub_code";
-  const SELECTED_FIELD = "selected";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
+  const setLoading = useSetRecoilState(isLoading);
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
   const [mainDataState, setMainDataState] = useState<State>({
     group: [
       {
-        field: "group_category",
+        field: "group_category_name",
       },
     ],
     sort: [],
@@ -92,10 +93,6 @@ const Page: React.FC = () => {
   });
 
   const pathname: string = window.location.pathname.replace("/", "");
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -203,11 +200,9 @@ const Page: React.FC = () => {
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
 
   const [workType, setWorkType] = useState("");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [isCopy, setIsCopy] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -242,7 +237,9 @@ const Page: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
+    isSearch: true, // true면 조회조건(filters) 변경 되었을때 조회
     pgSize: PAGE_SIZE,
+    pgNum: 1,
     group_category: "",
     group_code: "",
     group_name: "",
@@ -250,46 +247,48 @@ const Page: React.FC = () => {
     userid: userId,
     sub_code: "",
     subcode_name: "",
-    comment: "",
+    field_caption: "",
+    find_row_value: "",
   });
 
   const [detailFilters, setDetailFilters] = useState({
+    isSearch: false,
     pgSize: PAGE_SIZE,
+    pgNum: 1,
     group_code: "",
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_SY_A0010W_Q",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "LIST",
-      "@p_group_category": filters.group_category,
-      "@p_group_code": "%" + filters.group_code + "%",
+      "@p_group_code": filters.group_code,
       "@p_group_name": filters.group_name,
+      "@p_group_category": filters.group_category,
+      "@p_field_caption": filters.field_caption,
       "@p_memo": filters.memo,
-      "@p_userid": filters.userid,
       "@p_sub_code": filters.sub_code,
-      "@p_subcode_name": filters.subcode_name,
-      "@p_comment": filters.comment,
+      "@p_code_name": filters.subcode_name,
+      "@p_find_row_value": filters.find_row_value,
     },
   };
-
   const detailParameters: Iparameters = {
     procedureName: "P_SY_A0010W_Q",
-    pageNumber: detailPgNum,
+    pageNumber: detailFilters.pgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
       "@p_work_type": "DETAIL",
-      "@p_group_category": "",
       "@p_group_code": detailFilters.group_code,
       "@p_group_name": "",
+      "@p_group_category": "",
+      "@p_field_caption": "",
       "@p_memo": "",
-      "@p_userid": userId,
       "@p_sub_code": "",
-      "@p_subcode_name": "",
-      "@p_comment": "",
+      "@p_code_name": "",
+      "@p_find_row_value": "",
     },
   };
 
@@ -302,8 +301,8 @@ const Page: React.FC = () => {
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
     procedureName: "P_SY_A0010W_S",
-    pageNumber: 1,
-    pageSize: 10,
+    pageNumber: 0,
+    pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
       "@p_group_code": paraDataDeleted.group_code,
@@ -333,6 +332,8 @@ const Page: React.FC = () => {
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
+    setLoading(true);
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -343,21 +344,29 @@ const Page: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0)
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
+
+        if (filters.pgNum !== data.pageNumber) {
+          setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
+        }
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+
+    setLoading(false);
   };
 
   const fetchDetailGrid = async () => {
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", detailParameters);
@@ -377,56 +386,68 @@ const Page: React.FC = () => {
           };
         });
     }
+    setLoading(false);
   };
 
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchDetailGrid();
-    }
-  }, [detailPgNum]);
-
-  useEffect(() => {
-    resetDetailGrid();
-    fetchDetailGrid();
-  }, [detailFilters]);
+  // 조회 버튼 => 리셋 후 조회
+  const search = () => {
+    resetAllGrid();
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
+  };
 
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
-  //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
+    if (mainDataResult.total > 0) {
+      if (filters.find_row_value === "" && filters.pgNum === 1) {
+        // 첫번째 행 조회
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
 
         setDetailFilters((prev) => ({
           ...prev,
           group_code: firstRowData.group_code,
+          isSearch: true,
         }));
-
-        setIfSelectFirstRow(true);
       }
+      setFilters((prev) => ({ ...prev, isSearch: false, find_row_value: "" }));
     }
   }, [mainDataResult]);
 
+  useEffect(() => {
+    if (filters.isSearch && permissions !== null) {
+      setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+
+      if (filters.find_row_value !== "") {
+        // 그룹코드로 조회 시 리셋 후 조회
+        resetAllGrid();
+        fetchMainGrid();
+      } else {
+        // 일반 조회
+        fetchMainGrid();
+      }
+    }
+  }, [filters, permissions]);
+
+  useEffect(() => {
+    if (permissions !== null && detailFilters.isSearch) {
+      setDetailFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+
+      if (detailFilters.pgNum === 1) {
+        setDetailDataResult(process([], detailDataState));
+        fetchDetailGrid();
+      } else {
+        fetchDetailGrid();
+      }
+    }
+  }, [detailFilters, permissions]);
+
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
-  };
-
-  const resetDetailGrid = () => {
-    setDetailPgNum(1);
     setDetailDataResult(process([], detailDataState));
   };
 
@@ -445,6 +466,7 @@ const Page: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       group_code: selectedRowData.group_code,
+      isSearch: true,
     }));
   };
 
@@ -458,13 +480,25 @@ const Page: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    if (chkScrollHandler(event, filters.pgNum, PAGE_SIZE) && !filters.isSearch)
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: prev.pgNum + 1,
+        isSearch: true,
+        find_row_value: "",
+      }));
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
-      setDetailPgNum((prev) => prev + 1);
+    if (
+      chkScrollHandler(event, detailFilters.pgNum, PAGE_SIZE) &&
+      !detailFilters.isSearch
+    )
+      setDetailFilters((prev) => ({
+        ...prev,
+        pgNum: prev.pgNum + 1,
+        isSearch: true,
+      }));
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -548,6 +582,7 @@ const Page: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       group_code: selectedRowData.group_code,
+      isSearch: true,
     }));
 
     setIsCopy(true);
@@ -591,20 +626,35 @@ const Page: React.FC = () => {
     paraDataDeleted.group_code = "";
   };
 
-  const setGroupCode = (group_code: string) => {
-    setIsInitSearch(false);
-    setFilters((prev) => ({ ...prev, group_code }));
+  const setGroupCode = (groupCode: string) => {
+    // 리셋
+    resetAllGrid();
+
+    // 행 선택
+    setSelectedState({ [groupCode]: true });
+
+    // 메인 조회
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: true,
+      find_row_value: groupCode,
+    }));
+
+    // 디테일 조회
+    setDetailFilters((prev) => ({
+      ...prev,
+      group_code: groupCode,
+      isSearch: true,
+    }));
   };
 
-  const reloadData = (workType: string) => {
-    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
-    if (workType === "U") {
-      setIfSelectFirstRow(false);
-      resetAllGrid();
-      fetchMainGrid();
-      fetchDetailGrid();
-    } else {
-      setIfSelectFirstRow(true);
+  const reloadData = (workType: string, groupCode: string | undefined) => {
+    if (groupCode) {
+      //그룹코드로 조회
+      setGroupCode(groupCode);
+    } else if (workType === "U") {
+      // 일반조회
+      search();
     }
   };
 
@@ -622,20 +672,6 @@ const Page: React.FC = () => {
         : event.dataItem.expanded;
     event.dataItem.expanded = !isExpanded;
     setMainDataState((prev) => ({ ...prev }));
-  };
-
-  // 최초 한번만 실행
-  useEffect(() => {
-    if (!isInitSearch && permissions !== null) {
-      resetAllGrid();
-      fetchMainGrid();
-      setIsInitSearch(true);
-    }
-  }, [filters, permissions]);
-
-  const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
   };
 
   return (
@@ -689,12 +725,12 @@ const Page: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>코멘트</th>
+              <th>필드 캡션</th>
               <td>
                 <Input
-                  name="comment"
+                  name="field_caption"
                   type="text"
-                  value={filters.comment}
+                  value={filters.field_caption}
                   onChange={filterInputChange}
                 />
               </td>
@@ -719,7 +755,7 @@ const Page: React.FC = () => {
                 />
               </td>
               <th>메모</th>
-              <td>
+              <td colSpan={3}>
                 <Input
                   name="memo"
                   type="text"
@@ -727,8 +763,6 @@ const Page: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th></th>
-              <td></td>
             </tr>
           </tbody>
         </FilterBox>
@@ -780,9 +814,12 @@ const Page: React.FC = () => {
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
-                  group_category: groupCategoryListData.find(
-                    (item: any) => item.sub_code === row.group_category
-                  )?.code_name,
+                  group_category_name:
+                    row.group_category +
+                    ":" +
+                    groupCategoryListData.find(
+                      (item: any) => item.sub_code === row.group_category
+                    )?.code_name,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -814,7 +851,7 @@ const Page: React.FC = () => {
               expandField="expanded"
             >
               <GridColumn cell={CommandCell} width="55px" />
-              <GridColumn field="group_category" title={"유형분류"} />
+              <GridColumn field="group_category_name" title={"유형분류"} />
 
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
@@ -907,7 +944,6 @@ const Page: React.FC = () => {
           workType={workType} //신규 : N, 수정 : U
           group_code={detailFilters.group_code}
           isCopy={isCopy}
-          setGroupCode={setGroupCode}
           reloadData={reloadData}
         />
       )}
