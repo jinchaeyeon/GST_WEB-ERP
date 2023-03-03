@@ -247,6 +247,7 @@ export const FormBox = styled.table`
 type TGridContainerWrap = {
   flexDirection?: "column" | "row" | "row-reverse" | "column-reverse";
   maxWidth?: string | number;
+  height?: string | number;
 };
 
 export const GridContainerWrap = styled.div<TGridContainerWrap>`
@@ -258,6 +259,8 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
     typeof props.maxWidth === "number"
       ? props.maxWidth + "px"
       : props.maxWidth};
+  height: ${(props) =>
+    typeof props.height === "number" ? props.height + "px" : props.height};
 
   @media (max-width: 768px) {
     flex-direction: column;
