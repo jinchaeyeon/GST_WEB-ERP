@@ -206,7 +206,7 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-   
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -416,9 +416,9 @@ const KendoWindow = ({
               style={{ width: "500px", display: "inline-block" }}
               margin={{ top: "30px" }}
             >
-                                         <GridTitleContainer>
-                  <GridTitle>요약정보</GridTitle>
-                </GridTitleContainer>
+              <GridTitleContainer>
+                <GridTitle>요약정보</GridTitle>
+              </GridTitleContainer>
               <Grid
                 data={detailDataResult.data.map((item: any) => ({
                   ...item,
@@ -433,7 +433,7 @@ const KendoWindow = ({
                 onSelectionChange={onSubDataSelectionChange}
                 style={{ height: "400px" }}
               >
-                <GridColumn field="pattern_id" title="패턴ID" width="120px"/>
+                <GridColumn field="pattern_id" title="패턴ID" width="120px" />
                 <GridColumn field="pattern_name" title="패턴명" width="150px" />
                 <GridColumn field="remark" title="비고" width="200px" />
               </Grid>
@@ -442,9 +442,9 @@ const KendoWindow = ({
               style={{ width: "600px", display: "inline-block" }}
               margin={{ top: "30px", left: "40px" }}
             >
-                                         <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                </GridTitleContainer>
+              <GridTitleContainer>
+                <GridTitle>상세정보</GridTitle>
+              </GridTitleContainer>
               <Grid
                 data={detailDataResult2.data.map((item: any) => ({
                   ...item,
@@ -453,15 +453,20 @@ const KendoWindow = ({
                   )?.code_name,
                   proccd: proccdListData.find(
                     (items: any) => items.sub_code === item.proccd
-                  )?.code_name
+                  )?.code_name,
                 }))}
                 total={detailDataResult2.total}
                 dataItemKey={FORM_DATA_INDEX}
                 onRowDoubleClick={onRowDoubleClick}
                 style={{ height: "400px" }}
               >
-                <GridColumn field="proccd" title="공정" width="140px"/>
-                <GridColumn field="procseq" title="공정순서" width="120px" cell={NumberCell}/>
+                <GridColumn field="proccd" title="공정" width="140px" />
+                <GridColumn
+                  field="procseq"
+                  title="공정순서"
+                  width="120px"
+                  cell={NumberCell}
+                />
                 <GridColumn field="outprocyn" title="외주구분" width="120px" />
                 <GridColumn field="remark" title="비고" width="200px" />
               </Grid>

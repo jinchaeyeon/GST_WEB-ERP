@@ -1027,7 +1027,7 @@ const SA_B2000: React.FC = () => {
       </FilterBoxWrap>
 
       <GridContainerWrap>
-        <GridContainer width={"50%"}>
+        <GridContainer width={`50%`}>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {

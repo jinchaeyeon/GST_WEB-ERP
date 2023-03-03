@@ -71,6 +71,7 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
   EXPANDED_FIELD,
+  GAP,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
@@ -1177,7 +1178,7 @@ const SY_A0125W: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer width="800px">
+        <GridContainer width="46%">
           <ExcelExport
             ref={(exporter) => (_export = exporter)}
             hierarchy={true}
@@ -1207,7 +1208,7 @@ const SY_A0125W: React.FC = () => {
             />
           </ExcelExport>
         </GridContainer>
-        <GridContainer>
+        <GridContainer width={`calc(54% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>

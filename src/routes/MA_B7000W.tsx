@@ -50,6 +50,7 @@ import {
   GRID_MARGIN,
   PAGE_SIZE,
   SELECTED_FIELD,
+  GAP,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
@@ -985,7 +986,7 @@ const MA_B7000: React.FC = () => {
         </ExcelExport>
       </GridContainer>
       <GridContainerWrap>
-        <GridContainer width={"450px"}>
+        <GridContainer width={`20%`}>
           <GridTitleContainer>
             <GridTitle>계정별LOT</GridTitle>
           </GridTitleContainer>
@@ -1050,7 +1051,7 @@ const MA_B7000: React.FC = () => {
           </Grid>
         </GridContainer>
         <GridContainer
-          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 450 + "px"}
+           width={`calc(80% - ${GAP}px)`}
         >
           <GridTitleContainer>
             <GridTitle>LOT별 상세이력</GridTitle>

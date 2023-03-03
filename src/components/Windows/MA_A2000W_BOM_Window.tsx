@@ -11,25 +11,25 @@ import {
   getSelectedState,
   GridDataStateChangeEvent,
   GridExpandChangeEvent,
-  GridItemChangeEvent
+  GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
 import {
-    TreeList,
-    createDataTree,
-    mapTree,
-    TreeListToolbar,
-    extendDataItem,
-    TreeListExpandChangeEvent,
-    TreeListColumnProps,
-    filterBy,
-    orderBy,
-    treeToFlat,
-    TreeListSelectionChangeEvent,
-    TreeListCellProps,
-    TreeListHeaderSelectionCell,
-    TreeListHeaderSelectionChangeEvent,
-    TreeListSelectionCell
-  } from "@progress/kendo-react-treelist";
+  TreeList,
+  createDataTree,
+  mapTree,
+  TreeListToolbar,
+  extendDataItem,
+  TreeListExpandChangeEvent,
+  TreeListColumnProps,
+  filterBy,
+  orderBy,
+  treeToFlat,
+  TreeListSelectionChangeEvent,
+  TreeListCellProps,
+  TreeListHeaderSelectionCell,
+  TreeListHeaderSelectionChangeEvent,
+  TreeListSelectionCell,
+} from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
 import { CellRender, RowRender } from "../Renderers";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -61,11 +61,16 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   convertDateToStr,
-  getGridItemChangedData
+  getGridItemChangedData,
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD, EDIT_FIELD,  EXPANDED_FIELD, } from "../CommonString";
+import {
+  PAGE_SIZE,
+  SELECTED_FIELD,
+  EDIT_FIELD,
+  EXPANDED_FIELD,
+} from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
@@ -85,63 +90,62 @@ type IWindow = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-    const [bizComponentData, setBizComponentData] = useState([]);
-    UseBizComponent("L_BA171,L_BA172,L_BA173", setBizComponentData);
-  
-    const field = props.field ?? "";
-    const bizComponentIdVal =
-      field === "itemlvl1"
-        ? "L_BA171"
-        : field === "itemlvl2"
-        ? "L_BA172"
-        : field === "itemlvl3"
-        ? "L_BA173"
-        : "";
-    const bizComponent = bizComponentData.find(
-      (item: any) => item.bizComponentId === bizComponentIdVal
-    );
-  
-    return bizComponent ? (
-      <ComboBoxCell bizComponent={bizComponent} {...props} />
-    ) : (
-      <td />
-    );
-  };
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_BA171,L_BA172,L_BA173", setBizComponentData);
 
-  interface AppState {
-    data: lev[];
-    dataState: DataState;
-    expanded: number[];
-    selected: number[];
-  }
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "itemlvl1"
+      ? "L_BA171"
+      : field === "itemlvl2"
+      ? "L_BA172"
+      : field === "itemlvl3"
+      ? "L_BA173"
+      : "";
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
 
-  export interface lev {
-    ID: string;
-    ItemCD: string;
-    ItemNM: string;
-    LEV: number;
-    ParentID: string;
-    bnatur: string;
-    chk: string;
-    insiz: string;
-    itemacnt: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    itemno: string;
-    jeagoqty: number;
-    num: number;
-    qty: number;
-    qtyunit: string;
-    rowstatus: string;
-    spec: string;
-    unitqty: number;
-  }
-  export interface DataState {
-    sort: SortDescriptor[];
-    filter: FilterDescriptor[];
-  }
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
+};
 
+interface AppState {
+  data: lev[];
+  dataState: DataState;
+  expanded: number[];
+  selected: number[];
+}
+
+export interface lev {
+  ID: string;
+  ItemCD: string;
+  ItemNM: string;
+  LEV: number;
+  ParentID: string;
+  bnatur: string;
+  chk: string;
+  insiz: string;
+  itemacnt: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  itemno: string;
+  jeagoqty: number;
+  num: number;
+  qty: number;
+  qtyunit: string;
+  rowstatus: string;
+  spec: string;
+  unitqty: number;
+}
+export interface DataState {
+  sort: SortDescriptor[];
+  filter: FilterDescriptor[];
+}
 
 const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -186,7 +190,8 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
         ordsts: defaultOption.find((item: any) => item.id === "ordsts")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn2").valueCode,
+        finyn: defaultOption.find((item: any) => item.id === "finyn2")
+          .valueCode,
         dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
       }));
     }
@@ -211,7 +216,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     { user_id: "", user_name: "" },
   ]);
 
-  
   const [itemlvl1ListData, setItemlvl1ListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -477,16 +481,16 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
-        "@p_work_type": "BOM",
-        "@p_orgdiv": "01",
-        "@p_itemcd": detailFilters.itemcd,
-        "@p_itemnm": filters.itemnm,
-        "@p_insiz": filters.insiz,
-        "@p_itemacnt": filters.itemacnt,
-        "@p_itemlvl1": filters.itemlvl1,
-        "@p_itemlvl2": filters.itemlvl2,
-        "@p_itemlvl3": filters.itemlvl3,
-        "@p_finyn": filters.finyn,
+      "@p_work_type": "BOM",
+      "@p_orgdiv": "01",
+      "@p_itemcd": detailFilters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_insiz": filters.insiz,
+      "@p_itemacnt": filters.itemacnt,
+      "@p_itemlvl1": filters.itemlvl1,
+      "@p_itemlvl2": filters.itemlvl2,
+      "@p_itemlvl3": filters.itemlvl3,
+      "@p_finyn": filters.finyn,
     },
   };
   //그리드 데이터 조회
@@ -550,10 +554,10 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           itemlvl3: itemlvl3ListData.find(
             (item: any) => item.sub_code === row.itemlvl3
           )?.code_name,
-        }
+        };
       });
 
-     if (totalRowCnt > 0) {
+      if (totalRowCnt > 0) {
         const dataTree: any = createDataTree(
           rows,
           (i: any) => i.ItemCD,
@@ -681,11 +685,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
 
   const [allMenuExpanded, setAllMenuExpanded] = React.useState<string[]>([]);
 
-  const allMenuCallback = (item: any) =>
-    allMenuExpanded.includes(item[ALL_MENU_DATA_ITEM_KEY])
-      ? extendDataItem(item, SUB_ITEMS_FIELD, { [EXPANDED_FIELD]: true })
-      : item;
-
   const onAllMenuExpandChange = (e: TreeListExpandChangeEvent) => {
     setState({
       ...state,
@@ -697,7 +696,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     });
   };
 
-  const [selectedState2, setSelectedState2] = React.useState<{[ItemCD: string]: number[] | boolean}>({});
+  const [selectedState2, setSelectedState2] = React.useState<{
+    [ItemCD: string]: number[] | boolean;
+  }>({});
   const [state, setState] = React.useState<AppState>({
     data: [...allMenuDataResult],
     dataState: {
@@ -707,48 +708,59 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     expanded: [],
     selected: [],
   });
-  
+
   const onDetailSelectionChange = React.useCallback(
     (event: TreeListSelectionChangeEvent) => {
-        const newSelectedState = getSelectedState({
-            event,
-            selectedState: selectedState2,
-            dataItemKey: ALL_MENU_DATA_ITEM_KEY
-        });
-        setSelectedState2(newSelectedState);
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: selectedState2,
+        dataItemKey: DATA_ITEM_KEY3,
+      });
+      setSelectedState2(newSelectedState);
     },
     [selectedState2]
-);
-  const headerSelectionValue = (data: any, selectedState2: any) => {
-    let allSelected = false;
-  
-    mapTree(data, SUB_ITEMS_FIELD, (item) => {
-      allSelected = allSelected && selectedState2[idGetter4(item)];
+  );
+
+  const headerSelectionValue = (dataTree: lev[], selectedState2: any) => {
+    let allSelected = true;
+
+    mapTree(dataTree, SUB_ITEMS_FIELD, (item) => {
+      allSelected = allSelected && selectedState2[idGetter3(item)];
       return item;
     });
-  
+
     return allSelected;
   };
 
   const allMenuColumns: TreeListColumnProps[] = [
     {
-        field: "selected",
-        width: "7%",
-        headerSelectionValue: headerSelectionValue(state.data, selectedState2),
-        cell: TreeListSelectionCell,
-        headerCell: TreeListHeaderSelectionCell,
-      },
+      field: "selected",
+      width: "7%",
+      headerSelectionValue: headerSelectionValue(state.data, selectedState2),
+      cell: TreeListSelectionCell,
+      headerCell: TreeListHeaderSelectionCell,
+    },
     { field: "LEV", title: "LEV", expandable: true },
-    { field: "ItemCD", title: "품목코드", expandable: false},
-    { field: "ItemNM", title: "품목명", expandable: false},
-    { field: "itemlvl1", title: "대분류", expandable: false},
-    { field: "itemlvl2", title: "중분류", expandable: false},
-    { field: "itemlvl3", title: "소분류", expandable: false},
-    { field: "insiz", title: "규격", expandable: false},
-    { field: "itemacnt", title: "품목계정", expandable: false},
-    { field: "unitqty", title: "단위수량", expandable: false, cell: NumberTreeCell},
-    { field: "jeagoqty", title: "재고량", expandable: false,  cell: NumberTreeCell},
-    { field: "qty", title: "처리량", expandable: false,  cell: NumberTreeCell},
+    { field: "ItemCD", title: "품목코드", expandable: false },
+    { field: "ItemNM", title: "품목명", expandable: false },
+    { field: "itemlvl1", title: "대분류", expandable: false },
+    { field: "itemlvl2", title: "중분류", expandable: false },
+    { field: "itemlvl3", title: "소분류", expandable: false },
+    { field: "insiz", title: "규격", expandable: false },
+    { field: "itemacnt", title: "품목계정", expandable: false },
+    {
+      field: "unitqty",
+      title: "단위수량",
+      expandable: false,
+      cell: NumberTreeCell,
+    },
+    {
+      field: "jeagoqty",
+      title: "재고량",
+      expandable: false,
+      cell: NumberTreeCell,
+    },
+    { field: "qty", title: "처리량", expandable: false, cell: NumberTreeCell },
   ];
 
   const processData = () => {
@@ -763,25 +775,24 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     return mapTree(dataTree, SUB_ITEMS_FIELD, (item) =>
       extendDataItem(item, SUB_ITEMS_FIELD, {
         [EXPANDED_FIELD]: expanded.includes(item.ItemCD),
-        selected: selectedState2[idGetter4(item)],
+        selected: selectedState2[idGetter3(item)],
       })
     );
   };
 
   const onHeaderSelectionChange = React.useCallback(
     (event: TreeListHeaderSelectionChangeEvent) => {
+      const checkboxElement: any = event.syntheticEvent.target;
+      const checked: boolean = checkboxElement.checked;
+      const newSelectedState: any = {};
 
-        const checkboxElement: any = event.syntheticEvent.target
-        const checked: boolean = checkboxElement.checked;
-        const newSelectedState:any = {};
-    
-        event.dataItems.forEach((item:any) => {
-            newSelectedState[idGetter4(item)] = checked;
-          });
-          setSelectedState2(newSelectedState);
-        },
-        []
-);
+      event.dataItems.forEach((item: any) => {
+        newSelectedState[idGetter3(item)] = checked;
+      });
+      setSelectedState2(newSelectedState);
+    },
+    []
+  );
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -880,6 +891,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   };
 
   const onRowDoubleClick = (props: any) => {
+    let arr: any = [];
     const datas = props.dataItem;
     let seq = 1;
     if (subDataResult.total > 0) {
@@ -890,59 +902,59 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       });
       seq++;
     }
-    const selectRow = detailDataResult.data.filter(
+
+    
+    for (const [key, value] of Object.entries(selectedState2)) {
+      if(value == true) {
+        arr.push(parseInt(key));
+      }
+    }
+
+    const selectRows = detailDataResult.data.filter(
       (item: any) =>
-        item.num == Object.getOwnPropertyNames(detailselectedState)[0]
-    )[0];
-    const newDataItem = {
-      [DATA_ITEM_KEY]: seq+1,
-      amt: selectRow.amt,
-      amtunit: selectRow.amtunit,
-      chk: selectRow.chk,
-      custcd: selectRow.custcd,
-      custnm: selectRow.custnm,
-      insiz: selectRow.insiz,
-      itemacnt: selectRow.itemacnt,
-      itemcd: selectRow.itemcd,
-      itemlvl1: selectRow.itemlvl1,
-      itemlvl2: selectRow.itemlvl2,
-      itemlvl3: selectRow.itemlvl3,
-      itemnm: selectRow.itemnm,
-      itemno: selectRow.itemno,
-      itemthick: selectRow.itemthick,
-      len: selectRow.len,
-      lev: selectRow.lev,
-      lotnum: selectRow.lotnum,
-      need_qty: selectRow.need_qty,
-      needqty: selectRow.needqty,
-      nowqty: selectRow.nowqty,
-      ordkey: selectRow.ordkey,
-      ordnum: selectRow.ordnum,
-      ordseq: selectRow.ordseq,
-      pac: selectRow.pac,
-      poregnum: selectRow.poregnum,
-      project: selectRow.project,
-      qty: selectRow.qty,
-      qtyunit: selectRow.qtyunit,
-      rowstatus: "N",
-      safeqty: selectRow.safeqty,
-      selected: selectRow.selected,
-      singular: selectRow.singular,
-      spec: selectRow.spec,
-      taxamt: selectRow.taxamt,
-      taxdiv: selectRow.taxdiv,
-      totwgt: selectRow.totwgt,
-      unitwgt: selectRow.unitwgt,
-      unp: selectRow.unp,
-      wgtunit: selectRow.wgtunit,
-      width: selectRow.width,
-      wonamt: selectRow.wonamt,
-    };
-    setSubDataResult((prev) => {
-      return {
-        data: [...prev.data, newDataItem],
-        total: prev.total + 1,
+        arr.includes(item.num) == true
+    );
+
+    selectRows.map((selectRow: any) => {
+      const newDataItem = {
+        [DATA_ITEM_KEY]: seq + 1,
+        chk: selectRow.chk,
+        insiz: selectRow.insiz,
+        itemacnt: itemacntListData.find(
+          (item: any) => item.code_name === selectRow.itemacnt
+        )?.sub_code,
+        itemcd: selectRow.ItemCD,
+        itemlvl1: itemlvl1ListData.find(
+          (item: any) => item.code_name === selectRow.itemlvl1
+        )?.sub_code,
+        itemlvl2: itemlvl2ListData.find(
+          (item: any) => item.code_name === selectRow.itemlvl2
+        )?.sub_code,
+        itemlvl3: itemlvl3ListData.find(
+          (item: any) => item.code_name === selectRow.itemlvl3
+        )?.sub_code,
+        itemnm: selectRow.ItemNM,
+        itemno: selectRow.itemno,
+        jeagoqty: selectRow.jeagoqty,
+        lev: selectRow.LEV,
+        lotnum: selectRow.lotnum,
+        qty: selectRow.qty,
+        qtyunit: selectRow.qtyunit,
+        rowstatus: "N",
+        spec: selectRow.spec,
+        unitqty: selectRow.unitqty,
+        amt: 0,
+        unp: 0,
+        wonamt: 0,
+        taxamt: 0,
       };
+      setSubDataResult((prev) => {
+        return {
+          data: [...prev.data, newDataItem],
+          total: prev.total + 1,
+        };
+      });
+      seq++;
     });
   };
 
@@ -991,11 +1003,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (
-      field != "itemcd" &&
-      field != "insiz" &&
-      field != "itemnm" 
-    ) {
+    if (field != "itemcd" && field != "insiz" && field != "itemnm") {
       const newData = subDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1032,7 +1040,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       };
     });
   };
-  
+
   return (
     <>
       <Window
@@ -1043,7 +1051,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-       <TitleContainer style={{ float: "right"}}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {
@@ -1061,7 +1069,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-              <th>품목코드</th>
+                <th>품목코드</th>
                 <td>
                   <Input
                     name="itemcd"
@@ -1096,15 +1104,15 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                   />
                 </td>
                 <th>등록여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="finyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="finyn"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
+                </td>
               </tr>
               <tr>
                 <th>대분류</th>
@@ -1187,33 +1195,44 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn field="itemcd" title="품목코드" width="540px" footerCell={mainTotalFooterCell}/>
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              width="540px"
+              footerCell={mainTotalFooterCell}
+            />
             <GridColumn field="itemnm" title="품목명" width="500px" />
             <GridColumn field="insiz" title="규격" width="500px" />
           </Grid>
         </GridContainer>
         <GridContainer>
           <GridTitleContainer>
-            <GridTitle>BOM</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onRowDoubleClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="plus"
+              ></Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <TreeList
-              style={{ height: "200px", overflow: "auto" }}
-              data={processData()}
-              expandField={EXPANDED_FIELD}
-              subItemsField={SUB_ITEMS_FIELD}
-              onExpandChange={onAllMenuExpandChange}
-              //선택 기능
-              dataItemKey={ALL_MENU_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              onSelectionChange={onDetailSelectionChange}
-              onHeaderSelectionChange={onHeaderSelectionChange}
-              {...state.dataState}
-              sortable={{ mode: "multiple" }}
-              //드래그용 행
-              columns={allMenuColumns}
-              toolbar={<TreeListToolbar />}
-              onRowDoubleClick={onRowDoubleClick}
-            />
+            style={{ height: "200px", overflow: "auto" }}
+            data={processData()}
+            expandField={EXPANDED_FIELD}
+            subItemsField={SUB_ITEMS_FIELD}
+            onExpandChange={onAllMenuExpandChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY3}
+            selectedField={SELECTED_FIELD}
+            onSelectionChange={onDetailSelectionChange}
+            onHeaderSelectionChange={onHeaderSelectionChange}
+            {...state.dataState}
+            sortable={{ mode: "multiple" }}
+            //드래그용 행
+            columns={allMenuColumns}
+            toolbar={<TreeListToolbar />}
+          />
         </GridContainer>
         <GridContainer>
           <GridTitleContainer>
@@ -1274,9 +1293,24 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               footerCell={subTotalFooterCell}
             />
             <GridColumn field="itemnm" title="품목명" width="200px" />
-            <GridColumn field="itemlvl1" title="대분류" width="170px" cell={CustomComboBoxCell}/>
-            <GridColumn field="itemlvl2" title="중분류" width="170px" cell={CustomComboBoxCell}/>
-            <GridColumn field="itemlvl3" title="소분류" width="170px" cell={CustomComboBoxCell}/>
+            <GridColumn
+              field="itemlvl1"
+              title="대분류"
+              width="170px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="itemlvl2"
+              title="중분류"
+              width="170px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="itemlvl3"
+              title="소분류"
+              width="170px"
+              cell={CustomComboBoxCell}
+            />
             <GridColumn field="insiz" title="규격" width="200px" />
             <GridColumn
               field="qty"

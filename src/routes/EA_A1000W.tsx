@@ -49,6 +49,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
+  GAP,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
@@ -1389,8 +1390,8 @@ const EA_A1000: React.FC = () => {
         style={{
           display: "inline-block",
           float: "left",
-          marginRight: "3%",
-          width: "600px",
+          marginRight: "1%",
+          width: "35%",
         }}
       >
         <GridContainer>
@@ -1630,7 +1631,7 @@ rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == und
           </ExcelExport>
         </GridContainer>
         <GridContainerWrap>
-          <GridContainer style={{ width: "30vw" }}>
+          <GridContainer width={`55%`} >
             <GridTitleContainer>
               <GridTitle>참조자</GridTitle>
               <ButtonContainer>
@@ -1709,7 +1710,7 @@ rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == und
                 )}
             </Grid>
           </GridContainer>
-          <GridContainer style={{ width: "23vw" }}>
+          <GridContainer  width={`calc(45% - ${GAP}px)`}>
             <GridTitleContainer>
               <GridTitle>시행자</GridTitle>
               <ButtonContainer>

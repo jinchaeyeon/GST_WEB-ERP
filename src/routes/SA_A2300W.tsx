@@ -929,6 +929,7 @@ const SA_A2300: React.FC = () => {
     
     setParaData((prev) => ({
       ...prev,
+      workType: workType,
       amtunit: filter.amtunit,
       attdatnum: filter.attdatnum,
       custcd: filter.custcd,

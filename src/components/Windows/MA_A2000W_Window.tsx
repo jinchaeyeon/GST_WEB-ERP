@@ -1,4 +1,10 @@
-import { useEffect, useState, useCallback, useContext, createContext } from "react";
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  createContext,
+} from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -19,6 +25,8 @@ import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import CopyWindow1 from "./MA_A2700W_BOM_Window";
 import CopyWindow2 from "./MA_A2000W_BOM_Window";
+import CopyWindow3 from "./BA_A0080W_Copy_Window";
+import CopyWindow4 from "./MA_A2700W_Orders_Window";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
@@ -31,7 +39,7 @@ import {
   FormBoxWrap,
   FormBox,
   GridTitle,
-  ButtonInGridInput
+  ButtonInGridInput,
 } from "../../CommonStyled";
 import { useRecoilState } from "recoil";
 import { Input } from "@progress/kendo-react-inputs";
@@ -77,27 +85,43 @@ type IWindow = {
 type Idata = {
   amt: number;
   amtunit: string;
+  appyn: string;
   attdatnum: string;
   baseamt: number;
+  cnt: number;
   custcd: string;
   custnm: string;
   custprsncd: string;
+  dlv_method: string;
   doexdiv: string;
   files: string;
+  finyn: string;
+  inamt: number;
+  indt: string;
   inexpdt: string;
+  inqty: number;
+  inwgt: number;
   location: string;
   num: number;
+  ordnum: string;
   orgdiv: string;
+  paymeth: string;
   person: string;
+  pgmdiv: string;
+  prcterms: string;
   purdt: string;
   purnum: string;
-  purqty: number;
   pursts: string;
+  purtype: string;
+  qty: number;
+  rcvcustcd: string;
+  rcvcustnm: string;
   remark: string;
   taxamt: number;
   taxdiv: string;
   totamt: number;
   uschgrat: number;
+  wgt: number;
   wonamt: number;
   wonchgrat: number;
 };
@@ -160,8 +184,14 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const { itemcd, itemnm, setItemcd, setItemnm, mainDataState, setMainDataState } =
-    useContext(FormContext);
+  const {
+    itemcd,
+    itemnm,
+    setItemcd,
+    setItemnm,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -206,21 +236,21 @@ const ColumnCommandCell = (props: GridCellProps) => {
       </ButtonInGridInput>
     </td>
   );
-   
-  return(
-  <>
-    {render === undefined
-      ? null
-      : render?.call(undefined, defaultRendering, props)}
-    {itemWindowVisible2 && (
-      <ItemsWindow
-        setVisible={setItemWindowVisible2}
-        workType={"FILTER"}
-        setData={setItemData2}
-      />
-    )}
-  </>
-  )
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {itemWindowVisible2 && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible2}
+          workType={"FILTER"}
+          setData={setItemData2}
+        />
+      )}
+    </>
+  );
 };
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -386,8 +416,11 @@ const CopyWindow = ({
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible2, setCopyWindowVisible2] = useState<boolean>(false);
+  const [CopyWindowVisible3, setCopyWindowVisible3] = useState<boolean>(false);
+  const [CopyWindowVisible4, setCopyWindowVisible4] = useState<boolean>(false);
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -433,7 +466,9 @@ const CopyWindow = ({
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
-
+  const onCustWndClick2 = () => {
+    setCustWindowVisible2(true);
+  };
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
@@ -456,7 +491,13 @@ const CopyWindow = ({
       custnm: data.custnm,
     }));
   };
-
+  const setCustData2 = (data: ICustData) => {
+    setFilters((prev) => ({
+      ...prev,
+      rcvcustcd: data.custcd,
+      rcvcustnm: data.custnm,
+    }));
+  };
   const processApi = useApi();
 
   const [filters, setFilters] = useState({
@@ -466,8 +507,6 @@ const CopyWindow = ({
     itemnm: "",
     custcd: "",
     custnm: "",
-    frdt: new Date(),
-    todt: new Date(),
     person: "",
     location: "",
     pursts: "",
@@ -497,8 +536,8 @@ const CopyWindow = ({
       "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
       "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
+      "@p_frdt": convertDateToStr(new Date()),
+      "@p_todt": convertDateToStr(new Date()),
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
       "@p_itemcd": filters.itemcd,
@@ -562,26 +601,30 @@ const CopyWindow = ({
 
   useEffect(() => {
     if (workType === "U" && data != undefined) {
-      // setFilters((prev) => ({
-      //   ...prev,
-      //   purnum: data.purnum,
-      //   purdt: toDate(data.purdt),
-      //   inexpdt: toDate(data.inexpdt),
-      //   person: data.person,
-      //   doexdiv: data.doexdiv,
-      //   location: data.location,
-      //   custcd: data.custcd,
-      //   custnm: data.custnm,
-      //   custprsncd: data.custprsncd,
-      //   taxdiv: data.taxdiv,
-      //   pursts: data.pursts,
-      //   amtunit: data.amtunit,
-      //   files: data.files,
-      //   attdatnum: data.attdatnum,
-      //   wonchgrat: data.wonchgrat,
-      //   uschgrat: data.uschgrat,
-      //   remark: data.remark,
-      // }));
+      setFilters((prev) => ({
+        ...prev,
+        custcd: data.custcd,
+        custnm: data.custnm,
+        person: data.person,
+        location: data.location,
+        pursts: data.pursts,
+        purnum: data.purnum,
+        finyn: data.finyn,
+        doexdiv: data.doexdiv,
+        amtunit: data.amtunit,
+        purdt: toDate(data.purdt),
+        inexpdt: toDate(data.inexpdt),
+        taxdiv: data.taxdiv,
+        wonchgrat: data.wonchgrat,
+        uschgrat: data.uschgrat,
+        custprsncd:data.custprsncd,
+        prcterms: data.prcterms,
+        rcvcustcd: data.rcvcustcd,
+        rcvcustnm: data.rcvcustnm,
+        files: data.files,
+        attdatnum: data.attdatnum,
+        remark: data.remark,
+      }));
     }
   }, []);
 
@@ -641,6 +684,12 @@ const CopyWindow = ({
   const onCopyWndClick2 = () => {
     setCopyWindowVisible2(true);
   };
+  const onCopyWndClick3 = () => {
+    setCopyWindowVisible3(true);
+  };
+  const onCopyWndClick4 = () => {
+    setCopyWindowVisible4(true);
+  };
   const getAttachmentsData = (data: IAttachmentData) => {
     setFilters((prev: any) => {
       return {
@@ -660,29 +709,22 @@ const CopyWindow = ({
         item.rowstatus !== undefined
       );
     });
+    if (dataItem.length === 0) return false;
+    let seq = 1;
+
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.map((item) => ({
+        ...item,
+        num: seq++,
+      }))
+    }
     const rows = data.map((row: any) => {
       return {
         ...row,
         totamt: 0,
+        num: seq++,
       };
     });
-    if (dataItem.length === 0) return false;
-
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
-    }
 
     try {
       rows.map((item: any) => {
@@ -698,50 +740,6 @@ const CopyWindow = ({
     }
   };
 
-  const setCopyData2 = (data: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-    const rows = data.map((row: any) => {
-      return {
-        ...row,
-        totamt: 0,
-      };
-    });
-    if (dataItem.length === 0) return false;
-
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
-    }
-
-    try {
-      rows.map((item: any) => {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, item],
-            total: prev.total + 1,
-          };
-        });
-      });
-    } catch (e) {
-      alert(e);
-    }
-  };
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -763,70 +761,72 @@ const CopyWindow = ({
   const selectData = (selectedData: any) => {
     let valid = true;
     mainDataResult.data.map((item) => {
-      if (item.qty == 0) {
+      if (item.qty == 0 && valid == true) {
         alert("수량을 채워주세요.");
         valid = false;
         return false;
       }
     });
 
-    try {
-      if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "MA_A2000W_004");
-      } else if (
-        convertDateToStr(filters.purdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.purdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.purdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.purdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "MA_A2400W_001");
-      } else if (
-        filters.doexdiv == null ||
-        filters.doexdiv == "" ||
-        filters.doexdiv == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2000W_003");
-      } else if (
-        filters.location == null ||
-        filters.location == "" ||
-        filters.location == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2000W_002");
-      } else if (
-        filters.custcd == null ||
-        filters.custcd == "" ||
-        filters.custcd == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2000W_005");
-      } else if (
-        filters.custnm == null ||
-        filters.custnm == "" ||
-        filters.custnm == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2000W_006");
-      }  else if (
-        filters.taxdiv == null ||
-        filters.taxdiv == "" ||
-        filters.taxdiv == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2400W_006");
-      } else if (
-        filters.amtunit == null ||
-        filters.amtunit == "" ||
-        filters.amtunit == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2000W_007");
-      } else {
-        if (valid == true) {
-          setData(mainDataResult.data, filters, deletedMainRows);
-          deletedMainRows = [];
-          if (workType == "N") {
-            onClose();
+    if(valid == true){
+      try {
+        if (mainDataResult.data.length == 0) {
+          throw findMessage(messagesData, "MA_A2000W_004");
+        } else if (
+          convertDateToStr(filters.purdt).substring(0, 4) < "1997" ||
+          convertDateToStr(filters.purdt).substring(6, 8) > "31" ||
+          convertDateToStr(filters.purdt).substring(6, 8) < "01" ||
+          convertDateToStr(filters.purdt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "MA_A2400W_001");
+        } else if (
+          filters.doexdiv == null ||
+          filters.doexdiv == "" ||
+          filters.doexdiv == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2000W_003");
+        } else if (
+          filters.location == null ||
+          filters.location == "" ||
+          filters.location == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2000W_002");
+        } else if (
+          filters.custcd == null ||
+          filters.custcd == "" ||
+          filters.custcd == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2000W_005");
+        } else if (
+          filters.custnm == null ||
+          filters.custnm == "" ||
+          filters.custnm == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2000W_006");
+        } else if (
+          filters.taxdiv == null ||
+          filters.taxdiv == "" ||
+          filters.taxdiv == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2400W_006");
+        } else if (
+          filters.amtunit == null ||
+          filters.amtunit == "" ||
+          filters.amtunit == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2000W_007");
+        } else {
+          if (valid == true) {
+            setData(mainDataResult.data, filters, deletedMainRows);
+            deletedMainRows = [];
+            if (workType == "N") {
+              onClose();
+            }
           }
         }
+      } catch (e) {
+        alert(e);
       }
-    } catch (e) {
-      alert(e);
     }
   };
 
@@ -887,7 +887,7 @@ const CopyWindow = ({
       field != "insiz" &&
       field != "totamt" &&
       field != "rowstatus" &&
-      field != "ordkey" 
+      field != "ordkey"
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -982,7 +982,7 @@ const CopyWindow = ({
       wgtunit: "",
       wonamt: 0,
       wonchgrat: 0,
-      rowstatus: "N"
+      rowstatus: "N",
     };
 
     setMainDataResult((prev) => {
@@ -1182,7 +1182,7 @@ const CopyWindow = ({
                   />
                   <ButtonInInput>
                     <Button
-                      onClick={onCustWndClick}
+                      onClick={onCustWndClick2}
                       icon="more-horizontal"
                       fillMode="flat"
                     />
@@ -1230,170 +1230,186 @@ const CopyWindow = ({
           </FormBox>
         </FormBoxWrap>
         <FormContext.Provider
-        value={{
-          itemcd,
-          itemnm,
-          setItemcd,
-          setItemnm,
-          mainDataState,
-          setMainDataState,
-          // fetchGrid,
-        }}
-      >
-        <GridContainer>
-          <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="plus"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-              ></Button>
-                            <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick2}
-                icon="folder-open"
-              >
-                BOM
-              </Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick}
-                icon="folder-open"
-              >
-                수주BOM
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "450px" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                rowstatus:
-                  row.rowstatus == null ||
-                  row.rowstatus == "" ||
-                  row.rowstatus == undefined
-                    ? ""
-                    : row.rowstatus,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            onDataStateChange={onMainDataStateChange}
-            {...mainDataState}
-            //선택 subDataState
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
-          >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn
-              field="itemcd"
-              title="품목코드"
-              width="150px"
-              cell={ColumnCommandCell}
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="itemnm" title="품목명" width="150px" />
-            <GridColumn field="insiz" title="규격" width="120px" />
-            <GridColumn
-              field="itemacnt"
-              title="품목계정"
-              width="120px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="qty"
-              title="발주량"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="qtyunit"
-              title="수량단위"
-              width="120px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="unpcalmeth"
-              title="단가산정방법"
-              width="120px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="unp"
-              title="단가"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="amt"
-              title="금액"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="wonamt"
-              title="원화금액"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="taxamt"
-              title="세액"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="totamt"
-              title="합계금액"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn field="remark" title="비고" width="280px" />
-            <GridColumn
-              field="finyn"
-              title="완료여부"
-              width="100px"
-              cell={CheckBoxReadOnlyCell}
-            />
-            <GridColumn field="ordkey" title="수주번호" width="150px" />
-          </Grid>
-        </GridContainer>
+          value={{
+            itemcd,
+            itemnm,
+            setItemcd,
+            setItemnm,
+            mainDataState,
+            setMainDataState,
+            // fetchGrid,
+          }}
+        >
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>상세정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="plus"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                ></Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick2}
+                  icon="folder-open"
+                >
+                  BOM
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick}
+                  icon="folder-open"
+                >
+                  수주BOM
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick3}
+                  icon="folder-open"
+                >
+                  품목
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick4}
+                  icon="folder-open"
+                >
+                  수주
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "450px" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                })),
+                mainDataState
+              )}
+              onDataStateChange={onMainDataStateChange}
+              {...mainDataState}
+              //선택 subDataState
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              onScroll={onMainScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn
+                field="itemcd"
+                title="품목코드"
+                width="150px"
+                cell={ColumnCommandCell}
+                footerCell={mainTotalFooterCell}
+              />
+              <GridColumn field="itemnm" title="품목명" width="150px" />
+              <GridColumn field="insiz" title="규격" width="120px" />
+              <GridColumn
+                field="itemacnt"
+                title="품목계정"
+                width="120px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn
+                field="qty"
+                title="발주량"
+                width="100px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="qtyunit"
+                title="수량단위"
+                width="120px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn
+                field="unpcalmeth"
+                title="단가산정방법"
+                width="120px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn
+                field="unp"
+                title="단가"
+                width="100px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="amt"
+                title="금액"
+                width="100px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="wonamt"
+                title="원화금액"
+                width="100px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="taxamt"
+                title="세액"
+                width="100px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="totamt"
+                title="합계금액"
+                width="100px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn field="remark" title="비고" width="280px" />
+              <GridColumn
+                field="finyn"
+                title="완료여부"
+                width="100px"
+                cell={CheckBoxReadOnlyCell}
+              />
+              <GridColumn field="ordkey" title="수주번호" width="150px" />
+            </Grid>
+          </GridContainer>
         </FormContext.Provider>
         <BottomContainer>
           <ButtonContainer>
@@ -1417,6 +1433,13 @@ const CopyWindow = ({
           setData={setCustData}
         />
       )}
+            {custWindowVisible2 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible2}
+          workType={workType}
+          setData={setCustData2}
+        />
+      )}
       {CopyWindowVisible && (
         <CopyWindow1
           setVisible={setCopyWindowVisible}
@@ -1424,11 +1447,26 @@ const CopyWindow = ({
           setData={setCopyData}
         />
       )}
-            {CopyWindowVisible2 && (
+      {CopyWindowVisible2 && (
         <CopyWindow2
           setVisible={setCopyWindowVisible2}
           workType={"FILTER"}
-          setData={setCopyData2}
+          setData={setCopyData}
+        />
+      )}
+      {CopyWindowVisible3 && (
+        <CopyWindow3
+          setVisible={setCopyWindowVisible3}
+          workType={"FILTER"}
+          setData={setCopyData}
+          itemacnt={""}
+        />
+      )}
+      {CopyWindowVisible4 && (
+        <CopyWindow4
+          setVisible={setCopyWindowVisible4}
+          workType={"FILTER"}
+          setData={setCopyData}
         />
       )}
       {attachmentsWindowVisible && (

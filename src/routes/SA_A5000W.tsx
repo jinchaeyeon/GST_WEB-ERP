@@ -1038,6 +1038,7 @@ const SA_A5000: React.FC = () => {
     
     setParaData((prev) => ({
       ...prev,
+      workType: workType,
       location: filter.location,
       position: filter.position,
       outdt: filter.outdt,

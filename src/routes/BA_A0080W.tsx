@@ -70,6 +70,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
+  GAP,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
@@ -1157,7 +1158,7 @@ const BA_A0080: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer style={{ width: "19.2vw" }}>
+        <GridContainer width={`22%`}>
           <GridTitleContainer>
             <GridTitle>품목계정</GridTitle>
           </GridTitleContainer>
@@ -1206,7 +1207,7 @@ const BA_A0080: React.FC = () => {
           // fetchGrid,
         }}
       >
-        <GridContainer style={{ width: "68vw" }}>
+        <GridContainer width={`calc(78% - ${GAP}px)`}>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {

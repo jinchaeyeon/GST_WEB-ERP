@@ -70,6 +70,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
+  GAP,
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -1263,7 +1264,7 @@ const BA_A0050: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer style={{ width: "19.2vw" }}>
+        <GridContainer width={`21%`}>
           <GridTitleContainer>
             <GridTitle>BOM구성정보</GridTitle>
           </GridTitleContainer>
@@ -1316,7 +1317,7 @@ const BA_A0050: React.FC = () => {
               )}
           </Grid>
         </GridContainer>
-        <GridContainer style={{ width: "19.2vw" }}>
+        <GridContainer width={`calc(21% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>공정리스트</GridTitle>
           </GridTitleContainer>
@@ -1338,7 +1339,7 @@ const BA_A0050: React.FC = () => {
             </FormBox>
           </FormBoxWrap>
           <Grid
-            style={{ height: "69.5vh" }}
+            style={{height: "69.5vh"}}
             data={process(
               subData2Result.data.map((row) => ({
                 ...row,
@@ -1386,7 +1387,7 @@ const BA_A0050: React.FC = () => {
               )}
           </Grid>
         </GridContainer>
-        <GridContainer style={{ width: "48vw" }}>
+        <GridContainer width={`calc(58% - ${GAP}px)`}>
           <ExcelExport
             data={subDataResult.data}
             ref={(exporter) => {

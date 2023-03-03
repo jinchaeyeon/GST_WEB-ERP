@@ -344,7 +344,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     person: "",
     finyn: "",
     remark: "",
-    pac: "",
+    pac: "A",
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -355,7 +355,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_MA_P2030W_Q",
+    procedureName: "P_MA_A2000W_Sub2_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
@@ -384,7 +384,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
 
   //조회조건 파라미터
   const detailParameters: Iparameters = {
-    procedureName: "P_MA_P2030W_Q",
+    procedureName: "P_MA_A2000W_Sub2_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
@@ -447,6 +447,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const fetchDetailGrid = async () => {
     //if (!permissions?.view) return;
     let data: any;
+
     setLoading(true);
     try {
       data = await processApi<any>("procedure", detailParameters);
@@ -462,15 +463,11 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           rowstatus: "N",
           amt: row.amt == null ? 0 : row.amt,
           unp: row.unp == null ? 0 : row.unp,
-          qty: row.qty == null ? 1 : row.qty,
+          qty: row.qty == 0 ? 1 : row.qty,
           wonamt: row.wonamt == null ? 0 : row.wonamt,
           taxamt: row.taxamt == null ? 0 : row.taxamt,
           totwgt: row.totwgt == null ? 0 : row.totwgt,
-          len: row.len == null ? 0 : row.len,
-          itemthick: row.itemthick == null ? 0 : row.itemthick,
           width: row.width == null ? 0 : row.width,
-          pac: row.pac == null ? "A": row.pac,
-          enddt: row.enddt == null ? new Date(): row.enddt,
           singular: "N"
 
         };

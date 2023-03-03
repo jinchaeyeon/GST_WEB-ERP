@@ -79,6 +79,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
+  GAP,
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -2510,7 +2511,7 @@ const BA_A0020: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer width="26vw">
+        <GridContainer width={`29%`} >
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {

@@ -54,6 +54,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
+  GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -1027,6 +1028,7 @@ const MA_A2400W: React.FC = () => {
     });
     setParaData((prev) => ({
       ...prev,
+      workType: workType,
       amt: filter.amt,
       amtunit: filter.amtunit,
       attdatnum: filter.attdatnum,
@@ -1526,12 +1528,12 @@ const MA_A2400W: React.FC = () => {
         </ExcelExport>
       </GridContainer>
       <GridContainerWrap>
-        <GridContainer>
+        <GridContainer width={`73%`} >
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "34vh", width: "65vw" }}
+            style={{ height: "34vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
@@ -1600,12 +1602,12 @@ const MA_A2400W: React.FC = () => {
               )}
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer width={`calc(27% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>출고품목</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "34vh", width: "23vw" }}
+            style={{ height: "34vh"}}
             data={process(
               detailDataResult2.data.map((row) => ({
                 ...row,
