@@ -19,9 +19,9 @@ div.k-animation-container {
   z-index: 10100 !important;
 }
 
-.k-grid tr {
+/* .k-grid tr {
   height: 36px;
-}
+} */
 
 .k-form-horizontal .k-form-field > .k-label,
 .k-form-horizontal .k-form-field > kendo-label,

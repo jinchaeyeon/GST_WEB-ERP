@@ -6,7 +6,7 @@ import { passwordExpirationInfoState, loginResultState } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { useSetRecoilState } from "recoil";
 import { FormInput, FormComboBox } from "../components/Editors";
-import { LoginBox } from "../CommonStyled";
+import { AppName, LoginAppName, LoginBox, Logo } from "../CommonStyled";
 import { UseGetIp } from "../components/CommonFunction";
 import { isLoading } from "../store/atoms";
 import Loading from "../components/Loading";
@@ -113,6 +113,10 @@ const Login: React.FC = () => {
         onSubmit={handleSubmit}
         render={() => (
           <FormElement horizontal={true}>
+            <LoginAppName>
+              <Logo size="36px" />
+              GST ERP
+            </LoginAppName>
             <fieldset className={"k-form-fieldset"}>
               <Field
                 name={"langCode"}
@@ -169,7 +173,7 @@ const Login: React.FC = () => {
                 component={FormInput}
               />
             </fieldset>
-            <Button className="login-btn" themeColor={"primary"}>
+            <Button className="login-btn" themeColor={"primary"} size="large">
               LOGIN
             </Button>
           </FormElement>

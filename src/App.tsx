@@ -1,11 +1,10 @@
-import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
+import { RecoilRoot, useRecoilValue } from "recoil";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import React, { Component, useEffect } from "react";
-import "@progress/kendo-theme-default/dist/all.css";
-import PanelBarNavContainer from "./components/PanelBarNavContainer";
+import React from "react";
+import "./index.scss";
 import { createGlobalStyle } from "styled-components";
+import PanelBarNavContainer from "./components/PanelBarNavContainer";
 import AuthRoute from "./components/AuthRoute";
-//import "./App.css";
 import Login from "./routes/Login";
 import Main from "./routes/Main";
 import BA_A0020W from "./routes/BA_A0020W";
@@ -152,7 +151,19 @@ input.readonly {
 }
 .k-radio-label{
   font-size:14px;
-  line-height: 1.4285714286;
+  line-height: 1.4285714286; 
+}
+
+// 그리드 행높이 조절 
+.k-grid tbody tr,
+.k-grid tbody tr td,
+.k-grid td.k-state-selected, 
+.k-grid td.k-selected, 
+.k-grid tr.k-state-selected > td, 
+.k-grid tr.k-selected > td{
+  height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 `;
 
