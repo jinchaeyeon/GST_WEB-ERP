@@ -8,6 +8,8 @@ import {
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
+  GridGroupChangeEvent,
+  GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -37,6 +39,8 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   UseGetValueFromSessionItem,
+  rowsWithSelectedDataResult,
+  rowsOfDataResult,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
@@ -101,53 +105,6 @@ const Page: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_menu_group,L_BA000", setBizComponentData);
 
-  // 그룹 카테고리 리스트
-  const [groupCategoryListData, setGroupCategoryListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
-  // 그룹 카테고리 조회 쿼리
-  const groupCategoryQuery =
-    bizComponentData !== null
-      ? getQueryFromBizComponent(
-          bizComponentData.find(
-            (item: any) => item.bizComponentId === "L_BA000"
-          )
-        )
-      : "";
-
-  // 그룹 카테고리 조회
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      fetchQueryData(groupCategoryQuery, setGroupCategoryListData);
-    }
-  }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
-
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
@@ -184,6 +141,7 @@ const Page: React.FC = () => {
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+  const [mainDataTotal, setMainDataTotal] = useState<number>(0);
 
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], detailDataState)
@@ -341,19 +299,45 @@ const Page: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      // 그룹카테고리 리스트
+      const groupCategoryData =
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA000")
+          ?.data.Rows ?? [];
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
+        // 조회된 행의 데이터 조작
+        const rows = data.tables[0].Rows.map((row: any) => ({
+          ...row,
+          group_category_name:
+            row.group_category +
+            ":" +
+            groupCategoryData.find(
+              (item: any) => item.sub_code === row.group_category
+            )?.code_name,
+        }));
 
+        // 데이터 세팅
+        setMainDataTotal(totalRowCnt);
+        setMainDataResult((prev) =>
+          process([...rowsOfDataResult(prev), ...rows], mainDataState)
+        );
+
+        // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
         if (filters.pgNum !== data.pageNumber) {
           setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
+        }
+
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+
+          setDetailFilters((prev) => ({
+            ...prev,
+            group_code: firstRowData.group_code,
+            isSearch: true,
+          }));
         }
       }
     } else {
@@ -396,29 +380,22 @@ const Page: React.FC = () => {
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
+  // selectedState가 바뀔때마다 data에 바뀐 selectedState 적용
+  useEffect(() => {
+    setMainDataResult((prev) =>
+      process(
+        rowsWithSelectedDataResult(prev, selectedState, DATA_ITEM_KEY),
+        mainDataState
+      )
+    );
+  }, [selectedState]);
+
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   useEffect(() => {
-    if (mainDataResult.total > 0) {
-      if (filters.find_row_value === "" && filters.pgNum === 1) {
-        // 첫번째 행 조회
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-
-        setDetailFilters((prev) => ({
-          ...prev,
-          group_code: firstRowData.group_code,
-          isSearch: true,
-        }));
-      }
-      setFilters((prev) => ({ ...prev, isSearch: false, find_row_value: "" }));
-    }
-  }, [mainDataResult]);
-
-  useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
 
       if (filters.find_row_value !== "") {
@@ -430,7 +407,7 @@ const Page: React.FC = () => {
         fetchMainGrid();
       }
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData]);
 
   useEffect(() => {
     if (permissions !== null && detailFilters.isSearch) {
@@ -447,6 +424,7 @@ const Page: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setMainDataTotal(1);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
   };
@@ -480,13 +458,17 @@ const Page: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, filters.pgNum, PAGE_SIZE) && !filters.isSearch)
+    if (
+      chkScrollHandler(event, filters.pgNum, PAGE_SIZE) &&
+      !filters.isSearch
+    ) {
       setFilters((prev) => ({
         ...prev,
         pgNum: prev.pgNum + 1,
         isSearch: true,
         find_row_value: "",
       }));
+    }
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
@@ -502,6 +484,7 @@ const Page: React.FC = () => {
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataResult((prev) => process(prev.data, event.dataState));
     setMainDataState(event.dataState);
   };
 
@@ -513,7 +496,7 @@ const Page: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총 {mainDataTotal}건
       </td>
     );
   };
@@ -573,10 +556,11 @@ const Page: React.FC = () => {
   };
 
   const onCopyClick = () => {
-    const key = Object.getOwnPropertyNames(selectedState)[0];
+    if (mainDataResult.total < 1) return false;
 
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item[DATA_ITEM_KEY] === key
+    const key = Object.getOwnPropertyNames(selectedState)[0];
+    const selectedRowData = mainDataResult.data[0].items.find(
+      (item: any) => item[DATA_ITEM_KEY] === key
     );
 
     setDetailFilters((prev) => ({
@@ -665,13 +649,14 @@ const Page: React.FC = () => {
     setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const onExpandChange = (event: any) => {
+  const onExpandChange = (event: GridExpandChangeEvent) => {
     const isExpanded =
       event.dataItem.expanded === undefined
         ? event.dataItem.aggregates
         : event.dataItem.expanded;
     event.dataItem.expanded = !isExpanded;
-    setMainDataState((prev) => ({ ...prev }));
+
+    setMainDataResult({ ...mainDataResult });
   };
 
   return (
@@ -811,19 +796,7 @@ const Page: React.FC = () => {
             </GridTitleContainer>
             <Grid
               style={{ height: "78vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  group_category_name:
-                    row.group_category +
-                    ":" +
-                    groupCategoryListData.find(
-                      (item: any) => item.sub_code === row.group_category
-                    )?.code_name,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
+              data={mainDataResult}
               {...mainDataState}
               onDataStateChange={onMainDataStateChange}
               //선택 기능
@@ -836,7 +809,7 @@ const Page: React.FC = () => {
               onSelectionChange={onSelectionChange}
               //스크롤 조회 기능
               fixedScroll={true}
-              total={mainDataResult.total}
+              total={mainDataTotal}
               onScroll={onMainScrollHandler}
               //정렬기능
               sortable={true}

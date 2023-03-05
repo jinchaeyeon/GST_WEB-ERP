@@ -19,8 +19,9 @@ import {
   FilterBox,
   GridTitleContainer,
   GridTitle,
+  GridContainerWrap,
 } from "../../CommonStyled";
-import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "../CommonString";
+import { COM_CODE_DEFAULT_VALUE, GAP, SELECTED_FIELD } from "../CommonString";
 import { Input } from "@progress/kendo-react-inputs";
 import { Form, FormElement, FormRenderProps } from "@progress/kendo-react-form";
 import { Iparameters } from "../../store/types";
@@ -59,10 +60,6 @@ const KendoWindow = ({
   setData,
   para = { user_id: "", user_name: "" },
 }: TKendoWindow) => {
-  const { user_id, user_name } = para;
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
-
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA011,L_PR010", setBizComponentData);
@@ -96,21 +93,6 @@ const KendoWindow = ({
   const onClose = () => {
     getVisible(false);
   };
-
-  const [formKey, setFormKey] = React.useState(1);
-  const resetForm = () => {
-    setFormKey(formKey + 1);
-  };
-
-  const [formKey2, setFormKey2] = React.useState(1);
-  const resetForm2 = () => {
-    setFormKey2(formKey2 + 1);
-  };
-  //수정 없이 submit 가능하도록 임의 value를 change 시켜줌
-  useEffect(() => {
-    const valueChanged = document.getElementById("valueChanged");
-    valueChanged!.click();
-  }, [formKey]);
 
   const processApi = useApi();
   const [dataState, setDataState] = useState<State>({
@@ -188,15 +170,6 @@ const KendoWindow = ({
     },
   };
 
-  //fetch된 그리드 데이터가 그리드 폼에 세팅되도록 하기 위해 적용
-  useEffect(() => {
-    resetForm();
-  }, [detailDataResult]);
-
-  useEffect(() => {
-    resetForm2();
-  }, [detailDataResult2]);
-
   //상세그리드 조회
   const fetchGrid = async () => {
     let data: any;
@@ -251,18 +224,6 @@ const KendoWindow = ({
     }
   };
 
-  const pathname: string = window.location.pathname.replace("/", "");
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
-
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setDetailDataResult(process([], dataState));
-    setDetailDataResult2(process([], dataState));
-  };
-
   useEffect(() => {
     if (bizComponentData !== null) {
       const outprocynQueryStr = getQueryFromBizComponent(
@@ -299,30 +260,6 @@ const KendoWindow = ({
     }
   }, []);
 
-  const filterInputChange = (e: any) => {
-    const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-  };
-
-  const filterInputChange2 = (e: any) => {
-    const { value, name } = e.target;
-    if (value !== null)
-      setFilters2((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-  };
-
-  const search = () => {
-    resetAllGrid();
-    fetchGrid();
-    fetchGrid2();
-  };
-
   useEffect(() => {
     fetchGrid2();
   }, [filters2]);
@@ -356,136 +293,68 @@ const KendoWindow = ({
       onResize={handleResize}
       onClose={onClose}
     >
-      <Form
-        initialValues={{
-          user_id,
-          user_name,
-          groupDetails: detailDataResult.data, //detailDataResult.data,
-          groupDetails2: detailDataResult2.data,
-        }}
-        render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true}>
-            <fieldset className={"k-form-fieldset"}>
-              <button
-                id="valueChanged"
-                style={{ display: "none" }}
-                onClick={(e) => {
-                  e.preventDefault(); // Changing desired field value
-                  formRenderProps.onChange("valueChanged", {
-                    value: "1",
-                  });
-                }}
-              ></button>
-              <FilterBoxWrap>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>패턴ID</th>
-                      <td>
-                        <Input
-                          name="pattern_id"
-                          type="text"
-                          value={filters.pattern_id}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>패턴명</th>
-                      <td>
-                        <Input
-                          name="pattern_name"
-                          type="text"
-                          value={filters.pattern_name}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>공정</th>
-                      <td>
-                        <Input
-                          name="proccd"
-                          type="text"
-                          value={filters2.proccd}
-                          onChange={filterInputChange2}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterBoxWrap>
-            </fieldset>
-            <GridContainer
-              style={{ width: "500px", display: "inline-block" }}
-              margin={{ top: "30px" }}
-            >
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
-              <Grid
-                data={detailDataResult.data.map((item: any) => ({
-                  ...item,
-                }))}
-                total={detailDataResult.total}
-                dataItemKey={FORM_DATA_INDEX}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "multiple",
-                }}
-                onSelectionChange={onSubDataSelectionChange}
-                style={{ height: "400px" }}
-              >
-                <GridColumn field="pattern_id" title="패턴ID" width="120px" />
-                <GridColumn field="pattern_name" title="패턴명" width="150px" />
-                <GridColumn field="remark" title="비고" width="200px" />
-              </Grid>
-            </GridContainer>
-            <GridContainer
-              style={{ width: "600px", display: "inline-block" }}
-              margin={{ top: "30px", left: "40px" }}
-            >
-              <GridTitleContainer>
-                <GridTitle>상세정보</GridTitle>
-              </GridTitleContainer>
-              <Grid
-                data={detailDataResult2.data.map((item: any) => ({
-                  ...item,
-                  outprocyn: outprocynListData.find(
-                    (items: any) => items.sub_code === item.outprocyn
-                  )?.code_name,
-                  proccd: proccdListData.find(
-                    (items: any) => items.sub_code === item.proccd
-                  )?.code_name,
-                }))}
-                total={detailDataResult2.total}
-                dataItemKey={FORM_DATA_INDEX}
-                onRowDoubleClick={onRowDoubleClick}
-                style={{ height: "400px" }}
-              >
-                <GridColumn field="proccd" title="공정" width="140px" />
-                <GridColumn
-                  field="procseq"
-                  title="공정순서"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn field="outprocyn" title="외주구분" width="120px" />
-                <GridColumn field="remark" title="비고" width="200px" />
-              </Grid>
-            </GridContainer>
-
-            <BottomContainer>
-              <ButtonContainer>
-                <Button
-                  themeColor={"primary"}
-                  fillMode={"outline"}
-                  onClick={onClose}
-                >
-                  닫기
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </FormElement>
-        )}
-      />
+      <GridContainerWrap height="calc(100% - 70px)">
+        <GridContainer width={`45%`}>
+          <GridTitleContainer>
+            <GridTitle>요약정보</GridTitle>
+          </GridTitleContainer>
+          <Grid
+            data={detailDataResult.data.map((item: any) => ({
+              ...item,
+            }))}
+            total={detailDataResult.total}
+            dataItemKey={FORM_DATA_INDEX}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "multiple",
+            }}
+            onSelectionChange={onSubDataSelectionChange}
+            style={{ height: `calc(100% - 40px)` }}
+          >
+            <GridColumn field="pattern_id" title="패턴ID" width="120px" />
+            <GridColumn field="pattern_name" title="패턴명" width="150px" />
+            <GridColumn field="remark" title="비고" width="200px" />
+          </Grid>
+        </GridContainer>
+        <GridContainer width={`calc(55% - ${GAP}px)`}>
+          <GridTitleContainer>
+            <GridTitle>상세정보</GridTitle>
+          </GridTitleContainer>
+          <Grid
+            data={detailDataResult2.data.map((item: any) => ({
+              ...item,
+              outprocyn: outprocynListData.find(
+                (items: any) => items.sub_code === item.outprocyn
+              )?.code_name,
+              proccd: proccdListData.find(
+                (items: any) => items.sub_code === item.proccd
+              )?.code_name,
+            }))}
+            total={detailDataResult2.total}
+            dataItemKey={FORM_DATA_INDEX}
+            onRowDoubleClick={onRowDoubleClick}
+            style={{ height: `calc(100% - 40px)` }}
+          >
+            <GridColumn field="proccd" title="공정" width="140px" />
+            <GridColumn
+              field="procseq"
+              title="공정순서"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn field="outprocyn" title="외주구분" width="120px" />
+            <GridColumn field="remark" title="비고" width="200px" />
+          </Grid>
+        </GridContainer>
+      </GridContainerWrap>
+      <BottomContainer>
+        <ButtonContainer>
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            닫기
+          </Button>
+        </ButtonContainer>
+      </BottomContainer>
     </Window>
   );
 };
