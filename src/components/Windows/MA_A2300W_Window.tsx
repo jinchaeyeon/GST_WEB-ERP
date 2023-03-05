@@ -692,7 +692,7 @@ const CopyWindow = ({
     let seq = 1;
 
     if (mainDataResult.total > 0) {
-      seq = mainDataResult.data[mainDataResult.total -1];
+      seq = mainDataResult.data[mainDataResult.total -1].num;
     }
 
     const rows = data.map((row: any) => {

@@ -914,7 +914,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       (item: any) =>
         arr.includes(item.num) == true
     );
-
+    setSelectedState2({});
     selectRows.map((selectRow: any) => {
       const newDataItem = {
         [DATA_ITEM_KEY]: seq + 1,
