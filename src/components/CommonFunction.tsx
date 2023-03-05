@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, loginResultState } from "../store/atoms";
-import { COM_CODE_DEFAULT_VALUE } from "./CommonString";
+import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 import { detect } from "detect-browser";
 import { bytesToBase64 } from "byte-base64";
 import {
@@ -18,6 +18,7 @@ import captionJaJp from "../store/cultures/Captions.ja-JP.json";
 import captionZhCn from "../store/cultures/Captions.zh-CN.json";
 import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
+import { DataResult, getter } from "@progress/kendo-data-query";
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
@@ -854,4 +855,40 @@ export const resetLocalStorage = () => {
   localStorage.removeItem("loginResult");
   localStorage.removeItem("menus");
   localStorage.removeItem("sessionItem");
+};
+
+// Grouped된 DataResult 데이터를 selectedState를 포함해서 일반적인 Array 형태로 변환하여 반환
+export const rowsWithSelectedDataResult = (
+  dataResult: DataResult,
+  selectedState: {
+    [id: string]: boolean | number[];
+  },
+  DATA_ITEM_KEY: string
+) => {
+  const idGetter = getter(DATA_ITEM_KEY);
+  const newData: any = [];
+  dataResult.data.forEach((data) => {
+    data.items.forEach((item: any) => {
+      newData.push({
+        ...item,
+        [SELECTED_FIELD]: selectedState[idGetter(item)],
+      });
+    });
+  });
+
+  return newData;
+};
+
+// Grouped된 DataResult 데이터를 일반적인 Array 형태로 반환
+export const rowsOfDataResult = (prevDataResult: DataResult) => {
+  let prevRows: any[] = [];
+  if (prevDataResult.data.length !== 0) {
+    prevDataResult.data.forEach((data: any) => {
+      data.items.forEach((item: any) => {
+        prevRows.push(item);
+      });
+    });
+  }
+
+  return prevRows;
 };
