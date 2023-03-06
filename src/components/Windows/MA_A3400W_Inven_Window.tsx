@@ -40,6 +40,8 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   convertDateToStr,
+  rowsOfDataResult,
+  rowsWithSelectedDataResult
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -173,7 +175,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   const [mainDataState, setMainDataState] = useState<State>({
     group: [
       {
-        field: "itemacnt",
+        field: "group_category_name",
       },
     ],
     sort: [],
@@ -337,6 +339,8 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     itemacnt: itemacnt,
     zeroyn: "%",
     itemgrade: "",
+    pgNum: 1,
+    find_row_value: "",
   });
 
   //조회조건 파라미터
@@ -358,6 +362,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
       "@p_itemgrade": filters.itemgrade,
     },
   };
+  const [mainDataTotal, setMainDataTotal] = useState<number>(0);
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     //if (!permissions?.view) return;
@@ -386,16 +391,31 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
           width: row.width == null ? 0 : row.width,
           pac: row.pac == null ? "A": row.pac,
           groupId: row.itemacnt + "itemacnt",
+          group_category_name: "품목" + " : " + itemacntListData.find(
+            (item: any) => item.sub_code === row.itemacnt
+          )?.code_name,
+          itemacnt: itemacntListData.find(
+            (item: any) => item.sub_code === row.itemacnt
+          )?.code_name,
         };
       });
   
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt,
-          };
-        });
+        setMainDataTotal(totalRowCnt);
+        setMainDataResult((prev) =>
+          process([...rowsOfDataResult(prev), ...rows], mainDataState)
+        );
+
+        // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
+        if (filters.pgNum !== data.pageNumber) {
+          setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
+        }
+
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -411,7 +431,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         : event.dataItem.expanded;
     event.dataItem.expanded = !isExpanded;
 
-    setMainDataState((prev) => ({ ...prev }));
+    setMainDataResult({ ...mainDataResult });
   };
   
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -430,15 +450,13 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
-    }
-  }, [mainDataResult]);
+    setMainDataResult((prev) =>
+      process(
+        rowsWithSelectedDataResult(prev, selectedState, DATA_ITEM_KEY),
+        mainDataState
+      )
+    );
+  }, [selectedState]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -537,7 +555,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   };
 
   const onRowDoubleClick = (props: any) => {
-    const datas = mainDataResult.data.filter(
+    const datas = rowsOfDataResult(mainDataResult).filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     );
 
@@ -696,16 +714,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         <GridContainer>
           <Grid
             style={{ height: "300px" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
+            data={mainDataResult}
             onDataStateChange={onMainDataStateChange}
             {...mainDataState}
             //선택 기능

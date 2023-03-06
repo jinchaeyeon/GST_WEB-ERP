@@ -1297,7 +1297,7 @@ const MA_A2700W: React.FC = () => {
       );
     });
     setParaData(filter);
-    if (dataItem.length === 0) return false;
+    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
 
 
     let dataArr: TdataArr = {

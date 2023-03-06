@@ -903,17 +903,16 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       seq++;
     }
 
-    
     for (const [key, value] of Object.entries(selectedState2)) {
-      if(value == true) {
+      if (value == true) {
         arr.push(parseInt(key));
       }
     }
 
     const selectRows = detailDataResult.data.filter(
-      (item: any) =>
-        arr.includes(item.num) == true
+      (item: any) => arr.includes(item.num) == true
     );
+
     setSelectedState2({});
     selectRows.map((selectRow: any) => {
       const newDataItem = {

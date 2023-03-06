@@ -63,19 +63,17 @@ import { isLoading } from "../store/atoms";
 
 const DATA_ITEM_KEY = "reckey";
 
-const DateField =[
-  "outdt"
-]
+const DateField = ["outdt"];
 
-const NumberField =[
+const NumberField = [
   "qty",
   "unp",
   "amt",
   "taxamt",
   "len",
   "itemthick",
-  "width"
-]
+  "width",
+];
 type TdataArr = {
   rowstatus_s: string[];
   seq2_s: string[];
@@ -237,7 +235,7 @@ const MA_A3400W: React.FC = () => {
       const finynQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
       );
-      
+
       fetchQuery(outuseQueryStr, setOutuseListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
@@ -274,7 +272,7 @@ const MA_A3400W: React.FC = () => {
   }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
-    sort: [{field: "outdt", dir: "desc"}],
+    sort: [{ field: "outdt", dir: "desc" }],
   });
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
@@ -818,10 +816,13 @@ const MA_A3400W: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "MA_A3400W_003");
-      } else if(filters.cboLocation == null || filters.cboLocation == undefined || filters.cboLocation ==""){
+      } else if (
+        filters.cboLocation == null ||
+        filters.cboLocation == undefined ||
+        filters.cboLocation == ""
+      ) {
         throw findMessage(messagesData, "MA_A3400W_004");
-      }
-        else {
+      } else {
         resetAllGrid();
         fetchMainGrid();
       }
@@ -907,8 +908,77 @@ const MA_A3400W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(para);
+    console.log(data);
     if (data.isSuccess === true) {
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "N",
+        orgdiv: "01",
+        recdt: "",
+        seq1: 0,
+        cboLocation: "01",
+        outdt: new Date(),
+        cboPerson: "admin",
+        custcd: "",
+        custnm: "",
+        remark: "",
+        attdatnum: "",
+        outuse: "",
+        rowstatus_s: "",
+        seq2_s: "",
+        rtnyn_s: "",
+        rtntype_s: "",
+        ordnum_s: "",
+        ordseq_s: "",
+        itemgrade_s: "",
+        itemcd_s: "",
+        itemnm_s: "",
+        itemacnt_s: "",
+        pacmeth_s: "",
+        qty_s: "",
+        qtyunit_s: "",
+        lenunit_s: "",
+        totlen_s: "",
+        unitwgt_s: "",
+        wgtunit_s: "",
+        totwgt_s: "",
+        len_s: "",
+        itemthick_s: "",
+        width_s: "",
+        unpcalmeth_s: "",
+        unp_s: "",
+        amt_s: "",
+        dlramt_s: "",
+        wonamt_s: "",
+        taxamt_s: "",
+        lotnum_s: "",
+        orglot_s: "",
+        heatno_s: "",
+        pcncd_s: "",
+        remark_s: "",
+        inrecdt_s: "",
+        inseq1_s: "",
+        inseq2_s: "",
+        gonum_s: "",
+        goseq_s: "",
+        connum_s: "",
+        conseq_s: "",
+        spno_s: "",
+        boxno_s: "",
+        endyn_s: "",
+        reqnum_s: "",
+        reqseq_s: "",
+        serialno_s: "",
+        load_place_s: "",
+        outdt_s: "",
+        person_s: "",
+        userid: userId,
+        pc: pc,
+        form_id: "MA_A3400",
+        serviceid: "2207A046",
+        reckey: "",
+      });
       fetchMainGrid();
     } else {
       console.log("[오류 발생]");
@@ -918,7 +988,7 @@ const MA_A3400W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.itemcd_s != null) {
+    if (ParaData.rowstatus_s != "") {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
@@ -988,8 +1058,8 @@ const MA_A3400W: React.FC = () => {
       "@p_load_place_s": ParaData.load_place_s,
       "@p_outdt_s": ParaData.outdt_s,
       "@p_person_s": ParaData.person_s,
-      "@p_userid": ParaData.userid,
-      "@p_pc": ParaData.pc,
+      "@p_userid": userId,
+      "@p_pc": pc,
       "@p_form_id": "MA_A3400",
       "@p_serviceid": "2207A046",
     },
@@ -1002,8 +1072,24 @@ const MA_A3400W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-    setParaData(filter);
-    if (dataItem.length === 0) return false;
+    setParaData((prev) => ({
+        ...prev,
+        pgSize: PAGE_SIZE,
+        workType: workType,
+        recdt: filter.recdt,
+        seq1: filter.seq1,
+        cboLocation: filter.cboLocation,
+        outdt: filter.outdt,
+        cboPerson: filter.cboPerson,
+        custcd: filter.custcd,
+        custnm: filter.custnm,
+        remark: filter.remark,
+        attdatnum: filter.attdatnum,
+        outuse: filter.outuse,
+        reckey: filter.reckey,
+    }));
+
+    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -1156,6 +1242,7 @@ const MA_A3400W: React.FC = () => {
       dataArr.outdt_s.push(outdt);
       dataArr.person_s.push(person);
     });
+
     deletedMainRows.forEach((item: any, idx: number) => {
       const {
         rowstatus = "",
@@ -1538,7 +1625,11 @@ const MA_A3400W: React.FC = () => {
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      cell={DateField.includes(item.fieldName) ? DateCell : undefined}
+                      cell={
+                        DateField.includes(item.fieldName)
+                          ? DateCell
+                          : undefined
+                      }
                       footerCell={
                         item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }

@@ -958,7 +958,7 @@ const MA_A2500W: React.FC = () => {
       serviceid: "2207A046",
     }));
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
     
     let dataArr: TdataArr = {
       rowstatus_s: [],

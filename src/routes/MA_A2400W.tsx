@@ -1054,7 +1054,7 @@ const MA_A2400W: React.FC = () => {
       form_id: "MA_A2400W",
       serviceid: "2207A046",
     }));
-    if (dataItem.length === 0) return false;
+    if (dataItem.length === 0  && deletedMainRows.length == 0) return false;
     
     let dataArr: TdataArr = {
       rowstatus_s: [],

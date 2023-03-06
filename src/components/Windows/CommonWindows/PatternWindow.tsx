@@ -8,9 +8,9 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
-import NumberCell from "../Cells/NumberCell";
+import { DataResult, process, State, getter } from "@progress/kendo-data-query";
+import { useApi } from "../../../hooks/api";
+import NumberCell from "../../Cells/NumberCell";
 import {
   BottomContainer,
   ButtonContainer,
@@ -20,21 +20,21 @@ import {
   GridTitleContainer,
   GridTitle,
   GridContainerWrap,
-} from "../../CommonStyled";
-import { COM_CODE_DEFAULT_VALUE, GAP, SELECTED_FIELD } from "../CommonString";
+} from "../../../CommonStyled";
+import { COM_CODE_DEFAULT_VALUE, GAP, SELECTED_FIELD } from "../../CommonString";
 import { Input } from "@progress/kendo-react-inputs";
 import { Form, FormElement, FormRenderProps } from "@progress/kendo-react-form";
-import { Iparameters } from "../../store/types";
+import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
   UseMessages,
   handleKeyPressSearch,
   UseParaPc,
   getQueryFromBizComponent,
-} from "../CommonFunction";
+} from "../../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../../CommonString";
 const SUB_DATA_ITEM_KEY = "pattern_id";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -61,6 +61,7 @@ const KendoWindow = ({
   para = { user_id: "", user_name: "" },
 }: TKendoWindow) => {
   // 비즈니스 컴포넌트 조회
+  const idGetter = getter(SUB_DATA_ITEM_KEY);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA011,L_PR010", setBizComponentData);
 
@@ -286,7 +287,7 @@ const KendoWindow = ({
 
   return (
     <Window
-      title={"패턴공장도 참조"}
+      title={"패턴공정도 참조"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
@@ -301,6 +302,7 @@ const KendoWindow = ({
           <Grid
             data={detailDataResult.data.map((item: any) => ({
               ...item,
+              [SELECTED_FIELD]: selectedsubDataState[idGetter(item)],
             }))}
             total={detailDataResult.total}
             dataItemKey={FORM_DATA_INDEX}

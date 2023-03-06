@@ -11,7 +11,7 @@ import {
   getSelectedState,
   GridDataStateChangeEvent,
   GridExpandChangeEvent,
-  GridHeaderSelectionChangeEvent
+  GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -41,6 +41,8 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   convertDateToStr,
+  rowsOfDataResult,
+  rowsWithSelectedDataResult,
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -61,8 +63,13 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
-const CopyWindow = ({   custcd,
-  custnm,workType, setVisible, setData }: IWindow) => {
+const CopyWindow = ({
+  custcd,
+  custnm,
+  workType,
+  setVisible,
+  setData,
+}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -78,6 +85,7 @@ const CopyWindow = ({   custcd,
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+  const [mainDataTotal, setMainDataTotal] = useState<number>(0);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -156,7 +164,7 @@ const CopyWindow = ({   custcd,
   const [mainDataState, setMainDataState] = useState<State>({
     group: [
       {
-        field: "purnum",
+        field: "group_category_name",
       },
     ],
     sort: [],
@@ -323,6 +331,8 @@ const CopyWindow = ({   custcd,
     person: "",
     lotnum: "",
     finyn: "",
+    pgNum: 1,
+    find_row_value: "",
   });
 
   //조회조건 파라미터
@@ -360,8 +370,9 @@ const CopyWindow = ({   custcd,
       data = null;
     }
 
+    console.log(parameters)
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
@@ -377,16 +388,31 @@ const CopyWindow = ({   custcd,
           width: row.width == null ? 0 : row.width,
           pac: row.pac == null ? "A" : row.pac,
           groupId: row.purnum + "purnum",
+          group_category_name: "발주번호" + " : " + row.purnum,
+          itemacnt: itemacntListData.find(
+            (item: any) => item.sub_code === row.itemacnt
+          )?.code_name,
+          person: usersListData.find((item: any) => item.user_id === row.person)
+            ?.user_name,
         };
       });
 
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt,
-          };
-        });
+        setMainDataTotal(totalRowCnt);
+        setMainDataResult((prev) =>
+          process([...rowsOfDataResult(prev), ...rows], mainDataState)
+        );
+
+        // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
+        if (filters.pgNum !== data.pageNumber) {
+          setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
+        }
+
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -402,7 +428,7 @@ const CopyWindow = ({   custcd,
         : event.dataItem.expanded;
     event.dataItem.expanded = !isExpanded;
 
-    setMainDataState((prev) => ({ ...prev }));
+    setMainDataResult({ ...mainDataResult });
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -421,15 +447,13 @@ const CopyWindow = ({   custcd,
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
-    }
-  }, [mainDataResult]);
+    setMainDataResult((prev) =>
+      process(
+        rowsWithSelectedDataResult(prev, selectedState, DATA_ITEM_KEY),
+        mainDataState
+      )
+    );
+  }, [selectedState]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -449,7 +473,7 @@ const CopyWindow = ({   custcd,
     (event: GridHeaderSelectionChangeEvent) => {
       const checkboxElement: any = event.syntheticEvent.target;
       const checked = checkboxElement.checked;
-      const newSelectedState: any= {};
+      const newSelectedState: any = {};
 
       event.dataItems.forEach((item: any) => {
         newSelectedState[idGetter(item)] = checked;
@@ -458,7 +482,6 @@ const CopyWindow = ({   custcd,
     },
     []
   );
-
 
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -543,7 +566,7 @@ const CopyWindow = ({   custcd,
   };
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
-    mainDataResult.data.forEach((item) =>
+    rowsOfDataResult(mainDataResult).forEach((item) =>
       props.field !== undefined ? (sum += item[props.field]) : ""
     );
     var parts = sum.toString().split(".");
@@ -571,6 +594,7 @@ const CopyWindow = ({   custcd,
   const onRowDoubleClick = (props: any) => {
     let arr: any = [];
     let seq = 1;
+    let valid = true;
     if (subDataResult.total > 0) {
       subDataResult.data.forEach((item) => {
         if (item[DATA_ITEM_KEY] > seq) {
@@ -581,67 +605,83 @@ const CopyWindow = ({   custcd,
     }
 
     for (const [key, value] of Object.entries(selectedState)) {
-      if(value == true) {
+      if (value == true) {
         arr.push(parseInt(key));
       }
     }
 
-    const selectRows = mainDataResult.data.filter(
-      (item: any) =>
-        arr.includes(item.num) == true
+    const selectRows = rowsOfDataResult(mainDataResult).filter(
+      (item: any) => arr.includes(item.num) == true
     );
 
-    selectRows.map((selectRow: any) => {
-      const newDataItem = {
-        [DATA_ITEM_KEY]: seq + 1,
-        amt: selectRow.amt,
-        amtunit: selectRow.amtunit,
-        chk: selectRow.chk,
-        custcd: selectRow.custcd,
-        custnm: selectRow.custnm,
-        doexdiv: selectRow.doexdiv,
-        doqty: selectRow.doqty,
-        finyn: selectRow.finyn,
-        inexpdt: selectRow.inexpdt,
-        insiz: selectRow.insiz,
-        itemacnt: selectRow.itemacnt,
-        itemcd: selectRow.itemcd,
-        itemnm: selectRow.itemnm,
-        itemthick: selectRow.itemthick,
-        janqty: selectRow.janqty,
-        len: selectRow.len,
-        lotnum: selectRow.lotnum,
-        orgdiv: selectRow.orgdiv,
-        pac: selectRow.pac,
-        person: selectRow.person,
-        purdt: selectRow.purdt,
-        purkey: selectRow.purkey,
-        purnum: selectRow.purnum,
-        purqty: selectRow.purqty,
-        purseq: selectRow.purseq,
-        qty: selectRow.qty,
-        remark: selectRow.remark,
-        rowstatus: "N",
-        taxamt: selectRow.taxamt,
-        taxdiv: selectRow.taxdiv,
-        totwgt: selectRow.totwgt,
-        unp: selectRow.unp,
-        width: selectRow.width,
-        wonamt: selectRow.wonamt,
-        unitwgt: 0,
-        unpcalmeth: "Q",
-        dlramt: 0,
-        qtyunit:"001"
-      };
-      setSelectedState({});
-      setSubDataResult((prev) => {
-        return {
-          data: [...prev.data, newDataItem],
-          total: prev.total + 1,
-        };
+    selectRows.map((item) => {
+      selectRows.map((items) => {
+        if (item.custcd != items.custcd) {
+          valid = false;
+        }
       });
-      seq++;
+
+      subDataResult.data.map((items) => {
+        if (item.custcd != items.custcd) {
+          valid = false;
+        }
+      });
     });
+    if (valid == true) {
+      selectRows.map((selectRow: any) => {
+        const newDataItem = {
+          [DATA_ITEM_KEY]: seq + 1,
+          amt: selectRow.amt,
+          amtunit: selectRow.amtunit,
+          chk: selectRow.chk,
+          custcd: selectRow.custcd,
+          custnm: selectRow.custnm,
+          doexdiv: selectRow.doexdiv,
+          doqty: selectRow.doqty,
+          finyn: selectRow.finyn,
+          inexpdt: selectRow.inexpdt,
+          insiz: selectRow.insiz,
+          itemacnt: selectRow.itemacnt,
+          itemcd: selectRow.itemcd,
+          itemnm: selectRow.itemnm,
+          itemthick: selectRow.itemthick,
+          janqty: selectRow.janqty,
+          len: selectRow.len,
+          lotnum: selectRow.lotnum,
+          orgdiv: selectRow.orgdiv,
+          pac: selectRow.pac,
+          person: selectRow.person,
+          purdt: selectRow.purdt,
+          purkey: selectRow.purkey,
+          purnum: selectRow.purnum,
+          purqty: selectRow.purqty,
+          purseq: selectRow.purseq,
+          qty: selectRow.qty,
+          remark: selectRow.remark,
+          rowstatus: "N",
+          taxamt: selectRow.taxamt,
+          taxdiv: selectRow.taxdiv,
+          totwgt: selectRow.totwgt,
+          unp: selectRow.unp,
+          width: selectRow.width,
+          wonamt: selectRow.wonamt,
+          unitwgt: 0,
+          unpcalmeth: "Q",
+          dlramt: 0,
+          qtyunit: "001",
+        };
+        setSelectedState({});
+        setSubDataResult((prev) => {
+          return {
+            data: [...prev.data, newDataItem],
+            total: prev.total + 1,
+          };
+        });
+        seq++;
+      });
+    } else {
+      alert("동일 업체를 선택해주세요.");
+    }
   };
 
   const onDeleteClick = (e: any) => {
@@ -864,19 +904,7 @@ const CopyWindow = ({   custcd,
           </GridTitleContainer>
           <Grid
             style={{ height: "300px" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
-                )?.code_name,
-                person: usersListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
+            data={mainDataResult}
             onDataStateChange={onMainDataStateChange}
             {...mainDataState}
             //선택 기능

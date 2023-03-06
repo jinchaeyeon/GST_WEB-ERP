@@ -995,7 +995,7 @@ const MA_A2000W: React.FC = () => {
       attdatnum: filter.attdatnum,
       files: filter.files,
     }));
-    if (dataItem.length === 0) return false;
+    if (dataItem.length === 0  && deletedMainRows.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],

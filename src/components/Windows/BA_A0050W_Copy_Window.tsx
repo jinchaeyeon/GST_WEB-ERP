@@ -7,6 +7,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridEvent,
+  GridHeaderSelectionChangeEvent
 } from "@progress/kendo-react-grid";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
@@ -23,7 +24,7 @@ import {
   GridTitle,
   GridContainerWrap,
 } from "../../CommonStyled";
-import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "../CommonString";
+import { COM_CODE_DEFAULT_VALUE, GAP, SELECTED_FIELD } from "../CommonString";
 import { Input } from "@progress/kendo-react-inputs";
 import { Form, FormElement, FormRenderProps } from "@progress/kendo-react-form";
 import { Iparameters } from "../../store/types";
@@ -44,6 +45,7 @@ import { FormCheckBoxCell } from "../Editors";
 import NumberCell from "../Cells/NumberCell";
 
 const SUB_DATA_ITEM_KEY = "pattern_id";
+const DATA_ITEM_KEY = "itemcd";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = React.createContext<{
@@ -59,13 +61,14 @@ type TPara = {
 };
 type TKendoWindow = {
   getVisible(isVisible: boolean): void;
-  setData(data: object): void;
+  setData(data: object, itemcd: string): void;
   para: TPara;
 };
 
 const KendoWindow = ({
   getVisible,
   para = { user_id: "", user_name: "" },
+  setData,
 }: TKendoWindow) => {
   const { user_id, user_name } = para;
   const [pc, setPc] = useState("");
@@ -158,6 +161,7 @@ const KendoWindow = ({
   const [detailDataResult3, setDetailDataResult3] = useState<DataResult>(
     process([], dataState)
   );
+  const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(FORM_DATA_INDEX);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -223,6 +227,13 @@ const KendoWindow = ({
     }
   }, [detailDataResult]);
 
+  useEffect(() => {
+    if (detailDataResult3.total > 0) {
+      const firstRowData = detailDataResult3.data[0];
+      setSelectedsubDataState2({ [firstRowData.itemcd]: true });
+    }
+  }, [detailDataResult3]);
+
   //조회조건 파라미터
   const parameters2: Iparameters = {
     procedureName: "P_BA_A0050W_Sub1_Q",
@@ -239,6 +250,21 @@ const KendoWindow = ({
     },
   };
 
+  const parameters3: Iparameters = {
+    procedureName: "P_BA_A0050W_Sub1_Q ",
+    pageNumber: mainPgNum,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "PASTE",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_insiz": filters.insiz,
+      "@p_itemacnt": filters.itemacnt,
+      "@p_company_code": "2207A046",
+    },
+  };
+
   //상세그리드 조회
   const fetchGrid = async () => {
     let data: any;
@@ -247,12 +273,33 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-    
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+      fetchGrid3();
+      setDetailDataResult(() => {
+        return {
+          data: rows,
+          total: totalRowCnt,
+        };
+      });
+    }
+  };
+
+  const fetchGrid3 = async () => {
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", parameters3);
+    } catch (error) {
+      data = null;
+    }
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
-      setDetailDataResult(() => {
+      setDetailDataResult3(() => {
         return {
           data: rows,
           total: totalRowCnt,
@@ -270,7 +317,7 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-
+  
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -356,14 +403,30 @@ const KendoWindow = ({
   const onSubDataSelectionChange2 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
-      dataItemKey: FORM_DATA_INDEX,
+      selectedState: selectedsubDataState2,
+      dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedsubDataState2(newSelectedState);
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
   };
+
+  
+  const onHeaderSelectionChange = React.useCallback(
+    (event: GridHeaderSelectionChangeEvent) => {
+      const checkboxElement: any = event.syntheticEvent.target;
+      const checked = checkboxElement.checked;
+      const newSelectedState: any = {};
+
+      event.dataItems.forEach((item: any) => {
+        newSelectedState[idGetter(item)] = checked;
+      });
+      setSelectedsubDataState2(newSelectedState);
+    },
+    []
+  );
+
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -448,7 +511,7 @@ const KendoWindow = ({
     const newSelectedState = getSelectedState({
       event,
       selectedState: selectedState,
-      dataItemKey: SUB_DATA_ITEM_KEY,
+      dataItemKey: DATA_ITEM_KEY,
     });
 
     setSelectedsubDataState(newSelectedState);
@@ -468,6 +531,22 @@ const KendoWindow = ({
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
+  };
+
+  const selectData = (selectedData: any) => {
+    let arr: any = [];
+    for (const [key, value] of Object.entries(selectedsubDataState2)) {
+      if (value == true) {
+        arr.push(key);
+      }
+    }
+
+    const selectRows = detailDataResult3.data.filter(
+      (item: any) => arr.includes(item.itemcd) == true
+    );
+
+    setData(selectRows, Object.getOwnPropertyNames(selectedsubDataState)[0]);
+    onClose();
   };
 
   return (
@@ -555,8 +634,7 @@ const KendoWindow = ({
             </fieldset>
             <GridContainerWrap>
               <GridContainer
-                style={{ width: "750px", display: "inline-block" }}
-                margin={{ top: "30px" }}
+                width={`45%`}
               >
                 <GridTitleContainer>
                   <GridTitle>품목리스트</GridTitle>
@@ -567,9 +645,10 @@ const KendoWindow = ({
                     itemacnt: itemacntListData.find(
                       (items: any) => items.sub_code === item.itemacnt
                     )?.code_name,
+                    [SELECTED_FIELD]: selectedsubDataState[idGetter(item)],
                   }))}
                   total={detailDataResult.total}
-                  dataItemKey={FORM_DATA_INDEX}
+                  dataItemKey={DATA_ITEM_KEY}
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
@@ -580,13 +659,12 @@ const KendoWindow = ({
                 >
                   <GridColumn field="itemcd" title="품목코드" width="200px" />
                   <GridColumn field="itemnm" title="품목명" width="200PX" />
-                  <GridColumn field="insiz" title="규격" width="200px" />
+                  <GridColumn field="insiz" title="규격" width="150px" />
                   <GridColumn field="itemacnt" title="품목계정" width="150px" />
                 </Grid>
               </GridContainer>
               <GridContainer
-                style={{ width: "750px", display: "inline-block" }}
-                margin={{ top: "30px", left: "40px" }}
+                width={`calc(55% - ${GAP}px)`}
               >
                 <GridTitleContainer>
                   <GridTitle>복사대상</GridTitle>
@@ -597,22 +675,28 @@ const KendoWindow = ({
                     itemacnt: itemacntListData.find(
                       (items: any) => items.sub_code === item.itemacnt
                     )?.code_name,
+                    [SELECTED_FIELD]: selectedsubDataState2[idGetter(item)],
                   }))}
                   total={detailDataResult3.total}
-                  dataItemKey={FORM_DATA_INDEX}
+                  dataItemKey={DATA_ITEM_KEY}
                   onScroll={onMainScrollHandler}
                   style={{ height: "250px" }}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "multiple",
+                  }}
                   onSelectionChange={onSubDataSelectionChange2}
+                  onHeaderSelectionChange={onHeaderSelectionChange}
                 >
                   <GridColumn
                     field={SELECTED_FIELD}
                     width="45px"
                     headerSelectionValue={
                       detailDataResult3.data.findIndex(
-                        (item: any) => !selectedsubDataState[idGetter2(item)]
+                        (item: any) => !selectedsubDataState2[idGetter(item)]
                       ) === -1
                     }
-                    cell={FormCheckBoxCell}
                   />
                   <GridColumn field="itemcd" title="품목코드" width="200px" />
                   <GridColumn field="itemnm" title="품목명" width="200PX" />
@@ -623,8 +707,7 @@ const KendoWindow = ({
             </GridContainerWrap>
             <GridContainerWrap>
               <GridContainer
-                style={{ width: "1570px" }}
-                margin={{ top: "10px" }}
+                width={`99.9%`}
               >
                 <GridTitleContainer>
                   <GridTitle>BOM상세</GridTitle>
@@ -692,6 +775,12 @@ const KendoWindow = ({
             </GridContainerWrap>
             <BottomContainer>
               <ButtonContainer>
+              <Button
+                  themeColor={"primary"}
+                  onClick={selectData}
+                >
+                  저장
+                </Button>
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}

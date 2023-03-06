@@ -959,7 +959,7 @@ const SA_A2300: React.FC = () => {
       serviceid: "2207A046",
       files: filter.files,
     }));
-    if (dataItem.length === 0) return false;
+    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus: [],
       seq2: [],

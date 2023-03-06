@@ -74,6 +74,7 @@ import DateCell from "../Cells/DateCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import RequiredHeader from "../RequiredHeader";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -886,6 +887,8 @@ const CopyWindow = ({
       field != "itemnm" &&
       field != "insiz" &&
       field != "totamt" &&
+      field != "wonamt" &&
+      field != "taxamt" &&
       field != "rowstatus" &&
       field != "ordkey"
     ) {
@@ -915,6 +918,9 @@ const CopyWindow = ({
   const exitEdit = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
+      wonamt: item.amtunit == "KRW" ? item.qty * item.unp : item.qty * item.unp*filters.wonchgrat,
+      taxamt: item.amtunit == "KRW" ? (item.qty * item.unp)/10 : (item.qty * item.unp*filters.wonchgrat)/10,
+      totamt: item.amtunit == "KRW" ? Math.round(item.amt + (item.qty * item.unp)/10) : Math.round(item.amt + (item.qty * item.unp*filters.wonchgrat)/10),
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);
@@ -1353,6 +1359,7 @@ const CopyWindow = ({
                 width="100px"
                 cell={NumberCell}
                 footerCell={gridSumQtyFooterCell}
+                headerCell={RequiredHeader}
               />
               <GridColumn
                 field="qtyunit"

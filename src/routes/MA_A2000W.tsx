@@ -983,7 +983,7 @@ const MA_A2000W: React.FC = () => {
       uschgrat: filter.uschgrat,
       wonchgrat: filter.wonchgrat,
     }));
-    if (dataItem.length === 0) return false;
+    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],

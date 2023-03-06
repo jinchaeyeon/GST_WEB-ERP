@@ -16,7 +16,7 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import CopyWindow from "../components/Windows/BA_A0050W_Copy_Window";
-import CopyWindow2 from "../components/Windows/BA_A0050W_Patterns_Window";
+import CopyWindow2 from "../components/Windows/CommonWindows/PatternWindow";
 import {
   Title,
   FilterBoxWrap,
@@ -381,7 +381,7 @@ const BA_A0050: React.FC = () => {
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -417,7 +417,7 @@ const BA_A0050: React.FC = () => {
 
         setSubData2Result((prev) => {
           return {
-            data: [...prev.data, ...row],
+            data: row,
             total: totalRowCnt,
           };
         });
@@ -448,7 +448,7 @@ const BA_A0050: React.FC = () => {
       if (totalRowCnt > 0) {
         setSubDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -918,6 +918,35 @@ const BA_A0050: React.FC = () => {
     company_code: "2207A046",
   });
 
+  const [paraData2, setParaData2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "N",
+    orgdiv: "01",
+    prntitemcd: "",
+    itemcd_s: "",
+    userid: userId,
+    pc: pc,
+    form_id: "BA_A0050W_Sub1",
+    company_code: "2207A046",
+  });
+
+  const para2: Iparameters = {
+    procedureName: "P_BA_A0050W_Sub1_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData2.workType,
+      "@p_orgdiv": paraData2.orgdiv,
+      "@p_prntitemcd": paraData2.prntitemcd,
+      "@p_itemcd_s": paraData2.itemcd_s,
+      "@p_userid": paraData2.userid,
+      "@p_pc": paraData2.pc,
+      "@p_form_id": paraData2.form_id,
+      "@p_company_code": paraData2.company_code,
+    },
+  };
+
+
   const para: Iparameters = {
     procedureName: "P_BA_A0050W_S",
     pageNumber: 0,
@@ -1106,11 +1135,41 @@ const BA_A0050: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchTodoGridSaved2 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setSubPgNum(1);
+      setSubDataResult(process([], subData2State));
+      setParaData2((prev) => ({
+        ...prev,
+        itemcd_s: ""
+      }))
+      fetchSubGrid2();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (paraData.prntitemcd != "") {
       fetchTodoGridSaved();
     }
   }, [paraData]);
+
+  useEffect(() => {
+    if (paraData2.itemcd_s != "") {
+      fetchTodoGridSaved2();
+    }
+  }, [paraData2]);
 
   const onCopyEditClick = () => {
     //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
@@ -1122,13 +1181,24 @@ const BA_A0050: React.FC = () => {
     setCopyWindowVisible2(true);
   };
 
-  const reloadData = () => {
-    // const key = Object.getOwnPropertyNames(selectedState)[0];
-    // selectedRowIdx = mainDataResult.data.findIndex(
-    //   (item) => item["idx"] === Number(key)
-    // );
-    // resetAllGrid();
-    // fetchMainGrid();
+  const reloadData = (data: any, itemcd: any) => {
+    if (data.length === 0) return false;
+    let dataArr: any = {
+      itemcd_s: []
+    };
+
+    data.forEach((item: any, idx: number) => {
+      const {
+        itemcd = ""
+      } = item;
+      dataArr.itemcd_s.push(itemcd);
+    });
+   
+    setParaData2((prev) => ({
+      ...prev,
+      prntitemcd: itemcd,
+      itemcd_s: dataArr.itemcd_s.join("|"),
+    }));
   };
 
   const reloadData2 = (data: any) => {
