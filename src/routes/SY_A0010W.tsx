@@ -191,9 +191,11 @@ const Page: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
+    scrollDirrection: "down", // "up" | "down" 스크롤 방향에 따라서 데이터 앞에 추가할지, 뒤에 추가할지 판단
     isSearch: true, // true면 조회조건(filters) 변경 되었을때 조회
     pgSize: PAGE_SIZE,
     pgNum: 1,
+    pgGap: 0,
     group_category: "",
     group_code: "",
     group_name: "",
@@ -317,7 +319,12 @@ const Page: React.FC = () => {
         // 데이터 세팅
         setMainDataTotal(totalRowCnt);
         setMainDataResult((prev) =>
-          process([...rowsOfDataResult(prev), ...rows], mainDataState)
+          process(
+            filters.scrollDirrection === "down"
+              ? [...rowsOfDataResult(prev), ...rows]
+              : [...rows, ...rowsOfDataResult(prev)],
+            mainDataState
+          )
         );
 
         // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
@@ -349,6 +356,7 @@ const Page: React.FC = () => {
       console.log(data);
     }
 
+    //초기화
     setFilters((prev) => ({
       ...prev,
       isSearch: false,
@@ -387,7 +395,12 @@ const Page: React.FC = () => {
   const search = () => {
     resetAllGrid();
     setSelectedState({});
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+      pgGap: 0,
+    }));
   };
 
   // selectedState가 바뀔때마다 data에 바뀐 selectedState 적용
@@ -469,13 +482,32 @@ const Page: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (
-      chkScrollHandler(event, filters.pgNum, PAGE_SIZE) &&
-      !filters.isSearch
-    ) {
+    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+
+    let pgNumWithGap =
+      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
       setFilters((prev) => ({
         ...prev,
-        pgNum: prev.pgNum + 1,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
         isSearch: true,
       }));
     }
@@ -617,7 +649,10 @@ const Page: React.FC = () => {
 
         setGroupCode(prevDataVal);
       } else {
-        fetchMainGrid();
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+        }));
       }
     } else {
       console.log("[오류 발생]");
@@ -638,6 +673,7 @@ const Page: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       isSearch: true,
+      pgGap: 0,
       find_row_value: groupCode,
     }));
     setDetailFilters((prev) => ({

@@ -498,7 +498,8 @@ export const getQueryFromBizComponent = (bcItem: any) => {
 export const chkScrollHandler = (
   event: GridEvent,
   PgNum: number,
-  PgSize: number
+  PgSize: number,
+  dirrection: "up" | "down" = "down"
 ) => {
   const totalNumber = event.target.props.total;
   const e = event.nativeEvent;
@@ -509,11 +510,16 @@ export const chkScrollHandler = (
     return false;
   }
 
-  if (
-    e.target.scrollTop + 10 >=
-    e.target.scrollHeight - e.target.clientHeight
-  ) {
-    if (totalNumber > PgNum * PgSize) {
+  if (dirrection === "down") {
+    if (
+      e.target.scrollTop + 10 >=
+        e.target.scrollHeight - e.target.clientHeight &&
+      totalNumber > PgNum * PgSize
+    ) {
+      chk = true;
+    }
+  } else {
+    if (e.target.scrollTop === 0 && totalNumber > 0 && PgNum > 1) {
       chk = true;
     }
   }
