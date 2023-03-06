@@ -466,6 +466,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           wonamt,
           taxamt,
           totamt,
+          [EDIT_FIELD]: undefined,
         },
       });
     }
