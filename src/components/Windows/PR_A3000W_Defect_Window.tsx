@@ -58,7 +58,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { sessionItemState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
 

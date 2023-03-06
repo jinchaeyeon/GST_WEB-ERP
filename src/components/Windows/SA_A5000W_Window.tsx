@@ -44,7 +44,7 @@ import {
   getGridItemChangedData,
   findMessage,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -134,7 +134,13 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) => {
+const CopyWindow = ({
+  workType,
+  data,
+  setVisible,
+  setData,
+  reload,
+}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -142,11 +148,11 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
     height: 900,
   });
   const DATA_ITEM_KEY = "num";
-  useEffect(()=> {
+  useEffect(() => {
     setMainPgNum(1);
-    setMainDataResult(process([], mainDataState))
+    setMainDataResult(process([], mainDataState));
     fetchMainGrid();
-  },[reload])
+  }, [reload]);
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -352,7 +358,6 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
     baseamt: 0,
     recdt: new Date(),
     seq1: 0,
-
   });
 
   const parameters: Iparameters = {
@@ -380,7 +385,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
       "@p_ordkey": "",
       "@p_recdt": convertDateToStr(filters.recdt),
       "@p_seq1": filters.seq1,
-      "@p_company_code": "2207A046"
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -474,7 +479,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
         taxnum: data.taxnum,
         uschgrat: data.uschgrat,
         wonamt: data.wonamt,
-        wonchgrat: data.wonchgrat
+        wonchgrat: data.wonchgrat,
       }));
     }
   }, []);
@@ -504,7 +509,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
   };
-  
+
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
@@ -622,15 +627,15 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
         ...prev,
         custcd: data[0].custcd,
         custnm: data[0].custnm,
-        amtunit: data[0].amtunit == undefined ? "KRW": data[0].amtunit,
-        doexdiv: data[0].doexdiv == "" ? "A": data[0].doexdiv,
-        taxdiv: data[0].taxdiv == undefined ? "A": data[0].taxdiv,
+        amtunit: data[0].amtunit == undefined ? "KRW" : data[0].amtunit,
+        doexdiv: data[0].doexdiv == "" ? "A" : data[0].doexdiv,
+        taxdiv: data[0].taxdiv == undefined ? "A" : data[0].taxdiv,
       }));
     } catch (e) {
       alert(e);
     }
   };
- 
+
   //그리드 푸터selectData
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -651,7 +656,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
- 
+
     for (var i = 0; i < mainDataResult.data.length; i++) {
       if (mainDataResult.data[i].qty == 0 && valid == true) {
         alert("수량을 채워주세요.");
@@ -696,7 +701,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
         if (valid == true) {
           setData(mainDataResult.data, filters, deletedMainRows);
           deletedMainRows = [];
-          if(workType == "N") {
+          if (workType == "N") {
             onClose();
           }
         }
@@ -1078,7 +1083,12 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
                 itemacnt: itemacntListData.find(
                   (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,
-                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                rowstatus:
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

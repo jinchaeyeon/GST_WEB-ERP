@@ -59,7 +59,7 @@ import {
   getCodeFromValue,
   getQueryFromBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc
+  UseParaPc,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -78,7 +78,7 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
 
 const CustomComboBoxCell = (props: GridCellProps) => {

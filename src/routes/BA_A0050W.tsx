@@ -11,7 +11,7 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -806,26 +806,26 @@ const BA_A0050: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if(field != "rowstatus") {
+    if (field != "rowstatus") {
       const newData = subDataResult.data.map((item) =>
-      item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+        item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setSubDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     }
   };
 
@@ -860,13 +860,13 @@ const BA_A0050: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-    const questionToDelete = useSysMessage("QuestionToDelete");
+  const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
-    
+
     let newData: any[] = [];
 
     subDataResult.data.forEach((item: any, index: number) => {
@@ -945,7 +945,6 @@ const BA_A0050: React.FC = () => {
       "@p_company_code": paraData2.company_code,
     },
   };
-
 
   const para: Iparameters = {
     procedureName: "P_BA_A0050W_S",
@@ -1149,8 +1148,8 @@ const BA_A0050: React.FC = () => {
       setSubDataResult(process([], subData2State));
       setParaData2((prev) => ({
         ...prev,
-        itemcd_s: ""
-      }))
+        itemcd_s: "",
+      }));
       fetchSubGrid2();
     } else {
       console.log("[오류 발생]");
@@ -1184,16 +1183,14 @@ const BA_A0050: React.FC = () => {
   const reloadData = (data: any, itemcd: any) => {
     if (data.length === 0) return false;
     let dataArr: any = {
-      itemcd_s: []
+      itemcd_s: [],
     };
 
     data.forEach((item: any, idx: number) => {
-      const {
-        itemcd = ""
-      } = item;
+      const { itemcd = "" } = item;
       dataArr.itemcd_s.push(itemcd);
     });
-   
+
     setParaData2((prev) => ({
       ...prev,
       prntitemcd: itemcd,
@@ -1409,7 +1406,7 @@ const BA_A0050: React.FC = () => {
             </FormBox>
           </FormBoxWrap>
           <Grid
-            style={{height: "69.5vh"}}
+            style={{ height: "69.5vh" }}
             data={process(
               subData2Result.data.map((row) => ({
                 ...row,
@@ -1506,7 +1503,12 @@ const BA_A0050: React.FC = () => {
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
                   [SELECTED_FIELD]: selectedsubDataState[idGetter3(row)],
                 })),
                 subDataState

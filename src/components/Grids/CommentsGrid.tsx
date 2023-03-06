@@ -30,7 +30,7 @@ import {
   UsePermissions,
 } from "../CommonFunction";
 import { EDIT_FIELD, SELECTED_FIELD } from "../CommonString";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 
 const DATA_ITEM_KEY = "seq";
 let deletedRows: object[] = [];

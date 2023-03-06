@@ -24,7 +24,7 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/QC_A2000W_C";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
@@ -1304,7 +1304,14 @@ const QC_A2000: React.FC = () => {
       />
     );
     array.push(<GridColumn field={"remark"} title={"비고"} width="200px" />);
-    array.push(<GridColumn field={"files"} title={"첨부파일"} width="350px" cell={ColumnCommandCell}/>);
+    array.push(
+      <GridColumn
+        field={"files"}
+        title={"첨부파일"}
+        width="350px"
+        cell={ColumnCommandCell}
+      />
+    );
     return array;
   };
 

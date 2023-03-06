@@ -66,7 +66,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import { Renderers } from "../components/TreeListRenderers";
+import { Renderers } from "../components/Renderers/TreeListRenderers";
 import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { isLoading } from "../store/atoms";
@@ -1250,7 +1250,7 @@ const Page: React.FC = () => {
                     bizComponentId="L_BA002"
                     bizComponentData={bizComponentData}
                     changeData={filterComboBoxChange}
-              />
+                  />
                 )}
               </td>
               <th>부서코드</th>

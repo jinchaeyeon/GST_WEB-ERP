@@ -13,7 +13,7 @@ import {
   GridItemChangeEvent,
   GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
@@ -447,7 +447,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {

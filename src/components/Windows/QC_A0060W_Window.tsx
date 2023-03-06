@@ -49,9 +49,9 @@ import {
   dateformat,
   isValidDate,
   findMessage,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { loginResultState } from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
@@ -128,7 +128,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   reload,
-  rev
+  rev,
 }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -155,7 +155,7 @@ const CopyWindow = ({
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
-    if (customOptionData !== null && (workType != "U" && workType != "R")) {
+    if (customOptionData !== null && workType != "U" && workType != "R") {
       const defaultOption = customOptionData.menuCustomDefaultOptions.new;
       setFilters((prev) => ({
         ...prev,
@@ -354,7 +354,7 @@ const CopyWindow = ({
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((row: any) => 
+      const rows = data.tables[0].Rows.map((row: any) =>
         workType == "R"
           ? {
               ...row,

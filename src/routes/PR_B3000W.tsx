@@ -50,7 +50,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import TopButtons from "../components/TopButtons";
 import { gridList } from "../store/columns/PR_B3000W_C";

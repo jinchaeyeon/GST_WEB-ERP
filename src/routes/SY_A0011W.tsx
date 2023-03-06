@@ -59,7 +59,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import { Renderers } from "../components/TreeListRenderers";
+import { Renderers } from "../components/Renderers/TreeListRenderers";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";

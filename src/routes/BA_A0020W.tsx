@@ -19,7 +19,7 @@ import {
   CheckboxChangeEvent,
 } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";

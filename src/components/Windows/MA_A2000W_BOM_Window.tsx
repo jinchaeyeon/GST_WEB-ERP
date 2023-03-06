@@ -31,7 +31,7 @@ import {
   TreeListSelectionCell,
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";

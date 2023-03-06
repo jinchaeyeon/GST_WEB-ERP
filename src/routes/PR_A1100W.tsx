@@ -62,7 +62,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import { CellRender, RowRender } from "../components/GroupRenderers";
+import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { isLoading } from "../store/atoms";

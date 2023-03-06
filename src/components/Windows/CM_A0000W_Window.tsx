@@ -70,7 +70,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { useRecoilState } from "recoil";
 import { bytesToBase64 } from "byte-base64";
 
@@ -247,12 +247,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         marginLeft: "3%",
         width: "37%",
         float: "right",
-        height: "500px"
+        height: "500px",
       }}
     >
-      <GridTitle>
-        참조
-      </GridTitle>
+      <GridTitle>참조</GridTitle>
       <Grid
         data={dataWithIndexes.map((item: any) => ({
           ...item,
@@ -268,7 +266,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         }}
         onSelectionChange={onSelectionChange}
         total={dataWithIndexes.total}
-        style={{height: "500px"}}
+        style={{ height: "500px" }}
       >
         <GridColumn
           field="user_name"
@@ -598,7 +596,7 @@ const KendoWindow = ({
       } catch (error) {
         data = null;
       }
-  
+
       if (data.isSuccess === true) {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows;
@@ -618,7 +616,7 @@ const KendoWindow = ({
       };
     });
   };
-  
+
   let result: IAttachmentData = {
     attdatnum: "",
     original_name: "",
@@ -638,17 +636,18 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
- 
+
     if (data !== null) {
       const totalRowCnt = data.tables[0].RowCount;
 
       if (totalRowCnt > 0) {
         const rows = data.tables[0].Rows;
-       
+
         result = {
           attdatnum: rows[0].attdatnum,
-          original_name: rows[0].original_name +
-          (totalRowCnt > 1 ? " 등 " + String(totalRowCnt - 1) + "건" : ""),
+          original_name:
+            rows[0].original_name +
+            (totalRowCnt > 1 ? " 등 " + String(totalRowCnt - 1) + "건" : ""),
           rowCount: totalRowCnt,
         };
       } else {
@@ -662,7 +661,7 @@ const KendoWindow = ({
       setInitialVal((prev) => {
         return {
           ...prev,
-          files: result.original_name
+          files: result.original_name,
         };
       });
     }

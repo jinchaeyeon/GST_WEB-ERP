@@ -17,7 +17,7 @@ import { GridCellProps } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import FieldDropDownList from "./DropDownLists/FieldDropDownList";
 import FieldComboBox from "./ComboBoxes/FieldComboBox";
-import FieldCheckBox from "./FieldCheckBox";
+import FieldCheckBox from "./CheckBoxes/FieldCheckBox";
 import {
   checkIsDDLValid,
   checkIsObjValid,

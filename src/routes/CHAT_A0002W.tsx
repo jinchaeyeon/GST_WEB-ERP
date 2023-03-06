@@ -32,7 +32,7 @@ import {
   EXPANDED_FIELD,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import { Renderers } from "../components/TreeListRenderers";
+import { Renderers } from "../components/Renderers/TreeListRenderers";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";

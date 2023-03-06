@@ -71,7 +71,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
 import RequiredHeader from "../RequiredHeader";
 import { isLoading } from "../../store/atoms";

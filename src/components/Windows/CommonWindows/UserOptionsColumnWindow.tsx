@@ -52,7 +52,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
-import { CellRender, RowRender } from "../../Renderers";
+import { CellRender, RowRender } from "../../Renderers/Renderers";
 import { isLoading } from "../../../store/atoms";
 import { useSetRecoilState } from "recoil";
 
