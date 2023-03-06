@@ -66,7 +66,7 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import { isLoading, loginResultState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import CommentsGrid from "../components/CommentsGrid";
+import CommentsGrid from "../components/Grids/CommentsGrid";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
