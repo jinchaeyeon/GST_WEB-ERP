@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -8,7 +7,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
-  GridItemChangeEvent,
   GridHeaderSelectionChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
@@ -28,15 +26,13 @@ import {
   GridTitleContainer,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input, RadioGroup } from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
   convertDateToStr,
   findMessage,
-  getGridItemChangedData,
   getQueryFromBizComponent,
   setDefaultDate,
   UseBizComponent,
@@ -46,53 +42,44 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  //UseMenuDefaults,
 } from "../components/CommonFunction";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { IAttachmentData, IItemData } from "../hooks/interfaces";
+import { IAttachmentData } from "../hooks/interfaces";
 import {
   COM_CODE_DEFAULT_VALUE,
-  GNV_WIDTH,
-  CLIENT_WIDTH,
-  GRID_MARGIN,
   PAGE_SIZE,
   SELECTED_FIELD,
-  EDIT_FIELD,
   OLD_COMPANY,
+  GAP,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import CashDisbursementVoucher from "../components/Prints/CashDisbursementVoucher";
 import AbsenceRequest from "../components/Prints/AbsenceRequest";
-import { CellRender, RowRender } from "../components/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { Window } from "@progress/kendo-react-dialogs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { isLoading, loginResultState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
+import CommentsGrid from "../components/CommentsGrid";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
-let deletedCmtRows: object[] = [];
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "appnum";
 const DETAIL_DATA_ITEM_KEY = "resno";
-const DETAIL3_DATA_ITEM_KEY = "commseq";
 
 const EA_A2000: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
-  const detail3IdGetter = getter(DETAIL3_DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -219,10 +206,6 @@ const EA_A2000: React.FC = () => {
     sort: [],
   });
 
-  const [detail3DataState, setDetail3DataState] = useState<State>({
-    sort: [],
-  });
-
   //그리드 데이터 결과값
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
@@ -236,10 +219,6 @@ const EA_A2000: React.FC = () => {
     process([], detail2DataState)
   );
 
-  const [detail3DataResult, setDetail3DataResult] = useState<DataResult>(
-    process([], detail3DataState)
-  );
-
   const [selectedRowData, setSelectedRowData] = useState(null);
 
   //선택 상태
@@ -248,9 +227,6 @@ const EA_A2000: React.FC = () => {
   }>({});
 
   const [detailSelectedState, setDetailSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-  const [detail3SelectedState, setDetail3SelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -403,13 +379,17 @@ const EA_A2000: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0)
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
+      } else {
+        setDetailFilters((prev) => ({ ...prev, appnum: "" }));
+        resetAllDetailGrid();
+      }
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -483,25 +463,6 @@ const EA_A2000: React.FC = () => {
           };
         });
       }
-
-      const totalRowCnt3 = data.tables[2].RowCount;
-      const rows3 = data.tables[2].Rows;
-
-      if (totalRowCnt3 > 0) {
-        setDetail3DataResult((prev) => {
-          return {
-            data: [...rows3],
-            total: totalRowCnt3,
-          };
-        });
-      } else {
-        setDetail3DataResult((prev) => {
-          return {
-            data: [],
-            total: 0,
-          };
-        });
-      }
     }
     setLoading(false);
   };
@@ -531,13 +492,11 @@ const EA_A2000: React.FC = () => {
     setMainDataResult(process([], mainDataState));
     setDetail1DataResult(process([], detail1DataState));
     setDetail2DataResult(process([], detail2DataState));
-    setDetail3DataResult(process([], detail2DataState));
   };
 
   const resetAllDetailGrid = () => {
     setDetail1DataResult(process([], detail1DataState));
     setDetail2DataResult(process([], detail2DataState));
-    setDetail3DataResult(process([], detail2DataState));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -599,15 +558,6 @@ const EA_A2000: React.FC = () => {
     });
   };
 
-  const onDetail3SelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: detail3SelectedState,
-      dataItemKey: DETAIL3_DATA_ITEM_KEY,
-    });
-    setDetail3SelectedState(newSelectedState);
-  };
-
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -640,9 +590,6 @@ const EA_A2000: React.FC = () => {
   const onDetail2DataStateChange = (event: GridDataStateChangeEvent) => {
     setDetail2DataState(event.dataState);
   };
-  const onDetail3DataStateChange = (event: GridDataStateChangeEvent) => {
-    setDetail3DataState(event.dataState);
-  };
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
@@ -668,26 +615,6 @@ const EA_A2000: React.FC = () => {
       </td>
     );
   };
-  const detail3TotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {detail3DataResult.total}건
-      </td>
-    );
-  };
-
-  //품목마스터 팝업
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
-  };
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
-  };
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -701,9 +628,6 @@ const EA_A2000: React.FC = () => {
   };
   const onDetail2SortChange = (e: any) => {
     setDetail2DataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-  const onDetail3SortChange = (e: any) => {
-    setDetail3DataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   //customOptionData 조회 후 디폴트 값 세팅
@@ -739,125 +663,6 @@ const EA_A2000: React.FC = () => {
       setIsInitSearch(true);
     }
   }, [filters, permissions]);
-
-  const onAddClick = () => {
-    let seq = 1;
-
-    if (detail3DataResult.total > 0) {
-      detail3DataResult.data.forEach((item) => {
-        if (item[DETAIL3_DATA_ITEM_KEY] > seq) {
-          seq = item[DETAIL3_DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    const idx: number =
-      Number(Object.getOwnPropertyNames(selectedState)[0]) ??
-      //Number(planDataResult.data[0].idx) ??
-      null;
-    if (idx === null) return false;
-    const selectedRowData = detail3DataResult.data.find(
-      (item) => item[DETAIL3_DATA_ITEM_KEY] === idx
-    );
-
-    const newDataItem = {
-      [DETAIL3_DATA_ITEM_KEY]: seq,
-      // planno: selectedRowData.planno,
-      time: convertDateToStr(new Date()),
-      rowstatus: "N",
-      insert_user: userId,
-    };
-    setDetail3DataResult((prev) => {
-      return {
-        data: [...prev.data, newDataItem],
-        total: prev.total + 1,
-      };
-    });
-  };
-
-  const onRemoveClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
-    let newData: any[] = [];
-
-    detail3DataResult.data.forEach((item: any, index: number) => {
-      if (!detail3SelectedState[item[DETAIL3_DATA_ITEM_KEY]]) {
-        newData.push(item);
-      } else {
-        deletedCmtRows.push(item);
-      }
-    });
-
-    //newData 생성
-    setDetail3DataResult((prev) => ({
-      data: newData,
-      total: newData.length,
-    }));
-
-    //선택 상태 초기화
-    setDetail3SelectedState({});
-  };
-
-  const onSaveClick = () => {
-    const dataItem: { [name: string]: any } = detail3DataResult.data.filter(
-      (item: any) => {
-        return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
-          item.rowstatus !== undefined
-        );
-      }
-    );
-    if (
-      mainDataResult.data.length === 0 ||
-      (dataItem.length === 0 && deletedCmtRows.length === 0)
-    )
-      return false;
-
-    type TData = {
-      comment: string[];
-      rowstatus_s: string[];
-      commseq_s: string[];
-      time_s: string[];
-    };
-
-    let dataArr: TData = {
-      comment: [],
-      rowstatus_s: [],
-      commseq_s: [],
-      time_s: [],
-    };
-
-    dataItem.forEach((item: any, idx: number) => {
-      const { comment, rowstatus, commseq, time } = item;
-
-      console.log("item");
-      console.log(item);
-
-      dataArr.comment.push(comment);
-      dataArr.rowstatus_s.push(rowstatus);
-      dataArr.commseq_s.push(commseq);
-      dataArr.time_s.push(time);
-    });
-
-    deletedCmtRows.forEach((item: any, idx: number) => {
-      const { comment, commseq, time } = item;
-
-      dataArr.rowstatus_s.push("D");
-      dataArr.comment.push(comment);
-      dataArr.commseq_s.push(commseq);
-      dataArr.time_s.push(time);
-    });
-
-    setDetailParaDataSaved((prev) => ({
-      ...prev,
-      work_type: "CMT",
-      rowstatus_s: dataArr.rowstatus_s.join("|"),
-      comment: dataArr.comment.join("|"),
-      commseq_s: dataArr.commseq_s.join("|"),
-      time_s: dataArr.time_s.join("|"),
-      appnum: Object.getOwnPropertyNames(selectedState)[0],
-    }));
-  };
 
   //계획 저장 파라미터 초기값
   const [detailParaDataSaved, setDetailParaDataSaved] = useState({
@@ -910,14 +715,11 @@ const EA_A2000: React.FC = () => {
       if (detailParaDataSaved.work_type === "CMT") {
         setDetail1DataResult(process([], detail1DataState));
         setDetail2DataResult(process([], detail2DataState));
-        setDetail3DataResult(process([], detail3DataState));
         fetchDetailGrid();
       } else {
         resetAllGrid();
         fetchMainGrid();
       }
-
-      deletedCmtRows = [];
     } else {
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
@@ -929,69 +731,6 @@ const EA_A2000: React.FC = () => {
   useEffect(() => {
     if (detailParaDataSaved.work_type !== "") fetchDetailGridSaved();
   }, [detailParaDataSaved]);
-
-  const onDetail3ItemChange = (event: GridItemChangeEvent) => {
-    getGridItemChangedData(
-      event,
-      detail3DataResult,
-      setDetail3DataResult,
-      DETAIL3_DATA_ITEM_KEY
-    );
-  };
-
-  const enterEdit = (dataItem: any, field: string) => {
-    const newData = detail3DataResult.data.map((item) =>
-      item[DETAIL3_DATA_ITEM_KEY] === dataItem[DETAIL3_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-
-    setDetail3DataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  };
-
-  const exitEdit = () => {
-    const newData = detail3DataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setDetail3DataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  };
-
-  const customCellRender = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
 
   const processApproval = (workType: string) => {
     const dataItem: { [name: string]: any } = mainDataResult.data.filter(
@@ -1308,7 +1047,7 @@ const EA_A2000: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer>
+        <GridContainer width={`60%`}>
           {filters.radWorkType === "A" && (
             <GridContainer>
               <ExcelExport
@@ -1819,7 +1558,7 @@ const EA_A2000: React.FC = () => {
           )}
 
           <GridContainerWrap>
-            <GridContainer width={"550px"}>
+            <GridContainer width={`55%`}>
               <GridTitleContainer>
                 <GridTitle data-control-name="grtlLineList">결재자</GridTitle>
               </GridTitleContainer>
@@ -2007,147 +1746,20 @@ const EA_A2000: React.FC = () => {
                       ))}
               </Grid>
             </GridContainer>
-            <GridContainer
-              width={
-                CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 600 - 650 + "px"
-              }
-            >
-              <GridTitleContainer>
-                <GridTitle data-control-name="grtlCmtList">코멘트</GridTitle>
-
-                {permissions && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="plus"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      onClick={onRemoveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                  </ButtonContainer>
-                )}
-              </GridTitleContainer>
-              <Grid
+            <GridContainer width={`calc(45% - ${GAP}px)`}>
+              <CommentsGrid
+                ref_key={detailFilters.appnum}
+                form_id={pathname}
+                table_id={"EA100T"}
                 style={{ height: "45vh" }}
-                data={process(
-                  detail3DataResult.data.map((row) => ({
-                    ...row,
-                    insert_user: personListData.find(
-                      (item: any) => item.code === row.insert_user
-                    )?.name,
-                    [SELECTED_FIELD]:
-                      detail3SelectedState[detail3IdGetter(row)],
-                  })),
-                  detail3DataState
-                )}
-                {...detail3DataState}
-                onDataStateChange={onDetail3DataStateChange}
-                //선택기능
-                dataItemKey={DETAIL3_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onDetail3SelectionChange}
-                //정렬기능
-                sortable={true}
-                onSortChange={onDetail3SortChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={detail3DataResult.total}
-                //onScroll={onDetail2ScrollHandler} // 전부조회 (페이징처리 미사용)
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                //incell 수정 기능
-                onItemChange={onDetail3ItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn
-                  field="rowstatus"
-                  title=" "
-                  width="40px"
-                  editable={false}
-                />
-                {customOptionData !== null
-                  ? customOptionData.menuCustomColumnOptions["grdCmtList"]
-                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      .map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              editable={
-                                item.fieldName === "time" ||
-                                item.fieldName === "insert_user"
-                                  ? false
-                                  : true
-                              }
-                              footerCell={
-                                item.sortOrder === 0
-                                  ? detail3TotalFooterCell
-                                  : undefined
-                              }
-                              locked={item.fixed === "None" ? false : true}
-                            />
-                          )
-                      )
-                  : gridList
-                      .find((grid: TGrid) => grid.gridName === "grdCmtList")
-                      ?.columns.map((item: TColumn, idx: number) => (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.field}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.field)
-                              ? NumberCell
-                              : dateField.includes(item.field)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            idx === 0 ? detail3TotalFooterCell : undefined
-                          }
-                          locked={item.fixed === "None" ? false : true}
-                        />
-                      ))}
-              </Grid>
+              ></CommentsGrid>
             </GridContainer>
           </GridContainerWrap>
         </GridContainer>
-        <GridContainer className="preview-grid-container">
+        <GridContainer
+          className="preview-grid-container"
+          width={`calc(40% - ${GAP}px)`}
+        >
           <GridTitleContainer>
             <GridTitle data-control-name="grtlPreview">
               결재문서 미리보기
@@ -2155,7 +1767,6 @@ const EA_A2000: React.FC = () => {
           </GridTitleContainer>
           <GridContainer
             style={{
-              width: "650px",
               height: "79vh",
               overflow: "scroll",
               border: "solid 1px #e6e6e6",
@@ -2175,14 +1786,6 @@ const EA_A2000: React.FC = () => {
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>
-
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
-        />
-      )}
 
       {attachmentsWindowVisible && (
         <AttachmentsWindow

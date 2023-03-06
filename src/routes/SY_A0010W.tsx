@@ -529,7 +529,7 @@ const Page: React.FC = () => {
     let caption = orgCaption;
 
     if (key) {
-      const selectedRowData = mainDataResult.data.find(
+      const selectedRowData = rowsOfDataResult(mainDataResult).find(
         (item) => item[DATA_ITEM_KEY] === key
       );
 
@@ -559,7 +559,7 @@ const Page: React.FC = () => {
     if (mainDataResult.total < 1) return false;
 
     const key = Object.getOwnPropertyNames(selectedState)[0];
-    const selectedRowData = mainDataResult.data[0].items.find(
+    const selectedRowData = rowsOfDataResult(mainDataResult).find(
       (item: any) => item[DATA_ITEM_KEY] === key
     );
 
@@ -756,7 +756,7 @@ const Page: React.FC = () => {
       <GridContainerWrap>
         <GridContainer width={"500px"}>
           <ExcelExport
-            data={mainDataResult.data}
+            data={rowsOfDataResult(mainDataResult)}
             ref={(exporter) => {
               _export = exporter;
             }}
