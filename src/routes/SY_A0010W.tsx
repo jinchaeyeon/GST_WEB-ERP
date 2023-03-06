@@ -326,6 +326,13 @@ const Page: React.FC = () => {
         // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
         if (filters.pgNum !== data.pageNumber) {
           setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
+          setSelectedState({ [filters.find_row_value]: true });
+
+          setDetailFilters((prev) => ({
+            ...prev,
+            group_code: filters.find_row_value,
+            isSearch: true,
+          }));
         }
 
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -599,7 +606,21 @@ const Page: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      fetchMainGrid();
+
+      const prevDataIdx =
+        (rowsOfDataResult(mainDataResult).findIndex(
+          (item) => item[DATA_ITEM_KEY] === paraDataDeleted.group_code
+        ) ?? 0) - 1;
+
+      // 메인 조회
+      if (prevDataIdx > -1) {
+        const prevDataVal =
+          rowsOfDataResult(mainDataResult)[prevDataIdx][DATA_ITEM_KEY];
+
+        setGroupCode(prevDataVal);
+      } else {
+        fetchMainGrid();
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -614,21 +635,11 @@ const Page: React.FC = () => {
     // 리셋
     resetAllGrid();
 
-    // 행 선택
-    setSelectedState({ [groupCode]: true });
-
     // 메인 조회
     setFilters((prev) => ({
       ...prev,
       isSearch: true,
       find_row_value: groupCode,
-    }));
-
-    // 디테일 조회
-    setDetailFilters((prev) => ({
-      ...prev,
-      group_code: groupCode,
-      isSearch: true,
     }));
   };
 
