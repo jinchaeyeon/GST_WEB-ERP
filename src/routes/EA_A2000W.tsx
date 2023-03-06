@@ -59,6 +59,7 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
   OLD_COMPANY,
+  GAP,
 } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
@@ -77,6 +78,7 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import { isLoading, loginResultState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
+import CommentsGrid from "../components/CommentsGrid";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
@@ -403,13 +405,17 @@ const EA_A2000: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0)
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
+      } else {
+        setDetailFilters((prev) => ({ ...prev, appnum: "" }));
+        resetAllDetailGrid();
+      }
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -829,9 +835,6 @@ const EA_A2000: React.FC = () => {
 
     dataItem.forEach((item: any, idx: number) => {
       const { comment, rowstatus, commseq, time } = item;
-
-      console.log("item");
-      console.log(item);
 
       dataArr.comment.push(comment);
       dataArr.rowstatus_s.push(rowstatus);
@@ -1308,7 +1311,7 @@ const EA_A2000: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <GridContainerWrap>
-        <GridContainer>
+        <GridContainer width={`60%`}>
           {filters.radWorkType === "A" && (
             <GridContainer>
               <ExcelExport
@@ -1819,7 +1822,7 @@ const EA_A2000: React.FC = () => {
           )}
 
           <GridContainerWrap>
-            <GridContainer width={"550px"}>
+            <GridContainer width={`55%`}>
               <GridTitleContainer>
                 <GridTitle data-control-name="grtlLineList">결재자</GridTitle>
               </GridTitleContainer>
@@ -2007,147 +2010,20 @@ const EA_A2000: React.FC = () => {
                       ))}
               </Grid>
             </GridContainer>
-            <GridContainer
-              width={
-                CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 600 - 650 + "px"
-              }
-            >
-              <GridTitleContainer>
-                <GridTitle data-control-name="grtlCmtList">코멘트</GridTitle>
-
-                {permissions && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="plus"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      onClick={onRemoveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                  </ButtonContainer>
-                )}
-              </GridTitleContainer>
-              <Grid
+            <GridContainer width={`calc(45% - ${GAP}px)`}>
+              <CommentsGrid
+                ref_key={detailFilters.appnum}
+                form_id={pathname}
+                table_id={"EA100T"}
                 style={{ height: "45vh" }}
-                data={process(
-                  detail3DataResult.data.map((row) => ({
-                    ...row,
-                    insert_user: personListData.find(
-                      (item: any) => item.code === row.insert_user
-                    )?.name,
-                    [SELECTED_FIELD]:
-                      detail3SelectedState[detail3IdGetter(row)],
-                  })),
-                  detail3DataState
-                )}
-                {...detail3DataState}
-                onDataStateChange={onDetail3DataStateChange}
-                //선택기능
-                dataItemKey={DETAIL3_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onDetail3SelectionChange}
-                //정렬기능
-                sortable={true}
-                onSortChange={onDetail3SortChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={detail3DataResult.total}
-                //onScroll={onDetail2ScrollHandler} // 전부조회 (페이징처리 미사용)
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                //incell 수정 기능
-                onItemChange={onDetail3ItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn
-                  field="rowstatus"
-                  title=" "
-                  width="40px"
-                  editable={false}
-                />
-                {customOptionData !== null
-                  ? customOptionData.menuCustomColumnOptions["grdCmtList"]
-                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      .map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              editable={
-                                item.fieldName === "time" ||
-                                item.fieldName === "insert_user"
-                                  ? false
-                                  : true
-                              }
-                              footerCell={
-                                item.sortOrder === 0
-                                  ? detail3TotalFooterCell
-                                  : undefined
-                              }
-                              locked={item.fixed === "None" ? false : true}
-                            />
-                          )
-                      )
-                  : gridList
-                      .find((grid: TGrid) => grid.gridName === "grdCmtList")
-                      ?.columns.map((item: TColumn, idx: number) => (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.field}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.field)
-                              ? NumberCell
-                              : dateField.includes(item.field)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            idx === 0 ? detail3TotalFooterCell : undefined
-                          }
-                          locked={item.fixed === "None" ? false : true}
-                        />
-                      ))}
-              </Grid>
+              ></CommentsGrid>
             </GridContainer>
           </GridContainerWrap>
         </GridContainer>
-        <GridContainer className="preview-grid-container">
+        <GridContainer
+          className="preview-grid-container"
+          width={`calc(40% - ${GAP}px)`}
+        >
           <GridTitleContainer>
             <GridTitle data-control-name="grtlPreview">
               결재문서 미리보기
@@ -2155,7 +2031,6 @@ const EA_A2000: React.FC = () => {
           </GridTitleContainer>
           <GridContainer
             style={{
-              width: "650px",
               height: "79vh",
               overflow: "scroll",
               border: "solid 1px #e6e6e6",
