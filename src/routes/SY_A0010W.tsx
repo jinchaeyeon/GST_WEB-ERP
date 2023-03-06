@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -8,7 +8,6 @@ import {
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
-  GridGroupChangeEvent,
   GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -32,7 +31,6 @@ import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
@@ -46,7 +44,6 @@ import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   CLIENT_WIDTH,
-  COM_CODE_DEFAULT_VALUE,
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
@@ -56,7 +53,6 @@ import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox"
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import TopButtons from "../components/TopButtons";
-import { bytesToBase64 } from "byte-base64";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 
@@ -315,6 +311,7 @@ const Page: React.FC = () => {
             groupCategoryData.find(
               (item: any) => item.sub_code === row.group_category
             )?.code_name,
+          [SELECTED_FIELD]: selectedState[idGetter(row)],
         }));
 
         // 데이터 세팅
@@ -324,7 +321,7 @@ const Page: React.FC = () => {
         );
 
         // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
-        if (filters.pgNum !== data.pageNumber) {
+        if (filters.find_row_value !== "") {
           setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
           setSelectedState({ [filters.find_row_value]: true });
 
@@ -335,7 +332,7 @@ const Page: React.FC = () => {
           }));
         }
 
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
+        if (Object.keys(selectedState).length === 0) {
           // 첫번째 행 선택하기
           const firstRowData = rows[0];
           setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
@@ -351,6 +348,12 @@ const Page: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
     }
+
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+      find_row_value: "",
+    }));
 
     setLoading(false);
   };
@@ -383,8 +386,8 @@ const Page: React.FC = () => {
   // 조회 버튼 => 리셋 후 조회
   const search = () => {
     resetAllGrid();
+    setSelectedState({});
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
   // selectedState가 바뀔때마다 data에 바뀐 selectedState 적용
@@ -395,6 +398,13 @@ const Page: React.FC = () => {
         mainDataState
       )
     );
+
+    const key = Object.getOwnPropertyNames(selectedState)[0];
+    setDetailFilters((prev) => ({
+      ...prev,
+      group_code: key,
+      isSearch: true,
+    }));
   }, [selectedState]);
 
   useEffect(() => {
@@ -447,12 +457,6 @@ const Page: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
-    setDetailFilters((prev) => ({
-      ...prev,
-      group_code: selectedRowData.group_code,
-      isSearch: true,
-    }));
   };
 
   //엑셀 내보내기
@@ -473,7 +477,6 @@ const Page: React.FC = () => {
         ...prev,
         pgNum: prev.pgNum + 1,
         isSearch: true,
-        find_row_value: "",
       }));
     }
   };
@@ -570,12 +573,6 @@ const Page: React.FC = () => {
       (item: any) => item[DATA_ITEM_KEY] === key
     );
 
-    setDetailFilters((prev) => ({
-      ...prev,
-      group_code: selectedRowData.group_code,
-      isSearch: true,
-    }));
-
     setIsCopy(true);
     setWorkType("N");
     setDetailWindowVisible(true);
@@ -597,6 +594,7 @@ const Page: React.FC = () => {
 
   const fetchToDelete = async () => {
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", paraDeleted);
@@ -629,6 +627,7 @@ const Page: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.group_code = "";
+    setLoading(false);
   };
 
   const setGroupCode = (groupCode: string) => {
@@ -641,15 +640,17 @@ const Page: React.FC = () => {
       isSearch: true,
       find_row_value: groupCode,
     }));
+    setDetailFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
   };
 
   const reloadData = (workType: string, groupCode: string | undefined) => {
     if (groupCode) {
       //그룹코드로 조회
       setGroupCode(groupCode);
-    } else if (workType === "U") {
-      // 일반조회
-      search();
     }
   };
 

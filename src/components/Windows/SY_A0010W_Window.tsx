@@ -815,6 +815,7 @@ const KendoWindow = ({
 
   const fetchMainSaved = async () => {
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", paraSaved);
@@ -826,7 +827,7 @@ const KendoWindow = ({
       if (workType === "U") {
         resetAllGrid();
 
-        reloadData("U");
+        reloadData("U", paraData.group_code);
         fetchMain();
         fetchGrid(1);
       } else {
@@ -841,6 +842,7 @@ const KendoWindow = ({
     }
 
     paraData.work_type = ""; //초기화
+    setLoading(false);
   };
 
   const fetchGridSaved = async (paraSaved: any) => {
