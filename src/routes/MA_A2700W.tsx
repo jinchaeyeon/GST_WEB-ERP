@@ -358,7 +358,8 @@ const MA_A2700W: React.FC = () => {
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [barcodeWindowVisible, setBarcodeWindowVisible] = useState<boolean>(false);
+  const [barcodeWindowVisible, setBarcodeWindowVisible] =
+    useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -370,11 +371,11 @@ const MA_A2700W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -701,7 +702,7 @@ const MA_A2700W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       setreload(!reload);
       fetchMainGrid();
@@ -883,12 +884,12 @@ const MA_A2700W: React.FC = () => {
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
-      setBarcodeDateResult((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt,
-        };
-      });
+        setBarcodeDateResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
     }
     setLoading(false);
   };
@@ -994,7 +995,7 @@ const MA_A2700W: React.FC = () => {
       seq1: selectedRowData.seq1,
       lotnum: selectedRowData.lotnum,
       seq2: selectedRowData.seq2,
-    }))
+    }));
   };
 
   //엑셀 내보내기
@@ -1218,10 +1219,13 @@ const MA_A2700W: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "MA_A2700W_002");
-      } else if(filters.location == null || filters.location == undefined || filters.location ==""){
+      } else if (
+        filters.location == null ||
+        filters.location == undefined ||
+        filters.location == ""
+      ) {
         throw findMessage(messagesData, "MA_A2700W_003");
-      }
-        else {
+      } else {
         resetAllGrid();
         fetchMainGrid();
       }
@@ -1298,7 +1302,6 @@ const MA_A2700W: React.FC = () => {
     });
     setParaData(filter);
     if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
-
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -1453,7 +1456,9 @@ const MA_A2700W: React.FC = () => {
       dataArr.load_place_s.push(load_place);
       dataArr.pac_s.push(pac);
       dataArr.itemlvl1_s.push(itemlvl1);
-      dataArr.enddt_s.push(enddt.length == undefined ? convertDateToStr(enddt) : enddt);
+      dataArr.enddt_s.push(
+        enddt.length == undefined ? convertDateToStr(enddt) : enddt
+      );
       dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
@@ -1557,7 +1562,9 @@ const MA_A2700W: React.FC = () => {
       dataArr.load_place_s.push(load_place);
       dataArr.pac_s.push(pac);
       dataArr.itemlvl1_s.push(itemlvl1);
-      dataArr.enddt_s.push(enddt.length == undefined ? convertDateToStr(enddt) : enddt);
+      dataArr.enddt_s.push(
+        enddt.length == undefined ? convertDateToStr(enddt) : enddt
+      );
       dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
     });
     setParaData((prev) => ({
@@ -1618,21 +1625,17 @@ const MA_A2700W: React.FC = () => {
 
   const onPrint = () => {
     const datas = detailDataResult.data.filter(
-      (item) =>
-        item.num == Object.getOwnPropertyNames(detailselectedState)[0]
-    )[0]
+      (item) => item.num == Object.getOwnPropertyNames(detailselectedState)[0]
+    )[0];
     try {
-      if (
-        datas == null || datas == undefined
-      ) {
+      if (datas == null || datas == undefined) {
         throw findMessage(messagesData, "MA_A2700W_006");
       } else {
-          onBarcodeWndClick();
+        onBarcodeWndClick();
       }
     } catch (e) {
       alert(e);
     }
-
   };
 
   return (

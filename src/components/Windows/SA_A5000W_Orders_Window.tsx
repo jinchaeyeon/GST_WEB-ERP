@@ -124,7 +124,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-     
+
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(personQueryStr, setPersonListData);
     }
@@ -183,11 +183,11 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -377,8 +377,8 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           width: row.width == null ? 0 : row.width,
           pac: row.pac == null ? "A" : row.pac,
           enddt: row.enddt == null ? new Date() : row.enddt,
-          sort_seq: row.sort_seq == null ? 0 :row.sort_seq,
-          unpcalmeth: row.unpcalmeth == null ? "Q": row.unpcalmeth
+          sort_seq: row.sort_seq == null ? 0 : row.sort_seq,
+          unpcalmeth: row.unpcalmeth == null ? "Q" : row.unpcalmeth,
         };
       });
 
@@ -547,19 +547,18 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const onRowDoubleClick = (props: any) => {
     let valid = true;
     const selectRow = mainDataResult.data.filter(
-      (item: any) =>
-        item.num == Object.getOwnPropertyNames(selectedState)[0]
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     subDataResult.data.map((item) => {
-      if(item.custcd != selectRow.custcd && valid == true) {
+      if (item.custcd != selectRow.custcd && valid == true) {
         alert("업체코드는 동일해야합니다.");
         valid = false;
-        return false
+        return false;
       }
-    })
+    });
 
-    if(valid == true){
+    if (valid == true) {
       let seq = 1;
       if (subDataResult.total > 0) {
         subDataResult.data.forEach((item) => {
@@ -649,13 +648,13 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         wonamt: selectRow.wonamt,
         wonchgrat: selectRow.wonchgrat,
       };
-  
-        setSubDataResult((prev) => {
-          return {
-            data: [...prev.data, newDataItem],
-            total: prev.total + 1,
-          };
-        });
+
+      setSubDataResult((prev) => {
+        return {
+          data: [...prev.data, newDataItem],
+          total: prev.total + 1,
+        };
+      });
     }
   };
 
@@ -685,7 +684,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-   <TitleContainer style={{ float: "right" }}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {
@@ -1003,7 +1002,12 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             />
             <GridColumn field="poregnum" title="PO번호" width="120px" />
             <GridColumn field="remark" title="비고" width="300px" />
-            <GridColumn field="finyn" title="완료여부" width="120px" cell={CheckBoxCell}/>
+            <GridColumn
+              field="finyn"
+              title="완료여부"
+              width="120px"
+              cell={CheckBoxCell}
+            />
             <GridColumn field="ordkey" title="수주번호" width="200px" />
           </Grid>
         </GridContainer>

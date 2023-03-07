@@ -195,11 +195,11 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -383,8 +383,8 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
           len: row.len == null ? 0 : row.len,
           itemthick: row.itemthick == null ? 0 : row.itemthick,
           width: row.width == null ? 0 : row.width,
-          pac: row.pac == null ? "A": row.pac,
-          enddt: row.enddt == null ? new Date(): row.enddt
+          pac: row.pac == null ? "A" : row.pac,
+          enddt: row.enddt == null ? new Date() : row.enddt,
         };
       });
 
@@ -551,7 +551,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
       }
     }
 
-    if(valid == true){
+    if (valid == true) {
       setSubDataResult((prev) => {
         return {
           data: [...prev.data, datas[0]],
@@ -587,7 +587,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-       <TitleContainer style={{ float: "right"}}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {

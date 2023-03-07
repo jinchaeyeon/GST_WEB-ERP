@@ -7,7 +7,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridEvent,
-  GridHeaderSelectionChangeEvent
+  GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
@@ -317,7 +317,7 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -412,7 +412,6 @@ const KendoWindow = ({
     const selectedRowData = event.dataItems[selectedIdx];
   };
 
-  
   const onHeaderSelectionChange = React.useCallback(
     (event: GridHeaderSelectionChangeEvent) => {
       const checkboxElement: any = event.syntheticEvent.target;
@@ -482,11 +481,11 @@ const KendoWindow = ({
   };
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -633,9 +632,7 @@ const KendoWindow = ({
               </FilterBoxWrap>
             </fieldset>
             <GridContainerWrap>
-              <GridContainer
-                width={`45%`}
-              >
+              <GridContainer width={`45%`}>
                 <GridTitleContainer>
                   <GridTitle>품목리스트</GridTitle>
                 </GridTitleContainer>
@@ -663,9 +660,7 @@ const KendoWindow = ({
                   <GridColumn field="itemacnt" title="품목계정" width="150px" />
                 </Grid>
               </GridContainer>
-              <GridContainer
-                width={`calc(55% - ${GAP}px)`}
-              >
+              <GridContainer width={`calc(55% - ${GAP}px)`}>
                 <GridTitleContainer>
                   <GridTitle>복사대상</GridTitle>
                 </GridTitleContainer>
@@ -706,9 +701,7 @@ const KendoWindow = ({
               </GridContainer>
             </GridContainerWrap>
             <GridContainerWrap>
-              <GridContainer
-                width={`99.9%`}
-              >
+              <GridContainer width={`99.9%`}>
                 <GridTitleContainer>
                   <GridTitle>BOM상세</GridTitle>
                 </GridTitleContainer>
@@ -737,7 +730,12 @@ const KendoWindow = ({
                   style={{ height: "200px" }}
                 >
                   <GridColumn field="proccd" title="공정" width="150px" />
-                  <GridColumn field="procseq" title="공정순서" width="100px" cell={NumberCell}/>
+                  <GridColumn
+                    field="procseq"
+                    title="공정순서"
+                    width="100px"
+                    cell={NumberCell}
+                  />
                   <GridColumn
                     field="outprocyn"
                     title="외주구분"
@@ -755,7 +753,12 @@ const KendoWindow = ({
                     title="소요자재명"
                     width="150px"
                   />
-                  <GridColumn field="unitqty" title="단위수량" width="120px" cell={NumberCell}/>
+                  <GridColumn
+                    field="unitqty"
+                    title="단위수량"
+                    width="120px"
+                    cell={NumberCell}
+                  />
                   <GridColumn field="qtyunit" title="수량단위" width="120px" />
                   <GridColumn field="outgb" title="불출구분" width="120px" />
                   <GridColumn
@@ -775,10 +778,7 @@ const KendoWindow = ({
             </GridContainerWrap>
             <BottomContainer>
               <ButtonContainer>
-              <Button
-                  themeColor={"primary"}
-                  onClick={selectData}
-                >
+                <Button themeColor={"primary"} onClick={selectData}>
                   저장
                 </Button>
                 <Button

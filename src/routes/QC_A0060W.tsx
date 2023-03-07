@@ -43,7 +43,6 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -81,21 +80,21 @@ const requireField = ["inspeccd", "qc_gubun"];
 const centerField = ["qc_sort", "inspeccd", "qc_gubun"];
 type TdataArr = {
   rowstatus_d: string[];
-    stdseq_d: string[];
-    inspeccd_d: string[];
-    qc_gubun_d: string[];
-    qc_sort_d: string[];
-    qc_unit_d: string[];
-    qc_spec_d: string[];
-    qc_base_d: string[];
-    qc_min_d: string[];
-    qc_max_d: string[];
-    qc_scope1_d: string[];
-    qc_scope2_d: string[];
-    chkmed_d: string[];
-    cycle_d: string[];
-    qty_d: string[];
-    remark_d: string[];
+  stdseq_d: string[];
+  inspeccd_d: string[];
+  qc_gubun_d: string[];
+  qc_sort_d: string[];
+  qc_unit_d: string[];
+  qc_spec_d: string[];
+  qc_base_d: string[];
+  qc_min_d: string[];
+  qc_max_d: string[];
+  qc_scope1_d: string[];
+  qc_scope2_d: string[];
+  chkmed_d: string[];
+  cycle_d: string[];
+  qty_d: string[];
+  remark_d: string[];
 };
 
 const QC_A0060W: React.FC = () => {
@@ -270,11 +269,11 @@ const QC_A0060W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -794,7 +793,7 @@ const QC_A0060W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-  
+
     setParaData((prev) => ({
       ...prev,
       workType: workType == "R" ? "REV" : workType,
@@ -816,24 +815,24 @@ const QC_A0060W: React.FC = () => {
     }));
     let dataArr: TdataArr = {
       rowstatus_d: [],
-    stdseq_d: [],
-    inspeccd_d: [],
-    qc_gubun_d: [],
-    qc_sort_d: [],
-    qc_unit_d: [],
-    qc_spec_d: [],
-    qc_base_d: [],
-    qc_min_d: [],
-    qc_max_d: [],
-    qc_scope1_d: [],
-    qc_scope2_d: [],
-    chkmed_d: [],
-    cycle_d: [],
-    qty_d: [],
-    remark_d: [],
+      stdseq_d: [],
+      inspeccd_d: [],
+      qc_gubun_d: [],
+      qc_sort_d: [],
+      qc_unit_d: [],
+      qc_spec_d: [],
+      qc_base_d: [],
+      qc_min_d: [],
+      qc_max_d: [],
+      qc_scope1_d: [],
+      qc_scope2_d: [],
+      chkmed_d: [],
+      cycle_d: [],
+      qty_d: [],
+      remark_d: [],
     };
 
-    if (dataItem.length !== 0){
+    if (dataItem.length !== 0) {
       dataItem.forEach((item: any, idx: number) => {
         const {
           rowstatus = "",
@@ -872,7 +871,7 @@ const QC_A0060W: React.FC = () => {
         dataArr.remark_d.push(remark);
       });
     }
-    if (deletedMainRows.length !== 0){
+    if (deletedMainRows.length !== 0) {
       deletedMainRows.forEach((item: any, idx: number) => {
         const {
           rowstatus = "",
@@ -892,7 +891,7 @@ const QC_A0060W: React.FC = () => {
           qty = "",
           remark = "",
         } = item;
-  
+
         dataArr.rowstatus_d.push(workType == "R" ? "N" : rowstatus);
         dataArr.stdseq_d.push(stdseq);
         dataArr.inspeccd_d.push(inspeccd);
@@ -911,26 +910,26 @@ const QC_A0060W: React.FC = () => {
         dataArr.remark_d.push(remark);
       });
     }
-    
-      setParaData((prev) => ({
-        ...prev,
-        rowstatus_d: dataArr.rowstatus_d.join("|"),
-        stdseq_d: dataArr.stdseq_d.join("|"),
-        inspeccd_d: dataArr.inspeccd_d.join("|"),
-        qc_gubun_d: dataArr.qc_gubun_d.join("|"),
-        qc_sort_d: dataArr.qc_sort_d.join("|"),
-        qc_unit_d: dataArr.qc_unit_d.join("|"),
-        qc_spec_d: dataArr.qc_spec_d.join("|"),
-        qc_base_d: dataArr.qc_base_d.join("|"),
-        qc_min_d: dataArr.qc_min_d.join("|"),
-        qc_max_d: dataArr.qc_max_d.join("|"),
-        qc_scope1_d: dataArr.qc_scope1_d.join("|"),
-        qc_scope2_d: dataArr.qc_scope2_d.join("|"),
-        chkmed_d: dataArr.chkmed_d.join("|"),
-        cycle_d: dataArr.cycle_d.join("|"),
-        qty_d: dataArr.qty_d.join("|"),
-        remark_d: dataArr.remark_d.join("|"),
-      }));
+
+    setParaData((prev) => ({
+      ...prev,
+      rowstatus_d: dataArr.rowstatus_d.join("|"),
+      stdseq_d: dataArr.stdseq_d.join("|"),
+      inspeccd_d: dataArr.inspeccd_d.join("|"),
+      qc_gubun_d: dataArr.qc_gubun_d.join("|"),
+      qc_sort_d: dataArr.qc_sort_d.join("|"),
+      qc_unit_d: dataArr.qc_unit_d.join("|"),
+      qc_spec_d: dataArr.qc_spec_d.join("|"),
+      qc_base_d: dataArr.qc_base_d.join("|"),
+      qc_min_d: dataArr.qc_min_d.join("|"),
+      qc_max_d: dataArr.qc_max_d.join("|"),
+      qc_scope1_d: dataArr.qc_scope1_d.join("|"),
+      qc_scope2_d: dataArr.qc_scope2_d.join("|"),
+      chkmed_d: dataArr.chkmed_d.join("|"),
+      cycle_d: dataArr.cycle_d.join("|"),
+      qty_d: dataArr.qty_d.join("|"),
+      remark_d: dataArr.remark_d.join("|"),
+    }));
   };
 
   const para: Iparameters = {
@@ -939,7 +938,7 @@ const QC_A0060W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv":ParaData.orgdiv,
+      "@p_orgdiv": ParaData.orgdiv,
       "@p_location": ParaData.location,
       "@p_dptcd": ParaData.dptcd,
       "@p_stdnum": ParaData.stdnum,

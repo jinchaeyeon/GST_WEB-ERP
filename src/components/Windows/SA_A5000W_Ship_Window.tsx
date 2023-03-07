@@ -122,7 +122,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-  
+
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(personQueryStr, setPersonListData);
@@ -182,11 +182,11 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -355,9 +355,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           width: row.width == null ? 0 : row.width,
           pac: row.pac == null ? "A" : row.pac,
           enddt: row.enddt == null ? new Date() : row.enddt,
-          sort_seq: row.sort_seq == null ? 0 :row.sort_seq,
-          unpcalmeth: row.unpcalmeth == null ? "Q": row.unpcalmeth,
-          dlramt: row.dlramt == null ? 0 : row.dlramt
+          sort_seq: row.sort_seq == null ? 0 : row.sort_seq,
+          unpcalmeth: row.unpcalmeth == null ? "Q" : row.unpcalmeth,
+          dlramt: row.dlramt == null ? 0 : row.dlramt,
         };
       });
 
@@ -526,19 +526,18 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const onRowDoubleClick = (props: any) => {
     let valid = true;
     const selectRow = mainDataResult.data.filter(
-      (item: any) =>
-        item.num == Object.getOwnPropertyNames(selectedState)[0]
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     subDataResult.data.map((item) => {
-      if(item.custcd != selectRow.custcd && valid == true) {
+      if (item.custcd != selectRow.custcd && valid == true) {
         alert("업체코드는 동일해야합니다.");
         valid = false;
-        return false
+        return false;
       }
-    })
+    });
 
-    if(valid == true){
+    if (valid == true) {
       let seq = 1;
       if (subDataResult.total > 0) {
         subDataResult.data.forEach((item) => {
@@ -626,15 +625,15 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         wgtunit: selectRow.wgtunit,
         width: selectRow.width,
         wonamt: selectRow.wonamt,
-        wonchgrat: selectRow.wonchgrat
+        wonchgrat: selectRow.wonchgrat,
       };
-  
-        setSubDataResult((prev) => {
-          return {
-            data: [...prev.data, newDataItem],
-            total: prev.total + 1,
-          };
-        });
+
+      setSubDataResult((prev) => {
+        return {
+          data: [...prev.data, newDataItem],
+          total: prev.total + 1,
+        };
+      });
     }
   };
 
@@ -664,7 +663,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-   <TitleContainer style={{ float: "right" }}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {
@@ -682,9 +681,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th>
-                  일자구분
-                </th>
+                <th>일자구분</th>
                 <td>
                   <div className="filter-item-wrap">
                     <DatePicker
@@ -739,7 +736,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                 </td>
               </tr>
               <tr>
-              <th>완료여부</th>
+                <th>완료여부</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionRadioGroup
@@ -842,7 +839,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             <GridColumn field="itemcd" title="품목코드" width="200px" />
             <GridColumn field="itemnm" title="품목명" width="200px" />
             <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn field="itemacnt" title="품목계정" width="200px"/>
+            <GridColumn field="itemacnt" title="품목계정" width="200px" />
             <GridColumn
               field="qty"
               title="출하수량"
@@ -905,7 +902,12 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="remark" title="비고" width="300px" />
-            <GridColumn field="finyn" title="완료여부" width="120px" cell={CheckBoxCell}/>
+            <GridColumn
+              field="finyn"
+              title="완료여부"
+              width="120px"
+              cell={CheckBoxCell}
+            />
           </Grid>
         </GridContainer>
         <GridContainer>
@@ -960,7 +962,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             resizable={true}
             //더블클릭
           >
-           <GridColumn
+            <GridColumn
               field="outdt"
               title="출하일자"
               cell={DateCell}
@@ -972,8 +974,8 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             <GridColumn field="itemcd" title="품목코드" width="200px" />
             <GridColumn field="itemnm" title="품목명" width="200px" />
             <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn field="itemacnt" title="품목계정" width="200px"/>
-                        <GridColumn
+            <GridColumn field="itemacnt" title="품목계정" width="200px" />
+            <GridColumn
               field="doqty"
               title="처리량"
               width="120px"
