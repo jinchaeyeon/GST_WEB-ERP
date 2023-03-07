@@ -361,7 +361,6 @@ const Page: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       isSearch: false,
-      find_row_value: "",
     }));
 
     setLoading(false);
@@ -399,6 +398,7 @@ const Page: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: 1,
+      scrollDirrection: "down",
       isSearch: true,
       pgGap: 0,
     }));
@@ -423,13 +423,25 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      const pgNumWithGap =
-        filters.pgNum -
-        (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = rowsOfDataResult(mainDataResult).findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
 
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+        }));
+      }
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      if (filters.scrollDirrection === "up" && pgNumWithGap > 1) {
+      else if (filters.scrollDirrection === "up") {
         gridRef.vs.container.scroll(0, 20);
       }
     }
@@ -688,7 +700,6 @@ const Page: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       isSearch: true,
-      scrollDirrection: "up",
       pgGap: 0,
       find_row_value: groupCode,
     }));
