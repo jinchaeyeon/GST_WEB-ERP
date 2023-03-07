@@ -1290,6 +1290,7 @@ const MA_A2400W: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
+                    placeholder=""
                   />
                   ~
                   <DatePicker
@@ -1298,6 +1299,7 @@ const MA_A2400W: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
+                    placeholder=""
                   />
                 </div>
               </td>

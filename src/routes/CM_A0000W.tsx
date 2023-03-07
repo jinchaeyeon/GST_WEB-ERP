@@ -663,6 +663,7 @@ const CM_A0000W: React.FC = () => {
                   onChange={filterInputChange}
                   width="160px"
                   className="required"
+                  placeholder=""
                 />
               </td>
 

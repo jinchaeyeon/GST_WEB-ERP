@@ -1080,6 +1080,7 @@ const CopyWindow = ({
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       className="required"
+                      placeholder=""
                     />
                   </div>
                 </td>
@@ -1091,6 +1092,7 @@ const CopyWindow = ({
                       value={filters.inexpdt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
+                      placeholder=""
                     />
                   </div>
                 </td>

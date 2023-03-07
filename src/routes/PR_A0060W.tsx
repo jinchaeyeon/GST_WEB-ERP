@@ -2167,6 +2167,7 @@ const PR_A0060: React.FC = () => {
                       value={infomation.recdt}
                       format="yyyy-MM-dd"
                       onChange={InputChange}
+                      placeholder=""
                     />
                   </td>
                   <th>사용여부</th>
@@ -2205,6 +2206,7 @@ const PR_A0060: React.FC = () => {
                       value={infomation.makedt}
                       format="yyyy-MM-dd"
                       onChange={InputChange}
+                      placeholder=""
                     />
                   </td>
                   <th>제조사</th>
@@ -2259,6 +2261,7 @@ const PR_A0060: React.FC = () => {
                       value={infomation.indt}
                       format="yyyy-MM-dd"
                       onChange={InputChange}
+                      placeholder=""
                     />
                   </td>
                   <th>구입금액</th>

@@ -808,6 +808,7 @@ const PR_A9100W: React.FC = () => {
                   format="yyyy"
                   onChange={filterInputChange}
                   calendar={YearCalendar}
+                  placeholder=""
                 />
               </td>
               <th>사업장</th>

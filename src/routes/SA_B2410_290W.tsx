@@ -838,6 +838,7 @@ const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
                     name="ymdFrdt"
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    placeholder=""
                   />
                   ~
                   <DatePicker
@@ -845,6 +846,7 @@ const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
                     value={filters.ymdTodt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    placeholder=""
                   />
                 </div>
               </td>

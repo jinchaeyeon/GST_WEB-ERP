@@ -881,6 +881,7 @@ const EA_A2000: React.FC = () => {
                     value={filters.ymdStartDt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    placeholder=""
                   />
                   ~
                   <DatePicker
@@ -888,6 +889,7 @@ const EA_A2000: React.FC = () => {
                     value={filters.ymdEndDt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    placeholder=""
                   />
                 </div>
               </td>

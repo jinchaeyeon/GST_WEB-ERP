@@ -509,6 +509,7 @@ const App: React.FC = () => {
                   format="yyyy-MM"
                   calendar={MonthCalendar}
                   onChange={filterInputChange}
+                  placeholder=""
                 />
               </td>
               {tabSelected === 0 && (

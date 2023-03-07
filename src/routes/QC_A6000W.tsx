@@ -819,6 +819,20 @@ const QC_A6000: React.FC = () => {
     });
   };
 
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    );
+  };
+
   const createColumn = () => {
     const array = [];
     array.push(
@@ -827,6 +841,7 @@ const QC_A6000: React.FC = () => {
         title={"생산일자"}
         width="120px"
         cell={DateCell}
+        footerCell={mainTotalFooterCell}
       />
     );
     array.push(<GridColumn field={"itemnm"} title={"품목명"} width="150px" />);
@@ -841,6 +856,7 @@ const QC_A6000: React.FC = () => {
         title={"외경"}
         width="100px"
         cell={NumberCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(
@@ -849,6 +865,7 @@ const QC_A6000: React.FC = () => {
         title={"두께"}
         width="100px"
         cell={NumberCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(
@@ -857,6 +874,7 @@ const QC_A6000: React.FC = () => {
         title={"길이"}
         width="100px"
         cell={NumberCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(<GridColumn field={"insiz"} title={"규격"} width="150px" />);
@@ -867,6 +885,7 @@ const QC_A6000: React.FC = () => {
         title={"실적수량"}
         width="100px"
         cell={NumberCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(<GridColumn field={"lotnum"} title={"LOT NO"} width="150px" />);
@@ -1034,6 +1053,7 @@ const QC_A6000: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
+                    placeholder=""
                   />
                   ~
                   <DatePicker
@@ -1042,6 +1062,7 @@ const QC_A6000: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
+                    placeholder=""
                   />
                 </div>
               </td>

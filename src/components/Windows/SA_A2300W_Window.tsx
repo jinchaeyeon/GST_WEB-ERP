@@ -785,6 +785,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
                       value={filters.outdt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
+                      placeholder=""
                     />
                   </div>
                 </td>
@@ -887,6 +888,7 @@ const CopyWindow = ({ workType, data, setVisible, setData, reload }: IWindow) =>
                       value={filters.shipdt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
+                      placeholder=""
                     />
                   </div>
                 </td>

@@ -1486,6 +1486,7 @@ const QC_A3000: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
+                    placeholder=""
                   />
                   ~
                   <DatePicker
@@ -1494,6 +1495,7 @@ const QC_A3000: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
+                    placeholder=""
                   />
                 </div>
               </td>
@@ -1807,6 +1809,7 @@ const QC_A3000: React.FC = () => {
                       format="yyyy-MM-dd"
                       onChange={InforInputChange}
                       className="required"
+                      placeholder=""
                     />
                   </div>
                 </td>

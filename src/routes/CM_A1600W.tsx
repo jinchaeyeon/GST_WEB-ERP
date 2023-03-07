@@ -1057,12 +1057,14 @@ const CM_A1600: React.FC = () => {
                               value={todoFilter.frdt}
                               format="yyyy-MM-dd"
                               onChange={filterInputChange}
+                              placeholder=""
                             />
                             <DatePicker
                               name="todt"
                               value={todoFilter.todt}
                               format="yyyy-MM-dd"
                               onChange={filterInputChange}
+                              placeholder=""
                             />
                           </div>
                         </td>

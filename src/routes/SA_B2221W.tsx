@@ -468,6 +468,7 @@ const SA_B2221: React.FC = () => {
                   onChange={filterInputChange}
                   calendar={YearCalendar}
                   className="required"
+                  placeholder=""
                 />
               </td>
               <th data-control-name="lblImcd">품목코드</th>

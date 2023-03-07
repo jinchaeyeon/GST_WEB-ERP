@@ -897,6 +897,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       className="required"
+                      placeholder=""
                     />
                     <DatePicker
                       name="todt"
@@ -904,6 +905,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       className="required"
+                      placeholder=""
                     />
                   </div>
                 </td>

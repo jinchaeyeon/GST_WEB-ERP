@@ -487,7 +487,7 @@ const CopyWindow = ({
     const newSelectedState = getSelectedState({
       event,
       selectedState: subselectedState,
-      dataItemKey: DATA_ITEM_KEY2,
+      dataItemKey: DATA_ITEM_KEY,
     });
     setSubSelectedState(newSelectedState);
     // setyn(true);
@@ -737,6 +737,7 @@ const CopyWindow = ({
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       className="required"
+                      placeholder=""
                     />
                     <DatePicker
                       name="todt"
@@ -744,6 +745,7 @@ const CopyWindow = ({
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       className="required"
+                      placeholder=""
                     />
                   </div>
                 </td>

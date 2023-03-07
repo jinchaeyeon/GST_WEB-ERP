@@ -576,6 +576,7 @@ const QC_A0120: React.FC = () => {
                     value={filters.ymdFrdt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    placeholder=""
                   />
                   ~
                   <DatePicker
@@ -583,6 +584,7 @@ const QC_A0120: React.FC = () => {
                     value={filters.ymdTodt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    placeholder=""
                   />
                 </div>
               </td>

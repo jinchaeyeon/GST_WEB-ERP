@@ -1072,6 +1072,7 @@ const QC_A2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setSelectedState({});
       fetchMainGrid();
       fetchDetailGrid();
       fetchDetailGrid2();
@@ -1579,47 +1580,6 @@ const QC_A2000: React.FC = () => {
     }
   };
 
-  // const ColumnCommandCell = (props: GridCellProps) => {
-  //   const selectedData = props.dataItem;
-
-  //   const datas = detailDataResult.data.filter(
-  //     (item: any) =>
-  //       item.num == Object.getOwnPropertyNames(detailSelectedState)[0]
-  //   )[0];
-  //   if (datas != undefined) {
-  //     const find3 = detailDataResult.data.findIndex(
-  //       (e: any) => e.num == datas.num
-  //     );
-  //     setrows(find3);
-  //   }
-
-  //   return selectedData.rowstatus == "U" ? (
-  //     <td className="k-command-cell">
-  //       {selectedData.files}
-  //       <Button
-  //         onClick={onAttachmentsWndClick}
-  //         icon="more-horizontal"
-  //         fillMode="flat"
-  //       />
-  //     </td>
-  //   ) : (
-  //     <td className="k-command-cell">
-  //       {/* <Input
-  //       name="itemcd"
-  //       type="text"
-  //       value={datas.itemcd}
-  //       onChange={setItems}
-  //       style={{width : "70%"}}
-  //     /> */}
-  //       <Button
-  //         name="itemcd"
-  //         onClick={onAttachmentsWndClick}
-  //         icon="more-horizontal"
-  //         fillMode="flat"
-  //       />
-  //     </td>
-  //   );
-  // };
   useEffect(() => {
     const datas = mainDataResult.data.map((item: any) =>
       item.num == mainDataResult.data[rows].num
@@ -1668,6 +1628,7 @@ const QC_A2000: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
+                    placeholder=""
                   />
                   ~
                   <DatePicker
@@ -1676,6 +1637,7 @@ const QC_A2000: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
+                    placeholder=""
                   />
                 </div>
               </td>

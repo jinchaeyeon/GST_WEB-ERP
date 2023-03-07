@@ -962,6 +962,7 @@ const CopyWindow = ({
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       className="required"
+                      placeholder=""
                     />
                   </div>
                 </td>

@@ -752,6 +752,7 @@ const PR_B3000W: React.FC = () => {
                     value={filters.ymdFrdt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    placeholder=""
                   />
                   ~
                   <DatePicker
@@ -759,6 +760,7 @@ const PR_B3000W: React.FC = () => {
                     value={filters.ymdTodt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
+                    placeholder=""
                   />
                 </div>
               </td>
