@@ -12,7 +12,7 @@ import {
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
 import RequiredHeader from "../components/RequiredHeader";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -256,11 +256,11 @@ const EA_A1000: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -594,26 +594,26 @@ const EA_A1000: React.FC = () => {
   };
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit = () => {
@@ -650,8 +650,8 @@ const EA_A1000: React.FC = () => {
   const onAddClick = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     if (rows.length == 0) {
-        alert("반영할 결재자가 선택되지 않았습니다.");
-        return false;
+      alert("반영할 결재자가 선택되지 않았습니다.");
+      return false;
     } else {
       let isValid = true;
       rows.map((item) => {
@@ -711,8 +711,8 @@ const EA_A1000: React.FC = () => {
   const onAddClick2 = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     if (rows.length == 0) {
-        alert("반영할 참조자가 선택되지 않았습니다.");
-        return false;
+      alert("반영할 참조자가 선택되지 않았습니다.");
+      return false;
     } else {
       let isValid = true;
       rows.map((item) => {
@@ -736,7 +736,7 @@ const EA_A1000: React.FC = () => {
           aftergb: "N",
           appgb: "T",
           appline: "",
-          appseq:counts + 1,
+          appseq: counts + 1,
           arbitragb: "N",
           dptcd: item.dptcd,
           insert_pc: pc,
@@ -772,8 +772,8 @@ const EA_A1000: React.FC = () => {
   const onAddClick3 = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     if (rows.length == 0) {
-        alert("반영할 합의자가 선택되지 않았습니다.");
-        return false;
+      alert("반영할 합의자가 선택되지 않았습니다.");
+      return false;
     } else {
       let isValid = true;
       rows.map((item) => {
@@ -833,8 +833,8 @@ const EA_A1000: React.FC = () => {
   const onAddClick4 = () => {
     const rows = subDataResult.data.filter((item) => item.chooses == true);
     if (rows.length == 0) {
-        alert("반영할 시행자가 선택되지 않았습니다.");
-        return false;
+      alert("반영할 시행자가 선택되지 않았습니다.");
+      return false;
     } else {
       let isValid = true;
       rows.map((item) => {
@@ -941,7 +941,7 @@ const EA_A1000: React.FC = () => {
   const onSaveClick = async () => {
     let isValid = true;
 
-    if(mainDataResult.total != 0){
+    if (mainDataResult.total != 0) {
       for (var i = count; i > 0; i--) {
         if (mainDataResult.data[mainDataResult.total - i].appseq == 0) {
           alert("결재순서를 입력해주세요.");
@@ -956,7 +956,7 @@ const EA_A1000: React.FC = () => {
         }
       }
     }
-    
+
     if (!isValid) {
       return false;
     } else {
@@ -1137,7 +1137,7 @@ const EA_A1000: React.FC = () => {
       data = null;
     }
     console.log(para);
-    console.log(data)
+    console.log(data);
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -1255,7 +1255,7 @@ const EA_A1000: React.FC = () => {
       alert("이동시킬 행을 선택해주세요.");
       return false;
     }
-    if(filters.resno == rowData.resno) {
+    if (filters.resno == rowData.resno) {
       alert("작성자의 행은 이동 불가능합니다.");
       return false;
     }
@@ -1275,56 +1275,56 @@ const EA_A1000: React.FC = () => {
     newData.splice(rowIndex + (direction === "UP" ? -1 : 1), 0, rowData);
     if (direction === "UP" && rowIndex != 0) {
       const newDatas = newData.map((item) =>
-      item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            appseq: replaceData,
-            [EDIT_FIELD]: undefined,
-          }
-        : item[DATA_ITEM_KEY] === dataResult.data[rowIndex - 1].num
-        ? {
-            ...item,
-            appseq: rowData.appseq,
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+        item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              appseq: replaceData,
+              [EDIT_FIELD]: undefined,
+            }
+          : item[DATA_ITEM_KEY] === dataResult.data[rowIndex - 1].num
+          ? {
+              ...item,
+              appseq: rowData.appseq,
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setDataResult((prev: any) => {
-      return {
-        data: newDatas,
-        total: prev.total,
-      };
-    });
+      setDataResult((prev: any) => {
+        return {
+          data: newDatas,
+          total: prev.total,
+        };
+      });
     } else {
       const newDatas = newData.map((item) =>
-      item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            appseq: replaceData,
-            [EDIT_FIELD]: undefined,
-          }
-        : item[DATA_ITEM_KEY] === dataResult.data[rowIndex + 1].num
-        ? {
-            ...item,
-            appseq: rowData.appseq,
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+        item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              appseq: replaceData,
+              [EDIT_FIELD]: undefined,
+            }
+          : item[DATA_ITEM_KEY] === dataResult.data[rowIndex + 1].num
+          ? {
+              ...item,
+              appseq: rowData.appseq,
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setDataResult((prev: any) => {
-      return {
-        data: newDatas,
-        total: prev.total,
-      };
-    });
+      setDataResult((prev: any) => {
+        return {
+          data: newDatas,
+          total: prev.total,
+        };
+      });
     }
   };
 
@@ -1559,7 +1559,12 @@ const EA_A1000: React.FC = () => {
                   appgb: appgbListData.find(
                     (item: any) => item.sub_code === row.appgb
                   )?.code_name,
-rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1631,7 +1636,7 @@ rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == und
           </ExcelExport>
         </GridContainer>
         <GridContainerWrap>
-          <GridContainer width={`55%`} >
+          <GridContainer width={`55%`}>
             <GridTitleContainer>
               <GridTitle>참조자</GridTitle>
               <ButtonContainer>
@@ -1659,7 +1664,12 @@ rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == und
                   dptcd: dptcdListData.find(
                     (item: any) => item.dptcd === row.dptcd
                   )?.dptnm,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
                   [SELECTED_FIELD]: selected3State[idGetter(row)],
                 })),
                 mainData3State
@@ -1710,7 +1720,7 @@ rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == und
                 )}
             </Grid>
           </GridContainer>
-          <GridContainer  width={`calc(45% - ${GAP}px)`}>
+          <GridContainer width={`calc(45% - ${GAP}px)`}>
             <GridTitleContainer>
               <GridTitle>시행자</GridTitle>
               <ButtonContainer>
@@ -1738,7 +1748,12 @@ rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == und
                   dptcd: dptcdListData.find(
                     (item: any) => item.dptcd === row.dptcd
                   )?.dptnm,
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
                   [SELECTED_FIELD]: selected2State[idGetter(row)],
                 })),
                 mainData2State

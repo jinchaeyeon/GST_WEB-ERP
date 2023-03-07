@@ -1,5 +1,5 @@
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { sessionItemState, loginResultState } from "../store/atoms";
@@ -498,7 +498,8 @@ export const getQueryFromBizComponent = (bcItem: any) => {
 export const chkScrollHandler = (
   event: GridEvent,
   PgNum: number,
-  PgSize: number
+  PgSize: number,
+  dirrection: "up" | "down" = "down"
 ) => {
   const totalNumber = event.target.props.total;
   const e = event.nativeEvent;
@@ -509,11 +510,16 @@ export const chkScrollHandler = (
     return false;
   }
 
-  if (
-    e.target.scrollTop + 10 >=
-    e.target.scrollHeight - e.target.clientHeight
-  ) {
-    if (totalNumber > PgNum * PgSize) {
+  if (dirrection === "down") {
+    if (
+      e.target.scrollTop + 10 >=
+        e.target.scrollHeight - e.target.clientHeight &&
+      totalNumber > PgNum * PgSize
+    ) {
+      chk = true;
+    }
+  } else {
+    if (e.target.scrollTop === 0 && totalNumber > 0 && PgNum > 1) {
       chk = true;
     }
   }
@@ -787,6 +793,46 @@ export const UseParaPc = (setData: any) => {
 
     setData(locationIp.IPv4 + "/" + browser);
   }, []);
+};
+
+export const useGeoLocation = () => {
+  const [location, setLocation] = useState<any>({
+    loaded: false,
+    coordinates: { lat: "", lng: "" },
+  });
+
+  const onSuccess = (location: any) => {
+    setLocation({
+      loaded: true,
+      coordinates: {
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      },
+    });
+  };
+
+  const onError = (_error: any) => {
+    setLocation({
+      loaded: true,
+      error: {
+        code: _error.code,
+        message: _error.message,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (!("geolocation" in navigator)) {
+      onError({
+        code: 0,
+        message: "Geolocation not supported",
+      });
+    }
+
+    navigator.geolocation.getCurrentPosition(onSuccess, onError);
+  }, []);
+
+  return location;
 };
 
 // 유효한 날짜인 경우 true 반환

@@ -59,7 +59,7 @@ import {
 } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import DateCell from "../components/Cells/DateCell";
 import { Button } from "@progress/kendo-react-buttons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";

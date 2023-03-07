@@ -16,11 +16,11 @@ import {
   ButtonContainer,
   GridTitle,
   GridTitleContainer,
-} from "../CommonStyled";
-import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
-import { Iparameters, TPermissions } from "../store/types";
-import CenterCell from "./Cells/CenterCell";
+} from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
+import { isLoading } from "../../store/atoms";
+import { Iparameters, TPermissions } from "../../store/types";
+import CenterCell from "../Cells/CenterCell";
 import {
   convertDateToStr,
   dateformat2,
@@ -28,9 +28,9 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   UsePermissions,
-} from "./CommonFunction";
-import { EDIT_FIELD, SELECTED_FIELD } from "./CommonString";
-import { CellRender, RowRender } from "./Renderers";
+} from "../CommonFunction";
+import { EDIT_FIELD, SELECTED_FIELD } from "../CommonString";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 
 const DATA_ITEM_KEY = "seq";
 let deletedRows: object[] = [];

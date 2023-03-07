@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState, createContext, useContext } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+} from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -16,7 +22,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
@@ -35,7 +41,12 @@ import {
   ButtonInGridInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input, TextArea, NumericTextBoxChangeEvent, NumericTextBox } from "@progress/kendo-react-inputs";
+import {
+  Input,
+  TextArea,
+  NumericTextBoxChangeEvent,
+  NumericTextBox,
+} from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -136,22 +147,17 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const {
-    bool,
-    setBool,
-    mainDataState,
-    setMainDataState,
-  } = useContext(FormContext);
+  const { bool, setBool, mainDataState, setMainDataState } =
+    useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : 0;
 
-  const [badWindowVisible, setBadWindowVisible] =
-    useState<boolean>(false);
-  const onAttWndClick= () => {
+  const [badWindowVisible, setBadWindowVisible] = useState<boolean>(false);
+  const onAttWndClick = () => {
     setBadWindowVisible(true);
   };
   const getBadData = () => {
-    setBool(!bool)
+    setBool(!bool);
   };
   const defaultRendering = (
     <td
@@ -160,9 +166,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {
-        value
-      }
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -261,7 +265,9 @@ const QC_A6000: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
       );
       const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_sysUserMaster_001")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
       );
       fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(userQueryStr, setUsersListData);
@@ -315,11 +321,11 @@ const QC_A6000: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -447,9 +453,9 @@ const QC_A6000: React.FC = () => {
     }
     setLoading(false);
   };
-  
+
   useEffect(() => {
-        fetchMainGrid();
+    fetchMainGrid();
   }, [bool]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -731,7 +737,7 @@ const QC_A6000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-   
+
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -989,7 +995,7 @@ const QC_A6000: React.FC = () => {
           dataArr.itemcd_s.push(itemcd);
           dataArr.person_s.push(prodemp);
           dataArr.lotnum_s.push(lotnum);
-          dataArr.badcd_s.push(badcd== undefined ? "" : badcd);
+          dataArr.badcd_s.push(badcd == undefined ? "" : badcd);
           dataArr.badqty_s.push(badqty);
           dataArr.qcdecision.push(qcdecision);
           dataArr.qcdt_s.push(convertDateToStr(qcdt));
@@ -1096,16 +1102,16 @@ const QC_A6000: React.FC = () => {
         </FilterBox>
       </FilterBoxWrap>
       <FormContext.Provider
-              value={{
-                bool,
-                setBool,
-                mainDataState,
-                setMainDataState,
-                // fetchGrid,
-              }}
-            >
-      <GridContainer>
-      <GridTitleContainer>
+        value={{
+          bool,
+          setBool,
+          mainDataState,
+          setMainDataState,
+          // fetchGrid,
+        }}
+      >
+        <GridContainer>
+          <GridTitleContainer>
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
               <Button
@@ -1116,65 +1122,65 @@ const QC_A6000: React.FC = () => {
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-          <Grid
-            style={{ height: "80vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                proccd: proccdListData.find(
-                  (item: any) => item.sub_code == row.proccd
-                )?.code_name,
-                rowstatus:
-                  row.rowstatus == null ||
-                  row.rowstatus == "" ||
-                  row.rowstatus == undefined
-                    ? ""
-                    : row.rowstatus,
-                prodemp: usersListData.find(
-                  (item: any) => item.user_id === row.prodemp
-                )?.user_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
           >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn title="생산실적정보">{createColumn()}</GridColumn>
-            <GridColumn title="검사정보">{createColumn2()}</GridColumn>
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+            <Grid
+              style={{ height: "80vh" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  proccd: proccdListData.find(
+                    (item: any) => item.sub_code == row.proccd
+                  )?.code_name,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
+                  prodemp: usersListData.find(
+                    (item: any) => item.user_id === row.prodemp
+                  )?.user_name,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              onScroll={onMainScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn title="생산실적정보">{createColumn()}</GridColumn>
+              <GridColumn title="검사정보">{createColumn2()}</GridColumn>
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
       </FormContext.Provider>
       {custWindowVisible && (
         <CustomersWindow

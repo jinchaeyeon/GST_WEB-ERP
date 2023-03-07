@@ -34,7 +34,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { EDIT_FIELD, FORM_DATA_INDEX } from "../CommonString";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = React.createContext<{

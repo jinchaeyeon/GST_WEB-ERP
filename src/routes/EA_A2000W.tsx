@@ -66,7 +66,7 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import { isLoading, loginResultState } from "../store/atoms";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import CommentsGrid from "../components/CommentsGrid";
+import CommentsGrid from "../components/Grids/CommentsGrid";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
@@ -240,11 +240,11 @@ const EA_A2000: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅

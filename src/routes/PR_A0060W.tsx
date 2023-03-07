@@ -15,7 +15,7 @@ import { gridList } from "../store/columns/PR_A0060W_C";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import { TextArea } from "@progress/kendo-react-inputs";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
@@ -90,35 +90,17 @@ const DATA_ITEM_KEY = "fxcode";
 const SUB_DATA_ITEM_KEY = "fxseq";
 let deletedMainRows: any[] = [];
 
-const DateField =[
-"recdt",
-"makedt",
-"indt",
-"fxdt"
-]
+const DateField = ["recdt", "makedt", "indt", "fxdt"];
 
-const NumberField =[
-"uph",
-"cnt",
-"IOT_TER_ID",
-"fxcost"
-]
+const NumberField = ["uph", "cnt", "IOT_TER_ID", "fxcost"];
 
-const CheckField =[
-"useyn",
-]
+const CheckField = ["useyn"];
 
-const requiredField =[
-"recdt"
-]
+const requiredField = ["recdt"];
 
-const editField =[
-  "fxdt"
-]
+const editField = ["fxdt"];
 
-const commandField =[
-  "attdatnum"
-]
+const commandField = ["attdatnum"];
 const PR_A0060: React.FC = () => {
   const [rows, setrows] = useState<number>(0);
   const setLoading = useSetRecoilState(isLoading);
@@ -249,11 +231,11 @@ const PR_A0060: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const InputChange = (e: any) => {
@@ -1110,26 +1092,26 @@ const PR_A0060: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if(field != "rowstatus"){
+    if (field != "rowstatus") {
       const newData = subDataResult.data.map((item) =>
-      item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+        item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setSubDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     }
   };
 
@@ -2034,7 +2016,11 @@ const PR_A0060: React.FC = () => {
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      className={requiredField.includes(item.fieldName) ? "required" : undefined}
+                      className={
+                        requiredField.includes(item.fieldName)
+                          ? "required"
+                          : undefined
+                      }
                       headerCell={
                         requiredField.includes(item.fieldName)
                           ? RequiredHeader
@@ -2402,7 +2388,12 @@ const PR_A0060: React.FC = () => {
                 subDataResult.data.map((row) => ({
                   ...row,
                   fxdt: new Date(dateformat(row.fxdt)),
-                  rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
                   [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                 })),
                 subDataState
@@ -2433,7 +2424,7 @@ const PR_A0060: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-<GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList2"].map(
                   (item: any, idx: number) =>
@@ -2454,7 +2445,9 @@ const PR_A0060: React.FC = () => {
                             : undefined
                         }
                         className={
-                          editField.includes(item.fieldName) ? "editable-new-only" : undefined
+                          editField.includes(item.fieldName)
+                            ? "editable-new-only"
+                            : undefined
                         }
                         footerCell={
                           item.sortOrder === 0

@@ -79,31 +79,31 @@ const numberField = [
   "inqty",
 ];
 type TdataArr = {
-  rowstatus_s: string[],
-  seq2_s: string[],
-  pac_s: string[],
-  itemcd_s: string[],
-  itemnm_s: string[],
-  insiz_s: string[],
-  itemacnt_s: string[],
-  lotnum_s: string[],
-  serialno_s: string[],
-  heatno_s: string[],
-  qty_s: string[],
-  qtyunit_s: string[],
-  unitwgt_s: string[],
-  totwgt_s: string[],
-  wgtunit_s: string[],
-  unpcalmeth_s: string[],
-  unp_s: string[],
-  amt_s: string[],
-  wonamt_s: string[],
-  dlramt_s: string[],
-  taxamt_s: string[],
-  remark_s: string[],
-  load_place_s: string[],
-  purnum_s: string[],
-  purseq_s: string[],
+  rowstatus_s: string[];
+  seq2_s: string[];
+  pac_s: string[];
+  itemcd_s: string[];
+  itemnm_s: string[];
+  insiz_s: string[];
+  itemacnt_s: string[];
+  lotnum_s: string[];
+  serialno_s: string[];
+  heatno_s: string[];
+  qty_s: string[];
+  qtyunit_s: string[];
+  unitwgt_s: string[];
+  totwgt_s: string[];
+  wgtunit_s: string[];
+  unpcalmeth_s: string[];
+  unp_s: string[];
+  amt_s: string[];
+  wonamt_s: string[];
+  dlramt_s: string[];
+  taxamt_s: string[];
+  remark_s: string[];
+  load_place_s: string[];
+  purnum_s: string[];
+  purseq_s: string[];
 };
 
 const MA_A2000W: React.FC = () => {
@@ -159,9 +159,7 @@ const MA_A2000W: React.FC = () => {
   const [unpcalmethListData, setUnpcalmethListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [pacListData, setPACListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+  const [pacListData, setPACListData] = useState([COM_CODE_DEFAULT_VALUE]);
   const [loadplaceListData, setLoadPlaceListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -203,7 +201,9 @@ const MA_A2000W: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId === "L_MA036")
       );
       const loadplaceQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_LOADPLACE")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_LOADPLACE"
+        )
       );
       const pacQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
@@ -348,11 +348,11 @@ const MA_A2000W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -995,7 +995,7 @@ const MA_A2000W: React.FC = () => {
       attdatnum: filter.attdatnum,
       files: filter.files,
     }));
-    if (dataItem.length === 0  && deletedMainRows.length == 0) return false;
+    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -1026,31 +1026,31 @@ const MA_A2000W: React.FC = () => {
     };
     dataItem.forEach((item: any, idx: number) => {
       const {
-        rowstatus= "",
-        seq2= "",
-        PAC= "",
-        itemcd= "",
-        itemnm= "",
-        insiz= "",
-        itemacnt= "",
-        lotnum= "",
-        serialno= "",
-        heatno= "",
-        qty= "",
-        qtyunit= "",
-        unitwgt= "",
-        totwgt= "",
-        wgtunit= "",
-        unpcalmeth= "",
-        unp= "",
-        amt= "",
-        wonamt= "",
-        dlramt= "",
-        taxamt= "",
-        remark= "",
-        load_place= "",
-        purnum= "",
-        purseq= "",
+        rowstatus = "",
+        seq2 = "",
+        PAC = "",
+        itemcd = "",
+        itemnm = "",
+        insiz = "",
+        itemacnt = "",
+        lotnum = "",
+        serialno = "",
+        heatno = "",
+        qty = "",
+        qtyunit = "",
+        unitwgt = "",
+        totwgt = "",
+        wgtunit = "",
+        unpcalmeth = "",
+        unp = "",
+        amt = "",
+        wonamt = "",
+        dlramt = "",
+        taxamt = "",
+        remark = "",
+        load_place = "",
+        purnum = "",
+        purseq = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == undefined || seq2 == "" ? 0 : seq2);
@@ -1080,31 +1080,31 @@ const MA_A2000W: React.FC = () => {
     });
     deletedMainRows.forEach((item: any, idx: number) => {
       const {
-        rowstatus= "",
-        seq2= "",
-        PAC= "",
-        itemcd= "",
-        itemnm= "",
-        insiz= "",
-        itemacnt= "",
-        lotnum= "",
-        serialno= "",
-        heatno= "",
-        qty= "",
-        qtyunit= "",
-        unitwgt= "",
-        totwgt= "",
-        wgtunit= "",
-        unpcalmeth= "",
-        unp= "",
-        amt= "",
-        wonamt= "",
-        dlramt= "",
-        taxamt= "",
-        remark= "",
-        load_place= "",
-        purnum= "",
-        purseq= "",
+        rowstatus = "",
+        seq2 = "",
+        PAC = "",
+        itemcd = "",
+        itemnm = "",
+        insiz = "",
+        itemacnt = "",
+        lotnum = "",
+        serialno = "",
+        heatno = "",
+        qty = "",
+        qtyunit = "",
+        unitwgt = "",
+        totwgt = "",
+        wgtunit = "",
+        unpcalmeth = "",
+        unp = "",
+        amt = "",
+        wonamt = "",
+        dlramt = "",
+        taxamt = "",
+        remark = "",
+        load_place = "",
+        purnum = "",
+        purseq = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == undefined || seq2 == "" ? 0 : seq2);
@@ -1136,30 +1136,30 @@ const MA_A2000W: React.FC = () => {
       ...prev,
       workType: workType,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
-      seq2_s:  dataArr.seq2_s.join("|"),
-      pac_s:  dataArr.pac_s.join("|"),
-      itemcd_s:  dataArr.itemcd_s.join("|"),
-      itemnm_s:  dataArr.itemnm_s.join("|"),
-      insiz_s:  dataArr.insiz_s.join("|"),
-      itemacnt_s:  dataArr.itemacnt_s.join("|"),
-      lotnum_s:  dataArr.lotnum_s.join("|"),
-      serialno_s:  dataArr.serialno_s.join("|"),
-      heatno_s:  dataArr.heatno_s.join("|"),
-      qty_s:  dataArr.qty_s.join("|"),
-      qtyunit_s:  dataArr.qtyunit_s.join("|"),
-      unitwgt_s:  dataArr.unitwgt_s.join("|"),
-      totwgt_s:  dataArr.totwgt_s.join("|"),
-      wgtunit_s:  dataArr.wgtunit_s.join("|"),
-      unpcalmeth_s:  dataArr.unpcalmeth_s.join("|"),
-      unp_s:  dataArr.unp_s.join("|"),
-      amt_s:  dataArr.amt_s.join("|"),
-      wonamt_s:  dataArr.wonamt_s.join("|"),
-      dlramt_s:  dataArr.dlramt_s.join("|"),
-      taxamt_s:  dataArr.taxamt_s.join("|"),
-      remark_s:  dataArr.remark_s.join("|"),
-      load_place_s:  dataArr.load_place_s.join("|"),
-      purnum_s:  dataArr.purnum_s.join("|"),
-      purseq_s:  dataArr.purseq_s.join("|"),
+      seq2_s: dataArr.seq2_s.join("|"),
+      pac_s: dataArr.pac_s.join("|"),
+      itemcd_s: dataArr.itemcd_s.join("|"),
+      itemnm_s: dataArr.itemnm_s.join("|"),
+      insiz_s: dataArr.insiz_s.join("|"),
+      itemacnt_s: dataArr.itemacnt_s.join("|"),
+      lotnum_s: dataArr.lotnum_s.join("|"),
+      serialno_s: dataArr.serialno_s.join("|"),
+      heatno_s: dataArr.heatno_s.join("|"),
+      qty_s: dataArr.qty_s.join("|"),
+      qtyunit_s: dataArr.qtyunit_s.join("|"),
+      unitwgt_s: dataArr.unitwgt_s.join("|"),
+      totwgt_s: dataArr.totwgt_s.join("|"),
+      wgtunit_s: dataArr.wgtunit_s.join("|"),
+      unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
+      unp_s: dataArr.unp_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
+      wonamt_s: dataArr.wonamt_s.join("|"),
+      dlramt_s: dataArr.dlramt_s.join("|"),
+      taxamt_s: dataArr.taxamt_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      load_place_s: dataArr.load_place_s.join("|"),
+      purnum_s: dataArr.purnum_s.join("|"),
+      purseq_s: dataArr.purseq_s.join("|"),
     }));
   };
 
@@ -1606,9 +1606,8 @@ const MA_A2000W: React.FC = () => {
               load_place: loadplaceListData.find(
                 (item: any) => item.sub_code === row.load_place
               )?.code_name,
-              PAC: pacListData.find(
-                (item: any) => item.sub_code === row.PAC
-              )?.code_name,
+              PAC: pacListData.find((item: any) => item.sub_code === row.PAC)
+                ?.code_name,
               unpcalmeth: unpcalmethListData.find(
                 (item: any) => item.sub_code === row.unpcalmeth
               )?.code_name,

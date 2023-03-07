@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -8,13 +7,11 @@ import {
   GridSelectionChangeEvent,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 // ES2015 module syntax
 import {
   Scheduler,
-  AgendaView,
-  TimelineView,
   DayView,
   WeekView,
   MonthView,
@@ -32,23 +29,21 @@ import {
   MainWorkStartEndContainer,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
-  getBrowser,
   UseCustomOption,
-  UseGetIp,
   UseGetValueFromSessionItem,
   UseParaPc,
+  useGeoLocation,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import useGeoLocation from "../hooks/useGeoLocation";
 
 const DATA_ITEM_KEY = "datnum";
 

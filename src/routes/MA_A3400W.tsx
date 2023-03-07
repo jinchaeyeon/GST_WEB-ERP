@@ -334,11 +334,11 @@ const MA_A3400W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -1073,20 +1073,20 @@ const MA_A3400W: React.FC = () => {
       );
     });
     setParaData((prev) => ({
-        ...prev,
-        pgSize: PAGE_SIZE,
-        workType: workType,
-        recdt: filter.recdt,
-        seq1: filter.seq1,
-        cboLocation: filter.cboLocation,
-        outdt: filter.outdt,
-        cboPerson: filter.cboPerson,
-        custcd: filter.custcd,
-        custnm: filter.custnm,
-        remark: filter.remark,
-        attdatnum: filter.attdatnum,
-        outuse: filter.outuse,
-        reckey: filter.reckey,
+      ...prev,
+      pgSize: PAGE_SIZE,
+      workType: workType,
+      recdt: filter.recdt,
+      seq1: filter.seq1,
+      cboLocation: filter.cboLocation,
+      outdt: filter.outdt,
+      cboPerson: filter.cboPerson,
+      custcd: filter.custcd,
+      custnm: filter.custnm,
+      remark: filter.remark,
+      attdatnum: filter.attdatnum,
+      outuse: filter.outuse,
+      reckey: filter.reckey,
     }));
 
     if (dataItem.length === 0 && deletedMainRows.length == 0) return false;

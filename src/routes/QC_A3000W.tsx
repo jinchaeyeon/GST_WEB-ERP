@@ -17,7 +17,7 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/QC_A3000W_C";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
@@ -282,11 +282,11 @@ const QC_A3000: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const InforInputChange = (e: any) => {
@@ -521,9 +521,9 @@ const QC_A3000: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
-  
+
       if (totalRowCnt > 0) {
-        if(information.workType == "N"){
+        if (information.workType == "N") {
           setInformation((prev) => ({
             ...prev,
             badqty: 0,
@@ -533,7 +533,7 @@ const QC_A3000: React.FC = () => {
             qcyn: rows[0].qcyn,
             person: rows[0].prodemp,
             itemcd: rows[0].itemcd,
-            itemnm: rows[0].itemnm
+            itemnm: rows[0].itemnm,
           }));
         }
 
@@ -608,47 +608,46 @@ const QC_A3000: React.FC = () => {
     )[0];
 
     if (data.isSuccess === true) {
-      if(datas.qcyn == "등록" && information.workType == "N") {
+      if (datas.qcyn == "등록" && information.workType == "N") {
         const totalRowCnt = data.tables[1].RowCount;
         const rows = data.tables[1].Rows;
- 
-          setDetailDataResult2((prev) => {
-            return {
-              data: rows,
-              total: totalRowCnt,
-            };
-          });
-      } else if(datas.qcyn == "등록"&& information.workType == "U") {
 
+        setDetailDataResult2((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
+      } else if (datas.qcyn == "등록" && information.workType == "U") {
         const totalRowCnt = data.tables[0].RowCount;
         const rows = data.tables[0].Rows;
-        
-          setDetailDataResult2((prev) => {
-            return {
-              data: rows,
-              total: totalRowCnt,
-            };
-          });
-      } else if(datas.qcyn == "미등록" && information.workType == "N") {
+
+        setDetailDataResult2((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
+      } else if (datas.qcyn == "미등록" && information.workType == "N") {
         const totalRowCnt = data.tables[1].RowCount;
         const rows = data.tables[1].Rows;
 
-          setDetailDataResult2((prev) => {
-            return {
-              data: rows,
-              total: totalRowCnt,
-            };
-          });
+        setDetailDataResult2((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
       } else {
         const totalRowCnt = data.tables[0].RowCount;
         const rows = data.tables[0].Rows;
 
-          setDetailDataResult2((prev) => {
-            return {
-              data: [],
-              total: totalRowCnt,
-            };
-          });
+        setDetailDataResult2((prev) => {
+          return {
+            data: [],
+            total: totalRowCnt,
+          };
+        });
       }
     }
     setLoading(false);
@@ -694,7 +693,7 @@ const QC_A3000: React.FC = () => {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.num]: true });
-   
+
         setDetailFilters((prev) => ({
           ...prev,
           itemcd: firstRowData.itemcd,
@@ -711,27 +710,27 @@ const QC_A3000: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-      if (detailDataResult.total > 0) {
-        const firstRowData = detailDataResult.data[0];
-        setDetailSelectedState({ [firstRowData.num]: true });
-     
-          setDetailFilters2((prev) => ({
-            ...prev,
-            itemcd: firstRowData.itemcd,
-            renum: firstRowData.renum== undefined ? "" : firstRowData.renum,
-            reseq: firstRowData.reseq== undefined ? 0 : firstRowData.reseq,
-            qcnum:firstRowData.qcnum == undefined ? "" : firstRowData.qcnum,
-          }));
+    if (detailDataResult.total > 0) {
+      const firstRowData = detailDataResult.data[0];
+      setDetailSelectedState({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
-      } else {
-        setDetailDataResult2((prev) => {
-          return {
-            data: [],
-            total: 0,
-          };
-        });
-      }
+      setDetailFilters2((prev) => ({
+        ...prev,
+        itemcd: firstRowData.itemcd,
+        renum: firstRowData.renum == undefined ? "" : firstRowData.renum,
+        reseq: firstRowData.reseq == undefined ? 0 : firstRowData.reseq,
+        qcnum: firstRowData.qcnum == undefined ? "" : firstRowData.qcnum,
+      }));
+
+      setIfSelectFirstRow(true);
+    } else {
+      setDetailDataResult2((prev) => {
+        return {
+          data: [],
+          total: 0,
+        };
+      });
+    }
   }, [detailDataResult]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -753,9 +752,10 @@ const QC_A3000: React.FC = () => {
       itemnm: selectedRowData.itemnm,
       attdatnum: "",
       badqty: 0,
-      endtime: selectedRowData.endtime == "" || selectedRowData.endtime == undefined
-      ? convertDateToStrWithTime2(new Date())
-      : convertDateToStrWithTime2(selectedRowData.endtime),
+      endtime:
+        selectedRowData.endtime == "" || selectedRowData.endtime == undefined
+          ? convertDateToStrWithTime2(new Date())
+          : convertDateToStrWithTime2(selectedRowData.endtime),
       files: "",
       person: "",
       qcdecision: "",
@@ -766,10 +766,11 @@ const QC_A3000: React.FC = () => {
       qcno: "",
       qcnum: "",
       qcqty: 0,
-      remark:"",
-      strtime: selectedRowData.strtime == "" || selectedRowData.strtime == undefined
-      ? convertDateToStrWithTime2(new Date())
-      : convertDateToStrWithTime2(selectedRowData.strtime),
+      remark: "",
+      strtime:
+        selectedRowData.strtime == "" || selectedRowData.strtime == undefined
+          ? convertDateToStrWithTime2(new Date())
+          : convertDateToStrWithTime2(selectedRowData.strtime),
     }));
 
     setDetailFilters((prev) => ({
@@ -910,7 +911,7 @@ const QC_A3000: React.FC = () => {
       renum: data.renum,
       reseq: data.reseq,
       qcnum: "",
-    }))
+    }));
     setInformation((prev) => ({
       ...prev,
       workType: "N",
@@ -1241,7 +1242,12 @@ const QC_A3000: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "qc_sort" && field != "inspeccd" && field != "qc_spec"&& field != "rowstatus") {
+    if (
+      field != "qc_sort" &&
+      field != "inspeccd" &&
+      field != "qc_spec" &&
+      field != "rowstatus"
+    ) {
       const newData = detailDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1281,13 +1287,7 @@ const QC_A3000: React.FC = () => {
 
   const createColumn = () => {
     const array = [];
-    array.push(
-      <GridColumn
-        field={"rowstatus"}
-        title={" "}
-        width="50px"
-      />
-    );
+    array.push(<GridColumn field={"rowstatus"} title={" "} width="50px" />);
     array.push(
       <GridColumn
         field={"qc_sort"}
@@ -1340,7 +1340,7 @@ const QC_A3000: React.FC = () => {
     try {
       if (valid != true && information.workType == "N") {
         throw findMessage(messagesData, "QC_A3000W_003");
-      } else if(detailDataResult2.total == 0) {
+      } else if (detailDataResult2.total == 0) {
         throw findMessage(messagesData, "QC_A3000W_007");
       } else if (
         convertDateToStr(information.qcdt).substring(0, 4) < "1997" ||
@@ -1382,7 +1382,7 @@ const QC_A3000: React.FC = () => {
           qcresult1_s: [],
         };
 
-        if (dataItem.length !== 0){
+        if (dataItem.length !== 0) {
           dataItem.forEach((item: any, idx: number) => {
             const {
               rowstatus = "",
@@ -1396,7 +1396,7 @@ const QC_A3000: React.FC = () => {
               qcvalue1 = "",
               qcresult1 = "",
             } = item;
-      
+
             dataArr.rowstatus_s.push(rowstatus);
             dataArr.qcseq_s.push(qcseq);
             dataArr.stdnum_s.push(stdnum);
@@ -1409,22 +1409,24 @@ const QC_A3000: React.FC = () => {
             dataArr.qcresult1_s.push(qcresult1);
           });
         }
-   
+
         setParaData((prev) => ({
           ...prev,
           workType: information.workType,
           renum: data.renum,
           reseq: data.reseq,
-          qcnum: information.qcnum == undefined ? "": information.qcnum,
+          qcnum: information.qcnum == undefined ? "" : information.qcnum,
           qcdt: information.qcdt,
           person: information.person,
           qcno: information.qcno,
           qcqty: information.qcqty == undefined ? 0 : information.qcqty,
-          badqty: information.badqty== undefined ? 0 : information.badqty,
+          badqty: information.badqty == undefined ? 0 : information.badqty,
           strtime: information.strtime,
           endtime: information.endtime,
-          qcdecision: information.qcdecision == undefined ? "" : information.qcdecision,
-          attdatnum: information.attdatnum == undefined ? "" : information.attdatnum,
+          qcdecision:
+            information.qcdecision == undefined ? "" : information.qcdecision,
+          attdatnum:
+            information.attdatnum == undefined ? "" : information.attdatnum,
           remark: information.remark == undefined ? "" : information.remark,
           itemcd: data.itemcd,
           rowstatus_s: dataArr.rowstatus_s.join("|"),
@@ -1435,7 +1437,7 @@ const QC_A3000: React.FC = () => {
           qc_sort_s: dataArr.qc_sort_s.join("|"),
           inspeccd_s: dataArr.inspeccd_s.join("|"),
           qc_spec_s: dataArr.qc_spec_s.join("|"),
-          qcvalue1_s: dataArr.qcvalue1_s.join("|"), 
+          qcvalue1_s: dataArr.qcvalue1_s.join("|"),
           qcresult1_s: dataArr.qcresult1_s.join("|"),
         }));
       }

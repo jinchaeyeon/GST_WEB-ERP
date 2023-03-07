@@ -1,4 +1,10 @@
-import { useEffect, useState, useCallback, useContext, createContext } from "react";
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  createContext,
+} from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -51,7 +57,7 @@ import {
   dateformat,
   isValidDate,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { loginResultState } from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
@@ -188,8 +194,14 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const { itemcd, itemnm, setItemcd, setItemnm, mainDataState, setMainDataState } =
-    useContext(FormContext);
+  const {
+    itemcd,
+    itemnm,
+    setItemcd,
+    setItemnm,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -234,23 +246,29 @@ const ColumnCommandCell = (props: GridCellProps) => {
       </ButtonInGridInput>
     </td>
   );
-   
-  return(
-  <>
-    {render === undefined
-      ? null
-      : render?.call(undefined, defaultRendering, props)}
-    {itemWindowVisible2 && (
-      <ItemsWindow
-        setVisible={setItemWindowVisible2}
-        workType={"FILTER"}
-        setData={setItemData2}
-      />
-    )}
-  </>
-  )
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {itemWindowVisible2 && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible2}
+          workType={"FILTER"}
+          setData={setItemData2}
+        />
+      )}
+    </>
+  );
 };
-const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => {
+const CopyWindow = ({
+  workType,
+  data,
+  setVisible,
+  setData,
+  reload,
+}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -274,38 +292,33 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-  useEffect(()=> {
+  useEffect(() => {
     setMainPgNum(1);
-    setMainDataResult(process([], mainDataState))
+    setMainDataResult(process([], mainDataState));
     fetchMainGrid();
-  },[reload])
+  }, [reload]);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
-        position:
-          defaultOption.find((item: any) => item.id === "position")
-                .valueCode,
-        location:
-          defaultOption.find((item: any) => item.id === "location")
-                .valueCode,
-        person:
-          defaultOption.find((item: any) => item.id === "person")
-                .valueCode,
-        doexdiv:
-          defaultOption.find((item: any) => item.id === "doexdiv")
-                .valueCode,
-        taxdiv:
-          defaultOption.find((item: any) => item.id === "taxdiv").valueCode,
-        auto_transfer:
-         defaultOption.find((item: any) => item.id === "auto_transfer")
-                .valueCode,
-        inuse:
-          defaultOption.find((item: any) => item.id === "inuse").valueCode,
+        position: defaultOption.find((item: any) => item.id === "position")
+          .valueCode,
+        location: defaultOption.find((item: any) => item.id === "location")
+          .valueCode,
+        person: defaultOption.find((item: any) => item.id === "person")
+          .valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+          .valueCode,
+        taxdiv: defaultOption.find((item: any) => item.id === "taxdiv")
+          .valueCode,
+        auto_transfer: defaultOption.find(
+          (item: any) => item.id === "auto_transfer"
+        ).valueCode,
+        inuse: defaultOption.find((item: any) => item.id === "inuse").valueCode,
         amtunit: defaultOption.find((item: any) => item.id === "amtunit")
-                .valueCode,
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -336,11 +349,11 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -507,7 +520,7 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
       "@p_lotnum": "",
       "@p_remark": filters.remark,
       "@p_pursiz": "",
-      "@p_seq2_s": ""
+      "@p_seq2_s": "",
     },
   };
 
@@ -544,7 +557,7 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
     }
     setLoading(false);
   };
-  
+
   const onCopyClick = () => {
     let seq = 1;
 
@@ -553,18 +566,16 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
         if (item[DATA_ITEM_KEY] > seq) {
           seq = item[DATA_ITEM_KEY];
         }
-
       });
       seq++;
     }
 
     const selectRow = mainDataResult.data.filter(
-      (item) =>
-        item.num == Object.getOwnPropertyNames(selectedState)[0]
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq+1,
+      [DATA_ITEM_KEY]: seq + 1,
       amt: selectRow.amt,
       amtunit: selectRow.amtunit,
       chk: selectRow.chk,
@@ -991,7 +1002,10 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
   const selectData = (selectedData: any) => {
     let valid = true;
     mainDataResult.data.map((item) => {
-      if ((item.itemcd == "" || item.itemnm == "" || item.qty == 0) && valid == true) {
+      if (
+        (item.itemcd == "" || item.itemnm == "" || item.qty == 0) &&
+        valid == true
+      ) {
         alert("필수항목(품목코드, 품목명, 수량을 채워주세요.");
         valid = false;
         return false;
@@ -1000,7 +1014,7 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
 
     if (valid == true) {
       setData(mainDataResult.data, filters, deletedMainRows);
-      if(workType == "N") {
+      if (workType == "N") {
         onClose();
       }
     }
@@ -1058,7 +1072,12 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "insiz" && field != "qtyunit" && field != "rowstatus" && field != "itemnm") {
+    if (
+      field != "insiz" &&
+      field != "qtyunit" &&
+      field != "rowstatus" &&
+      field != "itemnm"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1332,202 +1351,210 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
           </FormBox>
         </FormBoxWrap>
         <FormContext.Provider
-        value={{
-          itemcd,
-          itemnm,
-          setItemcd,
-          setItemnm,
-          mainDataState,
-          setMainDataState,
-          // fetchGrid,
-        }}
-      >
-        <GridContainer>
-          <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="plus"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-              ></Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyClick}
-                icon="copy"
-              ></Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick}
-                icon="folder-open"
-              >
-                품목참조
-              </Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick3}
-                icon="folder-open"
-              >
-                수주참조
-              </Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick4}
-                icon="folder-open"
-              >
-                수주BOM
-              </Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick2}
-                icon="folder-open"
-              >
-                불량재고참조
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "450px" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
-                enddt: workType == "U" && isValidDate(row.enddt) ? new Date(dateformat(row.enddt)) : new Date(),
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            onDataStateChange={onMainDataStateChange}
-            {...mainDataState}
-            //선택 subDataState
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
-          >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn
-              field="pac"
-              title="도/사급"
-              width="150px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="itemcd"
-              title="품목코드"
-              width="200px"
-              footerCell={mainTotalFooterCell}
-              cell={ColumnCommandCell}
-            />
-            <GridColumn field="itemnm" title="품목명" width="250px" />
-            <GridColumn
-              field="itemlvl1"
-              title="대분류"
-              width="150px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="itemacnt"
-              title="품목계정"
-              width="200px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn field="lotnum" title="LOT NO" width="200px" />
-            <GridColumn field="heatno" title="HEAT NO" width="200px" />
-            <GridColumn
-              field="qty"
-              title="수량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="qtyunit"
-              title="단위"
-              width="150px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="unp"
-              title="단가"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="wonamt"
-              title="원화금액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="taxamt"
-              title="세액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn field="remark" title="비고" width="300px" />
-            <GridColumn
-              field="totwgt"
-              title="전체중량"
-              width="150px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="len"
-              title="길이"
-              width="150px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="enddt"
-              title="소비기한"
-              width="150px"
-              cell={DateCell}
-            />
-            <GridColumn
-              field="itemthick"
-              title="두께"
-              width="150px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="width"
-              title="폭"
-              width="150px"
-              cell={NumberCell}
-            />
-          </Grid>
-        </GridContainer>
+          value={{
+            itemcd,
+            itemnm,
+            setItemcd,
+            setItemnm,
+            mainDataState,
+            setMainDataState,
+            // fetchGrid,
+          }}
+        >
+          <GridContainer height="calc(100% - 310px) ">
+            <GridTitleContainer>
+              <GridTitle>상세정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="plus"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                ></Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyClick}
+                  icon="copy"
+                ></Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick}
+                  icon="folder-open"
+                >
+                  품목참조
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick3}
+                  icon="folder-open"
+                >
+                  수주참조
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick4}
+                  icon="folder-open"
+                >
+                  수주BOM
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCopyWndClick2}
+                  icon="folder-open"
+                >
+                  불량재고참조
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "calc(100% - 50px)" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
+                  enddt:
+                    workType == "U" && isValidDate(row.enddt)
+                      ? new Date(dateformat(row.enddt))
+                      : new Date(),
+                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                })),
+                mainDataState
+              )}
+              onDataStateChange={onMainDataStateChange}
+              {...mainDataState}
+              //선택 subDataState
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              onScroll={onMainScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn
+                field="pac"
+                title="도/사급"
+                width="150px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn
+                field="itemcd"
+                title="품목코드"
+                width="200px"
+                footerCell={mainTotalFooterCell}
+                cell={ColumnCommandCell}
+              />
+              <GridColumn field="itemnm" title="품목명" width="250px" />
+              <GridColumn
+                field="itemlvl1"
+                title="대분류"
+                width="150px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn
+                field="itemacnt"
+                title="품목계정"
+                width="200px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn field="insiz" title="규격" width="200px" />
+              <GridColumn field="lotnum" title="LOT NO" width="200px" />
+              <GridColumn field="heatno" title="HEAT NO" width="200px" />
+              <GridColumn
+                field="qty"
+                title="수량"
+                width="120px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="qtyunit"
+                title="단위"
+                width="150px"
+                cell={CustomComboBoxCell}
+              />
+              <GridColumn
+                field="unp"
+                title="단가"
+                width="120px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="wonamt"
+                title="원화금액"
+                width="120px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="taxamt"
+                title="세액"
+                width="120px"
+                cell={NumberCell}
+              />
+              <GridColumn field="remark" title="비고" width="300px" />
+              <GridColumn
+                field="totwgt"
+                title="전체중량"
+                width="150px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="len"
+                title="길이"
+                width="150px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="enddt"
+                title="소비기한"
+                width="150px"
+                cell={DateCell}
+              />
+              <GridColumn
+                field="itemthick"
+                title="두께"
+                width="150px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="width"
+                title="폭"
+                width="150px"
+                cell={NumberCell}
+              />
+            </Grid>
+          </GridContainer>
         </FormContext.Provider>
         <BottomContainer>
           <ButtonContainer>

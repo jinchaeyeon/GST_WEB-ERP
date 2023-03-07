@@ -206,11 +206,11 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -468,8 +468,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           taxamt: row.taxamt == null ? 0 : row.taxamt,
           totwgt: row.totwgt == null ? 0 : row.totwgt,
           width: row.width == null ? 0 : row.width,
-          singular: "N"
-
+          singular: "N",
         };
       });
 
@@ -710,7 +709,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         item.num == Object.getOwnPropertyNames(detailselectedState)[0]
     )[0];
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq+1,
+      [DATA_ITEM_KEY]: seq + 1,
       amt: selectRow.amt,
       amtunit: selectRow.amtunit,
       chk: selectRow.chk,
@@ -787,7 +786,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-       <TitleContainer style={{ float: "right"}}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {

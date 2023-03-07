@@ -27,7 +27,7 @@ import {
   TreeListSelectionChangeEvent,
 } from "@progress/kendo-react-treelist";
 import { FilterDescriptor, SortDescriptor } from "@progress/kendo-data-query";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -241,11 +241,11 @@ const SY_A0125W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const InputChange = (e: any) => {
@@ -1344,7 +1344,12 @@ const SY_A0125W: React.FC = () => {
                 postcd: postcdListData.find(
                   (item: any) => item.sub_code === row.postcd
                 )?.code_name,
-                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                rowstatus:
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
                 [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
               })),
               subDataState
@@ -1375,7 +1380,7 @@ const SY_A0125W: React.FC = () => {
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
- <GridColumn field="rowstatus" title=" " width="50px" />
+            <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdAllList"].map(
                 (item: any, idx: number) =>

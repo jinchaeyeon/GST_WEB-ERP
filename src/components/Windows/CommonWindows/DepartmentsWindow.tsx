@@ -59,11 +59,11 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -116,7 +116,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
     parameters: {
       "@p_work_type": "Q",
       "@p_orgdiv": "01",
-      "@p_dptcd" : filters.dptcd,
+      "@p_dptcd": filters.dptcd,
       "@p_dptnm": filters.dptnm,
       "@p_useyn": filters.useyn,
     },

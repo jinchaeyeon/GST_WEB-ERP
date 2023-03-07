@@ -49,9 +49,9 @@ import {
   dateformat,
   isValidDate,
   findMessage,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { loginResultState } from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
@@ -128,7 +128,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   reload,
-  rev
+  rev,
 }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -155,7 +155,7 @@ const CopyWindow = ({
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
-    if (customOptionData !== null && (workType != "U" && workType != "R")) {
+    if (customOptionData !== null && workType != "U" && workType != "R") {
       const defaultOption = customOptionData.menuCustomDefaultOptions.new;
       setFilters((prev) => ({
         ...prev,
@@ -198,11 +198,11 @@ const CopyWindow = ({
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -354,7 +354,7 @@ const CopyWindow = ({
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((row: any) => 
+      const rows = data.tables[0].Rows.map((row: any) =>
         workType == "R"
           ? {
               ...row,

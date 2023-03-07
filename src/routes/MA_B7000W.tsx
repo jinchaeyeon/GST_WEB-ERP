@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -45,9 +44,6 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
 import {
   COM_CODE_DEFAULT_VALUE,
-  GNV_WIDTH,
-  CLIENT_WIDTH,
-  GRID_MARGIN,
   PAGE_SIZE,
   SELECTED_FIELD,
   GAP,
@@ -59,8 +55,8 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { gridList } from "../store/columns/MA_B7000W_C";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { isLoading, sessionItemState } from "../store/atoms";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
+import { useSetRecoilState } from "recoil";
 
 const numberField = [
   "safeqty",
@@ -207,11 +203,11 @@ const MA_B7000: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -1051,9 +1047,7 @@ const MA_B7000: React.FC = () => {
                 )}
           </Grid>
         </GridContainer>
-        <GridContainer
-           width={`calc(80% - ${GAP}px)`}
-        >
+        <GridContainer width={`calc(80% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>LOT별 상세이력</GridTitle>
           </GridTitleContainer>

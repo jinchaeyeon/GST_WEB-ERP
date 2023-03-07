@@ -11,7 +11,7 @@ import {
   GridDataStateChangeEvent,
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
@@ -215,11 +215,11 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -441,7 +441,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -859,7 +859,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     });
   };
 
-
   return (
     <>
       <Window
@@ -870,7 +869,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-         <TitleContainer style={{ float: "right" }}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {
@@ -1219,7 +1218,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                 taxdiv: taxdivListData.find(
                   (item: any) => item.sub_code === row.taxdiv
                 )?.code_name,
-                reqdt: isValidDate(row.reqdt) ? new Date(dateformat(row.reqdt)) : new Date(),
+                reqdt: isValidDate(row.reqdt)
+                  ? new Date(dateformat(row.reqdt))
+                  : new Date(),
                 [SELECTED_FIELD]: subselectedState[idGetter2(row)], //선택된 데이터
               })),
               subDataState

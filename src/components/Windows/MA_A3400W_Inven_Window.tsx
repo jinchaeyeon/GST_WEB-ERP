@@ -41,7 +41,7 @@ import {
   setDefaultDate,
   convertDateToStr,
   rowsOfDataResult,
-  rowsWithSelectedDataResult
+  rowsWithSelectedDataResult,
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -209,11 +209,11 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -373,7 +373,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -389,17 +389,19 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
           len: row.len == null ? 0 : row.len,
           itemthick: row.itemthick == null ? 0 : row.itemthick,
           width: row.width == null ? 0 : row.width,
-          pac: row.pac == null ? "A": row.pac,
+          pac: row.pac == null ? "A" : row.pac,
           groupId: row.itemacnt + "itemacnt",
-          group_category_name: "품목" + " : " + itemacntListData.find(
-            (item: any) => item.sub_code === row.itemacnt
-          )?.code_name,
+          group_category_name:
+            "품목" +
+            " : " +
+            itemacntListData.find((item: any) => item.sub_code === row.itemacnt)
+              ?.code_name,
           itemacnt: itemacntListData.find(
             (item: any) => item.sub_code === row.itemacnt
           )?.code_name,
         };
       });
-  
+
       if (totalRowCnt > 0) {
         setMainDataTotal(totalRowCnt);
         setMainDataResult((prev) =>
@@ -433,7 +435,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
     setMainDataResult({ ...mainDataResult });
   };
-  
+
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (customOptionData !== null && isInitSearch === false) {
@@ -561,21 +563,24 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
 
     let valid = true;
     for (var i = 0; i < subDataResult.data.length; i++) {
-      if (datas[0].itemcd == subDataResult.data[i].itemcd && datas[0].lotnum == subDataResult.data[i].lotnum ) {
+      if (
+        datas[0].itemcd == subDataResult.data[i].itemcd &&
+        datas[0].lotnum == subDataResult.data[i].lotnum
+      ) {
         alert("중복되는 품목이있습니다.");
         valid = false;
         return false;
-    } 
+      }
     }
 
     const rows = datas.map((row: any) => {
       return {
         ...row,
-        qty: row.now_qty
+        qty: row.now_qty,
       };
     });
 
-    if(valid == true) {
+    if (valid == true) {
       setSubDataResult((prev) => {
         return {
           data: [...prev.data, rows[0]],
@@ -611,7 +616,7 @@ const CopyWindow = ({ workType, itemacnt, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <TitleContainer style={{ float: "right"}}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {

@@ -307,11 +307,11 @@ const SA_A2300: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -926,7 +926,7 @@ const SA_A2300: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-    
+
     setParaData((prev) => ({
       ...prev,
       workType: workType,
@@ -1199,13 +1199,13 @@ const SA_A2300: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    if (ParaData.itemcd !=  "") {
+    if (ParaData.itemcd != "") {
       fetchTodoGridSaved();
     }
   }, [ParaData]);

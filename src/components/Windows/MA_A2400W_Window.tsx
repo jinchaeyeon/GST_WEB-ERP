@@ -49,7 +49,7 @@ import {
   isValidDate,
   findMessage,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { loginResultState } from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
@@ -118,7 +118,13 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => {
+const CopyWindow = ({
+  workType,
+  data,
+  setVisible,
+  setData,
+  reload,
+}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -141,11 +147,11 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-  useEffect(()=> {
+  useEffect(() => {
     setMainPgNum(1);
-    setMainDataResult(process([], mainDataState))
+    setMainDataResult(process([], mainDataState));
     fetchMainGrid();
-  },[reload])
+  }, [reload]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -187,7 +193,7 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
       const proccdQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
       );
-      
+
       fetchQuery(proccdQueryStr, setProccdListData);
     }
   }, [bizComponentData]);
@@ -236,11 +242,11 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -518,7 +524,7 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
     }
 
     try {
-      if(mainDataResult.data.length == 0){
+      if (mainDataResult.data.length == 0) {
         setMainDataResult(process([], mainDataState));
       }
       data.map((item: any) => {
@@ -606,7 +612,7 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
         if (valid == true) {
           setData(mainDataResult.data, filters, deletedMainRows);
           deletedMainRows = [];
-          if(workType == "N") {
+          if (workType == "N") {
             onClose();
           }
         }
@@ -957,10 +963,15 @@ const CopyWindow = ({ workType, data, setVisible, setData,reload }: IWindow) => 
                   workType == "U" && isValidDate(row.enddt)
                     ? new Date(dateformat(row.enddt))
                     : new Date(),
-                  proccd: proccdListData.find(
-                      (item: any) => item.sub_code === row.proccd
-                    )?.code_name,
-                    rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                proccd: proccdListData.find(
+                  (item: any) => item.sub_code === row.proccd
+                )?.code_name,
+                rowstatus:
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

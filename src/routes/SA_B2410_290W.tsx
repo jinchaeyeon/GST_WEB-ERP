@@ -198,11 +198,11 @@ const SA_B2410: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const filterRadioChange = (e: any) => {
@@ -590,9 +590,9 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
-   mainDataResult.data.forEach((item) =>
+    mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum += item[props.field]) : ""
     );
     var parts = sum.toString().split(".");
@@ -646,7 +646,6 @@ const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
       </td>
     );
   };
-
 
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {

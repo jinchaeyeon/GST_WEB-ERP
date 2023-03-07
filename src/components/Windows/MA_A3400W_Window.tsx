@@ -45,7 +45,7 @@ import {
   findMessage,
   convertDateToStr,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { loginResultState } from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
@@ -232,11 +232,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -394,7 +394,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -559,7 +559,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
   };
   const setCopyData = (data: any) => {
-  
     const dataItem = data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -618,7 +617,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       alert(e);
     }
   };
-  
+
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -664,7 +663,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     if (valid == true) {
       setData(mainDataResult.data, filters, deletedMainRows);
       deletedMainRows = [];
-      if(workType == "N") {
+      if (workType == "N") {
         onClose();
       }
     }
@@ -947,7 +946,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 invunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.invunit
                 )?.code_name,
-                rowstatus: (row.rowstatus == null || row.rowstatus == "" || row.rowstatus == undefined) ? "" : row.rowstatus,
+                rowstatus:
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -977,7 +981,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
             cellRender={customCellRender}
             rowRender={customRowRender}
             editField={EDIT_FIELD}
-          ><GridColumn field="rowstatus" title=" " width="50px" />
+          >
+            <GridColumn field="rowstatus" title=" " width="50px" />
             <GridColumn
               field="itemcd"
               title="품목코드"

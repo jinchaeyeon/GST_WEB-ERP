@@ -24,7 +24,7 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/QC_A2000W_C";
-import { CellRender, RowRender } from "../components/Renderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
@@ -385,11 +385,11 @@ const QC_A2000: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -1305,7 +1305,14 @@ const QC_A2000: React.FC = () => {
       />
     );
     array.push(<GridColumn field={"remark"} title={"비고"} width="200px" />);
-    array.push(<GridColumn field={"files"} title={"첨부파일"} width="350px" cell={ColumnCommandCell}/>);
+    array.push(
+      <GridColumn
+        field={"files"}
+        title={"첨부파일"}
+        width="350px"
+        cell={ColumnCommandCell}
+      />
+    );
     return array;
   };
 

@@ -126,11 +126,11 @@ const PR_A3000W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
   //조회조건 NumericTextBox Change 함수 => 사용자가 NumericTextBox 입력한 값을 조회 파라미터로 세팅
   const filterNumericTextBoxChange = (e: NumericTextBoxChangeEvent) => {
@@ -547,7 +547,6 @@ const PR_A3000W: React.FC = () => {
                     changeData={filterComboBoxChange}
                     valueField="user_id"
                     textField="user_name"
-
                   />
                 )}
               </td>
@@ -562,7 +561,6 @@ const PR_A3000W: React.FC = () => {
                     changeData={filterComboBoxChange}
                     valueField="fxcode"
                     textField="fxfull"
-
                   />
                 )}
               </td>

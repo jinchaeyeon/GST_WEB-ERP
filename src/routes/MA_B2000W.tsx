@@ -198,11 +198,11 @@ const MA_B2000W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const filterRadioChange = (e: any) => {
@@ -373,10 +373,10 @@ const MA_B2000W: React.FC = () => {
       </td>
     );
   };
-  
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
-   mainDataResult.data.forEach((item) =>
+    mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum += item[props.field]) : ""
     );
     var parts = sum.toString().split(".");

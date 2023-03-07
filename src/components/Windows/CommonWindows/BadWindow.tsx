@@ -20,13 +20,28 @@ import {
 } from "../../../CommonStyled";
 import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
-import { chkScrollHandler, UseBizComponent,   UseParaPc,
-  UseGetValueFromSessionItem,   findMessage, UseMessages, convertDateToStr} from "../../CommonFunction";
+import {
+  chkScrollHandler,
+  UseBizComponent,
+  UseParaPc,
+  UseGetValueFromSessionItem,
+  findMessage,
+  UseMessages,
+  convertDateToStr,
+} from "../../CommonFunction";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD, EDIT_FIELD, COM_CODE_DEFAULT_VALUE } from "../../CommonString";
+import {
+  PAGE_SIZE,
+  SELECTED_FIELD,
+  EDIT_FIELD,
+  COM_CODE_DEFAULT_VALUE,
+} from "../../CommonString";
 import NumberCell from "../../Cells/NumberCell";
-import {getGridItemChangedData,   getQueryFromBizComponent,} from "../../CommonFunction";
-import { CellRender, RowRender } from "../../Renderers";
+import {
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+} from "../../CommonFunction";
+import { CellRender, RowRender } from "../../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
@@ -42,7 +57,7 @@ type TdataArr = {
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
-  setData(event?: any): void; 
+  setData(event?: any): void;
   renum: string;
   //data : 선택한 품목 데이터를 전달하는 함수
 };
@@ -83,7 +98,7 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
       const badcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_QC002")
       );
-      
+
       fetchQuery(badcdQueryStr, setBadcdListData);
     }
   }, [bizComponentData]);
@@ -291,7 +306,7 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
     const data = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
-    if(data != null){
+    if (data != null) {
       try {
         if (data.qty < 0) {
           throw findMessage(messagesData, "QC_A6000W_003");
@@ -324,7 +339,7 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
             dataArr.badnum_s.push(badnum == undefined ? "" : badnum);
             dataArr.badseq_s.push(badseq == undefined ? "" : badseq);
           });
-  
+
           setParaData((prev) => ({
             ...prev,
             rowstatus_s: dataArr.rowstatus_s.join("|"),
@@ -337,7 +352,7 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
       } catch (e) {
         alert(e);
       }
-    }  else {
+    } else {
       onClose();
     }
   };
@@ -444,11 +459,11 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
             mainDataResult.data.map((row) => ({
               ...row,
               rowstatus:
-              row.rowstatus == null ||
-              row.rowstatus == "" ||
-              row.rowstatus == undefined
-                ? ""
-                : row.rowstatus,
+                row.rowstatus == null ||
+                row.rowstatus == "" ||
+                row.rowstatus == undefined
+                  ? ""
+                  : row.rowstatus,
               badcd: badcdListData.find(
                 (item: any) => item.sub_code === row.badcd
               )?.code_name,
@@ -483,14 +498,19 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
           rowRender={customRowRender3}
           editField={EDIT_FIELD}
         >
-            <GridColumn field="rowstatus" title=" " width="48px" />
+          <GridColumn field="rowstatus" title=" " width="48px" />
           <GridColumn
             field="badcd"
             title="불량유형"
             width="200px"
             footerCell={mainTotalFooterCell}
           />
-          <GridColumn field="qty" title="불량수량" width="200px" cell={NumberCell}/>
+          <GridColumn
+            field="qty"
+            title="불량수량"
+            width="200px"
+            cell={NumberCell}
+          />
         </Grid>
       </GridContainer>
       <BottomContainer>

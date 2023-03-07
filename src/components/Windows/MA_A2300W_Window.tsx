@@ -57,7 +57,7 @@ import {
   findMessage,
   setDefaultDate,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { loginResultState } from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
@@ -97,8 +97,8 @@ type Idata = {
   orgdiv: string;
   person: string;
   position: string;
- recdt: string;
- reckey: string;
+  recdt: string;
+  reckey: string;
   remark: string;
   seq1: number;
   taxamt: number;
@@ -422,11 +422,11 @@ const CopyWindow = ({
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value !== null)
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -693,7 +693,7 @@ const CopyWindow = ({
     let seq = 1;
 
     if (mainDataResult.total > 0) {
-      seq = mainDataResult.data[mainDataResult.total -1].num;
+      seq = mainDataResult.data[mainDataResult.total - 1].num;
     }
 
     const rows = data.map((row: any) => {
@@ -704,7 +704,7 @@ const CopyWindow = ({
         num: seq,
       };
     });
-    if(filters.custcd == "") {
+    if (filters.custcd == "") {
       setFilters((item: any) => ({
         ...item,
         custcd: rows[0].custcd,
@@ -714,7 +714,7 @@ const CopyWindow = ({
         amtunit: "KRW",
       }));
     }
-    
+
     try {
       rows.map((item: any) => {
         setMainDataResult((prev) => {
@@ -882,9 +882,20 @@ const CopyWindow = ({
   const exitEdit = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
-      wonamt: item.amtunit == "KRW" ? item.qty * item.unp : item.qty * item.unp*filters.wonchgrat,
-      taxamt: item.amtunit == "KRW" ? (item.qty * item.unp)/10 : (item.qty * item.unp*filters.wonchgrat)/10,
-      totamt: item.amtunit == "KRW" ? Math.round(item.amt + (item.qty * item.unp)/10) : Math.round(item.amt + (item.qty * item.unp*filters.wonchgrat)/10),
+      wonamt:
+        item.amtunit == "KRW"
+          ? item.qty * item.unp
+          : item.qty * item.unp * filters.wonchgrat,
+      taxamt:
+        item.amtunit == "KRW"
+          ? (item.qty * item.unp) / 10
+          : (item.qty * item.unp * filters.wonchgrat) / 10,
+      totamt:
+        item.amtunit == "KRW"
+          ? Math.round(item.amt + (item.qty * item.unp) / 10)
+          : Math.round(
+              item.amt + (item.qty * item.unp * filters.wonchgrat) / 10
+            ),
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);
@@ -1299,7 +1310,7 @@ const CopyWindow = ({
           workType={"FILTER"}
           setData={setCopyData}
           custcd={filters.custcd == undefined ? "" : filters.custcd}
-          custnm={filters.custnm== undefined ? "" : filters.custnm}
+          custnm={filters.custnm == undefined ? "" : filters.custnm}
         />
       )}
       {attachmentsWindowVisible && (
