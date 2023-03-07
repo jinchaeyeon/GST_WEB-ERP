@@ -2827,6 +2827,7 @@ const BA_A0020: React.FC = () => {
                           value={infomation.estbdt}
                           format="yyyy-MM-dd"
                           onChange={InputChange}
+                          placeholder=""
                         />
                       </td>
                     </tr>
