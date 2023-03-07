@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -79,6 +79,7 @@ const Page: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
+  let gridRef: any = useRef(null);
 
   const [mainDataState, setMainDataState] = useState<State>({
     group: [
@@ -421,6 +422,20 @@ const Page: React.FC = () => {
   }, [selectedState]);
 
   useEffect(() => {
+    if (customOptionData !== null) {
+      const pgNumWithGap =
+        filters.pgNum -
+        (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      if (filters.scrollDirrection === "up" && pgNumWithGap > 1) {
+        gridRef.vs.container.scroll(0, 20);
+      }
+    }
+  }, [mainDataResult]);
+
+  useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
@@ -673,6 +688,7 @@ const Page: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       isSearch: true,
+      scrollDirrection: "up",
       pgGap: 0,
       find_row_value: groupCode,
     }));
@@ -859,6 +875,7 @@ const Page: React.FC = () => {
               fixedScroll={true}
               total={mainDataTotal}
               onScroll={onMainScrollHandler}
+              ref={(ref) => (gridRef = ref)}
               //정렬기능
               sortable={true}
               onSortChange={onMainSortChange}
