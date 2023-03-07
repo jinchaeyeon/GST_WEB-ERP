@@ -269,6 +269,7 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
 
 type TGridContainer = {
   maxWidth?: string;
+  minHeight?: string;
   clientWidth?: number;
   height?: string;
   width?: string;
@@ -286,6 +287,7 @@ type TMargin = {
 export const GridContainer = styled.div<TGridContainer>`
   flex-direction: column;
   max-width: ${(props) => props.maxWidth};
+  min-height: ${(props) => props.minHeight};
   width: ${(props) =>
     props.width
       ? props.width

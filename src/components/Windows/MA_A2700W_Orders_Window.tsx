@@ -126,7 +126,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      
+
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(personQueryStr, setPersonListData);
     }
@@ -378,8 +378,8 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           len: row.len == null ? 0 : row.len,
           itemthick: row.itemthick == null ? 0 : row.itemthick,
           width: row.width == null ? 0 : row.width,
-          pac: row.pac == null ? "A": row.pac,
-          enddt: row.enddt == null ? new Date(): row.enddt
+          pac: row.pac == null ? "A" : row.pac,
+          enddt: row.enddt == null ? new Date() : row.enddt,
         };
       });
 
@@ -570,10 +570,10 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         alert("중복되는 품목이있습니다.");
         valid = false;
         return false;
-    } 
+      }
     }
 
-    if(valid == true) {
+    if (valid == true) {
       setSubDataResult((prev) => {
         return {
           data: [...prev.data, datas[0]],
@@ -609,7 +609,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
-        <TitleContainer style={{ float: "right"}}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {
@@ -812,9 +812,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterBoxWrap>
-        <GridContainer>
+        <GridContainer height="calc(50% - 120px)" minHeight="200px">
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "calc(100% - 5px)" }} //5px = margin bottom 값
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -937,7 +937,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             <GridColumn field="person" title="담당자" width="200px" />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height="calc(50% - 120px)" minHeight="200px">
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -949,7 +949,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "300px" }}
+            style={{ height: "calc(100% - 30px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

@@ -1360,7 +1360,7 @@ const CopyWindow = ({
             // fetchGrid,
           }}
         >
-          <GridContainer>
+          <GridContainer height="calc(100% - 310px) ">
             <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
               <ButtonContainer>
@@ -1417,7 +1417,7 @@ const CopyWindow = ({
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "450px" }}
+              style={{ height: "calc(100% - 50px)" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
