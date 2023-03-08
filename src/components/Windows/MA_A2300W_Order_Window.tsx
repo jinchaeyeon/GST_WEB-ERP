@@ -400,7 +400,7 @@ const CopyWindow = ({
       if (totalRowCnt > 0) {
         setMainDataTotal(totalRowCnt);
         setMainDataResult((prev) =>
-          process([...rowsOfDataResult(prev), ...rows], mainDataState)
+          process(rows, mainDataState)
         );
 
         // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
@@ -619,6 +619,9 @@ const CopyWindow = ({
         if (item.custcd != items.custcd) {
           valid = false;
         }
+        if(filters.custcd != "" && filters.custcd != items.custcd) {
+          valid = false;
+        }
       });
 
       subDataResult.data.map((items) => {
@@ -627,6 +630,8 @@ const CopyWindow = ({
         }
       });
     });
+
+ 
     if (valid == true) {
       selectRows.map((selectRow: any) => {
         const newDataItem = {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -8,6 +8,7 @@ import {
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
+  GridGroupChangeEvent,
   GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -31,6 +32,7 @@ import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
+  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
@@ -44,6 +46,7 @@ import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   CLIENT_WIDTH,
+  COM_CODE_DEFAULT_VALUE,
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
@@ -53,6 +56,7 @@ import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox"
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import TopButtons from "../components/TopButtons";
+import { bytesToBase64 } from "byte-base64";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 
@@ -79,7 +83,6 @@ const Page: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  let gridRef: any = useRef(null);
 
   const [mainDataState, setMainDataState] = useState<State>({
     group: [
@@ -163,11 +166,11 @@ const Page: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -192,11 +195,9 @@ const Page: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    scrollDirrection: "down", // "up" | "down" 스크롤 방향에 따라서 데이터 앞에 추가할지, 뒤에 추가할지 판단
     isSearch: true, // true면 조회조건(filters) 변경 되었을때 조회
     pgSize: PAGE_SIZE,
     pgNum: 1,
-    pgGap: 0,
     group_category: "",
     group_code: "",
     group_name: "",
@@ -314,33 +315,20 @@ const Page: React.FC = () => {
             groupCategoryData.find(
               (item: any) => item.sub_code === row.group_category
             )?.code_name,
-          [SELECTED_FIELD]: selectedState[idGetter(row)],
         }));
 
         // 데이터 세팅
         setMainDataTotal(totalRowCnt);
         setMainDataResult((prev) =>
-          process(
-            filters.scrollDirrection === "down"
-              ? [...rowsOfDataResult(prev), ...rows]
-              : [...rows, ...rowsOfDataResult(prev)],
-            mainDataState
-          )
+          process([...rowsOfDataResult(prev), ...rows], mainDataState)
         );
 
         // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
-        if (filters.find_row_value !== "") {
+        if (filters.pgNum !== data.pageNumber) {
           setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
-          setSelectedState({ [filters.find_row_value]: true });
-
-          setDetailFilters((prev) => ({
-            ...prev,
-            group_code: filters.find_row_value,
-            isSearch: true,
-          }));
         }
 
-        if (Object.keys(selectedState).length === 0) {
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
           // 첫번째 행 선택하기
           const firstRowData = rows[0];
           setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
@@ -356,12 +344,6 @@ const Page: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
     }
-
-    //초기화
-    setFilters((prev) => ({
-      ...prev,
-      isSearch: false,
-    }));
 
     setLoading(false);
   };
@@ -394,14 +376,8 @@ const Page: React.FC = () => {
   // 조회 버튼 => 리셋 후 조회
   const search = () => {
     resetAllGrid();
-    setSelectedState({});
-    setFilters((prev) => ({
-      ...prev,
-      pgNum: 1,
-      scrollDirrection: "down",
-      isSearch: true,
-      pgGap: 0,
-    }));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
   // selectedState가 바뀔때마다 data에 바뀐 selectedState 적용
@@ -412,40 +388,7 @@ const Page: React.FC = () => {
         mainDataState
       )
     );
-
-    const key = Object.getOwnPropertyNames(selectedState)[0];
-    setDetailFilters((prev) => ({
-      ...prev,
-      group_code: key,
-      isSearch: true,
-    }));
   }, [selectedState]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = rowsOfDataResult(mainDataResult).findIndex(
-          (item) => idGetter(item) === filters.find_row_value
-        );
-
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
-
-        //초기화
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-        }));
-      }
-      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
-      }
-    }
-  }, [mainDataResult]);
 
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
@@ -497,6 +440,12 @@ const Page: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+
+    setDetailFilters((prev) => ({
+      ...prev,
+      group_code: selectedRowData.group_code,
+      isSearch: true,
+    }));
   };
 
   //엑셀 내보내기
@@ -509,33 +458,15 @@ const Page: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-
-    let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+    if (
+      chkScrollHandler(event, filters.pgNum, PAGE_SIZE) &&
+      !filters.isSearch
+    ) {
       setFilters((prev) => ({
         ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
+        pgNum: prev.pgNum + 1,
         isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
+        find_row_value: "",
       }));
     }
   };
@@ -632,6 +563,12 @@ const Page: React.FC = () => {
       (item: any) => item[DATA_ITEM_KEY] === key
     );
 
+    setDetailFilters((prev) => ({
+      ...prev,
+      group_code: selectedRowData.group_code,
+      isSearch: true,
+    }));
+
     setIsCopy(true);
     setWorkType("N");
     setDetailWindowVisible(true);
@@ -653,7 +590,6 @@ const Page: React.FC = () => {
 
   const fetchToDelete = async () => {
     let data: any;
-    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", paraDeleted);
@@ -663,24 +599,7 @@ const Page: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-
-      const prevDataIdx =
-        (rowsOfDataResult(mainDataResult).findIndex(
-          (item) => item[DATA_ITEM_KEY] === paraDataDeleted.group_code
-        ) ?? 0) - 1;
-
-      // 메인 조회
-      if (prevDataIdx > -1) {
-        const prevDataVal =
-          rowsOfDataResult(mainDataResult)[prevDataIdx][DATA_ITEM_KEY];
-
-        setGroupCode(prevDataVal);
-      } else {
-        setFilters((prev) => ({
-          ...prev,
-          isSearch: true,
-        }));
-      }
+      fetchMainGrid();
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -689,23 +608,26 @@ const Page: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.group_code = "";
-    setLoading(false);
   };
 
   const setGroupCode = (groupCode: string) => {
     // 리셋
     resetAllGrid();
 
+    // 행 선택
+    setSelectedState({ [groupCode]: true });
+
     // 메인 조회
     setFilters((prev) => ({
       ...prev,
       isSearch: true,
-      pgGap: 0,
       find_row_value: groupCode,
     }));
+
+    // 디테일 조회
     setDetailFilters((prev) => ({
       ...prev,
-      pgNum: 1,
+      group_code: groupCode,
       isSearch: true,
     }));
   };
@@ -714,6 +636,9 @@ const Page: React.FC = () => {
     if (groupCode) {
       //그룹코드로 조회
       setGroupCode(groupCode);
+    } else if (workType === "U") {
+      // 일반조회
+      search();
     }
   };
 
@@ -886,7 +811,6 @@ const Page: React.FC = () => {
               fixedScroll={true}
               total={mainDataTotal}
               onScroll={onMainScrollHandler}
-              ref={(ref) => (gridRef = ref)}
               //정렬기능
               sortable={true}
               onSortChange={onMainSortChange}

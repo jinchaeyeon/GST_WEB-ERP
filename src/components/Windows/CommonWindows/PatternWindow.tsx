@@ -182,7 +182,7 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].Rows.length;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
@@ -224,6 +224,14 @@ const KendoWindow = ({
       });
     }
   };
+
+    //메인 그리드 데이터 변경 되었을 때
+    useEffect(() => {
+        if (detailDataResult.total > 0) {
+          const firstRowData = detailDataResult.data[0];
+          setSelectedsubDataState({ [firstRowData.pattern_id]: true });
+      }
+    }, [detailDataResult]);
 
   useEffect(() => {
     if (bizComponentData !== null) {

@@ -437,6 +437,7 @@ const EA_A1000: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
+    setIfSelectFirstRow(true);
     setSelectedState(newSelectedState);
   };
   const onSelection2Change = (event: GridSelectionChangeEvent) => {
@@ -459,7 +460,7 @@ const EA_A1000: React.FC = () => {
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: subselectedState,
       dataItemKey: DATA_ITEM_KEY2,
     });
     setSubSelectedState(newSelectedState);
@@ -697,6 +698,8 @@ const EA_A1000: React.FC = () => {
         idx++;
         count++;
         counts++;
+        setSelectedState({ [newDataItem.num]: true });
+        setIfSelectFirstRow(false);
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, newDataItem],
@@ -758,6 +761,8 @@ const EA_A1000: React.FC = () => {
         idx++;
         count++;
         counts++;
+        setSelected3State({ [newDataItem.num]: true });
+        setIfSelectFirstRow(false);
         setMainData3Result((prev) => {
           return {
             data: [...prev.data, newDataItem],
@@ -819,6 +824,8 @@ const EA_A1000: React.FC = () => {
         idx++;
         count++;
         counts++;
+        setSelectedState({ [newDataItem.num]: true });
+        setIfSelectFirstRow(false);
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, newDataItem],
@@ -880,6 +887,8 @@ const EA_A1000: React.FC = () => {
         idx++;
         count++;
         counts++;
+        setSelected2State({ [newDataItem.num]: true });
+        setIfSelectFirstRow(false);
         setMainData2Result((prev) => {
           return {
             data: [...prev.data, newDataItem],
@@ -1136,8 +1145,7 @@ const EA_A1000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data);
+
     if (data.isSuccess === true) {
       fetchMainGrid();
     } else {
@@ -1335,6 +1343,39 @@ const EA_A1000: React.FC = () => {
     setDataResult: setMainDataResult,
   };
 
+    //메인 그리드 데이터 변경 되었을 때
+    useEffect(() => {
+      if (ifSelectFirstRow) {
+        if (mainDataResult.total > 0) {
+          const firstRowData = mainDataResult.data[0];
+          setSelectedState({ [firstRowData.num]: true });
+  
+          setIfSelectFirstRow(true);
+        }
+      }
+    }, [mainDataResult]);
+
+    useEffect(() => {
+      if (ifSelectFirstRow) {
+        if (mainData3Result.total > 0) {
+          const firstRowData = mainData3Result.data[0];
+          setSelected3State({ [firstRowData.num]: true });
+  
+          setIfSelectFirstRow(true);
+        }
+      }
+    }, [mainData3Result]);
+
+    useEffect(() => {
+      if (ifSelectFirstRow) {
+        if (mainData2Result.total > 0) {
+          const firstRowData = mainData2Result.data[0];
+          setSelected2State({ [firstRowData.num]: true });
+  
+          setIfSelectFirstRow(true);
+        }
+      }
+    }, [mainData2Result]);
   return (
     <>
       <TitleContainer>

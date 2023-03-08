@@ -709,7 +709,7 @@ const QC_A2000: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    setIfSelectFirstRow(true);
     setDetailFilters2((prev) => ({
       ...prev,
       qcnum: selectedRowData.qcnum,
@@ -847,7 +847,8 @@ const QC_A2000: React.FC = () => {
       qty: 1,
       rowstatus: "N",
     };
-
+    setDetailSelectedState2({ [newDataItem.num]: true });
+    setIfSelectFirstRow(false);
     setDetailDataResult2((prev) => {
       return {
         data: [...prev.data, newDataItem],

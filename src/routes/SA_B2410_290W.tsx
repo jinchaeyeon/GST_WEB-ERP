@@ -338,7 +338,7 @@ const SA_B2410: React.FC = () => {
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -363,7 +363,7 @@ const SA_B2410: React.FC = () => {
       if (totalRowCnt > 0) {
         setDetail1DataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -448,7 +448,7 @@ const SA_B2410: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.custcd]: true });
+        setSelectedState({ [firstRowData.num]: true });
 
         if (filters.workType == "Q1") {
           setDetailFilters1((prev) => ({
@@ -480,7 +480,7 @@ const SA_B2410: React.FC = () => {
       if (detail1DataResult.total > 0) {
         const firstRowData = detail1DataResult.data[0];
 
-        setDetailSelectedState({ [firstRowData.outdt]: true });
+        setDetailSelectedState({ [firstRowData.num]: true });
         setIfSelectFirstRow(true);
       }
     }
@@ -491,7 +491,7 @@ const SA_B2410: React.FC = () => {
       if (detail2DataResult.total > 0) {
         const firstRowData = detail2DataResult.data[0];
 
-        setDetail2SelectedState({ [firstRowData.outdt]: true });
+        setDetail2SelectedState({ [firstRowData.num]: true });
         setDetailFilters1((prev) => ({
           ...prev,
           ymdFrdt: firstRowData.outdt,

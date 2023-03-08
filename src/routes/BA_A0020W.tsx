@@ -707,9 +707,9 @@ const BA_A0020: React.FC = () => {
     if (ifSelectFirstRow) {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
-        // setSelectedsubDataState({ [firstRowData.num]: true });
+        setSelectedsubDataState({ [firstRowData.num]: true });
 
-        // setIfSelectFirstRow(true);
+        setIfSelectFirstRow(false);
       }
     }
   }, [subDataResult]);
@@ -718,9 +718,9 @@ const BA_A0020: React.FC = () => {
     if (ifSelectFirstRow) {
       if (subDataResult2.total > 0) {
         const firstRowData = subDataResult2.data[0];
-        // setSelectedsubDataState({ [firstRowData.num]: true });
+        setSelectedsubDataState2({ [firstRowData.num]: true });
 
-        // setIfSelectFirstRow(true);
+        setIfSelectFirstRow(false);
       }
     }
   }, [subDataResult2]);
@@ -834,7 +834,7 @@ const BA_A0020: React.FC = () => {
       files: selectedRowData.files,
       auto: selectedRowData.auto,
     });
-
+    setIfSelectFirstRow(true)
     if (tabSelected == 1) {
       setsubFilters((prev) => ({
         ...prev,
@@ -863,7 +863,7 @@ const BA_A0020: React.FC = () => {
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: selectedsubDataState,
       dataItemKey: SUB_DATA_ITEM_KEY,
     });
     setSelectedsubDataState(newSelectedState);
@@ -872,7 +872,7 @@ const BA_A0020: React.FC = () => {
   const onSubDataSelectionChange2 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: selectedsubDataState2,
       dataItemKey: SUB_DATA_ITEM_KEY2,
     });
     setSelectedsubDataState2(newSelectedState);
@@ -1032,7 +1032,7 @@ const BA_A0020: React.FC = () => {
       update_userid: "",
       rowstatus: "N",
     };
-
+    setSelectedsubDataState({ [newDataItem.num]: true });
     setSubDataResult((prev) => {
       return {
         data: [...prev.data, newDataItem],
@@ -1069,7 +1069,7 @@ const BA_A0020: React.FC = () => {
       inEdit: "yyyy",
       rowstatus: "N",
     };
-
+    setSelectedsubDataState2({ [newDataItem.num]: true });
     setSubDataResult2((prev) => {
       return {
         data: [...prev.data, newDataItem],

@@ -608,9 +608,6 @@ const MA_A2000W: React.FC = () => {
     if (ifSelectFirstRow) {
       if (detailDataResult.total > 0) {
         const firstRowData = detailDataResult.data[0];
-        setDetailSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
       }
     }
   }, [detailDataResult]);

@@ -850,6 +850,7 @@ const CopyWindow = ({
     if (
       field != "itemnm" &&
       field != "insiz" &&
+      field != "amt" &&
       field != "totamt" &&
       field != "wonamt" &&
       field != "taxamt" &&
@@ -882,16 +883,20 @@ const CopyWindow = ({
   const exitEdit = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
+      amt:
+      filters.amtunit == "KRW"
+        ? item.qty * item.unp
+        : item.qty * item.unp * filters.wonchgrat,
       wonamt:
-        item.amtunit == "KRW"
+      filters.amtunit == "KRW"
           ? item.qty * item.unp
           : item.qty * item.unp * filters.wonchgrat,
       taxamt:
-        item.amtunit == "KRW"
+      filters.amtunit == "KRW"
           ? (item.qty * item.unp) / 10
           : (item.qty * item.unp * filters.wonchgrat) / 10,
       totamt:
-        item.amtunit == "KRW"
+      filters.amtunit == "KRW"
           ? Math.round(item.amt + (item.qty * item.unp) / 10)
           : Math.round(
               item.amt + (item.qty * item.unp * filters.wonchgrat) / 10

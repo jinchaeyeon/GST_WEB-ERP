@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -241,6 +241,7 @@ const QC_A0060W: React.FC = () => {
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+  let gridRef: any = useRef(null);
 
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], detailDataState)
@@ -309,11 +310,21 @@ const QC_A0060W: React.FC = () => {
     stdrev: 0,
     qcgb: "",
     rev: "",
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     stdnum: "",
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
   //조회조건 파라미터
@@ -333,6 +344,7 @@ const QC_A0060W: React.FC = () => {
       "@p_stdrev": 0,
       "@p_qcgb": filters.qcgb,
       "@p_rev": filters.rev,
+      "@p_find_row_value": filters.find_row_value,
     },
   };
 
@@ -352,6 +364,7 @@ const QC_A0060W: React.FC = () => {
       "@p_stdrev": 0,
       "@p_qcgb": filters.qcgb,
       "@p_rev": filters.rev,
+      "@p_find_row_value": filters.find_row_value,
     },
   };
 
@@ -426,10 +439,25 @@ const QC_A0060W: React.FC = () => {
             total: totalRowCnt,
           };
         });
+
+        if (filters.find_row_value === "") {
+          setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
+        }
+
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+        //초기화
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: false,
+        }));
     setLoading(false);
   };
 
@@ -454,16 +482,15 @@ const QC_A0060W: React.FC = () => {
           };
         });
     }
+
     setLoading(false);
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
-    ) {
+    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+      setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+
       fetchMainGrid();
       setIsInitSearch(true);
     }
@@ -489,16 +516,26 @@ const QC_A0060W: React.FC = () => {
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = mainDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
 
-        setDetailFilters((prev) => ({
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
           ...prev,
-          stdnum: firstRowData.stdnum,
+          find_row_value: "",
         }));
-
-        setIfSelectFirstRow(true);
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);

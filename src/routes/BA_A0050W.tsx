@@ -228,6 +228,8 @@ const BA_A0050: React.FC = () => {
   const [sub2PgNum, setSubPgNum] = useState(1);
 
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+  const [ifSelectFirstRow2, setIfSelectFirstRow2] = useState(true);
+  const [ifSelectFirstRow3, setIfSelectFirstRow3] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -381,7 +383,7 @@ const BA_A0050: React.FC = () => {
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
@@ -412,12 +414,9 @@ const BA_A0050: React.FC = () => {
       }));
 
       if (totalRowCnt > 0) {
-        setSub2PgNum(1);
-        setSubData2Result(process([], subData2State));
-
         setSubData2Result((prev) => {
           return {
-            data: row,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
@@ -504,21 +503,23 @@ const BA_A0050: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (ifSelectFirstRow) {
+    if (ifSelectFirstRow2) {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
+        setSelectedsubDataState({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow2(true);
       }
     }
   }, [subDataResult]);
 
   useEffect(() => {
-    if (ifSelectFirstRow) {
+    if (ifSelectFirstRow3) {
       if (subData2Result.total > 0) {
         const firstRowData = subData2Result.data[0];
+        setSelectedsubData2State({ [firstRowData.sub_code]: true });
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow3(false);
       }
     }
   }, [subData2Result]);
@@ -565,12 +566,14 @@ const BA_A0050: React.FC = () => {
       ...prev,
       itemcd: selectedRowData.itemcd,
     }));
+    setIfSelectFirstRow(true);
+    setIfSelectFirstRow2(true);
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: selectedsubDataState,
       dataItemKey: SUB_DATA_ITEM_KEY,
     });
     setSelectedsubDataState(newSelectedState);
@@ -579,7 +582,7 @@ const BA_A0050: React.FC = () => {
   const onSubData2SelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: selectedsubData2State,
       dataItemKey: SUB_DATA_ITEM_KEY2,
     });
 
@@ -597,7 +600,7 @@ const BA_A0050: React.FC = () => {
       });
       seq++;
     }
-
+    setIfSelectFirstRow2(false)
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: seq,
       chlditemcd: "",
@@ -622,7 +625,8 @@ const BA_A0050: React.FC = () => {
       unitqty: 0,
       rowstatus: "N",
     };
-
+    setSelectedsubDataState({ [newDataItem.num]: true });
+ 
     setSubDataResult((prev) => {
       return {
         data: [...prev.data, newDataItem],
@@ -643,6 +647,7 @@ const BA_A0050: React.FC = () => {
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
+      setIfSelectFirstRow(false);
   };
 
   const onSubScrollHandler = (event: GridEvent) => {
@@ -1144,13 +1149,10 @@ const BA_A0050: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      setSubPgNum(1);
-      setSubDataResult(process([], subData2State));
       setParaData2((prev) => ({
         ...prev,
         itemcd_s: "",
       }));
-      fetchSubGrid2();
     } else {
       console.log("[오류 발생]");
       console.log(data);

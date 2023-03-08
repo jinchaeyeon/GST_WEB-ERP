@@ -626,9 +626,6 @@ const MA_A2000W: React.FC = () => {
     if (ifSelectFirstRow) {
       if (detailDataResult.total > 0) {
         const firstRowData = detailDataResult.data[0];
-        setDetailSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
       }
     }
   }, [detailDataResult]);
@@ -973,7 +970,7 @@ const MA_A2000W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-    console.log(filter);
+
     setParaData((prev) => ({
       ...prev,
       workType: workType,
@@ -1052,13 +1049,18 @@ const MA_A2000W: React.FC = () => {
         purnum = "",
         purseq = "",
       } = item;
+      const itemacnts = itemacntListData.find(
+        (item: any) => item.code_name === itemacnt
+      )?.sub_code == undefined ? "" : itemacntListData.find(
+        (item: any) => item.code_name === itemacnt
+      )?.sub_code
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == undefined || seq2 == "" ? 0 : seq2);
       dataArr.pac_s.push(PAC == undefined ? "" : PAC);
       dataArr.itemcd_s.push(itemcd);
       dataArr.itemnm_s.push(itemnm);
       dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
-      dataArr.itemacnt_s.push(itemacnt == undefined ? "" : itemacnt);
+      dataArr.itemacnt_s.push(itemacnts == undefined ? "" : itemacnts);
       dataArr.lotnum_s.push(lotnum == undefined ? "" : lotnum);
       dataArr.serialno_s.push(serialno == undefined ? "" : serialno);
       dataArr.heatno_s.push(heatno == undefined ? "" : heatno);

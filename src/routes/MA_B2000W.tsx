@@ -301,7 +301,7 @@ const MA_B2000W: React.FC = () => {
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -332,7 +332,7 @@ const MA_B2000W: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.ordnum]: true });
+        setSelectedState({ [firstRowData.purno]: true });
 
         setIfSelectFirstRow(true);
       }

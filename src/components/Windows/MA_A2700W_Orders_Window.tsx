@@ -386,7 +386,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });

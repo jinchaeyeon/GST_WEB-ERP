@@ -523,7 +523,7 @@ const BA_A0080: React.FC = () => {
           setSelectedState({});
         }
 
-        // setIfSelectFirstRow(true);
+        setIfSelectFirstRow(true);
       }
     }
   }, [mainDataResult]);
@@ -556,7 +556,7 @@ const BA_A0080: React.FC = () => {
         if (filters.itemacnt == "") {
           setSelectedsubDataState({ [firstRowData.sub_code]: true });
         }
-        // setIfSelectFirstRow(true);
+        setIfSelectFirstRow(true);
       }
     }
   }, [subDataResult]);
@@ -864,6 +864,7 @@ const BA_A0080: React.FC = () => {
           rowstatus: "N",
         };
         setSelectedState({ [newDataItem.num]: true });
+        setIfSelectFirstRow(false);
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, newDataItem],

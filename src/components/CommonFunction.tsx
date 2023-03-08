@@ -523,6 +523,7 @@ export const chkScrollHandler = (
       chk = true;
     }
   }
+
   return chk;
 };
 

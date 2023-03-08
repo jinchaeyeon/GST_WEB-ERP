@@ -882,7 +882,7 @@ const BA_A0040: React.FC = () => {
       inEdit: "recdt",
       rowstatus: "N",
     };
-
+    setSelectedsubData2State({ [newDataItem.num]: true });
     setSubData2Result((prev) => {
       return {
         data: [...prev.data, newDataItem],
@@ -1024,6 +1024,7 @@ const BA_A0040: React.FC = () => {
   const search = () => {
     resetAllGrid();
     fetchMainGrid();
+
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
