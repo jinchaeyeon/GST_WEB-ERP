@@ -1152,7 +1152,6 @@ const PR_A1100W: React.FC = () => {
   const onSavePlanClick = () => {
     const dataItem: { [name: string]: any } = planDataResult.data.filter(
       (item: any) => {
-        //console.log(item.rowstatus === "N" || "U" ? item : {});
         return (
           (item.rowstatus === "N" || item.rowstatus === "U") &&
           item.rowstatus !== undefined
@@ -1341,7 +1340,6 @@ const PR_A1100W: React.FC = () => {
   const onSaveMtrClick = () => {
     const dataItem: { [name: string]: any } = materialDataResult.data.filter(
       (item: any) => {
-        //console.log(item.rowstatus === "N" || "U" ? item : {});
         return (
           (item.rowstatus === "N" || item.rowstatus === "U") &&
           item.rowstatus !== undefined

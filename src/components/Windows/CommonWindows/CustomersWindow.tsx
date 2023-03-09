@@ -31,6 +31,7 @@ import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
+import {handleKeyPressSearch} from "../../CommonFunction";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -231,6 +232,12 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
       </td>
     );
   };
+
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  }
+  
   return (
     <Window
       title={"업체마스터"}
@@ -256,25 +263,24 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
+            <th>업체코드</th>
+              <td>
+                <Input
+                  name="custcd"
+                  type="text"
+                  value={filters.custcd}
+                  onChange={filterInputChange}
+                />
+              </td>
               <th>업체명</th>
               <td>
                 <Input
                   name="custnm"
                   type="text"
                   value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>업체코드</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={filters.custcd}
                   onChange={filterInputChange}
                 />
               </td>

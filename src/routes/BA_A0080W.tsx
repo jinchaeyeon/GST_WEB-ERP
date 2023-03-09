@@ -33,10 +33,6 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
-  ButtonInFieldWrap,
-  ButtonInField,
-  FormBox,
-  FormBoxWrap,
   GridContainerWrap,
   ButtonInGridInput,
 } from "../CommonStyled";
@@ -44,13 +40,11 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
-  setDefaultDate,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -59,15 +53,9 @@ import {
   getGridItemChangedData,
   dateformat,
   UseParaPc,
-  dateformat2,
   UseGetValueFromSessionItem,
-  getCodeFromValue,
-  getSelectedFirstData,
-  getItemQuery,
 } from "../components/CommonFunction";
-import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
@@ -290,7 +278,7 @@ const BA_A0080: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061, L_BA171, L_BA172, L_BA173",
+    "L_BA061, L_BA171, L_BA172, L_BA173, L_ITEM_TEST",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -303,7 +291,9 @@ const BA_A0080: React.FC = () => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [itemListData, setItemListData] = useState([
+    { itemcd: "", itemnm: "" },
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
@@ -315,10 +305,13 @@ const BA_A0080: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
-
+      const itemQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_ITEM_TEST")
+      );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      fetchQuery(itemQueryStr, setItemListData);
     }
   }, [bizComponentData]);
 
@@ -790,6 +783,11 @@ const BA_A0080: React.FC = () => {
   const exitEdit = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
+      itemnm: itemListData.find(
+        (items: any) => items.itemcd === item.itemcd
+      )?.itemnm == item.itemnm ? item.itemnm : itemListData.find(
+        (items: any) => items.itemcd === item.itemcd
+      )?.itemnm,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);

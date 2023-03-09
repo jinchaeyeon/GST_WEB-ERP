@@ -59,7 +59,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const dateField = ["purdt"];
 const DATA_ITEM_KEY = "purno";
-const numberField = ["qty", "unp", "amt", "taxamt", "totamt"];
+const numberField = ["qty", "unp", "amt", "taxamt", "totamt","inqty"];
 const checkboxField = ["finyn"];
 
 const MA_B2000W: React.FC = () => {
@@ -671,6 +671,9 @@ const MA_B2000W: React.FC = () => {
                 ...row,
                 purtype: purtypeListData.find(
                   (item: any) => item.sub_code === row.purtype
+                )?.code_name,
+                qtyunit: qtyunitListData.find(
+                  (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),

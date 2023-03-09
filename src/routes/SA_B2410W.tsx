@@ -239,7 +239,7 @@ const SA_B2410: React.FC = () => {
     lotnum: "",
     itemlvl1: "",
     outuse: "",
-    cboLocation: "",
+    cboLocation: "01",
   });
 
   //조회조건 파라미터
@@ -285,7 +285,7 @@ const SA_B2410: React.FC = () => {
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -316,7 +316,7 @@ const SA_B2410: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.ordnum]: true });
+        setSelectedState({ [firstRowData.reckey]: true });
 
         setIfSelectFirstRow(true);
       }

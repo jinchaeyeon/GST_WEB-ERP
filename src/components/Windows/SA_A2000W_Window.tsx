@@ -77,6 +77,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import ItemsMultiWindow from "./CommonWindows/ItemsMultiWindow";
 import {
   IAttachmentData,
   ICustData,
@@ -387,7 +388,8 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
+  const [itemMultiWindowVisible, setItemMultiWindowVisible] =
+  useState<boolean>(false);
   //스크롤 핸들러
   const scrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
@@ -472,23 +474,107 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     }
   };
 
+  const addItemData = (
+    itemDatas: IItemData[],
+    orgIndex?: number,
+    orgDataItem?: any
+  ) => {
+    //단가정보
+    itemDatas.map((itemData: any) => {
+      const index = orgIndex !== undefined ? orgIndex : editIndex;
+      const unpData: any = unpList.filter(
+        (item: any) => item.recdt <= orddt && item.itemcd === itemData.itemcd
+      );
+  
+      if (index === undefined) {
+        //신규생성
+          fieldArrayRenderProps.onPush({
+            value: {
+              rowstatus: "N",
+              itemcd: itemData.itemcd,
+              itemnm: itemData.itemnm,
+              insiz: itemData.insiz,
+              itemacnt: itemData.itemacnt,
+              qtyunit: COM_CODE_DEFAULT_VALUE,
+              qty: 0,
+              specialunp: 0,
+              specialamt: 0,
+              unp: unpData.length > 0 ? unpData[0].unp : 0,
+              amt: 0,
+              wonamt: 0,
+              taxamt: 0,
+              totamt: 0,
+              outqty: 0,
+              sale_qty: 0,
+              finyn: "N",
+              bf_qty: 0,
+              ordseq: 0,
+              poregseq: 0,
+              totwgt: 0,
+              len: 0,
+              totlen: 0,
+              thickness: 0,
+              width: 0,
+              length: 0,
+              dlramt: 0,
+              chk: "N",
+            },
+          });
+      } else {
+        //기존 행 업데이트
+        const dataItem = orgDataItem ? orgDataItem : editedRowData;
+  
+        let { unp, wonamt, taxamt, totamt, qty } = dataItem;
+  
+        if (unpData.length > 0) {
+          unp = unpData[0].unp;
+          wonamt = unp * qty;
+          taxamt = wonamt / 10;
+          totamt = wonamt + taxamt;
+        }
+  
+        fieldArrayRenderProps.onReplace({
+          index: index,
+          value: {
+            ...dataItem,
+            rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+            itemcd: itemData.itemcd,
+            itemnm: itemData.itemnm,
+            insiz: itemData.insiz,
+            itemacnt: itemData.itemacnt,
+            qtyunit: COM_CODE_DEFAULT_VALUE,
+            unp,
+            wonamt,
+            taxamt,
+            totamt,
+            [EDIT_FIELD]: undefined,
+          },
+        });
+      }
+    })
+  };
   const onItemWndClick = () => {
     setEditIndex(undefined);
     setItemWindowVisible(true);
   };
-
+  const onItemMultiWndClick = () => {
+    setEditIndex(undefined);
+    setItemMultiWindowVisible(true);
+  };
   const enterEdit = (dataItem: any, field: string | undefined) => {
-    fieldArrayRenderProps.onReplace({
-      index: dataItem[FORM_DATA_INDEX],
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-        [EDIT_FIELD]: field,
-      },
-    });
-
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
-    if (field) setEditedField(field);
+    if(field != "outqty" && field != "sale_qty"){
+      fieldArrayRenderProps.onReplace({
+        index: dataItem[FORM_DATA_INDEX],
+        value: {
+          ...dataItem,
+          rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+          [EDIT_FIELD]: field,
+        },
+      });
+  
+      setEditIndex(dataItem[FORM_DATA_INDEX]);
+      if (field) setEditedField(field);
+    }
   };
 
   const exitEdit = () => {
@@ -774,9 +860,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             type={"button"}
             themeColor={"primary"}
             fillMode="outline"
-            onClick={onItemWndClick}
+            onClick={onItemMultiWndClick}
           >
-            품목참조
+            품목멀티
           </Button>
         </GridToolbar>
 
@@ -834,18 +920,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           title="단위"
           width="120px"
           cell={CustomComboBoxCell}
-        />
-        <GridColumn
-          field="specialunp"
-          title="발주단가"
-          width="120px"
-          cell={FormNumberCell}
-        />
-        <GridColumn
-          field="specialamt"
-          title="발주금액"
-          width="120px"
-          cell={FormNumberCell}
         />
         <GridColumn
           field="unp"
@@ -914,7 +988,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           cell={FormNameCell}
         />
       </Grid>
-
+      {itemMultiWindowVisible && (
+        <ItemsMultiWindow
+          setVisible={setItemMultiWindowVisible}
+          setData={addItemData}
+        />
+      )}
       {itemWindowVisible && (
         <ItemsWindow
           workType={editIndex === undefined ? "ROWS_ADD" : "ROW_ADD"}
@@ -2215,7 +2294,6 @@ const KendoWindow = ({
           setData={setCustData}
         />
       )}
-
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}

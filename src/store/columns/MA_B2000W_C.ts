@@ -49,7 +49,13 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_qty",
         field: "qty",
-        caption: "수량",
+        caption: "발주수량",
+        width: 80,
+      },
+      {
+        id: "col_inqty",
+        field: "inqty",
+        caption: "입고수량",
         width: 80,
       },
       {

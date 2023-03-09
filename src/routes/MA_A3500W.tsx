@@ -1134,7 +1134,6 @@ const MA_A2400W: React.FC = () => {
       infomation.pgNum +
       (infomation.scrollDirrection === "up" ? infomation.pgGap : 0);
 
-      console.log(pgNumWithGap)
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
       setInfomation((prev) => ({

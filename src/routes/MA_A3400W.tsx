@@ -908,8 +908,7 @@ const MA_A3400W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data);
+    
     if (data.isSuccess === true) {
       setParaData({
         pgSize: PAGE_SIZE,

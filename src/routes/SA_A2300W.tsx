@@ -686,6 +686,19 @@ const SA_A2300: React.FC = () => {
     );
   };
 
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    detailDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    );
+  };
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -1011,6 +1024,7 @@ const SA_A2300: React.FC = () => {
         reqseq = "",
         remark = "",
       } = item;
+
       dataArr.rowstatus.push(rowstatus);
       dataArr.seq2.push(seq2 == "" ? 0 : seq2);
       dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
@@ -1229,7 +1243,7 @@ const SA_A2300: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th colSpan={2}>
+              <th style={{width: "250px"}}>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
                     name="gubun1"
@@ -1238,7 +1252,7 @@ const SA_A2300: React.FC = () => {
                   />
                 )}
               </th>
-              <td colSpan={3}>
+              <td>
                 <div className="filter-item-wrap">
                   <DatePicker
                     name="frdt"
@@ -1284,43 +1298,6 @@ const SA_A2300: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-            </tr>
-
-            <tr>
-              <th colSpan={2}>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="gubun2"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </th>
-              <td colSpan={2}>
-                <div className="filter-item-wrap">
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </div>
-              </td>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
               <th>수주번호</th>
               <td>
                 <Input
@@ -1341,8 +1318,43 @@ const SA_A2300: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <th colSpan={2}>내수구분</th>
-              <td colSpan={3}>
+              <th>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="gubun2"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </th>
+              <td>
+                <div className="filter-item-wrap">
+                  <Input
+                    name="custcd"
+                    type="text"
+                    value={filters.custcd}
+                    onChange={filterInputChange}
+                  />
+                  <ButtonInInput>
+                    <Button
+                      onClick={onCustWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
+                </div>
+              </td>
+              <th>업체명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>내수구분</th>
+              <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
                     name="cboDoexdiv"
@@ -1542,7 +1554,7 @@ const SA_A2300: React.FC = () => {
                       item.sortOrder === 0
                         ? detailTotalFooterCell
                         : numberField.includes(item.fieldName)
-                        ? gridSumQtyFooterCell
+                        ? gridSumQtyFooterCell2
                         : undefined
                     }
                   />

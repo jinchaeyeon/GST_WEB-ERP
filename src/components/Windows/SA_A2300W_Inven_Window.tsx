@@ -29,6 +29,7 @@ import {
   ButtonInInput,
   GridTitleContainer,
   GridTitle,
+  GridContainerWrap,
 } from "../../CommonStyled";
 import { Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../store/types";
@@ -48,7 +49,7 @@ import {
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
@@ -60,9 +61,17 @@ type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  custcd: string;
+  custnm: string;
 };
 
-const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
+const CopyWindow = ({
+  workType,
+  setVisible,
+  setData,
+  custcd,
+  custnm,
+}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -265,6 +274,13 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     setItemWindowVisible(true);
   };
 
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      custcd: custcd,
+      custnm: custnm,
+    }));
+  }, []);
   interface ICustData {
     custcd: string;
     custnm: string;
@@ -720,10 +736,14 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       });
       seq++;
     }
+    const data = mainDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
     const selectRow = detailDataResult.data.filter(
       (item: any) =>
         item.num == Object.getOwnPropertyNames(detailselectedState)[0]
     )[0];
+
     const newDataItem = {
       [DATA_ITEM_KEY]: seq + 1,
       amt: selectRow.amt,
@@ -747,8 +767,8 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       needqty: selectRow.needqty,
       nowqty: selectRow.nowqty,
       ordkey: selectRow.ordkey,
-      ordnum: selectRow.ordnum,
-      ordseq: selectRow.ordseq,
+      ordnum: data.ordnum,
+      ordseq: data.ordseq,
       pac: selectRow.pac,
       poregnum: selectRow.poregnum,
       project: selectRow.project,
@@ -862,7 +882,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   return (
     <>
       <Window
-        title={"재고참조"}
+        title={"수주참조"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -914,15 +934,8 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                     name="custcd"
                     type="text"
                     value={filters.custcd}
-                    onChange={filterInputChange}
+                    className="readonly"
                   />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
                 </td>
                 <th>업체명</th>
                 <td>
@@ -930,7 +943,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                     name="custnm"
                     type="text"
                     value={filters.custnm}
-                    onChange={filterInputChange}
+                    className="readonly"
                   />
                 </td>
                 <th>출하지시번호</th>
@@ -1012,90 +1025,88 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterBoxWrap>
-        <GridContainer>
-          <Grid
-            style={{ height: "200px" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                person: personListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            onDataStateChange={onMainDataStateChange}
-            {...mainDataState}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-          >
-            <GridColumn
-              field="ordnum"
-              title="수주번호"
-              width="150px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="custnm" title="업체명" width="200px" />
-            <GridColumn
-              field="orddt"
-              title="수주일자"
-              cell={DateCell}
-              width="100px"
-            />
-            <GridColumn
-              field="dlvdt"
-              title="납기일자"
-              cell={DateCell}
-              width="100px"
-            />
-            <GridColumn field="itemcd" title="품목코드" width="200px" />
-            <GridColumn field="itemnm" title="품목명" width="200px" />
-            <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn
-              field="qty"
-              title="수주량"
-              width="120px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="inqty"
-              title="출하량"
-              width="120px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="janqty"
-              title="잔량"
-              width="120px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn field="qtyunit" title="수량단위" width="120px" />
-            <GridColumn field="lotnum" title="LOT NO" width="200px" />
-            <GridColumn
+        <GridContainerWrap>
+          <GridContainer width={`60%`}>
+          <GridTitleContainer>
+              <GridTitle>상세정보</GridTitle>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "350px" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  person: personListData.find(
+                    (item: any) => item.user_id === row.person
+                  )?.user_name,
+                  qtyunit: qtyunitListData.find(
+                    (item: any) => item.sub_code === row.qtyunit
+                  )?.code_name,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              onDataStateChange={onMainDataStateChange}
+              {...mainDataState}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              onScroll={onMainScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              <GridColumn
+                field="ordnum"
+                title="수주번호"
+                width="150px"
+                footerCell={mainTotalFooterCell}
+              />
+              <GridColumn field="custnm" title="업체명" width="200px" />
+              <GridColumn
+                field="dlvdt"
+                title="납기일자"
+                cell={DateCell}
+                width="100px"
+              />
+              <GridColumn field="itemcd" title="품목코드" width="200px" />
+              <GridColumn field="itemnm" title="품목명" width="200px" />
+              <GridColumn field="insiz" title="규격" width="200px" />
+              <GridColumn
+                field="janqty"
+                title="잔량"
+                width="120px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn field="qtyunit" title=" " width="60px" />
+              <GridColumn
+                field="qty"
+                title="수주량"
+                width="120px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn
+                field="inqty"
+                title="출하량"
+                width="120px"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell}
+              />
+              <GridColumn field="lotnum" title="LOT NO" width="200px" />
+              {/* <GridColumn
               field="unp"
               title="단가"
               width="120px"
@@ -1119,77 +1130,71 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="세액"
               width="120px"
               cell={NumberCell}
-            />
-            <GridColumn field="remark" title="비고" width="300px" />
-          </Grid>
-        </GridContainer>
-        <GridContainer>
-          <GridTitleContainer>
-            <GridTitle>LOT별 재고</GridTitle>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "200px" }}
-            data={process(
-              detailDataResult.data.map((row) => ({
-                ...row,
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
-                )?.code_name,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
-                )?.code_name,
-                [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
-              })),
-              detailDataState
-            )}
-            onDataStateChange={onDetailDataStateChange}
-            {...detailDataState}
-            //선택 subDataState
-            dataItemKey={DATA_ITEM_KEY3}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onDetailSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={detailDataResult.total}
-            onScroll={onDetailScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onDetailSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            //더블클릭
-            onRowDoubleClick={onRowDoubleClick}
-          >
-            <GridColumn
-              field="lotnum"
-              title="LOT NO"
-              width="350px"
-              footerCell={detailTotalFooterCell}
-            />
-            <GridColumn field="itemacnt" title="품목계정" width="350px" />
-            <GridColumn
-              field="qty"
-              title="재고량"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell2}
-              width="200px"
-            />
-            <GridColumn
-              field="outqty"
-              title="처리량"
-              width="200px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell2}
-            />
-            <GridColumn field="remark" title="비고" width="430px" />
-          </Grid>
-        </GridContainer>
+            /> */}
+              <GridColumn field="remark" title="비고" width="300px" />
+            </Grid>
+          </GridContainer>
+          <GridContainer width={`calc(40% - ${GAP}px)`}>
+            <GridTitleContainer>
+              <GridTitle>LOT별 재고</GridTitle>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "350px" }}
+              data={process(
+                detailDataResult.data.map((row) => ({
+                  ...row,
+                  qtyunit: qtyunitListData.find(
+                    (item: any) => item.sub_code === row.qtyunit
+                  )?.code_name,
+                  itemacnt: itemacntListData.find(
+                    (item: any) => item.sub_code === row.itemacnt
+                  )?.code_name,
+                  [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
+                })),
+                detailDataState
+              )}
+              onDataStateChange={onDetailDataStateChange}
+              {...detailDataState}
+              //선택 subDataState
+              dataItemKey={DATA_ITEM_KEY3}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onDetailSelectionChange}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={detailDataResult.total}
+              onScroll={onDetailScrollHandler}
+              //정렬기능
+              sortable={true}
+              onSortChange={onDetailSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              //더블클릭
+              onRowDoubleClick={onRowDoubleClick}
+            >
+              <GridColumn
+                field="lotnum"
+                title="LOT NO"
+                width="150px"
+                footerCell={detailTotalFooterCell}
+              />
+              <GridColumn field="itemacnt" title="품목계정" width="120px" />
+              <GridColumn
+                field="qty"
+                title="재고량"
+                cell={NumberCell}
+                footerCell={gridSumQtyFooterCell2}
+                width="100px"
+              />
+              <GridColumn field="remark" title="비고" width="210px" />
+            </Grid>
+          </GridContainer>
+        </GridContainerWrap>
         <GridContainer>
           <GridTitleContainer>
             <ButtonContainer>

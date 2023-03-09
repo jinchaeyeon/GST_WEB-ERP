@@ -460,7 +460,7 @@ const CM_A0000W: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.ordnum]: true });
+        setSelectedState({ [firstRowData.datnum]: true });
 
         setDetailFilters((prev) => ({
           ...prev,

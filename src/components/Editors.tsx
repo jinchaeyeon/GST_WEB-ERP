@@ -261,7 +261,7 @@ export const FormReadOnlyNumberCell = (props: GridCellProps) => {
   return (
     <td className={className ?? ""} style={{ textAlign: "right" }}>
       <Field
-        component={DisplayValue}
+        component={DisplayNumberValue}
         name={`${parentField}[${dataItem[FORM_DATA_INDEX]}].${field}`}
       />
     </td>

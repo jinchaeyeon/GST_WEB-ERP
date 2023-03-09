@@ -538,7 +538,11 @@ const CopyWindow = ({
   };
 
   const onCopyWndClick = () => {
-    setCopyWindowVisible(true);
+    if(filters.custcd == ""){
+      alert("출하처코드를 선택하여 주세요.");
+    } else {
+      setCopyWindowVisible(true);
+    }
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
@@ -562,7 +566,6 @@ const CopyWindow = ({
     });
 
     if (dataItem.length === 0) return false;
-
     let seq = 1;
 
     if (mainDataResult.total > 0) {
@@ -574,13 +577,16 @@ const CopyWindow = ({
       seq++;
     }
 
-    for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
-    }
+    const rows = dataItem.map((row: any) => {
+      seq += seq + 1;
+      return {
+        ...row,
+        num: seq,
+      };
+    });
 
     try {
-      data.map((item: any) => {
+      rows.map((item: any) => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, item],
@@ -1023,7 +1029,7 @@ const CopyWindow = ({
                 onClick={onCopyWndClick}
                 icon="folder-open"
               >
-                재고참조
+                수주참조
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1139,6 +1145,8 @@ const CopyWindow = ({
           setVisible={setCopyWindowVisible}
           workType={"FILTER"}
           setData={setCopyData}
+          custcd={filters.custcd}
+          custnm={filters.custnm}
         />
       )}
       {attachmentsWindowVisible && (

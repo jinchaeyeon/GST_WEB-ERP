@@ -1238,18 +1238,6 @@ const SA_B2000: React.FC = () => {
             />
             <GridColumn field="qtyunit" title="단위" width="120px" />
             <GridColumn
-              field="specialunp"
-              title="발주단가"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="specialamt"
-              title="발주금액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
               field="unp"
               title="단가"
               width="120px"

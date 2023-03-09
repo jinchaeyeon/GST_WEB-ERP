@@ -370,7 +370,6 @@ const CopyWindow = ({
       data = null;
     }
 
-    console.log(parameters);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {

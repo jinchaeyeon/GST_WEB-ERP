@@ -57,7 +57,7 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2205W_C";
 
 const dateField = ["orddt", "dlvdt"];
-const DATA_ITEM_KEY = "ordnum";
+const DATA_ITEM_KEY = "num";
 const numberField = [
   "qty",
   "outqty",
@@ -68,6 +68,9 @@ const numberField = [
   "wonamt",
   "taxamt",
   "dlramt",
+  "wgt",
+  "totwgt",
+  "unitwgt"
 ];
 
 const SA_B2205: React.FC = () => {
@@ -94,22 +97,9 @@ const SA_B2205: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
-        cbodptcd: defaultOption.find((item: any) => item.id === "cbodptcd")
-          .valueCode,
-        cboPerson: defaultOption.find((item: any) => item.id === "cboPerson")
-          .valueCode,
         cboOrdsts: defaultOption.find((item: any) => item.id === "cboOrdsts")
           .valueCode,
         radFinyn: defaultOption.find((item: any) => item.id === "radFinyn")
-          .valueCode,
-        radOutyn: defaultOption.find((item: any) => item.id === "radOutyn")
-          .valueCode,
-        radSaleyn: defaultOption.find((item: any) => item.id === "radSaleyn")
-          .valueCode,
-        cboPosition: defaultOption.find(
-          (item: any) => item.id === "cboPosition"
-        ).valueCode,
-        cbofrdt: defaultOption.find((item: any) => item.id === "cbofrdt")
           .valueCode,
       }));
     }
@@ -117,7 +107,7 @@ const SA_B2205: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,R_FINYN, L_ORD_DATE_KIND, L_BA028,L_BA171,L_BA172,L_BA173,L_BA015,L_BA020",
+    "L_SA002,L_BA061,L_BA015,R_FINYN",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부, 수주일자/납기일자, 사업부구분, 대분류, 중분류, 소분류, 수량단위, 화폐단위
     setBizComponentData
   );
@@ -126,56 +116,21 @@ const SA_B2205: React.FC = () => {
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [usersListData, setUsersListData] = useState([
-    { user_id: "", user_name: "" },
-  ]);
-
-  const [departmentsListData, setDepartmentsListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
   const [itemacntListData, setItemacntListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [positionListData, setPositionListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [qtyunitListData, setQtyunitListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [amtunitListData, setAmtunitListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
-  const [frdtStrData, setFrdtQueryStrData] = useState([COM_CODE_DEFAULT_VALUE]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
-      );
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
       const ordstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
-      );
-      const departmentQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
@@ -183,36 +138,11 @@ const SA_B2205: React.FC = () => {
       const finynQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "R_FINYN")
       );
-      const frdtQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_ORD_DATE_KIND"
-        )
-      );
-      const positionQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA028")
-      );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
-      );
 
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
-      fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(departmentQueryStr, setDepartmentsListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(frdtQueryStr, setFrdtQueryStrData);
       fetchQuery(finynQueryStr, setFinynListData);
-      fetchQuery(positionQueryStr, setPositionListData);
     }
   }, [bizComponentData]);
 
@@ -300,73 +230,43 @@ const SA_B2205: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    cbofrdt: "",
+    location: "01",
     ymdFrdt: new Date(),
     ymdTodt: new Date(),
-    ordnum: "",
-    cboItemacnt: "",
-    radFinyn: "%",
-    lotnum: "",
-    cboPerson: "",
-    cboLocation: "01",
-    cboPosition: "",
-    custcd: "",
-    custnm: "",
     itemcd: "",
     itemnm: "",
-    cboOrdsts: "",
+    cboItemacnt: "",
     poregnum: "",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
+    radFinyn: "%",
+    cboOrdsts: "",
+    custcd: "",
+    custnm: "",
     project: "",
-    radOutyn: "%",
-    radSaleyn: "%",
-    bnatur: "",
-    insiz: "",
-    spec: "",
-    cbodptcd: "",
-  });
-
-  const [detailFilters, setDetailFilters] = useState({
-    pgSize: PAGE_SIZE,
     ordnum: "",
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_SA_B2205W_Q",
+    procedureName: "P_SA_B2200W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "Q",
+      "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.cboLocation,
-      "@p_position": filters.cboPosition,
+      "@p_location": filters.location,
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
       "@p_itemacnt": filters.cboItemacnt,
-      "@p_dtgb": "A",
       "@p_frdt": convertDateToStr(filters.ymdFrdt),
       "@p_todt": convertDateToStr(filters.ymdTodt),
       "@p_ordsts": filters.cboOrdsts,
       "@p_finyn": filters.radFinyn,
       "@p_ordnum": filters.ordnum,
-      "@p_lotnum": filters.lotnum,
       "@p_poregnum": filters.poregnum,
-      "@p_itemlvl1": filters.itemlvl1,
       "@p_project": filters.project,
-      "@p_outyn": filters.radOutyn,
-      "@p_saleyn": filters.radSaleyn,
-      "@p_bnatur": filters.bnatur,
-      "@p_insiz": filters.insiz,
-      "@p_spec": filters.spec,
-      "@p_itemlvl2": filters.itemlvl2,
-      "@p_itemlvl3": filters.itemlvl3,
-      "@p_person": filters.cboPerson,
-      "@p_dptcd": filters.cbodptcd,
+      "@p_company_code": "2207A046"
     },
   };
 
@@ -380,15 +280,15 @@ const SA_B2205: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+  
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -419,13 +319,7 @@ const SA_B2205: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.ordnum]: true });
-
-        setDetailFilters((prev) => ({
-          ...prev,
-          location: firstRowData.location,
-          ordnum: firstRowData.ordnum,
-        }));
+        setSelectedState({ [firstRowData.num]: true });
 
         setIfSelectFirstRow(true);
       }
@@ -435,9 +329,7 @@ const SA_B2205: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
-    setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -451,12 +343,6 @@ const SA_B2205: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
-    setDetailFilters((prev) => ({
-      ...prev,
-      location: selectedRowData.location,
-      ordnum: selectedRowData.ordnum,
-    }));
   };
 
   //엑셀 내보내기
@@ -588,18 +474,9 @@ const SA_B2205: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>일자</th>
+              <th>수주일자</th>
               <td colSpan={3}>
                 <div className="filter-item-wrap">
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="cbofrdt"
-                      value={filters.cbofrdt}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      className="required"
-                    />
-                  )}
                   <DatePicker
                     name="ymdFrdt"
                     value={filters.ymdFrdt}
@@ -619,97 +496,6 @@ const SA_B2205: React.FC = () => {
                   />
                 </div>
               </td>
-
-              <th>수주번호</th>
-              <td>
-                <Input
-                  name="ordnum"
-                  type="text"
-                  value={filters.ordnum}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>품목계정</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboItemacnt"
-                    value={filters.cboItemacnt}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>완료여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="radFinyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-
-            <tr>
-              <th>업체</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={filters.custcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onCustWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>업체명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>PO번호</th>
-              <td>
-                <Input
-                  name="poregnum"
-                  type="text"
-                  value={filters.poregnum}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>수주상태</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboOrdsts"
-                    value={filters.cboOrdsts}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>출하여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="radOutyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
               <th>품목</th>
               <td>
                 <Input
@@ -735,6 +521,74 @@ const SA_B2205: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
+              <th>품목계정</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="cboItemacnt"
+                    value={filters.cboItemacnt}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>PO번호</th>
+              <td>
+                <Input
+                  name="poregnum"
+                  type="text"
+                  value={filters.poregnum}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>완료여부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="radFinyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
+              <th>수주상태</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="cboOrdsts"
+                    value={filters.cboOrdsts}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>업체</th>
+              <td>
+                <Input
+                  name="custcd"
+                  type="text"
+                  value={filters.custcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onCustWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>업체명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
+                  onChange={filterInputChange}
+                />
+              </td>
               <th>프로젝트</th>
               <td>
                 <Input
@@ -744,79 +598,12 @@ const SA_B2205: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>사업부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboPosition"
-                    value={filters.cboPosition}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>사업여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="radSaleyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>LOT NO</th>
+              <th>수주번호</th>
               <td>
                 <Input
-                  name="lotnum"
+                  name="ordnum"
                   type="text"
-                  value={filters.lotnum}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>담당자</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboPerson"
-                    value={filters.cboPerson}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="user_name"
-                    valueField="user_id"
-                  />
-                )}
-              </td>
-              <th>재질</th>
-              <td>
-                <Input
-                  name="bnatur"
-                  type="text"
-                  value={filters.bnatur}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>담당부서</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cbodptcd"
-                    value={filters.cbodptcd}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="dptnm"
-                    valueField="dptcd"
-                  />
-                )}
-              </td>
-              <th>사양</th>
-              <td>
-                <Input
-                  name="spec"
-                  type="text"
-                  value={filters.spec}
+                  value={filters.ordnum}
                   onChange={filterInputChange}
                 />
               </td>
@@ -843,29 +630,11 @@ const SA_B2205: React.FC = () => {
                 ordsts: ordstsListData.find(
                   (item: any) => item.sub_code === row.ordsts
                 )?.code_name,
-                person: usersListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
-                finyn: finynListData.find(
-                  (item: any) => item.code === row.finyn
-                )?.name,
-                dptcd: departmentsListData.find(
-                  (item: any) => item.dptcd === row.dptcd
-                )?.dptnm,
-                itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
-                )?.code_name,
-                itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
-                )?.code_name,
-                itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
+                itemacnt: itemacntListData.find(
+                  (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.qtyunit
-                )?.code_name,
-                amtunit: amtunitListData.find(
-                  (item: any) => item.sub_code === row.amtunit
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -910,7 +679,7 @@ const SA_B2205: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.fieldName == "dlvdt"
+                        item.fieldName == "ordkey"
                           ? mainTotalFooterCell
                           : undefined
                       }
@@ -935,7 +704,6 @@ const SA_B2205: React.FC = () => {
           setData={setItemData}
         />
       )}
-
       {gridList.map((grid: any) =>
         grid.columns.map((column: any) => (
           <div

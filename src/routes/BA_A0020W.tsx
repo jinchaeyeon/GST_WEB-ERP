@@ -2753,7 +2753,7 @@ const BA_A0020: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>단가항목</th>
+                      <th>매출단가항목</th>
                       <td>
                         {bizComponentData !== null && (
                           <BizComponentComboBox

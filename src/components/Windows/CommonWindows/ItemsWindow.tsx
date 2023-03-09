@@ -29,6 +29,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
+import {handleKeyPressSearch} from "../../CommonFunction"
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
@@ -229,6 +230,11 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
     );
   };
 
+  const search = () => {
+    resetAllGrid();
+    fetchMainGrid();
+  }
+  
   return (
     <Window
       title={"품목마스터"}
@@ -254,7 +260,7 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>품목코드</th>
