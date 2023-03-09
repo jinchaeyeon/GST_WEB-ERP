@@ -389,7 +389,7 @@ const PR_A5000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -397,7 +397,7 @@ const PR_A5000W: React.FC = () => {
       if (totalRowCnt > 0)
         setBarcodeDateResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, rows],
             total: totalRowCnt,
           };
         });
@@ -848,11 +848,13 @@ const PR_A5000W: React.FC = () => {
       fetchBarcordGrid();
     }
   }, [barcodeFilters]);
+
   const [barcodeWindowVisible, setBarcodeWindowVisible] =
     useState<boolean>(false);
   const onBarcodeWndClick = () => {
     setBarcodeWindowVisible(true);
   };
+
 
   const onPrint = () => {
     let arr: any = [];
@@ -870,8 +872,6 @@ const PR_A5000W: React.FC = () => {
     try {
       if (datas == null || datas == undefined) {
         throw findMessage(messagesData, "PR_A5000W_001");
-      } else if (datas.length != 1) {
-        throw findMessage(messagesData, "PR_A5000W_002");
       } else {
         onBarcodeWndClick();
       }
@@ -879,6 +879,7 @@ const PR_A5000W: React.FC = () => {
       alert(e);
     }
   };
+
   return (
     <>
       <TitleContainer>
@@ -1166,7 +1167,7 @@ const PR_A5000W: React.FC = () => {
       {barcodeWindowVisible && (
         <BarcodeWindow
           setVisible={setBarcodeWindowVisible}
-          data={barcodeDataResult.data[0]}
+          data={barcodeDataResult.data}
         />
       )}
       {gridList.map((grid: any) =>

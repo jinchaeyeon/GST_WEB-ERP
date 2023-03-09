@@ -69,52 +69,52 @@ const CopyWindow = ({ setVisible, data }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
+        <ButtonContainer>
+          <ReactToPrint
+            trigger={() => (
+              <Button fillMode="outline" themeColor={"primary"} icon="print">
+                출력
+              </Button>
+            )}
+            content={() => componentRef.current}
+          />
+        </ButtonContainer>
+        <div id="BarcodePrint" className="printable barcode" ref={componentRef}>
+          <table style={{ width: "650px" }}>
+            <tbody>
+              <tr>
+                <th>입고일자</th>
+                <td>{data.indt}</td>
+                <th>품목계정</th>
+                <td>{data.itemacnt}</td>
+              </tr>
+              <tr>
+                <th>품명</th>
+                <td colSpan={3}>{data.itemnm}</td>
+              </tr>
+              <tr>
+                <th>규격</th>
+                <td>{data.insiz}</td>
+                <th>수량</th>
+                <td>{data.qty}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table style={{ width: "650px" }}>
+            <tbody>
+              <tr>
+                <th>바코드</th>
+              </tr>
+              <tr>
+                <td>
+                  <Barcode type="Code128" width={630} value={data.barcode} />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <BottomContainer>
           <ButtonContainer>
-            <ReactToPrint
-              trigger={() => (
-                <Button fillMode="outline" themeColor={"primary"} icon="print">
-                  출력
-                </Button>
-              )}
-              content={() => componentRef.current}
-            />
-          </ButtonContainer>
-          <div
-            id="BarcodePrint"
-            className="printable barcode"
-            ref={componentRef}
-          >
-            <table style={{width: "650px"}}>
-              <tbody>
-                <tr>
-                  <th>입고일자</th>
-                  <th>품목계정</th>
-                  <th>품명</th>
-                  <th>규격</th>
-                  <th>수량</th>
-                </tr>
-                <tr>
-                  <td>{data.indt}</td>
-                  <td>{data.itemacnt}</td>
-                  <td>{data.itemnm}</td>
-                  <td>{data.insiz}</td>
-                  <td>{data.qty}</td>
-                </tr>
-              </tbody>
-            </table>
-            <table style={{width: "650px"}}>
-              <tbody>
-                <tr>
-                  <th>바코드</th>
-                </tr>
-                <tr>
-                  <td><Barcode type="Code128" width={630} value={data.barcode} /></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <BottomContainer>
-           <ButtonContainer>
             <Button
               themeColor={"primary"}
               fillMode={"outline"}

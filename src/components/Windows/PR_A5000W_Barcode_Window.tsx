@@ -21,14 +21,19 @@ import ReactToPrint from "react-to-print";
 
 type barcode = {
   barcode: string;
+  chk: string;
+  custnm: string;
+  itemcd: string;
   itemnm: string;
   insiz: string;
   lotnum: string;
+  ordkey: string;
+  project: string;
   qty: string;
 };
 
 type IWindow = {
-  data: barcode;
+  data: barcode[];
   setVisible(t: boolean): void;
 };
 
@@ -67,55 +72,65 @@ const CopyWindow = ({ setVisible, data }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
       >
+        <ButtonContainer>
+          <ReactToPrint
+            trigger={() => (
+              <Button fillMode="outline" themeColor={"primary"} icon="print">
+                출력
+              </Button>
+            )}
+            content={() => componentRef.current}
+          />
+        </ButtonContainer>
+        <div id="BarcodePrint" className="printable barcode" ref={componentRef}>
+          {data != null &&
+            data.map((item: any) => (
+              <div
+                key={item[0].ordkey}
+                style={{marginBottom: "10px"}}
+              >
+                <table style={{ width: "650px" }}>
+                  <tbody>
+                    <tr>
+                      <th>품명</th>
+                      <td colSpan={2}>{item[0].itemnm}</td>
+                    </tr>
+                    <tr>
+                      <th>규격</th>
+                      <td colSpan={2}>{item[0].insiz}</td>
+                    </tr>
+                    <tr>
+                      <th>LOT NO</th>
+                      <td>{item[0].lotnum}</td>
+                      <td>{item[0].qty}</td>
+                    </tr>
+                    <tr>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table style={{ width: "650px" }}>
+                  <tbody>
+                    <tr>
+                      <th>바코드</th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <Barcode
+                          type="Code128"
+                          width={630}
+                          value={item[0].barcode}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ))}
+        </div>
+        <BottomContainer>
           <ButtonContainer>
-            <ReactToPrint
-              trigger={() => (
-                <Button fillMode="outline" themeColor={"primary"} icon="print">
-                  출력
-                </Button>
-              )}
-              content={() => componentRef.current}
-            />
-          </ButtonContainer>
-          <div
-            id="BarcodePrint"
-            className="printable barcode"
-            ref={componentRef}
-          >
-            <table style={{width: "650px"}}>
-              <tbody>
-                <tr>
-                  <th>품명</th>
-                  <td colSpan={2}>{data.itemnm}</td>
-                </tr>
-                <tr>
-                  <th>규격</th>
-                  <td colSpan={2}>{data.insiz}</td>
-                </tr>
-                <tr>
-                  <th>LOT NO</th>
-                  <td>{data.lotnum}</td>
-                  <td>{data.qty}</td>
-                </tr>
-                <tr>
-                  <th></th>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-            <table style={{width: "650px"}}>
-              <tbody>
-                <tr>
-                  <th>바코드</th>
-                </tr>
-                <tr>
-                  <td><Barcode type="Code128" width={630} value={data.barcode} /></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>  
-          <BottomContainer>
-           <ButtonContainer>
             <Button
               themeColor={"primary"}
               fillMode={"outline"}
