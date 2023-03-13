@@ -149,7 +149,7 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
   const excelInput: any = React.useRef();
 
   const upload = () => {
-    const uploadInput = document.getElementById("upload");
+    const uploadInput = document.getElementById("uploadAttachment");
     uploadInput!.click();
   };
 
@@ -299,7 +299,7 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
           >
             업로드
             <input
-              id="upload"
+              id="uploadAttachment"
               style={{ display: "none" }}
               type="file"
               multiple
