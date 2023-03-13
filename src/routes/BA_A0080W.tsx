@@ -1063,7 +1063,6 @@ const BA_A0080: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log(paraData.itemcd)
     if (paraData.itemcd != "") {
       fetchTodoGridSaved();
     }
@@ -1092,53 +1091,71 @@ const BA_A0080: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
-    let dataArr: TdataArr = {
-      unpitem: [],
-      rowstatus: [],
-      itemcd: [],
-      unp: [],
-      itemacnt: [],
-      remark: [],
-      recdt: [],
-      amtunit: [],
-    };
-    jsonArr.forEach((item: any, idx: number) => {
-      const {
-        unpitem = "",
-        품목코드 = "",
-        품목명 = "",
-        단가 = "",
-        비고 = "",
-        itemacnt = "",
-        recdt = "",
-        amtunit = "",
-      } = item;
-      
-      dataArr.rowstatus.push("N");
-      dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
-      dataArr.itemcd.push(품목코드);
-      dataArr.unp.push(단가);
-      dataArr.itemacnt.push(itemacnt == "" ? Object.getOwnPropertyNames(selectedsubDataState)[0] : itemacnt);
-      dataArr.remark.push(비고);
-      dataArr.recdt.push(recdt == "" ? convertDateToStr(new Date()) : recdt);
-      dataArr.amtunit.push(amtunit == "" ? filters.amtunit : amtunit);
-    });
-    setParaData((prev) => ({
-      ...prev,
-      workType: "",
-      orgdiv: "01",
-      user_id: userId,
-      form_id: "BA_A0080W",
-      pc: pc,
-      unpitem: dataArr.unpitem.join("|"),
-      rowstatus: dataArr.rowstatus.join("|"),
-      itemcd: dataArr.itemcd.join("|"),
-      unp: dataArr.unp.join("|"),
-      itemacnt: dataArr.itemacnt.join("|"),
-      remark: dataArr.remark.join("|"),
-      recdt: dataArr.recdt.join("|"),
-      amtunit: dataArr.amtunit.join("|"),
-    }));
+    if(jsonArr.length == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      let valid = true;
+
+      jsonArr.map((item: any) => {
+        Object.keys(item).map((items: any) => {
+          if(items != "단가" && items != "비고" && items != "품목명" && items != "품목코드"){
+            valid = false;
+          }
+        })
+      })
+
+      if(valid == true){
+        let dataArr: TdataArr = {
+          unpitem: [],
+          rowstatus: [],
+          itemcd: [],
+          unp: [],
+          itemacnt: [],
+          remark: [],
+          recdt: [],
+          amtunit: [],
+        };
+        jsonArr.forEach((item: any, idx: number) => {
+          const {
+            unpitem = "",
+            품목코드 = "",
+            품목명 = "",
+            단가 = "",
+            비고 = "",
+            itemacnt = "",
+            recdt = "",
+            amtunit = "",
+          } = item;
+          
+          dataArr.rowstatus.push("N");
+          dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
+          dataArr.itemcd.push(품목코드);
+          dataArr.unp.push(단가);
+          dataArr.itemacnt.push(itemacnt == "" ? Object.getOwnPropertyNames(selectedsubDataState)[0] : itemacnt);
+          dataArr.remark.push(비고);
+          dataArr.recdt.push(recdt == "" ? convertDateToStr(new Date()) : recdt);
+          dataArr.amtunit.push(amtunit == "" ? filters.amtunit : amtunit);
+        });
+        setParaData((prev) => ({
+          ...prev,
+          workType: "",
+          orgdiv: "01",
+          user_id: userId,
+          form_id: "BA_A0080W",
+          pc: pc,
+          unpitem: dataArr.unpitem.join("|"),
+          rowstatus: dataArr.rowstatus.join("|"),
+          itemcd: dataArr.itemcd.join("|"),
+          unp: dataArr.unp.join("|"),
+          itemacnt: dataArr.itemacnt.join("|"),
+          remark: dataArr.remark.join("|"),
+          recdt: dataArr.recdt.join("|"),
+          amtunit: dataArr.amtunit.join("|"),
+        }));
+      } else {
+        alert("양식이 맞지 않습니다.")
+      }    
+    }
   };
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -1467,7 +1484,7 @@ const BA_A0080: React.FC = () => {
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
-          para={""}
+          para={"BA_A0080W"}
         />
       )}
     </>

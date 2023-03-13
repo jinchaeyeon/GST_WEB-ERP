@@ -1903,23 +1903,22 @@ const MA_A2700W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
             <ButtonContainer>
-              {permissions && (
+              {/* {permissions && (
                 <ExcelUploadButtons
                   saveExcel={saveExcel}
                   permissions={permissions}
-                  style={{ marginLeft: "15px" }}
+                  style={{ marginLeft: "0px" }}
                 />
               )}
               <Button
-                    title="Export Excel"
-                    onClick={onAttachmentsWndClick}
-                    icon="file"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    style={{ marginLeft: "10px" }}
-                  >
-                    엑셀양식
-                  </Button>
+                title="Export Excel"
+                onClick={onAttachmentsWndClick}
+                icon="file"
+                fillMode="outline"
+                themeColor={"primary"}
+              >
+                엑셀양식
+              </Button> */}
               <Button
                 onClick={onAddClick}
                 themeColor={"primary"}
@@ -2163,7 +2162,7 @@ const MA_A2700W: React.FC = () => {
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
-          para={""}
+          para={"MA_A2700W"}
         />
       )}
     </>
