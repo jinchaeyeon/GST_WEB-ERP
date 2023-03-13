@@ -1430,7 +1430,7 @@ const MA_A2400W: React.FC = () => {
   const onAddClick = () => {
     let seq = 1;
     let valid = 0;
-    let arr: any = [];
+
     if (subDataResult2.total > 0) {
       subDataResult2.data.forEach((item) => {
         if (item[DATA_ITEM_KEY] > seq) {
@@ -1440,14 +1440,8 @@ const MA_A2400W: React.FC = () => {
       seq++;
     }
 
-    for (const [key, value] of Object.entries(selectedSubState)) {
-      if (value == true) {
-        arr.push(parseInt(key));
-      }
-    }
-
     const selectRows = subDataResult.data.filter(
-      (item: any) => arr.includes(item.num) == true
+      (item: any) => item.chk == true
     );
     selectRows.map((item) => {
       if (item.doqty == 0) {
@@ -1459,11 +1453,12 @@ const MA_A2400W: React.FC = () => {
 
     if (valid == 0) {
       const newData = subDataResult.data.map((item) =>
-        arr.includes(item.num) == true
+        item.chk == true
           ? {
               ...item,
               now_qty: item.now_qty - item.doqty,
               doqty: 0,
+              chk: false,
             }
           : {
               ...item,
@@ -1518,7 +1513,6 @@ const MA_A2400W: React.FC = () => {
   const onAddClick2 = () => {
     let seq = 1;
     let valid = true;
-    let arr: any = [];
     if (subDataResult2.total > 0) {
       subDataResult2.data.forEach((item) => {
         if (item[DATA_ITEM_KEY] > seq) {
@@ -1528,14 +1522,8 @@ const MA_A2400W: React.FC = () => {
       seq++;
     }
 
-    for (const [key, value] of Object.entries(selectedBOMState2)) {
-      if (value == true) {
-        arr.push(parseInt(key));
-      }
-    }
-
     const selectRows = BOMDataResult2.data.filter(
-      (item: any) => arr.includes(item.num) == true
+      (item: any) => item.chk == true
     );
     selectRows.map((item) => {
       if (item.doqty == 0 || item.doqty > item.now_qty) {
@@ -1545,11 +1533,12 @@ const MA_A2400W: React.FC = () => {
 
     if (valid == true) {
       const newData = BOMDataResult2.data.map((item) =>
-        arr.includes(item.num) == true
+      item.chk == true
           ? {
               ...item,
               now_qty: item.now_qty - item.doqty,
               doqty: 0,
+              chk: false,
             }
           : {
               ...item,
@@ -1982,6 +1971,7 @@ const MA_A2400W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
+      setIfSelectFirstRow(true);
       fetchSubGrid();
       fetchMainGrid();
       fetchSubGrid2();
