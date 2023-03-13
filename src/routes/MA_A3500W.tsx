@@ -2073,7 +2073,7 @@ const MA_A2400W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field == "doqty") {
+    if (field == "doqty" || field == "chk") {
       const newData = subDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -2098,7 +2098,7 @@ const MA_A2400W: React.FC = () => {
   };
 
   const enterEdit2 = (dataItem: any, field: string) => {
-    if (field == "doqty") {
+    if (field == "doqty" || field == "chk") {
       const newData = BOMDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {

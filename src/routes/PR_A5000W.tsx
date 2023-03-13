@@ -9,6 +9,8 @@ import {
   getSelectedState,
   GridFooterCellProps,
   GridHeaderSelectionChangeEvent,
+  GridItemChangeEvent,
+  GridHeaderCellProps
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -43,7 +45,9 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
   findMessage,
+  getGridItemChangedData
 } from "../components/CommonFunction";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -52,12 +56,15 @@ import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
+  EDIT_FIELD
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import { Checkbox } from "@progress/kendo-react-inputs";
 
 const DATA_ITEM_KEY = "num";
 const dateField = ["indt"];
@@ -437,7 +444,7 @@ const PR_A5000W: React.FC = () => {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow(false);
       }
     }
   }, [mainDataResult]);
@@ -459,6 +466,131 @@ const PR_A5000W: React.FC = () => {
     }
   }, [detailDataResult]);
 
+  const onItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
+  const customCellRender3 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender3 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+  const enterEdit3 = (dataItem: any, field: string) => {
+    if (field == "chk") {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              chk: typeof item.chk == "boolean" ? item.chk : false,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+  const exitEdit3 = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const onItemChange2 = (event: GridItemChangeEvent) => {
+    setDetailDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      detailDataResult,
+      setDetailDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+  const enterEdit2 = (dataItem: any, field: string) => {
+    if (field == "chk") {
+      const newData = detailDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              chk: typeof item.chk == "boolean" ? item.chk : false,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+  const exitEdit2 = () => {
+    const newData = detailDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setDetailDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
@@ -879,7 +1011,54 @@ const PR_A5000W: React.FC = () => {
       alert(e);
     }
   };
+  const [values, setValues] = React.useState<boolean>(false);
+  const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        chk: !values,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues(!values);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
 
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  
+  const [values2, setValues2] = React.useState<boolean>(false);
+  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = detailDataResult.data.map((item) => ({
+        ...item,
+        chk: !values2,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues2(!values2);
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
   return (
     <>
       <TitleContainer>
@@ -956,6 +1135,7 @@ const PR_A5000W: React.FC = () => {
                 prodmac: fxListData.find(
                   (item: any) => item.fxcode === row.prodmac
                 )?.fxfull,
+                chk: row.chk == "" ? false : row.chk,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -982,15 +1162,17 @@ const PR_A5000W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            onItemChange={onItemChange}
+            cellRender={customCellRender3}
+            rowRender={customRowRender3}
+            editField={EDIT_FIELD}
           >
-            <GridColumn
-              field={SELECTED_FIELD}
+           <GridColumn
+              field="chk"
+              title=" "
               width="45px"
-              headerSelectionValue={
-                mainDataResult.data.findIndex(
-                  (item: any) => !selectedState[idGetter(item)]
-                ) === -1
-              }
+              headerCell={CustomCheckBoxCell}
+              cell={CheckBoxCell}
             />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -1087,6 +1269,7 @@ const PR_A5000W: React.FC = () => {
               unpcalmeth: unpcalmethListData.find(
                 (item: any) => item.sub_code === row.unpcalmeth
               )?.code_name,
+              chk: row.chk == "" ? false : row.chk,
               [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
             })),
             detailDataState
@@ -1112,16 +1295,18 @@ const PR_A5000W: React.FC = () => {
           reorderable={true}
           //컬럼너비조정
           resizable={true}
+          onItemChange={onItemChange2}
+          cellRender={customCellRender2}
+          rowRender={customRowRender2}
+          editField={EDIT_FIELD}
         >
-          <GridColumn
-            field={SELECTED_FIELD}
-            width="45px"
-            headerSelectionValue={
-              detailDataResult.data.findIndex(
-                (item: any) => !detailSelectedState[idGetter(item)]
-              ) === -1
-            }
-          />
+         <GridColumn
+              field="chk"
+              title=" "
+              width="45px"
+              headerCell={CustomCheckBoxCell2}
+              cell={CheckBoxCell}
+            />
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList2"].map(
               (item: any, idx: number) =>

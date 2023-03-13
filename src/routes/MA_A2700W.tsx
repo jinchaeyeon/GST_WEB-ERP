@@ -14,7 +14,9 @@ import { gridList } from "../store/columns/MA_A2700W_C";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
+import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
   Title,
   FilterBoxWrap,
@@ -1638,6 +1640,62 @@ const MA_A2700W: React.FC = () => {
     }
   };
 
+  const saveExcel = (jsonArr: any[]) => {
+    console.log(jsonArr);
+
+    // let dataArr: TdataArr = {
+    //   unpitem: [],
+    //   rowstatus: [],
+    //   itemcd: [],
+    //   unp: [],
+    //   itemacnt: [],
+    //   remark: [],
+    //   recdt: [],
+    //   amtunit: [],
+    // };
+    // jsonArr.forEach((item: any, idx: number) => {
+    //   const {
+    //     unpitem = "",
+    //     품목코드 = "",
+    //     품목명 = "",
+    //     단가 = "",
+    //     비고 = "",
+    //     itemacnt = "",
+    //     recdt = "",
+    //     amtunit = "",
+    //   } = item;
+
+    //   dataArr.rowstatus.push("N");
+    //   dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
+    //   dataArr.itemcd.push(품목코드);
+    //   dataArr.unp.push(단가);
+    //   dataArr.itemacnt.push(itemacnt == "" ? Object.getOwnPropertyNames(selectedsubDataState)[0] : itemacnt);
+    //   dataArr.remark.push(비고);
+    //   dataArr.recdt.push(recdt == "" ? convertDateToStr(new Date()) : recdt);
+    //   dataArr.amtunit.push(amtunit == "" ? filters.amtunit : amtunit);
+    // });
+    // setParaData((prev) => ({
+    //   ...prev,
+    //   workType: "",
+    //   orgdiv: "01",
+    //   user_id: userId,
+    //   form_id: "BA_A0080W",
+    //   pc: pc,
+    //   unpitem: dataArr.unpitem.join("|"),
+    //   rowstatus: dataArr.rowstatus.join("|"),
+    //   itemcd: dataArr.itemcd.join("|"),
+    //   unp: dataArr.unp.join("|"),
+    //   itemacnt: dataArr.itemacnt.join("|"),
+    //   remark: dataArr.remark.join("|"),
+    //   recdt: dataArr.recdt.join("|"),
+    //   amtunit: dataArr.amtunit.join("|"),
+    // }));
+  };
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
   return (
     <>
       <TitleContainer>
@@ -1845,6 +1903,23 @@ const MA_A2700W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
             <ButtonContainer>
+              {permissions && (
+                <ExcelUploadButtons
+                  saveExcel={saveExcel}
+                  permissions={permissions}
+                  style={{ marginLeft: "15px" }}
+                />
+              )}
+              <Button
+                    title="Export Excel"
+                    onClick={onAttachmentsWndClick}
+                    icon="file"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    엑셀양식
+                  </Button>
               <Button
                 onClick={onAddClick}
                 themeColor={"primary"}
@@ -2084,6 +2159,12 @@ const MA_A2700W: React.FC = () => {
             hidden
           />
         ))
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          para={""}
+        />
       )}
     </>
   );

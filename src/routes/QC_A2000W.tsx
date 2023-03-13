@@ -16,6 +16,7 @@ import {
   GridFooterCellProps,
   GridCellProps,
   GridItemChangeEvent,
+  GridHeaderCellProps,
   GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -47,6 +48,7 @@ import {
   Input,
   TextArea,
   InputChangeEvent,
+  Checkbox,
 } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
@@ -84,6 +86,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
 
@@ -1232,12 +1235,13 @@ const QC_A2000: React.FC = () => {
     }
   };
   const enterEdit3 = (dataItem: any, field: string) => {
-    if (field == "doqty" || field == "remark" || field == " files") {
+    if (field == "doqty" || field == "remark" || field == " files" || field == "chk") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
+              chk: typeof item.chk == "boolean" ? item.chk : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -1608,6 +1612,30 @@ const QC_A2000: React.FC = () => {
     });
   }, [attdatnum, files]);
 
+  const [values, setValues] = React.useState<boolean>(false);
+  const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        chk: !values,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues(!values);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1833,6 +1861,7 @@ const QC_A2000: React.FC = () => {
                           row.rowstatus == undefined
                             ? ""
                             : row.rowstatus,
+                        chk: row.chk == "" ? false : row.chk,
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
                       })),
                       mainDataState
@@ -1865,14 +1894,12 @@ const QC_A2000: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     <GridColumn
-                      field={SELECTED_FIELD}
-                      width="45px"
-                      headerSelectionValue={
-                        mainDataResult.data.findIndex(
-                          (item: any) => !selectedState[idGetter(item)]
-                        ) === -1
-                      }
-                    />
+              field="chk"
+              title=" "
+              width="45px"
+              headerCell={CustomCheckBoxCell}
+              cell={CheckBoxCell}
+            />
                     <GridColumn title="검사입력정보">
                       {createColumn()}
                     </GridColumn>
