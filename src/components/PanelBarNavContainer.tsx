@@ -6,19 +6,17 @@ import {
 } from "@progress/kendo-react-layout";
 import { useLocation, withRouter } from "react-router-dom";
 import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import {
-  isLoading,
-  isMenuOpendState,
+  isMobileMenuOpendState,
   menusState,
   passwordExpirationInfoState,
-  sessionItemState,
   loginResultState,
+  isMenuOpendState,
 } from "../store/atoms";
 import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
 import ChangePasswordWindow from "./Windows/CommonWindows/ChangePasswordWindow";
 import SystemOptionWindow from "./Windows/CommonWindows/SystemOptionWindow";
-import { CLIENT_WIDTH } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { Iparameters, TLogParaVal, TPath } from "../store/types";
 import Loading from "./Loading";
@@ -33,12 +31,7 @@ import {
   TopTitle,
   Wrapper,
 } from "../CommonStyled";
-import {
-  getBrowser,
-  getToday,
-  resetLocalStorage,
-  UseGetIp,
-} from "./CommonFunction";
+import { getBrowser, resetLocalStorage, UseGetIp } from "./CommonFunction";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -51,6 +44,9 @@ const PanelBarNavContainer = (props: any) => {
     if (token === null) fetchMenus();
   }, [token]);
   const [menus, setMenus] = useRecoilState(menusState);
+  const [isMobileMenuOpend, setIsMobileMenuOpend] = useRecoilState(
+    isMobileMenuOpendState
+  );
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
@@ -60,8 +56,6 @@ const PanelBarNavContainer = (props: any) => {
 
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
-  const setSessionItem = useSetRecoilState(sessionItemState);
-  const setLoading = useSetRecoilState(isLoading);
 
   const [ip, setIp] = useState(null);
   UseGetIp(setIp);
@@ -109,6 +103,9 @@ const PanelBarNavContainer = (props: any) => {
   }, [menus]);
 
   useEffect(() => {
+    // console.log("caches" in window);
+    // console.log(window.caches);
+
     checkPwExpInfo();
   }, []);
 
@@ -201,7 +198,7 @@ const PanelBarNavContainer = (props: any) => {
     props.history.push(route);
 
     if (route) {
-      setIsMenuOpend(false);
+      setIsMobileMenuOpend(false);
       setUserOptionsWindowVisible(false);
       setChangePasswordWindowVisible(false);
       setSystemOptionWindowVisible(false);
@@ -331,7 +328,7 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   const onMenuBtnClick = () => {
-    setIsMenuOpend((prev) => !prev);
+    setIsMobileMenuOpend((prev) => !prev);
   };
 
   const onClickChatbot = () => {
@@ -399,107 +396,126 @@ const PanelBarNavContainer = (props: any) => {
   const singleMenus = ["/Home", "/GANTT", "/WORD_EDITOR"];
 
   return (
-    <Wrapper isMenuOpend={isMenuOpend}>
-      <Modal isMenuOpend={isMenuOpend} onClick={onMenuBtnClick} />
-      <Gnv isMenuOpend={isMenuOpend}>
-        <AppName>
-          <Logo size="32px" />
-          GST ERP
-        </AppName>
-        {paths.length > 0 && (
-          <PanelBar
-            selected={selected}
-            expandMode={"single"}
-            onSelect={onSelect}
-          >
-            {panelBars.map((path: TPath, idx: number) => {
-              return singleMenus.includes(path.path) ? (
-                <PanelBarItem
-                  key={idx}
-                  title={path.menuName}
-                  route={path.path}
-                />
-              ) : (
-                <PanelBarItem
-                  key={idx}
-                  title={path.menuName}
-                  icon={path.menuId === "setting" ? "gear" : undefined}
-                >
-                  {paths
-                    .filter(
-                      (childPath: TPath) =>
-                        childPath.menuCategory === "WEB" &&
-                        childPath.parentMenuId === path.menuId
-                    )
-                    .map((childPath: TPath, childIdx: number) => (
-                      <PanelBarItem
-                        key={childIdx}
-                        title={childPath.menuName}
-                        route={
-                          path.menuId === "setting" ? undefined : childPath.path
-                        }
-                        className={childPath.menuId}
-                      />
-                    ))}
-                </PanelBarItem>
-              );
-            })}
-          </PanelBar>
-        )}
+    <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
+      <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
+      {isMenuOpend ? (
+        <Gnv isMobileMenuOpend={isMobileMenuOpend}>
+          <AppName onClick={() => setIsMenuOpend(false)}>
+            <Logo size="32px" />
+            GST ERP
+          </AppName>
+          {paths.length > 0 && (
+            <PanelBar
+              selected={selected}
+              expandMode={"single"}
+              onSelect={onSelect}
+            >
+              {panelBars.map((path: TPath, idx: number) => {
+                return singleMenus.includes(path.path) ? (
+                  <PanelBarItem
+                    key={idx}
+                    title={path.menuName}
+                    route={path.path}
+                  />
+                ) : (
+                  <PanelBarItem
+                    key={idx}
+                    title={path.menuName}
+                    icon={path.menuId === "setting" ? "gear" : undefined}
+                  >
+                    {paths
+                      .filter(
+                        (childPath: TPath) =>
+                          childPath.menuCategory === "WEB" &&
+                          childPath.parentMenuId === path.menuId
+                      )
+                      .map((childPath: TPath, childIdx: number) => (
+                        <PanelBarItem
+                          key={childIdx}
+                          title={childPath.menuName}
+                          route={
+                            path.menuId === "setting"
+                              ? undefined
+                              : childPath.path
+                          }
+                          className={childPath.menuId}
+                        />
+                      ))}
+                  </PanelBarItem>
+                );
+              })}
+            </PanelBar>
+          )}
 
-        {/* GST */}
-        {/* {companyCode === "2207C612" && (
-          <PanelBar
-            selected={selected}
-            expandMode={"single"}
-            onSelect={onSelect}
-          >
-            <PanelBarItem title={"Home"} route="/Home"></PanelBarItem>
-
-            <PanelBarItem title={"전사관리"}>
-              <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
-            </PanelBarItem>
-            <PanelBarItem title={"전자결재"}>
-              <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
-            </PanelBarItem>
-          </PanelBar>
-        )} */}
-
-        <ButtonContainer
-          flexDirection={"column"}
-          style={{ marginTop: "10px", gap: "5px" }}
+          {/* GST */}
+          {/* {companyCode === "2207C612" && (
+        <PanelBar
+          selected={selected}
+          expandMode={"single"}
+          onSelect={onSelect}
         >
-          <Button
-            onClick={onClickChatbot}
-            icon={"hyperlink-open-sm"}
-            fillMode={"solid"}
-            shape={"rectangle"}
-            themeColor={"secondary"}
-            rounded={"full"}
-            size="small"
+          <PanelBarItem title={"Home"} route="/Home"></PanelBarItem>
+
+          <PanelBarItem title={"전사관리"}>
+            <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
+          </PanelBarItem>
+          <PanelBarItem title={"전자결재"}>
+            <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
+          </PanelBarItem>
+        </PanelBar>
+      )} */}
+
+          <ButtonContainer
+            flexDirection={"column"}
+            style={{ marginTop: "10px", gap: "5px" }}
           >
-            Chatbot
-          </Button>
-          {isAdmin && (
             <Button
-              onClick={() => setUserOptionsWindowVisible(true)}
+              onClick={onClickChatbot}
+              icon={"hyperlink-open-sm"}
+              fillMode={"solid"}
+              shape={"rectangle"}
+              themeColor={"secondary"}
+              rounded={"full"}
+              size="small"
+            >
+              Chatbot
+            </Button>
+            {isAdmin && (
+              <Button
+                onClick={() => setUserOptionsWindowVisible(true)}
+                fillMode={"flat"}
+                themeColor={"secondary"}
+              >
+                사용자 옵션
+              </Button>
+            )}
+            <Button
+              onClick={logout}
+              icon={"logout"}
               fillMode={"flat"}
               themeColor={"secondary"}
             >
-              사용자 옵션
+              로그아웃
             </Button>
-          )}
+          </ButtonContainer>
+        </Gnv>
+      ) : (
+        <div
+          style={{
+            paddingTop: "10px",
+            borderRight: "solid 1px #ebebeb",
+            height: "100vh",
+          }}
+        >
           <Button
-            onClick={logout}
-            icon={"logout"}
+            icon="menu"
             fillMode={"flat"}
-            themeColor={"secondary"}
-          >
-            로그아웃
-          </Button>
-        </ButtonContainer>
-      </Gnv>
-      <Content CLIENT_WIDTH={clientWidth}>
+            themeColor={"primary"}
+            onClick={() => setIsMenuOpend(true)}
+          />
+        </div>
+      )}
+      <Content isMenuOpen={isMenuOpend}>
         <TopTitle>
           <div style={{ width: "30px" }}></div>
           <AppName>

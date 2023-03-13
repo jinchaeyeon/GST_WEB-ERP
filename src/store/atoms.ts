@@ -62,9 +62,13 @@ export const deletedRowsState = atom<object[]>({
   default: [],
 });
 
+export const isMobileMenuOpendState = atom<boolean>({
+  key: "isMobileMenuOpendState",
+  default: false,
+});
 export const isMenuOpendState = atom<boolean>({
   key: "isMenuOpendState",
-  default: false,
+  default: true,
 });
 
 export const isLoading = atom<boolean>({

@@ -64,10 +64,10 @@ import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
 import WORD_EDITOR from "./routes/WORD_EDITOR";
 import GANTT from "./routes/GANTT";
 import SY_A0100W from "./routes/SY_A0100W";
-import { isMenuOpendState } from "./store/atoms";
+import { isMobileMenuOpendState } from "./store/atoms";
 
 type TGlobalStyle = {
-  isMenuOpend: boolean;
+  isMobileMenuOpend: boolean;
 };
 const GlobalStyle = createGlobalStyle<TGlobalStyle>`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -102,7 +102,7 @@ footer, header, hgroup, main, menu, nav, section {
 }
 body {
   line-height: 1;  
-  overflow: ${(props) => (props.isMenuOpend ? "hidden" : "auto")};
+  overflow: ${(props) => (props.isMobileMenuOpend ? "hidden" : "auto")};
 }
 menu, ol, ul {
   list-style: none;
@@ -186,11 +186,11 @@ const App: React.FC = () => {
   //}
 };
 const AppInner: React.FC = () => {
-  const isMenuOpend = useRecoilValue(isMenuOpendState);
+  const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
 
   return (
     <>
-      <GlobalStyle isMenuOpend={isMenuOpend} />
+      <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
       <Router>
         <Switch>
           <Route path="/" component={Login} exact />
