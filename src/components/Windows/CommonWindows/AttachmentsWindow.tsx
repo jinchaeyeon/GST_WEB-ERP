@@ -20,8 +20,8 @@ import { SELECTED_FIELD } from "../../CommonString";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
-  setData(data: object): void;
-  para: string; //{};
+  setData?(data: object): void;
+  para: string;
 };
 
 const DATA_ITEM_KEY = "saved_name";
@@ -141,7 +141,9 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
       }
     }
 
-    setData(result);
+    if (setData) {
+      setData(result);
+    }
   };
 
   const excelInput: any = React.useRef();
