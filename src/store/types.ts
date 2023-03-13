@@ -32,8 +32,6 @@ export interface Iparameters {
 }
 
 export type TLoginResult = {
-  // token: string;
-  // refreshToken: string;
   userId: string;
   langCode: "ko-KR" | "en-US" | "zh-CN" | "ja-JP";
   userName: string;
