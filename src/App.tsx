@@ -26,6 +26,7 @@ import MA_B7000W from "./routes/MA_B7000W";
 import SA_A2000W from "./routes/SA_A2000W";
 import SA_A2010W from "./routes/SA_A2010W";
 import SA_A2300W from "./routes/SA_A2300W";
+import SA_A3000W from "./routes/SA_A3000W";
 import SA_A5000W from "./routes/SA_A5000W";
 import SA_B2205W from "./routes/SA_B2205W";
 import SA_B2211W from "./routes/SA_B2211W";
@@ -34,7 +35,6 @@ import SA_B2410W from "./routes/SA_B2410W";
 import SA_B2410_290W from "./routes/SA_B2410_290W";
 import SA_B3000W from "./routes/SA_B3000W";
 import SA_B3100W from "./routes/SA_B3100W";
-import PR_A1100W from "./routes/PR_A1100W";
 import QC_A0060W from "./routes/QC_A0060W";
 import QC_A0120W from "./routes/QC_A0120W";
 import QC_A2000W from "./routes/QC_A2000W";
@@ -52,7 +52,9 @@ import CM_A1600W from "./routes/CM_A1600W";
 import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
 import PR_A0060W from "./routes/PR_A0060W";
+import PR_A1100W from "./routes/PR_A1100W";
 import PR_A5000W from "./routes/PR_A5000W";
+import PR_A6000W from "./routes/PR_A6000W";
 import PR_A9100W from "./routes/PR_A9100W";
 import PR_B3000W from "./routes/PR_B3000W";
 import PR_A3000W from "./routes/PR_A3000W";
@@ -220,6 +222,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/SA_A2000W" component={SA_A2000W} exact />
             <AuthRoute path="/SA_A2010W" component={SA_A2010W} exact />
             <AuthRoute path="/SA_A2300W" component={SA_A2300W} exact />
+            <AuthRoute path="/SA_A3000W" component={SA_A3000W} exact />
             <AuthRoute path="/SA_A5000W" component={SA_A5000W} exact />
             <AuthRoute path="/SA_B2205W" component={SA_B2205W} exact />
             <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
@@ -235,6 +238,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/PR_A9100W" component={PR_A9100W} exact />
             <AuthRoute path="/PR_B3000W" component={PR_B3000W} exact />
             <AuthRoute path="/PR_A3000W" component={PR_A3000W} exact />
+            <AuthRoute path="/PR_A6000W" component={PR_A6000W} exact />
             {/* 품질관리 */}
             <AuthRoute path="/QC_A0060W" component={QC_A0060W} exact />
             <AuthRoute path="/QC_A0120W" component={QC_A0120W} exact />

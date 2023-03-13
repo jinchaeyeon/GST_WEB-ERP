@@ -30,15 +30,28 @@ export const getToday = () => {
   return year + month + day;
 };
 
+//String타입 Date로 반환(시간, 분,초 포함)
+export const toDate2 = (date_str: string) => {
+  var yyyyMMdd = String(date_str);
+  var sYear = yyyyMMdd.substring(0, 4);
+  var sMonth = yyyyMMdd.substring(5, 7);
+  var sDate = yyyyMMdd.substring(8, 10);
+  var hh = yyyyMMdd.substring(11, 13);
+  var mm = yyyyMMdd.substring(14, 16);
+  var dd = yyyyMMdd.substring(17, 19);
+  return new Date(Number(sYear), Number(sMonth) - 1, Number(sDate), Number(hh), Number(mm), Number(dd));
+};
+
 //String타입 Date로 반환
 export const toDate = (date_str: string) => {
   var yyyyMMdd = String(date_str);
   var sYear = yyyyMMdd.substring(0, 4);
   var sMonth = yyyyMMdd.substring(4, 6);
-  var sDate = yyyyMMdd.substring(6, 18);
+  var sDate = yyyyMMdd.substring(6, 8);
 
   return new Date(Number(sYear), Number(sMonth) - 1, Number(sDate));
 };
+
 
 //Date 타입 인수를 8자리 YYYYMMDD string로 날짜 변환하여 반환 (ex. => 20220101)
 export const convertDateToStr = (date: Date | null) => {

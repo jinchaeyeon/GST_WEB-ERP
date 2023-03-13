@@ -41,7 +41,7 @@ import {
   UseParaPc,
   useGeoLocation,
 } from "../components/CommonFunction";
-import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 
@@ -605,7 +605,7 @@ const Main: React.FC = () => {
       </MainTopContainer>
 
       <GridContainerWrap>
-        <GridContainer>
+        <GridContainer width={`65%`} >
           <GridTitleContainer>
             <GridTitle>Work Calendar</GridTitle>
             {customOptionData !== null && (
@@ -629,7 +629,7 @@ const Main: React.FC = () => {
             <WeekView />
           </Scheduler>
         </GridContainer>
-        <GridContainerWrap flexDirection="column" maxWidth="650px">
+        <GridContainerWrap style={{width: `calc(35% - ${GAP}px)`}}flexDirection="column">
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>공지사항</GridTitle>
