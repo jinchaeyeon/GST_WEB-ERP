@@ -890,6 +890,7 @@ const BA_A0020: React.FC = () => {
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
+      setIfSelectFirstRow(false);
   };
 
   const onSubScrollHandler = (event: GridEvent) => {

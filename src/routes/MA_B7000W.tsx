@@ -396,9 +396,10 @@ const MA_B7000: React.FC = () => {
     }
     setLoading(false);
   };
-
+  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
+    if (ifSelectFirstRow) {
     if (mainDataResult.total > 0) {
       const firstRowData = mainDataResult.data[0];
       setSelectedState({ [firstRowData.itemcd]: true });
@@ -409,7 +410,9 @@ const MA_B7000: React.FC = () => {
         itemcd: firstRowData.itemcd,
         work_type: "DETAIL1",
       }));
+      setIfSelectFirstRow(true);
     }
+  }
   }, [mainDataResult]);
 
   //디테일1 그리드 데이터 변경 되었을 때
@@ -581,6 +584,7 @@ const MA_B7000: React.FC = () => {
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
+      setIfSelectFirstRow(false);
   };
   const onDetail1ScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, detail1PgNum, PAGE_SIZE))
