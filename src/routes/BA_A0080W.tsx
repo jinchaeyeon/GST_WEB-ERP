@@ -23,6 +23,7 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
   Title,
   FilterBoxWrap,
@@ -70,7 +71,6 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import TopButtons from "../components/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import ExcelWindow from "../components/Windows/CommonWindows/ExcelWindow";
 import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
 import RequiredHeader from "../components/RequiredHeader";
 import NameCell from "../components/Cells/NameCell";
@@ -368,7 +368,6 @@ const BA_A0080: React.FC = () => {
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [excelWindowVisible, setExcelWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSub2PgNum] = useState(1);
@@ -644,9 +643,6 @@ const BA_A0080: React.FC = () => {
     } catch (e) {
       alert(e);
     }
-  };
-  const onExcelWndClick = () => {
-    setExcelWindowVisible(true);
   };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
@@ -1067,6 +1063,7 @@ const BA_A0080: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log(paraData.itemcd)
     if (paraData.itemcd != "") {
       fetchTodoGridSaved();
     }
@@ -1095,7 +1092,58 @@ const BA_A0080: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
-    console.log(jsonArr);
+    let dataArr: TdataArr = {
+      unpitem: [],
+      rowstatus: [],
+      itemcd: [],
+      unp: [],
+      itemacnt: [],
+      remark: [],
+      recdt: [],
+      amtunit: [],
+    };
+    jsonArr.forEach((item: any, idx: number) => {
+      const {
+        unpitem = "",
+        품목코드 = "",
+        품목명 = "",
+        단가 = "",
+        비고 = "",
+        itemacnt = "",
+        recdt = "",
+        amtunit = "",
+      } = item;
+      
+      dataArr.rowstatus.push("N");
+      dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
+      dataArr.itemcd.push(품목코드);
+      dataArr.unp.push(단가);
+      dataArr.itemacnt.push(itemacnt == "" ? Object.getOwnPropertyNames(selectedsubDataState)[0] : itemacnt);
+      dataArr.remark.push(비고);
+      dataArr.recdt.push(recdt == "" ? convertDateToStr(new Date()) : recdt);
+      dataArr.amtunit.push(amtunit == "" ? filters.amtunit : amtunit);
+    });
+    setParaData((prev) => ({
+      ...prev,
+      workType: "",
+      orgdiv: "01",
+      user_id: userId,
+      form_id: "BA_A0080W",
+      pc: pc,
+      unpitem: dataArr.unpitem.join("|"),
+      rowstatus: dataArr.rowstatus.join("|"),
+      itemcd: dataArr.itemcd.join("|"),
+      unp: dataArr.unp.join("|"),
+      itemacnt: dataArr.itemacnt.join("|"),
+      remark: dataArr.remark.join("|"),
+      recdt: dataArr.recdt.join("|"),
+      amtunit: dataArr.amtunit.join("|"),
+    }));
+  };
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
   };
   return (
     <>
@@ -1246,7 +1294,7 @@ const BA_A0080: React.FC = () => {
                   )}
                   <Button
                     title="Export Excel"
-                    onClick={onExcelWndClick}
+                    onClick={onAttachmentsWndClick}
                     icon="file"
                     fillMode="outline"
                     themeColor={"primary"}
@@ -1403,7 +1451,6 @@ const BA_A0080: React.FC = () => {
           itemacnt={filters.itemacnt}
         />
       )}
-      {excelWindowVisible && <ExcelWindow setVisible={setExcelWindowVisible} />}
       {gridList.map((grid: any) =>
         grid.columns.map((column: any) => (
           <div
@@ -1416,6 +1463,12 @@ const BA_A0080: React.FC = () => {
             hidden
           />
         ))
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          para={""}
+        />
       )}
     </>
   );
