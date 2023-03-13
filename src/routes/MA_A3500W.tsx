@@ -1015,14 +1015,8 @@ const MA_A2400W: React.FC = () => {
       return false;
     }
 
-    let arr: any = [];
-    for (const [key, value] of Object.entries(selectedState)) {
-      if (value == true) {
-        arr.push(parseInt(key));
-      }
-    }
     const selectRows = mainDataResult.data.filter(
-      (item: any) => arr.includes(item.num) == true
+      (item: any) => item.chk == true
     );
 
     let dataArr: TdataArr = {
@@ -2420,7 +2414,7 @@ const MA_A2400W: React.FC = () => {
             <GridColumn
               field="chk"
               title=" "
-              width="100px"
+              width="45px"
               headerCell={CustomCheckBoxCell}
               cell={CheckBoxCell}
             />
@@ -2577,7 +2571,7 @@ const MA_A2400W: React.FC = () => {
                   <GridColumn
                     field="chk"
                     title=" "
-                    width="100px"
+                    width="45px"
                     headerCell={CustomCheckBoxCell2}
                     cell={CheckBoxCell}
                   />
@@ -2826,7 +2820,7 @@ const MA_A2400W: React.FC = () => {
                       <GridColumn
                         field="chk"
                         title=" "
-                        width="100px"
+                        width="45px"
                         headerCell={CustomCheckBoxCell3}
                         cell={CheckBoxCell}
                       />
