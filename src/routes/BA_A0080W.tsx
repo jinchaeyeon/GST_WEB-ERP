@@ -74,6 +74,7 @@ import ExcelWindow from "../components/Windows/CommonWindows/ExcelWindow";
 import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
 import RequiredHeader from "../components/RequiredHeader";
 import NameCell from "../components/Cells/NameCell";
+import ExcelUploadButtons from "../components/ExcelUploadButtons";
 
 export const FormContext = createContext<{
   itemcd: string;
@@ -306,7 +307,9 @@ const BA_A0080: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
       const itemQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_ITEM_TEST")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_ITEM_TEST"
+        )
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -783,11 +786,12 @@ const BA_A0080: React.FC = () => {
   const exitEdit = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
-      itemnm: itemListData.find(
-        (items: any) => items.itemcd === item.itemcd
-      )?.itemnm == item.itemnm ? item.itemnm : itemListData.find(
-        (items: any) => items.itemcd === item.itemcd
-      )?.itemnm,
+      itemnm:
+        itemListData.find((items: any) => items.itemcd === item.itemcd)
+          ?.itemnm == item.itemnm
+          ? item.itemnm
+          : itemListData.find((items: any) => items.itemcd === item.itemcd)
+              ?.itemnm,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);
@@ -1090,6 +1094,9 @@ const BA_A0080: React.FC = () => {
     setMainDataState({});
   };
 
+  const saveExcel = (jsonArr: any[]) => {
+    console.log(jsonArr);
+  };
   return (
     <>
       <TitleContainer>
@@ -1230,16 +1237,13 @@ const BA_A0080: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>
                   상세정보
-                  <Button
-                    title="Export Excel"
-                    // onClick={onExcelWndClick}
-                    icon="upload"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    style={{ marginLeft: "15px" }}
-                  >
-                    엑셀업로드
-                  </Button>
+                  {permissions && (
+                    <ExcelUploadButtons
+                      saveExcel={saveExcel}
+                      permissions={permissions}
+                      style={{ marginLeft: "15px" }}
+                    />
+                  )}
                   <Button
                     title="Export Excel"
                     onClick={onExcelWndClick}
