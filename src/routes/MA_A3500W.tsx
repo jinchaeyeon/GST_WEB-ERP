@@ -857,7 +857,7 @@ const MA_A2400W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (customOptionData != null && filters.isSearch && permissions !== null && bizComponentData !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
 
       if (isInitSearch2 == false) {
