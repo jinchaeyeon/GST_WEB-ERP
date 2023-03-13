@@ -14,7 +14,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import calculateSize from "calculate-size";
+import { gridList } from "../store/columns/QC_A2500W_C";
 import {
   Title,
   FilterBoxWrap,
@@ -25,6 +25,7 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
+  GridContainerWrap,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -45,7 +46,7 @@ import {
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A2000W_Window";
+import DetailWindow from "../components/Windows/QC_A2500W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -62,10 +63,25 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 
-const DATA_ITEM_KEY = "ordnum";
-const DETAIL_DATA_ITEM_KEY = "ordseq";
+const DATA_ITEM_KEY = "num";
+const DETAIL_DATA_ITEM_KEY = "num";
+const dateField = ["baddt", "qcdt"];
+const numberField = [
+  "amt",
+  "wonamt",
+  "taxamt",
+  "totamt",
+  "dlramt",
+  "qty",
+  "unitwgt",
+  "totwgt",
+  "unp",
+  "inqty",
+];
 
-const SA_B2000: React.FC = () => {
+const numberField2 = ["reseq"];
+
+const QC_A2500W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
@@ -92,22 +108,12 @@ const SA_B2000: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
-        ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
-        cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
-        ).valueCode,
-        cboDptcd: defaultOption.find((item: any) => item.id === "cboDptcd")
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
+        location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
-        cboPerson: defaultOption.find((item: any) => item.id === "cboPerson")
-          .valueCode,
-        cboDoexdiv: defaultOption.find((item: any) => item.id === "cboDoexdiv")
-          .valueCode,
-        cboOrdtype: defaultOption.find((item: any) => item.id === "cboOrdtype")
-          .valueCode,
-        cboOrdsts: defaultOption.find((item: any) => item.id === "cboOrdsts")
-          .valueCode,
-        radFinyn: defaultOption.find((item: any) => item.id === "radFinyn")
+        gubun: defaultOption.find((item: any) => item.id === "gubun").valueCode,
+        proccd: defaultOption.find((item: any) => item.id === "proccd")
           .valueCode,
       }));
     }
@@ -115,12 +121,22 @@ const SA_B2000: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_QC001,L_PR010,L_LOADPLACE,L_BA016,L_BA020, L_BA019, L_MA036,L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn, L_PR010",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
+  const [unpcalmethListData, setUnpcalmethListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [pacListData, setPACListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [loadplaceListData, setLoadPlaceListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [purstsListData, setPurstsListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -147,9 +163,35 @@ const SA_B2000: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
-
+  const [amtunitListData, setAmtunitListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [proccdListData, setProccdListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [causedcdListData, setCausedListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  
   useEffect(() => {
     if (bizComponentData !== null) {
+      const causedcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_QC001")
+      );
+      const purstsQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_MA036")
+      );
+      const loadplaceQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_LOADPLACE"
+        )
+      );
+      const pacQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
+      );
+      const unpcalmethQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
+      );
       const ordstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
       );
@@ -172,6 +214,9 @@ const SA_B2000: React.FC = () => {
           (item: any) => item.bizComponentId === "L_dptcd_001"
         )
       );
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
       );
@@ -181,7 +226,15 @@ const SA_B2000: React.FC = () => {
       const finynQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
       );
-
+      const amtunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+      );
+      fetchQuery(causedcdQueryStr, setCausedListData);
+      fetchQuery(amtunitQueryStr, setAmtunitListData);
+      fetchQuery(pacQueryStr, setPACListData);
+      fetchQuery(loadplaceQueryStr, setLoadPlaceListData);
+      fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
+      fetchQuery(purstsQueryStr, setPurstsListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(taxdivQueryStr, setTaxdivListData);
@@ -191,6 +244,7 @@ const SA_B2000: React.FC = () => {
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(finynQueryStr, setFinynListData);
+      fetchQuery(proccdQueryStr, setProccdListData);
     }
   }, [bizComponentData]);
 
@@ -222,19 +276,14 @@ const SA_B2000: React.FC = () => {
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
+
   const [isInitSearch, setIsInitSearch] = useState(false);
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.ordnum]: true });
-
-      setDetailFilters((prev) => ({
-        ...prev,
-        location: rowData.location,
-        ordnum: rowData.ordnum,
-      }));
+      setSelectedState({ [rowData.num]: true });
 
       setIsCopy(false);
       setWorkType("U");
@@ -266,7 +315,7 @@ const SA_B2000: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [detailSelectedState, setDetailSelectedState] = useState<{
+  const [detailselectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -316,161 +365,115 @@ const SA_B2000: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    itemcd: "",
-    itemnm: "",
+    location: "01",
+    datnum: "",
+    frdt: new Date(),
+    todt: new Date(),
     custcd: "",
     custnm: "",
-    ymdFrdt: new Date(),
-    ymdTodt: new Date(),
-    radFinyn: "",
-    poregnum: "",
-    ordnum: "",
-    cboLocation: "",
-    cboDptcd: "",
-    cboPerson: "",
-    cboDoexdiv: "",
-    cboOrdtype: "",
-    cboOrdsts: "",
+    itemcd: "",
+    itemnm: "",
+    lotnum: "",
+    title: "",
+    proccd: "",
+    gubun: "",
+    badkey: "",
+    planno: "",
   });
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
-    ordnum: "",
+    badkey: "",
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_SA_A2000W_Q",
+    procedureName: "P_QC_A2500W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "HEADER",
+      "@p_work_type": "BADLIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.cboLocation,
-      "@p_dtgb": "B",
-      "@p_frdt": convertDateToStr(filters.ymdFrdt),
-      "@p_todt": convertDateToStr(filters.ymdTodt),
-      "@p_ordnum": filters.ordnum,
+      "@p_location": filters.location,
+      "@p_datnum": filters.datnum,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
-      "@p_person": filters.cboPerson,
-      "@p_finyn": filters.radFinyn,
-      "@p_dptcd": filters.cboDptcd,
-      "@p_ordsts": filters.cboOrdsts,
-      "@p_doexdiv": filters.cboDoexdiv,
-      "@p_ordtype": filters.cboOrdtype,
-      "@p_poregnum": filters.poregnum,
+      "@p_lotnum": filters.lotnum,
+      "@p_title": filters.title,
+      "@p_proccd": filters.proccd,
+      "@p_gubun": filters.gubun,
+      "@p_badkey": filters.badkey,
+      "@p_planno": filters.planno,
     },
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_SA_A2000W_Q",
+    procedureName: "P_QC_A2500W_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
-      "@p_work_type": "DETAIL",
+      "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.cboLocation,
-      "@p_dtgb": "",
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_ordnum": detailFilters.ordnum,
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_itemcd": "",
-      "@p_itemnm": "",
-      "@p_person": "",
-      "@p_finyn": "",
-      "@p_dptcd": "",
-      "@p_ordsts": "",
-      "@p_doexdiv": "",
-      "@p_ordtype": "",
-      "@p_poregnum": "",
+      "@p_location": filters.location,
+      "@p_datnum": filters.datnum,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_lotnum": filters.lotnum,
+      "@p_title": filters.title,
+      "@p_proccd": filters.proccd,
+      "@p_gubun": filters.gubun,
+      "@p_badkey": detailFilters.badkey,
+      "@p_planno": filters.planno,
     },
   };
 
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
-    ordnum: "",
+    datnum: "",
   });
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_SA_A2000W_S",
+    procedureName: "P_QC_A2500W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_service_id": "",
-      "@p_orgdiv": filters.orgdiv,
+      "@p_orgdiv": "01",
       "@p_location": "",
-      "@p_ordnum": paraDataDeleted.ordnum,
-      "@p_poregnum": "",
-      "@p_project": "",
-      "@p_ordtype": "",
-      "@p_ordsts": "",
-      "@p_taxdiv": "",
-      "@p_orddt": "",
-      "@p_dlvdt": "",
-      "@p_dptcd": "",
-      "@p_person": "",
-      "@p_amtunit": "",
-      "@p_portnm": "",
-      "@p_finaldes": "",
-      "@p_paymeth": "",
-      "@p_prcterms": "",
+      "@p_datnum": paraDataDeleted.datnum,
+      "@p_recdt": "",
+      "@p_baddt": "",
       "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_rcvcustcd": "",
-      "@p_rcvcustnm": "",
-      "@p_wonchgrat": "0",
-      "@p_uschgrat": "0",
-      "@p_doexdiv": "",
-      "@p_remark": "",
+      "@p_itemcd": "",
+      "@p_proccd": "",
+      "@p_lotnum": "",
+      "@p_qty": 0,
+      "@p_person": "",
+      "@p_title": "",
+      "@p_contents": "",
+      "@p_errtext": "",
+      "@p_qcdt": "",
+      "@p_protext": "",
+      "@p_renum": "",
+      "@p_reseq": 0,
+      "@p_badnum": "",
+      "@p_badseq": 0,
       "@p_attdatnum": "",
+      "@p_causedcd": "",
+      "@p_crsdiv1": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_ship_method": "",
-      "@p_dlv_method": "",
-      "@p_hullno": "",
-      "@p_rowstatus_s": "",
-      "@p_chk_s": "",
-      "@p_ordseq_s": "",
-      "@p_poregseq_s": "",
-      "@p_itemcd_s": "",
-      "@p_itemnm_s": "",
-      "@p_itemacnt_s": "",
-      "@p_insiz_s": "",
-      "@p_bnatur_s": "",
-      "@p_qty_s": "",
-      "@p_qtyunit_s": "",
-      "@p_totwgt_s": "",
-      "@p_wgtunit_s": "",
-      "@p_len_s": "",
-      "@p_totlen_s": "",
-      "@p_lenunit_s": "",
-      "@p_thickness_s": "",
-      "@p_width_s": "",
-      "@p_length_s": "",
-      "@p_unpcalmeth_s": "",
-      "@p_unp_s": "",
-      "@p_amt_s": "",
-      "@p_taxamt_s": "",
-      "@p_dlramt_s": "",
-      "@p_wonamt_s": "",
-      "@p_remark_s": "",
-      "@p_pac_s": "",
-      "@p_finyn_s": "",
-      "@p_specialunp_s": "",
-      "@p_lotnum_s": "",
-      "@p_dlvdt_s": "",
-      "@p_specialamt_s": "",
-      "@p_heatno_s": "",
-      "@p_bf_qty_s": "",
-      "@p_form_id": "",
+      "@p_form_id": "QC_A2500W",
     },
   };
 
@@ -486,13 +489,13 @@ const SA_B2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -513,13 +516,13 @@ const SA_B2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
         setDetailDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -561,18 +564,26 @@ const SA_B2000: React.FC = () => {
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.ordnum]: true });
+        setSelectedState({ [firstRowData.num]: true });
 
         setDetailFilters((prev) => ({
           ...prev,
-          location: firstRowData.location,
-          ordnum: firstRowData.ordnum,
+          badkey: firstRowData.badkey,
         }));
 
         setIfSelectFirstRow(true);
       }
     }
   }, [mainDataResult]);
+
+  useEffect(() => {
+    if (ifSelectFirstRow) {
+      if (detailDataResult.total > 0) {
+        const firstRowData = detailDataResult.data[0];
+        setDetailSelectedState({ [firstRowData.num]: true });
+      }
+    }
+  }, [detailDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -601,9 +612,20 @@ const SA_B2000: React.FC = () => {
 
     setDetailFilters((prev) => ({
       ...prev,
-      location: selectedRowData.location,
-      ordnum: selectedRowData.ordnum,
+      badkey: selectedRowData.badkey,
     }));
+  };
+
+  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: detailselectedState,
+      dataItemKey: DETAIL_DATA_ITEM_KEY,
+    });
+    setDetailSelectedState(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   //엑셀 내보내기
@@ -618,7 +640,6 @@ const SA_B2000: React.FC = () => {
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
-      setIfSelectFirstRow(false);
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
@@ -636,25 +657,43 @@ const SA_B2000: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
-  const calculateWidth = (field: any) => {
-    let maxWidth = 0;
-    mainDataResult.data.forEach((item) => {
-      const size = calculateSize(item[field], {
-        font: "Source Sans Pro",
-        fontSize: "16px",
-      }); // pass the font properties based on the application
-      if (size.width > maxWidth) {
-        maxWidth = size.width;
-      }
-    });
 
-    return maxWidth;
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    );
+  };
+
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    detailDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum += item[props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    );
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -678,38 +717,19 @@ const SA_B2000: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-
-  const onCopyClick = () => {
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
-
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item.ordnum === ordnum
-    );
-
-    setDetailFilters((prev) => ({
-      ...prev,
-      location: selectedRowData.location,
-      ordnum: selectedRowData.ordnum,
-    }));
-
-    setIsCopy(true);
-    setWorkType("N");
-    setDetailWindowVisible(true);
-  };
-
   const questionToDelete = useSysMessage("QuestionToDelete");
-
   const onDeleteClick = (e: any) => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
-
-    const ordnum = Object.getOwnPropertyNames(selectedState)[0];
+    const data = detailDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(detailselectedState)[0]
+    )[0];
 
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      ordnum: ordnum,
+      datnum: data.datnum,
     }));
   };
 
@@ -732,20 +752,7 @@ const SA_B2000: React.FC = () => {
     }
 
     paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.ordnum = "";
-  };
-
-  const reloadData = (workType: string) => {
-    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
-    if (workType === "U") {
-      setIfSelectFirstRow(false);
-    } else {
-      setIfSelectFirstRow(true);
-    }
-
-    resetAllGrid();
-    fetchMainGrid();
-    fetchDetailGrid();
+    paraDataDeleted.datnum = "";
   };
 
   interface ICustData {
@@ -823,13 +830,189 @@ const SA_B2000: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_A2500W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_A2500W_001");
+      } else {
+        resetAllGrid();
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
+
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "N",
+    orgdiv: "01",
+    location: "01",
+    datnum: "",
+    attdatnum: "",
+    baddt: "",
+    badnum: "",
+    badseq: 0,
+    causedcd: "",
+    contents: "",
+    crsdiv1: "",
+    custcd: "",
+    custnm: "",
+    errtext: "",
+    files: "",
+    itemcd: "",
+    itemnm: "",
+    lotnum: "",
+    person: "",
+    proccd: "",
+    protext: "",
+    qcdt: "",
+    qty: 0,
+    recdt: "",
+    renum: "",
+    reseq: 0,
+    title: "",
+  });
+
+  const setCopyData = (filter: any) => {
+    setParaData((prev) => ({
+      ...prev,
+      workType: workType,
+      orgdiv: "01",
+      location: "01",
+      datnum: filter.datnum,
+      attdatnum: filter.attdatnum,
+      baddt: convertDateToStr(filter.baddt),
+      badnum: filter.badnum,
+      badseq: filter.badseq,
+      causedcd: filter.causedcd,
+      contents: filter.contents,
+      crsdiv1: filter.crsdiv1,
+      custcd: filter.custcd,
+      custnm: filter.custnm,
+      errtext: filter.errtext,
+      files: filter.files,
+      itemcd: filter.itemcd,
+      itemnm: filter.itemnm,
+      lotnum: filter.lotnum,
+      person: filter.person,
+      proccd: filter.proccd,
+      protext: filter.protext,
+      qcdt: convertDateToStr(filter.qcdt),
+      qty: filter.qty,
+      recdt: convertDateToStr(filter.recdt),
+      renum: filter.renum,
+      reseq: filter.reseq,
+      title: filter.title,
+    }));
+  };
+
+  const para: Iparameters = {
+    procedureName: "P_QC_A2500W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_datnum": ParaData.datnum,
+      "@p_recdt": ParaData.recdt,
+      "@p_baddt": ParaData.baddt,
+      "@p_custcd": ParaData.custcd,
+      "@p_itemcd": ParaData.itemcd,
+      "@p_proccd": ParaData.proccd,
+      "@p_lotnum": ParaData.lotnum,
+      "@p_qty": ParaData.qty,
+      "@p_person": ParaData.person,
+      "@p_title": ParaData.title,
+      "@p_contents": ParaData.contents,
+      "@p_errtext": ParaData.errtext,
+      "@p_qcdt": ParaData.qcdt,
+      "@p_protext": ParaData.protext,
+      "@p_renum": ParaData.renum,
+      "@p_reseq": ParaData.reseq,
+      "@p_badnum": ParaData.badnum,
+      "@p_badseq": ParaData.badseq,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_causedcd": ParaData.causedcd,
+      "@p_crsdiv1": ParaData.crsdiv1,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "QC_A2500W",
+    },
+  };
+  const [reload, setreload] = useState<boolean>(false);
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+    console.log(para);
+    console.log(data)
+    if (data.isSuccess === true) {
+      setreload(!reload);
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: workType,
+        orgdiv: "01",
+        location: "01",
+        datnum: "",
+        attdatnum: "",
+        baddt: "",
+        badnum: "",
+        badseq: 0,
+        causedcd: "",
+        contents: "",
+        crsdiv1: "",
+        custcd: "",
+        custnm: "",
+        errtext: "",
+        files: "",
+        itemcd: "",
+        itemnm: "",
+        lotnum: "",
+        person: "",
+        proccd: "",
+        protext: "",
+        qcdt: "",
+        qty: 0,
+        recdt: "",
+        renum: "",
+        reseq: 0,
+        title: "",
+      });
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.causedcd != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   return (
     <>
       <TitleContainer>
-        <Title>수주처리</Title>
+        <Title>NCR관리</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -845,12 +1028,12 @@ const SA_B2000: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>납기일자</th>
+              <th>불량일자</th>
               <td colSpan={3}>
                 <div className="filter-item-wrap">
                   <DatePicker
-                    name="ymdFrdt"
-                    value={filters.ymdFrdt}
+                    name="frdt"
+                    value={filters.frdt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
@@ -858,8 +1041,8 @@ const SA_B2000: React.FC = () => {
                   />
                   ~
                   <DatePicker
-                    name="ymdTodt"
-                    value={filters.ymdTodt}
+                    name="todt"
+                    value={filters.todt}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
@@ -867,48 +1050,6 @@ const SA_B2000: React.FC = () => {
                   />
                 </div>
               </td>
-
-              <th>사업장</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboLocation"
-                    value={filters.cboLocation}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>부서</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboDptcd"
-                    value={filters.cboDptcd}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="dptnm"
-                    valueField="dptcd"
-                  />
-                )}
-              </td>
-
-              <th>담당자</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboPerson"
-                    value={filters.cboPerson}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="user_name"
-                    valueField="user_id"
-                  />
-                )}
-              </td>
-            </tr>
-
-            <tr>
               <th>품목코드</th>
               <td>
                 <Input
@@ -934,59 +1075,43 @@ const SA_B2000: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-
-              <th>수주상태</th>
+              <th>NCR NO</th>
               <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboOrdsts"
-                    value={filters.cboOrdsts}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-
-              <th>수주형태</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboOrdtype"
-                    value={filters.cboOrdtype}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-
-              <th>내수구분</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboDoexdiv"
-                    value={filters.cboDoexdiv}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
+                <Input
+                  name="datnum"
+                  type="text"
+                  value={filters.datnum}
+                  onChange={filterInputChange}
+                />
               </td>
             </tr>
             <tr>
-              <th>업체코드</th>
-              <td>
+              <th>제목</th>
+              <td colSpan={3}>
                 <Input
-                  name="custcd"
+                  name="title"
                   type="text"
-                  value={filters.custcd}
+                  value={filters.title}
                   onChange={filterInputChange}
                 />
-                <ButtonInInput>
-                  <Button
-                    onClick={onCustWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
+              </td>
+              <th>업체코드</th>
+              <td>
+                <div className="filter-item-wrap">
+                  <Input
+                    name="custcd"
+                    type="text"
+                    value={filters.custcd}
+                    onChange={filterInputChange}
                   />
-                </ButtonInInput>
+                  <ButtonInInput>
+                    <Button
+                      onClick={onCustWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
+                </div>
               </td>
               <th>업체명</th>
               <td>
@@ -997,31 +1122,53 @@ const SA_B2000: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-
-              <th>수주번호</th>
+              <th>LOT NO</th>
               <td>
                 <Input
-                  name="ordnum"
+                  name="lotnum"
                   type="text"
-                  value={filters.ordnum}
+                  value={filters.lotnum}
                   onChange={filterInputChange}
                 />
               </td>
-
-              <th>PO번호</th>
+            </tr>
+            <tr>
+              <th>사업장</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="location"
+                    value={filters.location}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>공정</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="proccd"
+                    value={filters.proccd}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>생산계획번호</th>
               <td>
                 <Input
-                  name="poregnum"
+                  name="planno"
                   type="text"
-                  value={filters.poregnum}
+                  value={filters.planno}
                   onChange={filterInputChange}
                 />
               </td>
-              <th>완료여부</th>
+              <th>등록여부</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
-                    name="radFinyn"
+                    name="gubun"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
@@ -1040,32 +1187,7 @@ const SA_B2000: React.FC = () => {
           }}
         >
           <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                수주생성
-              </Button>
-              <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                수주복사
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                수주삭제
-              </Button>
-            </ButtonContainer>
+            <GridTitle>불량내역</GridTitle>
           </GridTitleContainer>
           <Grid
             style={{ height: "36vh" }}
@@ -1093,6 +1215,18 @@ const SA_B2000: React.FC = () => {
                 finyn: finynListData.find(
                   (item: any) => item.code === row.finyn
                 )?.name,
+                pursts: purstsListData.find(
+                  (item: any) => item.sub_code === row.pursts
+                )?.code_name,
+                amtunit: amtunitListData.find(
+                  (item: any) => item.sub_code === row.amtunit
+                )?.code_name,
+                proccd: proccdListData.find(
+                  (item: any) => item.sub_code === row.proccd
+                )?.code_name,
+                causedcd: causedcdListData.find(
+                  (item: any) => item.sub_code === row.causedcd
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1119,81 +1253,51 @@ const SA_B2000: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn cell={CommandCell} width="55px" />
-            <GridColumn
-              field="orddt"
-              title="수주일자"
-              cell={DateCell}
-              footerCell={mainTotalFooterCell}
-              width="100px"
-            />
-            <GridColumn
-              field="dlvdt"
-              title="납기일자"
-              cell={DateCell}
-              width="100px"
-              //width={calculateWidth("dlvdt")}
-            />
-            <GridColumn field="ordnum" title="수주번호" width="120px" />
-            <GridColumn field="custnm" title="업체명" width="170px" />
-            <GridColumn field="ordsts" title="수주상태" width="100px" />
-            <GridColumn field="doexdiv" title="내수구분" width="100px" />
-            <GridColumn field="taxdiv" title="과세구분" width="100px" />
-            <GridColumn
-              field="out_qty"
-              title="출하수량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="sale_qty"
-              title="판매수량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="qty"
-              title="수주수량"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="specialamt"
-              title="발주금액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="amt"
-              title="금액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="taxamt"
-              title="세액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="totamt"
-              title="합계금액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn field="location" title="사업장" width="120px" />
-            <GridColumn field="dptcd" title="부서" width="120px" />
-            <GridColumn field="person" title="담당자" width="120px" />
-            <GridColumn field="quokey" title="견적번호" width="120px" />
-            <GridColumn field="remark" title="비고" width="120px" />
-            <GridColumn field="finyn" title="완료여부" width="120px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
+                          : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>
-
       <GridContainer>
         <GridTitleContainer>
-          <GridTitle>상세정보</GridTitle>
+          <GridTitle>요약정보</GridTitle>
+          <ButtonContainer>
+            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+              NCR생성
+            </Button>
+            <Button
+              onClick={onDeleteClick}
+              icon="delete"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              NCR삭제
+            </Button>
+          </ButtonContainer>
         </GridTitleContainer>
         <Grid
           style={{ height: "34vh" }}
@@ -1206,12 +1310,37 @@ const SA_B2000: React.FC = () => {
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
+              wgtunit: qtyunitListData.find(
+                (item: any) => item.sub_code === row.wgtunit
+              )?.code_name,
+              load_place: loadplaceListData.find(
+                (item: any) => item.sub_code === row.load_place
+              )?.code_name,
+              PAC: pacListData.find((item: any) => item.sub_code === row.PAC)
+                ?.code_name,
+              unpcalmeth: unpcalmethListData.find(
+                (item: any) => item.sub_code === row.unpcalmeth
+              )?.code_name,
+              proccd: proccdListData.find(
+                (item: any) => item.sub_code === row.proccd
+              )?.code_name,
+              person: usersListData.find(
+                (item: any) => item.user_id === row.person
+              )?.user_name,
+              [SELECTED_FIELD]: detailselectedState[detailIdGetter(row)],
             })),
             detailDataState
           )}
           {...detailDataState}
           onDataStateChange={onDetailDataStateChange}
           //스크롤 조회 기능
+          dataItemKey={DETAIL_DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onDetailSelectionChange}
           fixedScroll={true}
           total={detailDataResult.total}
           onScroll={onDetailScrollHandler}
@@ -1223,73 +1352,67 @@ const SA_B2000: React.FC = () => {
           //컬럼너비조정
           resizable={true}
         >
-          <GridColumn
-            field="itemcd"
-            title="품목코드"
-            width="160px"
-            footerCell={detailTotalFooterCell}
-          />
-          <GridColumn field="itemnm" title="품목명" width="180px" />
-          <GridColumn field="insiz" title="규격" width="200px" />
-          <GridColumn field="itemacnt" title="품목계정" width="120px" />
-          <GridColumn
-            field="qty"
-            title="수주량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="qtyunit" title="단위" width="120px" />
-          <GridColumn
-            field="unp"
-            title="단가"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="wonamt"
-            title="금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="taxamt"
-            title="세액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="totamt"
-            title="합계금액"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="remark" title="비고" width="120px" />
-          <GridColumn field="purcustnm" title="발주처" width="120px" />
-          <GridColumn
-            field="outqty"
-            title="출하수량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="sale_qty"
-            title="판매수량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="finyn" title="완료여부" width="120px" />
-          <GridColumn field="bf_qty" title="LOT수량" width="120px" />
-          <GridColumn field="lotnum" title="LOT NO" width="120px" />
+          <GridColumn cell={CommandCell} width="60px" />
+          {customOptionData !== null &&
+            customOptionData.menuCustomColumnOptions["grdList2"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 && (
+                  <GridColumn
+                    key={idx}
+                    field={item.fieldName}
+                    title={item.caption}
+                    width={item.width}
+                    cell={
+                      numberField.includes(item.fieldName)
+                        ? NumberCell
+                        : dateField.includes(item.fieldName)
+                        ? DateCell
+                        : numberField2.includes(item.fieldName)
+                        ? NumberCell
+                        : undefined
+                    }
+                    footerCell={
+                      item.sortOrder === 0
+                        ? detailTotalFooterCell
+                        : numberField.includes(item.fieldName)
+                        ? gridSumQtyFooterCell2
+                        : undefined
+                    }
+                  />
+                )
+            )}
         </Grid>
       </GridContainer>
       {detailWindowVisible && (
         <DetailWindow
-          getVisible={setDetailWindowVisible}
+          setVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
-          ordnum={detailFilters.ordnum}
-          isCopy={isCopy}
-          reloadData={reloadData}
-          para={detailParameters}
+          setData={setCopyData}
+          data={
+            detailDataResult.data.filter(
+              (item: any) =>
+                item.num == Object.getOwnPropertyNames(detailselectedState)[0]
+            )[0] == undefined
+              ? ""
+              : detailDataResult.data.filter(
+                  (item: any) =>
+                    item.num ==
+                    Object.getOwnPropertyNames(detailselectedState)[0]
+                )[0]
+          }
+          basicdata ={
+            mainDataResult.data.filter(
+              (item: any) =>
+                item.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0] == undefined
+              ? ""
+              : mainDataResult.data.filter(
+                  (item: any) =>
+                    item.num ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+          }
+          reload={reload}
         />
       )}
       {custWindowVisible && (
@@ -1306,8 +1429,21 @@ const SA_B2000: React.FC = () => {
           setData={setItemData}
         />
       )}
+      {gridList.map((grid: any) =>
+        grid.columns.map((column: any) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };
 
-export default SA_B2000;
+export default QC_A2500W;

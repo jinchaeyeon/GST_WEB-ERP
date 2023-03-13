@@ -11,6 +11,7 @@ import {
   GridCellProps,
   GridItemChangeEvent,
   GridHeaderSelectionChangeEvent,
+  GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -36,7 +37,7 @@ import {
   FormBox,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -75,6 +76,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import RequiredHeader from "../components/RequiredHeader";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -307,6 +309,7 @@ const MA_A2400W: React.FC = () => {
     sort: [],
   });
   const [isInitSearch, setIsInitSearch] = useState(false);
+  const [isInitSearch2, setIsInitSearch2] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
@@ -449,6 +452,77 @@ const MA_A2400W: React.FC = () => {
     }));
   };
 
+  const [values, setValues] = React.useState<boolean>(false);
+  const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        chk: !values,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues(!values);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const [values2, setValues2] = React.useState<boolean>(false);
+  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = subDataResult.data.map((item) => ({
+        ...item,
+        chk: !values2,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues2(!values2);
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const [values3, setValues3] = React.useState<boolean>(false);
+  const CustomCheckBoxCell3 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = BOMDataResult2.data.map((item) => ({
+        ...item,
+        chk: !values3,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues3(!values3);
+      setBOMDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values3} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -635,7 +709,6 @@ const MA_A2400W: React.FC = () => {
       data = null;
     }
 
-
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -648,7 +721,11 @@ const MA_A2400W: React.FC = () => {
         };
       });
 
-      if (filters.find_row_value === "" && filters.pgNum === 1 && totalRowCnt > 0) {
+      if (
+        filters.find_row_value === "" &&
+        filters.pgNum === 1 &&
+        totalRowCnt > 0
+      ) {
         // 첫번째 행 선택하기
         const firstRowData = rows[0];
         setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
@@ -659,8 +736,8 @@ const MA_A2400W: React.FC = () => {
     }
     setFilters((prev) => ({
       ...prev,
-      isSearch: false
-    }))
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -673,7 +750,7 @@ const MA_A2400W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -686,19 +763,23 @@ const MA_A2400W: React.FC = () => {
           };
         });
 
-        if (infomation.find_row_value === "" && infomation.pgNum === 1 && totalRowCnt > 0) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedSubState({ [firstRowData[DATA_ITEM_KEY]]: true });
-        }
+      if (
+        infomation.find_row_value === "" &&
+        infomation.pgNum === 1 &&
+        totalRowCnt > 0
+      ) {
+        // 첫번째 행 선택하기
+        const firstRowData = rows[0];
+        setSelectedSubState({ [firstRowData[DATA_ITEM_KEY]]: true });
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
     setInfomation((prev) => ({
       ...prev,
-      isSearch: false
-    }))
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -723,11 +804,15 @@ const MA_A2400W: React.FC = () => {
             total: totalRowCnt,
           };
         });
-        if (infomation2.find_row_value === "" && infomation2.pgNum === 1 && totalRowCnt > 0) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedBOMState({ [firstRowData[DATA_ITEM_KEY]]: true });
-        }
+      if (
+        infomation2.find_row_value === "" &&
+        infomation2.pgNum === 1 &&
+        totalRowCnt > 0
+      ) {
+        // 첫번째 행 선택하기
+        const firstRowData = rows[0];
+        setSelectedBOMState({ [firstRowData[DATA_ITEM_KEY]]: true });
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -756,7 +841,11 @@ const MA_A2400W: React.FC = () => {
         };
       });
 
-      if (infomation3.find_row_value === "" && infomation3.pgNum === 1 && totalRowCnt > 0) {
+      if (
+        infomation3.find_row_value === "" &&
+        infomation3.pgNum === 1 &&
+        totalRowCnt > 0
+      ) {
         // 첫번째 행 선택하기
         const firstRowData = rows[0];
         setSelectedBOMState2({ [firstRowData[DATA_ITEM_KEY]]: true });
@@ -771,7 +860,10 @@ const MA_A2400W: React.FC = () => {
     if (filters.isSearch && permissions !== null && bizComponentData !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
 
-      if (filters.find_row_value !== "") {
+      if (isInitSearch2 == false) {
+        fetchMainGrid();
+        fetchSubGrid();
+      } else if (filters.find_row_value !== "") {
         // 그룹코드로 조회 시 리셋 후 조회
         resetAllGrid();
         fetchMainGrid();
@@ -780,25 +872,32 @@ const MA_A2400W: React.FC = () => {
         fetchMainGrid();
       }
       setIsInitSearch(true);
+      setIsInitSearch2(true);
     }
   }, [filters, permissions]);
 
-
   useEffect(() => {
-    if (infomation.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      infomation.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
+    ) {
       setInfomation((prev) => ({ ...prev, isSearch: false }));
-        // 일반 조회
+      // 일반 조회
       fetchSubGrid();
 
       setIsInitSearch(true);
     }
   }, [infomation]);
 
-  
   useEffect(() => {
-    if (infomation2.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      infomation2.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
+    ) {
       setInfomation2((prev) => ({ ...prev, isSearch: false }));
-        // 일반 조회
+      // 일반 조회
       fetchSubGrid();
 
       setIsInitSearch(true);
@@ -841,7 +940,6 @@ const MA_A2400W: React.FC = () => {
           ...prev,
           find_row_value: "",
         }));
-    
       }
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
@@ -984,25 +1082,12 @@ const MA_A2400W: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
+
     setSelectedState(newSelectedState);
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
   };
-
-  const onHeaderSelectionChange2 = React.useCallback(
-    (event: GridHeaderSelectionChangeEvent) => {
-      const checkboxElement: any = event.syntheticEvent.target;
-      const checked = checkboxElement.checked;
-      const newSelectedState: any = {};
-
-      event.dataItems.forEach((item: any) => {
-        newSelectedState[idGetter(item)] = checked;
-      });
-      setSelectedState(newSelectedState);
-    },
-    []
-  );
 
   const onHeaderSelectionChange3 = React.useCallback(
     (event: GridHeaderSelectionChangeEvent) => {
@@ -1102,7 +1187,6 @@ const MA_A2400W: React.FC = () => {
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-   
       setFilters((prev) => ({
         ...prev,
         scrollDirrection: "down",
@@ -1351,7 +1435,7 @@ const MA_A2400W: React.FC = () => {
   };
   const onAddClick = () => {
     let seq = 1;
-    let valid = true;
+    let valid = 0;
     let arr: any = [];
     if (subDataResult2.total > 0) {
       subDataResult2.data.forEach((item) => {
@@ -1372,12 +1456,14 @@ const MA_A2400W: React.FC = () => {
       (item: any) => arr.includes(item.num) == true
     );
     selectRows.map((item) => {
-      if (item.doqty == 0 || item.doqty > item.now_qty) {
-        valid = false;
+      if (item.doqty == 0) {
+        valid = 1;
+      } else if (item.doqty > item.now_qty) {
+        valid = 2;
       }
     });
 
-    if (valid == true) {
+    if (valid == 0) {
       const newData = subDataResult.data.map((item) =>
         arr.includes(item.num) == true
           ? {
@@ -1428,8 +1514,10 @@ const MA_A2400W: React.FC = () => {
         seq++;
       });
       setSelectedSubState({});
-    } else {
+    } else if (valid == 1) {
       alert("불출량을 입력해주세요.");
+    } else if (valid == 2) {
+      alert("불출량이 재고량을 초과하였습니다");
     }
   };
 
@@ -1926,6 +2014,17 @@ const MA_A2400W: React.FC = () => {
       DATA_ITEM_KEY
     );
   };
+
+  const onItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
   const onBOMItemChange = (event: GridItemChangeEvent) => {
     setBOMDataState2((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -1949,6 +2048,24 @@ const MA_A2400W: React.FC = () => {
       originalProps={props}
       tr={tr}
       exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customCellRender3 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender3 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit3}
       editField={EDIT_FIELD}
     />
   );
@@ -1978,6 +2095,7 @@ const MA_A2400W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
+              chk: typeof item.chk == "boolean" ? item.chk : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -2002,6 +2120,7 @@ const MA_A2400W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
+              chk: typeof item.chk == "boolean" ? item.chk : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -2011,6 +2130,29 @@ const MA_A2400W: React.FC = () => {
       );
 
       setBOMDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit3 = (dataItem: any, field: string) => {
+    if (field == "chk") {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              chk: typeof item.chk == "boolean" ? item.chk : false,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setMainDataResult((prev) => {
         return {
           data: newData,
           total: prev.total,
@@ -2045,7 +2187,19 @@ const MA_A2400W: React.FC = () => {
       };
     });
   };
+  const exitEdit3 = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
 
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
   return (
     <>
       <TitleContainer>
@@ -2233,6 +2387,7 @@ const MA_A2400W: React.FC = () => {
                   (item: any) => item.sub_code === row.outpgm
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
+                chk: row.chk == "" ? false : row.chk,
               })),
               mainDataState
             )}
@@ -2246,7 +2401,6 @@ const MA_A2400W: React.FC = () => {
               mode: "multiple",
             }}
             onSelectionChange={onSelectionChange}
-            onHeaderSelectionChange={onHeaderSelectionChange2}
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
@@ -2258,15 +2412,17 @@ const MA_A2400W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            onItemChange={onItemChange}
+            cellRender={customCellRender3}
+            rowRender={customRowRender3}
+            editField={EDIT_FIELD}
           >
             <GridColumn
-              field={SELECTED_FIELD}
-              width="45px"
-              headerSelectionValue={
-                mainDataResult.data.findIndex(
-                  (item: any) => !selectedState[idGetter(item)]
-                ) === -1
-              }
+              field="chk"
+              title=" "
+              width="100px"
+              headerCell={CustomCheckBoxCell}
+              cell={CheckBoxCell}
             />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -2386,6 +2542,7 @@ const MA_A2400W: React.FC = () => {
                       outpgm: outpgmListData.find(
                         (item: any) => item.sub_code === row.outpgm
                       )?.code_name,
+                      chk: row.chk == "" ? false : row.chk,
                       [SELECTED_FIELD]: selectedSubState[idGetter(row)],
                     })),
                     subDataState
@@ -2418,13 +2575,11 @@ const MA_A2400W: React.FC = () => {
                   editField={EDIT_FIELD}
                 >
                   <GridColumn
-                    field={SELECTED_FIELD}
-                    width="45px"
-                    headerSelectionValue={
-                      subDataResult.data.findIndex(
-                        (item: any) => !selectedSubState[idGetter(item)]
-                      ) === -1
-                    }
+                    field="chk"
+                    title=" "
+                    width="100px"
+                    headerCell={CustomCheckBoxCell2}
+                    cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList2"].map(
@@ -2636,6 +2791,7 @@ const MA_A2400W: React.FC = () => {
                           outpgm: outpgmListData.find(
                             (item: any) => item.sub_code === row.outpgm
                           )?.code_name,
+                          chk: row.chk == "" ? false : row.chk,
                           [SELECTED_FIELD]: selectedBOMState2[idGetter(row)],
                         })),
                         BOMDataState2
@@ -2668,13 +2824,11 @@ const MA_A2400W: React.FC = () => {
                       editField={EDIT_FIELD}
                     >
                       <GridColumn
-                        field={SELECTED_FIELD}
-                        width="45px"
-                        headerSelectionValue={
-                          BOMDataResult2.data.findIndex(
-                            (item: any) => !selectedBOMState2[idGetter(item)]
-                          ) === -1
-                        }
+                        field="chk"
+                        title=" "
+                        width="100px"
+                        headerCell={CustomCheckBoxCell3}
+                        cell={CheckBoxCell}
                       />
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
@@ -2733,7 +2887,7 @@ const MA_A2400W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "43vh" }}
+            style={{ height: "47vh" }}
             data={process(
               subDataResult2.data.map((row) => ({
                 ...row,

@@ -284,6 +284,16 @@ type TMargin = {
   right?: string;
 };
 
+export const FormFieldWrap = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
 export const GridContainer = styled.div<TGridContainer>`
   flex-direction: column;
   max-width: ${(props) => props.maxWidth};

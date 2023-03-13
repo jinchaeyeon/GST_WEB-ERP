@@ -44,7 +44,7 @@ import {
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A2000W_Window";
+import DetailWindow from "../components/Windows/SA_A2010W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -485,7 +485,6 @@ const SA_B2000: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      resetAllGrid();
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
@@ -616,6 +615,7 @@ const SA_B2000: React.FC = () => {
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
+      setIfSelectFirstRow(false);
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
