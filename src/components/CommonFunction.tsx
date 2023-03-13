@@ -939,3 +939,12 @@ export const rowsOfDataResult = (prevDataResult: DataResult) => {
 
   return prevRows;
 };
+
+//세부코드값 받아서 SYS060 공통코드 조회 쿼리 반환
+export const getAttdatnumQuery = (code: any) => {
+  return `
+    SELECT ISNULL(extra_field1, '') 
+    FROM comCodeMaster 
+    WHERE group_code = 'SYS060' AND sub_code = '${code}'
+    `;
+};
