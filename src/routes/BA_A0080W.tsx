@@ -74,7 +74,7 @@ import ExcelWindow from "../components/Windows/CommonWindows/ExcelWindow";
 import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
 import RequiredHeader from "../components/RequiredHeader";
 import NameCell from "../components/Cells/NameCell";
-import ExcelUploadButtons from "../components/ExcelUploadButtons";
+import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
 
 export const FormContext = createContext<{
   itemcd: string;
