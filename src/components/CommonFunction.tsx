@@ -527,7 +527,7 @@ export const chkScrollHandler = (
     if (
       e.target.scrollTop + 10 >=
         e.target.scrollHeight - e.target.clientHeight &&
-      totalNumber > PgNum * PgSize
+      totalNumber >= PgNum * PgSize
     ) {
       chk = true;
     }
