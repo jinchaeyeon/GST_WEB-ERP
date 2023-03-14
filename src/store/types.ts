@@ -126,6 +126,7 @@ export type TMenu = {
   releaseStatus: string;
   menuCategory: string;
   sort: number;
+  isFavorite: boolean;
 };
 
 export type TPath = {
@@ -135,6 +136,7 @@ export type TPath = {
   menuId: string;
   parentMenuId: string;
   menuCategory: string;
+  isFavorite: boolean;
 };
 
 // TypeScript에서 string key로 객체에 접근하기 위한 객체 타입

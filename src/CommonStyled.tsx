@@ -656,8 +656,29 @@ export const Gnv = styled.div<TGnv>`
     justify-content: center;
   }
 
-  .k-panelbar-item-icon.k-icon.k-i-gear {
+  .k-panelbar-item-icon.k-icon.k-i-gear,
+  .k-panelbar-item-icon.k-icon.k-i-star,
+  .k-panelbar-item-icon.k-icon.k-i-star-outline {
     color: #2289c3;
+  }
+
+  .k-selected > .k-panelbar-item-icon.k-icon.k-i-star-outline {
+    color: #fff;
+  }
+
+  .k-panelbar-item-icon.k-icon.k-i-circle {
+    color: transparent;
+    /* color: #ebebeb; */
+  }
+
+  .k-panelbar > .k-panelbar-item.fav-menu > .k-link {
+    background-color: rgba(51, 122, 183, 0.05);
+  }
+
+  .k-panelbar .k-group > .k-item > .k-link,
+  .k-panelbar .k-panelbar-group > .k-panelbar-item > .k-link {
+    flex-direction: row-reverse;
+    justify-content: space-between;
   }
 
   /*=========================================================================
@@ -712,6 +733,11 @@ export const AppName = styled.h1`
   background-color: #fff;
   border-right: 1px solid #ebebeb;
   cursor: pointer;
+`;
+
+export const MenuSearchBox = styled.div`
+  padding: 5px;
+  border-right: solid 1px #ebebeb;
 `;
 
 export const LoginAppName = styled(AppName)`
