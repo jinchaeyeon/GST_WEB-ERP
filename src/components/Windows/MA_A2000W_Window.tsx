@@ -933,9 +933,9 @@ const CopyWindow = ({
           : (item.qty * item.unp * filters.wonchgrat) / 10,
       totamt:
       filters.amtunit == "KRW"
-          ? Math.round(item.amt + (item.qty * item.unp) / 10)
+          ? Math.round((item.qty * item.unp) + (item.qty * item.unp) / 10)
           : Math.round(
-              item.amt + (item.qty * item.unp * filters.wonchgrat) / 10
+              (item.qty * item.unp * filters.wonchgrat) + (item.qty * item.unp * filters.wonchgrat) / 10
             ),
       [EDIT_FIELD]: undefined,
     }));

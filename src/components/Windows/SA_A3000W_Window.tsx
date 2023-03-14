@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useContext,
-  createContext,
-} from "react";
+import { useEffect, useState, useCallback, useContext, createContext } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -23,20 +17,19 @@ import { TextArea, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
-import CopyWindow1 from "./MA_A2300W_Order_Window";
+import CopyWindow2 from "./SA_A3000W_Inven_Window";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
-  Title,
-  TitleContainer,
   ButtonInInput,
   GridTitleContainer,
   FormBoxWrap,
   FormBox,
-  GridTitle,
   ButtonInGridInput,
+  GridTitle,
 } from "../../CommonStyled";
 import { useRecoilState } from "recoil";
 import { Input } from "@progress/kendo-react-inputs";
@@ -55,7 +48,6 @@ import {
   dateformat,
   isValidDate,
   findMessage,
-  setDefaultDate,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -67,17 +59,16 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
+import CheckBoxCell from "../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
-import RequiredHeader from "../RequiredHeader";
+
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void;
-  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(data: object, filter: object, deletedMainRows: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  reload: boolean;
 };
 
 type Idata = {
@@ -85,30 +76,71 @@ type Idata = {
   amtunit: string;
   attdatnum: string;
   baseamt: number;
+  busadiv: string;
+  cargb: string;
+  cargocd: string;
+  carno: string;
+  chk: string;
   custcd: string;
   custnm: string;
-  dlramt: number;
+  custprsncd: string;
   doexdiv: string;
+  dvnm: string;
+  dvnum: string;
   files: string;
-  indt: string;
-  inqty: number;
+  finyn: string;
+  finaldes: string;
+  gugancd: string;
+  itemacnt: string;
   location: string;
+  jisiqty: number;
   num: number;
   orgdiv: string;
+  outdt: string;
+  outkind: string;
+  outtype: string;
+  outqty: number;
+  outuse: string;
   person: string;
+  pgmdiv: string;
+  portnm: string;
+  poregnum: string;
+  project: string;
   position: string;
+  qty: number;
+  rcvcustcd: string;
+  rcvcustnm: string;
+  rcvperson: string;
+  rcvnum: string;
   recdt: string;
-  reckey: string;
+  reqdt: string;
+  recdtfind: string;
   remark: string;
+  reqnum: string;
   seq1: number;
+  shipdt: string;
   taxamt: number;
   taxdiv: string;
-  taxnum: string;
+  taxdt: string;
+  taxnu: string;
+  taxtype: string;
   totamt: number;
+  trcost: number;
   uschgrat: number;
-  wonamt: number;
   wonchgrat: number;
 };
+let deletedMainRows: object[] = [];
+
+export const FormContext = createContext<{
+  itemcd: string;
+  itemnm: string;
+  setItemcd: (d: any) => void;
+  setItemnm: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
 interface IItemData {
   itemcd: string;
   itemno: string;
@@ -146,17 +178,6 @@ interface IItemData {
   itemlvl5: string;
   custitemnm: string;
 }
-let deletedMainRows: object[] = [];
-
-export const FormContext = createContext<{
-  itemcd: string;
-  itemnm: string;
-  setItemcd: (d: any) => void;
-  setItemnm: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
-  // fetchGrid: (n: number) => any;
-}>({} as any);
 
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
@@ -195,8 +216,12 @@ const ColumnCommandCell = (props: GridCellProps) => {
     setItemWindowVisible2(true);
   };
   const setItemData2 = (data: IItemData) => {
-    setItemcd(data.itemcd);
-    setItemnm(data.itemnm);
+    if (dataItem["rowstatus"] == "N") {
+      setItemcd(data.itemcd);
+      setItemnm(data.itemnm);
+    } else {
+      alert("품목코드와 품목명은 수정이 불가합니다.");
+    }
   };
   const defaultRendering = (
     <td
@@ -236,28 +261,15 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </>
   );
 };
+
+
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent(
-    "L_BA019,L_BA015,L_BA061,L_BA016,L_LOADPLACE",
-    setBizComponentData
-  );
+  UseBizComponent("L_BA005,L_BA061", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "unpcalmeth"
-      ? "L_BA019"
-      : field === "qtyunit"
-      ? "L_BA015"
-      : field === "wgtunit"
-      ? "L_BA015"
-      : field === "itemacnt"
-      ? "L_BA061"
-      : field === "PAC"
-      ? "L_BA016"
-      : field === "load_place"
-      ? "L_LOADPLACE"
-      : "";
+    field === "doexdiv" ? "L_BA005" : field === "itemacnt" ? "L_BA061" : "";
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
@@ -282,13 +294,14 @@ const CopyWindow = ({
     width: 1600,
     height: 900,
   });
+  const [itemcd, setItemcd] = useState<string>("");
+  const [itemnm, setItemnm] = useState<string>("");
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const DATA_ITEM_KEY = "num";
-  const [itemcd, setItemcd] = useState<string>("");
-  const [itemnm, setItemnm] = useState<string>("");
+
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -299,11 +312,6 @@ const CopyWindow = ({
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-  useEffect(() => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
-  }, [reload]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -311,69 +319,53 @@ const CopyWindow = ({
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
         person: defaultOption.find((item: any) => item.id === "person")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        cargocd: defaultOption.find((item: any) => item.id === "cargocd")
           .valueCode,
-        indt: setDefaultDate(customOptionData, "indt"),
       }));
     }
   }, [customOptionData]);
 
-  useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-            itemcd: itemcd,
-            itemnm: itemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [itemcd, itemnm]);
-
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA005,L_BA029,L_BA020",
+    "L_ITEM_TEST,L_BA002,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_YESNOALL",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [doexdivListData, setDoexdivListData] = useState([
+  const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [taxdivListData, setTaxdivListData] = useState([
+  const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [amtunitListData, setAmtunitListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
+  const [itemListData, setItemListData] = useState([
+    { itemcd: "", itemnm: "" },
   ]);
   useEffect(() => {
+    setMainPgNum(1);
+    setMainDataResult(process([], mainDataState));
+    fetchMainGrid();
+  }, [reload]);
+
+  useEffect(() => {
     if (bizComponentData !== null) {
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+      const qtyunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+      const locationQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
       );
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+      const itemQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_ITEM_TEST"
+        )
       );
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
+      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      fetchQuery(locationQueryStr, setLocationListData);
+      fetchQuery(itemQueryStr, setItemListData);
     }
   }, [bizComponentData]);
 
@@ -398,6 +390,7 @@ const CopyWindow = ({
       setListData(rows);
     }
   }, []);
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -464,6 +457,27 @@ const CopyWindow = ({
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            itemcd: itemcd,
+            itemnm: itemnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemcd, itemnm]);
   interface ICustData {
     custcd: string;
     custnm: string;
@@ -483,6 +497,7 @@ const CopyWindow = ({
       custnm: data.custnm,
     }));
   };
+
   const setCustData2 = (data: ICustData) => {
     setFilters((prev) => ({
       ...prev,
@@ -490,58 +505,66 @@ const CopyWindow = ({
       rcvcustnm: data.custnm,
     }));
   };
+
   const processApi = useApi();
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    reckey: "",
-    indt: new Date(),
-    person: "",
-    amtunit: "",
-    location: "",
     custcd: "",
     custnm: "",
-    doexdiv: "",
-    wonchgrat: 0,
-    position: "",
-    files: "",
-    attdatnum: "",
-    taxdiv: "",
-    uschgrat: 0,
+    carno: "",
+    cargocd: "",
+    cargb: "",
+    trcost: 0,
+    dvnm: "",
+    dvnum: "",
+    finaldes: "",
+    gugancd: "",
+    location: "01",
+    orgdiv: "01",
+    person: "",
+    poregnum: "",
+    portnm: "",
+    rcvcustcd: "",
+    rcvcustnm: "",
+    rcvperson: "",
+    rcvnum: "",
+    reqdt: new Date(),
     remark: "",
-    purnum: "",
-    itemcd: "",
-    itemnm: "",
-    lotnum: "",
-    taxyn: "",
-    recdt: "",
-    seq1: 0,
+    reqnum: "",
+    shipdt: new Date(),
+    userid: userId,
+    pc: pc,
+    form_id: "SA_A2300W",
+    serviceid: "2207A046",
+    files: "",
+    frdt: new Date(),
+    todt: new Date(),
   });
 
   const parameters: Iparameters = {
-    procedureName: "P_MA_A2300W_Q",
+    procedureName: "P_SA_A3000W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
       "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(new Date()),
-      "@p_todt": convertDateToStr(new Date()),
-      "@p_position": filters.position,
-      "@p_doexdiv": filters.doexdiv,
-      "@p_purnum": filters.purnum,
+      "@p_position": "",
+      "@p_reqnum": filters.reqnum,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_person": filters.person,
-      "@p_lotnum": filters.lotnum,
-      "@p_taxyn": filters.taxyn,
-      "@p_recdt": filters.recdt,
-      "@p_seq1": filters.seq1,
-      "@p_company_code": "",
+      "@p_itemcd": "",
+      "@p_itemnm": "",
+      "@p_finyn": "",
+      "@p_ordnum": "",
+      "@p_poregnum": filters.poregnum,
+      "@p_itemno": "",
+      "@p_reqnum_s": "",
+      "@p_reqseq_s": "",
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -595,40 +618,38 @@ const CopyWindow = ({
     if (workType === "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
-        amtunit: data.amtunit,
-        attdatnum: data.attdatnum,
+        cargb: data.cargb,
+        cargocd: data.cargocd,
+        carno: data.carno,
         custcd: data.custcd,
         custnm: data.custnm,
-        doexdiv: data.doexdiv,
-        files: data.files,
-        indt: toDate(data.indt),
+        custprsncd: data.custprsncd,
+        dvnm: data.dvnm,
+        dvnum: data.dvnum,
+        finaldes: data.finaldes,
+        finyn: data.finyn,
+        gugancd: data.gugancd,
+        itemacnt: data.itemacnt,
+        jisiqty: data.jisiqty,
         location: data.location,
+        outqty: data.outqty,
         person: data.person,
+        poregnum: data.poregnum,
+        portnm: data.portnm,
         position: data.position,
-        recdt: data.recdt,
-        reckey: data.reckey,
+        project: data.project,
+        rcvcustcd: data.rcvcustcd,
+        rcvcustnm: data.rcvcustnm,
+        rcvperson: data.rcvperson,
+        rcvnum: data.rcvnum,
         remark: data.remark,
-        seq1: data.seq1,
-        taxdiv: data.taxdiv,
-        wonchgrat: data.wonchgrat,
-        uschgrat: data.uschgrat,
+        reqdt: toDate(data.reqdt),
+        reqnum: data.reqnum,
+        shipdt: data.shipdt == "" ? new Date() : toDate(data.shipdt),
+        trcost: data.trcost,
       }));
     }
   }, []);
-
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
-    mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
-    );
-    var parts = sum.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    );
-  };
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -670,18 +691,6 @@ const CopyWindow = ({
     setCopyWindowVisible(true);
   };
 
-  const getAttachmentsData = (data: IAttachmentData) => {
-    setFilters((prev: any) => {
-      return {
-        ...prev,
-        attdatnum: data.attdatnum,
-        files:
-          data.original_name +
-          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-      };
-    });
-  };
-
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
@@ -689,33 +698,33 @@ const CopyWindow = ({
         item.rowstatus !== undefined
       );
     });
+
     if (dataItem.length === 0) return false;
     let seq = 1;
 
     if (mainDataResult.total > 0) {
-      seq = mainDataResult.data[mainDataResult.total - 1].num;
+      mainDataResult.data.forEach((item) => {
+        if (item[DATA_ITEM_KEY] > seq) {
+          seq = item[DATA_ITEM_KEY];
+        }
+      });
+      seq++;
     }
 
-    const rows = data.map((row: any) => {
+    const rows = dataItem.map((row: any) => {
       seq += seq + 1;
       return {
         ...row,
-        totamt: 0,
         num: seq,
       };
     });
-    if (filters.custcd == "") {
-      setFilters((item: any) => ({
-        ...item,
-        custcd: rows[0].custcd,
-        custnm: rows[0].custnm,
-        doexdiv: "A",
-        taxdiv: "A",
-        amtunit: "KRW",
-      }));
-    }
 
     try {
+      setFilters((prev: any) => ({
+        ...prev,
+        custcd: rows[0].custcd,
+        custnm: rows[0].custnm,
+      }))
       rows.map((item: any) => {
         setMainDataResult((prev) => {
           return {
@@ -750,48 +759,34 @@ const CopyWindow = ({
   const selectData = (selectedData: any) => {
     let valid = true;
     mainDataResult.data.map((item) => {
-      if (item.qty == 0 && valid == true) {
+      if (item.qty == 0) {
         alert("수량을 채워주세요.");
         valid = false;
         return false;
       }
     });
 
-    if (valid == true) {
-      try {
-        if (mainDataResult.data.length == 0) {
-          throw findMessage(messagesData, "MA_A2300W_003");
-        } else if (
-          convertDateToStr(filters.indt).substring(0, 4) < "1997" ||
-          convertDateToStr(filters.indt).substring(6, 8) > "31" ||
-          convertDateToStr(filters.indt).substring(6, 8) < "01" ||
-          convertDateToStr(filters.indt).substring(6, 8).length != 2
-        ) {
-          throw findMessage(messagesData, "MA_A2300W_001");
-        } else if (
-          filters.person == null ||
-          filters.person == "" ||
-          filters.person == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2300W_004");
-        } else if (
-          filters.location == null ||
-          filters.location == "" ||
-          filters.location == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2300W_002");
-        } else {
-          if (valid == true) {
-            setData(mainDataResult.data, filters, deletedMainRows);
-            deletedMainRows = [];
-            if (workType == "N") {
-              onClose();
-            }
+    try {
+      if (mainDataResult.data.length == 0) {
+        throw findMessage(messagesData, "SA_A3000W_002");
+      } else if (
+        convertDateToStr(filters.shipdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.shipdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.shipdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.shipdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A3000W_001");
+      } else {
+        if (valid == true) {
+          setData(mainDataResult.data, filters, deletedMainRows);
+          deletedMainRows = [];
+          if (workType == "N") {
+            onClose();
           }
         }
-      } catch (e) {
-        alert(e);
       }
+    } catch (e) {
+      alert(e);
     }
   };
 
@@ -848,14 +843,13 @@ const CopyWindow = ({
 
   const enterEdit = (dataItem: any, field: string) => {
     if (
-      field != "itemnm" &&
-      field != "insiz" &&
-      field != "amt" &&
-      field != "totamt" &&
-      field != "wonamt" &&
-      field != "taxamt" &&
       field != "rowstatus" &&
-      field != "ordkey"
+      field != "insiz" &&
+      field != "qtyunit" &&
+      field != "itemnm" &&
+      field != "len"&&
+      field != "ordnum"&&
+      field != "finyn"
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -883,24 +877,12 @@ const CopyWindow = ({
   const exitEdit = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
-      amt:
-      filters.amtunit == "KRW"
-        ? item.qty * item.unp
-        : item.qty * item.unp * filters.wonchgrat,
-      wonamt:
-      filters.amtunit == "KRW"
-          ? item.qty * item.unp
-          : item.qty * item.unp * filters.wonchgrat,
-      taxamt:
-      filters.amtunit == "KRW"
-          ? (item.qty * item.unp) / 10
-          : (item.qty * item.unp * filters.wonchgrat) / 10,
-      totamt:
-      filters.amtunit == "KRW"
-      ? Math.round((item.qty * item.unp) + (item.qty * item.unp) / 10)
-      : Math.round(
-          (item.qty * item.unp * filters.wonchgrat) + (item.qty * item.unp * filters.wonchgrat) / 10
-        ),
+      itemnm:
+      itemListData.find((items: any) => items.itemcd === item.itemcd)
+        ?.itemnm == item.itemnm
+        ? item.itemnm
+        : itemListData.find((items: any) => items.itemcd === item.itemcd)
+            ?.itemnm,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);
@@ -915,7 +897,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "자재입고생성" : "자재입고정보"}
+        title={workType === "N" ? "출하지시생성" : "출하지시정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -926,24 +908,36 @@ const CopyWindow = ({
           <FormBox>
             <tbody>
               <tr>
-                <th>입고번호</th>
+                <th>출하지시번호</th>
                 <td>
                   <Input
-                    name="reckey"
+                    name="reqnum"
                     type="text"
-                    value={filters.reckey}
+                    value={filters.reqnum}
                     className="readonly"
                   />
                 </td>
-                <th>입고일자</th>
+                <th>지시일자</th>
                 <td>
                   <div className="filter-item-wrap">
                     <DatePicker
-                      name="indt"
-                      value={filters.indt}
+                      name="reqdt"
+                      value={filters.reqdt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
+                      placeholder=""
                       className="required"
+                    />
+                  </div>
+                </td>
+                <th>선적일자</th>
+                <td>
+                  <div className="filter-item-wrap">
+                    <DatePicker
+                      name="shipdt"
+                      value={filters.shipdt}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
                       placeholder=""
                     />
                   </div>
@@ -958,127 +952,185 @@ const CopyWindow = ({
                       changeData={filterComboBoxChange}
                       textField="user_name"
                       valueField="user_id"
-                      className="required"
                     />
                   )}
                 </td>
-                <th>화폐단위</th>
-                <td>
-                  <Input
-                    name="amtunit"
-                    type="text"
-                    value={
-                      amtunitListData.find(
-                        (item: any) => item.sub_code === filters.amtunit
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
-                </td>
                 <th>사업장</th>
                 <td>
-                  {customOptionData !== null && (
+                {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="location"
                       value={filters.location}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
-                      className="required"
                     />
                   )}
                 </td>
               </tr>
               <tr>
-                <th>업체코드</th>
+                <th>출하처코드</th>
                 <td>
                   <Input
                     name="custcd"
                     type="text"
                     value={filters.custcd}
-                    className="readonly"
-                  />
-                </td>
-                <th>업체명</th>
-                <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
-                    className="readonly"
-                  />
-                </td>
-                <th>내수구분</th>
-                <td>
-                  <Input
-                    name="doexdiv"
-                    type="text"
-                    value={
-                      doexdivListData.find(
-                        (item: any) => item.sub_code === filters.doexdiv
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>원화환율</th>
-                <td>
-                  <Input
-                    name="wonchgrat"
-                    type="number"
-                    value={filters.wonchgrat}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>사업부</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="position"
-                      value={filters.position}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>첨부파일</th>
-                <td colSpan={5}>
-                  <Input
-                    name="files"
-                    type="text"
-                    value={filters.files}
-                    className="readonly"
                     onChange={filterInputChange}
                   />
                   <ButtonInInput>
                     <Button
-                      type={"button"}
-                      onClick={onAttachmentsWndClick}
+                      onClick={onCustWndClick}
                       icon="more-horizontal"
                       fillMode="flat"
                     />
                   </ButtonInInput>
                 </td>
-                <th>과세구분</th>
+                <th>출하처명</th>
                 <td>
                   <Input
-                    name="taxdiv"
+                    name="custnm"
                     type="text"
-                    value={
-                      taxdivListData.find(
-                        (item: any) => item.sub_code === filters.taxdiv
-                      )?.code_name
-                    }
-                    className="readonly"
+                    value={filters.custnm}
+                    onChange={filterInputChange}
                   />
                 </td>
-                <th>대미환율</th>
+                <th>PO번호</th>
                 <td>
                   <Input
-                    name="uschgrat"
+                    name="poregnum"
+                    type="text"
+                    value={filters.poregnum}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>운송비구간</th>
+                <td>
+                  <Input
+                    name="gugancd"
+                    type="text"
+                    value={filters.gugancd}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>차량구분</th>
+                <td>
+                  <Input
+                    name="cargb"
+                    type="text"
+                    value={filters.cargb}
+                    onChange={filterInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>인수처코드</th>
+                <td>
+                  <Input
+                    name="rcvcustcd"
+                    type="text"
+                    value={filters.rcvcustcd}
+                    onChange={filterInputChange}
+                  />
+                  <ButtonInInput>
+                    <Button
+                      onClick={onCustWndClick2}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
+                </td>
+                <th>인수처명</th>
+                <td>
+                  <Input
+                    name="rcvcustnm"
+                    type="text"
+                    value={filters.rcvcustnm}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>운송사</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="cargocd"
+                      value={filters.cargocd}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>운송비</th>
+                <td>
+                  <Input
+                    name="trcost"
                     type="number"
-                    value={filters.uschgrat}
+                    value={filters.trcost}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>차량번호</th>
+                <td>
+                  <Input
+                    name="carno"
+                    type="text"
+                    value={filters.carno}
+                    onChange={filterInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>선적지</th>
+                <td colSpan={3}>
+                  <Input
+                    name="portnm"
+                    type="text"
+                    value={filters.portnm}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>운전자명</th>
+                <td>
+                  <Input
+                    name="dvnm"
+                    type="text"
+                    value={filters.dvnm}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>운전자연락처</th>
+                <td>
+                  <Input
+                    name="dvnum"
+                    type="text"
+                    value={filters.dvnum}
+                    onChange={filterInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+              <th>도착지</th>
+                <td colSpan={3}>
+                  <Input
+                    name="finaldes"
+                    type="text"
+                    value={filters.finaldes}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>인수자</th>
+                <td>
+                  <Input
+                    name="rcvperson"
+                    type="text"
+                    value={filters.rcvperson}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>인수자연락처</th>
+                <td>
+                  <Input
+                    name="rcvnum"
+                    type="text"
+                    value={filters.rcvnum}
                     onChange={filterInputChange}
                   />
                 </td>
@@ -1108,177 +1160,113 @@ const CopyWindow = ({
             // fetchGrid,
           }}
         >
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>상세정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                ></Button>
-                <Button
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  onClick={onCopyWndClick}
-                  icon="folder-open"
-                >
-                  발주
-                </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "500px" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  rowstatus:
-                    row.rowstatus == null ||
-                    row.rowstatus == "" ||
-                    row.rowstatus == undefined
-                      ? ""
-                      : row.rowstatus,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-                mainDataState
-              )}
-              onDataStateChange={onMainDataStateChange}
-              {...mainDataState}
-              //선택 subDataState
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              onScroll={onMainScrollHandler}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onMainItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn field="rowstatus" title=" " width="50px" />
-              <GridColumn
-                field="PAC"
-                title="도/사급"
-                width="150px"
-                cell={CustomComboBoxCell}
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn field="itemcd" title="품목코드" width="150px" />
-              <GridColumn field="itemnm" title="품목명" width="150px" />
-              <GridColumn field="insiz" title="규격" width="120px" />
-              <GridColumn
-                field="itemacnt"
-                title="품목계정"
-                width="120px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn field="lotnum" title="LOT NO" width="120px" />
-              <GridColumn
-                field="load_place"
-                title="적재장소"
-                width="100px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="qty"
-                title="수량"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-                headerCell={RequiredHeader}
-              />
-              <GridColumn
-                field="qtyunit"
-                title="수량단위"
-                width="120px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="unitwgt"
-                title="단량"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="totwgt"
-                title="총중량"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="wgtunit"
-                title="중량단위"
-                width="120px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="unpcalmeth"
-                title="단가산정방법"
-                width="120px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="unp"
-                title="단가"
-                width="100px"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="amt"
-                title="금액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="wonamt"
-                title="원화금액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="dlramt"
-                title="달러금액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="taxamt"
-                title="세액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="totamt"
-                title="합계금액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn field="remark" title="비고" width="280px" />
-              <GridColumn field="purkey" title="발주번호" width="150px" />
-              <GridColumn field="reckey" title="입고번호" width="150px" />
-            </Grid>
-          </GridContainer>
+        <GridContainer>
+          <GridTitleContainer>
+            <GridTitle>상세정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+              ></Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyWndClick}
+                icon="folder-open"
+              >
+                수주참조
+              </Button>
+            </ButtonContainer>
+          </GridTitleContainer>
+          <Grid
+            style={{ height: "450px" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                enddt:
+                  workType == "U" && isValidDate(row.enddt)
+                    ? new Date(dateformat(row.enddt))
+                    : new Date(),
+                qtyunit: qtyunitListData.find(
+                  (item: any) => item.sub_code === row.qtyunit
+                )?.code_name,
+                rowstatus:
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
+            )}
+            onDataStateChange={onMainDataStateChange}
+            {...mainDataState}
+            //선택 subDataState
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange}
+            //스크롤 조회기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            onScroll={onMainScrollHandler}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender}
+            rowRender={customRowRender}
+            editField={EDIT_FIELD}
+          >
+            <GridColumn field="rowstatus" title=" " width="50px" />
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              width="180px"
+              cell={ColumnCommandCell}
+              footerCell={mainTotalFooterCell}
+            />
+            <GridColumn field="itemnm" title="품목명" width="150px" />
+            <GridColumn field="insiz" title="규격" width="150px" />
+            <GridColumn
+              field="itemacnt"
+              title="품목계정"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="qty"
+              title="수량"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="qtyunit"
+              title="수량단위"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+                        <GridColumn
+              field="len"
+              title="길이"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn field="remark" title="비고" width="250px" />
+            <GridColumn field="ordnum" title="수주번호" width="180px" />
+            <GridColumn field="finyn" title="완료여부" width="120px" cell={CheckBoxReadOnlyCell}/>
+          </Grid>
+        </GridContainer>
         </FormContext.Provider>
         <BottomContainer>
           <ButtonContainer>
@@ -1310,19 +1298,12 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow1
+        <CopyWindow2
           setVisible={setCopyWindowVisible}
           workType={"FILTER"}
           setData={setCopyData}
-          custcd={filters.custcd == undefined ? "" : filters.custcd}
-          custnm={filters.custnm == undefined ? "" : filters.custnm}
-        />
-      )}
-      {attachmentsWindowVisible && (
-        <AttachmentsWindow
-          setVisible={setAttachmentsWindowVisible}
-          setData={getAttachmentsData}
-          para={filters.attdatnum}
+          custcd={filters.custcd}
+          custnm={filters.custnm}
         />
       )}
     </>

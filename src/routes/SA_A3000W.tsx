@@ -46,7 +46,7 @@ import {
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A2300W_Window";
+import DetailWindow from "../components/Windows/SA_A3000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -64,6 +64,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import { deprecationHandler } from "moment";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -72,31 +73,42 @@ const numberField = ["jisiqty", "outqty", "qty", "len"];
 const checkField = ["finyn"];
 type TdataArr = {
   rowstatus: string[];
-  seq2: string[];
-  ordnum: string[];
-  ordseq: string[];
-  portcd: string[];
-  portnm: string[];
-  prcterms: string[];
-  poregnum: string[];
+  custcd: string[];
+  custnm: string[];
+  doqty: number[];
+  dptcd: string[];
+  itemacnt: string[];
   itemcd: string[];
   itemnm: string[];
-  itemacnt: string[];
-  qty: string[];
+  itemno: string[];
+  len: number[];
+  ordbnatur: string[];
+  orddt: string[];
+  ordinsiz: string[];
+  ordkey: string[];
+  ordnum: string[];
+  ordseq: string[];
+  ordsts: string[];
+  person: string[];
+  qty: number[];
   qtyunit: string[];
-  unp: string[];
-  amt: string[];
-  dlramt: string[];
-  wonamt: string[];
-  taxamt: string[];
-  lotnum: string[];
-  remark_s: string[];
-  inrecdt: string[];
-  reqnum: string[];
-  reqseq: string[];
-  serialno: string[];
+  rcvcustcd: string[];
+  rcvcustnm: string[];
+  remark: string[];
+  reqqty: number[];
+  unp: number[];
+  reqseq: number[];
+  unitwgt: number[];
+  wgt: number[];
+  wgtunit: string[];
+  totwgt: number[];
+  finyn: string[];
+  spqty: number[];
+  boxqty_w: number[];
+  boxqty_h: number[];
+  boxjanqty: number[];
+  boxqty: number[];
   outlot: string[];
-  unitqty: string[];
 };
 
 const SA_A2300: React.FC = () => {
@@ -511,7 +523,7 @@ const SA_A2300: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -835,67 +847,85 @@ const SA_A2300: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "N",
     orgdiv: "01",
-    recdt: new Date(),
-    seq1: 0,
+    reqnum: "",
     location: "01",
-    doexdiv: "A",
-    outtype: "",
-    outdt: new Date(),
+    position: "",
+    reqdt: new Date(),
     shipdt: new Date(),
-    person: "admin",
+    person: "",
     custcd: "",
+    custnm: "",
     rcvcustcd: "",
-    taxdiv: "",
-    userid: userId,
-    pc: pc,
-    amtunit: "",
-    baseamt: 0,
-    wonchgrat: 0,
-    uschgrat: 0,
-    remark: "",
+    poregnum: "",
+    portnm: "",
+    finaldes: "",
     carno: "",
     cargocd: "",
     cargb: "",
     dvnm: "",
     dvnum: "",
+    gugancd: "",
     trcost: 0,
-    portnm: "",
-    finaldes: "",
-    attdatnum: "",
-    outuse: "",
+    remark: "",
+    finyn: "",
+    custprsncd: "",
+    rcvperson: "",
+    rcvnum: "",
+    rcvnm: "",
     rowstatus: "",
-    seq2: "",
-    ordnum: "",
-    ordseq: "",
-    portcd: "",
-    prcterms: "",
-    poregnum: "",
-    itemcd: "",
-    itemnm: "",
-    itemacnt: "",
-    qty: "",
-    qtyunit: "",
-    unp: "",
-    amt: "",
-    dlramt: "",
-    wonamt: "",
-    taxamt: "",
-    lotnum: "",
+    reqseq_s: "",
+    ordnum_s: "",
+    ordseq_s: "",
+    itemcd_s: "",
+    itemnm_s: "",
+    itemacnt_s: "",
+    qty_s: "",
+    len_s: "",
+    unitwgt_s: "",
+    wgt_s: "",
+    wgtunit_s: "",
+    totwgt_s: "",
     remark_s: "",
-    inrecdt: "",
-    reqnum: "",
-    reqseq: "",
-    serialno: "",
-    outlot: "",
-    custnm: "",
-    rcvcustnm: "",
-    unitqty: "",
-    form_id: "SA_A2300W",
+    finyn_s: "",
+    unp_s: "",
+    spqty_s: "",
+    boxqty_w_s: "",
+    boxqty_h_s: "",
+    boxjanqty_s: "",
+    boxqty_s: "",
+    userid: userId,
+    pc: pc,
+    outlot_s: "",
+    form_id: "SA_A3000W",
     serviceid: "2207A046",
   });
 
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
-    let valid = true;
+    setParaData((prev) => ({
+      ...prev,
+      workType: workType,
+      reqnum: filter.reqnum,
+      location: filter.location,
+      reqdt: filter.reqdt,
+      shipdt: filter.shipdt,
+      person: filter.person,
+      custcd: filter.custcd,
+      custnm: filter.custnm,
+      rcvcustcd: filter.rcvcustcd,
+      poregnum: filter.poregnum,
+      portnm: filter.portnm,
+      finaldes: filter.finaldes,
+      carno: filter.carno,
+      cargocd: filter.cargocd,
+      cargb: filter.cargb,
+      dvnm: filter.dvnm,
+      dvnum: filter.dvnum,
+      gugancd: filter.gugancd,
+      trcost: parseInt(filter.trcost),
+      remark: filter.remark,
+      rcvperson: filter.rcvperson,
+      rcvnum: filter.rcvnum,
+    }));
 
     const dataItem = data.filter((item: any) => {
       return (
@@ -903,262 +933,228 @@ const SA_A2300: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-
-    setParaData((prev) => ({
-      ...prev,
-      workType: workType,
-      amtunit: filter.amtunit,
-      attdatnum: filter.attdatnum,
-      custcd: filter.custcd,
-      custnm: filter.custnm,
-      carno: filter.carno,
-      cargocd: filter.cargocd,
-      trcost: parseInt(filter.trcost),
-      doexdiv: filter.doexdiv,
-      dvnm: filter.dvnm,
-      dvnum: filter.dvnum,
-      finaldes: filter.finaldes,
-      location: "01",
-      orgdiv: "01",
-      outdt: filter.outdt,
-      outtype: filter.outtype,
-      person: filter.person,
-      rcvcustcd: filter.rcvcustcd,
-      rcvcustnm: filter.rcvcustnm,
-      recdt: filter.recdt,
-      remark: filter.remark,
-      seq1: filter.seq1,
-      shipdt: filter.shipdt,
-      wonchgrat: filter.wonchgrat,
-      userid: userId,
-      pc: pc,
-      form_id: "SA_A2300W",
-      serviceid: "2207A046",
-      files: filter.files,
-    }));
     if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus: [],
-      seq2: [],
-      ordnum: [],
-      ordseq: [],
-      portcd: [],
-      portnm: [],
-      prcterms: [],
-      poregnum: [],
+      custcd: [],
+      custnm: [],
+      doqty: [],
+      dptcd: [],
+      itemacnt: [],
       itemcd: [],
       itemnm: [],
-      itemacnt: [],
+      itemno: [],
+      len: [],
+      ordbnatur: [],
+      orddt: [],
+      ordinsiz: [],
+      ordkey: [],
+      ordnum: [],
+      ordseq: [],
+      ordsts: [],
+      person: [],
       qty: [],
       qtyunit: [],
+      rcvcustcd: [],
+      rcvcustnm: [],
+      remark: [],
+      reqqty: [],
       unp: [],
-      amt: [],
-      dlramt: [],
-      wonamt: [],
-      taxamt: [],
-      lotnum: [],
-      remark_s: [],
-      inrecdt: [],
-      reqnum: [],
       reqseq: [],
-      serialno: [],
+      unitwgt: [],
+      wgt: [],
+      wgtunit: [],
+      totwgt: [],
+      finyn: [],
+      spqty: [],
+      boxqty_w: [],
+      boxqty_h: [],
+      boxjanqty: [],
+      boxqty: [],
       outlot: [],
-      unitqty: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
       const {
-        amt = "",
+        rowstatus = "",
         itemacnt = "",
         itemcd = "",
         itemnm = "",
-        lotnum = "",
+        len = "",
         ordnum = "",
         ordseq = "",
-        poregnum = "",
-        rowstatus = "",
-        seq2 = "",
-        taxamt = "",
-        unp = "",
         qty = "",
-        qtyunit = "",
-        wonamt = "",
-        dlramt = "",
-        unitqty = "",
-        reqseq = "",
         remark = "",
+        unp = "",
+        reqseq = "",
+        unitwgt = "",
+        wgt = "",
+        wgtunit = "",
+        totwgt = "",
+        finyn = "",
+        spqty = "",
+        boxqty_w = "",
+        boxqty_h = "",
+        boxjanqty = "",
+        boxqty = "",
       } = item;
 
       dataArr.rowstatus.push(rowstatus);
-      dataArr.seq2.push(seq2 == "" ? 0 : seq2);
+      dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
       dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
       dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
-      dataArr.portcd.push("");
-      dataArr.portnm.push("");
-      dataArr.prcterms.push("");
-      dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
       dataArr.itemcd.push(itemcd);
       dataArr.itemnm.push(itemnm);
       dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
       dataArr.qty.push(qty == "" ? 0 : qty);
-      dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
+      dataArr.len.push(len == "" ? 0 : len);
+      dataArr.unitwgt.push(unitwgt == "" ? 0 : unitwgt);
+      dataArr.wgt.push(wgt == "" ? 0 : wgt);
+      dataArr.wgtunit.push(wgtunit == "" ? 0 : wgtunit);
+      dataArr.totwgt.push(totwgt == "" ? 0 : totwgt);
+      dataArr.remark.push(remark == undefined ? "" : remark);
+      dataArr.finyn.push(finyn == undefined ? "" : finyn);
       dataArr.unp.push(unp == "" ? 0 : unp);
-      dataArr.amt.push(amt == "" ? 0 : amt);
-      dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
-      dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
-      dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
-      dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
-      dataArr.remark_s.push(remark == undefined ? "" : remark);
-      dataArr.inrecdt.push("");
-      dataArr.reqnum.push("");
-      dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+      dataArr.spqty.push(spqty == "" ? 0 : spqty);
+      dataArr.boxqty_w.push(boxqty_w == "" ? 0 : boxqty_w);
+      dataArr.boxqty_h.push(boxqty_h == "" ? 0 : boxqty_h);
+      dataArr.boxjanqty.push(boxjanqty == "" ? 0 : boxjanqty);
+      dataArr.boxqty.push(boxqty == "" ? 0 : boxqty);
       dataArr.outlot.push("");
-      dataArr.serialno.push("");
-      dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
       const {
-        amt = "",
+        rowstatus = "",
         itemacnt = "",
         itemcd = "",
         itemnm = "",
-        lotnum = "",
+        len = "",
         ordnum = "",
         ordseq = "",
-        poregnum = "",
-        rowstatus = "",
-        seq2 = "",
-        taxamt = "",
-        unp = "",
         qty = "",
-        qtyunit = "",
-        wonamt = "",
-        dlramt = "",
-        unitqty = "",
-        reqseq = "",
         remark = "",
+        unp = "",
+        reqseq = "",
+        unitwgt = "",
+        wgt = "",
+        wgtunit = "",
+        totwgt = "",
+        finyn = "",
+        spqty = "",
+        boxqty_w = "",
+        boxqty_h = "",
+        boxjanqty = "",
+        boxqty = "",
       } = item;
+
       dataArr.rowstatus.push(rowstatus);
-      dataArr.seq2.push(seq2 == "" ? 0 : seq2);
+      dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
       dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
       dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
-      dataArr.portcd.push("");
-      dataArr.portnm.push("");
-      dataArr.prcterms.push("");
-      dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
       dataArr.itemcd.push(itemcd);
       dataArr.itemnm.push(itemnm);
       dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
       dataArr.qty.push(qty == "" ? 0 : qty);
-      dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
+      dataArr.len.push(len == "" ? 0 : len);
+      dataArr.unitwgt.push(unitwgt == "" ? 0 : unitwgt);
+      dataArr.wgt.push(wgt == "" ? 0 : wgt);
+      dataArr.wgtunit.push(wgtunit == "" ? 0 : wgtunit);
+      dataArr.totwgt.push(totwgt == "" ? 0 : totwgt);
+      dataArr.remark.push(remark == undefined ? "" : remark);
+      dataArr.finyn.push(finyn == undefined ? "" : finyn);
       dataArr.unp.push(unp == "" ? 0 : unp);
-      dataArr.amt.push(amt == "" ? 0 : amt);
-      dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
-      dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
-      dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
-      dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
-      dataArr.remark_s.push(remark == undefined ? "" : remark);
-      dataArr.inrecdt.push("");
-      dataArr.reqnum.push("");
-      dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+      dataArr.spqty.push(spqty == "" ? 0 : spqty);
+      dataArr.boxqty_w.push(boxqty_w == "" ? 0 : boxqty_w);
+      dataArr.boxqty_h.push(boxqty_h == "" ? 0 : boxqty_h);
+      dataArr.boxjanqty.push(boxjanqty == "" ? 0 : boxjanqty);
+      dataArr.boxqty.push(boxqty == "" ? 0 : boxqty);
       dataArr.outlot.push("");
-      dataArr.serialno.push("");
-      dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
     });
     setParaData((prev) => ({
       ...prev,
       workType: workType,
       rowstatus: dataArr.rowstatus.join("|"),
-      seq2: dataArr.seq2.join("|"),
-      ordnum: dataArr.ordnum.join("|"),
-      ordseq: dataArr.ordseq.join("|"),
-      portcd: dataArr.portcd.join("|"),
-      portnm: dataArr.portnm.join("|"),
-      prcterms: dataArr.prcterms.join("|"),
-      poregnum: dataArr.poregnum.join("|"),
-      itemcd: dataArr.itemcd.join("|"),
-      itemnm: dataArr.itemnm.join("|"),
-      itemacnt: dataArr.itemacnt.join("|"),
-      qty: dataArr.qty.join("|"),
-      qtyunit: dataArr.qtyunit.join("|"),
-      unp: dataArr.unp.join("|"),
-      amt: dataArr.amt.join("|"),
-      dlramt: dataArr.dlramt.join("|"),
-      wonamt: dataArr.wonamt.join("|"),
-      taxamt: dataArr.taxamt.join("|"),
-      lotnum: dataArr.lotnum.join("|"),
-      remark_s: dataArr.remark_s.join("|"),
-      inrecdt: dataArr.inrecdt.join("|"),
-      reqnum: dataArr.reqnum.join("|"),
-      reqseq: dataArr.reqseq.join("|"),
-      serialno: dataArr.serialno.join("|"),
-      outlot: dataArr.outlot.join("|"),
-      unitqty: dataArr.unitqty.join("|"),
+      reqseq_s: dataArr.reqseq.join("|"),
+      ordnum_s: dataArr.ordnum.join("|"),
+      ordseq_s: dataArr.ordseq.join("|"),
+      itemcd_s: dataArr.itemcd.join("|"),
+      itemnm_s: dataArr.itemnm.join("|"),
+      itemacnt_s: dataArr.itemacnt.join("|"),
+      qty_s: dataArr.qty.join("|"),
+      len_s: dataArr.len.join("|"),
+      unitwgt_s: dataArr.unitwgt.join("|"),
+      wgt_s: dataArr.wgt.join("|"),
+      wgtunit_s: dataArr.wgtunit.join("|"),
+      totwgt_s: dataArr.totwgt.join("|"),
+      remark_s: dataArr.remark.join("|"),
+      finyn_s: dataArr.finyn.join("|"),
+      unp_s: dataArr.unp.join("|"),
+      spqty_s: dataArr.spqty.join("|"),
+      boxqty_w_s: dataArr.boxqty_w.join("|"),
+      boxqty_h_s: dataArr.boxqty_h.join("|"),
+      boxjanqty_s: dataArr.boxjanqty.join("|"),
+      boxqty_s: dataArr.boxqty.join("|"),
+      outlot_s: dataArr.outlot.join("|"),
     }));
   };
 
   const para: Iparameters = {
-    procedureName: "P_SA_A2300W_S",
+    procedureName: "P_SA_A3000W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
-      "@p_recdt": convertDateToStr(ParaData.recdt),
-      "@p_seq1": ParaData.seq1,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_reqnum": ParaData.reqnum,
       "@p_location": ParaData.location,
-      "@p_doexdiv": ParaData.doexdiv,
-      "@p_outtype": ParaData.outtype,
-      "@p_outdt": convertDateToStr(ParaData.outdt),
+      "@p_position": ParaData.position,
+      "@p_reqdt": convertDateToStr(ParaData.reqdt),
       "@p_shipdt": convertDateToStr(ParaData.shipdt),
       "@p_person": ParaData.person,
       "@p_custcd": ParaData.custcd,
       "@p_custnm": ParaData.custnm,
       "@p_rcvcustcd": ParaData.rcvcustcd,
-      "@p_rcvcustnm": ParaData.rcvcustnm,
-      "@p_taxdiv": ParaData.taxdiv,
-      "@p_amtunit": ParaData.amtunit,
-      "@p_baseamt": ParaData.baseamt,
-      "@p_wonchgrat": ParaData.wonchgrat,
-      "@p_uschgrat": ParaData.uschgrat,
-      "@p_remark": ParaData.remark,
+      "@p_poregnum": ParaData.poregnum,
+      "@p_portnm": ParaData.portnm,
+      "@p_finaldes": ParaData.finaldes,
       "@p_carno": ParaData.carno,
       "@p_cargocd": ParaData.cargocd,
+      "@p_cargb": ParaData.cargb,
       "@p_dvnm": ParaData.dvnm,
       "@p_dvnum": ParaData.dvnum,
+      "@p_gugancd": ParaData.gugancd,
       "@p_trcost": ParaData.trcost,
-      "@p_finaldes": ParaData.finaldes,
-      "@p_attdatnum": ParaData.attdatnum,
-      "@p_outuse": ParaData.outuse,
+      "@p_remark": ParaData.remark,
+      "@p_finyn": ParaData.finyn,
+      "@p_custprsncd": ParaData.custprsncd,
+      "@p_rcvperson": ParaData.rcvperson,
+      "@p_rcvnum": ParaData.rcvnum,
       "@p_rowstatus": ParaData.rowstatus,
-      "@p_seq2": ParaData.seq2,
-      "@p_ordnum": ParaData.ordnum,
-      "@p_ordseq": ParaData.ordseq,
-      "@p_portcd": ParaData.portcd,
-      "@p_prcterms": ParaData.prcterms,
-      "@p_poregnum": ParaData.poregnum,
-      "@p_itemcd": ParaData.itemcd,
-      "@p_itemnm": ParaData.itemnm,
-      "@p_itemacnt": ParaData.itemacnt,
-      "@p_qty": ParaData.qty,
-      "@p_qtyunit": ParaData.qtyunit,
-      "@p_unp": ParaData.unp,
-      "@p_amt": ParaData.amt,
-      "@p_dlramt": ParaData.dlramt,
-      "@p_wonamt": ParaData.wonamt,
-      "@p_taxamt": ParaData.taxamt,
-      "@p_lotnum": ParaData.lotnum,
+      "@p_reqseq_s": ParaData.reqseq_s,
+      "@p_ordnum_s": ParaData.ordnum_s,
+      "@p_ordseq_s": ParaData.ordseq_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemnm_s": ParaData.itemnm_s,
+      "@p_itemacnt_s": ParaData.itemacnt_s,
+      "@p_qty_s": ParaData.qty_s,
+      "@p_len_s": ParaData.len_s,
+      "@p_unitwgt_s": ParaData.unitwgt_s,
+      "@p_wgt_s": ParaData.wgt_s,
+      "@p_wgtunit_s": ParaData.wgtunit_s,
+      "@p_totwgt_s": ParaData.totwgt_s,
       "@p_remark_s": ParaData.remark_s,
-      "@p_inrecdt": ParaData.inrecdt,
-      "@p_reqnum": ParaData.reqnum,
-      "@p_reqseq": ParaData.reqseq,
-      "@p_serialno": ParaData.serialno,
-      "@p_outlot": ParaData.outlot,
-      "@p_unitqty": ParaData.unitqty,
+      "@p_finyn_s": ParaData.finyn_s,
+      "@p_unp_s": ParaData.unp_s,
+      "@p_spqty_s": ParaData.spqty_s,
+      "@p_boxqty_w_s": ParaData.boxqty_w_s,
+      "@p_boxqty_h_s": ParaData.boxqty_h_s,
+      "@p_boxjanqty_s": ParaData.boxjanqty_s,
+      "@p_boxqty_s": ParaData.boxqty_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "P_SA_A2300W",
-      "@p_portnm": ParaData.portnm,
+      "@p_outlot_s": ParaData.outlot_s,
+      "@p_form_id": "P_SA_A3000W",
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -1174,6 +1170,63 @@ const SA_A2300: React.FC = () => {
     if (data.isSuccess === true) {
       setreload(!reload);
       fetchMainGrid();
+      fetchDetailGrid();
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "N",
+        orgdiv: "01",
+        reqnum: "",
+        location: "01",
+        position: "",
+        reqdt: new Date(),
+        shipdt: new Date(),
+        person: "",
+        custcd: "",
+        custnm: "",
+        rcvcustcd: "",
+        poregnum: "",
+        portnm: "",
+        finaldes: "",
+        carno: "",
+        cargocd: "",
+        cargb: "",
+        dvnm: "",
+        dvnum: "",
+        gugancd: "",
+        trcost: 0,
+        remark: "",
+        finyn: "",
+        custprsncd: "",
+        rcvperson: "",
+        rcvnum: "",
+        rcvnm: "",
+        rowstatus: "",
+        reqseq_s: "",
+        ordnum_s: "",
+        ordseq_s: "",
+        itemcd_s: "",
+        itemnm_s: "",
+        itemacnt_s: "",
+        qty_s: "",
+        len_s: "",
+        unitwgt_s: "",
+        wgt_s: "",
+        wgtunit_s: "",
+        totwgt_s: "",
+        remark_s: "",
+        finyn_s: "",
+        unp_s: "",
+        spqty_s: "",
+        boxqty_w_s: "",
+        boxqty_h_s: "",
+        boxjanqty_s: "",
+        boxqty_s: "",
+        userid: userId,
+        pc: pc,
+        outlot_s: "",
+        form_id: "SA_A3000W",
+        serviceid: "2207A046",
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1183,7 +1236,7 @@ const SA_A2300: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.itemcd != "") {
+    if (ParaData.rowstatus != "" || ParaData.reqnum != "") {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
@@ -1342,7 +1395,7 @@ const SA_A2300: React.FC = () => {
                 themeColor={"primary"}
                 icon="file-add"
               >
-                출하처리생성
+                출하지시생성
               </Button>
               <Button
                 onClick={onDeleteClick}
