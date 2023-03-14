@@ -10,6 +10,8 @@ const domain: any = {
   procedure: { action: "post", url: "api/data/sql-procedure" },
   "platform-query": { action: "post", url: "api/data/sql-query" },
   "platform-procedure": { action: "post", url: "api/data/sql-procedure" },
+  fav: { action: "post", url: "api/data/menus/fav/:formId" },
+  "del-fav": { action: "delete", url: "api/data/menus/fav/:formId" },
   "custom-option": { action: "get", url: "api/data/:formId/:para" },
   messages: { action: "get", url: "api/data/:formId/messages" },
   "design-info": { action: "get", url: "api/data/:formId/design-info" },

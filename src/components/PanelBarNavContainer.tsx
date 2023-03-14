@@ -4,7 +4,7 @@ import {
   PanelBarItem,
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
-import { useLocation, withRouter } from "react-router-dom";
+import { useHistory, useLocation, withRouter } from "react-router-dom";
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
 import {
@@ -26,12 +26,17 @@ import {
   Content,
   Gnv,
   Logo,
+  MenuSearchBox,
   Modal,
   PageWrap,
   TopTitle,
   Wrapper,
 } from "../CommonStyled";
 import { getBrowser, resetLocalStorage, UseGetIp } from "./CommonFunction";
+import {
+  AutoComplete,
+  AutoCompleteCloseEvent,
+} from "@progress/kendo-react-dropdowns";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -144,6 +149,33 @@ const PanelBarNavContainer = (props: any) => {
           menuId: menu.menuId,
           parentMenuId: menu.parentMenuId,
           menuCategory: menu.menuCategory,
+          isFavorite: menu.isFavorite,
+        });
+      });
+
+    // 즐겨찾기 그룹 push
+    paths.push({
+      path: "",
+      menuName: "즐겨찾기",
+      index: "." + 1,
+      menuId: "fav",
+      parentMenuId: "",
+      menuCategory: "GROUP",
+      isFavorite: false,
+    });
+
+    // 즐겨찾기 Menu push
+    menus
+      .filter((menu) => menu.menuCategory === "WEB" && menu.isFavorite)
+      .forEach((menu, idx: number) => {
+        paths.push({
+          path: "/" + menu.formId,
+          menuName: menu.menuName,
+          index: ".1." + idx,
+          menuId: menu.menuId,
+          parentMenuId: "fav",
+          menuCategory: menu.menuCategory,
+          isFavorite: menu.isFavorite,
         });
       });
 
@@ -159,10 +191,11 @@ const PanelBarNavContainer = (props: any) => {
         paths.push({
           path: "/" + menu.formId,
           menuName: menu.menuName,
-          index: "." + (idx + 1),
+          index: "." + (idx + 2), // home, 즐겨찾기 때문에 +2
           menuId: menu.menuId,
           parentMenuId: menu.parentMenuId,
           menuCategory: menu.menuCategory,
+          isFavorite: menu.isFavorite,
         });
       });
 
@@ -181,6 +214,7 @@ const PanelBarNavContainer = (props: any) => {
             menuId: menu.menuId,
             parentMenuId: menu.parentMenuId,
             menuCategory: menu.menuCategory,
+            isFavorite: menu.isFavorite,
           });
         });
     });
@@ -296,7 +330,9 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   const setSelectedIndex = (pathName: any) => {
-    let currentPath: any = paths.find((item: any) => item.path === pathName);
+    let currentPath: any = paths
+      .filter((item) => item.parentMenuId !== "fav")
+      .find((item: any) => item.path === pathName);
 
     return currentPath ? currentPath.index : 0;
   };
@@ -347,6 +383,7 @@ const PanelBarNavContainer = (props: any) => {
       menuId: "",
       parentMenuId: "",
       menuCategory: "",
+      isFavorite: false,
     });
     panelBars.push({
       path: "/GANTT",
@@ -355,6 +392,7 @@ const PanelBarNavContainer = (props: any) => {
       menuId: "",
       parentMenuId: "",
       menuCategory: "",
+      isFavorite: false,
     });
     panelBars.push({
       path: "/",
@@ -363,6 +401,7 @@ const PanelBarNavContainer = (props: any) => {
       menuId: "setting",
       parentMenuId: "",
       menuCategory: "WEB",
+      isFavorite: false,
     });
     paths.push({
       path: "/",
@@ -371,6 +410,7 @@ const PanelBarNavContainer = (props: any) => {
       menuId: "change-password",
       parentMenuId: "setting",
       menuCategory: "WEB",
+      isFavorite: false,
     });
     paths.push({
       path: "/",
@@ -379,6 +419,7 @@ const PanelBarNavContainer = (props: any) => {
       menuId: "custom-option",
       parentMenuId: "setting",
       menuCategory: "WEB",
+      isFavorite: false,
     });
     if (isAdmin) {
       paths.push({
@@ -388,12 +429,30 @@ const PanelBarNavContainer = (props: any) => {
         menuId: "system-option",
         parentMenuId: "setting",
         menuCategory: "WEB",
+        isFavorite: false,
       });
     }
   }
 
   // Parent 그룹 없는 메뉴 Array
   const singleMenus = ["/Home", "/GANTT", "/WORD_EDITOR"];
+
+  let prgMenus;
+  if (menus) {
+    prgMenus = menus
+      .filter((menu) => menu.menuCategory === "WEB")
+      .map((menu) => ({ id: menu.formId, text: menu.menuName }));
+  }
+  const [searchedMenu, setSearchedMenu] = useState("");
+
+  const history = useHistory();
+
+  const openSelctedMenu = (e: AutoCompleteCloseEvent) => {
+    const { focusedItem } = e.target.state;
+    if (focusedItem) {
+      history.push("/" + focusedItem.id);
+    }
+  };
 
   return (
     <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
@@ -404,6 +463,17 @@ const PanelBarNavContainer = (props: any) => {
             <Logo size="32px" />
             GST ERP
           </AppName>
+          <MenuSearchBox>
+            <AutoComplete
+              style={{ width: "100%" }}
+              data={prgMenus}
+              textField="text"
+              value={searchedMenu}
+              onChange={(e) => setSearchedMenu(e.value)}
+              onClose={openSelctedMenu}
+              // placeholder="메뉴검색"
+            />
+          </MenuSearchBox>
           {paths.length > 0 && (
             <PanelBar
               selected={selected}
@@ -421,7 +491,14 @@ const PanelBarNavContainer = (props: any) => {
                   <PanelBarItem
                     key={idx}
                     title={path.menuName}
-                    icon={path.menuId === "setting" ? "gear" : undefined}
+                    icon={
+                      path.menuId === "fav"
+                        ? "star"
+                        : path.menuId === "setting"
+                        ? "gear"
+                        : undefined
+                    }
+                    className={path.menuId === "fav" ? "fav-menu" : ""}
                   >
                     {paths
                       .filter(
@@ -439,7 +516,8 @@ const PanelBarNavContainer = (props: any) => {
                               : childPath.path
                           }
                           className={childPath.menuId}
-                        />
+                          icon={childPath.isFavorite ? "circle" : "circle"}
+                        ></PanelBarItem>
                       ))}
                   </PanelBarItem>
                 );
