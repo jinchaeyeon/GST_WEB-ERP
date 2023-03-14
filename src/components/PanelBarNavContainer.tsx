@@ -447,18 +447,14 @@ const PanelBarNavContainer = (props: any) => {
 
   const history = useHistory();
 
-  const openSelctedMenu = (e: AutoCompleteCloseEvent) => {
-    const { value } = e.target;
-    const { focusedItem } = e.target.state;
+  const openSelctedMenu = (e: any) => {
+    const { value } = e;
 
-    if (focusedItem) {
-      history.push("/" + focusedItem.id);
-    } else {
-      if (prgMenus) {
-        const selectedValue = prgMenus.find((menu) => menu.text === value);
-        if (selectedValue) {
-          history.push("/" + selectedValue.id);
-        }
+    if (prgMenus) {
+      const selectedValue = prgMenus.find((menu) => menu.text === value);
+      console.log(selectedValue);
+      if (selectedValue) {
+        history.push("/" + selectedValue.id);
       }
     }
   };
