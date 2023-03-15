@@ -961,8 +961,7 @@ const QC_A2500W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data)
+
     if (data.isSuccess === true) {
       setreload(!reload);
       setParaData({

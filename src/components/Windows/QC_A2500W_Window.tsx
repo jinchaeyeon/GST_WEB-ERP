@@ -355,7 +355,6 @@ const CopyWindow = ({
         title: data.title,
       }));
     } else if(workType === "N" && basicdata != undefined){
-      console.log(basicdata);
       setFilters((prev) => ({
         ...prev,
         workType: workType,

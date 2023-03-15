@@ -427,7 +427,6 @@ const QC_A0060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -435,8 +434,8 @@ const QC_A0060W: React.FC = () => {
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: rows,
-            total: totalRowCnt,
+            data: [...prev.data, ...rows],
+            total: prev.total + totalRowCnt,
           };
         });
 
@@ -444,7 +443,7 @@ const QC_A0060W: React.FC = () => {
           setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
         }
 
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
+        if (filters.find_row_value === "" && data.pageNumber === 1) {
           // 첫번째 행 선택하기
           const firstRowData = rows[0];
           setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
@@ -488,7 +487,7 @@ const QC_A0060W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (filters.isSearch && permissions !== null && bizComponentData !== null && isInitSearch == false) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
 
       fetchMainGrid();
@@ -583,6 +582,7 @@ const QC_A0060W: React.FC = () => {
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
+      setIsInitSearch(false)
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {

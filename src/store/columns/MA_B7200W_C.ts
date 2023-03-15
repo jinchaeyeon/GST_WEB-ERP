@@ -160,4 +160,80 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList4",
+    columns: [
+      {
+        id: "col_proddt",
+        field: "proddt",
+        caption: "생산일자",
+        width: 120,
+      },
+      {
+        id: "col_div",
+        field: "div",
+        caption: "구분",
+        width: 100,
+      },
+      {
+        id: "col_itemcd2",
+        field: "itemcd",
+        caption: "품목코드",
+        width: 150,
+      },
+      {
+        id: "col_itemnm2",
+        field: "itemnm",
+        caption: "품목명",
+        width: 130,
+      },
+      {
+        id: "col_insiz2",
+        field: "insiz",
+        caption: "규격",
+        width: 150,
+      },
+      {
+        id: "col_lotnum4",
+        field: "lotnum",
+        caption: "LOT NO",
+        width: 120,
+      },
+    ],
+  },
+  {
+    gridName: "grdList5",
+    columns: [
+      {
+        id: "col_proddt2",
+        field: "proddt",
+        caption: "생산일자",
+        width: 140,
+      },
+      {
+        id: "col_div2",
+        field: "div",
+        caption: "구분",
+        width: 120,
+      },
+      {
+        id: "col_itemcd3",
+        field: "itemcd",
+        caption: "품목코드",
+        width: 170,
+      },
+      {
+        id: "col_itemnm3",
+        field: "itemnm",
+        caption: "품목명",
+        width: 170,
+      },
+      {
+        id: "col_insiz3",
+        field: "insiz",
+        caption: "규격",
+        width: 170,
+      },
+    ],
+  },
 ];

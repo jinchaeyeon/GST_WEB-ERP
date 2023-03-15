@@ -279,14 +279,14 @@ const SA_B2410: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
-            data: rows,
-            total: totalRowCnt,
+            data: [...prev.data, ...rows],
+            total: prev.total + totalRowCnt
           };
         });
     }
@@ -306,7 +306,7 @@ const SA_B2410: React.FC = () => {
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
+    if (customOptionData !== null && isInitSearch === true) {
       fetchMainGrid();
     }
   }, [mainPgNum]);
@@ -343,6 +343,8 @@ const SA_B2410: React.FC = () => {
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
       setMainPgNum((prev) => prev + 1);
+      
+      setIfSelectFirstRow(false);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
