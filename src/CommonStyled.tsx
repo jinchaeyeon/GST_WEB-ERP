@@ -671,7 +671,8 @@ export const Gnv = styled.div<TGnv>`
     /* color: #ebebeb; */
   }
 
-  .k-panelbar > .k-panelbar-item.fav-menu > .k-link {
+  .k-panelbar > .k-panelbar-item.fav-menu > .k-link,
+  .k-panelbar > .k-panelbar-item.fav-menu > div.k-animation-container {
     background-color: rgba(51, 122, 183, 0.05);
   }
 
