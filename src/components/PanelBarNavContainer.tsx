@@ -447,12 +447,11 @@ const PanelBarNavContainer = (props: any) => {
 
   const history = useHistory();
 
-  const openSelctedMenu = (e: any) => {
-    const { value } = e;
+  const openSelctedMenu = (e: AutoCompleteCloseEvent) => {
+    const { value } = e.target;
 
     if (prgMenus) {
       const selectedValue = prgMenus.find((menu) => menu.text === value);
-      console.log(selectedValue);
       if (selectedValue) {
         history.push("/" + selectedValue.id);
       }
