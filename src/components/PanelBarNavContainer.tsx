@@ -41,9 +41,9 @@ import {
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
-  const [loginResult, setLoginResult] = useRecoilState(loginResultState);
+  const [loginResult] = useRecoilState(loginResultState);
   const accessToken = localStorage.getItem("accessToken");
-  const [token, setToken] = useState(accessToken);
+  const [token] = useState(accessToken);
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   useEffect(() => {
     if (token === null) fetchMenus();
@@ -437,7 +437,7 @@ const PanelBarNavContainer = (props: any) => {
   // Parent 그룹 없는 메뉴 Array
   const singleMenus = ["/Home", "/GANTT", "/WORD_EDITOR"];
 
-  let prgMenus;
+  let prgMenus: null | { id: string; text: string }[] = null;
   if (menus) {
     prgMenus = menus
       .filter((menu) => menu.menuCategory === "WEB")
@@ -448,9 +448,13 @@ const PanelBarNavContainer = (props: any) => {
   const history = useHistory();
 
   const openSelctedMenu = (e: AutoCompleteCloseEvent) => {
-    const { focusedItem } = e.target.state;
-    if (focusedItem) {
-      history.push("/" + focusedItem.id);
+    const { value } = e.target;
+
+    if (prgMenus) {
+      const selectedValue = prgMenus.find((menu) => menu.text === value);
+      if (selectedValue) {
+        history.push("/" + selectedValue.id);
+      }
     }
   };
 
@@ -463,17 +467,24 @@ const PanelBarNavContainer = (props: any) => {
             <Logo size="32px" />
             GST ERP
           </AppName>
-          <MenuSearchBox>
-            <AutoComplete
-              style={{ width: "100%" }}
-              data={prgMenus}
-              textField="text"
-              value={searchedMenu}
-              onChange={(e) => setSearchedMenu(e.value)}
-              onClose={openSelctedMenu}
-              // placeholder="메뉴검색"
-            />
-          </MenuSearchBox>
+          {prgMenus && (
+            <MenuSearchBox>
+              {searchedMenu === "" && (
+                <span className="k-icon k-i-search"></span>
+              )}
+              <AutoComplete
+                style={{ width: "100%" }}
+                data={prgMenus}
+                textField="text"
+                value={searchedMenu}
+                onChange={(e) => setSearchedMenu(e.value)}
+                onBlur={(e) => setSearchedMenu("")}
+                onClose={openSelctedMenu}
+                size="small"
+                placeholder="Search menu.."
+              />
+            </MenuSearchBox>
+          )}
           {paths.length > 0 && (
             <PanelBar
               selected={selected}

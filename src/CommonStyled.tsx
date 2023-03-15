@@ -671,7 +671,8 @@ export const Gnv = styled.div<TGnv>`
     /* color: #ebebeb; */
   }
 
-  .k-panelbar > .k-panelbar-item.fav-menu > .k-link {
+  .k-panelbar > .k-panelbar-item.fav-menu > .k-link,
+  .k-panelbar > .k-panelbar-item.fav-menu > div.k-animation-container {
     background-color: rgba(51, 122, 183, 0.05);
   }
 
@@ -738,6 +739,18 @@ export const AppName = styled.h1`
 export const MenuSearchBox = styled.div`
   padding: 5px;
   border-right: solid 1px #ebebeb;
+  position: relative;
+
+  input::placeholder {
+    color: #bdbdbd;
+  }
+  .k-i-search {
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    right: 15px;
+    color: #bdbdbd;
+  }
 `;
 
 export const LoginAppName = styled(AppName)`
