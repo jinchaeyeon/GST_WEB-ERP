@@ -25,12 +25,9 @@ import {
   FilterBox,
   FilterBoxWrap,
   GridContainer,
-  Title,
   TitleContainer,
   ButtonInInput,
   GridTitleContainer,
-  GridTitle,
-  GridContainerWrap,
 } from "../../CommonStyled";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../store/types";
@@ -50,7 +47,7 @@ import {
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
@@ -82,7 +79,7 @@ const CopyWindow = ({
   });
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
-  const DATA_ITEM_KEY3 = "num";
+
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
