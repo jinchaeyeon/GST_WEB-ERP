@@ -16,6 +16,7 @@ import MA_A2300W from "./routes/MA_A2300W";
 import MA_A2400W from "./routes/MA_A2400W";
 import MA_A2500W from "./routes/MA_A2500W";
 import MA_A2700W from "./routes/MA_A2700W";
+import MA_B2800W from "./routes/MA_B2800W";
 import MA_A3400W from "./routes/MA_A3400W";
 import MA_A3500W from "./routes/MA_A3500W";
 import MA_B2000W from "./routes/MA_B2000W";
@@ -213,6 +214,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/MA_A2400W" component={MA_A2400W} exact />
             <AuthRoute path="/MA_A2500W" component={MA_A2500W} exact />
             <AuthRoute path="/MA_A2700W" component={MA_A2700W} exact />
+            <AuthRoute path="/MA_B2800W" component={MA_B2800W} exact />
             <AuthRoute path="/MA_A3400W" component={MA_A3400W} exact />
             <AuthRoute path="/MA_A3500W" component={MA_A3500W} exact />
             <AuthRoute path="/MA_B2000W" component={MA_B2000W} exact />
