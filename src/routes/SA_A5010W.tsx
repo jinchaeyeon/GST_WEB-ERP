@@ -1336,7 +1336,6 @@ const SA_A5010W: React.FC = () => {
           <tbody>
             <tr>
               <th colSpan={2}>
-                {" "}
                 {customOptionData !== null && (
                   <CustomOptionComboBox
                     name="dtgb"
@@ -1532,7 +1531,7 @@ const SA_A5010W: React.FC = () => {
                 themeColor={"primary"}
                 icon="file-add"
               >
-                판매처리생성
+                직접판매처리생성
               </Button>
               <Button
                 onClick={onDeleteClick}
