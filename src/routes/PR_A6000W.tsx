@@ -501,9 +501,9 @@ const PR_A6000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+  
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
@@ -529,9 +529,9 @@ const PR_A6000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data);
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
@@ -580,7 +580,7 @@ const PR_A6000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
@@ -820,7 +820,7 @@ const PR_A6000W: React.FC = () => {
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult.total}건
+        총 {detailDataTotal}건
       </td>
     );
   };
@@ -828,7 +828,7 @@ const PR_A6000W: React.FC = () => {
   const detail2TotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult2.total}건
+        총 {mainDataTotal2}건
       </td>
     );
   };
@@ -1310,7 +1310,7 @@ const PR_A6000W: React.FC = () => {
                       }
                       footerCell={
                         item.sortOrder === 0
-                          ? detail2TotalFooterCell
+                          ? detailTotalFooterCell
                           : undefined
                       }
                     />
@@ -1391,7 +1391,7 @@ const PR_A6000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder === 0 ? detail2TotalFooterCell : undefined
                       }
                     />
                   )
