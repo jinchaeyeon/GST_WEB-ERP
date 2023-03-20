@@ -1113,6 +1113,47 @@ const SA_A5010W: React.FC = () => {
       setreload(!reload);
       resetAllGrid();
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "N",
+        orgdiv: "01",
+        recdt: new Date(),
+        seq1: 0,
+        location: "01",
+        outdt: new Date(),
+        shipdt: new Date(),
+        doexdiv: "A",
+        taxdiv: "A",
+        amtunit: "",
+        baseamt: 0,
+        wonchgrat: 0,
+        uschgrat: 0,
+        person: "admin",
+        custcd: "",
+        custnm: "",
+        rcvcustcd: "",
+        rcvcustnm: "",
+        remark: "",
+        rowstatus_s: "",
+        seq2_s: "",
+        itemcd_s: "",
+        itemacnt_s: "",
+        qty_s: "",
+        qtyunit_s: "",
+        unpcalmeth_s: "",
+        unp_s: "",
+        amt_s: "",
+        wonamt_s: "",
+        taxamt_s: "",
+        dlramt_s: "",
+        unitwgt_s: "",
+        totwgt_s: "",
+        wgtunit_s: "",
+        remark_s: "",
+        userid: userId,
+        pc: pc,
+        files: "",
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);

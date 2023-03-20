@@ -205,9 +205,7 @@ const PR_A5000W: React.FC = () => {
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
-  const [barcordDataState, setBarcodeDataState] = useState<State>({
-    sort: [],
-  });
+
   const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
@@ -217,9 +215,7 @@ const PR_A5000W: React.FC = () => {
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], detailDataState)
   );
-  const [barcodeDataResult, setBarcodeDateResult] = useState<DataResult>(
-    process([], barcordDataState)
-  );
+
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -275,11 +271,6 @@ const PR_A5000W: React.FC = () => {
     pgSize: PAGE_SIZE,
   });
 
-  const [barcodeFilters, setBarCodeFilters] = useState({
-    pgSize: PAGE_SIZE,
-    lotnum_s: "",
-    prntqty_s: "",
-  });
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_PR_A5000W_Q",
@@ -313,24 +304,6 @@ const PR_A5000W: React.FC = () => {
       "@p_finyn": filters.finyn,
       "@p_lotnum_s": filters.lotnum_s,
       "@p_prntqty_s": filters.prntqty_s,
-      "@p_company_code": "2207A046",
-    },
-  };
-
-  const BarCodeParameters: Iparameters = {
-    procedureName: "P_PR_A5000W_Q",
-    pageNumber: detailPgNum,
-    pageSize: barcodeFilters.pgSize,
-    parameters: {
-      "@p_work_type": "BARCODE",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_person": filters.person,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_finyn": filters.finyn,
-      "@p_lotnum_s": barcodeFilters.lotnum_s,
-      "@p_prntqty_s": barcodeFilters.prntqty_s,
       "@p_company_code": "2207A046",
     },
   };
@@ -388,30 +361,6 @@ const PR_A5000W: React.FC = () => {
     setLoading(false);
   };
 
-  const fetchBarcordGrid = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", BarCodeParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows;
-
-      if (totalRowCnt > 0)
-        setBarcodeDateResult((prev) => {
-          return {
-            data: [...prev.data, rows],
-            total: totalRowCnt,
-          };
-        });
-    }
-    setLoading(false);
-  };
-
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
@@ -456,11 +405,6 @@ const PR_A5000W: React.FC = () => {
         const firstRowData = detailDataResult.data[0];
         setDetailSelectedState({ [firstRowData.num]: true });
 
-        setBarCodeFilters((prev) => ({
-          ...prev,
-          lotnum_s: firstRowData.makey,
-          prntqty_s: String(firstRowData.prntqty),
-        }));
         setIfSelectFirstRow(true);
       }
     }
@@ -570,6 +514,7 @@ const PR_A5000W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+
       setDetailDataResult((prev) => {
         return {
           data: newData,
@@ -636,12 +581,6 @@ const PR_A5000W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
-    setBarCodeFilters((prev) => ({
-      ...prev,
-      lotnum_s: selectedRowData.makey,
-      prntqty_s: String(selectedRowData.prntqty),
-    }));
   };
 
   const onHeaderSelectionChange2 = React.useCallback(
@@ -975,11 +914,6 @@ const PR_A5000W: React.FC = () => {
       unp_s: dataArr.unp_s.join("|"),
     }));
   };
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchBarcordGrid();
-    }
-  }, [barcodeFilters]);
 
   const [barcodeWindowVisible, setBarcodeWindowVisible] =
     useState<boolean>(false);
@@ -987,18 +921,9 @@ const PR_A5000W: React.FC = () => {
     setBarcodeWindowVisible(true);
   };
 
-
   const onPrint = () => {
-    let arr: any = [];
-
-    for (const [key, value] of Object.entries(detailSelectedState)) {
-      if (value == true) {
-        arr.push(parseInt(key));
-      }
-    }
-
     const datas = detailDataResult.data.filter(
-      (item: any) => arr.includes(item.num) == true
+      (item: any) => item.chk == true
     );
 
     try {
@@ -1011,6 +936,7 @@ const PR_A5000W: React.FC = () => {
       alert(e);
     }
   };
+
   const [values, setValues] = React.useState<boolean>(false);
   const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
     const changeCheck = () => {
@@ -1352,7 +1278,12 @@ const PR_A5000W: React.FC = () => {
       {barcodeWindowVisible && (
         <BarcodeWindow
           setVisible={setBarcodeWindowVisible}
-          data={barcodeDataResult.data}
+          data={detailDataResult.data.filter(
+            (item: any) => item.chk == true
+          )}
+          total={detailDataResult.data.filter(
+            (item: any) => item.chk == true
+          ).length}
         />
       )}
       {gridList.map((grid: any) =>

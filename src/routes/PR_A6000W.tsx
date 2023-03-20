@@ -1256,7 +1256,7 @@ const PR_A6000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? detailTotalFooterCell : undefined
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )
@@ -1268,7 +1268,7 @@ const PR_A6000W: React.FC = () => {
             <GridTitle>일자별비가동시간</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "34vh" }}
+            style={{ height: "36vh" }}
             data={detailDataResult2}
             {...detailDataState2}
             onDataStateChange={onDetailDataStateChange2}
