@@ -17,7 +17,7 @@ import {
   GridDataStateChangeEvent,
   GridItemChangeEvent,
   GridCellProps,
-  GridHeaderCellProps
+  GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { TextArea, InputChangeEvent, Checkbox } from "@progress/kendo-react-inputs";

@@ -140,7 +140,7 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
         };
       }
     }
-
+    console.log(result);
     if (setData) {
       setData(result);
     }
