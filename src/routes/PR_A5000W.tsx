@@ -853,6 +853,7 @@ const PR_A5000W: React.FC = () => {
         seq2_s: "",
         unp_s: "",
       });
+      resetAllGrid();
       fetchMainGrid();
       fetchDetailGrid();
     } else {
