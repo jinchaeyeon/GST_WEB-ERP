@@ -1593,8 +1593,12 @@ const QC_A2000: React.FC = () => {
   };
 
   useEffect(() => {
+    const items = mainDataResult.data.filter(
+      (item: any) =>
+        item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
     const datas = mainDataResult.data.map((item: any) =>
-      item.num == mainDataResult.data[rows].num
+      item.num == items.num
         ? {
             ...item,
             attdatnum: attdatnum,

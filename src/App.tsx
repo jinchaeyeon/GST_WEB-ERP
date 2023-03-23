@@ -68,6 +68,7 @@ import PR_B3000W from "./routes/PR_B3000W";
 import PR_A3000W from "./routes/PR_A3000W";
 import CT_A0111W from "./routes/CT_A0111W";
 import CM_A0000W from "./routes/CM_A0000W";
+import CM_A4100W from "./routes/CM_A4100W";
 import CM_B1101W from "./routes/CM_B1101W";
 import CHAT_A0001W from "./routes/CHAT_A0001W";
 import CHAT_A0002W from "./routes/CHAT_A0002W";
@@ -274,6 +275,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/CM_A0000W" component={CM_A0000W} exact />
             <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
             <AuthRoute path="/CM_A1710W" component={CM_A1710W} exact />
+            <AuthRoute path="/CM_A4100W" component={CM_A4100W} exact />
             <AuthRoute path="/CM_B1101W" component={CM_B1101W} exact />
             {/* 전자결재 */}
             <AuthRoute path="/EA_A1000W" component={EA_A1000W} exact />
