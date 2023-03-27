@@ -514,14 +514,14 @@ const SA_A5010W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt + prev.total,
+            total: totalRowCnt,
           };
         });
 
@@ -583,12 +583,6 @@ const SA_A5010W: React.FC = () => {
       fetchMainGrid();
     }
   }, [filters, permissions]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     if (customOptionData !== null) {

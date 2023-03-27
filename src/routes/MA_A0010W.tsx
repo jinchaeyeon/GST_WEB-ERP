@@ -52,7 +52,6 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
-  PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
@@ -238,7 +237,7 @@ const MA_A0010W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: PAGE_SIZE,
+    pgSize: 25,
     sub_code: "",
     code_name: "",
     find_row_value: "",
@@ -356,7 +355,7 @@ const MA_A0010W: React.FC = () => {
       filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
 
     // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+    if (chkScrollHandler(event, pgNumWithGap, 25)) {
       setFilters((prev) => ({
         ...prev,
         scrollDirrection: "down",
@@ -370,7 +369,7 @@ const MA_A0010W: React.FC = () => {
     pgNumWithGap =
       filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
     // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+    if (chkScrollHandler(event, pgNumWithGap, 25, "up")) {
       setFilters((prev) => ({
         ...prev,
         scrollDirrection: "up",
@@ -615,7 +614,7 @@ const MA_A0010W: React.FC = () => {
   };
 
   const [ParaData, setParaData] = useState({
-    pgSize: PAGE_SIZE,
+    pgSize: 25,
     row_status_s: "",
     sub_code_s: "",
     code_name_s: "",
@@ -658,7 +657,7 @@ const MA_A0010W: React.FC = () => {
 
     if (data.isSuccess === true) {
       setParaData({
-        pgSize: PAGE_SIZE,
+        pgSize: 25,
         row_status_s: "",
         sub_code_s: "",
         code_name_s: "",

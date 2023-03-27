@@ -1603,7 +1603,8 @@ const MA_A2400W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      fetchMainGrid();
+      setIsInitSearch2(false);// 한번만 조회되도록
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true })); 
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1972,8 +1973,8 @@ const MA_A2400W: React.FC = () => {
     if (data.isSuccess === true) {
       resetAllGrid();
       setIfSelectFirstRow(true);
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true })); 
       fetchSubGrid();
-      fetchMainGrid();
       fetchSubGrid2();
       fetchSubGrid3();
     } else {

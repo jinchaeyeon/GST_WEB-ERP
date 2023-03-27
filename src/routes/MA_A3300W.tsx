@@ -672,7 +672,6 @@ const MA_A3300W: React.FC = () => {
       data = null;
     }
 
-    console.log(para);
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
@@ -867,13 +866,13 @@ const MA_A3300W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt + prev.total,
+            total: totalRowCnt,
           };
         });
 

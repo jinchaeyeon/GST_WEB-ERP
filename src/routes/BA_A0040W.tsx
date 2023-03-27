@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -390,13 +390,17 @@ const BA_A0040: React.FC = () => {
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
-    row_values: null,
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_BA_A0040W_Q",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": filters.workType,
@@ -410,7 +414,7 @@ const BA_A0040: React.FC = () => {
       "@p_itemcd_s": filters.itemcd_s,
       "@p_spec": filters.spec,
       "@p_remark": filters.remark,
-      "@p_find_row_value": filters.row_values,
+      "@p_find_row_value": filters.find_row_value,
     },
   };
 
@@ -482,11 +486,103 @@ const BA_A0040: React.FC = () => {
             total: totalRowCnt,
           };
         });
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+          setsubFilters((prev) => ({
+            ...prev,
+            workType: "UNP",
+            itemcd: firstRowData.itemcd,
+            itemnm: firstRowData.itemnm,
+            insiz: firstRowData.insiz,
+            itemacnt: firstRowData.itemacnt,
+            useyn: firstRowData.useyn,
+            custcd: firstRowData.custcd,
+            custnm: firstRowData.custnm,
+            itemcd_s: "",
+            spec: firstRowData.spec,
+            location: firstRowData.location,
+            remark: firstRowData.remark,
+            bnatur: firstRowData.bnatur,
+            itemlvl1: firstRowData.itemlvl1,
+            itemlvl2: firstRowData.itemlvl2,
+            itemlvl3: firstRowData.itemlvl3,
+          }));
+          setInfomation({
+            pgSize: PAGE_SIZE,
+            workType: "U",
+            itemcd: firstRowData.itemcd,
+            itemnm: firstRowData.itemnm,
+            insiz: firstRowData.insiz,
+            itemacnt:
+              itemacntListData.find(
+                (item: any) => item.sub_code === firstRowData.itemacnt
+              )?.code_name == undefined
+                ? firstRowData.itemacnt
+                : itemacntListData.find(
+                    (item: any) => item.sub_code === firstRowData.itemacnt
+                  )?.code_name,
+            useyn: firstRowData.useyn == "Y" ? "Y" : "N",
+            custcd: firstRowData.custcd,
+            custnm: firstRowData.custnm,
+            itemcd_s: firstRowData.itemcd_s,
+            spec: firstRowData.spec,
+            location: "01",
+            remark: firstRowData.remark,
+            bnatur: firstRowData.bnatur,
+            itemlvl1: firstRowData.itemlvl1,
+            itemlvl2: firstRowData.itemlvl2,
+            itemlvl3: firstRowData.itemlvl3,
+            itemlvl4: firstRowData.itemlvl4,
+            bomyn: firstRowData.bomyn,
+            attdatnum: firstRowData.attdatnum,
+            row_values: firstRowData.row_values,
+            safeqty: firstRowData.safeqty,
+            unitwgt: firstRowData.unitwgt,
+            invunit:
+              qtyunitListData.find(
+                (item: any) => item.sub_code === firstRowData.invunit
+              )?.code_name == undefined
+                ? firstRowData.invunit
+                : qtyunitListData.find(
+                    (item: any) => item.sub_code === firstRowData.invunit
+                  )?.code_name,
+            dwgno: firstRowData.dwgno,
+            maker: firstRowData.maker,
+            qcyn: firstRowData.qcyn == "Y" ? "Y" : "N",
+            attdatnum_img: firstRowData.attdatnum_img,
+            attdatnum_img2: firstRowData.attdatnum_img2,
+            snp: firstRowData.snp,
+            person: firstRowData.person,
+            extra_field2: firstRowData.extra_field2,
+            purleadtime: firstRowData.purleadtime,
+            len: firstRowData.len,
+            purqty: firstRowData.purqty,
+            boxqty: firstRowData.boxqty,
+            pac: firstRowData.pac,
+            bnatur_insiz: firstRowData.bnatur_insiz,
+            itemno: firstRowData.itemno,
+            itemgroup: firstRowData.itemgroup,
+            lenunit: firstRowData.lenunit,
+            hscode: firstRowData.hscode,
+            wgtunit: firstRowData.wgtunit,
+            custitemnm: firstRowData.custitemnm,
+            unitqty: firstRowData.unitqty,
+            procday: firstRowData.procday,
+            files: firstRowData.files,
+            auto: firstRowData.auto,
+          });
+        }
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -527,116 +623,45 @@ const BA_A0040: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
+      customOptionData != null &&
+      filters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
     ) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
       setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
-
-  useEffect(() => {
     fetchSubGrid();
   }, [subPgNum]);
-
+  let gridRef: any = useRef(null);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.itemcd]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = mainDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
 
-        setsubFilters((prev) => ({
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
           ...prev,
-          workType: "UNP",
-          itemcd: firstRowData.itemcd,
-          itemnm: firstRowData.itemnm,
-          insiz: firstRowData.insiz,
-          itemacnt: firstRowData.itemacnt,
-          useyn: firstRowData.useyn,
-          custcd: firstRowData.custcd,
-          custnm: firstRowData.custnm,
-          itemcd_s: "",
-          spec: firstRowData.spec,
-          location: firstRowData.location,
-          remark: firstRowData.remark,
-          bnatur: firstRowData.bnatur,
-          itemlvl1: firstRowData.itemlvl1,
-          itemlvl2: firstRowData.itemlvl2,
-          itemlvl3: firstRowData.itemlvl3,
+          find_row_value: "",
+          tab: 0,
         }));
-        setInfomation({
-          pgSize: PAGE_SIZE,
-          workType: "U",
-          itemcd: firstRowData.itemcd,
-          itemnm: firstRowData.itemnm,
-          insiz: firstRowData.insiz,
-          itemacnt:
-            itemacntListData.find(
-              (item: any) => item.sub_code === firstRowData.itemacnt
-            )?.code_name == undefined
-              ? firstRowData.itemacnt
-              : itemacntListData.find(
-                  (item: any) => item.sub_code === firstRowData.itemacnt
-                )?.code_name,
-          useyn: firstRowData.useyn == "Y" ? "Y" : "N",
-          custcd: firstRowData.custcd,
-          custnm: firstRowData.custnm,
-          itemcd_s: firstRowData.itemcd_s,
-          spec: firstRowData.spec,
-          location: "01",
-          remark: firstRowData.remark,
-          bnatur: firstRowData.bnatur,
-          itemlvl1: firstRowData.itemlvl1,
-          itemlvl2: firstRowData.itemlvl2,
-          itemlvl3: firstRowData.itemlvl3,
-          itemlvl4: firstRowData.itemlvl4,
-          bomyn: firstRowData.bomyn,
-          attdatnum: firstRowData.attdatnum,
-          row_values: firstRowData.row_values,
-          safeqty: firstRowData.safeqty,
-          unitwgt: firstRowData.unitwgt,
-          invunit:
-            qtyunitListData.find(
-              (item: any) => item.sub_code === firstRowData.invunit
-            )?.code_name == undefined
-              ? firstRowData.invunit
-              : qtyunitListData.find(
-                  (item: any) => item.sub_code === firstRowData.invunit
-                )?.code_name,
-          dwgno: firstRowData.dwgno,
-          maker: firstRowData.maker,
-          qcyn: firstRowData.qcyn == "Y" ? "Y" : "N",
-          attdatnum_img: firstRowData.attdatnum_img,
-          attdatnum_img2: firstRowData.attdatnum_img2,
-          snp: firstRowData.snp,
-          person: firstRowData.person,
-          extra_field2: firstRowData.extra_field2,
-          purleadtime: firstRowData.purleadtime,
-          len: firstRowData.len,
-          purqty: firstRowData.purqty,
-          boxqty: firstRowData.boxqty,
-          pac: firstRowData.pac,
-          bnatur_insiz: firstRowData.bnatur_insiz,
-          itemno: firstRowData.itemno,
-          itemgroup: firstRowData.itemgroup,
-          lenunit: firstRowData.lenunit,
-          hscode: firstRowData.hscode,
-          wgtunit: firstRowData.wgtunit,
-          custitemnm: firstRowData.custitemnm,
-          unitqty: firstRowData.unitqty,
-          procday: firstRowData.procday,
-          files: firstRowData.files,
-          auto: firstRowData.auto,
-        });
-        setIfSelectFirstRow(true);
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -656,10 +681,7 @@ const BA_A0040: React.FC = () => {
   }, [subPgNum]);
 
   useEffect(() => {
-    setSub2PgNum(1);
-    setSubData2Result(process([], subData2State));
     if (customOptionData !== null) {
-      fetchSubGrid();
     }
   }, [tabSelected]);
 
@@ -734,26 +756,24 @@ const BA_A0040: React.FC = () => {
       files: selectedRowData.files,
       auto: selectedRowData.auto,
     });
-    if (tabSelected === 1) {
-      setsubFilters((prev) => ({
-        ...prev,
-        itemcd: selectedRowData.itemcd,
-        itemnm: selectedRowData.itemnm,
-        insiz: selectedRowData.insiz,
-        itemacnt: selectedRowData.itemacnt,
-        useyn: selectedRowData.useyn,
-        custcd: selectedRowData.custcd,
-        custnm: selectedRowData.custnm,
-        itemcd_s: "",
-        spec: selectedRowData.spec,
-        location: selectedRowData.location,
-        remark: selectedRowData.remark,
-        bnatur: selectedRowData.bnatur,
-        itemlvl1: selectedRowData.itemlvl1,
-        itemlvl2: selectedRowData.itemlvl2,
-        itemlvl3: selectedRowData.itemlvl3,
-      }));
-    }
+    setsubFilters((prev) => ({
+      ...prev,
+      itemcd: selectedRowData.itemcd,
+      itemnm: selectedRowData.itemnm,
+      insiz: selectedRowData.insiz,
+      itemacnt: selectedRowData.itemacnt,
+      useyn: selectedRowData.useyn,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      itemcd_s: "",
+      spec: selectedRowData.spec,
+      location: selectedRowData.location,
+      remark: selectedRowData.remark,
+      bnatur: selectedRowData.bnatur,
+      itemlvl1: selectedRowData.itemlvl1,
+      itemlvl2: selectedRowData.itemlvl2,
+      itemlvl3: selectedRowData.itemlvl3,
+    }));
   };
 
   const onSubData2SelectionChange = (event: GridSelectionChangeEvent) => {
@@ -775,8 +795,34 @@ const BA_A0040: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
   };
 
   const onSub2ScrollHandler = (event: GridEvent) => {
@@ -804,7 +850,17 @@ const BA_A0040: React.FC = () => {
       </td>
     );
   };
-
+  const sub2TotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = subData2Result.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
   const onAddClick2 = () => {
     setWorkType("N");
     setInfomation({
@@ -905,8 +961,6 @@ const BA_A0040: React.FC = () => {
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
-    setSub2PgNum(1);
-    setSubData2Result(process([], subData2State));
   };
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
@@ -1023,8 +1077,7 @@ const BA_A0040: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    fetchMainGrid();
-
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
@@ -2106,7 +2159,7 @@ const BA_A0040: React.FC = () => {
                           }
                           footerCell={
                             item.sortOrder === 0
-                              ? mainTotalFooterCell
+                              ? sub2TotalFooterCell
                               : undefined
                           }
                         />

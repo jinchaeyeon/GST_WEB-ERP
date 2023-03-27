@@ -4,6 +4,7 @@ import React, {
   useState,
   createContext,
   useContext,
+  useRef
 } from "react";
 import * as ReactDOM from "react-dom";
 import {
@@ -434,8 +435,21 @@ const QC_A2000: React.FC = () => {
     custcd: "",
     custnm: "",
     purnum: "",
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
+  const [detailFilters, setDetailFilters] = useState({
+    pgSize: PAGE_SIZE,
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
+  })
   const [detailFilters2, setDetailFilters2] = useState({
     pgSize: PAGE_SIZE,
     qcnum: "",
@@ -444,7 +458,7 @@ const QC_A2000: React.FC = () => {
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_QC_A2000W_Q",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "LIST",
@@ -469,8 +483,8 @@ const QC_A2000: React.FC = () => {
 
   const detailParameters: Iparameters = {
     procedureName: "P_QC_A2000W_Q",
-    pageNumber: detailPgNum,
-    pageSize: filters.pgSize,
+    pageNumber: detailFilters.pgNum,
+    pageSize: detailFilters.pgSize,
     parameters: {
       "@p_work_type": "QCLIST",
       "@p_orgdiv": filters.orgdiv,
@@ -529,21 +543,32 @@ const QC_A2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+
+          setDetailFilters2((prev) => ({
+            ...prev,
+            qcnum: firstRowData.qcnum,
+          }));
+        }
       }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -557,21 +582,31 @@ const QC_A2000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
-        return {
-          ...row,
-        };
-      });
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
       if (totalRowCnt > 0) {
         setDetailDataResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
+        if (detailFilters.find_row_value === "" && detailFilters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setDetailSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+          setDetailFilters2((prev) => ({
+            ...prev,
+            qcnum: firstRowData.qcnum,
+          }));
+        }
       }
     }
+    setDetailFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -605,21 +640,29 @@ const QC_A2000: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
+      customOptionData != null &&
+      filters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
     ) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      fetchDetailGrid();
       setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
+    if (
+      customOptionData != null &&
+      detailFilters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
+    ) {
+      setDetailFilters((prev) => ({ ...prev, isSearch: false }));
+      fetchDetailGrid();
+      setIsInitSearch(true);
     }
-  }, [mainPgNum]);
+  }, [detailFilters, permissions]);
 
   useEffect(() => {
     resetDetailGrid2();
@@ -627,33 +670,56 @@ const QC_A2000: React.FC = () => {
       fetchDetailGrid2();
     }
   }, [detailFilters2]);
-
+  let gridRef: any = useRef(null);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = mainDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
 
-        setDetailFilters2((prev) => ({
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
           ...prev,
-          qcnum: firstRowData.qcnum,
+          find_row_value: "",
         }));
-        setIfSelectFirstRow(true);
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (detailDataResult.total > 0) {
-        const firstRowData = detailDataResult.data[0];
-        setDetailSelectedState({ [firstRowData.num]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (detailFilters.find_row_value !== "" && detailDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = detailDataResult.data.findIndex(
+          (item) => idGetter(item) === detailFilters.find_row_value
+        );
 
-        setDetailFilters2((prev) => ({
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setDetailFilters((prev) => ({
           ...prev,
-          qcnum: firstRowData.qcnum,
+          find_row_value: "",
         }));
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (detailFilters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
       }
     }
   }, [detailDataResult]);
@@ -739,13 +805,65 @@ const QC_A2000: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
-      setDetailPgNum((prev) => prev + 1);
+    if (detailFilters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+    detailFilters.pgNum + (detailFilters.scrollDirrection === "up" ? detailFilters.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setDetailFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+    detailFilters.pgNum - (detailFilters.scrollDirrection === "down" ? detailFilters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setDetailFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
   };
 
   const onDetailScrollHandler2 = (event: GridEvent) => {
@@ -767,8 +885,9 @@ const QC_A2000: React.FC = () => {
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
-    fetchMainGrid();
-    fetchDetailGrid();
+    resetAllGrid();
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     fetchDetailGrid2();
   };
 
@@ -1011,9 +1130,9 @@ const QC_A2000: React.FC = () => {
     } catch (e) {
       alert(e);
     }
-    resetDetailGrid();
-    fetchMainGrid();
-    fetchDetailGrid();
+    resetAllGrid();
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     fetchDetailGrid2();
   };
 
@@ -1077,8 +1196,9 @@ const QC_A2000: React.FC = () => {
 
     if (data.isSuccess === true) {
       setSelectedState({});
-      fetchMainGrid();
-      fetchDetailGrid();
+      resetAllGrid();
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       fetchDetailGrid2();
     } else {
       console.log("[오류 발생]");

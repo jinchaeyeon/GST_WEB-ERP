@@ -168,7 +168,8 @@ const CM_B1101W: React.FC = () => {
 
   const handleSelectTab = (e: any) => {
     resetAllGrid();
-
+    setIfSelectFirstRow(true);
+    setIfSelectFirstRow2(true);
     if (e.selected == 0) {
       fetchMainGrid();
     } else {

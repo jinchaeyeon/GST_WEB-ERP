@@ -420,7 +420,6 @@ const CopyWindow = ({
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-
       const itemQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_ITEM_TEST"
@@ -986,14 +985,11 @@ const CopyWindow = ({
               (item.qty * item.unp * filters.baseamt) / 10
           ),
     dlramt: filters.amtunit == "KRW" ? item.qty / filters.baseamt : 0,
-    itemnm:
-      item.rowstatus == "N"
-        ? itemListData.find((items: any) => items.itemcd === item.itemcd)
-            ?.itemnm == item.itemnm
-          ? item.itemnm
-          : itemListData.find((items: any) => items.itemcd === item.itemcd)
-              ?.itemnm
-        : item.itemnm,
+    itemnm:  itemListData.find((items: any) => items.itemcd === item.itemcd)
+    ?.itemnm == item.itemnm
+    ? item.itemnm
+    : itemListData.find((items: any) => items.itemcd === item.itemcd)
+        ?.itemnm,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);

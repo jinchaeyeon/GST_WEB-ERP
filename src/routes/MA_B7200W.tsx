@@ -499,7 +499,7 @@ const MA_B7200W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+  
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -1143,7 +1143,7 @@ const MA_B7200W: React.FC = () => {
   };
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
-    var parts = mainDataResult.total.toString().split(".");
+    var parts = mainDataTotal.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -1179,7 +1179,7 @@ const MA_B7200W: React.FC = () => {
   };
 
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
-    var parts = mainDataResult2.total.toString().split(".");
+    var parts = mainDataTotal2.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}

@@ -487,16 +487,16 @@ const MA_B2800W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(parameters);
+
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt + prev.total,
+            total: totalRowCnt,
           };
         });
     } else {

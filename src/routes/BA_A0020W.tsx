@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -387,13 +387,17 @@ const BA_A0020: React.FC = () => {
     ceonm: "",
     raduseyn: "Y",
     company_code: "2207A046",
-    row_value: null,
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_BA_A0020W_Q",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": filters.workType,
@@ -405,7 +409,7 @@ const BA_A0020: React.FC = () => {
       "@p_ceonm": filters.ceonm,
       "@p_useyn": filters.raduseyn,
       "@p_company_code": filters.company_code,
-      "@p_find_row_value": filters.row_value,
+      "@p_find_row_value": filters.find_row_value,
     },
   };
 
@@ -492,7 +496,6 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -504,11 +507,110 @@ const BA_A0020: React.FC = () => {
             total: totalRowCnt,
           };
         });
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+
+          setInfomation({
+            pgSize: PAGE_SIZE,
+            workType: "U",
+            custcd: firstRowData.custcd,
+            custnm: firstRowData.custnm,
+            custdiv:
+              custdivListData.find(
+                (item: any) => item.sub_code === firstRowData.custdiv
+              )?.code_name == undefined
+                ? firstRowData.custdiv
+                : custdivListData.find(
+                    (item: any) => item.sub_code === firstRowData.custdiv
+                  )?.code_name,
+            custabbr: firstRowData.custabbr,
+            compnm_eng: firstRowData.compnm_eng,
+            inunpitem: firstRowData.inunpitem,
+            bizregnum: firstRowData.bizregnum,
+            zipcode: firstRowData.zipcode,
+            area: firstRowData.area,
+            unpitem: firstRowData.unpitem,
+            ceonm: firstRowData.ceonm,
+            address: firstRowData.address,
+            bizdiv:
+              bizdivListData.find(
+                (item: any) => item.sub_code === firstRowData.bizdiv
+              )?.code_name == undefined
+                ? firstRowData.bizdiv
+                : bizdivListData.find(
+                    (item: any) => item.sub_code === firstRowData.bizdiv
+                  )?.code_name,
+            repreregno: firstRowData.repreregno,
+            address_eng: firstRowData.address_eng,
+            estbdt: isValidDate(firstRowData.estbdt)
+              ? new Date(dateformat(firstRowData.estbdt))
+              : null,
+            phonenum: firstRowData.phonenum,
+            bnkinfo: firstRowData.bnkinfo,
+            bankacntuser: firstRowData.bankacntuser,
+            compclass: firstRowData.compclass,
+            etelnum: firstRowData.etelnum,
+            bankacnt: firstRowData.bankacnt,
+            comptype: firstRowData.comptype,
+            faxnum: firstRowData.faxnum,
+            bnkinfo2: firstRowData.bnkinfo2,
+            bankacnt2: firstRowData.bankacnt2,
+            taxorg: firstRowData.taxorg,
+            efaxnum: firstRowData.efaxnum,
+            email: firstRowData.email,
+            taxortnm: firstRowData.taxortnm,
+            useyn: firstRowData.useyn == "Y" ? "Y" : "N",
+            scmyn: firstRowData.scmyn == "Y" ? "Y" : "N",
+            pariodyn: firstRowData.pariodyn == "Y" ? "Y" : "N",
+            attdatnum: firstRowData.attdatnum,
+            itemlvl1: firstRowData.itemlvl1,
+            itemlvl2: firstRowData.itemlvl2,
+            itemlvl3: firstRowData.itemlvl3,
+            etax: firstRowData.etax,
+            remark: firstRowData.remark,
+            etxprs: firstRowData.etxprs,
+            phonenum_og: firstRowData.phonenum_og,
+            emailaddr_og: firstRowData.emailaddr_og,
+            bill_type: firstRowData.bill_type,
+            recvid: firstRowData.recvid,
+            rtxisuyn: firstRowData.rtxisuyn,
+            files: firstRowData.files,
+            auto: firstRowData.auto,
+          });
+
+          setsubFilters((prev) => ({
+            ...prev,
+            workType: "CustPerson",
+            useyn: firstRowData.useyn,
+            custcd: firstRowData.custcd,
+            custnm: firstRowData.custnm,
+            custdiv: firstRowData.custdiv,
+            bizregnum: firstRowData.bizregnum,
+            ceonm: firstRowData.ceonm,
+          }));
+
+          setsubFilters2((prev) => ({
+            ...prev,
+            workType: "MONEY",
+            useyn: firstRowData.useyn,
+            custcd: firstRowData.custcd,
+            custnm: firstRowData.custnm,
+            custdiv: firstRowData.custdiv,
+            bizregnum: firstRowData.bizregnum,
+            ceonm: firstRowData.ceonm,
+          }));
+        }
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -553,7 +655,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+  
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -578,20 +680,16 @@ const BA_A0020: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
+      customOptionData != null &&
+      filters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
     ) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
       setIsInitSearch(true);
     }
   }, [filters, permissions]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     fetchSubGrid();
@@ -600,105 +698,30 @@ const BA_A0020: React.FC = () => {
   useEffect(() => {
     fetchSubGrid2();
   }, [subPgNum2]);
-
+  let gridRef: any = useRef(null);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.custcd]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = mainDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
 
-        setInfomation({
-          pgSize: PAGE_SIZE,
-          workType: "U",
-          custcd: firstRowData.custcd,
-          custnm: firstRowData.custnm,
-          custdiv:
-            custdivListData.find(
-              (item: any) => item.sub_code === firstRowData.custdiv
-            )?.code_name == undefined
-              ? firstRowData.custdiv
-              : custdivListData.find(
-                  (item: any) => item.sub_code === firstRowData.custdiv
-                )?.code_name,
-          custabbr: firstRowData.custabbr,
-          compnm_eng: firstRowData.compnm_eng,
-          inunpitem: firstRowData.inunpitem,
-          bizregnum: firstRowData.bizregnum,
-          zipcode: firstRowData.zipcode,
-          area: firstRowData.area,
-          unpitem: firstRowData.unpitem,
-          ceonm: firstRowData.ceonm,
-          address: firstRowData.address,
-          bizdiv:
-            bizdivListData.find(
-              (item: any) => item.sub_code === firstRowData.bizdiv
-            )?.code_name == undefined
-              ? firstRowData.bizdiv
-              : bizdivListData.find(
-                  (item: any) => item.sub_code === firstRowData.bizdiv
-                )?.code_name,
-          repreregno: firstRowData.repreregno,
-          address_eng: firstRowData.address_eng,
-          estbdt: isValidDate(firstRowData.estbdt)
-            ? new Date(dateformat(firstRowData.estbdt))
-            : null,
-          phonenum: firstRowData.phonenum,
-          bnkinfo: firstRowData.bnkinfo,
-          bankacntuser: firstRowData.bankacntuser,
-          compclass: firstRowData.compclass,
-          etelnum: firstRowData.etelnum,
-          bankacnt: firstRowData.bankacnt,
-          comptype: firstRowData.comptype,
-          faxnum: firstRowData.faxnum,
-          bnkinfo2: firstRowData.bnkinfo2,
-          bankacnt2: firstRowData.bankacnt2,
-          taxorg: firstRowData.taxorg,
-          efaxnum: firstRowData.efaxnum,
-          email: firstRowData.email,
-          taxortnm: firstRowData.taxortnm,
-          useyn: firstRowData.useyn == "Y" ? "Y" : "N",
-          scmyn: firstRowData.scmyn == "Y" ? "Y" : "N",
-          pariodyn: firstRowData.pariodyn == "Y" ? "Y" : "N",
-          attdatnum: firstRowData.attdatnum,
-          itemlvl1: firstRowData.itemlvl1,
-          itemlvl2: firstRowData.itemlvl2,
-          itemlvl3: firstRowData.itemlvl3,
-          etax: firstRowData.etax,
-          remark: firstRowData.remark,
-          etxprs: firstRowData.etxprs,
-          phonenum_og: firstRowData.phonenum_og,
-          emailaddr_og: firstRowData.emailaddr_og,
-          bill_type: firstRowData.bill_type,
-          recvid: firstRowData.recvid,
-          rtxisuyn: firstRowData.rtxisuyn,
-          files: firstRowData.files,
-          auto: firstRowData.auto,
-        });
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
 
-        setsubFilters((prev) => ({
+        //초기화
+        setFilters((prev) => ({
           ...prev,
-          workType: "CustPerson",
-          useyn: firstRowData.useyn,
-          custcd: firstRowData.custcd,
-          custnm: firstRowData.custnm,
-          custdiv: firstRowData.custdiv,
-          bizregnum: firstRowData.bizregnum,
-          ceonm: firstRowData.ceonm,
+          find_row_value: "",
         }));
-
-        setsubFilters2((prev) => ({
-          ...prev,
-          workType: "MONEY",
-          useyn: firstRowData.useyn,
-          custcd: firstRowData.custcd,
-          custnm: firstRowData.custnm,
-          custdiv: firstRowData.custdiv,
-          bizregnum: firstRowData.bizregnum,
-          ceonm: firstRowData.ceonm,
-        }));
-
-        setIfSelectFirstRow(true);
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -751,11 +774,6 @@ const BA_A0020: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      if (tabSelected == 1) {
-        fetchSubGrid();
-      } else if (tabSelected == 2) {
-        fetchSubGrid2();
-      }
     }
   }, [tabSelected]);
 
@@ -834,30 +852,29 @@ const BA_A0020: React.FC = () => {
       files: selectedRowData.files,
       auto: selectedRowData.auto,
     });
-    setIfSelectFirstRow(true)
-    if (tabSelected == 1) {
-      setsubFilters((prev) => ({
-        ...prev,
-        workType: "CustPerson",
-        useyn: selectedRowData.useyn,
-        custcd: selectedRowData.custcd,
-        custnm: selectedRowData.custnm,
-        custdiv: selectedRowData.custdiv,
-        bizregnum: selectedRowData.bizregnum,
-        ceonm: selectedRowData.ceonm,
-      }));
-    } else if (tabSelected == 2) {
-      setsubFilters2((prev) => ({
-        ...prev,
-        workType: "MONEY",
-        useyn: selectedRowData.useyn,
-        custcd: selectedRowData.custcd,
-        custnm: selectedRowData.custnm,
-        custdiv: selectedRowData.custdiv,
-        bizregnum: selectedRowData.bizregnum,
-        ceonm: selectedRowData.ceonm,
-      }));
-    }
+    setIfSelectFirstRow(true);
+
+    setsubFilters((prev) => ({
+      ...prev,
+      workType: "CustPerson",
+      useyn: selectedRowData.useyn,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      custdiv: selectedRowData.custdiv,
+      bizregnum: selectedRowData.bizregnum,
+      ceonm: selectedRowData.ceonm,
+    }));
+
+    setsubFilters2((prev) => ({
+      ...prev,
+      workType: "MONEY",
+      useyn: selectedRowData.useyn,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      custdiv: selectedRowData.custdiv,
+      bizregnum: selectedRowData.bizregnum,
+      ceonm: selectedRowData.ceonm,
+    }));
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -888,9 +905,34 @@ const BA_A0020: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
-      setIfSelectFirstRow(false);
+    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
   };
 
   const onSubScrollHandler = (event: GridEvent) => {
@@ -1085,10 +1127,6 @@ const BA_A0020: React.FC = () => {
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
-    setSubPgNum(1);
-    setSubDataResult(process([], subDataState));
-    setSubPgNum2(1);
-    setSubDataResult2(process([], subDataState2));
   };
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =

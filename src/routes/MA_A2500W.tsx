@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -370,6 +370,11 @@ const MA_A2500W: React.FC = () => {
     doexdiv: "",
     recdt: new Date(),
     seq1: 0,
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -381,7 +386,7 @@ const MA_A2500W: React.FC = () => {
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_MA_A2500W_Q",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "LIST",
@@ -502,22 +507,35 @@ const MA_A2500W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+ 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0)
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+
+          setDetailFilters((prev) => ({
+            ...prev,
+            recdt: toDate(firstRowData.recdt),
+            seq1: firstRowData.seq1,
+          }));
+        }
+      }
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -548,20 +566,16 @@ const MA_A2500W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
+      customOptionData != null &&
+      filters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
     ) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
       setIsInitSearch(true);
     }
   }, [filters, permissions]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     resetDetailGrid();
@@ -573,21 +587,30 @@ const MA_A2500W: React.FC = () => {
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
-
+  let gridRef: any = useRef(null);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = mainDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
 
-        setDetailFilters((prev) => ({
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
           ...prev,
-          recdt: toDate(firstRowData.recdt),
-          seq1: firstRowData.seq1,
+          find_row_value: "",
         }));
-
-        setIfSelectFirstRow(true);
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -634,8 +657,34 @@ const MA_A2500W: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
@@ -741,7 +790,7 @@ const MA_A2500W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      fetchMainGrid();
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -851,7 +900,7 @@ const MA_A2500W: React.FC = () => {
         throw findMessage(messagesData, "MA_A2500W_002");
       } else {
         resetAllGrid();
-        fetchMainGrid();
+        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);
@@ -1223,7 +1272,8 @@ const MA_A2500W: React.FC = () => {
 
     if (data.isSuccess === true) {
       setreload(!reload);
-      fetchMainGrid();
+      resetAllGrid();
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);

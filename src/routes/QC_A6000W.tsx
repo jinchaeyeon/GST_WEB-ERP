@@ -4,6 +4,7 @@ import React, {
   useState,
   createContext,
   useContext,
+  useRef
 } from "react";
 import * as ReactDOM from "react-dom";
 import {
@@ -358,12 +359,17 @@ const QC_A6000: React.FC = () => {
     itemnm: "",
     bnatur: "",
     renum: "",
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_QC_A6000W_Q",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "Q",
@@ -374,49 +380,6 @@ const QC_A6000: React.FC = () => {
       "@p_itemnm": filters.itemnm,
       "@p_bnatur": filters.bnatur,
       "@p_renum": filters.renum,
-    },
-  };
-
-  //삭제 프로시저 초기값
-  const [paraDataDeleted, setParaDataDeleted] = useState({
-    work_type: "",
-    qcno: "",
-  });
-
-  //삭제 프로시저 파라미터
-  const paraDeleted: Iparameters = {
-    procedureName: "P_QC_A3000W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": "01",
-      "@p_qcdt": "",
-      "@p_person": "",
-      "@p_qcno": paraDataDeleted.qcno,
-      "@p_qcqty": 0,
-      "@p_badqty": 0,
-      "@p_strtime": "",
-      "@p_endtime": "",
-      "@p_qcdecision": "",
-      "@p_remark": "",
-      "@p_attdatnum": "",
-      "@p_itemcd": "",
-      "@p_rowstatus_s": "",
-      "@p_qcseq_s": "",
-      "@p_stdnum_s": "",
-      "@p_stdrev_s": "",
-      "@p_stdseq_s": "",
-      "@p_qc_sort_s": "",
-      "@p_inspeccd_s": "",
-      "@p_qc_spec_s": "",
-      "@p_qcvalue1_s": "",
-      "@p_qcresult1_s": "",
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_form_id": "P_QC_A3000W",
-      "@p_company_code": "2207A046",
     },
   };
 
@@ -431,59 +394,75 @@ const QC_A6000: React.FC = () => {
       data = null;
     }
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
           qcdt: toDate(row.qcdt),
         };
       });
-
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
       }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchMainGrid();
+    resetAllGrid();
+    setFilters((prev) => ({ ...prev, pgNum: 1,isSearch: true }));
   }, [bool]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
+    if (      customOptionData != null &&
+      filters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
       setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
-
-  useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
-  }, [paraDataDeleted]);
-
+  let gridRef: any = useRef(null);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = mainDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
 
-        setIfSelectFirstRow(true);
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+        }));
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -517,8 +496,34 @@ const QC_A6000: React.FC = () => {
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -550,28 +555,6 @@ const QC_A6000: React.FC = () => {
 
   const onItemWndClick = () => {
     setItemWindowVisible(true);
-  };
-
-  const fetchToDelete = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", paraDeleted);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      resetAllGrid();
-      fetchMainGrid();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
-    }
-
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.qcno = "";
   };
 
   interface ICustData {
@@ -665,7 +648,8 @@ const QC_A6000: React.FC = () => {
     } catch (e) {
       alert(e);
     }
-    fetchMainGrid();
+    resetAllGrid();
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -739,7 +723,8 @@ const QC_A6000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      fetchMainGrid();
+      resetAllGrid();
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);

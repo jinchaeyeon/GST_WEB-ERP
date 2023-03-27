@@ -688,7 +688,7 @@ const MA_B7201W: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
-    var parts = mainDataResult.total.toString().split(".");
+    var parts = mainDataTotal.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}

@@ -857,9 +857,10 @@ const CopyWindow = ({
       field != "itemnm" &&
       field != "totamt" &&
       field != "dlramt" &&
-      field != "rowstatus"
+      field != "rowstatus" 
     ) {
-      const newData = mainDataResult.data.map((item) =>
+      if(!(field == "itemcd" && dataItem.rowstatus != "N")){
+        const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
@@ -879,6 +880,7 @@ const CopyWindow = ({
           total: prev.total,
         };
       });
+      }
     }
   };
 
@@ -905,14 +907,11 @@ const CopyWindow = ({
                 (item.qty * item.unp * filters.wonchgrat) / 10
             ),
       dlramt: filters.amtunit == "KRW" ? item.qty / filters.wonchgrat : 0,
-      itemnm:
-        item.rowstatus == "N"
-          ? itemListData.find((items: any) => items.itemcd === item.itemcd)
+      itemnm: itemListData.find((items: any) => items.itemcd === item.itemcd)
               ?.itemnm == item.itemnm
             ? item.itemnm
             : itemListData.find((items: any) => items.itemcd === item.itemcd)
-                ?.itemnm
-          : item.itemnm,
+                ?.itemnm,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);

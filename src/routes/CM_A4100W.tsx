@@ -1007,23 +1007,34 @@ const CM_A4100W: React.FC = () => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        {mainDataResult.total}
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
   //그리드 푸터
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult2.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        {mainDataResult2.total}
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const subTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = subDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        {subDataResult.total}
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -1848,7 +1859,7 @@ const CM_A4100W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterBoxWrap>
-          <GridContainer width="85vw">
+          <GridContainer width="87vw">
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
@@ -2114,7 +2125,7 @@ const CM_A4100W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterBoxWrap>
-          <GridContainerWrap style={{ width: "85vw" }}>
+          <GridContainerWrap style={{ width: "87vw" }}>
             <GridContainer width="35%">
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
