@@ -134,7 +134,6 @@ export const useApi = () => {
         headers = { ...headers, CultureName: loginResult.langCode };
       }
 
-      console.log(info);
       if (
         token &&
         !headers.hasOwnProperty("Authorization") &&
