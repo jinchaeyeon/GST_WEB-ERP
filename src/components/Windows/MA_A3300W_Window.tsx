@@ -54,6 +54,7 @@ import {
   getGridItemChangedData,
   dateformat,
   isValidDate,
+  getItemQuery
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -281,6 +282,8 @@ const CopyWindow = ({
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const DATA_ITEM_KEY = "num";
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const [itemcd, setItemcd] = useState<string>("");
   const [itemnm, setItemnm] = useState<string>("");
   const idGetter = getter(DATA_ITEM_KEY);
@@ -952,6 +955,12 @@ const CopyWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
+
+      if (field){
+        setEditedField(field);
+        setEditIndex(dataItem[DATA_ITEM_KEY]);
+      }
+      
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -962,7 +971,47 @@ const CopyWindow = ({
     }
   };
 
+  const getItemData = (itemcd: string) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData(queryStr);
+  };
+
+  const fetchData = React.useCallback(async (queryStr: string) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].RowCount;
+      if (rowCount > 0) {
+        setItemcd(rows[0].itemcd);
+        setItemnm(rows[0].itemnm);
+      }
+    }
+  }, []);
+
   const exitEdit = () => {
+        if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+      mainDataResult.data.map((item) => {
+        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+          getItemData(item.itemcd)
+        }
+      })
+    }
+
     const newData = mainDataResult.data.map((item) => ({
       ...item,
       amt:
@@ -985,11 +1034,6 @@ const CopyWindow = ({
               (item.qty * item.unp * filters.baseamt) / 10
           ),
     dlramt: filters.amtunit == "KRW" ? item.qty / filters.baseamt : 0,
-    itemnm:  itemListData.find((items: any) => items.itemcd === item.itemcd)
-    ?.itemnm == item.itemnm
-    ? item.itemnm
-    : itemListData.find((items: any) => items.itemcd === item.itemcd)
-        ?.itemnm,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);

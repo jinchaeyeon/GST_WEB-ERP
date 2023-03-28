@@ -314,7 +314,6 @@ const MA_A3300W: React.FC = () => {
         ...prev,
         recdt: toDate(rowData.recdt),
         seq1: rowData.seq1,
-        person: rowData.person,
       }));
 
       setIsCopy(false);

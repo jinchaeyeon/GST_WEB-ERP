@@ -59,6 +59,7 @@ import {
   isValidDate,
   findMessage,
   setDefaultDate,
+  getItemQuery
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -303,7 +304,8 @@ const CopyWindow = ({
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -906,6 +908,11 @@ const CopyWindow = ({
             }
       );
 
+      if (field){
+        setEditedField(field);
+        setEditIndex(dataItem[DATA_ITEM_KEY]);
+      }
+
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -917,6 +924,14 @@ const CopyWindow = ({
   };
 
   const exitEdit = () => {
+    if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+      mainDataResult.data.map((item) => {
+        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+          getItemData(item.itemcd)
+        }
+      })
+    }
+
     const newData = mainDataResult.data.map((item) => ({
       ...item,
       amt:
@@ -947,6 +962,39 @@ const CopyWindow = ({
       };
     });
   };
+
+  
+  const getItemData = (itemcd: string) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData(queryStr);
+  };
+
+  const fetchData = React.useCallback(async (queryStr: string) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].RowCount;
+      if (rowCount > 0) {
+        setItemcd(rows[0].itemcd);
+        setItemnm(rows[0].itemnm);
+      }
+    }
+  }, []);
 
   const onAddClick = () => {
     let seq = 1;

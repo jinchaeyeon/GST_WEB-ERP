@@ -70,6 +70,8 @@ import CT_A0111W from "./routes/CT_A0111W";
 import CM_A0000W from "./routes/CM_A0000W";
 import CM_A4100W from "./routes/CM_A4100W";
 import CM_B1101W from "./routes/CM_B1101W";
+import HU_A2070W from "./routes/HU_A2070W";
+import HU_A2100W from "./routes/HU_A2100W";
 import CHAT_A0001W from "./routes/CHAT_A0001W";
 import CHAT_A0002W from "./routes/CHAT_A0002W";
 import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
@@ -282,6 +284,9 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
             {/* 원가관리 */}
             <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
+            {/* 인사관리 */}
+            <AuthRoute path="/HU_A2070W" component={HU_A2070W} exact />
+            <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
             {/* CHAT BOT */}
             <AuthRoute path="/CHAT_A0001W" component={CHAT_A0001W} exact />
             <AuthRoute path="/CHAT_A0002W" component={CHAT_A0002W} exact />

@@ -48,6 +48,7 @@ import {
   dateformat,
   isValidDate,
   findMessage,
+  getItemQuery
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -213,15 +214,15 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
   const onItemWndClick2 = () => {
-    setItemWindowVisible2(true);
-  };
-  const setItemData2 = (data: IItemData) => {
     if (dataItem["rowstatus"] == "N") {
-      setItemcd(data.itemcd);
-      setItemnm(data.itemnm);
+      setItemWindowVisible2(true);
     } else {
       alert("품목코드와 품목명은 수정이 불가합니다.");
     }
+  };
+  const setItemData2 = (data: IItemData) => {
+      setItemcd(data.itemcd);
+      setItemnm(data.itemnm);
   };
   const defaultRendering = (
     <td
@@ -301,7 +302,8 @@ const CopyWindow = ({
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const DATA_ITEM_KEY = "num";
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -460,7 +462,7 @@ const CopyWindow = ({
 
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         ? {
             ...item,
             itemcd: itemcd,
@@ -478,6 +480,7 @@ const CopyWindow = ({
       };
     });
   }, [itemcd, itemnm]);
+
   interface ICustData {
     custcd: string;
     custnm: string;
@@ -863,7 +866,10 @@ const CopyWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
-
+      if (field){
+        setEditedField(field);
+        setEditIndex(dataItem[DATA_ITEM_KEY]);
+      }
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -874,15 +880,48 @@ const CopyWindow = ({
     }
   };
 
+  const getItemData = (itemcd: string) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData(queryStr);
+  };
+
+  const fetchData = React.useCallback(async (queryStr: string) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].RowCount;
+      if (rowCount > 0) {
+        setItemcd(rows[0].itemcd);
+        setItemnm(rows[0].itemnm);
+      }
+    }
+  }, []);
+
   const exitEdit = () => {
+    if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+      mainDataResult.data.map((item) => {
+        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+          getItemData(item.itemcd)
+        }
+      })
+    }
     const newData = mainDataResult.data.map((item) => ({
       ...item,
-      itemnm:
-      itemListData.find((items: any) => items.itemcd === item.itemcd)
-        ?.itemnm == item.itemnm
-        ? item.itemnm
-        : itemListData.find((items: any) => items.itemcd === item.itemcd)
-            ?.itemnm,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);

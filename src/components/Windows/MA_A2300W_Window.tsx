@@ -148,94 +148,6 @@ interface IItemData {
 }
 let deletedMainRows: object[] = [];
 
-export const FormContext = createContext<{
-  itemcd: string;
-  itemnm: string;
-  setItemcd: (d: any) => void;
-  setItemnm: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
-  // fetchGrid: (n: number) => any;
-}>({} as any);
-
-const ColumnCommandCell = (props: GridCellProps) => {
-  const {
-    ariaColumnIndex,
-    columnIndex,
-    dataItem,
-    field = "",
-    render,
-    onChange,
-    className = "",
-  } = props;
-  const {
-    itemcd,
-    itemnm,
-    setItemcd,
-    setItemnm,
-    mainDataState,
-    setMainDataState,
-  } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
-  const value = field && dataItem[field] ? dataItem[field] : "";
-
-  const handleChange = (e: InputChangeEvent) => {
-    if (onChange) {
-      onChange({
-        dataIndex: 0,
-        dataItem: dataItem,
-        field: field,
-        syntheticEvent: e.syntheticEvent,
-        value: e.target.value ?? "",
-      });
-    }
-  };
-  const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
-  const onItemWndClick2 = () => {
-    setItemWindowVisible2(true);
-  };
-  const setItemData2 = (data: IItemData) => {
-    setItemcd(data.itemcd);
-    setItemnm(data.itemnm);
-  };
-  const defaultRendering = (
-    <td
-      className={className}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{ position: "relative" }}
-    >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
-      <ButtonInGridInput>
-        <Button
-          name="itemcd"
-          onClick={onItemWndClick2}
-          icon="more-horizontal"
-          fillMode="flat"
-        />
-      </ButtonInGridInput>
-    </td>
-  );
-
-  return (
-    <>
-      {render === undefined
-        ? null
-        : render?.call(undefined, defaultRendering, props)}
-      {itemWindowVisible2 && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible2}
-          workType={"FILTER"}
-          setData={setItemData2}
-        />
-      )}
-    </>
-  );
-};
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
@@ -849,6 +761,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (
       field != "itemnm" &&
+      field != "itemcd" &&
       field != "insiz" &&
       field != "amt" &&
       field != "totamt" &&
@@ -1097,17 +1010,6 @@ const CopyWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <FormContext.Provider
-          value={{
-            itemcd,
-            itemnm,
-            setItemcd,
-            setItemnm,
-            mainDataState,
-            setMainDataState,
-            // fetchGrid,
-          }}
-        >
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
@@ -1279,7 +1181,6 @@ const CopyWindow = ({
               <GridColumn field="reckey" title="입고번호" width="150px" />
             </Grid>
           </GridContainer>
-        </FormContext.Provider>
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>

@@ -320,6 +320,7 @@ const CopyWindow = ({
     remark: "",
     stdnum: "",
     rev: "",
+    find_row_value: "",
   });
 
   const parameters: Iparameters = {
@@ -338,6 +339,7 @@ const CopyWindow = ({
       "@p_stdrev": filters.stdrev,
       "@p_qcgb": filters.qcgb,
       "@p_rev": filters.rev,
+      "@p_find_row_value": filters.find_row_value,
     },
   };
 

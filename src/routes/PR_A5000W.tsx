@@ -773,16 +773,8 @@ const PR_A5000W: React.FC = () => {
   });
 
   const onSaveClick = () => {
-    let arr: any = [];
-
-    for (const [key, value] of Object.entries(selectedState)) {
-      if (value == true) {
-        arr.push(parseInt(key));
-      }
-    }
-
     const dataItem = mainDataResult.data.filter(
-      (item: any) => arr.includes(item.num) == true
+      (item: any) => item.chk == true
     );
     if (dataItem.length === 0) return false;
 
@@ -876,14 +868,8 @@ const PR_A5000W: React.FC = () => {
   const onRemove = () => {
     let arr: any = [];
 
-    for (const [key, value] of Object.entries(detailSelectedState)) {
-      if (value == true) {
-        arr.push(parseInt(key));
-      }
-    }
-
     const dataItem = detailDataResult.data.filter(
-      (item: any) => arr.includes(item.num) == true
+      (item: any) => item.chk == true
     );
     if (dataItem.length === 0) return false;
 

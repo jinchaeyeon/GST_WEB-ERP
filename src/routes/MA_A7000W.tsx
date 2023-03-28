@@ -62,6 +62,7 @@ import {
   getGridItemChangedData,
   UseGetValueFromSessionItem,
   UseParaPc,
+  getItemQuery,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -235,19 +236,19 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
   const onItemWndClick2 = () => {
-    setItemWindowVisible2(true);
+    if (dataItem["rowstatus"] == "N") {
+      setItemWindowVisible2(true);
+    } else {
+      alert("품목코드와 품목명은 수정이 불가합니다.");
+    }
   };
   const setItemData2 = (data: IItemData) => {
-    if (dataItem.rowstatus == "N") {
       setItemcd(data.itemcd);
       setItemnm(data.itemnm);
       setInsiz(data.insiz);
       setItemacnt(data.itemacnt);
       setBnatur(data.bnatur);
       setSpec(data.spec);
-    } else {
-      alert("수정이 불가능합니다.");
-    }
   };
   const defaultRendering = (
     <td
@@ -301,6 +302,8 @@ const MA_A7000W: React.FC = () => {
     //수량단위, 내수구분, 발주형태, 공정, 완료여부, 사업부
     setBizComponentData
   );
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -368,7 +371,7 @@ const MA_A7000W: React.FC = () => {
 
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         ? {
             ...item,
             itemcd: itemcd,
@@ -389,7 +392,7 @@ const MA_A7000W: React.FC = () => {
         total: prev.total,
       };
     });
-  }, [itemcd, itemnm, itemacnt, insiz, bnatur, spec]);
+  }, [itemcd, itemacnt, insiz, bnatur, spec]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -410,6 +413,42 @@ const MA_A7000W: React.FC = () => {
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
+    }
+  }, []);
+
+  const getItemData = (itemcd: string) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData(queryStr);
+  };
+
+  const fetchData = React.useCallback(async (queryStr: string) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].RowCount;
+      if (rowCount > 0) {
+        setItemcd(rows[0].itemcd);
+        setItemnm(rows[0].itemnm);
+        setInsiz(rows[0].insiz);
+        setItemacnt(rows[0].itemacnt);
+        setBnatur(rows[0].bnatur);
+        setSpec(rows[0].spec);
+      }
     }
   }, []);
 
@@ -435,15 +474,6 @@ const MA_A7000W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -859,6 +889,11 @@ const MA_A7000W: React.FC = () => {
             }
       );
 
+      if (field){
+        setEditedField(field);
+        setEditIndex(dataItem[DATA_ITEM_KEY]);
+      }
+
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -870,58 +905,27 @@ const MA_A7000W: React.FC = () => {
   };
 
   const exitEdit = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      totamt: item.wonamt + item.taxamt,
-      itemnm:
-        item.rowstatus == "N"
-          ? itemListData.find((items: any) => items.itemcd === item.itemcd)
-              ?.itemnm == item.itemnm
-            ? item.itemnm
-            : itemListData.find((items: any) => items.itemcd === item.itemcd)
-                ?.itemnm
-          : item.itemnm,
-      itemacnt:
-        item.rowstatus == "N"
-          ? itemListData.find((items: any) => items.itemcd === item.itemcd)
-              ?.itemacnt == item.itemacnt
-            ? item.itemacnt
-            : itemListData.find((items: any) => items.itemcd === item.itemcd)
-                ?.itemacnt
-          : item.itemacnt,
-      insiz:
-        item.rowstatus == "N"
-          ? itemListData.find((items: any) => items.itemcd === item.itemcd)
-              ?.insiz == item.insiz
-            ? item.insiz
-            : itemListData.find((items: any) => items.itemcd === item.itemcd)
-                ?.insiz
-          : item.insiz,
-      bnatur:
-        item.rowstatus == "N"
-          ? itemListData.find((items: any) => items.itemcd === item.itemcd)
-              ?.bnatur == item.bnatur
-            ? item.bnatur
-            : itemListData.find((items: any) => items.itemcd === item.itemcd)
-                ?.bnatur
-          : item.bnatur,
-      spec:
-        item.rowstatus == "N"
-          ? itemListData.find((items: any) => items.itemcd === item.itemcd)
-              ?.spec == item.spec
-            ? item.spec
-            : itemListData.find((items: any) => items.itemcd === item.itemcd)
-                ?.spec
-          : item.spec,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+      mainDataResult.data.map((item) => {
+        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+          getItemData(item.itemcd)
+        }
+      })
+    }
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        totamt: item.wonamt + item.taxamt,
+        [EDIT_FIELD]: undefined,
+      }));
+  
+      setIfSelectFirstRow(false);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+
   };
 
   const [ParaData, setParaData] = useState({
@@ -997,7 +1001,7 @@ const MA_A7000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       setParaData({
         pgSize: PAGE_SIZE,
@@ -1067,9 +1071,9 @@ const MA_A7000W: React.FC = () => {
     });
 
     const set = new Set(arr);
-    
-    if(arr.length !== set.size) {
-      alert("LOT NO가 중복되었습니다.")
+
+    if (arr.length !== set.size) {
+      alert("LOT NO가 중복되었습니다.");
       return false;
     }
 
@@ -1226,16 +1230,21 @@ const MA_A7000W: React.FC = () => {
 
       let arr: any = [];
       jsonArr.map((item: any) => {
-        if(item.품목코드 == undefined || item.수량 == undefined || item.LOTNO == undefined || item.품목계정 == undefined){
+        if (
+          item.품목코드 == undefined ||
+          item.수량 == undefined ||
+          item.LOTNO == undefined ||
+          item.품목계정 == undefined
+        ) {
           valid = false;
         }
         arr.push(item.LOTNO);
       });
-  
+
       const set = new Set(arr);
-      
-      if(arr.length !== set.size) {
-        alert("LOT NO가 중복되었습니다.")
+
+      if (arr.length !== set.size) {
+        alert("LOT NO가 중복되었습니다.");
         return false;
       }
 
@@ -1262,7 +1271,7 @@ const MA_A7000W: React.FC = () => {
           remark_s: [],
           unp_s: [],
         };
-  
+
         jsonArr.forEach((item: any, idx: number) => {
           const {
             품목코드 = "",
@@ -1279,14 +1288,14 @@ const MA_A7000W: React.FC = () => {
             wgtunit = "",
             wonamt = "",
             taxamt = "",
-            적재장소= "",
+            적재장소 = "",
             rowstatus = "",
             width = "",
             itemthick = "",
             remark = "",
             unp = "",
           } = item;
-  
+
           const itemacnts = itemacntListData.find(
             (items: any) => items.code_name == 품목계정
           )?.sub_code;
@@ -1294,25 +1303,27 @@ const MA_A7000W: React.FC = () => {
             (items: any) => items.code_name == 적재장소
           )?.sub_code;
 
-          dataArr.rowstatus_s.push(rowstatus== "" ? "N" : rowstatus);
+          dataArr.rowstatus_s.push(rowstatus == "" ? "N" : rowstatus);
           dataArr.itemcd_s.push(품목코드);
           dataArr.itemacnt_s.push(itemacnts != undefined ? itemacnts : "");
-          dataArr.custcd_s.push(custcd== "" ? "" : custcd);
-          dataArr.itemgrade_s.push(itemgrade== "" ? "" : itemgrade);
-          dataArr.unitwgt_s.push(unitwgt== "" ? 0 : unitwgt);
-          dataArr.qtyunit_s.push(qtyunit== "" ? "" : qtyunit);
+          dataArr.custcd_s.push(custcd == "" ? "" : custcd);
+          dataArr.itemgrade_s.push(itemgrade == "" ? "" : itemgrade);
+          dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
+          dataArr.qtyunit_s.push(qtyunit == "" ? "" : qtyunit);
           dataArr.qty_s.push(수량);
           dataArr.lotnum_s.push(LOTNO == "" ? "" : LOTNO);
-          dataArr.len_s.push(len== "" ? 0 : len);
-          dataArr.lenunit_s.push(lenunit== "" ? "" : lenunit);
-          dataArr.wgt_s.push(wgt== "" ? 0 : wgt);
-          dataArr.wgtunit_s.push(wgtunit== "" ? "" : wgtunit);
-          dataArr.wonamt_s.push(wonamt== "" ? 0 : unitwgt);
-          dataArr.taxamt_s.push(taxamt== "" ? 0 : unitwgt);
-          dataArr.load_place_s.push(load_places != undefined ? load_places : "");
-          dataArr.width_s.push(width== "" ? 0 : width);
+          dataArr.len_s.push(len == "" ? 0 : len);
+          dataArr.lenunit_s.push(lenunit == "" ? "" : lenunit);
+          dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
+          dataArr.wgtunit_s.push(wgtunit == "" ? "" : wgtunit);
+          dataArr.wonamt_s.push(wonamt == "" ? 0 : unitwgt);
+          dataArr.taxamt_s.push(taxamt == "" ? 0 : unitwgt);
+          dataArr.load_place_s.push(
+            load_places != undefined ? load_places : ""
+          );
+          dataArr.width_s.push(width == "" ? 0 : width);
           dataArr.itemthick_s.push(itemthick == "" ? 0 : itemthick);
-          dataArr.remark_s.push(remark== "" ? "" : remark);
+          dataArr.remark_s.push(remark == "" ? "" : remark);
           dataArr.unp_s.push(unp == "" ? 0 : unp);
         });
 
@@ -1504,7 +1515,7 @@ const MA_A7000W: React.FC = () => {
                   value={filters.itemcd}
                   onChange={filterInputChange}
                 />
-                <ButtonInInput style={{marginTop: "3px"}}>
+                <ButtonInInput style={{ marginTop: "3px" }}>
                   <Button
                     onClick={onItemWndClick}
                     icon="more-horizontal"

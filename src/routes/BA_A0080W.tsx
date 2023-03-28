@@ -55,6 +55,7 @@ import {
   dateformat,
   UseParaPc,
   UseGetValueFromSessionItem,
+  getItemQuery
 } from "../components/CommonFunction";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -525,7 +526,7 @@ const BA_A0080: React.FC = () => {
 
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         ? {
             ...item,
             itemcd: itemcd,
@@ -543,6 +544,39 @@ const BA_A0080: React.FC = () => {
       };
     });
   }, [itemcd, itemnm]);
+
+  const getItemData = (itemcd: string) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData(queryStr);
+  };
+
+  const fetchData = React.useCallback(async (queryStr: string) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].RowCount;
+      if (rowCount > 0) {
+        setItemcd(rows[0].itemcd);
+        setItemnm(rows[0].itemnm);
+      }
+    }
+  }, []);
+
 
   useEffect(() => {
     if (ifSelectFirstRow) {
@@ -751,10 +785,7 @@ const BA_A0080: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const datas = mainDataResult.data.filter(
-      (item) => item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-    )[0];
-    if (field === "recdt" && datas.rowstatus !== "N") {
+    if (field === "recdt" && dataItem.rowstatus !== "N") {
       return false;
     }
     const newData = mainDataResult.data.map((item) =>
@@ -769,7 +800,10 @@ const BA_A0080: React.FC = () => {
             [EDIT_FIELD]: undefined,
           }
     );
-    if (field) setEditedField(field);
+    if (field){
+      setEditedField(field);
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+    }
     setIfSelectFirstRow(false);
     setMainDataResult((prev) => {
       return {
@@ -780,14 +814,16 @@ const BA_A0080: React.FC = () => {
   };
 
   const exitEdit = () => {
+    if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+      mainDataResult.data.map((item) => {
+        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+          getItemData(item.itemcd)
+        }
+      })
+    }
+    
     const newData = mainDataResult.data.map((item) => ({
       ...item,
-      itemnm:
-        itemListData.find((items: any) => items.itemcd === item.itemcd)
-          ?.itemnm == item.itemnm
-          ? item.itemnm
-          : itemListData.find((items: any) => items.itemcd === item.itemcd)
-              ?.itemnm,
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);

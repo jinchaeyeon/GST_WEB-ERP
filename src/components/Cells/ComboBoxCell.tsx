@@ -8,10 +8,16 @@ import { GridCellProps } from "@progress/kendo-react-grid";
 import { getQueryFromBizComponent } from "../CommonFunction";
 import { bytesToBase64 } from "byte-base64";
 
+interface item {
+  color: string;
+  fontweight: string;
+}
+
 interface CustomCellProps extends GridCellProps {
   bizComponent: any;
   textField?: string;
   valueField?: string;
+  myProp?: item[];
 }
 const ComboBoxCell = (props: CustomCellProps) => {
   const {
@@ -25,6 +31,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
     className = "",
     valueField = "sub_code",
     textField = "code_name",
+    myProp,
   } = props;
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
@@ -33,9 +40,9 @@ const ComboBoxCell = (props: CustomCellProps) => {
   if (className.includes("read-only")) {
     isInEdit = false;
   } else if (className.includes("editable-new-only")) {
-      if (dataItem["rowstatus"] !== "N") {
-        isInEdit = false;
-      }
+    if (dataItem["rowstatus"] !== "N") {
+      isInEdit = false;
+    }
   }
 
   const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
@@ -91,24 +98,66 @@ const ComboBoxCell = (props: CustomCellProps) => {
       });
     }
   };
-
-  const defaultRendering = (
-    <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
-      {isInEdit ? (
-        <MultiColumnComboBox
-          data={listData}
-          value={value}
-          columns={newColumns}
-          textField={textField}
-          onChange={handleChange}
-        />
-      ) : value ? (
-        value[textField]
-      ) : (
-        ""
-      )}
-    </td>
-  );
+ 
+  const defaultRendering =
+    myProp == undefined ? (
+      <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
+        {isInEdit ? (
+          <MultiColumnComboBox
+            data={listData}
+            value={value}
+            columns={newColumns}
+            textField={textField}
+            onChange={handleChange}
+          />
+        ) : value ? (
+          value[textField]
+        ) : (
+          ""
+        )}
+      </td>
+    ) : (
+      <td
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+        style={{
+          color:
+            field == "prsnnum"
+              ? dataItem.dayofweek == "1" || dataItem.dayofweek == "7"
+                ? myProp[1].color
+                : dataItem.workcls == "A"
+                ? myProp[0].color
+                : dataItem.workcls == "B"
+                ? myProp[2].color
+                : myProp[3].color
+              : myProp[3].color,
+          fontWeight:
+            field == "prsnnum"
+              ? dataItem.dayofweek == "1" || dataItem.dayofweek == "7"
+                ? myProp[1].fontweight
+                : dataItem.workcls == "A"
+                ? myProp[0].fontweight
+                : dataItem.workcls == "B"
+                ? myProp[2].fontweight
+                : myProp[3].fontweight
+              : myProp[3].fontweight,
+        }}
+      >
+        {isInEdit ? (
+          <MultiColumnComboBox
+            data={listData}
+            value={value}
+            columns={newColumns}
+            textField={textField}
+            onChange={handleChange}
+          />
+        ) : value ? (
+          value[textField]
+        ) : (
+          ""
+        )}
+      </td>
+    );
 
   return render === undefined
     ? null
