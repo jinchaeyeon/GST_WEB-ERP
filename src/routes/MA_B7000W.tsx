@@ -496,7 +496,7 @@ const MA_B7000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(detail2Parameters)
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;

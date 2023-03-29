@@ -426,7 +426,7 @@ const CopyWindow = ({
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
@@ -436,7 +436,7 @@ const CopyWindow = ({
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });

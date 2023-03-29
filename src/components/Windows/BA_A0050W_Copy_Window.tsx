@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -173,11 +173,6 @@ const KendoWindow = ({
     [id: string]: boolean | number[];
   }>({});
 
-  useEffect(() => {
-    fetchGrid();
-    fetchGrid2();
-  }, []);
-
   const [filters, setFilters] = useState({
     pgSize: 20,
     workType: "COPY",
@@ -186,12 +181,32 @@ const KendoWindow = ({
     itemnm: "",
     insiz: "",
     itemacnt: "",
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
+  });
+
+  const [filters3, setFilters3] = useState({
+    pgSize: 20,
+    workType: "PASTE",
+    orgdiv: "01",
+    itemcd: "",
+    itemnm: "",
+    insiz: "",
+    itemacnt: "",
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_BA_A0050W_Sub1_Q ",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": filters.workType,
@@ -214,23 +229,56 @@ const KendoWindow = ({
     itemacnt: "",
     row_values: null,
   });
-
+  let gridRef: any = useRef(null);
   useEffect(() => {
-    if (detailDataResult.total > 0) {
-      const firstRowData = detailDataResult.data[0];
-      setSelectedsubDataState({ [firstRowData.itemcd]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && detailDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = detailDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
 
-      setFilters2((prev) => ({
-        ...prev,
-        itemcd: firstRowData.itemcd,
-      }));
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+        }));
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
+      }
     }
   }, [detailDataResult]);
 
   useEffect(() => {
-    if (detailDataResult3.total > 0) {
-      const firstRowData = detailDataResult3.data[0];
-      setSelectedsubDataState2({ [firstRowData.itemcd]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters3.find_row_value !== "" && detailDataResult3.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = detailDataResult3.data.findIndex(
+          (item) => idGetter(item) === filters3.find_row_value
+        );
+
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters3((prev) => ({
+          ...prev,
+          find_row_value: "",
+        }));
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters3.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
+      }
     }
   }, [detailDataResult3]);
 
@@ -252,8 +300,8 @@ const KendoWindow = ({
 
   const parameters3: Iparameters = {
     procedureName: "P_BA_A0050W_Sub1_Q ",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
+    pageNumber: filters3.pgNum,
+    pageSize: filters3.pgSize,
     parameters: {
       "@p_work_type": "PASTE",
       "@p_orgdiv": filters.orgdiv,
@@ -275,16 +323,31 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      fetchGrid3();
-      setDetailDataResult(() => {
-        return {
-          data: rows,
-          total: totalRowCnt,
-        };
-      });
+
+      if (totalRowCnt > 0) {
+        setDetailDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedsubDataState({ [firstRowData[DATA_ITEM_KEY]]: true });
+          setFilters2((prev) => ({
+            ...prev,
+            itemcd: firstRowData.itemcd,
+          }));
+        }
+      }
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
   };
 
   const fetchGrid3 = async () => {
@@ -296,16 +359,26 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
-      setDetailDataResult3(() => {
-        return {
-          data: rows,
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0) {
+        setDetailDataResult3((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+        if (filters3.find_row_value === "" && filters3.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedsubDataState2({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
+      }
     }
+    setFilters3((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
   };
 
   //상세그리드 조회
@@ -498,8 +571,8 @@ const KendoWindow = ({
 
   const search = () => {
     resetAllGrid();
-    fetchGrid();
-    fetchGrid2();
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setFilters3((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   useEffect(() => {
@@ -527,9 +600,79 @@ const KendoWindow = ({
     setItemWindowVisible(true);
   };
 
+  useEffect(() => {
+    if (filters.isSearch) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
+      fetchGrid();
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    if (filters3.isSearch) {
+      setFilters3((prev) => ({ ...prev, isSearch: false }));
+      fetchGrid3();
+    }
+  }, [filters3]);
+
+  const onMainScrollHandler2 = (event: GridEvent) => {
+    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
+  };
   const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    if (filters3.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+    filters3.pgNum + (filters3.scrollDirrection === "up" ? filters3.pgGap : 0);
+
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setFilters3((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
+
+    pgNumWithGap =
+    filters3.pgNum - (filters3.scrollDirrection === "down" ? filters3.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters3((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
   };
 
   const selectData = (selectedData: any) => {
@@ -651,6 +794,7 @@ const KendoWindow = ({
                     enabled: true,
                     mode: "multiple",
                   }}
+                  onScroll={onMainScrollHandler2}
                   onSelectionChange={onSubDataSelectionChange}
                   style={{ height: "250px" }}
                 >

@@ -466,6 +466,32 @@ const QC_A3000: React.FC = () => {
     },
   };
 
+  const detailParameters3: Iparameters = {
+    procedureName: "P_QC_A3000W_Q",
+    pageNumber: detailPgNum2,
+    pageSize: detailFilters2.pgSize,
+    parameters: {
+      "@p_work_type": "QCDETAIL_NEW",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": filters.location,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_proccd": filters.proccd,
+      "@p_itemcd": detailFilters2.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_prodemp": filters.prodemp,
+      "@p_prodmac": filters.prodmac,
+      "@p_qcyn": filters.qcyn,
+      "@p_lotnum": filters.lotnum,
+      "@p_plankey": filters.plankey,
+      "@p_rekey": filters.rekey,
+      "@p_renum": detailFilters2.renum,
+      "@p_reseq": detailFilters2.reseq,
+      "@p_qcnum": detailFilters2.qcnum,
+      "@p_company_code": filters.company_code,
+    },
+  };
+
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
@@ -629,8 +655,14 @@ const QC_A3000: React.FC = () => {
 
     if (data.isSuccess === true) {
       if (datas.qcyn == "등록" && information.workType == "N") {
-        const totalRowCnt = data.tables[1].RowCount;
-        const rows = data.tables[1].Rows;
+        try {
+          data = await processApi<any>("procedure", detailParameters3);
+        } catch (error) {
+          data = null;
+        }
+    
+        const totalRowCnt = data.tables[0].RowCount;
+        const rows = data.tables[0].Rows;
 
         setDetailDataResult2((prev) => {
           return {

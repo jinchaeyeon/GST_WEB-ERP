@@ -369,7 +369,7 @@ const CopyWindow = ({
     } catch (error) {
       data = null;
     }
-
+ 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -399,7 +399,7 @@ const CopyWindow = ({
       if (totalRowCnt > 0) {
         setMainDataTotal(totalRowCnt);
         setMainDataResult((prev) =>
-          process(rows, mainDataState)
+          process([...rowsOfDataResult(prev), ...rows], mainDataState)
         );
 
         // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
@@ -522,7 +522,7 @@ const CopyWindow = ({
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
-    var parts = mainDataResult.total.toString().split(".");
+    var parts = mainDataTotal.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}

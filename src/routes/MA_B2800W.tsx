@@ -131,21 +131,6 @@ const CustomLockedCell = (props: GridCellProps) => {
   );
 };
 
-const LockedFooterCell = (props: GridFooterCellProps) => {
-  console.log(props);
-  // const navigationAttributes = useTableKeyboardNavigation(``);
-  return (
-    <td
-      colSpan={props.colSpan}
-      className={"k-grid-footer-sticky"}
-      style={props.style}
-      role={"gridcell"}
-      {...{ [GRID_COL_INDEX_ATTRIBUTE]: props.ariaColumnIndex }}
-      // {...navigationAttributes}
-    ></td>
-  );
-};
-
 const MA_B2800W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -356,7 +341,7 @@ const MA_B2800W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    console.log(value);
+
     setFilters((prev) => ({
       ...prev,
       [name]: value,

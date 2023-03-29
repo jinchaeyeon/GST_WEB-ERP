@@ -399,6 +399,15 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     purseq: 0,
   });
 
+  
+  const [detailFilters2, setDetailFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    planno: "",
+    planseq: 0,
+    purnum: "",
+    purseq: 0,
+  });
+
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_MA_A2500W_Sub1_Q",
@@ -430,7 +439,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
-      "@p_work_type": "DETAIL",
+      "@p_work_type": "DETAIL_1",
       "@p_orgdiv": "01",
       "@p_location": filters.location,
       "@p_frdt": convertDateToStr(filters.frdt),
@@ -448,6 +457,31 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       "@p_company_code": "2207A046",
     },
   };
+
+    //조회조건 파라미터
+    const detailParameters2: Iparameters = {
+      procedureName: "P_MA_A2500W_Sub1_Q",
+      pageNumber: detailPgNum2,
+      pageSize: detailFilters2.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL_2",
+        "@p_orgdiv": "01",
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_purnum": detailFilters2.purnum,
+        "@p_purseq": detailFilters2.purseq,
+        "@p_planno": detailFilters2.planno,
+        "@p_planseq": detailFilters2.planseq,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_proccd": filters.proccd,
+        "@p_finyn": filters.finyn,
+        "@p_company_code": "2207A046",
+      },
+    };
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     //if (!permissions?.view) return;
@@ -458,9 +492,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-
+    
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
@@ -470,7 +504,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
@@ -491,9 +525,9 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-
+  
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
@@ -506,11 +540,29 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           total: totalRowCnt,
         };
       });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchDetailGrid2 = async () => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", detailParameters2);
+    } catch (error) {
+      data = null;
+    }
+  
+    if (data.isSuccess === true) {
       const datas = mainDataResult.data.filter(
         (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
-      const totalRowCnt2 = data.tables[1].RowCount;
-      const rows2 = data.tables[1].Rows.map((row: any) => {
+      const totalRowCnt2 = data.tables[0].TotalRowCount;
+      const rows2 = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
           rowstatus: "N",
@@ -523,7 +575,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
           planseq: datas.planseq,
         };
       });
-
+    
       setDetailDataResult2((prev) => {
         return {
           data: rows2,
@@ -547,14 +599,19 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
 
   useEffect(() => {
     setDetailPgNum(1);
-    setDetailPgNum2(1);
     setDetailDataResult(process([], detailDataState));
-    setDetailDataResult2(process([], detailDataState2));
     if (customOptionData !== null) {
       fetchDetailGrid();
     }
   }, [detailFilters]);
 
+  useEffect(() => {
+    setDetailPgNum2(1);
+    setDetailDataResult2(process([], detailDataState2));
+    if (customOptionData !== null) {
+      fetchDetailGrid2();
+    }
+  }, [detailFilters2]);
   useEffect(() => {
     if (customOptionData !== null) {
       fetchMainGrid();
@@ -567,6 +624,13 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     }
   }, [detailPgNum]);
 
+  useEffect(() => {
+    if (customOptionData !== null) {
+      fetchDetailGrid2();
+    }
+  }, [detailPgNum2]);
+
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
@@ -575,6 +639,13 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
         setSelectedState({ [firstRowData.num]: true });
 
         setDetailFilters((prev) => ({
+          ...prev,
+          planno: firstRowData.planno,
+          planseq: firstRowData.planseq,
+          purnum: firstRowData.purnum,
+          purseq: firstRowData.purseq,
+        }));
+        setDetailFilters2((prev) => ({
           ...prev,
           planno: firstRowData.planno,
           planseq: firstRowData.planseq,
@@ -633,6 +704,13 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     setDetailFilters((prev) => ({
+      ...prev,
+      planno: selectedRowData.planno,
+      planseq: selectedRowData.planseq,
+      purnum: selectedRowData.purnum,
+      purseq: selectedRowData.purseq,
+    }));
+    setDetailFilters2((prev) => ({
       ...prev,
       planno: selectedRowData.planno,
       planseq: selectedRowData.planseq,
