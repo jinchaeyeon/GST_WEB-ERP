@@ -791,15 +791,19 @@ const PR_A0060: React.FC = () => {
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     subDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
 
-    return (
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {sum}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
   const onAddClick2 = () => {

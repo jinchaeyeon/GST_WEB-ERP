@@ -335,7 +335,7 @@ const SA_B2410: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -635,16 +635,19 @@ const SA_B2410: React.FC = () => {
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -656,16 +659,19 @@ const SA_B2410: React.FC = () => {
   };
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     detail1DataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
 
@@ -678,16 +684,19 @@ const SA_B2410: React.FC = () => {
   };
 
   const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
-    let sum = 0;
-    detail1DataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+    let sum = "";
+    detail2DataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
 

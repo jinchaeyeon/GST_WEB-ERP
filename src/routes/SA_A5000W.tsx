@@ -380,7 +380,7 @@ const SA_A5000: React.FC = () => {
     recdt: new Date(),
     seq1: 0,
     company_code: "2207A046",
-           find_row_value: "",
+    find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
@@ -548,7 +548,6 @@ const SA_A5000: React.FC = () => {
             seq1: firstRowData.seq1,
             recdt: toDate(firstRowData.recdt),
           }));
-  
         }
       }
     }
@@ -734,16 +733,19 @@ const SA_A5000: React.FC = () => {
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
 

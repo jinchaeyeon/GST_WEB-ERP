@@ -668,28 +668,34 @@ const CM_B1101W: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = "";
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined && item.custnm == "총계"
-        ? (sum += item[props.field])
-        : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    return (
-      <td colSpan={props.colSpan} style={{ textAlign: "center" }}>
-        {sum}
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = "";
     mainDataResult2.data.forEach((item) =>
-      props.field !== undefined && item.custnm == "총계"
-        ? (sum += item[props.field])
-        : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    return (
-      <td colSpan={props.colSpan} style={{ textAlign: "center" }}>
-        {sum}
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
   return (

@@ -1389,42 +1389,51 @@ const MA_A2400W: React.FC = () => {
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     subDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
   const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     BOMDataResult2.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
   const onAddClick = () => {

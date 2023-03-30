@@ -190,15 +190,15 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
   const onItemWndClick2 = () => {
-    setItemWindowVisible2(true);
-  };
-  const setItemData2 = (data: IItemData) => {
     if (dataItem["rowstatus"] == "N") {
-      setItemcd(data.itemcd);
-      setItemnm(data.itemnm);
+      setItemWindowVisible2(true);
     } else {
       alert("품목코드와 품목명은 수정이 불가합니다.");
     }
+  };
+  const setItemData2 = (data: IItemData) => {
+    setItemcd(data.itemcd);
+    setItemnm(data.itemnm);
   };
   const defaultRendering = (
     <td

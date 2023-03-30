@@ -1215,58 +1215,70 @@ const MA_B7200W: React.FC = () => {
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     rowsOfDataResult(mainDataResult).forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     detailDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
 
   const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     detailDataResult2.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
 
   const gridSumQtyFooterCell4 = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     rowsOfDataResult(mainDataResult2).forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    var parts = sum.toString().split(".");
-    return (
+
+    var parts = parseInt(sum).toString().split(".");
+    return sum != undefined ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
       </td>
+    ) : (
+      <td></td>
     );
   };
   const onItemWndClick = () => {

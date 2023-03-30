@@ -437,7 +437,7 @@ const EA_A1000: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
-    setIfSelectFirstRow(true);
+    setIfSelectFirstRow(false);
     setSelectedState(newSelectedState);
   };
   const onSelection2Change = (event: GridSelectionChangeEvent) => {

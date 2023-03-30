@@ -713,35 +713,7 @@ const QC_A0060W: React.FC = () => {
       </td>
     );
   };
-
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
-    mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
-    );
-    var parts = sum.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    );
-  };
-
-  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
-    detailDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
-    );
-    var parts = sum.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    );
-  };
-
+  
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
