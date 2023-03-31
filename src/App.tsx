@@ -76,6 +76,7 @@ import HU_A4100W from "./routes/HU_A4100W";
 import HU_A5020W from "./routes/HU_A5020W";
 import HU_B2100W from "./routes/HU_B2100W";
 import HU_B3140W from "./routes/HU_B3140W";
+import HU_B3160W from "./routes/HU_B3160W";
 import CHAT_A0001W from "./routes/CHAT_A0001W";
 import CHAT_A0002W from "./routes/CHAT_A0002W";
 import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
@@ -295,6 +296,7 @@ const AppInner: React.FC = () => {
             <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
             <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />
             <AuthRoute path="/HU_B3140W" component={HU_B3140W} exact />
+            <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
             {/* CHAT BOT */}
             <AuthRoute path="/CHAT_A0001W" component={CHAT_A0001W} exact />
             <AuthRoute path="/CHAT_A0002W" component={CHAT_A0002W} exact />

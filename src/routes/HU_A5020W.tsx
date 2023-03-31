@@ -25,7 +25,7 @@ import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
-import PrsnnumMultiWindow from "../components/Windows/CommonWindows/PrsnnumMultiWindow";
+import PrsnnumMultiWindow from "../components/Windows/CommonWindows/UserMultiWindow";
 import {
   Title,
   FilterBoxWrap,

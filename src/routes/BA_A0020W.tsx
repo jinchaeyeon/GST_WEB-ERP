@@ -977,7 +977,7 @@ const BA_A0020: React.FC = () => {
     );
 
     var parts = parseInt(sum).toString().split(".");
-    return sum != undefined ? (
+    return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}

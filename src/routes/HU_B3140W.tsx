@@ -46,7 +46,6 @@ import {
   rowsWithSelectedDataResult,
 } from "../components/CommonFunction";
 import NumberCell from "../components/Cells/NumberCell";
-import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
@@ -61,6 +60,7 @@ import { isLoading } from "../store/atoms";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import MonthDateCell from "../components/Cells/MonthDateCell";
+import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 const DATA_ITEM_KEY = "num";
 
 const NumberField = [
@@ -80,10 +80,14 @@ const NumberField = [
 
 const DateField = ["recdt"];
 
-interface IPrsnnum {
-  user_id: string;
-  user_name: string;
+interface IPrsnnum{
+  prsnnum: string;
+  prsnnm: string;
+  dptcd: string;
+  abilcd: string;
+  postcd: string;
 }
+
 
 const HU_B3140W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -1281,8 +1285,8 @@ const HU_B3140W: React.FC = () => {
   const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
-      prsnnum: data.user_id,
-      prsnnm: data.user_name,
+      prsnnum: data.prsnnum,
+      prsnnm: data.prsnnm
     }));
   };
 
@@ -1293,7 +1297,7 @@ const HU_B3140W: React.FC = () => {
     );
 
     var parts = parseInt(sum).toString().split(".");
-    return sum != undefined ? (
+    return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1310,7 +1314,7 @@ const HU_B3140W: React.FC = () => {
     );
 
     var parts = parseInt(sum).toString().split(".");
-    return sum != undefined ? (
+    return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1327,7 +1331,7 @@ const HU_B3140W: React.FC = () => {
     );
 
     var parts = parseInt(sum).toString().split(".");
-    return sum != undefined ? (
+    return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1342,9 +1346,10 @@ const HU_B3140W: React.FC = () => {
     mainDataResult4.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-
+    
     var parts = parseInt(sum).toString().split(".");
-    return parts != undefined ? (
+
+    return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1361,7 +1366,7 @@ const HU_B3140W: React.FC = () => {
     );
 
     var parts = parseInt(sum).toString().split(".");
-    return sum != undefined ? (
+    return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1378,7 +1383,7 @@ const HU_B3140W: React.FC = () => {
     );
 
     var parts = parseInt(sum).toString().split(".");
-    return sum != undefined ? (
+    return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -2276,9 +2281,8 @@ const HU_B3140W: React.FC = () => {
         </TabStripTab>
       </TabStrip>
       {prsnnumWindowVisible && (
-        <PrsnnumWindow
+        <UserWindow
           setVisible={setPrsnnumWindowVisible}
-          workType={"FILTER"}
           setData={setPrsnnumData}
         />
       )}
