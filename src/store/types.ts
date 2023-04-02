@@ -151,6 +151,15 @@ export type TLogParaVal = {
   form_login_key: string;
 };
 
+export type TInsertImageFiles = {
+  view: any;
+  files: any;
+  nodeType: any;
+  position: any;
+  attrs?: any;
+  event?: any;
+};
+
 export type TSysMessageKey =
   | "QuestionToDeleteAllDataInCodeWithFormat"
   | "RequiredFieldWithFormat"
