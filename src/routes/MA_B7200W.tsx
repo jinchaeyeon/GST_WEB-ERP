@@ -132,6 +132,8 @@ const MA_B7200W: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
+  console.log(itemacntListData)
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
@@ -1156,6 +1158,9 @@ const MA_B7200W: React.FC = () => {
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = detailDataResult.total.toString().split(".");
+    if(parts[0] == "-1") {
+      parts[0]= "0"
+    }
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -1168,6 +1173,9 @@ const MA_B7200W: React.FC = () => {
 
   const detailTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = detailDataResult2.total.toString().split(".");
+    if(parts[0] == "-1") {
+      parts[0]= "0"
+    }
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -1192,6 +1200,9 @@ const MA_B7200W: React.FC = () => {
 
   const detailTotalFooterCell3 = (props: GridFooterCellProps) => {
     var parts = detailDataResult3.total.toString().split(".");
+    if(parts[0] == "-1") {
+      parts[0]= "0"
+    }
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -1204,6 +1215,9 @@ const MA_B7200W: React.FC = () => {
 
   const detailTotalFooterCell4 = (props: GridFooterCellProps) => {
     var parts = detailDataResult4.total.toString().split(".");
+    if(parts[0] == "-1") {
+      parts[0]= "0"
+    }
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -1286,6 +1300,7 @@ const MA_B7200W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    resetAllGrid();
     setTabSelected(e.selected);
   };
 

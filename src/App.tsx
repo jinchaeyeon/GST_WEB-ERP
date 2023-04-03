@@ -72,6 +72,7 @@ import CM_A4100W from "./routes/CM_A4100W";
 import CM_B1101W from "./routes/CM_B1101W";
 import HU_A2070W from "./routes/HU_A2070W";
 import HU_A2100W from "./routes/HU_A2100W";
+import HU_A3020W from "./routes/HU_A3020W";
 import HU_A4100W from "./routes/HU_A4100W";
 import HU_A5020W from "./routes/HU_A5020W";
 import HU_B2100W from "./routes/HU_B2100W";
@@ -292,6 +293,7 @@ const AppInner: React.FC = () => {
             {/* 인사관리 */}
             <AuthRoute path="/HU_A2070W" component={HU_A2070W} exact />
             <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
+            <AuthRoute path="/HU_A3020W" component={HU_A3020W} exact />
             <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
             <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
             <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />

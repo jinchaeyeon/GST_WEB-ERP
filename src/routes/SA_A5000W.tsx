@@ -1583,8 +1583,8 @@ const SA_A5000: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
+                          // : numberField.includes(item.fieldName)
+                          // ? gridSumQtyFooterCell
                           : undefined
                       }
                     />

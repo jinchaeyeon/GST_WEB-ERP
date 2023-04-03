@@ -691,8 +691,8 @@ const SA_B3000W: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? gridTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
+                                // : numberField.includes(item.fieldName)
+                                // ? gridSumQtyFooterCell
                                 : undefined
                             }
                           />
@@ -769,14 +769,14 @@ const SA_B3000W: React.FC = () => {
                               title={"수량"}
                               cell={NumberCell}
                               field={item.fieldName}
-                              footerCell={gridSumQtyFooterCell}
+                              //footerCell={gridSumQtyFooterCell}
                             />
 
                             <GridColumn
                               title={"금액"}
                               cell={NumberCell}
                               field={item.fieldName.replace("qty", "amt")}
-                              footerCell={gridSumQtyFooterCell}
+                              //footerCell={gridSumQtyFooterCell}
                             />
                           </GridColumn>
                         ) : (
@@ -787,8 +787,8 @@ const SA_B3000W: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? gridTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
+                                // : numberField.includes(item.fieldName)
+                                // ? gridSumQtyFooterCell
                                 : undefined
                             }
                           />
@@ -928,14 +928,14 @@ const SA_B3000W: React.FC = () => {
                                 title={"수량"}
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "q1" : "q11"}
-                                footerCell={gridSumQtyFooterCell}
+                                //footerCell={gridSumQtyFooterCell}
                               />
 
                               <GridColumn
                                 title={"금액"}
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "jm1" : "dm1"}
-                                footerCell={gridSumQtyFooterCell}
+                                //footerCell={gridSumQtyFooterCell}
                               />
                             </GridColumn>
                             <GridColumn title={"2/4분기"}>
@@ -943,14 +943,14 @@ const SA_B3000W: React.FC = () => {
                                 title={"수량"}
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "q2" : "q22"}
-                                footerCell={gridSumQtyFooterCell}
+                                //footerCell={gridSumQtyFooterCell}
                               />
 
                               <GridColumn
                                 title={"금액"}
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "jm2" : "dm2"}
-                                footerCell={gridSumQtyFooterCell}
+                                //footerCell={gridSumQtyFooterCell}
                               />
                             </GridColumn>
                             <GridColumn title={"3/4분기"}>
@@ -958,14 +958,14 @@ const SA_B3000W: React.FC = () => {
                                 title={"수량"}
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "q3" : "q33"}
-                                footerCell={gridSumQtyFooterCell}
+                                //footerCell={gridSumQtyFooterCell}
                               />
 
                               <GridColumn
                                 title={"금액"}
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "jm3" : "dm3"}
-                                footerCell={gridSumQtyFooterCell}
+                                //footerCell={gridSumQtyFooterCell}
                               />
                             </GridColumn>
                             <GridColumn title={"4/4분기"}>
@@ -973,14 +973,14 @@ const SA_B3000W: React.FC = () => {
                                 title={"수량"}
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "q4" : "q44"}
-                                footerCell={gridSumQtyFooterCell}
+                                //footerCell={gridSumQtyFooterCell}
                               />
 
                               <GridColumn
                                 title={"금액"}
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "jm4" : "dm4"}
-                                footerCell={gridSumQtyFooterCell}
+                                // footerCell={gridSumQtyFooterCell}
                               />
                             </GridColumn>
 
@@ -990,7 +990,7 @@ const SA_B3000W: React.FC = () => {
                               field={
                                 item.caption === "전기" ? "jtotal" : "dtotal"
                               }
-                              footerCell={gridSumQtyFooterCell}
+                              // footerCell={gridSumQtyFooterCell}
                             />
                           </GridColumn>
                         ) : (
@@ -1001,8 +1001,8 @@ const SA_B3000W: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? gridTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
+                                // : numberField.includes(item.fieldName)
+                                // ? gridSumQtyFooterCell
                                 : undefined
                             }
                           />
@@ -1254,7 +1254,7 @@ const SA_B3000W: React.FC = () => {
                                   ? "51"
                                   : "")
                               }
-                              footerCell={gridSumQtyFooterCell}
+                              // footerCell={gridSumQtyFooterCell}
                             />
                             <GridColumn
                               title={"(7-12)분기"}
@@ -1313,7 +1313,7 @@ const SA_B3000W: React.FC = () => {
                                   ? "52"
                                   : "")
                               }
-                              footerCell={gridSumQtyFooterCell}
+                              // footerCell={gridSumQtyFooterCell}
                             />
 
                             <GridColumn
@@ -1373,7 +1373,7 @@ const SA_B3000W: React.FC = () => {
                                   ? "05"
                                   : "")
                               }
-                              footerCell={gridSumQtyFooterCell}
+                              // footerCell={gridSumQtyFooterCell}
                             />
                           </GridColumn>
                         ) : (
@@ -1384,8 +1384,8 @@ const SA_B3000W: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? gridTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
+                                // : numberField.includes(item.fieldName)
+                                // ? gridSumQtyFooterCell
                                 : undefined
                             }
                           />

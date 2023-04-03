@@ -1741,8 +1741,8 @@ const MA_A7000W: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? mainTotalFooterCell
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
+                              // : numberField.includes(item.fieldName)
+                              // ? gridSumQtyFooterCell
                               : undefined
                           }
                         ></GridColumn>

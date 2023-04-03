@@ -1309,7 +1309,7 @@ const PR_A6000W: React.FC = () => {
                       }
                       footerCell={
                         item.sortOrder === 0
-                          ? detailTotalFooterCell
+                          ? detail2TotalFooterCell
                           : undefined
                       }
                     />
@@ -1390,7 +1390,7 @@ const PR_A6000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? detail2TotalFooterCell : undefined
+                        item.sortOrder === 0 ? detailTotalFooterCell : undefined
                       }
                     />
                   )

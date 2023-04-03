@@ -980,6 +980,9 @@ const HU_A5020W: React.FC = () => {
   }, [attdatnum, files]);
 
   const onCopyClick = () => {
+    if (!window.confirm("전월복사를 하시겠습니까?")) {
+      return false;
+    }
     setParaData((prev) => ({
       ...prev,
       workType: "COPY",

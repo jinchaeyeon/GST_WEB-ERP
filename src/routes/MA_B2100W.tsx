@@ -832,8 +832,8 @@ const MA_B2100W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell2
+                            // : numberField.includes(item.fieldName)
+                            // ? gridSumQtyFooterCell2
                             : undefined
                         }
                         locked={item.fixed === "None" ? false : true}

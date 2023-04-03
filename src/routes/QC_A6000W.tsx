@@ -849,7 +849,7 @@ const QC_A6000: React.FC = () => {
         title={"외경"}
         width="100px"
         cell={NumberCell}
-        footerCell={gridSumQtyFooterCell}
+        // footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(
@@ -858,7 +858,7 @@ const QC_A6000: React.FC = () => {
         title={"두께"}
         width="100px"
         cell={NumberCell}
-        footerCell={gridSumQtyFooterCell}
+        // footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(
@@ -867,7 +867,7 @@ const QC_A6000: React.FC = () => {
         title={"길이"}
         width="100px"
         cell={NumberCell}
-        footerCell={gridSumQtyFooterCell}
+        // footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(<GridColumn field={"insiz"} title={"규격"} width="150px" />);
@@ -878,7 +878,7 @@ const QC_A6000: React.FC = () => {
         title={"실적수량"}
         width="100px"
         cell={NumberCell}
-        footerCell={gridSumQtyFooterCell}
+        // footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(<GridColumn field={"lotnum"} title={"LOT NO"} width="150px" />);

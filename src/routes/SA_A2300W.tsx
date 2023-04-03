@@ -1548,8 +1548,8 @@ const SA_A2300: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
+                          // : numberField.includes(item.fieldName)
+                          // ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -1608,8 +1608,8 @@ const SA_A2300: React.FC = () => {
                     footerCell={
                       item.sortOrder === 0
                         ? detailTotalFooterCell
-                        : numberField.includes(item.fieldName)
-                        ? gridSumQtyFooterCell2
+                        // : numberField.includes(item.fieldName)
+                        // ? gridSumQtyFooterCell2
                         : undefined
                     }
                   />

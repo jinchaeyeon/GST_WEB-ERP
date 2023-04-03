@@ -290,7 +290,7 @@ const HU_A2070W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: PAGE_SIZE,
+    pgSize: 25,
     work_type: "Q",
     orgdiv: "",
     location: "",
@@ -424,7 +424,7 @@ const HU_A2070W: React.FC = () => {
       filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
 
     // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+    if (chkScrollHandler(event, pgNumWithGap, 25)) {
       setFilters((prev) => ({
         ...prev,
         scrollDirrection: "down",
@@ -438,7 +438,7 @@ const HU_A2070W: React.FC = () => {
     pgNumWithGap =
       filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
     // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+    if (chkScrollHandler(event, pgNumWithGap, 25, "up")) {
       setFilters((prev) => ({
         ...prev,
         scrollDirrection: "up",
@@ -730,7 +730,7 @@ const HU_A2070W: React.FC = () => {
   };
 
   const [ParaData, setParaData] = useState({
-    pgSize: PAGE_SIZE,
+    pgSize: 25,
     workType: "S",
     userid: userId,
     orgdiv: "",
@@ -776,7 +776,7 @@ const HU_A2070W: React.FC = () => {
 
     if (data.isSuccess === true) {
       setParaData({
-        pgSize: PAGE_SIZE,
+        pgSize: 25,
         workType: "S",
         userid: userId,
         orgdiv: "",
@@ -1053,6 +1053,7 @@ const HU_A2070W: React.FC = () => {
                     className="required"
                     placeholder=""
                   />
+                  ~
                   <DatePicker
                     name="todt"
                     value={filters.todt}
