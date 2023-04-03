@@ -28,3 +28,8 @@ export const DEFAULT_SESSION_ITEM: TSessionItem[] = [
   { code: "position", value: "" },
   { code: "dptcd", value: "" },
 ];
+
+export const DEFAULT_LANG_CODE = {
+  name: "ko-KR, 한국어(대한민국)",
+  code: "ko-KR",
+};

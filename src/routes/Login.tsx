@@ -1,15 +1,17 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Form, Field, FormElement } from "@progress/kendo-react-form";
-import { KeyboardEvent, useCallback, useState } from "react";
+import { KeyboardEvent, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { passwordExpirationInfoState, loginResultState } from "../store/atoms";
 import { useApi } from "../hooks/api";
+import { IComboBoxColumns } from "../hooks/interfaces";
 import { useSetRecoilState } from "recoil";
 import { FormInput, FormComboBox } from "../components/Editors";
 import { AppName, LoginAppName, LoginBox, Logo } from "../CommonStyled";
 import { UseGetIp } from "../components/CommonFunction";
 import { isLoading } from "../store/atoms";
 import Loading from "../components/Loading";
+import { DEFAULT_LANG_CODE } from "../components/CommonString";
 
 interface IFormData {
   langCode: string;
@@ -18,6 +20,46 @@ interface IFormData {
   password: string;
 }
 
+const langCodesColumns: IComboBoxColumns[] = [
+  {
+    sortOrder: 0,
+    fieldName: "code",
+    caption: "코드",
+    columnWidth: 100,
+    dataAlignment: "center",
+  },
+  {
+    sortOrder: 0,
+    fieldName: "name",
+    caption: "이름",
+    columnWidth: 100,
+    dataAlignment: "center",
+  },
+];
+const companyCodesColumns: IComboBoxColumns[] = [
+  {
+    sortOrder: 0,
+    fieldName: "company_code",
+    caption: "회사코드",
+    columnWidth: 100,
+    dataAlignment: "center",
+  },
+  {
+    sortOrder: 0,
+    fieldName: "name",
+    caption: "업체명",
+    columnWidth: 100,
+    dataAlignment: "center",
+  },
+  {
+    sortOrder: 0,
+    fieldName: "service_name",
+    caption: "서비스명",
+    columnWidth: 100,
+    dataAlignment: "center",
+  },
+];
+
 const Login: React.FC = () => {
   const processApi = useApi();
   const history = useHistory();
@@ -25,8 +67,11 @@ const Login: React.FC = () => {
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
   const [ifShowCompanyList, setIfShowCompanyList] = useState(false);
-  const [ip, setIp] = useState("");
-  UseGetIp(setIp);
+
+  useEffect(() => {
+    fetchCultureCodes();
+    fetchCompanyCodes();
+  }, []);
 
   const handleSubmit = (data: { [name: string]: any }) => {
     processLogin(data);
@@ -69,7 +114,6 @@ const Login: React.FC = () => {
           companyCode,
           serviceName,
           customerName,
-          defaultCulture,
           loginKey,
           passwordExpirationInfo,
         } = response;
@@ -78,7 +122,9 @@ const Login: React.FC = () => {
         localStorage.setItem("refreshToken", refreshToken);
 
         setLoginResult({
-          langCode: defaultCulture,
+          langCode: formData.langCode
+            ? formData.langCode.code
+            : DEFAULT_LANG_CODE.code,
           userId,
           userName,
           role,
@@ -101,11 +147,44 @@ const Login: React.FC = () => {
     []
   );
 
-  const companyCodeKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+  const companyCodesKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.ctrlKey && e.key === "'") {
       setIfShowCompanyList((prev) => !prev);
     }
   };
+
+  const [culterCodesData, setCulterCodesData] = useState([]);
+  const [companyCodesData, setCompanyCodesData] = useState([]);
+
+  const fetchCultureCodes = useCallback(async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("culture-codes");
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      const rows = data.Rows;
+      setCulterCodesData(rows);
+    }
+  }, []);
+
+  const fetchCompanyCodes = useCallback(async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("company-codes");
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      const rows = data.Rows;
+      setCompanyCodesData(rows);
+    }
+  }, []);
 
   return (
     <LoginBox>
@@ -121,47 +200,30 @@ const Login: React.FC = () => {
               <Field
                 name={"langCode"}
                 label={"언어설정"}
-                component={FormInput}
+                component={FormComboBox}
+                data={culterCodesData}
+                valueField="code"
+                textField="name"
+                columns={langCodesColumns}
+                defaultValue={DEFAULT_LANG_CODE}
               />
               {ifShowCompanyList ? (
                 <Field
                   name={"companyCode"}
                   label={"업체코드"}
                   component={FormComboBox}
-                  ifGetCompanyCode={true}
+                  data={companyCodesData}
                   valueField="company_code"
                   textField="name"
-                  onKeyDown={companyCodeKeyDown}
-                  columns={[
-                    {
-                      sortOrder: 0,
-                      fieldName: "company_code",
-                      caption: "회사코드",
-                      columnWidth: 100,
-                      dataAlignment: "center",
-                    },
-                    {
-                      sortOrder: 0,
-                      fieldName: "name",
-                      caption: "업체명",
-                      columnWidth: 100,
-                      dataAlignment: "center",
-                    },
-                    {
-                      sortOrder: 0,
-                      fieldName: "service_name",
-                      caption: "서비스명",
-                      columnWidth: 100,
-                      dataAlignment: "center",
-                    },
-                  ]}
+                  columns={companyCodesColumns}
+                  onKeyDown={companyCodesKeyDown}
                 />
               ) : (
                 <Field
                   name={"companyCode"}
                   label={"업체코드"}
                   component={FormInput}
-                  onKeyDown={companyCodeKeyDown}
+                  onKeyDown={companyCodesKeyDown}
                 />
               )}
 

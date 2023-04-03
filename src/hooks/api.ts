@@ -17,6 +17,7 @@ const domain: any = {
   "design-info": { action: "get", url: "api/data/:formId/design-info" },
   "biz-components": { action: "get", url: "api/data/:id" },
   permissions: { action: "get", url: "api/data/:para" },
+  "culture-codes": { action: "get", url: "api/data/culture-codes" },
   "get-password-requirements": {
     action: "get",
     url: "api/data/password-requirements",
@@ -46,7 +47,7 @@ const domain: any = {
   logout: { action: "post", url: "api/auth/logout" },
   login: { action: "post", url: "api/auth/login" },
   "login-old": { action: "post", url: "api/auth/login-old" },
-  "company-code": { action: "get", url: "api/auth/company-codes" },
+  "company-codes": { action: "get", url: "api/auth/company-codes" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },
   "file-upload": { action: "post", url: "api/files/:attached" },
   "file-download": {
@@ -130,7 +131,6 @@ export const useApi = () => {
         headers = { ...headers, DBAlias: "Platform" };
 
       if (loginResult) {
-        // headers = { ...headers, Authorization: `Bearer ${token}` };
         headers = { ...headers, CultureName: loginResult.langCode };
       }
 
@@ -219,7 +219,7 @@ axiosInstance.interceptors.response.use(
       errResponseURL = error.request.responseURL;
     } catch (e) {}
 
-    if (errResponseStatus === 401 && !errResponseURL.includes("auth/login")) {
+    if (errResponseStatus === 401 && !["auth/login"].includes(errResponseURL)) {
       if (!isTokenRefreshing) {
         let token = localStorage.getItem("accessToken");
         let refreshToken = localStorage.getItem("refreshToken");

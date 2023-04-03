@@ -31,9 +31,11 @@ export interface Iparameters {
   parameters: {};
 }
 
+export type TLangCode = "ko-KR" | "en-US" | "zh-CN" | "ja-JP";
+
 export type TLoginResult = {
   userId: string;
-  langCode: "ko-KR" | "en-US" | "zh-CN" | "ja-JP";
+  langCode: TLangCode;
   userName: string;
   role: string;
   companyCode: string;
