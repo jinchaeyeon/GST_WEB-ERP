@@ -31,9 +31,11 @@ export interface Iparameters {
   parameters: {};
 }
 
+export type TLangCode = "ko-KR" | "en-US" | "zh-CN" | "ja-JP";
+
 export type TLoginResult = {
   userId: string;
-  langCode: "ko-KR" | "en-US" | "zh-CN" | "ja-JP";
+  langCode: TLangCode;
   userName: string;
   role: string;
   companyCode: string;
@@ -149,6 +151,15 @@ export type TLogParaVal = {
   form_id: string;
   form_name: string;
   form_login_key: string;
+};
+
+export type TInsertImageFiles = {
+  view: any;
+  files: any;
+  nodeType: any;
+  position: any;
+  attrs?: any;
+  event?: any;
 };
 
 export type TSysMessageKey =
