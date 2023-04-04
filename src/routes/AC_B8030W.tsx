@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -8,12 +7,10 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
-  GridCellProps,
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
-import { Window } from "@progress/kendo-react-dialogs";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
@@ -24,13 +21,9 @@ import {
   TitleContainer,
   ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input, RadioButton } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
-import WorkDailyReport from "../components/Prints/WorkDailyReport";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -41,6 +34,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
+  findMessage
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -56,18 +50,13 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import { gridList } from "../store/columns/AC_B5000W_C";
-import TaxReport from "../components/Prints/TaxReport";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
-import RadioGroupCell from "../components/Cells/RadioGroupCell";
+import { gridList } from "../store/columns/AC_B8030W_C";
 
 const DATA_ITEM_KEY = "num";
-const numberField = ["splyamt", "taxamt"];
-const dateField = ["taxdt"];
-const checkField = ["exceptyn", "prtyn"];
+const numberField = ["amt", "taxamt", "totamt", "acseq1", "acseq2"];
+const dateField = ["taxdt", "actdt"];
 
-const AC_B5000W: React.FC = () => {
+const AC_B8030W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -78,7 +67,7 @@ const AC_B5000W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  //UseMessages(pathname, setMessagesData);
+  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -89,16 +78,15 @@ const AC_B5000W: React.FC = () => {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
+        fdate: setDefaultDate(customOptionData, "fdate"),
+        tdate: setDefaultDate(customOptionData, "tdate"),
         inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
           .valueCode,
         location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
-        taxtype: defaultOption.find((item: any) => item.id === "taxtype")
+        taxtype1: defaultOption.find((item: any) => item.id === "taxtype1")
           .valueCode,
-        prtyn: defaultOption.find((item: any) => item.id === "prtyn").valueCode,
-        prdiv: defaultOption.find((item: any) => item.id === "prdiv").valueCode,
+        taxtype2: defaultOption.find((item: any) => item.id === "taxtype2").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -273,14 +261,11 @@ const AC_B5000W: React.FC = () => {
     pgSize: PAGE_SIZE,
     orgdiv: "01",
     location: "01",
-    frdt: new Date(),
-    todt: new Date(),
-    custcd: "",
-    custnm: "",
-    prtyn: "%",
-    prdiv: "%",
+    fdate: new Date(),
+    tdate: new Date(),
     inoutdiv: "1",
-    taxtype: "",
+    taxtype1: "",
+    taxtype2: "",
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
@@ -290,31 +275,19 @@ const AC_B5000W: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_AC_B5000W_Q",
+    procedureName: "P_AC_B8030W_Q",
     pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "LIST",
+      "@p_work_type": "Q",
       "@p_orgdiv": filters.orgdiv,
       "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_prtyn": filters.prtyn,
-      "@p_prdiv": filters.prdiv,
+      "@p_fdate": convertDateToStr(filters.fdate),
+      "@p_tdate": convertDateToStr(filters.tdate),
       "@p_inoutdiv": filters.inoutdiv,
-      "@p_taxtype": filters.taxtype,
+      "@p_taxtype1": filters.taxtype1,
+      "@p_taxtype2": filters.taxtype2,
     },
-  };
-
-  const onPrintWndClick = () => {
-    if (mainDataResult.total != 0) {
-      window.scrollTo(0, 0);
-      setPreviewVisible((prev) => !prev);
-    } else {
-      alert("출력할 데이터가 없습니다");
-    }
   };
 
   //그리드 데이터 조회
@@ -561,13 +534,39 @@ const AC_B5000W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    try {
+      if (
+        convertDateToStr(filters.fdate).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.fdate).substring(6, 8) > "31" ||
+        convertDateToStr(filters.fdate).substring(6, 8) < "01" ||
+        convertDateToStr(filters.fdate).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_B8030W_001");
+      } else if (
+        convertDateToStr(filters.tdate).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.tdate).substring(6, 8) > "31" ||
+        convertDateToStr(filters.tdate).substring(6, 8) < "01" ||
+        convertDateToStr(filters.tdate).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_B8030W_001");
+      } else if (
+        filters.inoutdiv == null ||
+        filters.inoutdiv == "" ||
+        filters.inoutdiv == undefined
+      ) {
+        throw findMessage(messagesData, "AC_B8030W_002");
+      }  else {
+        resetAllGrid();
+        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
   return (
     <>
       <TitleContainer>
-        <Title>세금계산서조회</Title>
+        <Title>부가세 매입/매출장</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -583,16 +582,6 @@ const AC_B5000W: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>매입매출</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="inoutdiv"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (
@@ -604,12 +593,12 @@ const AC_B5000W: React.FC = () => {
                   />
                 )}
               </td>
-              <th>계산서일자</th>
+              <th>기준일자</th>
               <td colSpan={3}>
                 <div className="filter-item-wrap">
                   <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
+                    name="fdate"
+                    value={filters.fdate}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
@@ -617,8 +606,8 @@ const AC_B5000W: React.FC = () => {
                   />
                   ~
                   <DatePicker
-                    name="todt"
-                    value={filters.todt}
+                    name="tdate"
+                    value={filters.tdate}
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     className="required"
@@ -626,64 +615,38 @@ const AC_B5000W: React.FC = () => {
                   />
                 </div>
               </td>
-              <th>계산서유형</th>
+              <th>매입매출</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="taxtype"
-                    value={filters.taxtype}
+                    name="inoutdiv"
+                    value={filters.inoutdiv}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    className="required"
+                  />
+                )}
+              </td>
+              <th>유형</th>
+              {filters.inoutdiv == "1" ? (<td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="taxtype1"
+                    value={filters.taxtype1}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
                 )}
-              </td>
-            </tr>
-            <tr>
-              <th>업체코드</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={filters.custcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onCustWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>업체명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>출력유무</th>
-              <td colSpan={3}>
+              </td>): (<td>
                 {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="prtyn"
+                  <CustomOptionComboBox
+                    name="taxtype2"
+                    value={filters.taxtype2}
                     customOptionData={customOptionData}
-                    changeData={filterRadioChange}
+                    changeData={filterComboBoxChange}
                   />
                 )}
-              </td>
-              <th>출력구분</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="prdiv"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
+              </td>)}
             </tr>
           </tbody>
         </FilterBox>
@@ -697,22 +660,9 @@ const AC_B5000W: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
-            {permissions && (
-              <ButtonContainer>
-                <Button
-                  onClick={onPrintWndClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="print"
-                  disabled={permissions.print ? false : true}
-                >
-                  리스트 출력
-                </Button>
-              </ButtonContainer>
-            )}
           </GridTitleContainer>
           <Grid
-            style={{ height: "74vh" }}
+            style={{ height: "78vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -788,8 +738,6 @@ const AC_B5000W: React.FC = () => {
                             ? NumberCell
                             : dateField.includes(item.fieldName)
                             ? DateCell
-                            : checkField.includes(item.fieldName)
-                            ? CheckBoxReadOnlyCell
                             : undefined
                         }
                         footerCell={
@@ -819,18 +767,6 @@ const AC_B5000W: React.FC = () => {
           setData={setItemData}
         />
       )}
-      {previewVisible && (
-        <Window
-          title={"미리보기"}
-          onClose={() => {
-            setPreviewVisible((prev) => !prev);
-          }}
-          initialHeight={794}
-          initialWidth={1123}
-        >
-          <TaxReport data={mainDataResult} />
-        </Window>
-      )}
       {gridList.map((grid: any) =>
         grid.columns.map((column: any) => (
           <div
@@ -848,4 +784,4 @@ const AC_B5000W: React.FC = () => {
   );
 };
 
-export default AC_B5000W;
+export default AC_B8030W;

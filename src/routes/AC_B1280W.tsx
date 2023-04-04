@@ -656,7 +656,7 @@ const AC_B1280W: React.FC = () => {
             )}
           </GridTitleContainer>
           <Grid
-            style={{ height: "77vh" }}
+            style={{ height: "74vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
