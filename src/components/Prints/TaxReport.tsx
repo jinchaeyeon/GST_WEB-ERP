@@ -6,7 +6,7 @@ import { convertDateToStr, numberWithCommas } from "../CommonFunction";
 import ReactToPrint from "react-to-print";
 import { Button } from "@progress/kendo-react-buttons";
 
-const CodeReport = (data: any) => {
+const TaxReport = (data: any) => {
   const [mainDataResult, setMainDataResult] = useState<any>(null);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const CodeReport = (data: any) => {
     }
   }, [data]);
 
-
+  console.log(mainDataResult)
   const componentRef = useRef(null);
 
   return (
@@ -38,7 +38,7 @@ const CodeReport = (data: any) => {
         ref={componentRef}
       >
         <div className="title_container">
-          <h1 className="title">단축코드별리스트</h1>
+          <h1 className="title">세금계산서조회</h1>
           <table className="tb_approval right">
             <tbody>
               <tr>
@@ -61,34 +61,34 @@ const CodeReport = (data: any) => {
               <>
                 <table className="main_tb">
                   <colgroup>
+                    <col width="8%" />
+                    <col width="8%" />
                     <col width="10%" />
                     <col width="8%" />
-                    <col width="8%" />
-                    <col width="8%" />
-                    <col width="8%" />
                     <col width="auto" />
-                    <col width="9%" />
+                    <col width="10%" />
+                    <col width="8%" />
                   </colgroup>
                   <tbody>
                     <tr>
-                      <th>전표번호</th>
-                      <th>계정과목</th>
-                      <th>단축코드</th>
-                      <th>차변금액</th>
-                      <th>대변금액</th>
-                      <th>적요</th>
-                      <th>거래처</th>
+                      <th>계산서일자</th>
+                      <th>업체명</th>
+                      <th>공급가액</th>
+                      <th>세액</th>
+                      <th>거래품목</th>
+                      <th>계산서유형</th>
+                      <th>출력유무</th>
                     </tr>
                     {mainDataResult.data.map((item2: any, idx2: number) =>
                       idx1 + 10 > idx2 && idx1 <= idx2 ? (
-                        <tr key={item2.ackey}>
-                          <td className="center">{item2.ackey}</td>
-                          <td>{item2.acntnm}</td>
-                          <td>{item2.stdrmknm1}</td>
-                          <td className="number">{numberWithCommas(item2.dramt)}</td>
-                          <td className="number">{numberWithCommas(item2.cramt)}</td>
-                          <td>{item2.remark3}</td>
-                          <td className="center">{item2.custnm}</td>
+                        <tr key={item2.num}>
+                          <td className="center">{item2.reqdt}</td>
+                          <td>{item2.custnm}</td>
+                          <td className="number">{numberWithCommas(item2.splyamt)}</td>
+                          <td className="number">{numberWithCommas(item2.taxamt)}</td>
+                          <td>{item2.items}</td>
+                          <td>{item2.taxtype}</td>
+                          <td>{item2.prtyn}</td>
                         </tr>
                       ) : (
                         ""
@@ -107,4 +107,4 @@ const CodeReport = (data: any) => {
   );
 };
 
-export default CodeReport;
+export default TaxReport;
