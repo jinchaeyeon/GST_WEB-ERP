@@ -41,8 +41,10 @@ import {
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import WoodenWindow from "../components/Windows/CommonWindows/WoodenWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import YearCalender from "../components/Calendars/YearCalendar";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
@@ -53,14 +55,13 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import { gridList } from "../store/columns/AC_B1100W_C";
+import { gridList } from "../store/columns/TO_B0011W_C";
 import CenterCell from "../components/Cells/CenterCell";
 
 const DATA_ITEM_KEY = "num";
-const numberField = ["slipamt_1", "slipamt_2"];
-const dateField = ["actdt"];
-const centerField = ["acsts", "div", "proc_userid", "ackey", "acntcd", "inputpath", "custcd", "insert_userid"];
-const AC_B1100W: React.FC = () => {
+const numberField = ["stockqty"];
+
+const TO_B0011W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -82,13 +83,13 @@ const AC_B1100W: React.FC = () => {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
-        userid: defaultOption.find((item: any) => item.id === "userid")
+        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+          .valueCode,
+        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
           .valueCode,
       }));
     }
@@ -96,7 +97,7 @@ const AC_B1100W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_AC006,L_BA171,L_BA004,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
+    "L_LOADPLACE, L_AC006,L_BA171,L_BA004,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
     //대분류, 출고유형, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
     setBizComponentData
   );
@@ -134,8 +135,10 @@ const AC_B1100W: React.FC = () => {
   ]);
   const [InputListData, setInputListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
-  ])
-
+  ]);
+  const [loadplaceListData, setLoadPlaceListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const inputQueryStr = getQueryFromBizComponent(
@@ -167,6 +170,11 @@ const AC_B1100W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
+      const loadplaceQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_LOADPLACE"
+        )
+      );
       const amtunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
       );
@@ -184,6 +192,7 @@ const AC_B1100W: React.FC = () => {
       fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(pacQueryStr, setPacListData);
       fetchQuery(inputQueryStr, setInputListData);
+      fetchQuery(loadplaceQueryStr, setLoadPlaceListData);
     }
   }, [bizComponentData]);
 
@@ -230,6 +239,7 @@ const AC_B1100W: React.FC = () => {
   }>({});
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [woodenWindowVisible, setWoodenWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -240,50 +250,7 @@ const AC_B1100W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-    let arr: any[] = [];
-    if (name == "div1") {
-      if (value == true) {
-        arr.push("U");
-      }
-      if (filters.div2 == true) {
-        arr.push("D");
-      }
-      if (filters.div3 == true) {
-        arr.push("I");
-      }
-      setFilters((prev) => ({
-        ...prev,
-        div_s: arr.join("|"),
-      }));
-    } else if (name == "div2") {
-      if (filters.div1 == true) {
-        arr.push("U");
-      }
-      if (value == true) {
-        arr.push("D");
-      }
-      if (filters.div3 == true) {
-        arr.push("I");
-      }
-      setFilters((prev) => ({
-        ...prev,
-        div_s: arr.join("|"),
-      }));
-    } else if (name == "div3") {
-      if (filters.div1 == true) {
-        arr.push("U");
-      }
-      if (filters.div2 == true) {
-        arr.push("D");
-      }
-      if (value == true) {
-        arr.push("I");
-      }
-      setFilters((prev) => ({
-        ...prev,
-        div_s: arr.join("|"),
-      }));
-    }
+
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -313,18 +280,20 @@ const AC_B1100W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    frdt: new Date(),
-    todt: new Date(),
-    acnum: "",
-    location: "",
-    remark3: "",
-    userid: "",
-    position: "",
-    div1: true,
-    div2: true,
-    div3: false,
-    div_s: "U|D",
-    dptcd: "",
+    location: "01",
+    yyyymm: new Date(),
+    itemcd: "",
+    model: "",
+    itemnm: "",
+    itemno: "",
+    spec: "",
+    bnatur: "",
+    custcd: "",
+    custnm: "",
+    insiz: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
@@ -334,21 +303,26 @@ const AC_B1100W: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_AC_B1100W_Q",
+    procedureName: "P_TO_B0011W_Q",
     pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "Q",
+      "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_acnum": filters.acnum,
       "@p_location": filters.location,
-      "@p_remark3": filters.remark3,
-      "@p_userid": filters.userid,
-      "@p_position": filters.position,
-      "@p_div_s": filters.div_s,
-      "@p_dptcd": filters.dptcd
+      "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0, 4),
+      "@p_itemcd": filters.itemcd,
+      "@p_model": filters.model,
+      "@p_itemnm": filters.itemnm,
+      "@p_itemno": filters.itemno,
+      "@p_spec": filters.spec,
+      "@p_bnatur": filters.bnatur,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_insiz": filters.insiz,
+      "@p_itemlvl1": filters.itemlvl1,
+      "@p_itemlvl2": filters.itemlvl2,
+      "@p_itemlvl3": filters.itemlvl3,
     },
   };
 
@@ -362,7 +336,8 @@ const AC_B1100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(parameters);
+    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -521,7 +496,9 @@ const AC_B1100W: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-
+  const onWoodenWndClick = () => {
+    setWoodenWindowVisible(true);
+  };
   const columns = [{ field: "name", header: "Name", width: "100px" }];
 
   interface ICustData {
@@ -534,6 +511,11 @@ const AC_B1100W: React.FC = () => {
     remark: string;
     compclass: string;
     ceonm: string;
+  }
+  interface IWoodenData{
+    itemcd: string;
+    itemnm: string;
+    model: string;
   }
   interface IItemData {
     itemcd: string;
@@ -591,26 +573,28 @@ const AC_B1100W: React.FC = () => {
     }));
   };
 
+  const setWoodenData = (data: IWoodenData) => {
+    setFilters((prev) => ({
+      ...prev,
+      itemcd: data.itemcd,
+      itemnm: data.itemnm,
+      model: data.model,
+    }));
+  };
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const search = () => {
     try {
-      if (
-        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.frdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "AC_B1300W_001");
+      if (convertDateToStr(filters.yyyymm).substring(0, 4) < "1997") {
+        throw findMessage(messagesData, "TO_B0011W_001");
       } else if (
-        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.todt).substring(6, 8).length != 2
+        filters.location == null ||
+        filters.location == "" ||
+        filters.location == undefined
       ) {
-        throw findMessage(messagesData, "AC_B1300W_001");
+        throw findMessage(messagesData, "TO_B0011W_002");
       } else {
         resetAllGrid();
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
@@ -623,7 +607,7 @@ const AC_B1100W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>전표변경이력</Title>
+        <Title>목형재고조회</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -639,37 +623,81 @@ const AC_B1100W: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>처리일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
+              <th>재고년도</th>
+              <td>
+                <DatePicker
+                  name="yyyymm"
+                  value={filters.yyyymm}
+                  format="yyyy"
+                  onChange={filterInputChange}
+                  className="required"
+                  placeholder=""
+                  calendar={YearCalender}
+                />
               </td>
-              <th>전표번호</th>
+              <th>목형관리코드</th>
               <td>
                 <Input
-                  name="acnum"
+                  name="itemcd"
                   type="text"
-                  value={filters.acnum}
+                  value={filters.itemcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onWoodenWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>목형코드</th>
+              <td>
+                <Input
+                  name="model"
+                  type="text"
+                  value={filters.model}
                   onChange={filterInputChange}
                 />
               </td>
+              <th>목형명</th>
+              <td>
+                <Input
+                  name="itemnm"
+                  type="text"
+                  value={filters.itemnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>품번</th>
+              <td>
+                <Input
+                  name="itemno"
+                  type="text"
+                  value={filters.itemno}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>사양</th>
+              <td>
+                <Input
+                  name="spec"
+                  type="text"
+                  value={filters.spec}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>재질</th>
+              <td>
+                <Input
+                  name="bnatur"
+                  type="text"
+                  value={filters.bnatur}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (
@@ -678,64 +706,72 @@ const AC_B1100W: React.FC = () => {
                     value={filters.location}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    className="required"
                   />
                 )}
               </td>
-              <th>적요</th>
+              <th>업체코드</th>
               <td>
                 <Input
-                  name="remark3"
+                  name="custcd"
                   type="text"
-                  value={filters.remark3}
+                  value={filters.custcd}
                   onChange={filterInputChange}
                 />
+                <ButtonInInput>
+                  <Button
+                    onClick={onCustWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
               </td>
-            </tr>
-            <tr>
-              <th>구분</th>
+              <th>업체명</th>
               <td>
-                <Checkbox
-                  name="div1"
-                  label={"수정"}
-                  value={filters.div1}
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
                   onChange={filterInputChange}
                 />
               </td>
+              <th>규격</th>
               <td>
-                <Checkbox
-                  name="div2"
-                  label={"삭제"}
-                  value={filters.div2}
+                <Input
+                  name="insiz"
+                  type="text"
+                  value={filters.insiz}
                   onChange={filterInputChange}
                 />
               </td>
-              <td>
-                <Checkbox
-                  name="div3"
-                  label={"입력"}
-                  value={filters.div3}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>처리자</th>
+              <th>대분류</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="userid"
-                    value={filters.userid}
+                    name="itemlvl1"
+                    value={filters.itemlvl1}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
-                    textField="user_name"
-                    valueField="user_id"
                   />
                 )}
               </td>
-              <th>사업부</th>
+              <th>중분류</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="position"
-                    value={filters.position}
+                    name="itemlvl2"
+                    value={filters.itemlvl2}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>소분류</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemlvl3"
+                    value={filters.itemlvl3}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
@@ -760,15 +796,18 @@ const AC_B1100W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                proc_userid: usersListData.find(
-                  (item: any) => item.user_id === row.proc_userid
-                )?.user_name,
-                inputpath: InputListData.find(
-                  (item: any) => item.sub_code === row.inputpath
+                itemlvl1: itemlvl1ListData.find(
+                  (item: any) => item.sub_code === row.itemlvl1
                 )?.code_name,
-                insert_userid: usersListData.find(
-                  (item: any) => item.user_id === row.insert_userid
-                )?.user_name,
+                itemlvl2: itemlvl2ListData.find(
+                  (item: any) => item.sub_code === row.itemlvl2
+                )?.code_name,
+                itemlvl3: itemlvl3ListData.find(
+                  (item: any) => item.sub_code === row.itemlvl3
+                )?.code_name,
+                load_place: loadplaceListData.find(
+                  (item: any) => item.sub_code === row.load_place
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -809,10 +848,6 @@ const AC_B1100W: React.FC = () => {
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? DateCell
-                            : centerField.includes(item.fieldName)
-                            ? CenterCell
                             : undefined
                         }
                         footerCell={
@@ -842,6 +877,12 @@ const AC_B1100W: React.FC = () => {
           setData={setItemData}
         />
       )}
+      {woodenWindowVisible && (
+        <WoodenWindow
+          setVisible={setWoodenWindowVisible}
+          setData={setWoodenData}
+        />
+      )}
       {gridList.map((grid: any) =>
         grid.columns.map((column: any) => (
           <div
@@ -859,4 +900,4 @@ const AC_B1100W: React.FC = () => {
   );
 };
 
-export default AC_B1100W;
+export default TO_B0011W;

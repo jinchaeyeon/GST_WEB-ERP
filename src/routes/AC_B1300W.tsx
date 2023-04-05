@@ -21,7 +21,7 @@ import {
   TitleContainer,
   ButtonContainer,
   GridTitleContainer,
-  ButtonInInput
+  ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -37,8 +37,9 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  findMessage
+  findMessage,
 } from "../components/CommonFunction";
+import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -217,6 +218,8 @@ const AC_B1300W: React.FC = () => {
   }>({});
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [accountWindowVisible, setAccountWindowVisible] =
+    useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -265,7 +268,7 @@ const AC_B1300W: React.FC = () => {
     custnm: "",
     remark: "",
     slipamt: -999999999,
-    slipamt2: 999999999, 
+    slipamt2: 999999999,
     closeyn: "%",
     inputpath: "",
     find_row_value: "",
@@ -466,7 +469,9 @@ const AC_B1300W: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-
+  const onAccountWndClick = () => {
+    setAccountWindowVisible(true);
+  };
   const columns = [{ field: "name", header: "Name", width: "100px" }];
 
   interface ICustData {
@@ -479,6 +484,10 @@ const AC_B1300W: React.FC = () => {
     remark: string;
     compclass: string;
     ceonm: string;
+  }
+  interface IAccountData {
+    acntcd: string;
+    acntnm: string;
   }
   interface IItemData {
     itemcd: string;
@@ -536,6 +545,14 @@ const AC_B1300W: React.FC = () => {
     }));
   };
 
+  const setAccountData = (data: IAccountData) => {
+    setFilters((prev) => ({
+      ...prev,
+      acntcd: data.acntcd,
+      acntnm: data.acntnm,
+    }));
+  };
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -576,18 +593,10 @@ const AC_B1300W: React.FC = () => {
       />
     );
     array.push(
-      <GridColumn
-        field={"dracntcd"}
-        title={"계정과목코드"}
-        width="120px"
-      />
+      <GridColumn field={"dracntcd"} title={"계정과목코드"} width="120px" />
     );
     array.push(
-      <GridColumn
-        field={"dracntnm"}
-        title={"계정과목명"}
-        width="120px"
-      />
+      <GridColumn field={"dracntnm"} title={"계정과목명"} width="120px" />
     );
     return array;
   };
@@ -595,18 +604,10 @@ const AC_B1300W: React.FC = () => {
   const createColumn2 = () => {
     const array = [];
     array.push(
-      <GridColumn
-        field={"cracntcd"}
-        title={"계정과목코드"}
-        width="120px"
-      />
+      <GridColumn field={"cracntcd"} title={"계정과목코드"} width="120px" />
     );
     array.push(
-      <GridColumn
-        field={"cracntnm"}
-        title={"계정과목명"}
-        width="120px"
-      />
+      <GridColumn field={"cracntnm"} title={"계정과목명"} width="120px" />
     );
     array.push(
       <GridColumn
@@ -637,7 +638,7 @@ const AC_B1300W: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-            <th>전표일자</th>
+              <th>전표일자</th>
               <td colSpan={3}>
                 <div className="filter-item-wrap">
                   <DatePicker
@@ -667,7 +668,7 @@ const AC_B1300W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onCustWndClick}
+                    onClick={onAccountWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -684,7 +685,7 @@ const AC_B1300W: React.FC = () => {
               </td>
             </tr>
             <tr>
-            <th>업체코드</th>
+              <th>업체코드</th>
               <td>
                 <Input
                   name="custcd"
@@ -720,22 +721,22 @@ const AC_B1300W: React.FC = () => {
               </td>
             </tr>
             <tr>
-            <th>전표일자</th>
+              <th>전표일자</th>
               <td colSpan={3}>
                 <div className="filter-item-wrap">
-                <Input
-                  name="slipamt"
-                  type="number"
-                  value={filters.slipamt}
-                  onChange={filterInputChange}
-                />
+                  <Input
+                    name="slipamt"
+                    type="number"
+                    value={filters.slipamt}
+                    onChange={filterInputChange}
+                  />
                   ~
                   <Input
-                  name="slipamt2"
-                  type="number"
-                  value={filters.slipamt2}
-                  onChange={filterInputChange}
-                />
+                    name="slipamt2"
+                    type="number"
+                    value={filters.slipamt2}
+                    onChange={filterInputChange}
+                  />
                 </div>
               </td>
               <th>전표입력경로</th>
@@ -749,13 +750,13 @@ const AC_B1300W: React.FC = () => {
               </td>
               <th>승인여부</th>
               <td>
-              {customOptionData !== null && (
-                    <CustomOptionRadioGroup
-                      name="closeyn"
-                      customOptionData={customOptionData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="closeyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
             </tr>
           </tbody>
@@ -776,7 +777,7 @@ const AC_B1300W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                insert_time : new Date(row.insert_time),
+                insert_time: new Date(row.insert_time),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -803,19 +804,38 @@ const AC_B1300W: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-              <GridColumn field="actkey" title="전표번호" width="120px" footerCell={mainTotalFooterCell}/>
-              <GridColumn field="acseq2" title="순서" width="100px" cell={NumberCell}/>
-              <GridColumn title="차변">{createColumn()}</GridColumn>
-              <GridColumn title="대변">{createColumn2()}</GridColumn>
-              <GridColumn field="remark3" title="적요" width="200px" />
-              <GridColumn field="custcd" title="업체코드" width="120px" />
-              <GridColumn field="custnm" title="업체명" width="120px" />
-              <GridColumn field="mngdata1" title="관리항목코드" width="120px" />
-              <GridColumn field="mngdatanm1" title="관리항목명" width="120px" />
-              <GridColumn field="inputpath" title="입력경로" width="100px" />
-              <GridColumn field="insert_userid" title="등록자 아이디" width="150px" />
-              <GridColumn field="user_name" title="등록자명" width="120px" />
-              <GridColumn field="insert_time" title="등록날짜" width="120px" cell={DateCell}/>
+            <GridColumn
+              field="actkey"
+              title="전표번호"
+              width="120px"
+              footerCell={mainTotalFooterCell}
+            />
+            <GridColumn
+              field="acseq2"
+              title="순서"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn title="차변">{createColumn()}</GridColumn>
+            <GridColumn title="대변">{createColumn2()}</GridColumn>
+            <GridColumn field="remark3" title="적요" width="200px" />
+            <GridColumn field="custcd" title="업체코드" width="120px" />
+            <GridColumn field="custnm" title="업체명" width="120px" />
+            <GridColumn field="mngdata1" title="관리항목코드" width="120px" />
+            <GridColumn field="mngdatanm1" title="관리항목명" width="120px" />
+            <GridColumn field="inputpath" title="입력경로" width="100px" />
+            <GridColumn
+              field="insert_userid"
+              title="등록자 아이디"
+              width="150px"
+            />
+            <GridColumn field="user_name" title="등록자명" width="120px" />
+            <GridColumn
+              field="insert_time"
+              title="등록날짜"
+              width="120px"
+              cell={DateCell}
+            />
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -831,6 +851,12 @@ const AC_B1300W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+        />
+      )}
+      {accountWindowVisible && (
+        <AccountWindow
+          setVisible={setAccountWindowVisible}
+          setData={setAccountData}
         />
       )}
       {gridList.map((grid: any) =>

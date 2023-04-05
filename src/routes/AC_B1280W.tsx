@@ -41,6 +41,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
+import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -218,6 +219,8 @@ const AC_B1280W: React.FC = () => {
   }>({});
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [accountWindowVisible, setAccountWindowVisible] =
+    useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -280,11 +283,11 @@ const AC_B1280W: React.FC = () => {
   };
 
   const onPrintWndClick = () => {
-    if(mainDataResult.total != 0) {
+    if (mainDataResult.total != 0) {
       window.scrollTo(0, 0);
       setPreviewVisible((prev) => !prev);
     } else {
-      alert("출력할 데이터가 없습니다")
+      alert("출력할 데이터가 없습니다");
     }
   };
 
@@ -298,7 +301,7 @@ const AC_B1280W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+  
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -458,6 +461,9 @@ const AC_B1280W: React.FC = () => {
     setItemWindowVisible(true);
   };
 
+  const onAccountWndClick = () => {
+    setAccountWindowVisible(true);
+  };
   const columns = [{ field: "name", header: "Name", width: "100px" }];
 
   interface ICustData {
@@ -470,6 +476,10 @@ const AC_B1280W: React.FC = () => {
     remark: string;
     compclass: string;
     ceonm: string;
+  }
+  interface IAccountData {
+    acntcd: string;
+    acntnm: string;
   }
   interface IItemData {
     itemcd: string;
@@ -527,6 +537,14 @@ const AC_B1280W: React.FC = () => {
     }));
   };
 
+  const setAccountData = (data: IAccountData) => {
+    setFilters((prev) => ({
+      ...prev,
+      acntcd: data.acntcd,
+      acntnm: data.acntnm,
+    }));
+  };
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -578,7 +596,7 @@ const AC_B1280W: React.FC = () => {
               </td>
             </tr>
             <tr>
-            <th>계정코드</th>
+              <th>계정코드</th>
               <td>
                 <Input
                   name="acntcd"
@@ -588,7 +606,7 @@ const AC_B1280W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onCustWndClick}
+                    onClick={onAccountWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -735,9 +753,9 @@ const AC_B1280W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            // : numberField.includes(item.fieldName)
-                            // ? gridSumQtyFooterCell2
-                            : undefined
+                            : // : numberField.includes(item.fieldName)
+                              // ? gridSumQtyFooterCell2
+                              undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
@@ -758,6 +776,12 @@ const AC_B1280W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+        />
+      )}
+      {accountWindowVisible && (
+        <AccountWindow
+          setVisible={setAccountWindowVisible}
+          setData={setAccountData}
         />
       )}
       {previewVisible && (

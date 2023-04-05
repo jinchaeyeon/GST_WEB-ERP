@@ -133,7 +133,6 @@ const MA_B7200W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
 
-  console.log(itemacntListData)
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(

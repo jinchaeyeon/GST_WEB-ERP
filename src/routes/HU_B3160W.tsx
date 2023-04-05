@@ -210,7 +210,6 @@ const HU_B3160W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;

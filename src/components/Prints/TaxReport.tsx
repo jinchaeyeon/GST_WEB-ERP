@@ -15,7 +15,6 @@ const TaxReport = (data: any) => {
     }
   }, [data]);
 
-  console.log(mainDataResult)
   const componentRef = useRef(null);
 
   return (
