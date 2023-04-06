@@ -13,7 +13,7 @@ import {
 import { gridList } from "../store/columns/MA_A3300W_C";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
@@ -50,7 +50,6 @@ import {
 import DetailWindow from "../components/Windows/MA_A3300W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import BarcodeWindow from "../components/Windows/MA_A2700W_Barcode_Window";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -78,6 +77,7 @@ const NumberField = [
   "width",
   "amt",
 ];
+
 type TdataArr = {
   rowstatus_s: string[];
   itemgrade_s: string[];
@@ -126,6 +126,7 @@ type TdataArr = {
   load_place_s: string[];
   serialno_s: string[];
 };
+
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
 
@@ -174,31 +175,20 @@ const MA_A3300W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA016, L_BA171, L_MA002, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    "L_BA020, L_MA002,L_BA005,L_BA029,L_sysUserMaster_001,L_BA061,L_BA015",
+    //화폐단위, 입고용도, 내수구분, 과세구분, 사용자, 품목계정, 수량단위
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [pacListData, setPacListData] = useState([COM_CODE_DEFAULT_VALUE]);
-  const [ordstsListData, setOrdstsListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [doexdivListData, setDoexdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [taxdivListData, setTaxdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
-  ]);
-
-  const [departmentsListData, setDepartmentsListData] = useState([
-    { dptcd: "", dptnm: "" },
   ]);
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -206,41 +196,26 @@ const MA_A3300W: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [itemlvl1ListData, setItemlvl1ListData] = useState([
+  const [inuseListData, setInuseListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [amtunitListData, setAmtunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [inuseListData, setInuseListData] = useState([COM_CODE_DEFAULT_VALUE]);
-  const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const pacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
-      );
-      const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
-      );
       const doexdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
       );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
-      );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
-      );
-      const departmentQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
+      const amtunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
@@ -251,21 +226,13 @@ const MA_A3300W: React.FC = () => {
       const inuseQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_MA002")
       );
-      const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
-      );
-      fetchQuery(pacQueryStr, setPacListData);
-      fetchQuery(ordstsQueryStr, setOrdstsListData);
+      fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(locationQueryStr, setLocationListData);
       fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(departmentQueryStr, setDepartmentsListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(inuseQueryStr, setInuseListData);
-      fetchQuery(finynQueryStr, setFinynListData);
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
     }
   }, [bizComponentData]);
 
@@ -295,14 +262,9 @@ const MA_A3300W: React.FC = () => {
     sort: [],
   });
 
-  const [barcordDataState, setBarcodeDataState] = useState<State>({
-    sort: [],
-  });
-
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
@@ -316,7 +278,6 @@ const MA_A3300W: React.FC = () => {
         seq1: rowData.seq1,
       }));
 
-      setIsCopy(false);
       setWorkType("U");
       setDetailWindowVisible(true);
     };
@@ -342,10 +303,6 @@ const MA_A3300W: React.FC = () => {
     process([], detailDataState)
   );
 
-  const [barcodeDataResult, setBarcodeDateResult] = useState<DataResult>(
-    process([], barcordDataState)
-  );
-
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -358,15 +315,10 @@ const MA_A3300W: React.FC = () => {
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [barcodeWindowVisible, setBarcodeWindowVisible] =
-    useState<boolean>(false);
-
-  const [mainPgNum, setMainPgNum] = useState(1);
+ 
   const [detailPgNum, setDetailPgNum] = useState(1);
   const [reload, setreload] = useState<boolean>(false);
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [isCopy, setIsCopy] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -438,14 +390,6 @@ const MA_A3300W: React.FC = () => {
     pgGap: 0,
   });
 
-  const [barcodeFilters, setBarCodeFilters] = useState({
-    pgSize: PAGE_SIZE,
-    recdt: "",
-    seq1: 0,
-    lotnum: "",
-    seq2: "",
-  });
-
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_MA_A3300W_Q",
@@ -478,7 +422,7 @@ const MA_A3300W: React.FC = () => {
 
   const detailParameters: Iparameters = {
     procedureName: "P_MA_A3300W_Q",
-    pageNumber: detailFilters.pgNum,
+    pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
       "@p_work_type": "DETAIL",
@@ -674,7 +618,6 @@ const MA_A3300W: React.FC = () => {
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
 
       setParaData({
         pgSize: PAGE_SIZE,
@@ -936,12 +879,6 @@ const MA_A3300W: React.FC = () => {
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
-
-  useEffect(() => {
     if (
       customOptionData != null &&
       permissions !== null &&
@@ -989,10 +926,10 @@ const MA_A3300W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const resetDetailGrid = () => {
@@ -1027,17 +964,6 @@ const MA_A3300W: React.FC = () => {
       dataItemKey: DETAIL_DATA_ITEM_KEY,
     });
     setDetailSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-
-    setBarCodeFilters((prev) => ({
-      ...prev,
-      recdt: selectedRowData.recdt,
-      seq1: selectedRowData.seq1,
-      lotnum: selectedRowData.lotnum,
-      seq2: selectedRowData.seq2,
-    }));
   };
 
   //엑셀 내보내기
@@ -1146,7 +1072,6 @@ const MA_A3300W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    setIsCopy(false);
     setWorkType("N");
     setDetailWindowVisible(true);
   };
@@ -1189,7 +1114,6 @@ const MA_A3300W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1296,7 +1220,6 @@ const MA_A3300W: React.FC = () => {
         throw findMessage(messagesData, "MA_A3300W_002");
       } else {
         resetAllGrid();
-        fetchMainGrid();
       }
     } catch (e) {
       alert(e);
@@ -1943,8 +1866,8 @@ const MA_A3300W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                ordsts: ordstsListData.find(
-                  (item: any) => item.sub_code === row.ordsts
+                amtunit: amtunitListData.find(
+                  (item: any) => item.sub_code === row.amtunit
                 )?.code_name,
                 doexdiv: doexdivListData.find(
                   (item: any) => item.sub_code === row.doexdiv
@@ -1952,21 +1875,12 @@ const MA_A3300W: React.FC = () => {
                 taxdiv: taxdivListData.find(
                   (item: any) => item.sub_code === row.taxdiv
                 )?.code_name,
-                location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
+                inuse: inuseListData.find(
+                  (item: any) => item.sub_code === row.inuse
                 )?.code_name,
                 person: usersListData.find(
                   (item: any) => item.user_id === row.person
                 )?.user_name,
-                dptcd: departmentsListData.find(
-                  (item: any) => item.dptcd === row.dptcd
-                )?.dptnm,
-                finyn: finynListData.find(
-                  (item: any) => item.code === row.finyn
-                )?.name,
-                inuse: inuseListData.find(
-                  (item: any) => item.sub_code === row.inuse
-                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -2036,14 +1950,9 @@ const MA_A3300W: React.FC = () => {
               itemacnt: itemacntListData.find(
                 (item: any) => item.sub_code === row.itemacnt
               )?.code_name,
-              itemlvl1: itemlvl1ListData.find(
-                (item: any) => item.sub_code === row.itemlvl1
-              )?.code_name,
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
-              pac: pacListData.find((item: any) => item.sub_code === row.pac)
-                ?.code_name,
               [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
             })),
             detailDataState

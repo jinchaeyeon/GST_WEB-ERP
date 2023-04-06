@@ -37,7 +37,6 @@ import {
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
   handleKeyPressSearch,
   UsePermissions,
 } from "../components/CommonFunction";
@@ -73,10 +72,6 @@ const SA_B2410: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  //UseMessages(pathname, setMessagesData);
-
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -94,34 +89,20 @@ const SA_B2410: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "R_BA005, R_TAXYN,L_BA015",
-    //내수구분, 계산서
+    "L_BA015",
+    //수량단위
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [doexdivListData, setDoexdivListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [taxListData, setTaxListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "R_BA005")
-      );
-      const taxQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "R_TAXYN")
-      );
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxQueryStr, setTaxListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
     }
   }, [bizComponentData]);
@@ -162,8 +143,6 @@ const SA_B2410: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -189,7 +168,6 @@ const SA_B2410: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [detail1PgNum, setDetail1PgNum] = useState(1);
   const [detail2PgNum, setDetail2PgNum] = useState(1);
   const [workType, setWorkType] = useState<"N" | "U">("N");
@@ -441,7 +419,6 @@ const SA_B2410: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
@@ -466,6 +443,7 @@ const SA_B2410: React.FC = () => {
   }, [detail2PgNum]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -521,13 +499,13 @@ const SA_B2410: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setDetail1PgNum(1);
     setDetail2PgNum(1);
     setMainDataResult(process([], mainDataState));
     setDetail1DataResult(process([], detail1DataState));
     setDetail2DataResult(process([], detail2DataState));
   };
+
   const resetDetailGrid = () => {
     setDetail1PgNum(1);
     setDetail1DataResult(process([], detail1DataState));
@@ -592,6 +570,7 @@ const SA_B2410: React.FC = () => {
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
+  
   const onDetail1DataStateChange = (event: GridDataStateChangeEvent) => {
     setDetail1DataState(event.dataState);
   };

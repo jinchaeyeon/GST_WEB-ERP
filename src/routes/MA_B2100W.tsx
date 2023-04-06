@@ -35,7 +35,6 @@ import {
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
   UsePermissions,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -67,10 +66,6 @@ const MA_B2100W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  //UseMessages(pathname, setMessagesData);
-
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -88,8 +83,8 @@ const MA_B2100W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA171,L_BA004,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
-    //대분류, 출고유형, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
+    "L_BA171,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
+    //대분류, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
     setBizComponentData
   );
 
@@ -197,30 +192,19 @@ const MA_B2100W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
 
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
-  );
-
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
-
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -349,11 +333,11 @@ const MA_B2100W: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -383,10 +367,8 @@ const MA_B2100W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //엑셀 내보내기
@@ -441,6 +423,7 @@ const MA_B2100W: React.FC = () => {
       </td>
     );
   };
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
@@ -465,6 +448,7 @@ const MA_B2100W: React.FC = () => {
     });
     setSelectedState(newSelectedState);
   };
+
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -472,8 +456,6 @@ const MA_B2100W: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-
-  const columns = [{ field: "name", header: "Name", width: "100px" }];
 
   interface ICustData {
     custcd: string;
@@ -548,8 +530,8 @@ const MA_B2100W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
+  
   return (
     <>
       <TitleContainer>
@@ -755,12 +737,6 @@ const MA_B2100W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
-                )?.code_name,
-                doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
-                )?.code_name,
                 itemlvl1: itemlvl1ListData.find(
                   (item: any) => item.sub_code === row.itemlvl1
                 )?.code_name,
@@ -770,18 +746,24 @@ const MA_B2100W: React.FC = () => {
                 itemlvl3: itemlvl3ListData.find(
                   (item: any) => item.sub_code === row.itemlvl3
                 )?.code_name,
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                person: usersListData.find(
+                  (item: any) => item.user_id === row.person
+                )?.user_name,
+                inkind: inkindListData.find(
+                  (item: any) => item.sub_code === row.inkind
                 )?.code_name,
                 amtunit: amtunitListData.find(
                   (item: any) => item.sub_code === row.amtunit
                 )?.code_name,
-                inkind: inkindListData.find(
-                  (item: any) => item.sub_code === row.inkind
+                qtyunit: qtyunitListData.find(
+                  (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
-                person: usersListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
+                doexdiv: doexdivListData.find(
+                  (item: any) => item.sub_code === row.doexdiv
+                )?.code_name,
+                itemacnt: itemacntListData.find(
+                  (item: any) => item.sub_code === row.itemacnt
+                )?.code_name,
                 pac: PacListData.find(
                   (item: any) => item.sub_code === row.inkind
                 )?.code_name,

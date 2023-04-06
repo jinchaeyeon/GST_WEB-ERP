@@ -42,8 +42,6 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc,
-  UseGetValueFromSessionItem,
   rowsWithSelectedDataResult,
   rowsOfDataResult,
 } from "../components/CommonFunction";
@@ -79,9 +77,6 @@ const MA_B7200W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
-  const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -115,7 +110,7 @@ const MA_B7200W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA061,L_BA015,L_sysUserMaster_001,L_PR010",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    //품목계정, 수량단위, 사용자, 공정
     setBizComponentData
   );
 
@@ -262,10 +257,8 @@ const MA_B7200W: React.FC = () => {
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
   const [detailPgNum2, setDetailPgNum2] = useState(1);
-  const [mainPgNum2, setMainPgNum2] = useState(1);
   const [detailPgNum3, setDetailPgNum3] = useState(1);
   const [detailPgNum4, setDetailPgNum4] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -769,13 +762,6 @@ const MA_B7200W: React.FC = () => {
   }, [filters2, permissions]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-      fetchMainGrid2();
-    }
-  }, [mainPgNum]);
-
-  useEffect(() => {
     fetchDetailGrid();
     fetchDetailGrid2();
   }, [detailPgNum]);
@@ -806,6 +792,7 @@ const MA_B7200W: React.FC = () => {
   }, [selectedState2]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -920,11 +907,6 @@ const MA_B7200W: React.FC = () => {
   useEffect(() => {
     if (customOptionData !== null) {
       resetAllGrid();
-      // if (tabSelected == 0) {
-      //   fetchSubGrid();
-      // } else if (tabSelected == 2) {
-      //   fetchSubGrid2();
-      // }
       fetchMainGrid();
       fetchMainGrid2();
     }
@@ -932,13 +914,11 @@ const MA_B7200W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
     setDetailPgNum(1);
     setDetailPgNum2(1);
     setDetailDataResult(process([], detailDataState));
     setDetailDataResult2(process([], detailDataState2));
-    setMainPgNum2(1);
     setMainDataResult2(process([], mainDataState2));
     setDetailPgNum3(1);
     setDetailPgNum4(1);
@@ -1142,6 +1122,7 @@ const MA_B7200W: React.FC = () => {
   const onDetailDataStateChange4 = (event: GridDataStateChangeEvent) => {
     setDetailDataState4(event.dataState);
   };
+  
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataTotal.toString().split(".");

@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/SA_A5000W_C";
 import {
@@ -63,10 +63,9 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 
 const DATA_ITEM_KEY = "num";
-const DETAIL_DATA_ITEM_KEY = "num";
+
 const dateField = ["outdt", "shipdt"];
 const numberField = [
   "qty",
@@ -109,7 +108,6 @@ type TdataArr = {
 const SA_A5000: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -160,24 +158,8 @@ const SA_A5000: React.FC = () => {
   );
 
   //공통코드 리스트 조회 ()
-  const [ordstsListData, setOrdstsListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [doexdivListData, setDoexdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [taxdivListData, setTaxdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
-  ]);
-
-  const [departmentsListData, setDepartmentsListData] = useState([
-    { dptcd: "", dptnm: "" },
   ]);
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -188,33 +170,15 @@ const SA_A5000: React.FC = () => {
   const [unpcalmethListData, setUnpcalmethListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
-      );
       const unpcalmethQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
-      );
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
-      );
-      const departmentQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
@@ -223,19 +187,11 @@ const SA_A5000: React.FC = () => {
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
-      );
+
       fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
-      fetchQuery(ordstsQueryStr, setOrdstsListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(locationQueryStr, setLocationListData);
       fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(departmentQueryStr, setDepartmentsListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(finynQueryStr, setFinynListData);
     }
   }, [bizComponentData]);
 
@@ -267,7 +223,6 @@ const SA_A5000: React.FC = () => {
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
@@ -281,7 +236,6 @@ const SA_A5000: React.FC = () => {
         recdt: toDate(rowData.recdt),
       }));
 
-      setIsCopy(false);
       setWorkType("U");
       setDetailWindowVisible(true);
     };
@@ -320,12 +274,9 @@ const SA_A5000: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
 
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [isCopy, setIsCopy] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -592,7 +543,6 @@ const SA_A5000: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
@@ -606,7 +556,9 @@ const SA_A5000: React.FC = () => {
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -636,10 +588,10 @@ const SA_A5000: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const resetDetailGrid = () => {
@@ -664,6 +616,15 @@ const SA_A5000: React.FC = () => {
       seq1: selectedRowData.seq1,
       recdt: toDate(selectedRowData.recdt),
     }));
+  };
+
+  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: detailSelectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setDetailSelectedState(newSelectedState);
   };
 
   //엑셀 내보내기
@@ -756,7 +717,6 @@ const SA_A5000: React.FC = () => {
   };
 
   const onAddClick = () => {
-    setIsCopy(false);
     setWorkType("N");
     setDetailWindowVisible(true);
   };
@@ -797,7 +757,6 @@ const SA_A5000: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -907,7 +866,6 @@ const SA_A5000: React.FC = () => {
         throw findMessage(messagesData, "SA_A5000W_002");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);
@@ -1020,6 +978,7 @@ const SA_A5000: React.FC = () => {
       "@p_company_code": "2207A046",
     },
   };
+
   const [reload, setreload] = useState<boolean>(false);
   const fetchTodoGridSaved = async () => {
     let data: any;
@@ -1033,7 +992,6 @@ const SA_A5000: React.FC = () => {
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1516,27 +1474,9 @@ const SA_A5000: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                ordsts: ordstsListData.find(
-                  (item: any) => item.sub_code === row.ordsts
-                )?.code_name,
-                doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
-                )?.code_name,
-                taxdiv: taxdivListData.find(
-                  (item: any) => item.sub_code === row.taxdiv
-                )?.code_name,
-                location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
-                )?.code_name,
                 person: usersListData.find(
                   (item: any) => item.user_id === row.person
                 )?.user_name,
-                dptcd: departmentsListData.find(
-                  (item: any) => item.dptcd === row.dptcd
-                )?.dptnm,
-                finyn: finynListData.find(
-                  (item: any) => item.code === row.finyn
-                )?.name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1612,12 +1552,20 @@ const SA_A5000: React.FC = () => {
               unpcalmeth: unpcalmethListData.find(
                 (item: any) => item.sub_code === row.unpcalmeth
               )?.code_name,
+              [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
             })),
             detailDataState
           )}
           {...detailDataState}
           onDataStateChange={onDetailDataStateChange}
           onHeaderSelectionChange={onDetailHeaderSelectionChange}
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onDetailSelectionChange}
           //스크롤 조회 기능
           fixedScroll={true}
           total={detailDataResult.total}

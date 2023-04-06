@@ -177,30 +177,19 @@ const SA_B2410: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
 
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
-  );
-
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
-
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -318,11 +307,11 @@ const SA_B2410: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -352,10 +341,8 @@ const SA_B2410: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //엑셀 내보내기
@@ -410,6 +397,7 @@ const SA_B2410: React.FC = () => {
       </td>
     );
   };
+
   const mainSumFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.map((item) => {
@@ -430,6 +418,7 @@ const SA_B2410: React.FC = () => {
     });
     setSelectedState(newSelectedState);
   };
+
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -513,8 +502,8 @@ const SA_B2410: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
+  
   return (
     <>
       <TitleContainer>
@@ -709,6 +698,9 @@ const SA_B2410: React.FC = () => {
                 )?.code_name,
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.qtyunit
+                )?.code_name,
+                itemacnt: itemacntListData.find(
+                  (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),

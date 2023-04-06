@@ -23,11 +23,11 @@ import {
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/QC_A2000W_C";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
+import { IAttachmentData } from "../hooks/interfaces";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
   Title,
@@ -40,14 +40,11 @@ import {
   GridTitleContainer,
   ButtonInInput,
   GridContainerWrap,
-  FormBoxWrap,
-  FormBox,
   ButtonInGridInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import {
   Input,
-  TextArea,
   InputChangeEvent,
   Checkbox,
 } from "@progress/kendo-react-inputs";
@@ -67,9 +64,7 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
   getGridItemChangedData,
-  convertDateToStrWithTime2,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A5000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -100,8 +95,9 @@ export const FormContext = createContext<{
   setMainDataState: (d: any) => void;
   // fetchGrid: (n: number) => any;
 }>({} as any);
+
 const DATA_ITEM_KEY = "num";
-const DETAIL_DATA_ITEM_KEY = "num";
+
 const dateField = ["proddt", "qcdt"];
 const numberField = [
   "qty",
@@ -113,6 +109,7 @@ const numberField = [
 ];
 const customField = ["files"];
 const customField2 = ["badcd"];
+
 type TdataArr = {
   rowstatus_s: string[];
   qcdt_s: string[];
@@ -185,9 +182,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
+    
   const onAttWndClick2 = () => {
     setAttachmentsWindowVisible(true);
   };
+
   const getAttachmentsData = (data: IAttachmentData) => {
     setAttdatnum(data.attdatnum);
     setFiles(
@@ -195,6 +194,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
         (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
     );
   };
+
   const defaultRendering = (
     <td
       className={className}
@@ -217,6 +217,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       </ButtonInGridInput>
     </td>
   );
+
   return (
     <>
       {render === undefined
@@ -236,7 +237,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_QC002 ", setBizComponentData);
-
+  //불량유형
   const field = props.field ?? "";
   const bizComponentIdVal = field === "badcd" ? "L_QC002" : "";
   const bizComponent = bizComponentData.find(
@@ -260,8 +261,11 @@ const QC_A2000: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+
+  //FormContext 데이터 state
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -292,8 +296,8 @@ const QC_A2000: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001, L_fxcode, L_PR010, L_QCYN,L_QC006,L_QC100,L_sysUserMaster_001",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    "L_sysUserMaster_001, L_PR010",
+    //사용자, 공정
     setBizComponentData
   );
 
@@ -351,7 +355,6 @@ const QC_A2000: React.FC = () => {
   const [detailDataState2, setDetailDataState2] = useState<State>({
     sort: [],
   });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
@@ -363,7 +366,9 @@ const QC_A2000: React.FC = () => {
   const [detailDataResult2, setDetailDataResult2] = useState<DataResult>(
     process([], detailDataState2)
   );
+
   const [tabSelected, setTabSelected] = React.useState(0);
+
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -377,11 +382,7 @@ const QC_A2000: React.FC = () => {
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
   const [detailPgNum2, setDetailPgNum2] = useState(1);
 
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -450,6 +451,7 @@ const QC_A2000: React.FC = () => {
     isSearch: true,
     pgGap: 0,
   })
+
   const [detailFilters2, setDetailFilters2] = useState({
     pgSize: PAGE_SIZE,
     qcnum: "",
@@ -647,7 +649,6 @@ const QC_A2000: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
@@ -660,7 +661,6 @@ const QC_A2000: React.FC = () => {
     ) {
       setDetailFilters((prev) => ({ ...prev, isSearch: false }));
       fetchDetailGrid();
-      setIsInitSearch(true);
     }
   }, [detailFilters, permissions]);
 
@@ -670,7 +670,9 @@ const QC_A2000: React.FC = () => {
       fetchDetailGrid2();
     }
   }, [detailFilters2]);
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -735,19 +737,12 @@ const QC_A2000: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetailPgNum(1);
     setDetailPgNum2(1);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
     setDetailDataResult2(process([], detailDataState2));
-  };
-
-  const resetDetailGrid = () => {
-    setDetailPgNum(1);
-    setDetailPgNum2(1);
-    setDetailDataResult(process([], detailDataState));
-    setDetailDataResult2(process([], detailDataState2));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const resetDetailGrid2 = () => {
@@ -763,9 +758,6 @@ const QC_A2000: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   const ondetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -791,10 +783,8 @@ const QC_A2000: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setDetailSelectedState2(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -886,10 +876,9 @@ const QC_A2000: React.FC = () => {
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     fetchDetailGrid2();
   };
+
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
@@ -905,6 +894,7 @@ const QC_A2000: React.FC = () => {
       <td></td>
     );
   };
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     detailDataResult.data.forEach((item) =>
@@ -936,6 +926,7 @@ const QC_A2000: React.FC = () => {
       <td></td>
     );
   };
+
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -990,9 +981,6 @@ const QC_A2000: React.FC = () => {
 
   const onItemWndClick = () => {
     setItemWindowVisible(true);
-  };
-  const onAttachmentsWndClick = () => {
-    setAttachmentsWindowVisible(true);
   };
 
   const onDeleteClick = (e: any) => {
@@ -1115,6 +1103,7 @@ const QC_A2000: React.FC = () => {
   const onDetailSortChange2 = (e: any) => {
     setDetailDataState2((prev) => ({ ...prev, sort: e.sort }));
   };
+
   const search = () => {
     try {
       if (
@@ -1136,8 +1125,6 @@ const QC_A2000: React.FC = () => {
       alert(e);
     }
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     fetchDetailGrid2();
   };
 
@@ -1202,8 +1189,6 @@ const QC_A2000: React.FC = () => {
     if (data.isSuccess === true) {
       setSelectedState({});
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-      setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       fetchDetailGrid2();
     } else {
       console.log("[오류 발생]");
@@ -1234,7 +1219,6 @@ const QC_A2000: React.FC = () => {
     },
     []
   );
-  const [rows, setrows] = useState<number>(0);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setDetailDataState((prev) => ({ ...prev, sort: [] }));
@@ -1311,6 +1295,7 @@ const QC_A2000: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
+
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "files" || field == "remark") {
       const newData = detailDataResult.data.map((item) =>
@@ -1335,6 +1320,7 @@ const QC_A2000: React.FC = () => {
       });
     }
   };
+
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = detailDataResult2.data.map((item) =>
@@ -1359,6 +1345,7 @@ const QC_A2000: React.FC = () => {
       });
     }
   };
+
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field == "doqty" || field == "remark" || field == " files" || field == "chk") {
       const newData = mainDataResult.data.map((item) =>
@@ -1384,6 +1371,7 @@ const QC_A2000: React.FC = () => {
       });
     }
   };
+
   const exitEdit = () => {
     const newData = detailDataResult.data.map((item) => ({
       ...item,
@@ -1397,6 +1385,7 @@ const QC_A2000: React.FC = () => {
       };
     });
   };
+
   const exitEdit2 = () => {
     const newData = detailDataResult2.data.map((item) => ({
       ...item,
@@ -1410,6 +1399,7 @@ const QC_A2000: React.FC = () => {
       };
     });
   };
+
   const exitEdit3 = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
@@ -1423,6 +1413,7 @@ const QC_A2000: React.FC = () => {
       };
     });
   };
+
   const createColumn = () => {
     const array = [];
     array.push(
@@ -1717,6 +1708,7 @@ const QC_A2000: React.FC = () => {
     }
   };
 
+  //FormContext에서 데이터 받아 set
   useEffect(() => {
     const items = mainDataResult.data.filter(
       (item: any) =>

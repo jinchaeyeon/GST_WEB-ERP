@@ -105,15 +105,6 @@ const numberField = [
   "unitqty",
 ];
 const dateField = ["finexpdt", "plandt", "orddt", "dlvdt", "outdt", "indt"];
-const editablePlanListField = [
-  "finexpdt",
-  "plandt",
-  "orddt",
-  "dlvdt",
-  "plandt",
-  "outdt",
-  "indt",
-];
 const lookupField = ["outprocyn", "proccd", "qtyunit", "outgb"];
 
 let deletedPlanRows: object[] = [];

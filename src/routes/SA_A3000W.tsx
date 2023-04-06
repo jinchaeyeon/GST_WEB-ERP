@@ -12,9 +12,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import calculateSize from "calculate-size";
 import {
   Title,
   FilterBoxWrap,
@@ -42,7 +41,6 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  toDate,
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -64,13 +62,13 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import { deprecationHandler } from "moment";
 
 const DATA_ITEM_KEY = "num";
-const DETAIL_DATA_ITEM_KEY = "num";
+
 const dateField = ["reqdt"];
 const numberField = ["jisiqty", "outqty", "qty", "len"];
 const checkField = ["finyn"];
+
 type TdataArr = {
   rowstatus: string[];
   custcd: string[];
@@ -114,7 +112,7 @@ type TdataArr = {
 const SA_A2300: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
+
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -149,30 +147,14 @@ const SA_A2300: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    "L_sysUserMaster_001,L_BA061,L_BA015",
+    //사용자, 품목계정, 수량단위
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [ordstsListData, setOrdstsListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [doexdivListData, setDoexdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [taxdivListData, setTaxdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
-  ]);
-
-  const [departmentsListData, setDepartmentsListData] = useState([
-    { dptcd: "", dptnm: "" },
   ]);
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -180,30 +162,12 @@ const SA_A2300: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
-      );
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
-      );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
-      );
-      const departmentQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
@@ -212,19 +176,10 @@ const SA_A2300: React.FC = () => {
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
-      );
 
-      fetchQuery(ordstsQueryStr, setOrdstsListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(locationQueryStr, setLocationListData);
       fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(departmentQueryStr, setDepartmentsListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(finynQueryStr, setFinynListData);
     }
   }, [bizComponentData]);
 
@@ -256,7 +211,6 @@ const SA_A2300: React.FC = () => {
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
@@ -264,7 +218,6 @@ const SA_A2300: React.FC = () => {
       const rowData = props.dataItem;
       setSelectedState({ [rowData.num]: true });
 
-      setIsCopy(false);
       setWorkType("U");
       setDetailWindowVisible(true);
     };
@@ -303,12 +256,9 @@ const SA_A2300: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
 
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [isCopy, setIsCopy] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -567,7 +517,6 @@ const SA_A2300: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
@@ -581,8 +530,11 @@ const SA_A2300: React.FC = () => {
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
+
   const [reload, setreload] = useState<boolean>(false);
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -610,12 +562,19 @@ const SA_A2300: React.FC = () => {
     }
   }, [mainDataResult]);
 
+  useEffect(() => {
+    if (detailDataResult.total > 0) {
+      const firstRowData = detailDataResult.data[0];
+      setDetailSelectedState({ [firstRowData.num]: true });
+    }
+}, [detailDataResult]);
+
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const resetDetailGrid = () => {
@@ -639,6 +598,15 @@ const SA_A2300: React.FC = () => {
       ...prev,
       reqnum: selectedRowData.reqnum,
     }));
+  };
+  
+  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: detailSelectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setDetailSelectedState(newSelectedState);
   };
 
   //엑셀 내보내기
@@ -747,7 +715,6 @@ const SA_A2300: React.FC = () => {
   };
 
   const onAddClick = () => {
-    setIsCopy(false);
     setWorkType("N");
     setDetailWindowVisible(true);
   };
@@ -759,6 +726,7 @@ const SA_A2300: React.FC = () => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
+
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
@@ -788,7 +756,6 @@ const SA_A2300: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -810,6 +777,7 @@ const SA_A2300: React.FC = () => {
     compclass: string;
     ceonm: string;
   }
+  
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -891,7 +859,6 @@ const SA_A2300: React.FC = () => {
         throw findMessage(messagesData, "SA_A3000W_001");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);
@@ -1225,7 +1192,6 @@ const SA_A2300: React.FC = () => {
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
@@ -1467,24 +1433,9 @@ const SA_A2300: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                ordsts: ordstsListData.find(
-                  (item: any) => item.sub_code === row.ordsts
-                )?.code_name,
-                doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
-                )?.code_name,
-                taxdiv: taxdivListData.find(
-                  (item: any) => item.sub_code === row.taxdiv
-                )?.code_name,
-                location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
-                )?.code_name,
                 person: usersListData.find(
                   (item: any) => item.user_id === row.person
                 )?.user_name,
-                dptcd: departmentsListData.find(
-                  (item: any) => item.dptcd === row.dptcd
-                )?.dptnm,
                 finyn: row.finyn == "Y" ? true : false,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1560,11 +1511,19 @@ const SA_A2300: React.FC = () => {
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
+              [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
             })),
             detailDataState
           )}
           {...detailDataState}
           onDataStateChange={onDetailDataStateChange}
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onDetailSelectionChange}
           //스크롤 조회 기능
           fixedScroll={true}
           total={detailDataResult.total}

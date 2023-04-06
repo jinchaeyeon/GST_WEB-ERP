@@ -10,11 +10,9 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import calculateSize from "calculate-size";
 import { gridList } from "../store/columns/QC_A0060W_C";
 import {
   Title,
@@ -34,9 +32,7 @@ import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
-  findMessage,
   getQueryFromBizComponent,
-  setDefaultDate,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -47,7 +43,6 @@ import {
   useSysMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/QC_A0060W_Window";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
@@ -66,7 +61,7 @@ import { isLoading } from "../store/atoms";
 import RequiredHeader from "../components/RequiredHeader";
 
 const DATA_ITEM_KEY = "num";
-const DETAIL_DATA_ITEM_KEY = "num";
+
 const dateField = ["recdt"];
 const numberField = [
   "stdrev",
@@ -78,6 +73,7 @@ const numberField = [
 ];
 const requireField = ["inspeccd", "qc_gubun"];
 const centerField = ["qc_sort", "inspeccd", "qc_gubun"];
+
 type TdataArr = {
   rowstatus_d: string[];
   stdseq_d: string[];
@@ -100,7 +96,6 @@ type TdataArr = {
 const QC_A0060W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -137,7 +132,7 @@ const QC_A0060W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_QC003,L_sysUserMaster_001,L_PR010,L_QC100, L_QC120",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    //검사구분, 사용자, 공정, 검사항목, 측정구분
     setBizComponentData
   );
 
@@ -212,7 +207,6 @@ const QC_A0060W: React.FC = () => {
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
@@ -220,7 +214,6 @@ const QC_A0060W: React.FC = () => {
       const rowData = props.dataItem;
       setSelectedState({ [rowData.num]: true });
       setrev(false);
-      setIsCopy(false);
       setWorkType("U");
       setDetailWindowVisible(true);
     };
@@ -257,15 +250,9 @@ const QC_A0060W: React.FC = () => {
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
-
   const [workType, setWorkType] = useState<"N" | "U" | "R">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [isCopy, setIsCopy] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -516,15 +503,13 @@ const QC_A0060W: React.FC = () => {
       bizComponentData !== null
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
-
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
   useEffect(() => {
     if (detailFilters.isSearch &&customOptionData !== null && mainDataResult.total > 0) {
-      resetDetailGrid();
+      setDetailFilters((prev) => ({ ...prev, isSearch: false }));
       fetchDetailGrid();
     }
   }, [detailFilters]);
@@ -535,7 +520,6 @@ const QC_A0060W: React.FC = () => {
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
       // 저장 후, 선택 행 스크롤 유지 처리
       if (filters.find_row_value !== "" && mainDataResult.total > 0) {
         const ROW_HEIGHT = 35.56;
@@ -557,13 +541,11 @@ const QC_A0060W: React.FC = () => {
       else if (filters.scrollDirrection === "up") {
         gridRef.vs.container.scroll(0, 20);
       }
-    }
   }, [mainDataResult]);
 
 
     //메인 그리드 데이터 변경 되었을 때
     useEffect(() => {
-      if (ifSelectFirstRow) {
         // 저장 후, 선택 행 스크롤 유지 처리
         if (detailFilters.find_row_value !== "" && detailDataResult.total > 0) {
           const ROW_HEIGHT = 35.56;
@@ -586,18 +568,16 @@ const QC_A0060W: React.FC = () => {
         else if (detailFilters.scrollDirrection === "up") {
           gridRef.vs.container.scroll(0, 20);
         }
-      }
     }, [detailDataResult]);
+    
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const resetDetailGrid = () => {
-    setDetailPgNum(1);
     setDetailDataResult(process([], detailDataState));
   };
 
@@ -618,6 +598,15 @@ const QC_A0060W: React.FC = () => {
       stdnum: selectedRowData.stdnum,
       isSearch: true,
     }));
+  };
+
+  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: detailSelectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setDetailSelectedState(newSelectedState);
   };
 
   //엑셀 내보내기
@@ -723,26 +712,22 @@ const QC_A0060W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    setIsCopy(false);
     setWorkType("N");
     setrev(false);
     setDetailWindowVisible(true);
   };
   const onAddClick2 = () => {
-    setIsCopy(false);
     setWorkType("R");
     setrev(true);
     setDetailWindowVisible(true);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
+
   const questionToDelete = useSysMessage("QuestionToDelete");
+
   const onDeleteClick = (e: any) => {
     if (!window.confirm(questionToDelete)) {
       return false;
@@ -758,8 +743,10 @@ const QC_A0060W: React.FC = () => {
       stdrev: data.stdrev,
     }));
   };
+
   const [reload, setreload] = useState<boolean>(false);
   const [rev, setrev] = useState<boolean>(false);
+
   const fetchToDelete = async () => {
     let data: any;
 
@@ -771,7 +758,6 @@ const QC_A0060W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
@@ -784,17 +770,6 @@ const QC_A0060W: React.FC = () => {
     paraDataDeleted.stdrev = 0;
   };
 
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -833,15 +808,6 @@ const QC_A0060W: React.FC = () => {
     custitemnm: string;
   }
 
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
@@ -860,7 +826,6 @@ const QC_A0060W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
@@ -1099,7 +1064,6 @@ const QC_A0060W: React.FC = () => {
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       setDetailFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
@@ -1336,11 +1300,19 @@ const QC_A0060W: React.FC = () => {
               qc_gubun: qc_gubunListData.find(
                 (items: any) => items.sub_code === row.qc_gubun
               )?.code_name,
+              [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
             })),
             detailDataState
           )}
           {...detailDataState}
           onDataStateChange={onDetailDataStateChange}
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onDetailSelectionChange}
           //스크롤 조회 기능
           fixedScroll={true}
           total={detailDataResult.total}
@@ -1400,13 +1372,6 @@ const QC_A0060W: React.FC = () => {
           }
           reload={reload}
           rev={rev}
-        />
-      )}
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
         />
       )}
       {itemWindowVisible && (

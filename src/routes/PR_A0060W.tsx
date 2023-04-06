@@ -12,18 +12,13 @@ import {
   GridCellProps,
 } from "@progress/kendo-react-grid";
 import { gridList } from "../store/columns/PR_A0060W_C";
-import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
-import { TextArea } from "@progress/kendo-react-inputs";
-import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
+import { TextArea, Checkbox } from "@progress/kendo-react-inputs";
+import { IAttachmentData } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import { Field } from "@progress/kendo-react-form";
-import calculateSize from "calculate-size";
 import {
   Title,
   FilterBoxWrap,
@@ -36,8 +31,6 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
-  ButtonInFieldWrap,
-  ButtonInField,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
@@ -49,7 +42,6 @@ import {
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
-  setDefaultDate,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -58,18 +50,15 @@ import {
   getGridItemChangedData,
   dateformat,
   UseParaPc,
-  dateformat2,
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
-  COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
@@ -82,8 +71,6 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import { FormReadOnly } from "../components/Editors";
-import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 import RequiredHeader from "../components/RequiredHeader";
 
 const DATA_ITEM_KEY = "fxcode";
@@ -91,16 +78,12 @@ const SUB_DATA_ITEM_KEY = "fxseq";
 let deletedMainRows: any[] = [];
 
 const DateField = ["recdt", "makedt", "indt", "fxdt"];
-
 const NumberField = ["uph", "cnt", "IOT_TER_ID", "fxcost"];
-
 const CheckField = ["useyn"];
-
 const requiredField = ["recdt"];
-
 const editField = ["fxdt"];
-
 const commandField = ["attdatnum"];
+
 const PR_A0060: React.FC = () => {
   const [rows, setrows] = useState<number>(0);
   const setLoading = useSetRecoilState(isLoading);
@@ -138,8 +121,8 @@ const PR_A0060: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_PR030,R_USEYN,L_dptcd_001,L_sysUserMaster_001,L_PR010,L_sysUserMaster_004",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    "L_dptcd_001,L_sysUserMaster_004",
+    //부서, 사용자
     setBizComponentData
   );
 
@@ -219,6 +202,10 @@ const PR_A0060: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [custWindowVisible3, setCustWindowVisible3] = useState<boolean>(false);
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
+    useState<boolean>(false);
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
@@ -260,15 +247,6 @@ const PR_A0060: React.FC = () => {
         }));
       }
     }
-  };
-
-  const RadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setInfomation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
   };
 
   const ComboBoxChange = (e: any) => {
@@ -618,6 +596,7 @@ const PR_A0060: React.FC = () => {
     if (ifSelectFirstRow) {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
+        setSelectedsubDataState({ [firstRowData.fxseq]: true });
       }
     }
   }, [subDataResult]);
@@ -805,6 +784,7 @@ const PR_A0060: React.FC = () => {
       <td></td>
     );
   };
+
   const onAddClick2 = () => {
     setWorkType("N");
     setInfomation({
@@ -911,15 +891,9 @@ const PR_A0060: React.FC = () => {
     setSubDataResult(process([], subDataState));
   };
 
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
-
-  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
-    useState<boolean>(false);
 
   const getAttachmentsData2 = (data: IAttachmentData) => {
     const items = parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0]);
@@ -1176,6 +1150,7 @@ const PR_A0060: React.FC = () => {
 
     setSubDataState({});
   };
+
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
@@ -1312,7 +1287,6 @@ const PR_A0060: React.FC = () => {
       "@p_remark1_s": paraData.remark1_s,
       "@p_attdatnum_s": paraData.attdatnum_s,
       "@p_stdtime_s": paraData.stdtime_s,
-      // "@p_errcode_s": paraData.errcode_s,
       "@p_company_code": "2207A046",
     },
   };
@@ -1588,7 +1562,6 @@ const PR_A0060: React.FC = () => {
           "@p_remark1_s": item.remark1,
           "@p_attdatnum_s": item.attdatnum,
           "@p_stdtime_s": 0,
-          // "@p_errcode_s": paraData.errcode_s,
           "@p_company_code": "2207A046",
         },
       };
@@ -2041,8 +2014,8 @@ const PR_A0060: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          : NumberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
+                          // : NumberField.includes(item.fieldName)
+                          // ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -2455,8 +2428,8 @@ const PR_A0060: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? subTotalFooterCell
-                            : NumberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell
+                            // : NumberField.includes(item.fieldName)
+                            // ? gridSumQtyFooterCell
                             : undefined
                         }
                       />

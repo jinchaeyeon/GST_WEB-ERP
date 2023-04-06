@@ -24,14 +24,13 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
   getQueryFromBizComponent,
-  setDefaultDate,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -40,9 +39,7 @@ import {
   findMessage,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import WoodenWindow from "../components/Windows/CommonWindows/WoodenWindow";
-import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import YearCalender from "../components/Calendars/YearCalendar";
 import {
@@ -56,7 +53,6 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/TO_B0011W_C";
-import CenterCell from "../components/Cells/CenterCell";
 
 const DATA_ITEM_KEY = "num";
 const numberField = ["stockqty"];
@@ -68,7 +64,6 @@ const TO_B0011W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -77,6 +72,7 @@ const TO_B0011W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -97,22 +93,13 @@ const TO_B0011W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_LOADPLACE, L_AC006,L_BA171,L_BA004,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
-    //대분류, 출고유형, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
+    "L_LOADPLACE,,L_BA171,L_BA172,L_BA173",
+    //적재장소, 대분류, 중분류, 소분류
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [itemacntListData, setItemacntListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [doexdivListData, setDoexdivListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [qtyunitListData, setQtyunitListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
@@ -121,40 +108,14 @@ const TO_B0011W: React.FC = () => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [inkindListData, setInkindListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [usersListData, setUsersListData] = useState([
-    { user_id: "", user_name: "" },
-  ]);
-  const [amtunitListData, setAmtunitListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [PacListData, setPacListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [InputListData, setInputListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [loadplaceListData, setLoadPlaceListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
-      const inputQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC006")
-      );
       const itemlvl1QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
-      );
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
@@ -162,36 +123,14 @@ const TO_B0011W: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
-      const inkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA003")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
-      );
       const loadplaceQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_LOADPLACE"
         )
       );
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
-      );
-      const pacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
-      );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
-      fetchQuery(inkindQueryStr, setInkindListData);
-      fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
-      fetchQuery(pacQueryStr, setPacListData);
-      fetchQuery(inputQueryStr, setInputListData);
       fetchQuery(loadplaceQueryStr, setLoadPlaceListData);
     }
   }, [bizComponentData]);
@@ -221,44 +160,23 @@ const TO_B0011W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
 
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
-  );
-
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [woodenWindowVisible, setWoodenWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
-
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -373,11 +291,11 @@ const TO_B0011W: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -407,10 +325,8 @@ const TO_B0011W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //엑셀 내보내기
@@ -465,6 +381,7 @@ const TO_B0011W: React.FC = () => {
       </td>
     );
   };
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
@@ -489,17 +406,14 @@ const TO_B0011W: React.FC = () => {
     });
     setSelectedState(newSelectedState);
   };
+
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
 
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
-  };
   const onWoodenWndClick = () => {
     setWoodenWindowVisible(true);
   };
-  const columns = [{ field: "name", header: "Name", width: "100px" }];
 
   interface ICustData {
     custcd: string;
@@ -517,43 +431,6 @@ const TO_B0011W: React.FC = () => {
     itemnm: string;
     model: string;
   }
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
 
   //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setCustData = (data: ICustData) => {
@@ -561,15 +438,6 @@ const TO_B0011W: React.FC = () => {
       ...prev,
       custcd: data.custcd,
       custnm: data.custnm,
-    }));
-  };
-
-  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
     }));
   };
 
@@ -581,6 +449,7 @@ const TO_B0011W: React.FC = () => {
       model: data.model,
     }));
   };
+  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -597,7 +466,6 @@ const TO_B0011W: React.FC = () => {
         throw findMessage(messagesData, "TO_B0011W_002");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);
@@ -868,13 +736,6 @@ const TO_B0011W: React.FC = () => {
           setVisible={setCustWindowVisible}
           workType={workType}
           setData={setCustData}
-        />
-      )}
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
         />
       )}
       {woodenWindowVisible && (

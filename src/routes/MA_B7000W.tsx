@@ -38,7 +38,6 @@ import {
   UseCustomOption,
   UsePermissions,
   handleKeyPressSearch,
-  //UseMenuDefaults,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";

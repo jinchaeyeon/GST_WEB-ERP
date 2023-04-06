@@ -30,7 +30,6 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -58,7 +57,6 @@ import {
   GAP,
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
@@ -107,7 +105,7 @@ const MA_B7201W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA171,L_BA172,L_BA173,L_BA061,L_BA015,L_sysUserMaster_001",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    //대분류, 중분류, 소분류, 품목계정, 수량단위, 사용자
     setBizComponentData
   );
 
@@ -130,6 +128,7 @@ const MA_B7201W: React.FC = () => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
 
@@ -199,8 +198,6 @@ const MA_B7201W: React.FC = () => {
     sort: [],
   });
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -229,11 +226,8 @@ const MA_B7201W: React.FC = () => {
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
   const [detailPgNum2, setDetailPgNum2] = useState(1);
-  const [tabSelected, setTabSelected] = React.useState(0);
-  const [workType, setWorkType] = useState<string>("U");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -248,16 +242,6 @@ const MA_B7201W: React.FC = () => {
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -494,15 +478,8 @@ const MA_B7201W: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     fetchDetailGrid();
@@ -578,7 +555,6 @@ const MA_B7201W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
     setDetailPgNum(1);
     setDetailPgNum2(1);
@@ -776,21 +752,6 @@ const MA_B7201W: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -828,15 +789,6 @@ const MA_B7201W: React.FC = () => {
     itemlvl5: string;
     custitemnm: string;
   }
-
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
@@ -1187,13 +1139,6 @@ const MA_B7201W: React.FC = () => {
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}

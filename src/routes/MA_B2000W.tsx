@@ -35,7 +35,6 @@ import {
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
   UsePermissions,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -70,13 +69,10 @@ const MA_B2000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  //UseMessages(pathname, setMessagesData);
-
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -93,55 +89,30 @@ const MA_B2000W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA015,L_BA005, L_MA035, L_PR010, R_FINYN, L_BA028",
-    //수량단위, 내수구분, 발주형태, 공정, 완료여부, 사업부
+    "L_BA015, L_MA035",
+    //수량단위, 발주구분
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [doexdivListData, setDoexdivListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [qtyunitListData, setQtyunitListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [purtypeListData, setPurtypeListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [proccdListData, setProccdListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
-  const [positionListData, setPositionListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
-      );
       const purtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_MA035")
       );
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
-      );
-      const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "R_FINYN")
-      );
-      const positionQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA028")
-      );
 
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(purtypeQueryStr, setPurtypeListData);
-      fetchQuery(proccdQueryStr, setProccdListData);
-      fetchQuery(finynQueryStr, setFinynListData);
-      fetchQuery(positionQueryStr, setPositionListData);
     }
   }, [bizComponentData]);
 
@@ -170,30 +141,19 @@ const MA_B2000W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
 
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
-  );
-
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
-
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -334,10 +294,11 @@ const MA_B2000W: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -367,10 +328,8 @@ const MA_B2000W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //엑셀 내보내기
@@ -459,8 +418,6 @@ const MA_B2000W: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-  const columns = [{ field: "name", header: "Name", width: "100px" }];
-
   interface ICustData {
     custcd: string;
     custnm: string;
@@ -534,8 +491,8 @@ const MA_B2000W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
+  
   return (
     <>
       <TitleContainer>

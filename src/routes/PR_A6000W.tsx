@@ -12,9 +12,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import calculateSize from "calculate-size";
 import { gridList } from "../store/columns/PR_A6000W_C";
 import {
   Title,
@@ -25,7 +24,6 @@ import {
   TitleContainer,
   ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
   GridContainerWrap,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
@@ -51,9 +49,6 @@ import {
   convertDateToStrWithTime2,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/PR_A6000W_Window";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -61,45 +56,21 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import TimeDateCell from "../components/Cells/TimeDateCell";
 import CenterCell from "../components/Cells/CenterCell";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
 const dateField = ["strtime", "endtime"];
 const numberField = ["losshh"];
-type TdataArr = {
-  rowstatus_s: string[];
-  purseq_s: string[];
-  itemcd_s: string[];
-  itemnm_s: string[];
-  insiz_s: string[];
-  qty_s: string[];
-  qtyunit_s: string[];
-  unitwgt_s: string[];
-  wgt_s: string[];
-  wgtunit_s: string[];
-  proccd_s: string[];
-  planno_s: string[];
-  planseq_s: string[];
-  unpcalmeth_s: string[];
-  unp_s: string[];
-  amt_s: string[];
-  wonamt_s: string[];
-  taxamt_s: string[];
-  remark_s: string[];
-};
 
 const PR_A6000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -136,8 +107,8 @@ const PR_A6000W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_PR011, L_fxcode, L_BA019, L_MA036,L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn, L_PR010",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    "L_PR011, L_fxcode, L_sysUserMaster_001",
+    //비가동유형, 설비, 사용자
     setBizComponentData
   ); 
 
@@ -149,42 +120,10 @@ const PR_A6000W: React.FC = () => {
   const [prodmacListData, setProdmacListData] = useState([
     { fxfull: "", fxcode: "" },
   ]);
-  const [unpcalmethListData, setUnpcalmethListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [purstsListData, setPurstsListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [ordstsListData, setOrdstsListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [doexdivListData, setDoexdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [taxdivListData, setTaxdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [proccdListData, setProccdListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-
-  const [departmentsListData, setDepartmentsListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
-  const [itemacntListData, setItemacntListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [qtyunitListData, setQtyunitListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
-
+  
   useEffect(() => {
     if (bizComponentData !== null) {
       const stopcdQueryStr = getQueryFromBizComponent(
@@ -193,60 +132,15 @@ const PR_A6000W: React.FC = () => {
       const prodmacQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
       );
-      const purstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_MA036")
-      );
-      const unpcalmethQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
-      );
-      const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
-      );
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
-      );
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
-      );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      const departmentQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
-      );
-      const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
-      );
+      
       fetchQuery(stopcdQueryStr, setStopcdListData);
       fetchQuery(prodmacQueryStr, setProdmacListData);
-      fetchQuery(proccdQueryStr, setProccdListData);
-      fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
-      fetchQuery(purstsQueryStr, setPurstsListData);
-      fetchQuery(ordstsQueryStr, setOrdstsListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(locationQueryStr, setLocationListData);
       fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(departmentQueryStr, setDepartmentsListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(finynQueryStr, setFinynListData);
     }
   }, [bizComponentData]);
 
@@ -299,7 +193,6 @@ const PR_A6000W: React.FC = () => {
       const rowData = props.dataItem;
       setSelectedState({ [rowData.num]: true });
 
-      setIsCopy(false);
       setWorkType("U");
       setDetailWindowVisible(true);
     };
@@ -343,32 +236,20 @@ const PR_A6000W: React.FC = () => {
   const [detailselectedState2, setDetailSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
+    
   const [mainPgNum, setMainPgNum] = useState(1);
   const [mainPgNum2, setMainPgNum2] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
 
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [isCopy, setIsCopy] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -521,6 +402,7 @@ const PR_A6000W: React.FC = () => {
   };
 
   const [mainDataTotal2, setMainDataTotal2] = useState<number>(0);
+
   const fetchMainGrid2 = async () => {
     let data: any;
     setLoading(true);
@@ -569,6 +451,7 @@ const PR_A6000W: React.FC = () => {
 
 
   const [detailDataTotal, setDetailDataTotal] = useState<number>(0);
+
   const fetchDetailGrid = async () => {
     let data: any;
     setLoading(true);
@@ -634,6 +517,7 @@ const PR_A6000W: React.FC = () => {
 
     setDetailDataResult({ ...detailDataResult });
   };
+
   const onExpandChange2 = (event: any) => {
     const isExpanded =
       event.dataItem.expanded === undefined
@@ -643,6 +527,7 @@ const PR_A6000W: React.FC = () => {
 
     setDetailDataResult2({ ...detailDataResult2 });
   };
+
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
@@ -661,11 +546,13 @@ const PR_A6000W: React.FC = () => {
       fetchMainGrid();
     }
   }, [mainPgNum]);
+
   useEffect(() => {
     if (customOptionData !== null) {
       fetchMainGrid2();
     }
   }, [mainPgNum2]);
+
   useEffect(() => {
     resetDetailGrid();
     if (customOptionData !== null && mainDataResult.total > 0) {
@@ -686,6 +573,7 @@ const PR_A6000W: React.FC = () => {
       )
     );
   }, [detailselectedState]);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     setDetailDataResult2((prev) =>
@@ -695,6 +583,7 @@ const PR_A6000W: React.FC = () => {
       )
     );
   }, [detailselectedState2]);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
@@ -752,10 +641,8 @@ const PR_A6000W: React.FC = () => {
       dataItemKey: DETAIL_DATA_ITEM_KEY,
     });
     setDetailSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
+
   const onDetailSelectionChange2 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -763,10 +650,8 @@ const PR_A6000W: React.FC = () => {
       dataItemKey: DETAIL_DATA_ITEM_KEY,
     });
     setDetailSelectedState2(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -833,19 +718,12 @@ const PR_A6000W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    setIsCopy(false);
     setWorkType("N");
     setDetailWindowVisible(true);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
-  };
   const questionToDelete = useSysMessage("QuestionToDelete");
+
   const onDeleteClick = (e: any) => {
     if (!window.confirm(questionToDelete)) {
       return false;
@@ -882,73 +760,6 @@ const PR_A6000W: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.stopnum = "";
-  };
-
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
-
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
   };
 
   const onMainSortChange = (e: any) => {
@@ -1190,30 +1001,6 @@ const PR_A6000W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                ordsts: ordstsListData.find(
-                  (item: any) => item.sub_code === row.ordsts
-                )?.code_name,
-                doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
-                )?.code_name,
-                taxdiv: taxdivListData.find(
-                  (item: any) => item.sub_code === row.taxdiv
-                )?.code_name,
-                location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
-                )?.code_name,
-                person: usersListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
-                dptcd: departmentsListData.find(
-                  (item: any) => item.dptcd === row.dptcd
-                )?.dptnm,
-                finyn: finynListData.find(
-                  (item: any) => item.code === row.finyn
-                )?.name,
-                pursts: purstsListData.find(
-                  (item: any) => item.sub_code === row.pursts
-                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1418,20 +1205,6 @@ const PR_A6000W: React.FC = () => {
           prodmac={prodmacListData}
           stopcd={stopcdListData}
           prodemp={usersListData}
-        />
-      )}
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
         />
       )}
       {gridList.map((grid: any) =>

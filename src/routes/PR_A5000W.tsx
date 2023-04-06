@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/PR_A5000W_C";
 import BarcodeWindow from "../components/Windows/PR_A5000W_Barcode_Window";
@@ -48,8 +48,6 @@ import {
   getGridItemChangedData
 } from "../components/CommonFunction";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -85,10 +83,6 @@ type TdataArr = {
   seq1_s: string[];
   seq2_s: string[];
   unp_s: string[];
-};
-type TdataArr2 = {
-  makey_s: string[];
-  prntqty_s: string[];
 };
 
 const PR_A5000W: React.FC = () => {
@@ -127,15 +121,12 @@ const PR_A5000W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_fxcode, L_BA019, L_MA036,L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_PR010, L_fxcode,L_sysUserMaster_001, L_BA061",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [unpcalmethListData, setUnpcalmethListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -144,19 +135,15 @@ const PR_A5000W: React.FC = () => {
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [qtyunitListData, setQtyunitListData] = useState([
+  const [proccdListData, setProccdListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const fxQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
       );
-
-      const unpcalmethQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
-      );
-
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
@@ -165,14 +152,13 @@ const PR_A5000W: React.FC = () => {
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
       );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
       );
 
-      fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
+      fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(usersQueryStr, setUsersListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(fxQueryStr, setFxListData);
     }
   }, [bizComponentData]);
@@ -224,15 +210,14 @@ const PR_A5000W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [barcodeWindowVisible, setBarcodeWindowVisible] =
+  useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
 
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [isCopy, setIsCopy] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -410,6 +395,10 @@ const PR_A5000W: React.FC = () => {
     }
   }, [detailDataResult]);
 
+  const onBarcodeWndClick = () => {
+    setBarcodeWindowVisible(true);
+  };
+
   const onItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -437,6 +426,7 @@ const PR_A5000W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
+
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
@@ -459,6 +449,7 @@ const PR_A5000W: React.FC = () => {
       });
     }
   };
+
   const exitEdit3 = () => {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
@@ -500,6 +491,7 @@ const PR_A5000W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
+
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = detailDataResult.data.map((item) =>
@@ -523,6 +515,7 @@ const PR_A5000W: React.FC = () => {
       });
     }
   };
+
   const exitEdit2 = () => {
     const newData = detailDataResult.data.map((item) => ({
       ...item,
@@ -536,6 +529,7 @@ const PR_A5000W: React.FC = () => {
       };
     });
   };
+
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
@@ -552,9 +546,6 @@ const PR_A5000W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   const onHeaderSelectionChange = React.useCallback(
@@ -578,9 +569,6 @@ const PR_A5000W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setDetailSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   const onHeaderSelectionChange2 = React.useCallback(
@@ -596,6 +584,7 @@ const PR_A5000W: React.FC = () => {
     },
     []
   );
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -674,81 +663,6 @@ const PR_A5000W: React.FC = () => {
         총 {detailDataResult.total}건
       </td>
     );
-  };
-
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
-  };
-
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
-
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
   };
 
   const onMainSortChange = (e: any) => {
@@ -870,8 +784,6 @@ const PR_A5000W: React.FC = () => {
   };
 
   const onRemove = () => {
-    let arr: any = [];
-
     const dataItem = detailDataResult.data.filter(
       (item: any) => item.chk == true
     );
@@ -904,12 +816,6 @@ const PR_A5000W: React.FC = () => {
       seq2_s: dataArr.seq2_s.join("|"),
       unp_s: dataArr.unp_s.join("|"),
     }));
-  };
-
-  const [barcodeWindowVisible, setBarcodeWindowVisible] =
-    useState<boolean>(false);
-  const onBarcodeWndClick = () => {
-    setBarcodeWindowVisible(true);
   };
 
   const onPrint = () => {
@@ -976,6 +882,7 @@ const PR_A5000W: React.FC = () => {
       </div>
     );
   };
+  
   return (
     <>
       <TitleContainer>
@@ -1052,6 +959,9 @@ const PR_A5000W: React.FC = () => {
                 prodmac: fxListData.find(
                   (item: any) => item.fxcode === row.prodmac
                 )?.fxfull,
+                proccd: proccdListData.find(
+                  (item: any) => item.sub_code === row.proccd
+                )?.code_name,
                 chk: row.chk == "" ? false : row.chk,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1180,12 +1090,6 @@ const PR_A5000W: React.FC = () => {
               itemacnt: itemacntListData.find(
                 (item: any) => item.sub_code === row.itemacnt
               )?.code_name,
-              qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
-              )?.code_name,
-              unpcalmeth: unpcalmethListData.find(
-                (item: any) => item.sub_code === row.unpcalmeth
-              )?.code_name,
               chk: row.chk == "" ? false : row.chk,
               [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
             })),
@@ -1252,20 +1156,6 @@ const PR_A5000W: React.FC = () => {
             )}
         </Grid>
       </GridContainer>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
-        />
-      )}
       {barcodeWindowVisible && (
         <BarcodeWindow
           setVisible={setBarcodeWindowVisible}

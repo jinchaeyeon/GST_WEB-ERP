@@ -17,15 +17,12 @@ import {
   GridFooterCellProps,
   GridCellProps,
   GridItemChangeEvent,
-  GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
-import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
   Title,
   FilterBoxWrap,
@@ -36,17 +33,11 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
-  GridContainerWrap,
-  FormBoxWrap,
-  FormBox,
   ButtonInGridInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import {
   Input,
-  TextArea,
-  NumericTextBoxChangeEvent,
-  NumericTextBox,
 } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
@@ -65,10 +56,7 @@ import {
   UseGetValueFromSessionItem,
   toDate,
   getGridItemChangedData,
-  convertDateToStrWithTime2,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SA_A5000W_Window";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
@@ -78,8 +66,6 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
@@ -112,7 +98,7 @@ type TdataArr = {
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
-
+  //사용자
   const field = props.field ?? "";
   const bizComponentIdVal = field === "person" ? "L_sysUserMaster_001" : "";
   const bizComponent = bizComponentData.find(
@@ -138,6 +124,7 @@ export const FormContext = createContext<{
   setMainDataState: (d: any) => void;
   // fetchGrid: (n: number) => any;
 }>({} as any);
+
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
     ariaColumnIndex,
@@ -198,7 +185,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 const CustomRadioCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("R_MA034", setBizComponentData);
-
+  //합부판정
   const field = props.field ?? "";
   const bizComponentIdVal = field == "qcdecision" ? "R_MA034" : "";
   const bizComponent = bizComponentData.find(
@@ -247,7 +234,7 @@ const QC_A6000: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_PR010, L_sysUserMaster_001, L_fxcode, L_PR010, L_QCYN,L_QC006,L_QC100",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    //공정, 사용자
     setBizComponentData
   );
 
@@ -301,8 +288,6 @@ const QC_A6000: React.FC = () => {
     sort: [],
   });
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -311,37 +296,11 @@ const QC_A6000: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
-  const [mainPgNum, setMainPgNum] = useState(1);
-
-  const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -424,7 +383,6 @@ const QC_A6000: React.FC = () => {
 
   useEffect(() => {
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1,isSearch: true }));
   }, [bool]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -435,7 +393,6 @@ const QC_A6000: React.FC = () => {
       bizComponentData !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
@@ -469,8 +426,8 @@ const QC_A6000: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1,isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -481,9 +438,6 @@ const QC_A6000: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   //엑셀 내보내기
@@ -543,31 +497,10 @@ const QC_A6000: React.FC = () => {
     );
   };
 
-  const onAddClick = () => {
-    const data = mainDataResult.data.filter(
-      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-  };
-
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
 
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -606,15 +539,6 @@ const QC_A6000: React.FC = () => {
     custitemnm: string;
   }
 
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
@@ -649,13 +573,8 @@ const QC_A6000: React.FC = () => {
       alert(e);
     }
     resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-  const onAttachmentsWndClick = () => {
-    setAttachmentsWindowVisible(true);
-  };
+
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
@@ -724,7 +643,6 @@ const QC_A6000: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -786,7 +704,6 @@ const QC_A6000: React.FC = () => {
             }
       );
 
-      setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -801,7 +718,7 @@ const QC_A6000: React.FC = () => {
       ...item,
       [EDIT_FIELD]: undefined,
     }));
-    setIfSelectFirstRow(false);
+
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -1169,13 +1086,6 @@ const QC_A6000: React.FC = () => {
           </ExcelExport>
         </GridContainer>
       </FormContext.Provider>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}

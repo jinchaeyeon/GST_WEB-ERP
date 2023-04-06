@@ -8,7 +8,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
-  GridCellProps,
   GridItemChangeEvent,
   GridHeaderSelectionChangeEvent,
   GridHeaderCellProps,
@@ -17,10 +16,9 @@ import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox"
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import calculateSize from "calculate-size";
 import { gridList } from "../store/columns/MA_A3500W_C";
 import {
   Title,
@@ -55,9 +53,7 @@ import {
   UseGetValueFromSessionItem,
   useSysMessage,
   getGridItemChangedData,
-  rowsOfDataResult,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/MA_A2400W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -69,7 +65,6 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
@@ -116,7 +111,6 @@ type TdataArr = {
 const MA_A2400W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -128,6 +122,7 @@ const MA_A2400W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
   let gridRef: any = useRef(null);
 
   //커스텀 옵션 조회
@@ -164,15 +159,12 @@ const MA_A2400W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SYS012, L_BA019, L_MA036,L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn, L_PR010",
+    "L_SYS012, L_MA036,L_SA002,L_BA005,L_BA029,L_BA002,L_dptcd_001,L_BA061,L_BA015,L_finyn",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [unpcalmethListData, setUnpcalmethListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [purstsListData, setPurstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -188,13 +180,6 @@ const MA_A2400W: React.FC = () => {
   const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [proccdListData, setProccdListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [usersListData, setUsersListData] = useState([
-    { user_id: "", user_name: "" },
-  ]);
-
   const [departmentsListData, setDepartmentsListData] = useState([
     { dptcd: "", dptnm: "" },
   ]);
@@ -217,28 +202,17 @@ const MA_A2400W: React.FC = () => {
       const purstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_MA036")
       );
-      const unpcalmethQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
-      );
       const ordstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
       );
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
-      );
       const taxdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
       );
       const locationQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
       );
       const departmentQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
@@ -256,14 +230,11 @@ const MA_A2400W: React.FC = () => {
       );
 
       fetchQuery(outpgmQueryStr, setOutpgmListData);
-      fetchQuery(proccdQueryStr, setProccdListData);
-      fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
       fetchQuery(purstsQueryStr, setPurstsListData);
       fetchQuery(ordstsQueryStr, setOrdstsListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(taxdivQueryStr, setTaxdivListData);
       fetchQuery(locationQueryStr, setLocationListData);
-      fetchQuery(usersQueryStr, setUsersListData);
       fetchQuery(departmentQueryStr, setDepartmentsListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
@@ -308,7 +279,6 @@ const MA_A2400W: React.FC = () => {
   const [BOMDataState2, setBOMDataState2] = useState<State>({
     sort: [],
   });
-  const [isInitSearch, setIsInitSearch] = useState(false);
   const [isInitSearch2, setIsInitSearch2] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
@@ -343,19 +313,14 @@ const MA_A2400W: React.FC = () => {
   const [selectedBOMState2, setSelectedBOMState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [detailWindowVisible, setDetailWindowVisible] =
-    useState<boolean>(false);
+
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [subPgNum, setSubPgNum] = useState(1);
   const [subPgNum2, setSubPgNum2] = useState(1);
   const [BOMPgNum, setBOMPgNum] = useState(1);
   const [BOMPgNum2, setBOMPgNum2] = useState(1);
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [isCopy, setIsCopy] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -421,16 +386,6 @@ const MA_A2400W: React.FC = () => {
         total: prev.total,
       };
     });
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
   };
 
   const ComboBoxChange = (e: any) => {
@@ -871,7 +826,6 @@ const MA_A2400W: React.FC = () => {
         // 일반 조회
         fetchMainGrid();
       }
-      setIsInitSearch(true);
       setIsInitSearch2(true);
     }
   }, [filters, permissions]);
@@ -885,8 +839,6 @@ const MA_A2400W: React.FC = () => {
       setInfomation((prev) => ({ ...prev, isSearch: false }));
       // 일반 조회
       fetchSubGrid();
-
-      setIsInitSearch(true);
     }
   }, [infomation]);
 
@@ -899,8 +851,6 @@ const MA_A2400W: React.FC = () => {
       setInfomation2((prev) => ({ ...prev, isSearch: false }));
       // 일반 조회
       fetchSubGrid();
-
-      setIsInitSearch(true);
     }
   }, [infomation2]);
 
@@ -1310,6 +1260,7 @@ const MA_A2400W: React.FC = () => {
     if (chkScrollHandler(event, subPgNum2, PAGE_SIZE))
       setSubPgNum2((prev) => prev + 1);
   };
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
@@ -1330,7 +1281,7 @@ const MA_A2400W: React.FC = () => {
   };
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
-    var parts = mainDataResult.total.toString().split(".");
+    var parts = mainDataTotal.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -1433,6 +1384,7 @@ const MA_A2400W: React.FC = () => {
       <td></td>
     );
   };
+  
   const onAddClick = () => {
     let seq = 1;
     let valid = 0;
@@ -1978,7 +1930,6 @@ const MA_A2400W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setIfSelectFirstRow(true);
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true })); 
       fetchSubGrid();
       fetchSubGrid2();
@@ -2347,27 +2298,6 @@ const MA_A2400W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                ordsts: ordstsListData.find(
-                  (item: any) => item.sub_code === row.ordsts
-                )?.code_name,
-                doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
-                )?.code_name,
-                taxdiv: taxdivListData.find(
-                  (item: any) => item.sub_code === row.taxdiv
-                )?.code_name,
-                location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
-                )?.code_name,
-                dptcd: departmentsListData.find(
-                  (item: any) => item.dptcd === row.dptcd
-                )?.dptnm,
-                finyn: finynListData.find(
-                  (item: any) => item.code === row.finyn
-                )?.name,
-                pursts: purstsListData.find(
-                  (item: any) => item.sub_code === row.pursts
-                )?.code_name,
                 itemacnt: itemacntListData.find(
                   (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,
@@ -2527,12 +2457,6 @@ const MA_A2400W: React.FC = () => {
                       itemacnt: itemacntListData.find(
                         (item: any) => item.sub_code === row.itemacnt
                       )?.code_name,
-                      qtyunit: qtyunitListData.find(
-                        (item: any) => item.sub_code === row.qtyunit
-                      )?.code_name,
-                      outpgm: outpgmListData.find(
-                        (item: any) => item.sub_code === row.outpgm
-                      )?.code_name,
                       chk: row.chk == "" ? false : row.chk,
                       [SELECTED_FIELD]: selectedSubState[idGetter(row)],
                     })),
@@ -2653,9 +2577,6 @@ const MA_A2400W: React.FC = () => {
                           )?.code_name,
                           qtyunit: qtyunitListData.find(
                             (item: any) => item.sub_code === row.qtyunit
-                          )?.code_name,
-                          outpgm: outpgmListData.find(
-                            (item: any) => item.sub_code === row.outpgm
                           )?.code_name,
                           [SELECTED_FIELD]: selectedBOMState[idGetter(row)],
                         })),

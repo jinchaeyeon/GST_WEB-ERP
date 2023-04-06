@@ -64,9 +64,7 @@ import {
   UseParaPc,
   getItemQuery,
 } from "../components/CommonFunction";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -74,7 +72,6 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
@@ -83,7 +80,6 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A7000W_C";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import RequiredHeader from "../components/RequiredHeader";
-import { FormComboBoxCell } from "../components/Editors";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 interface IItemData {
@@ -157,7 +153,7 @@ let deletedMainRows: object[] = [];
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_BA015, L_LOADPLACE", setBizComponentData);
-
+  //수량단위, 적재장소
   const field = props.field ?? "";
   const bizComponentIdVal =
     field === "qtyunit"
@@ -235,6 +231,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     }
   };
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+
   const onItemWndClick2 = () => {
     if (dataItem["rowstatus"] == "N") {
       setItemWindowVisible2(true);
@@ -242,6 +239,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       alert("품목코드와 품목명은 수정이 불가합니다.");
     }
   };
+
   const setItemData2 = (data: IItemData) => {
       setItemcd(data.itemcd);
       setItemnm(data.itemnm);
@@ -250,6 +248,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       setBnatur(data.bnatur);
       setSpec(data.spec);
   };
+  
   const defaultRendering = (
     <td
       className={className}
@@ -296,17 +295,14 @@ const MA_A7000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_LOADPLACE, L_ITEM_TEST, L_BA061",
-    //수량단위, 내수구분, 발주형태, 공정, 완료여부, 사업부
-    setBizComponentData
-  );
+
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+
+  //FormContext 데이터 state
   const [itemcd, setItemcd] = useState<string>("");
   const [itemnm, setItemnm] = useState<string>("");
   const [itemacnt, setItemacnt] = useState<string>("");
@@ -338,12 +334,16 @@ const MA_A7000W: React.FC = () => {
     }
   }, [customOptionData]);
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_LOADPLACE, L_BA061",
+    //적재장소, 품목계정
+    setBizComponentData
+  );
+
   //공통코드 리스트 조회 ()
   const [itemacntListData, setItemacntListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemListData, setItemListData] = useState([
-    { itemcd: "", itemnm: "", itemacnt: "", insiz: "", bnatur: "", spec: "" },
   ]);
   const [loadplaceListData, setLoadPlaceListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
@@ -353,22 +353,17 @@ const MA_A7000W: React.FC = () => {
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
       );
-      const itemQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_ITEM_TEST"
-        )
-      );
       const loadplaceQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_LOADPLACE"
         )
       );
       fetchQuery(loadplaceQueryStr, setLoadPlaceListData);
-      fetchQuery(itemQueryStr, setItemListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
     }
   }, [bizComponentData]);
 
+  //데이터 변환 시 set
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
       item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -456,8 +451,6 @@ const MA_A7000W: React.FC = () => {
     sort: [],
   });
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -465,11 +458,11 @@ const MA_A7000W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+  useState<boolean>(false);
+  const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -569,11 +562,11 @@ const MA_A7000W: React.FC = () => {
     if (filters.isSearch && permissions !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -604,6 +597,7 @@ const MA_A7000W: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //엑셀 내보내기
@@ -668,27 +662,17 @@ const MA_A7000W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
 
-  const columns = [{ field: "name", header: "Name", width: "100px" }];
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
 
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
+  const onCopyWndClick = () => {
+    setCopyWindowVisible(true);
+  };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
@@ -704,14 +688,6 @@ const MA_A7000W: React.FC = () => {
     ) : (
       <td></td>
     );
-  };
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
   };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
@@ -739,7 +715,6 @@ const MA_A7000W: React.FC = () => {
         throw findMessage(messagesData, "MA_A7000W_002");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);
@@ -895,7 +870,6 @@ const MA_A7000W: React.FC = () => {
         setEditIndex(dataItem[DATA_ITEM_KEY]);
       }
 
-      setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -919,7 +893,6 @@ const MA_A7000W: React.FC = () => {
         [EDIT_FIELD]: undefined,
       }));
   
-      setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -1032,7 +1005,6 @@ const MA_A7000W: React.FC = () => {
         unp_s: "",
       });
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1360,16 +1332,6 @@ const MA_A7000W: React.FC = () => {
     }
   };
 
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-  const onAttachmentsWndClick = () => {
-    setAttachmentsWindowVisible(true);
-  };
-  const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
-  const onCopyWndClick = () => {
-    setCopyWindowVisible(true);
-  };
-
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
@@ -1454,6 +1416,7 @@ const MA_A7000W: React.FC = () => {
   };
 
   const [values2, setValues2] = React.useState<boolean>(false);
+
   const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
@@ -1476,6 +1439,7 @@ const MA_A7000W: React.FC = () => {
       </div>
     );
   };
+  
   return (
     <>
       <TitleContainer>
@@ -1752,13 +1716,6 @@ const MA_A7000W: React.FC = () => {
           </ExcelExport>
         </GridContainer>
       </FormContext.Provider>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
