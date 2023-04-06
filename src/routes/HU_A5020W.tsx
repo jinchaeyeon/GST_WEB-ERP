@@ -60,7 +60,6 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
-  COM_CODE_DEFAULT_VALUE,
 } from "../components/CommonString";
 import TopButtons from "../components/TopButtons";
 import { useSetRecoilState } from "recoil";
@@ -71,9 +70,9 @@ import { Button } from "@progress/kendo-react-buttons";
 import { bytesToBase64 } from "byte-base64";
 import NumberCell from "../components/Cells/NumberCell";
 import RequiredHeader from "../components/RequiredHeader";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import MonthDateCell from "../components/Cells/MonthDateCell";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 const dateField = ["payyrmm"];
@@ -239,9 +238,11 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   };
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
+
   const onAttWndClick2 = () => {
     setAttachmentsWindowVisible(true);
   };
+
   const getAttachmentsData = (data: IAttachmentData) => {
     setAttdatnum(data.attdatnum);
     setFiles(
@@ -297,16 +298,18 @@ const HU_A5020W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
+  //FormContext받은 데이터 state
   const [prsnnm, setPrsnnm] = useState<string>("");
   const [prsnnum, setPrsnnum] = useState<string>("");
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
+
   const pathname: string = window.location.pathname.replace("/", "");
-  //커스텀 옵션 조회
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_dptcd_001", setBizComponentData);
+  
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
+  //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
@@ -322,10 +325,15 @@ const HU_A5020W: React.FC = () => {
     }
   }, [customOptionData]);
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_dptcd_001", setBizComponentData);
+  //부서
+
   //공통코드 리스트 조회 ()
   const [dptcdListData, setDptcdListData] = React.useState([
     { dptcd: "", dptnm: "" },
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
@@ -373,6 +381,12 @@ const HU_A5020W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
+  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
+  useState<boolean>(false);
+
+  const [prsnnumMultiWindowVisible, setPrsnnumMultiWindowVisible] =
+  useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -462,7 +476,9 @@ const HU_A5020W: React.FC = () => {
     }));
     setLoading(false);
   };
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -493,6 +509,7 @@ const HU_A5020W: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -579,7 +596,6 @@ const HU_A5020W: React.FC = () => {
         throw findMessage(messagesData, "HU_A5020W_001");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);
@@ -683,6 +699,7 @@ const HU_A5020W: React.FC = () => {
           valid = false;
         }
       });
+
       let dataArr: TdataArr = {
         rowstatus_s: [],
         payyrmm_s: [],
@@ -818,7 +835,6 @@ const HU_A5020W: React.FC = () => {
       });
       deletedMainRows = [];
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -882,15 +898,9 @@ const HU_A5020W: React.FC = () => {
     });
   };
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
-
   const onPrsnnumWndClick = () => {
     setPrsnnumWindowVisible(true);
   };
-
-  const [prsnnumMultiWindowVisible, setPrsnnumMultiWindowVisible] =
-    useState<boolean>(false);
 
   const onPrsnnumMultiWndClick = () => {
     setPrsnnumMultiWindowVisible(true);
@@ -937,6 +947,7 @@ const HU_A5020W: React.FC = () => {
     })
   };
 
+  //FormContext 데이터 set
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
       item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -958,6 +969,7 @@ const HU_A5020W: React.FC = () => {
     });
   }, [prsnnm, prsnnum]);
 
+  //FormContext 데이터 set
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
       item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])

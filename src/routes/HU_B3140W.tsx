@@ -40,8 +40,6 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc,
-  UseGetValueFromSessionItem,
   rowsOfDataResult,
   rowsWithSelectedDataResult,
 } from "../components/CommonFunction";
@@ -61,6 +59,7 @@ import YearCalendar from "../components/Calendars/YearCalendar";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import MonthDateCell from "../components/Cells/MonthDateCell";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
+
 const DATA_ITEM_KEY = "num";
 
 const NumberField = [
@@ -78,8 +77,6 @@ const NumberField = [
   "payamt12",
 ];
 
-const DateField = ["recdt"];
-
 interface IPrsnnum{
   prsnnum: string;
   prsnnm: string;
@@ -88,19 +85,17 @@ interface IPrsnnum{
   postcd: string;
 }
 
-
 const HU_B3140W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
-  const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
+  //상단 필터 state
   const [multi, setMulti] = useState<boolean>(true);
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -115,6 +110,7 @@ const HU_B3140W: React.FC = () => {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       const DATE = new Date();
       const DATE2 = new Date();
+      //현재년도 1월, 12월 set
       DATE.setMonth(0);
       DATE2.setMonth(11);
       setFilters((prev) => ({
@@ -132,7 +128,7 @@ const HU_B3140W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_HU005,L_dptcd_001, L_HU032",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    //직위, 부서, 급상여구분
     setBizComponentData
   );
 
@@ -146,6 +142,7 @@ const HU_B3140W: React.FC = () => {
   const [paytypeListData, setPaytypeListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
@@ -247,6 +244,7 @@ const HU_B3140W: React.FC = () => {
   const [selectedState6, setSelectedState6] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
   const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
     useState<boolean>(false);
 
@@ -256,6 +254,7 @@ const HU_B3140W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const [mainDataTotal2, setMainDataTotal2] = useState<number>(0);
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -686,6 +685,7 @@ const HU_B3140W: React.FC = () => {
   }, [filters, permissions]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -972,6 +972,7 @@ const HU_B3140W: React.FC = () => {
       }));
     }
   };
+
   const onMainScrollHandler5 = (event: GridEvent) => {
     if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
@@ -1037,7 +1038,6 @@ const HU_B3140W: React.FC = () => {
       }));
     }
   };
-
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);

@@ -18,16 +18,12 @@ import {
   Checkbox,
   CheckboxChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
+import { IAttachmentData } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import { Field } from "@progress/kendo-react-form";
-import calculateSize from "calculate-size";
 import {
   Title,
   FilterBoxWrap,
@@ -38,8 +34,6 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
-  ButtonInFieldWrap,
-  ButtonInField,
   FormBoxWrap,
   FormBox,
   GridContainerWrap,
@@ -54,7 +48,6 @@ import {
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
-  setDefaultDate,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -63,16 +56,12 @@ import {
   getGridItemChangedData,
   dateformat,
   UseParaPc,
-  dateformat2,
   UseGetValueFromSessionItem,
   isValidDate,
   useSysMessage,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -89,7 +78,6 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import { FormReadOnly } from "../components/Editors";
 import RequiredHeader from "../components/RequiredHeader";
 
 const DATA_ITEM_KEY = "custcd";
@@ -112,12 +100,40 @@ const NumberField = [
 ];
 
 const requiredField = ["prsnnm", "yyyy"];
-
 const commandField = ["attdatnum"];
-
 const editField = ["custprsncd"];
-
 const YearDateField = ["yyyy"];
+
+
+type TdataArr = {
+  rowstatus: string[];
+  remark_s: string[];
+  custprsncd_s: string[];
+  prsnnm_s: string[];
+  dptnm: string[];
+  postcd_s: string[];
+  telno: string[];
+  phoneno_s: string[];
+  email_s: string[];
+  rtrchk_s: string[];
+  attdatnum_s: string[];
+  sort_seq_s: string[];
+};
+
+type TdataArr2 = {
+  rowstatus: string[];
+  remark_s: string[];
+  seq_s: string[];
+  yyyy_s: string[];
+  totasset_s: string[];
+  paid_up_capital_s: string[];
+  totcaptial_s: string[];
+  salesmoney_s: string[];
+  operating_profits_s: string[];
+  current_income_s: string[];
+  dedt_rati_s: string[];
+};
+
 const BA_A0020: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -155,8 +171,8 @@ const BA_A0020: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA026,L_BA027,L_AC901,L_sysUserMaster_001,R_USEYN,L_BA173,L_BA172,L_BA171,L_BA049,R_RTXISUYN,L_BA008",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    "L_BA026,L_BA027",
+    //업체구분, 사업자구분
     setBizComponentData
   );
 
@@ -204,7 +220,9 @@ const BA_A0020: React.FC = () => {
     }
   }, []);
 
+  //체크박스 유무
   const [yn, setyn] = useState(true);
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -241,10 +259,10 @@ const BA_A0020: React.FC = () => {
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
-  const [mainPgNum, setMainPgNum] = useState(1);
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
+   useState<boolean>(false);
   const [subPgNum, setSubPgNum] = useState(1);
   const [subPgNum2, setSubPgNum2] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -285,15 +303,7 @@ const BA_A0020: React.FC = () => {
     }
   };
 
-  const RadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setInfomation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
+  //Form정보 Change함수
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
@@ -698,7 +708,9 @@ const BA_A0020: React.FC = () => {
   useEffect(() => {
     fetchSubGrid2();
   }, [subPgNum2]);
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -772,14 +784,8 @@ const BA_A0020: React.FC = () => {
     }
   }, [subPgNum2]);
 
-  useEffect(() => {
-    if (customOptionData !== null) {
-    }
-  }, [tabSelected]);
-
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
@@ -1128,19 +1134,34 @@ const BA_A0020: React.FC = () => {
     setCustWindowVisible(true);
   };
 
-  const handleSelectTab = (e: any) => {
-    setTabSelected(e.selected);
-  };
-
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
 
-  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
-    useState<boolean>(false);
+  const handleSelectTab = (e: any) => {
+    setTabSelected(e.selected);
+  };
+
+  interface ICustData {
+    custcd: string;
+    custnm: string;
+    custabbr: string;
+    bizregnum: string;
+    custdivnm: string;
+    useyn: string;
+    remark: string;
+    compclass: string;
+    ceonm: string;
+  }
+
+  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
+  const setCustData = (data: ICustData) => {
+    setFilters((prev) => ({
+      ...prev,
+      custcd: data.custcd,
+      custnm: data.custnm,
+    }));
+  };
 
   const getAttachmentsData2 = (data: IAttachmentData) => {
     const datas = subDataResult.data.map((item: any) =>
@@ -1175,101 +1196,6 @@ const BA_A0020: React.FC = () => {
     });
   };
 
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
-
-  type TdataArr = {
-    rowstatus: string[];
-    remark_s: string[];
-    custprsncd_s: string[];
-    prsnnm_s: string[];
-    dptnm: string[];
-    postcd_s: string[];
-    telno: string[];
-    phoneno_s: string[];
-    email_s: string[];
-    rtrchk_s: string[];
-    attdatnum_s: string[];
-    sort_seq_s: string[];
-  };
-
-  type TdataArr2 = {
-    rowstatus: string[];
-    remark_s: string[];
-    seq_s: string[];
-    yyyy_s: string[];
-    totasset_s: string[];
-    paid_up_capital_s: string[];
-    totcaptial_s: string[];
-    salesmoney_s: string[];
-    operating_profits_s: string[];
-    current_income_s: string[];
-    dedt_rati_s: string[];
-  };
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
-  };
-
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1283,7 +1209,6 @@ const BA_A0020: React.FC = () => {
   };
 
   const search = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
@@ -2375,7 +2300,6 @@ const BA_A0020: React.FC = () => {
       data = null;
     }
     if (data.isSuccess === true) {
-      setMainPgNum(1);
       setMainDataResult(process([], mainDataState));
 
       fetchMainGrid();
@@ -2417,6 +2341,7 @@ const BA_A0020: React.FC = () => {
       fetchTodoGridSaved();
     }
   }, [paraData]);
+  
   const [rows, setrows] = useState<number>(0);
 
   const CommandCell = (props: GridCellProps) => {
@@ -3392,13 +3317,6 @@ const BA_A0020: React.FC = () => {
           setVisible={setCustWindowVisible}
           workType={workType}
           setData={setCustData}
-        />
-      )}
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
         />
       )}
       {attachmentsWindowVisible && (

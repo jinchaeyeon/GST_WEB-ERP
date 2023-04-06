@@ -36,14 +36,11 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  findMessage,
   handleKeyPressSearch,
   UseGetValueFromSessionItem,
   UseParaPc,
   useSysMessage,
 } from "../components/CommonFunction";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import CenterCell from "../components/Cells/CenterCell";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -118,37 +115,26 @@ const CM_A0000W: React.FC = () => {
 
   //공통코드 리스트 조회 ()
 
-  const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
   const [categoryListData, setCategoryListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-  const [dtgbListData, setDtgbListData] = useState([{ dtgb: "", 기준일: "" }]);
+  
   useEffect(() => {
     if (bizComponentData !== null) {
       const categoryQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SYS007")
-      );
-      const dtgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SYS2200_dt"
-        )
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "R_FINYN")
-      );
 
       fetchQuery(categoryQueryStr, setCategoryListData);
-      fetchQuery(dtgbQueryStr, setDtgbListData);
       fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(finynQueryStr, setFinynListData);
     }
   }, [bizComponentData]);
 
@@ -177,17 +163,9 @@ const CM_A0000W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
-  );
-
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
   );
 
   //window
@@ -233,18 +211,13 @@ const CM_A0000W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
-  const [mainPgNum, setMainPgNum] = useState(1);
-
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     datnum: "",
   });
+
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
@@ -390,6 +363,7 @@ const CM_A0000W: React.FC = () => {
       "@p_newDiv": "N",
     },
   };
+
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
@@ -443,7 +417,6 @@ const CM_A0000W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -468,10 +441,11 @@ const CM_A0000W: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -501,9 +475,8 @@ const CM_A0000W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -578,101 +551,18 @@ const CM_A0000W: React.FC = () => {
     );
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
-  };
-
   const reloadData = (workType: string) => {
-    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
-    if (workType === "U") {
-      setIfSelectFirstRow(false);
-    } else {
-      setIfSelectFirstRow(true);
-    }
-
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
-
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
-
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
-  };
-
+  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const search = () => {
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
+  
   return (
     <>
       <TitleContainer>
@@ -740,7 +630,6 @@ const CM_A0000W: React.FC = () => {
                 />
               </td>
             </tr>
-
             <tr>
               <th>제목</th>
               <td colSpan={3}>
@@ -804,11 +693,6 @@ const CM_A0000W: React.FC = () => {
                 person: usersListData.find(
                   (item: any) => item.user_id === row.person
                 )?.user_name,
-                dtgb: dtgbListData.find((item: any) => item.dtgb === row.dtgb)
-                  ?.기준일,
-                finyn: finynListData.find(
-                  (item: any) => item.code === row.finyn
-                )?.name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -885,20 +769,6 @@ const CM_A0000W: React.FC = () => {
           }
           reloadData={reloadData}
           para={detailParameters}
-        />
-      )}
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
         />
       )}
       {gridList.map((grid: any) =>

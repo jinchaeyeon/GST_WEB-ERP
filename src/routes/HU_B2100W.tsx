@@ -39,8 +39,6 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc,
-  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -66,9 +64,6 @@ const HU_B2100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
 
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -96,8 +91,8 @@ const HU_B2100W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    "L_SA002",
+    //수주상태
     setBizComponentData
   );
 
@@ -330,6 +325,7 @@ const HU_B2100W: React.FC = () => {
   }, [detailFilters]);
 
   let gridRef: any = useRef(null);
+  
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -387,6 +383,7 @@ const HU_B2100W: React.FC = () => {
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const resetDetailGrid = () => {
@@ -581,7 +578,6 @@ const HU_B2100W: React.FC = () => {
         throw findMessage(messagesData, "HU_B2100W_001");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);

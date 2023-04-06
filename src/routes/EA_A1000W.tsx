@@ -71,6 +71,7 @@ const checkboxField = ["chooses", "arbitragb"];
 const requiredField = ["appseq", "appline"];
 const numberField = ["appseq"];
 const customField = ["appline"];
+
 type TdataArr = {
   rowstatus_s: string[];
   postcd: string[];
@@ -87,7 +88,7 @@ type TdataArr = {
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
+  // 결재라인표시
   UseBizComponent("L_EA004", setBizComponentData);
 
   const field = props.field ?? "";
@@ -138,7 +139,8 @@ const EA_A1000: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_dptcd_001,L_HU005, L_sysUserMaster_004, L_EA001, L_EA004",
+    "L_dptcd_001,L_HU005, L_sysUserMaster_004, L_EA001",
+    //부서, 직위(직책), 사용자, 결재구분, 
     setBizComponentData
   );
 
@@ -154,9 +156,7 @@ const EA_A1000: React.FC = () => {
     { user_id: "", user_name: "" },
   ]);
   const [appgbListData, setappgbListData] = useState([COM_CODE_DEFAULT_VALUE]);
-  const [applineListData, setapplineListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
@@ -175,14 +175,11 @@ const EA_A1000: React.FC = () => {
       const appgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_EA001")
       );
-      const applineQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA004")
-      );
+
       fetchQuery(postcdQueryStr, setpostcdListData);
       fetchQuery(dptcdQueryStr, setdptcdListData);
       fetchQuery(resnoQueryStr, setResnoListData);
       fetchQuery(appgbQueryStr, setappgbListData);
-      fetchQuery(applineQueryStr, setapplineListData);
     }
   }, [bizComponentData]);
 
@@ -252,26 +249,6 @@ const EA_A1000: React.FC = () => {
   const [main3PgNum, setMain3PgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-
-  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-  const filterInputChange = (e: any) => {
-    const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
@@ -440,6 +417,7 @@ const EA_A1000: React.FC = () => {
     setIfSelectFirstRow(false);
     setSelectedState(newSelectedState);
   };
+
   const onSelection2Change = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -448,6 +426,7 @@ const EA_A1000: React.FC = () => {
     });
     setSelected2State(newSelectedState);
   };
+
   const onSelection3Change = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -480,16 +459,9 @@ const EA_A1000: React.FC = () => {
       setMainPgNum((prev) => prev + 1);
   };
 
-  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
-    setMainDataState(event.dataState);
-  };
   const onMain2ScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, main2PgNum, PAGE_SIZE))
       setMain2PgNum((prev) => prev + 1);
-  };
-
-  const onMainData2StateChange = (event: GridDataStateChangeEvent) => {
-    setMainData2State(event.dataState);
   };
 
   const onMain3ScrollHandler = (event: GridEvent) => {
@@ -497,26 +469,25 @@ const EA_A1000: React.FC = () => {
       setMain3PgNum((prev) => prev + 1);
   };
 
-  const onMainData3StateChange = (event: GridDataStateChangeEvent) => {
-    setMainData3State(event.dataState);
-  };
-
   const onSubScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, subPgNum, PAGE_SIZE))
       setSubPgNum((prev) => prev + 1);
   };
 
-  const onSubDataStateChange = (event: GridDataStateChangeEvent) => {
-    setSubDataState(event.dataState);
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
   };
 
-  //그리드 푸터
-  const mainTotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
-      </td>
-    );
+  const onMainData2StateChange = (event: GridDataStateChangeEvent) => {
+    setMainData2State(event.dataState);
+  };
+
+  const onMainData3StateChange = (event: GridDataStateChangeEvent) => {
+    setMainData3State(event.dataState);
+  };
+
+  const onSubDataStateChange = (event: GridDataStateChangeEvent) => {
+    setSubDataState(event.dataState);
   };
 
   const onMainSortChange = (e: any) => {
@@ -593,6 +564,7 @@ const EA_A1000: React.FC = () => {
       DATA_ITEM_KEY
     );
   };
+
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
@@ -1146,11 +1118,9 @@ const EA_A1000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      fetchMainGrid();
-    } else {
+    fetchMainGrid();
+    if (data.isSuccess === false) {
       alert("결재자가 중복되어 저장할 수 없습니다.");
-      fetchMainGrid();
     }
     fetchSubGrid();
     setLoading(false);
@@ -1376,6 +1346,7 @@ const EA_A1000: React.FC = () => {
         }
       }
     }, [mainData2Result]);
+    
   return (
     <>
       <TitleContainer>

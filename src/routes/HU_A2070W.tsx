@@ -25,18 +25,15 @@ import {
   ButtonContainer,
   GridTitleContainer,
 } from "../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
-  convertDateToStrWithTime2,
   UseBizComponent,
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  //UseMenuDefaults,
   UseGetValueFromSessionItem,
   UseCustomOption,
   getGridItemChangedData,
@@ -48,23 +45,19 @@ import {
 } from "../components/CommonFunction";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import {
-  PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
   COM_CODE_DEFAULT_VALUE,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import TopButtons from "../components/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/HU_A2070W_C";
 import DateCell from "../components/Cells/DateCell";
-import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import { Button } from "@progress/kendo-react-buttons";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { bytesToBase64 } from "byte-base64";
-import NumberCell from "../components/Cells/NumberCell";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import RequiredHeader from "../components/RequiredHeader";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -89,6 +82,7 @@ type TdataArr = {
   remark: string[];
 };
 
+//그리드 내부 글씨 색 정의
 const customData = [
   {
     color: "blue",
@@ -147,13 +141,10 @@ const HU_A2070W: React.FC = () => {
   UsePermissions(setPermissions);
   const pathname: string = window.location.pathname.replace("/", "");
   //커스텀 옵션 조회
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA001, L_HU250T, L_dptcd_001, L_BA002",
-    setBizComponentData
-  );
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
@@ -180,39 +171,33 @@ const HU_A2070W: React.FC = () => {
     }
   }, [customOptionData]);
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_dptcd_001, L_BA002",
+    //부서, 사업장
+    setBizComponentData
+  );
+
   //공통코드 리스트 조회 ()
-  const [orgdivListData, setOrgdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [prsnnumListData, setPrsnnumListData] = React.useState([
-    { prsnnum: "", prsnnm: "" },
   ]);
   const [dptcdListData, setDptcdListData] = React.useState([
     { dptcd: "", dptnm: "" },
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
-      const prsnnumQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
-      );
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_dptcd_001"
         )
-      );
-      const orgdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA001")
       );
       const locationQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
       );
 
       fetchQuery(dptcdQueryStr, setDptcdListData);
-      fetchQuery(prsnnumQueryStr, setPrsnnumListData);
-      fetchQuery(orgdivQueryStr, setOrgdivListData);
       fetchQuery(locationQueryStr, setLocationListData);
     }
   }, [bizComponentData]);
@@ -239,7 +224,6 @@ const HU_A2070W: React.FC = () => {
     }
   }, []);
 
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -255,11 +239,6 @@ const HU_A2070W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  //그리드 별 페이지 넘버
-  const [mainPgNum, setMainPgNum] = useState(1);
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -269,6 +248,7 @@ const HU_A2070W: React.FC = () => {
       [name]: value,
     }));
   };
+
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
@@ -363,7 +343,9 @@ const HU_A2070W: React.FC = () => {
     }));
     setLoading(false);
   };
+
   let gridRef: any = useRef(null);
+  
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -393,8 +375,8 @@ const HU_A2070W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -406,7 +388,6 @@ const HU_A2070W: React.FC = () => {
     });
 
     setSelectedState(newSelectedState);
-    setIfSelectFirstRow(false);
   };
 
   //엑셀 내보내기
@@ -473,7 +454,6 @@ const HU_A2070W: React.FC = () => {
     if (customOptionData != null && filters.isSearch && permissions !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
@@ -501,7 +481,6 @@ const HU_A2070W: React.FC = () => {
         throw findMessage(messagesData, "HU_A2070W_002");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);
@@ -791,7 +770,6 @@ const HU_A2070W: React.FC = () => {
       });
       deletedMainRows = [];
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);

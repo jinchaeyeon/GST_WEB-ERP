@@ -5,15 +5,65 @@ import { Iparameters } from "../../store/types";
 import { convertDateToStr, numberWithCommas } from "../CommonFunction";
 import ReactToPrint from "react-to-print";
 import { Button } from "@progress/kendo-react-buttons";
+import { DataResult, process, State } from "@progress/kendo-data-query";
 
-const CodeReport = (data: any) => {
-  const [mainDataResult, setMainDataResult] = useState<any>(null);
+const CodeReport = (filters: any) => {
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+
+  const processApi = useApi();
+
+  const parameters: Iparameters = {
+    procedureName: "P_AC_B1280W_Q",
+    pageNumber: filters.data.pgNum,
+    pageSize: 1000,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": filters.data.orgdiv,
+      "@p_frdt": convertDateToStr(filters.data.frdt),
+      "@p_todt": convertDateToStr(filters.data.todt),
+      "@p_acntcd": filters.data.acntcd,
+      "@p_acntnm": filters.data.acntnm,
+      "@p_stdrmkcd": filters.data.stdrmkcd,
+      "@p_stdrmknm": filters.data.stdrmknm,
+    },
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid = async () => {
+    // if (!permissions?.view) return;
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      if (totalRowCnt > 0) {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+      }
+    }
+  };
 
   useEffect(() => {
-    if (data.data.total !== 0) {
-      setMainDataResult(data.data);
+    if(mainDataResult.total == 0){
+      fetchMainGrid();
     }
-  }, [data]);
+  });
 
 
   const componentRef = useRef(null);
@@ -59,7 +109,7 @@ const CodeReport = (data: any) => {
           mainDataResult.data.map((item1: any, idx1: number) =>
             idx1 === 0 || idx1 % 10 === 0 ? (
               <>
-                <table className="main_tb">
+                <table className="main_tb" style={{width: "100%"}}>
                   <colgroup>
                     <col width="10%" />
                     <col width="8%" />

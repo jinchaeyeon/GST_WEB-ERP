@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -11,7 +11,6 @@ import {
   GridCellProps,
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -25,56 +24,38 @@ import {
   ButtonContainer,
   GridTitleContainer,
 } from "../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
-  convertDateToStr,
-  convertDateToStrWithTime2,
   UseBizComponent,
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  //UseMenuDefaults,
   UseGetValueFromSessionItem,
   UseCustomOption,
   getGridItemChangedData,
-  dateformat,
-  setDefaultDate,
-  findMessage,
   UseMessages,
-  getQueryFromBizComponent,
 } from "../components/CommonFunction";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import {
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
-  COM_CODE_DEFAULT_VALUE,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import TopButtons from "../components/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/HU_A2100W_C";
-import DateCell from "../components/Cells/DateCell";
-import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import { Button } from "@progress/kendo-react-buttons";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { bytesToBase64 } from "byte-base64";
-import NumberCell from "../components/Cells/NumberCell";
-import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import RequiredHeader from "../components/RequiredHeader";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import CenterCell from "../components/Cells/CenterCell";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 const requiredField = ["paycd", "workgb", "stddiv", "workdiv"];
 const customField = ["paycd", "workgb", "workcls", "stddiv", "workdiv"];
-// const centerField = ["work_strtime", "work_endtime"];
 let deletedMainRows: object[] = [];
 
 type TdataArr = {
@@ -95,6 +76,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
     "L_HU028, L_HU075,L_HU076,L_HU078,L_HU097",
+    //급여지급구분, 근무형태, 근무조, 근무구분, 근태구분
     setBizComponentData
   );
 
@@ -133,12 +115,7 @@ const HU_A2100W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const pathname: string = window.location.pathname.replace("/", "");
-  //커스텀 옵션 조회
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA001, L_HU250T, L_dptcd_001, L_BA002",
-    setBizComponentData
-  );
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -162,66 +139,6 @@ const HU_A2100W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  //공통코드 리스트 조회 ()
-  const [orgdivListData, setOrgdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [prsnnumListData, setPrsnnumListData] = React.useState([
-    { prsnnum: "", prsnnm: "" },
-  ]);
-  const [dptcdListData, setDptcdListData] = React.useState([
-    { dptcd: "", dptnm: "" },
-  ]);
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      const prsnnumQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
-      );
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      const orgdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA001")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
-      );
-
-      fetchQuery(dptcdQueryStr, setDptcdListData);
-      fetchQuery(prsnnumQueryStr, setPrsnnumListData);
-      fetchQuery(orgdivQueryStr, setOrgdivListData);
-      fetchQuery(locationQueryStr, setLocationListData);
-    }
-  }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
-
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -236,24 +153,6 @@ const HU_A2100W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-  const filterInputChange = (e: any) => {
-    const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
@@ -332,7 +231,9 @@ const HU_A2100W: React.FC = () => {
     }));
     setLoading(false);
   };
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -363,6 +264,7 @@ const HU_A2100W: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -374,7 +276,6 @@ const HU_A2100W: React.FC = () => {
     });
 
     setSelectedState(newSelectedState);
-    setIfSelectFirstRow(false);
   };
 
   //엑셀 내보내기
@@ -446,7 +347,6 @@ const HU_A2100W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -766,7 +666,6 @@ const HU_A2100W: React.FC = () => {
       });
       deletedMainRows = [];
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);

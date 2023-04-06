@@ -432,7 +432,7 @@ const MA_B7201W: React.FC = () => {
       setDetailDataResult((prev) => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {
@@ -460,10 +460,11 @@ const MA_B7201W: React.FC = () => {
       const row = rows.map((item: any) => ({
         ...item,
       }));
+
       setDetailDataResult2((prev) => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -11,7 +11,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import {
@@ -33,26 +33,20 @@ import {
   chkScrollHandler,
   convertDateToStr,
   findMessage,
-  getQueryFromBizComponent,
-  UseBizComponent,
   UseCustomOption,
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  UseParaPc,
-  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import NumberCell from "../components/Cells/NumberCell";
 import { gridList } from "../store/columns/HU_B3160W_C";
 import {
-  COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
-import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 
@@ -64,9 +58,6 @@ const HU_B3160W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
 
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -91,50 +82,6 @@ const HU_B3160W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
-
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
-  );
-
-  //공통코드 리스트 조회 ()
-  const [ordstsListData, setOrdstsListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
-      );
-
-      fetchQuery(ordstsQueryStr, setOrdstsListData);
-    }
-  }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -240,8 +187,7 @@ const HU_B3160W: React.FC = () => {
     if (
       customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions !== null
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
@@ -249,6 +195,7 @@ const HU_B3160W: React.FC = () => {
   }, [filters, permissions]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -279,8 +226,8 @@ const HU_B3160W: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
-
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -290,9 +237,6 @@ const HU_B3160W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   //엑셀 내보내기
@@ -380,7 +324,6 @@ const HU_B3160W: React.FC = () => {
     postcd: string;
   }
   
-  
   const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
@@ -407,7 +350,6 @@ const HU_B3160W: React.FC = () => {
         throw findMessage(messagesData, "HU_B3160W_002");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);

@@ -108,6 +108,7 @@ export const FormContext = createContext<{
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_HU290T", setBizComponentData);
+  //상하반기구분
 
   const field = props.field ?? "";
   const bizComponentIdVal = field === "Semiannualgb" ? "L_HU290T" : "";
@@ -227,11 +228,11 @@ const HU_A4100W: React.FC = () => {
   const [prsnnm, setPrsnnm] = useState<string>("");
   const [prsnnum, setPrsnnum] = useState<string>("");
   const pathname: string = window.location.pathname.replace("/", "");
-  //커스텀 옵션 조회
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_sysUserMaster_001", setBizComponentData);
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
+  //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
@@ -250,10 +251,15 @@ const HU_A4100W: React.FC = () => {
     }
   }, [customOptionData]);
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_sysUserMaster_001", setBizComponentData);
+  //사용자
+
   //공통코드 리스트 조회 ()
   const [userListData, setUserListData] = React.useState([
     { user_id: "", user_name: "" },
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
@@ -306,6 +312,8 @@ const HU_A4100W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
+  const [amtWindowVisible, setAmtWindowVisible] = useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -437,6 +445,7 @@ const HU_A4100W: React.FC = () => {
   };
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -468,10 +477,13 @@ const HU_A4100W: React.FC = () => {
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
+
   const resetGrid = () => {
     setMainDataResult2(process([], mainDataState2));
   };
+
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
   const onMainSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -560,7 +572,6 @@ const HU_A4100W: React.FC = () => {
         throw findMessage(messagesData, "HU_A4100W_001");
       } else {
         resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
       alert(e);
@@ -789,7 +800,6 @@ const HU_A4100W: React.FC = () => {
       });
       deletedMainRows = [];
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -850,8 +860,6 @@ const HU_A4100W: React.FC = () => {
     });
   };
 
-  const [amtWindowVisible, setAmtWindowVisible] = useState<boolean>(false);
-
   const onAmtWndClick = () => {
     if (filters.Semiannualgb == "") {
       alert("상/하반기 구분을 선택해주세요.");
@@ -892,6 +900,7 @@ const HU_A4100W: React.FC = () => {
     });
   };
 
+  //FormContext로 받아온 데이터 set
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
       item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])

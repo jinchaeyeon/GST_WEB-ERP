@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -27,8 +27,6 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
-  ButtonInFieldWrap,
-  ButtonInField,
   FormBox,
   FormBoxWrap,
   GridContainerWrap,
@@ -38,35 +36,24 @@ import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import { gridList } from "../store/columns/BA_A0050W_C";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
-  convertDateToStr,
-  findMessage,
-  getQueryFromBizComponent,
-  setDefaultDate,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
   getGridItemChangedData,
-  dateformat,
   UseParaPc,
-  dateformat2,
   UseGetValueFromSessionItem,
   getCodeFromValue,
   getSelectedFirstData,
   useSysMessage,
 } from "../components/CommonFunction";
-import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
-  COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
@@ -75,14 +62,13 @@ import {
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
-import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "sub_code";
+
 let deletedMainRows: object[] = [];
 
 const CustomComboField = [
@@ -94,11 +80,12 @@ const CustomComboField = [
 ];
 
 const NumberField = ["procseq", "unitqty", "procqty"];
+
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
   UseBizComponent(
     "L_PR010,L_BA011,L_sysUserMaster_001,L_BA015",
+      // 공정, 외주여부, 사용자, 수량단위, 공정단위
     setBizComponentData
   );
 
@@ -169,18 +156,6 @@ const BA_A0050: React.FC = () => {
     }
   }, [customOptionData]);
 
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_YESNOALL,L_PR010,L_sysUserMaster_001",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
-  );
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-    }
-  }, [bizComponentData]);
-
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -192,8 +167,6 @@ const BA_A0050: React.FC = () => {
   const [subData2State, setSubData2State] = useState<State>({
     sort: [],
   });
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
@@ -223,11 +196,9 @@ const BA_A0050: React.FC = () => {
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible2, setCopyWindowVisible2] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSub2PgNum] = useState(1);
   const [sub2PgNum, setSubPgNum] = useState(1);
 
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   const [ifSelectFirstRow2, setIfSelectFirstRow2] = useState(true);
   const [ifSelectFirstRow3, setIfSelectFirstRow3] = useState(true);
 
@@ -236,14 +207,6 @@ const BA_A0050: React.FC = () => {
     const { value, name } = e.target;
 
     setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const InputChange = (e: any) => {
-    const { value, name } = e.target;
-    setsubFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -264,6 +227,15 @@ const BA_A0050: React.FC = () => {
     const { name, value } = e;
 
     setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //Form정보 Change
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+    setsubFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -428,9 +400,6 @@ const BA_A0050: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
-      const row = rows.map((item: any) => ({
-        ...item,
-      }));
 
       if (totalRowCnt > 0) {
         setSubData2Result((prev) => {
@@ -483,12 +452,10 @@ const BA_A0050: React.FC = () => {
     if (
       customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions !== null
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
@@ -499,7 +466,9 @@ const BA_A0050: React.FC = () => {
   useEffect(() => {
     fetchSubGrid2();
   }, [sub2PgNum]);
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -570,8 +539,8 @@ const BA_A0050: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
     setSub2PgNum(1);
@@ -592,7 +561,6 @@ const BA_A0050: React.FC = () => {
       ...prev,
       itemcd: selectedRowData.itemcd,
     }));
-    setIfSelectFirstRow(true);
     setIfSelectFirstRow2(true);
   };
 
@@ -764,6 +732,16 @@ const BA_A0050: React.FC = () => {
     setItemWindowVisible(true);
   };
 
+  const onCopyEditClick = () => {
+    //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+    setCopyWindowVisible(true);
+  };
+
+  const onCopyEditClick2 = () => {
+    //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+    setCopyWindowVisible2(true);
+  };
+  
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -846,7 +824,6 @@ const BA_A0050: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     fetchSubGrid();
   };
 
@@ -1222,16 +1199,6 @@ const BA_A0050: React.FC = () => {
     }
   }, [paraData2]);
 
-  const onCopyEditClick = () => {
-    //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-    setCopyWindowVisible(true);
-  };
-
-  const onCopyEditClick2 = () => {
-    //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-    setCopyWindowVisible2(true);
-  };
-
   const reloadData = (data: any, itemcd: any) => {
     if (data.length === 0) return false;
     let dataArr: any = {
@@ -1296,12 +1263,6 @@ const BA_A0050: React.FC = () => {
     }
   };
 
-  interface IProccdData {
-    proccd: string;
-    procseq: string;
-    outprocyn: string;
-    remark: string;
-  }
   return (
     <>
       <TitleContainer>

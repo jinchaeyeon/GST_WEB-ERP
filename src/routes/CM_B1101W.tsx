@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -8,8 +8,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
-  GridCellProps,
-  GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -32,31 +30,22 @@ import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
-  convertDateToStrWithTime2,
   UseBizComponent,
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
-  //UseMenuDefaults,
   UseGetValueFromSessionItem,
   UseCustomOption,
-  getGridItemChangedData,
   setDefaultDate,
 } from "../components/CommonFunction";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import {
   PAGE_SIZE,
   SELECTED_FIELD,
-  EDIT_FIELD,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import TopButtons from "../components/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/CM_B1101W_C";
-import DateCell from "../components/Cells/DateCell";
-import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import { Button } from "@progress/kendo-react-buttons";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -99,17 +88,6 @@ const centerField = [
   "total",
 ];
 
-type TdataArr = {
-  rowstatus: string[];
-  user_id: string[];
-  user_name: string[];
-  tel_no: string[];
-  mobile_no: string[];
-  user_ip: string[];
-  birdt: string[];
-  bircd: string[];
-};
-
 const CM_B1101W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -140,43 +118,6 @@ const CM_B1101W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
-
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  const handleSelectTab = (e: any) => {
-    resetAllGrid();
-    setIfSelectFirstRow(true);
-    setIfSelectFirstRow2(true);
-    if (e.selected == 0) {
-      fetchMainGrid();
-    } else {
-      fetchMainGrid2();
-    }
-    setTabSelected(e.selected);
-  };
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
@@ -218,19 +159,11 @@ const CM_B1101W: React.FC = () => {
   const [detailPgNum, setDetailPgNum] = useState(1);
   const [isInitSearch, setIsInitSearch] = useState(false);
 
+  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -315,6 +248,7 @@ const CM_B1101W: React.FC = () => {
       "@p_userid": userId,
     },
   };
+
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
@@ -505,11 +439,13 @@ const CM_B1101W: React.FC = () => {
       fetchMainGrid();
     }
   }, [mainPgNum]);
+  
   useEffect(() => {
     if (bizComponentData !== null) {
       fetchMainGrid2();
     }
   }, [mainPgNum2]);
+
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
@@ -698,6 +634,43 @@ const CM_B1101W: React.FC = () => {
       <td></td>
     );
   };
+
+    const onCustWndClick = () => {
+    setCustWindowVisible(true);
+  };
+
+  interface ICustData {
+    custcd: string;
+    custnm: string;
+    custabbr: string;
+    bizregnum: string;
+    custdivnm: string;
+    useyn: string;
+    remark: string;
+    compclass: string;
+    ceonm: string;
+  }
+
+  const setCustData = (data: ICustData) => {
+    setFilters((prev) => ({
+      ...prev,
+      custcd: data.custcd,
+      custnm: data.custnm,
+    }));
+  };
+
+  const handleSelectTab = (e: any) => {
+    resetAllGrid();
+    setIfSelectFirstRow(true);
+    setIfSelectFirstRow2(true);
+    if (e.selected == 0) {
+      fetchMainGrid();
+    } else {
+      fetchMainGrid2();
+    }
+    setTabSelected(e.selected);
+  };
+  
   return (
     <>
       <TitleContainer>

@@ -20,7 +20,7 @@ import {
 import { gridList } from "../store/columns/BA_A0080W_C";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
@@ -94,15 +94,13 @@ let deletedMainRows: object[] = [];
 const DateField = ["recdt"];
 const CommandField = ["itemcd"];
 const NumberField = ["unp"];
-
 const CustomComboField = ["itemacnt", "amtunit"];
-
 const editableField = ["recdt", "itemcd", "unp", "amtunit", "remark"];
-
 const requiredField = ["itemcd", "unp", "amtunit"];
+
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
+  // 화폐단위, 품목계정
   UseBizComponent("L_BA020,L_BA061", setBizComponentData);
 
   const field = props.field ?? "";
@@ -119,6 +117,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td></td>
   );
 };
+
 interface IItemData {
   itemcd: string;
   itemno: string;
@@ -156,6 +155,7 @@ interface IItemData {
   itemlvl5: string;
   custitemnm: string;
 }
+
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
     ariaColumnIndex,
@@ -188,7 +188,9 @@ const ColumnCommandCell = (props: GridCellProps) => {
       });
     }
   };
+
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+
   const onItemWndClick2 = () => {
     if (dataItem["rowstatus"] == "N") {
       setItemWindowVisible2(true);
@@ -196,10 +198,12 @@ const ColumnCommandCell = (props: GridCellProps) => {
       alert("품목코드와 품목명은 수정이 불가합니다.");
     }
   };
+
   const setItemData2 = (data: IItemData) => {
     setItemcd(data.itemcd);
     setItemnm(data.itemnm);
   };
+
   const defaultRendering = (
     <td
       className={className}
@@ -243,15 +247,18 @@ const BA_A0080: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
-  const idGetter3 = getter(SUB_DATA_ITEM_KEY);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
+
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
+
+  //FormContext에서 받아오기위해 state
   const [itemcd, setItemcd] = useState<string>("");
   const [itemnm, setItemnm] = useState<string>("");
   UsePermissions(setPermissions);
@@ -280,7 +287,7 @@ const BA_A0080: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061, L_BA171, L_BA172, L_BA173, L_ITEM_TEST",
+    "L_BA171, L_BA172, L_BA173",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -293,9 +300,7 @@ const BA_A0080: React.FC = () => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [itemListData, setItemListData] = useState([
-    { itemcd: "", itemnm: "" },
-  ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
@@ -307,15 +312,10 @@ const BA_A0080: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
-      const itemQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_ITEM_TEST"
-        )
-      );
+ 
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
-      fetchQuery(itemQueryStr, setItemListData);
     }
   }, [bizComponentData]);
 
@@ -368,26 +368,17 @@ const BA_A0080: React.FC = () => {
   }>({});
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
+
   const [mainPgNum, setMainPgNum] = useState(1);
-  const [subPgNum, setSub2PgNum] = useState(1);
 
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -524,6 +515,7 @@ const BA_A0080: React.FC = () => {
     }
   }, [mainDataResult]);
 
+  //FormContext에서 데이터 변경시 set && 입력 시 set
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
     item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -606,8 +598,6 @@ const BA_A0080: React.FC = () => {
     });
 
     setSelectedState(newSelectedState);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -619,9 +609,7 @@ const BA_A0080: React.FC = () => {
     setSelectedsubDataState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-    const datas = mainDataResult.data.filter(
-      (item) => item.itemacnt == selectedRowData.sub_code
-    );
+
     setFilters((prev) => ({
       ...prev,
       itemacnt: selectedRowData.sub_code,
@@ -667,6 +655,10 @@ const BA_A0080: React.FC = () => {
     setItemWindowVisible(true);
   };
 
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
+  
   const onCopyWndClick = () => {
     try {
       if (filters.itemacnt != "") {
@@ -1193,11 +1185,7 @@ const BA_A0080: React.FC = () => {
       }    
     }
   };
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-  const onAttachmentsWndClick = () => {
-    setAttachmentsWindowVisible(true);
-  };
+
   return (
     <>
       <TitleContainer>

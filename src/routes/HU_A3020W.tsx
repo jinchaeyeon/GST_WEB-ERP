@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -29,7 +29,6 @@ import { Iparameters, TPermissions } from "../store/types";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -40,16 +39,13 @@ import {
 } from "../components/CommonFunction";
 import NumberCell from "../components/Cells/NumberCell";
 import {
-  COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
 import TopButtons from "../components/TopButtons";
-import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import RequiredHeader from "../components/RequiredHeader";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
@@ -59,7 +55,6 @@ const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
 
 const NumberField = ["notaxlmt", "stdamt"];
-
 const requiredField = ["payitemcd", "payitemnm"];
 const customField = ["payitemkind", "taxcd"];
 const checkField = [
@@ -92,17 +87,10 @@ type TdataArr = {
   daycalyn_s: string[];
 };
 
-interface IPrsnnum {
-  prsnnum: string;
-  prsnnm: string;
-  dptcd: string;
-  abilcd: string;
-  postcd: string;
-}
-
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_HU042, L_HU029", setBizComponentData);
+  //수당종류, 세액구분
 
   const field = props.field ?? "";
   const bizComponentIdVal =
@@ -122,6 +110,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 const CustomRadioCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("R_fraction", setBizComponentData);
+  //끝전처리
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "fraction" ? "R_fraction" : "";
@@ -165,65 +154,6 @@ const HU_A3020W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_HU005,L_dptcd_001, L_HU032",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
-  );
-
-  //공통코드 리스트 조회 ()
-  const [dptcdListData, setDptcdListData] = React.useState([
-    { dptcd: "", dptnm: "" },
-  ]);
-  const [postcdListData, setPostcdListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [paytypeListData, setPaytypeListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
-      );
-      const paytypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU032")
-      );
-
-      fetchQuery(paytypeQueryStr, setPaytypeListData);
-      fetchQuery(postcdQueryStr, setPostcdListData);
-      fetchQuery(dptcdQueryStr, setDptcdListData);
-    }
-  }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
-
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -245,44 +175,7 @@ const HU_A3020W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
-
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
-  };
-
   const [tabSelected, setTabSelected] = React.useState(0);
-  const [mainDataTotal2, setMainDataTotal2] = useState<number>(0);
-  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-  const filterInputChange = (e: any) => {
-    const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -372,6 +265,7 @@ const HU_A3020W: React.FC = () => {
   }, [filters, permissions]);
 
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -461,6 +355,7 @@ const HU_A3020W: React.FC = () => {
       _export.save();
     }
   };
+
   const onMainScrollHandler = (event: GridEvent) => {
     if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
@@ -571,7 +466,6 @@ const HU_A3020W: React.FC = () => {
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
     resetAllGrid();
-    deletedMainRows = [];
     if (e.selected == 0) {
       setFilters((prev: any) => ({
         ...prev,
@@ -595,6 +489,7 @@ const HU_A3020W: React.FC = () => {
         tab: 1,
       }));
     }
+    deletedMainRows = [];
   };
 
   const search = () => {
@@ -624,14 +519,6 @@ const HU_A3020W: React.FC = () => {
     }
   };
 
-  const setPrsnnumData = (data: IPrsnnum) => {
-    setFilters((prev) => ({
-      ...prev,
-      prsnnum: data.prsnnum,
-      prsnnm: data.prsnnm,
-    }));
-  };
-
   const onMainItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
       event,
@@ -658,12 +545,12 @@ const HU_A3020W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-
+    console.log(mainDataResult)
   const enterEdit = (dataItem: any, field: string) => {
     if (
       !(
         field == "payitemcd" &&
-        (dataItem.rowstatus == "" || dataItem.rowstatus == "U")
+        (dataItem.rowstatus == undefined || dataItem.rowstatus == "U")
       )
     ) {
       const newData = mainDataResult.data.map((item) =>
@@ -730,7 +617,7 @@ const HU_A3020W: React.FC = () => {
     if (
       !(
         field == "payitemcd" &&
-        (dataItem.rowstatus == "" || dataItem.rowstatus == "U")
+        (dataItem.rowstatus == undefined || dataItem.rowstatus == "U")
       )
     ) {
       const newData = mainDataResult2.data.map((item) =>
@@ -1235,7 +1122,7 @@ const HU_A3020W: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       setParaData({
         pgSize: PAGE_SIZE,
@@ -1262,18 +1149,26 @@ const HU_A3020W: React.FC = () => {
       deletedMainRows = [];
       resetAllGrid();
       if (tabSelected == 0) {
-        setFilters((prev) => ({
+        setFilters((prev: any) => ({
           ...prev,
           worktype: "PAY",
+          find_row_value: "",
+          scrollDirrection: "down",
           pgNum: 1,
           isSearch: true,
+          pgGap: 0,
+          tab: 0,
         }));
-      } else {
-        setFilters((prev) => ({
+      } else if (tabSelected == 1) {
+        setFilters((prev: any) => ({
           ...prev,
           worktype: "DEDUCT",
+          find_row_value: "",
+          scrollDirrection: "down",
           pgNum: 1,
           isSearch: true,
+          pgGap: 0,
+          tab: 1,
         }));
       }
     } else {
@@ -1552,12 +1447,6 @@ const HU_A3020W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
       </TabStrip>
-      {prsnnumWindowVisible && (
-        <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
-        />
-      )}
       {gridList.map((grid: any) =>
         grid.columns.map((column: any) => (
           <div

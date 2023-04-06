@@ -4,7 +4,7 @@ import React, {
   useState,
   useContext,
   createContext,
-  useRef
+  useRef,
 } from "react";
 import * as ReactDOM from "react-dom";
 import {
@@ -19,18 +19,14 @@ import {
   GridCellProps,
 } from "@progress/kendo-react-grid";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
-import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
+import { IAttachmentData } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { gridList } from "../store/columns/CM_A4100W_C";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import { Field } from "@progress/kendo-react-form";
-import calculateSize from "calculate-size";
 import {
   Title,
   FilterBoxWrap,
@@ -41,8 +37,6 @@ import {
   ButtonContainer,
   GridTitleContainer,
   ButtonInInput,
-  ButtonInFieldWrap,
-  ButtonInField,
   FormBoxWrap,
   FormBox,
   GridContainerWrap,
@@ -65,9 +59,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   getGridItemChangedData,
-  dateformat,
   UseParaPc,
-  dateformat2,
   UseGetValueFromSessionItem,
   useSysMessage,
   toDate,
@@ -75,8 +67,6 @@ import {
 import EducationWindow from "../components/Windows/CommonWindows/EducationWindow";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -86,7 +76,6 @@ import {
   EDIT_FIELD,
   GAP,
 } from "../components/CommonString";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
@@ -94,21 +83,19 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { TextArea } from "@progress/kendo-react-inputs";
+
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
 
 const NumberField = ["edtime", "cnt"];
-
 const CheckField = ["finyn"];
-
 const DateField = ["recdt"];
-
 const CustomComboField = ["person"];
-
 const filesField = ["files"];
+
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
+  // 사용자
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
 
   const field = props.field ?? "";
@@ -150,10 +137,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const {
-    setAttdatnum,
-    setFiles,
-  } = useContext(FormContext);
+  const { setAttdatnum, setFiles } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -168,11 +152,14 @@ const ColumnCommandCell = (props: GridCellProps) => {
       });
     }
   };
+
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
+
   const onAttWndClick2 = () => {
     setAttachmentsWindowVisible(true);
   };
+
   const getAttachmentsData = (data: IAttachmentData) => {
     setAttdatnum(data.attdatnum);
     setFiles(
@@ -180,6 +167,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
         (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
     );
   };
+
   const defaultRendering = (
     <td
       className={className}
@@ -202,6 +190,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       </ButtonInGridInput>
     </td>
   );
+
   return (
     <>
       {render === undefined
@@ -228,8 +217,11 @@ const CM_A4100W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+
+  //FormContext의 데이터 state
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -254,7 +246,7 @@ const CM_A4100W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_sysUserMaster_001,L_CM050",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    //사용자, 교육구분
     setBizComponentData
   );
 
@@ -265,6 +257,7 @@ const CM_A4100W: React.FC = () => {
   const [edudivListData, setEdudivListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const personQueryStr = getQueryFromBizComponent(
@@ -273,9 +266,7 @@ const CM_A4100W: React.FC = () => {
         )
       );
       const edudivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_CM050"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_CM050")
       );
       fetchQuery(personQueryStr, setPersonListData);
       fetchQuery(edudivQueryStr, setEdudivListData);
@@ -314,8 +305,6 @@ const CM_A4100W: React.FC = () => {
     sort: [],
   });
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -336,23 +325,27 @@ const CM_A4100W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [detailWindowVisible, setDetailWindowVisible] =
-    useState<boolean>(false);
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [mainPgNum2, setMainPgNum2] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
-  const [workType, setWorkType] = useState<string>("U");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [isCopy, setIsCopy] = useState(false);
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const [educationWindowVisible, setEducationWindowVisible] =
+    useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -384,38 +377,10 @@ const CM_A4100W: React.FC = () => {
     }
   };
 
-  const RadioChange = (e: any) => {
-    const { name, value } = e;
-    setInfomation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
     setInfomation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -546,7 +511,7 @@ const CM_A4100W: React.FC = () => {
           const persons = personListData.find(
             (item: any) => item.user_id == firstRowData.person
           )?.user_name;
-  
+
           setInfomation({
             pgSize: PAGE_SIZE,
             workType: "U",
@@ -576,7 +541,6 @@ const CM_A4100W: React.FC = () => {
             datnum: firstRowData.datnum,
             eduname: firstRowData.eduname,
           });
-  
         }
       }
     } else {
@@ -600,7 +564,7 @@ const CM_A4100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -619,7 +583,7 @@ const CM_A4100W: React.FC = () => {
           const persons = personListData.find(
             (item: any) => item.user_id == firstRowData.person
           )?.user_name;
-          
+
           setInfomation({
             pgSize: PAGE_SIZE,
             workType: "U",
@@ -649,7 +613,7 @@ const CM_A4100W: React.FC = () => {
             datnum: firstRowData.datnum,
             eduname: firstRowData.eduname,
           });
-  
+
           setsubFilters((prev) => ({
             ...prev,
             datnum: firstRowData.datnum,
@@ -667,6 +631,7 @@ const CM_A4100W: React.FC = () => {
     }));
     setLoading(false);
   };
+
   const fetchSubGrid = async () => {
     //if (!permissions?.view) return;
     let data: any;
@@ -699,12 +664,10 @@ const CM_A4100W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if(filters.isSearch && filters.tab == 1) {
+    if (filters.isSearch && filters.tab == 1) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid2();
-      setIsInitSearch(true);
-    }
-    else if (
+    } else if (
       customOptionData != null &&
       filters.isSearch &&
       permissions !== null &&
@@ -712,26 +675,15 @@ const CM_A4100W: React.FC = () => {
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
-      setIsInitSearch(true);
     }
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid2();
-    }
-  }, [mainPgNum2]);
-
-  useEffect(() => {
     fetchSubGrid();
   }, [subPgNum]);
+
   let gridRef: any = useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -804,12 +756,13 @@ const CM_A4100W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setMainPgNum2(1);
     setMainDataResult2(process([], mainDataState2));
   };
+
+  //체크박스 유무
   const [yn, setyn] = useState(true);
+
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     if (tabSelected === 0) {
@@ -820,7 +773,6 @@ const CM_A4100W: React.FC = () => {
       });
 
       setSelectedState(newSelectedState);
-      setIfSelectFirstRow(false);
 
       const selectedIdx = event.startRowIndex;
       const selectedRowData = event.dataItems[selectedIdx];
@@ -862,7 +814,6 @@ const CM_A4100W: React.FC = () => {
       });
 
       setSelectedState2(newSelectedState);
-      setIfSelectFirstRow(false);
 
       const selectedIdx = event.startRowIndex;
       const selectedRowData = event.dataItems[selectedIdx];
@@ -919,6 +870,7 @@ const CM_A4100W: React.FC = () => {
       _export.save();
     }
   };
+
   const onMainScrollHandler = (event: GridEvent) => {
     if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
@@ -981,7 +933,7 @@ const CM_A4100W: React.FC = () => {
         pgNum: pgNumWithGap - 1,
         pgGap: prev.pgGap + 1,
         isSearch: true,
-        tab: 1
+        tab: 1,
       }));
     }
   };
@@ -1014,6 +966,7 @@ const CM_A4100W: React.FC = () => {
       </td>
     );
   };
+
   //그리드 푸터
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = mainDataResult2.total.toString().split(".");
@@ -1038,9 +991,9 @@ const CM_A4100W: React.FC = () => {
       </td>
     );
   };
+
   const onAddClick2 = () => {
     if (tabSelected == 0) {
-      setWorkType("N");
       setInfomation({
         pgSize: PAGE_SIZE,
         workType: "N",
@@ -1063,7 +1016,6 @@ const CM_A4100W: React.FC = () => {
         eduname: "",
       });
     } else {
-      setWorkType("N");
       setInfomation({
         pgSize: PAGE_SIZE,
         workType: "",
@@ -1124,10 +1076,17 @@ const CM_A4100W: React.FC = () => {
     });
   };
 
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const onEducationWndClick = () => {
+    setEducationWindowVisible(true);
+  };
+
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
     resetAllGrid();
-
     if (e.selected == 0) {
       setFilters((prev: any) => ({
         ...prev,
@@ -1137,7 +1096,7 @@ const CM_A4100W: React.FC = () => {
         isSearch: true,
         pgGap: 0,
         tab: 0,
-      }))
+      }));
     } else {
       setFilters((prev: any) => ({
         ...prev,
@@ -1147,23 +1106,30 @@ const CM_A4100W: React.FC = () => {
         isSearch: true,
         pgGap: 0,
         tab: 1,
-      }))
+      }));
     }
-    setIfSelectFirstRow(true);
+  };
+  interface IEducationData {
+    edunum: string;
+    title: string;
+  }
+
+  type TdataArr = {
+    row_status_s: string[];
+    seq_s: string[];
+    person_s: string[];
+    remark_s: string[];
+    attdatnum_s: string[];
   };
 
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-
-  const onAttachmentsWndClick = () => {
-    setAttachmentsWindowVisible(true);
+  const setEdunum = () => {
+    setInfomation((prev) => ({
+      ...prev,
+      edunum: "",
+      eduname: "",
+    }));
   };
-  const [educationWindowVisible, setEducationWindowVisible] =
-    useState<boolean>(false);
 
-  const onEducationWndClick = () => {
-    setEducationWindowVisible(true);
-  };
   const getAttachmentsData = (data: IAttachmentData) => {
     setInfomation((prev) => {
       return {
@@ -1181,94 +1147,9 @@ const CM_A4100W: React.FC = () => {
       return {
         ...prev,
         edunum: data.edunum,
-        eduname: data.title
+        eduname: data.title,
       };
     });
-  };
-  interface IEducationData {
-    edunum: string;
-    title: string;
-  }
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
-
-  type TdataArr = {
-    row_status_s: string[];
-    seq_s: string[];
-    person_s: string[];
-    remark_s: string[];
-    attdatnum_s: string[];
-  };
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  const setCustData2 = (data: ICustData) => {
-    setInfomation((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
   };
 
   const onMainSortChange = (e: any) => {
@@ -1284,7 +1165,7 @@ const CM_A4100W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    if(tabSelected == 0){
+    if (tabSelected == 0) {
       setFilters((prev: any) => ({
         ...prev,
         find_row_value: "",
@@ -1293,7 +1174,7 @@ const CM_A4100W: React.FC = () => {
         isSearch: true,
         pgGap: 0,
         tab: 0,
-      }))
+      }));
     } else {
       setFilters((prev: any) => ({
         ...prev,
@@ -1302,10 +1183,9 @@ const CM_A4100W: React.FC = () => {
         pgNum: 1,
         isSearch: true,
         pgGap: 0,
-        tab: 1
-      }))
+        tab: 1,
+      }));
     }
-    setIfSelectFirstRow(true);
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
@@ -1484,11 +1364,16 @@ const CM_A4100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D" || paraDataDeleted.work_type === "D1") fetchToDelete();
+    if (paraDataDeleted.work_type === "D" || paraDataDeleted.work_type === "D1")
+      fetchToDelete();
   }, [paraDataDeleted]);
 
   useEffect(() => {
-    if (infomation.row_status_s != "" || infomation.workType == "N1"|| infomation.workType == "U1")
+    if (
+      infomation.row_status_s != "" ||
+      infomation.workType == "N1" ||
+      infomation.workType == "U1"
+    )
       fetchTodoGridSaved();
   }, [infomation]);
 
@@ -1502,7 +1387,6 @@ const CM_A4100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      setMainPgNum2(1);
       setMainDataResult2(process([], mainDataState2));
       setSubPgNum(1);
       setSubDataResult(process([], subDataState));
@@ -1519,8 +1403,8 @@ const CM_A4100W: React.FC = () => {
         pgNum: 1,
         isSearch: true,
         pgGap: 0,
-        tab: 1
-      }))
+        tab: 1,
+      }));
       fetchSubGrid();
       deletedMainRows = [];
     } else {
@@ -1558,7 +1442,7 @@ const CM_A4100W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
- 
+
     if (infomation.workType == "" && dataItem.length === 0) {
       setInfomation((prev) => ({
         ...prev,
@@ -1662,7 +1546,7 @@ const CM_A4100W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      if(tabSelected == 0){
+      if (tabSelected == 0) {
         setFilters((prev: any) => ({
           ...prev,
           find_row_value: "",
@@ -1671,7 +1555,7 @@ const CM_A4100W: React.FC = () => {
           isSearch: true,
           pgGap: 0,
           tab: 0,
-        }))
+        }));
       } else {
         setFilters((prev: any) => ({
           ...prev,
@@ -1681,7 +1565,7 @@ const CM_A4100W: React.FC = () => {
           isSearch: true,
           pgGap: 0,
           tab: 1,
-        }))
+        }));
       }
     } else {
       console.log("[오류 발생]");
@@ -1691,7 +1575,7 @@ const CM_A4100W: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.edunum = "";
-    paraDataDeleted.datnum="";
+    paraDataDeleted.datnum = "";
   };
 
   const onSaveClick = async () => {
@@ -1731,8 +1615,7 @@ const CM_A4100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      setMainPgNum(1);
-      setMainDataResult(process([], mainDataState))
+      setMainDataResult(process([], mainDataState));
 
       setFilters((prev: any) => ({
         ...prev,
@@ -1742,7 +1625,7 @@ const CM_A4100W: React.FC = () => {
         isSearch: true,
         pgGap: 0,
         tab: 0,
-      }))
+      }));
       deletedMainRows = [];
     } else {
       console.log("[오류 발생]");
@@ -1759,6 +1642,7 @@ const CM_A4100W: React.FC = () => {
     }));
   };
 
+  //FormContext 데이터 변경 시 set
   useEffect(() => {
     const items = subDataResult.data.filter(
       (item: any) =>
@@ -1805,13 +1689,6 @@ const CM_A4100W: React.FC = () => {
     setSelectedsubDataState({});
   };
 
-  const setEdunum = () => {
-    setInfomation((prev) => ({
-      ...prev,
-      edunum: "",
-      eduname: ""
-    }))
-  }
   return (
     <>
       <TitleContainer>
@@ -1987,15 +1864,14 @@ const CM_A4100W: React.FC = () => {
                   <th>교육구분</th>
                   <td>
                     {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="edudiv"
-                            value={infomation.edudiv}
-                            bizComponentId="L_CM050"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-
-                          />
-                        )}
+                      <BizComponentComboBox
+                        name="edudiv"
+                        value={infomation.edudiv}
+                        bizComponentId="L_CM050"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
                   </td>
                   <th>담당자</th>
                   <td>
@@ -2262,7 +2138,7 @@ const CM_A4100W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                    <th>제목</th>
+                      <th>제목</th>
                       <td>
                         <Input
                           name="title"
@@ -2273,7 +2149,7 @@ const CM_A4100W: React.FC = () => {
                       </td>
                       <th>교육번호</th>
                       <td>
-                      <Input
+                        <Input
                           name="edunum"
                           type="text"
                           value={infomation.edunum}
@@ -2286,7 +2162,7 @@ const CM_A4100W: React.FC = () => {
                             icon="more-horizontal"
                             fillMode="flat"
                           />
-                           <Button
+                          <Button
                             type={"button"}
                             onClick={setEdunum}
                             icon="x"
@@ -2437,27 +2313,6 @@ const CM_A4100W: React.FC = () => {
           </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
-      {custWindowVisible2 && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible2}
-          workType={workType}
-          setData={setCustData2}
-        />
-      )}
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
-        />
-      )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
@@ -2467,7 +2322,7 @@ const CM_A4100W: React.FC = () => {
       )}
       {educationWindowVisible && (
         <EducationWindow
-        getVisible={setEducationWindowVisible}
+          getVisible={setEducationWindowVisible}
           setData={getEducationData}
         />
       )}
