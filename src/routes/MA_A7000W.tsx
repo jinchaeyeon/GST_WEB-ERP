@@ -241,14 +241,14 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
 
   const setItemData2 = (data: IItemData) => {
-      setItemcd(data.itemcd);
-      setItemnm(data.itemnm);
-      setInsiz(data.insiz);
-      setItemacnt(data.itemacnt);
-      setBnatur(data.bnatur);
-      setSpec(data.spec);
+    setItemcd(data.itemcd);
+    setItemnm(data.itemnm);
+    setInsiz(data.insiz);
+    setItemacnt(data.itemacnt);
+    setBnatur(data.bnatur);
+    setSpec(data.spec);
   };
-  
+
   const defaultRendering = (
     <td
       className={className}
@@ -305,10 +305,16 @@ const MA_A7000W: React.FC = () => {
   //FormContext 데이터 state
   const [itemcd, setItemcd] = useState<string>("");
   const [itemnm, setItemnm] = useState<string>("");
+  const [itemcd2, setItemcd2] = useState<string>("");
+  const [itemnm2, setItemnm2] = useState<string>("");
   const [itemacnt, setItemacnt] = useState<string>("");
   const [insiz, setInsiz] = useState<string>("");
   const [bnatur, setBnatur] = useState<string>("");
   const [spec, setSpec] = useState<string>("");
+  const [itemacnt2, setItemacnt2] = useState<string>("");
+  const [insiz2, setInsiz2] = useState<string>("");
+  const [bnatur2, setBnatur2] = useState<string>("");
+  const [spec2, setSpec2] = useState<string>("");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -389,6 +395,33 @@ const MA_A7000W: React.FC = () => {
     });
   }, [itemcd, itemacnt, insiz, bnatur, spec]);
 
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            itemcd: itemcd2,
+            itemnm: itemnm2,
+            itemacnt: itemacnt2,
+            insiz: insiz2,
+            bnatur: bnatur2,
+            spec: spec2,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemcd2, itemnm2, itemacnt2, insiz2, bnatur2, spec2]);
+
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
 
@@ -447,6 +480,69 @@ const MA_A7000W: React.FC = () => {
     }
   }, []);
 
+  const getItemData2 = (itemcd: string, mainDataResult: any) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData2(queryStr, mainDataResult);
+  };
+
+  const fetchData2 = React.useCallback(
+    async (queryStr: string, mainDataResults: any) => {
+      let data: any;
+
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+        if (rowCount > 0) {
+          setItemcd2(rows[0].itemcd);
+          setItemnm2(rows[0].itemnm);
+          setInsiz2(rows[0].insiz);
+          setItemacnt2(rows[0].itemacnt);
+          setBnatur2(rows[0].bnatur);
+          setSpec2(rows[0].spec);
+        } else {
+          const newData = mainDataResults.map((item: any) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              ? {
+                  ...item,
+                  itemcd: item.itemcd,
+                  itemnm: "",
+                  insiz: "",
+                  itemacnt: "",
+                  bnatur: "",
+                  spec: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    []
+  );
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -461,7 +557,7 @@ const MA_A7000W: React.FC = () => {
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -865,11 +961,10 @@ const MA_A7000W: React.FC = () => {
             }
       );
 
-      if (field){
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
         setEditedField(field);
-        setEditIndex(dataItem[DATA_ITEM_KEY]);
       }
-
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -880,26 +975,26 @@ const MA_A7000W: React.FC = () => {
   };
 
   const exitEdit = () => {
-    if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
-      mainDataResult.data.map((item) => {
-        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
-          getItemData(item.itemcd)
-        }
-      })
-    }
+    if (editedField !== "itemcd") {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
         totamt: item.wonamt + item.taxamt,
         [EDIT_FIELD]: undefined,
       }));
-  
+
       setMainDataResult((prev) => {
         return {
           data: newData,
           total: prev.total,
         };
       });
-
+    } else {
+      mainDataResult.data.map((item) => {
+        if (editIndex === item.num) {
+          getItemData2(item.itemcd, mainDataResult.data);
+        }
+      });
+    }
   };
 
   const [ParaData, setParaData] = useState({
@@ -1439,7 +1534,7 @@ const MA_A7000W: React.FC = () => {
       </div>
     );
   };
-  
+
   return (
     <>
       <TitleContainer>
@@ -1705,9 +1800,9 @@ const MA_A7000W: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? mainTotalFooterCell
-                              // : numberField.includes(item.fieldName)
-                              // ? gridSumQtyFooterCell
-                              : undefined
+                              : // : numberField.includes(item.fieldName)
+                                // ? gridSumQtyFooterCell
+                                undefined
                           }
                         ></GridColumn>
                       )

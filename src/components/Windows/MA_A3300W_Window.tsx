@@ -20,7 +20,11 @@ import {
   GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { TextArea, InputChangeEvent, Checkbox } from "@progress/kendo-react-inputs";
+import {
+  TextArea,
+  InputChangeEvent,
+  Checkbox,
+} from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -54,7 +58,7 @@ import {
   getGridItemChangedData,
   dateformat,
   isValidDate,
-  getItemQuery
+  getItemQuery,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -159,7 +163,10 @@ let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_BA016, L_BA171, L_BA061,L_BA015, L_LOADPLACE", setBizComponentData);
+  UseBizComponent(
+    "L_BA016, L_BA171, L_BA061,L_BA015, L_LOADPLACE",
+    setBizComponentData
+  );
 
   const field = props.field ?? "";
   const bizComponentIdVal =
@@ -286,6 +293,8 @@ const CopyWindow = ({
   const [editedField, setEditedField] = useState("");
   const [itemcd, setItemcd] = useState<string>("");
   const [itemnm, setItemnm] = useState<string>("");
+  const [itemcd2, setItemcd2] = useState<string>("");
+  const [itemnm2, setItemnm2] = useState<string>("");
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -318,11 +327,11 @@ const CopyWindow = ({
         auto_transfer: defaultOption.find(
           (item: any) => item.id === "auto_transfer"
         ).valueCode,
-        inuse: defaultOption.find((item: any) => item.id === "inuse2").valueCode,
+        inuse: defaultOption.find((item: any) => item.id === "inuse2")
+          .valueCode,
         amtunit: defaultOption.find((item: any) => item.id === "amtunit")
           .valueCode,
-        pac: defaultOption.find((item: any) => item.id === "pac")
-        .valueCode,
+        pac: defaultOption.find((item: any) => item.id === "pac").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -454,6 +463,29 @@ const CopyWindow = ({
     });
   }, [itemcd, itemnm]);
 
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            itemcd: itemcd2,
+            itemnm: itemnm2,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemcd2, itemnm2]);
+
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
 
@@ -476,6 +508,60 @@ const CopyWindow = ({
     }
   }, []);
 
+  const getItemData2 = (itemcd: string, mainDataResult: any) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData2(queryStr, mainDataResult);
+  };
+
+  const fetchData2 = React.useCallback(
+    async (queryStr: string, mainDataResults: any) => {
+      let data: any;
+
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+        if (rowCount > 0) {
+          setItemcd2(rows[0].itemcd);
+          setItemnm2(rows[0].itemnm);
+        } else {
+          const newData = mainDataResults.map((item: any) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              ? {
+                  ...item,
+                  itemcd: item.itemcd,
+                  itemnm: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    []
+  );
 
   const processApi = useApi();
 
@@ -581,7 +667,7 @@ const CopyWindow = ({
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
       "@p_itemcd": "",
-      "@p_itemnm":"",
+      "@p_itemnm": "",
       "@p_finyn": "",
       "@p_doexdiv": filters.doexdiv,
       "@p_inuse": filters.inuse,
@@ -869,10 +955,7 @@ const CopyWindow = ({
   const selectData = (selectedData: any) => {
     let valid = true;
     mainDataResult.data.map((item) => {
-      if (
-        (item.itemcd == "") &&
-        valid == true
-      ) {
+      if (item.itemcd == "" && valid == true) {
         alert("품목코드를 채워주세요.");
         valid = false;
         return false;
@@ -939,10 +1022,7 @@ const CopyWindow = ({
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (
-      field != "rowstatus" &&
-      field != "itemnm"
-    ) {
+    if (field != "rowstatus" && field != "itemnm") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -956,11 +1036,11 @@ const CopyWindow = ({
             }
       );
 
-      if (field){
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
         setEditedField(field);
-        setEditIndex(dataItem[DATA_ITEM_KEY]);
       }
-      
+
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -1004,68 +1084,48 @@ const CopyWindow = ({
   }, []);
 
   const exitEdit = () => {
-        if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
+    if (editedField !== "itemcd") {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        amt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.baseamt,
+        wonamt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.baseamt,
+        taxamt:
+          filters.amtunit == "KRW"
+            ? (item.qty * item.unp) / 10
+            : (item.qty * item.unp * filters.baseamt) / 10,
+        totamt:
+          filters.amtunit == "KRW"
+            ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
+            : Math.round(
+                item.qty * item.unp * filters.baseamt +
+                  (item.qty * item.unp * filters.baseamt) / 10
+              ),
+        dlramt: filters.amtunit == "KRW" ? item.qty / filters.baseamt : 0,
+        [EDIT_FIELD]: undefined,
+      }));
+      setIfSelectFirstRow(false);
+
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
       mainDataResult.data.map((item) => {
-        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
-          getItemData(item.itemcd)
+        if (editIndex === item.num) {
+          getItemData2(item.itemcd, mainDataResult.data);
         }
-      })
+      });
     }
-
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      amt:
-      filters.amtunit == "KRW"
-        ? item.qty * item.unp
-        : item.qty * item.unp * filters.baseamt,
-    wonamt:
-      filters.amtunit == "KRW"
-        ? item.qty * item.unp
-        : item.qty * item.unp * filters.baseamt,
-    taxamt:
-      filters.amtunit == "KRW"
-        ? (item.qty * item.unp) / 10
-        : (item.qty * item.unp * filters.baseamt) / 10,
-    totamt:
-      filters.amtunit == "KRW"
-        ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
-        : Math.round(
-            item.qty * item.unp * filters.baseamt +
-              (item.qty * item.unp * filters.baseamt) / 10
-          ),
-    dlramt: filters.amtunit == "KRW" ? item.qty / filters.baseamt : 0,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
   };
-  useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-            itemcd: itemcd,
-            itemnm: itemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [itemcd, itemnm]);
 
-  
   const [values2, setValues2] = React.useState<boolean>(false);
   const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
     const changeCheck = () => {
@@ -1223,7 +1283,7 @@ const CopyWindow = ({
                 </td>
               </tr>
               <tr>
-              <th>내수구분</th>
+                <th>내수구분</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
@@ -1399,12 +1459,12 @@ const CopyWindow = ({
             >
               <GridColumn field="rowstatus" title=" " width="50px" />
               <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell2}
-              cell={CheckBoxCell}
-            />
+                field="chk"
+                title=" "
+                width="45px"
+                headerCell={CustomCheckBoxCell2}
+                cell={CheckBoxCell}
+              />
               <GridColumn
                 field="itemcd"
                 title="품목코드"

@@ -889,6 +889,15 @@ const MA_B7201W: React.FC = () => {
                   />
                 )}
               </td>
+              <th>규격</th>
+              <td>
+                <Input
+                  name="insiz"
+                  type="text"
+                  value={filters.insiz}
+                  onChange={filterInputChange}
+                />
+              </td>
             </tr>
             <tr>
             <th>품목코드</th>
@@ -913,15 +922,6 @@ const MA_B7201W: React.FC = () => {
                   name="itemnm"
                   type="text"
                   value={filters.itemnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>규격</th>
-              <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
                   onChange={filterInputChange}
                 />
               </td>

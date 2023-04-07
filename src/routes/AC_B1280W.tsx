@@ -37,6 +37,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
+import CodeWindow from "../components/Windows/CommonWindows/CodeWindow";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -85,11 +86,11 @@ const AC_B1280W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+
   const [accountWindowVisible, setAccountWindowVisible] =
     useState<boolean>(false);
-
-  const [workType, setWorkType] = useState<"N" | "U">("N");
+  const [codeWindowVisible, setCodeWindowVisible] =
+    useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -292,12 +293,12 @@ const AC_B1280W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
   const onAccountWndClick = () => {
     setAccountWindowVisible(true);
+  };
+
+  const onCodeWndClick = () => {
+    setCodeWindowVisible(true);
   };
 
   const onPrintWndClick = () => {
@@ -309,36 +310,29 @@ const AC_B1280W: React.FC = () => {
     }
   };
 
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
   interface IAccountData {
     acntcd: string;
     acntnm: string;
   }
 
-  //업체마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
+  interface ICodeData {
+    stdrmkcd: string;
+    stdrmknm1: string;
+  }
 
   const setAccountData = (data: IAccountData) => {
     setFilters((prev) => ({
       ...prev,
       acntcd: data.acntcd,
       acntnm: data.acntnm,
+    }));
+  };
+
+  const setCodeData = (data: ICodeData) => {
+    setFilters((prev) => ({
+      ...prev,
+      stdrmkcd: data.stdrmkcd,
+      stdrmknm: data.stdrmknm1,
     }));
   };
 
@@ -427,7 +421,7 @@ const AC_B1280W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onCustWndClick}
+                    onClick={onCodeWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -530,17 +524,16 @@ const AC_B1280W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
       {accountWindowVisible && (
         <AccountWindow
           setVisible={setAccountWindowVisible}
           setData={setAccountData}
+        />
+      )}
+      {codeWindowVisible && (
+        <CodeWindow
+          setVisible={setCodeWindowVisible}
+          setData={setCodeData}
         />
       )}
       {previewVisible && (

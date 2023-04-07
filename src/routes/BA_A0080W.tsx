@@ -55,7 +55,7 @@ import {
   dateformat,
   UseParaPc,
   UseGetValueFromSessionItem,
-  getItemQuery
+  getItemQuery,
 } from "../components/CommonFunction";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -261,6 +261,8 @@ const BA_A0080: React.FC = () => {
   //FormContext에서 받아오기위해 state
   const [itemcd, setItemcd] = useState<string>("");
   const [itemnm, setItemnm] = useState<string>("");
+  const [itemcd2, setItemcd2] = useState<string>("");
+  const [itemnm2, setItemnm2] = useState<string>("");
   UsePermissions(setPermissions);
 
   //메시지 조회
@@ -312,7 +314,7 @@ const BA_A0080: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
- 
+
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
@@ -518,7 +520,7 @@ const BA_A0080: React.FC = () => {
   //FormContext에서 데이터 변경시 set && 입력 시 set
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
-    item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         ? {
             ...item,
             itemcd: itemcd,
@@ -536,6 +538,29 @@ const BA_A0080: React.FC = () => {
       };
     });
   }, [itemcd, itemnm]);
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            itemcd: itemcd2,
+            itemnm: itemnm2,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemcd2, itemnm2]);
 
   const getItemData = (itemcd: string) => {
     const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
@@ -569,6 +594,57 @@ const BA_A0080: React.FC = () => {
     }
   }, []);
 
+  const getItemData2 = (itemcd: string, mainDataResult: any) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData2(queryStr, mainDataResult);
+  };
+
+  const fetchData2 = React.useCallback(async (queryStr: string, mainDataResults: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].RowCount;
+      if (rowCount > 0) {
+        setItemcd2(rows[0].itemcd);
+        setItemnm2(rows[0].itemnm);
+      } else {
+        const newData = mainDataResults.map((item: any) =>
+        item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+          ? {
+              ...item,
+              itemcd: item.itemcd,
+              itemnm: "",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (ifSelectFirstRow) {
@@ -655,10 +731,6 @@ const BA_A0080: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-  const onAttachmentsWndClick = () => {
-    setAttachmentsWindowVisible(true);
-  };
-  
   const onCopyWndClick = () => {
     try {
       if (filters.itemacnt != "") {
@@ -669,6 +741,10 @@ const BA_A0080: React.FC = () => {
     } catch (e) {
       alert(e);
     }
+  };
+
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
   };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
@@ -777,55 +853,63 @@ const BA_A0080: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field === "recdt" && dataItem.rowstatus !== "N") {
+    let valid = false;
+
+    if (
+      (field === "recdt" && dataItem.rowstatus !== "N") ||
+      (field === "itemcd" && dataItem.rowstatus !== "N")
+    ) {
+      valid = true;
       return false;
     }
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-    if (field){
-      setEditedField(field);
+    if (valid == false) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
       setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
+      setIfSelectFirstRow(false);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     }
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
   };
 
   const exitEdit = () => {
-    if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
-      mainDataResult.data.map((item) => {
-        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
-          getItemData(item.itemcd)
-        }
-      })
-    }
-    
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
+    if (editedField !== "itemcd") {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setIfSelectFirstRow(false);
 
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      mainDataResult.data.map((item) => {
+        if (editIndex === item.num) {
+          getItemData2(item.itemcd, mainDataResult.data);
+        }
+      });
+    }
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -1119,20 +1203,25 @@ const BA_A0080: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
-    if(jsonArr.length == 0) {
+    if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
     } else {
       let valid = true;
 
       jsonArr.map((item: any) => {
         Object.keys(item).map((items: any) => {
-          if(items != "단가" && items != "비고" && items != "품목명" && items != "품목코드"){
+          if (
+            items != "단가" &&
+            items != "비고" &&
+            items != "품목명" &&
+            items != "품목코드"
+          ) {
             valid = false;
           }
-        })
-      })
+        });
+      });
 
-      if(valid == true){
+      if (valid == true) {
         let dataArr: TdataArr = {
           unpitem: [],
           rowstatus: [],
@@ -1154,14 +1243,20 @@ const BA_A0080: React.FC = () => {
             recdt = "",
             amtunit = "",
           } = item;
-          
+
           dataArr.rowstatus.push("N");
           dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
           dataArr.itemcd.push(품목코드);
           dataArr.unp.push(단가);
-          dataArr.itemacnt.push(itemacnt == "" ? Object.getOwnPropertyNames(selectedsubDataState)[0] : itemacnt);
+          dataArr.itemacnt.push(
+            itemacnt == ""
+              ? Object.getOwnPropertyNames(selectedsubDataState)[0]
+              : itemacnt
+          );
           dataArr.remark.push(비고);
-          dataArr.recdt.push(recdt == "" ? convertDateToStr(new Date()) : recdt);
+          dataArr.recdt.push(
+            recdt == "" ? convertDateToStr(new Date()) : recdt
+          );
           dataArr.amtunit.push(amtunit == "" ? filters.amtunit : amtunit);
         });
         setParaData((prev) => ({
@@ -1181,8 +1276,8 @@ const BA_A0080: React.FC = () => {
           amtunit: dataArr.amtunit.join("|"),
         }));
       } else {
-        alert("양식이 맞지 않습니다.")
-      }    
+        alert("양식이 맞지 않습니다.");
+      }
     }
   };
 

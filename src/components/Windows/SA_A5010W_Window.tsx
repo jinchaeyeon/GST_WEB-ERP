@@ -311,6 +311,8 @@ const CopyWindow = ({
   UseMessages(pathname, setMessagesData);
   const [itemcd, setItemcd] = useState<string>("");
   const [itemnm, setItemnm] = useState<string>("");
+  const [itemcd2, setItemcd2] = useState<string>("");
+  const [itemnm2, setItemnm2] = useState<string>("");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -378,6 +380,30 @@ const CopyWindow = ({
       };
     });
   }, [itemcd, itemnm]);
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            itemcd: itemcd2,
+            itemnm: itemnm2,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemcd2, itemnm2]);
+
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -877,12 +903,10 @@ const CopyWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
-
-      if (field){
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
         setEditedField(field);
-        setEditIndex(dataItem[DATA_ITEM_KEY]);
       }
-
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -926,18 +950,63 @@ const CopyWindow = ({
     }
   }, []);
 
+  const getItemData2 = (itemcd: string, mainDataResult: any) => {
+    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+
+    fetchData2(queryStr, mainDataResult);
+  };
+
+  const fetchData2 = React.useCallback(async (queryStr: string, mainDataResults: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rowCount = data.tables[0].RowCount;
+      if (rowCount > 0) {
+        setItemcd2(rows[0].itemcd);
+        setItemnm2(rows[0].itemnm);
+      } else {
+        const newData = mainDataResults.map((item: any) =>
+        item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+          ? {
+              ...item,
+              itemcd: item.itemcd,
+              itemnm: "",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
+    }
+  }, []);
 
   const exitEdit = () => {
-    if(editedField == "itemcd" && editIndex == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
-      mainDataResult.data.map((item) => {
-        if(item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])){
-          getItemData(item.itemcd)
-        }
-      })
-    }
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      amt:
+    if (editedField !== "itemcd") {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        amt:
         filters.amtunit == "KRW"
           ? item.qty * item.unp
           : item.qty * item.unp * filters.wonchgrat,
@@ -957,15 +1026,23 @@ const CopyWindow = ({
                 (item.qty * item.unp * filters.wonchgrat) / 10
             ),
       dlramt: filters.amtunit == "KRW" ? item.qty / filters.wonchgrat : 0,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+        [EDIT_FIELD]: undefined,
+      }));
+      setIfSelectFirstRow(false);
+
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      mainDataResult.data.map((item) => {
+        if (editIndex === item.num) {
+          getItemData2(item.itemcd, mainDataResult.data);
+        }
+      });
+    }
   };
 
   const onAddClick = () => {
@@ -1375,7 +1452,7 @@ const CopyWindow = ({
                 title="수량"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                // footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="qtyunit"
@@ -1400,35 +1477,35 @@ const CopyWindow = ({
                 title="금액"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                //footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="wonamt"
                 title="원화금액"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                //footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="taxamt"
                 title="세액"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                //footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="unitwgt"
                 title="단량"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                //footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="totwgt"
                 title="총중량"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                //footerCell={gridSumQtyFooterCell}
               />
               <GridColumn field="wgtunit" title="중량단위" width="100px" />
               <GridColumn
@@ -1442,7 +1519,7 @@ const CopyWindow = ({
                 title="합계금액"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                //footerCell={gridSumQtyFooterCell}
               />
               <GridColumn field="remark" title="비고" width="200px" />
             </Grid>

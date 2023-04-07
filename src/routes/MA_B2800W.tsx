@@ -45,6 +45,7 @@ import {
   handleKeyPressSearch,
   dateformat2,
 } from "../components/CommonFunction";
+import MA_B2800W_Window from "../components/Windows/MA_B2800W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -64,22 +65,6 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import CenterCell from "../components/Cells/CenterCell";
 
 const DATA_ITEM_KEY = "num";
-const DETAIL_DATA_ITEM_KEY = "num";
-const dateField = ["indt"];
-const numberField = [
-  "purqty",
-  "amt",
-  "wonamt",
-  "taxamt",
-  "totamt",
-  "qty",
-  "unitwgt",
-  "wgt",
-  "unp",
-  "inqty",
-  "inamt",
-  "cnt",
-];
 
 const CustomLockedCell = (props: GridCellProps) => {
   const field = props.field || "";
@@ -105,7 +90,6 @@ const CustomLockedCell = (props: GridCellProps) => {
 const MA_B2800W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
 
   const pathname: string = window.location.pathname.replace("/", "");
@@ -210,9 +194,6 @@ const MA_B2800W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
 
   const [isInitSearch, setIsInitSearch] = useState(false);
 
@@ -220,23 +201,15 @@ const MA_B2800W: React.FC = () => {
     process([], mainDataState)
   );
 
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
-  );
-
   const [selectedState, setSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [detailselectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [windowVisible, setWindowVisible] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
 
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -333,38 +306,6 @@ const MA_B2800W: React.FC = () => {
     },
   };
 
-  const detailParameters: Iparameters = {
-    procedureName: "P_MA_B2800W_Q",
-    pageNumber: detailPgNum,
-    pageSize: detailFilters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_position": filters.position,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_purdt": filters.purdt,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_finyn": filters.finyn,
-      "@p_inkind": filters.inkind,
-      "@p_purnum": detailFilters.purnum,
-      "@p_purseq": detailFilters.purseq,
-      "@p_chklateyn":
-        filters.chklateyn == true
-          ? "Y"
-          : filters.chklateyn == false
-          ? "N"
-          : filters.chklateyn,
-      "@p_poregnum": filters.poregnum,
-      "@p_project": filters.project,
-      "@p_doexdiv": filters.doexdiv,
-    },
-  };
-
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
@@ -394,30 +335,6 @@ const MA_B2800W: React.FC = () => {
     setLoading(false);
   };
 
-  const fetchDetailGrid = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", detailParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows;
-
-      if (totalRowCnt > 0)
-        setDetailDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt,
-          };
-        });
-    }
-    setLoading(false);
-  };
-
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
@@ -435,13 +352,6 @@ const MA_B2800W: React.FC = () => {
       fetchMainGrid();
     }
   }, [mainPgNum]);
-
-  useEffect(() => {
-    resetDetailGrid();
-    if (customOptionData !== null && mainDataResult.total > 0) {
-      fetchDetailGrid();
-    }
-  }, [detailFilters]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -463,14 +373,7 @@ const MA_B2800W: React.FC = () => {
   const resetAllGrid = () => {
     setIfSelectFirstRow(true);
     setMainPgNum(1);
-    setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
-  };
-
-  const resetDetailGrid = () => {
-    setDetailPgNum(1);
-    setDetailDataResult(process([], detailDataState));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -492,15 +395,6 @@ const MA_B2800W: React.FC = () => {
     }));
   };
 
-  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: detailselectedState,
-      dataItemKey: DETAIL_DATA_ITEM_KEY,
-    });
-    setDetailSelectedState(newSelectedState);
-  };
-
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -516,17 +410,8 @@ const MA_B2800W: React.FC = () => {
     setIfSelectFirstRow(false);
   };
 
-  const onDetailScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
-      setDetailPgNum((prev) => prev + 1);
-  };
-
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
-  };
-
-  const onDetailDataStateChange = (event: GridDataStateChangeEvent) => {
-    setDetailDataState(event.dataState);
   };
 
   //그리드 푸터
@@ -560,30 +445,6 @@ const MA_B2800W: React.FC = () => {
       </td>
     ) : (
       <td></td>
-    );
-  };
-
-  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
-    detailDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-    );
-    var parts = sum.toString().split(".");
-    return parts[0] != "NaN" ? (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    ) : (
-      <td></td>
-    );
-  };
-
-  const detailTotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult.total}건
-      </td>
     );
   };
 
@@ -665,9 +526,6 @@ const MA_B2800W: React.FC = () => {
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  const onDetailSortChange = (e: any) => {
-    setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
 
   const search = () => {
     try {
@@ -687,9 +545,9 @@ const MA_B2800W: React.FC = () => {
         throw findMessage(messagesData, "MA_B2800W_001");
       } else {
         resetAllGrid();
-        if(mainPgNum == 1) {
+        if (mainPgNum == 1) {
           fetchMainGrid();
-        } 
+        }
       }
     } catch (e) {
       alert(e);
@@ -861,6 +719,47 @@ const MA_B2800W: React.FC = () => {
     array.push(<GridColumn field={"remark"} title={"비고"} width="150px" />);
     return array;
   };
+
+  const CommandCell = (props: GridCellProps) => {
+    const field = props.field || "";
+    const navigationAttributes = useTableKeyboardNavigation(props.id);
+
+    const onEditClick = () => {
+      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+      const rowData = props.dataItem;
+      setSelectedState({ [rowData.recnum]: true });
+
+      setDetailFilters((prev) => ({
+        ...prev,
+        purnum: rowData.purnum,
+        purseq: rowData.purseq,
+      }));
+
+      setWindowVisible(true);
+    };
+
+    return (
+      <td
+        style={props.style} // this applies styles that lock the column at a specific position
+        className={props.className} // this adds classes needed for locked columns
+        colSpan={props.colSpan}
+        role={"gridcell"}
+        aria-colindex={props.ariaColumnIndex}
+        aria-selected={props.isSelected}
+        {...{ [GRID_COL_INDEX_ATTRIBUTE]: props.columnIndex }}
+        {...navigationAttributes}
+      >
+        <Button
+          className="k-grid-edit-command"
+          themeColor={"primary"}
+          fillMode="outline"
+          onClick={onEditClick}
+          icon="edit"
+        ></Button>
+      </td>
+    );
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1074,7 +973,7 @@ const MA_B2800W: React.FC = () => {
             <GridTitle>발주대비입고자료</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "36vh" }}
+            style={{ height: "75vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1111,6 +1010,7 @@ const MA_B2800W: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
+            <GridColumn cell={CommandCell} locked={true} width="60px" />
             <GridColumn locked={true} title="자료">
               {createColumn()}
             </GridColumn>
@@ -1120,77 +1020,6 @@ const MA_B2800W: React.FC = () => {
             <GridColumn title="">{createColumn5()}</GridColumn>
           </Grid>
         </ExcelExport>
-      </GridContainer>
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>입고상세자료</GridTitle>
-        </GridTitleContainer>
-        <Grid
-          style={{ height: "34vh" }}
-          data={process(
-            detailDataResult.data.map((row) => ({
-              ...row,
-              doexdiv: doexdivListData.find(
-                (item: any) => item.sub_code === row.doexdiv
-              )?.code_name,
-              itemacnt: itemacntListData.find(
-                (item: any) => item.sub_code === row.itemacnt
-              )?.code_name,
-              qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
-              )?.code_name,
-              [SELECTED_FIELD]: detailselectedState[detailIdGetter(row)],
-            })),
-            detailDataState
-          )}
-          {...detailDataState}
-          onDataStateChange={onDetailDataStateChange}
-          //스크롤 조회 기능
-          dataItemKey={DETAIL_DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
-          }}
-          onSelectionChange={onDetailSelectionChange}
-          fixedScroll={true}
-          total={detailDataResult.total}
-          onScroll={onDetailScrollHandler}
-          //정렬기능
-          sortable={true}
-          onSortChange={onDetailSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-        >
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={item.width}
-                    cell={
-                      numberField.includes(item.fieldName)
-                        ? NumberCell
-                        : dateField.includes(item.fieldName)
-                        ? DateCell
-                        : undefined
-                    }
-                    footerCell={
-                      item.sortOrder === 0
-                        ? detailTotalFooterCell
-                        // : numberField.includes(item.fieldName)
-                        // ? gridSumQtyFooterCell2
-                        : undefined
-                    }
-                  />
-                )
-            )}
-        </Grid>
       </GridContainer>
       {custWindowVisible && (
         <CustomersWindow
@@ -1205,6 +1034,9 @@ const MA_B2800W: React.FC = () => {
           workType={"FILTER"}
           setData={setItemData}
         />
+      )}
+      {windowVisible && (
+        <MA_B2800W_Window setVisible={setWindowVisible} para={detailFilters} />
       )}
       {gridList.map((grid: any) =>
         grid.columns.map((column: any) => (
