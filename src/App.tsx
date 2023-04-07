@@ -11,6 +11,7 @@ import AC_B1100W from "./routes/AC_B1100W";
 import AC_B1280W from "./routes/AC_B1280W";
 import AC_B1300W from "./routes/AC_B1300W";
 import AC_B5000W from "./routes/AC_B5000W";
+import AC_B5080W from "./routes/AC_B5080W";
 import AC_B8030W from "./routes/AC_B8030W";
 import BA_A0020W from "./routes/BA_A0020W";
 import BA_A0040W from "./routes/BA_A0040W";
@@ -382,6 +383,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/AC_B1280W" component={AC_B1280W} exact />
                 <AuthRoute path="/AC_B1300W" component={AC_B1300W} exact />  
                 <AuthRoute path="/AC_B5000W" component={AC_B5000W} exact />  
+                <AuthRoute path="/AC_B5080W" component={AC_B5080W} exact />
                 <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact /> 
                 {/* 목형관리 */}
                 <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact /> 
