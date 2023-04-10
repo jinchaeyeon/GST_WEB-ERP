@@ -362,7 +362,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -879,7 +879,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="수주수량"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="cqty"
@@ -892,14 +892,14 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="판매수량"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="janqty"
               title="잔량"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="qtyunit" title="단위" width="120px" />
             <GridColumn
@@ -925,14 +925,14 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="공급가액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="lotnum" title="LOT NO" width="200px" />
             <GridColumn field="rcvcustnm" title="인수처명" width="200px" />
@@ -1009,7 +1009,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="처리량"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
               className="required"
             />
             <GridColumn field="qtyunit" title="수량단위" width="120px" />
@@ -1036,7 +1036,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="발주금액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="unp"
@@ -1049,14 +1049,14 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="공급가액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="lotnum" title="LOT NO" width="200px" />
             <GridColumn field="remark" title="비고" width="120px" />

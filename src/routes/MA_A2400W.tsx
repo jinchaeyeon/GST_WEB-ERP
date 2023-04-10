@@ -79,7 +79,13 @@ const numberField = [
   "wgt",
   "unp",
 ];
-
+const numberField2= [
+  "purqty",
+  "amt",
+  "wonamt",
+  "taxamt",
+  "totamt",
+];
 type TdataArr = {
   rowstatus_s: string[];
   purseq_s: string[];
@@ -471,7 +477,7 @@ const MA_A2400W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+ 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -1489,8 +1495,8 @@ const MA_A2400W: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          // : numberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -1562,8 +1568,8 @@ const MA_A2400W: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? detailTotalFooterCell
-                          // : numberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell2
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
                           : undefined
                       }
                     />

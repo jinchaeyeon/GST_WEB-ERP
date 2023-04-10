@@ -976,56 +976,54 @@ const CopyWindow = ({
               title="발주량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="inqty"
               title="입고량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="janqty"
               title="잔량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="doqty"
               title="처리량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="unp"
               title="단가"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="amt"
               title="금액"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="wonamt"
               title="원화금액"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="remark" title="비고" width="200px" />
             <GridColumn field="finyn" title="완료여부" width="100px" />

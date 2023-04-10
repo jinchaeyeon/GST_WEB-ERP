@@ -59,6 +59,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 const dateField = ["purdt"];
 const DATA_ITEM_KEY = "purno";
 const numberField = ["qty", "unp", "amt", "taxamt", "totamt","inqty"];
+const numberField2 = ["qty", "amt", "taxamt", "totamt","inqty"];
 const checkboxField = ["finyn"];
 
 const MA_B2000W: React.FC = () => {
@@ -735,8 +736,8 @@ const MA_B2000W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            // : numberField.includes(item.fieldName)
-                            // ? gridSumQtyFooterCell2
+                            : numberField2.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
                             : undefined
                         }
                         locked={item.fixed === "None" ? false : true}

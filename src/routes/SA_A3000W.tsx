@@ -67,6 +67,7 @@ const DATA_ITEM_KEY = "num";
 
 const dateField = ["reqdt"];
 const numberField = ["jisiqty", "outqty", "qty", "len"];
+const numberField2 = ["jisiqty", "outqty"];
 const checkField = ["finyn"];
 
 type TdataArr = {
@@ -1485,8 +1486,8 @@ const SA_A2300: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          // : numberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -1555,8 +1556,8 @@ const SA_A2300: React.FC = () => {
                     footerCell={
                       item.sortOrder === 0
                         ? detailTotalFooterCell
-                        // : numberField.includes(item.fieldName)
-                        // ? gridSumQtyFooterCell2
+                        : numberField2.includes(item.fieldName)
+                        ? gridSumQtyFooterCell2
                         : undefined
                     }
                   />

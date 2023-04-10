@@ -417,22 +417,6 @@ const CopyWindow = ({
     }
   }, []);
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
-    mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-    );
-    var parts = sum.toString().split(".");
-    return parts[0] != "NaN" ? (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    ) : (
-      <td></td>
-    );
-  };
-
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
@@ -1181,7 +1165,7 @@ const CopyWindow = ({
               field="qc_base"
               title="측정기준값"
               width="100px"
-              footerCell={gridSumQtyFooterCell}
+              // footerCell={gridSumQtyFooterCell}
               cell={NumberCell}
             />
             <GridColumn
@@ -1189,28 +1173,24 @@ const CopyWindow = ({
               title="범위계산1"
               width="100px"
               cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="qc_scope2"
               title="범위계산2"
               width="100px"
               cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="qc_min"
               title="하한값"
               width="100px"
               cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="qc_max"
               title="상한값"
               width="100px"
               cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="qc_spec" title="측정기준명" width="150px" />
             <GridColumn field="qc_unit" title="측정단위" width="150px" />

@@ -1736,9 +1736,9 @@ const QC_A3000: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            : // : numberField.includes(item.fieldName)
-                              // ? gridSumQtyFooterCell
-                              undefined
+                            : numberField.includes(item.fieldName)
+                              ? gridSumQtyFooterCell
+                              : undefined
                         }
                       />
                     )

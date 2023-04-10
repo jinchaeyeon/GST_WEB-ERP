@@ -68,6 +68,15 @@ const numberField = [
   "inamt",
   "cnt",
 ];
+const numberField2 = [
+  "amt",
+  "wonamt",
+  "taxamt",
+  "totamt",
+  "qty",
+  "inqty",
+  "inamt",
+];
 const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -392,9 +401,9 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
                     footerCell={
                       item.sortOrder === 0
                         ? mainTotalFooterCell
-                        : // : numberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell2
-                          undefined
+                        : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
+                          : undefined
                     }
                   />
                 )

@@ -1463,7 +1463,7 @@ const QC_A2000: React.FC = () => {
         field={"qty"}
         title={"발주량"}
         width="100px"
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
         cell={NumberCell}
       />
     );
@@ -1472,7 +1472,7 @@ const QC_A2000: React.FC = () => {
         field={"inqty"}
         title={"입고수량"}
         width="100px"
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
         cell={NumberCell}
       />
     );
@@ -1481,7 +1481,7 @@ const QC_A2000: React.FC = () => {
         field={"qcqty"}
         title={"검사수량"}
         width="100px"
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
         cell={NumberCell}
       />
     );
@@ -1490,7 +1490,7 @@ const QC_A2000: React.FC = () => {
         field={"janqty"}
         title={"잔여량"}
         width="100px"
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
         cell={NumberCell}
       />
     );
@@ -2122,8 +2122,8 @@ const QC_A2000: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? detailTotalFooterCell
-                              // : numberField.includes(item.fieldName)
-                              // ? gridSumQtyFooterCell2
+                              : numberField.includes(item.fieldName)
+                              ? gridSumQtyFooterCell2
                               : undefined
                           }
                         />
@@ -2215,8 +2215,8 @@ const QC_A2000: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? detailTotalFooterCell
-                              // : numberField.includes(item.fieldName)
-                              // ? gridSumQtyFooterCell3
+                              : numberField.includes(item.fieldName)
+                              ? gridSumQtyFooterCell3
                               : undefined
                           }
                         />

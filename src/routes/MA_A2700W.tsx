@@ -76,6 +76,13 @@ const NumberField = [
   "itemthick",
   "width",
 ];
+
+const NumberField2 = [
+  "qty",
+  "wonamt",
+  "taxamt",
+  "totamt",
+];
 type TdataArr = {
   rowstatus_s: string[];
   itemgrade_s: string[];
@@ -2013,8 +2020,8 @@ const MA_A2700W: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          // : NumberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell
+                          : NumberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -2099,8 +2106,8 @@ const MA_A2700W: React.FC = () => {
                     footerCell={
                       item.sortOrder === 1
                         ? detailTotalFooterCell
-                        // : NumberField.includes(item.fieldName)
-                        // ? gridSumQtyFooterCell2
+                        : NumberField2.includes(item.fieldName)
+                        ? gridSumQtyFooterCell2
                         : undefined
                     }
                   />

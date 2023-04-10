@@ -79,7 +79,16 @@ const numberField = [
   "inamt",
   "cnt",
 ];
-
+const numberField2 = [
+  "purqty",
+  "amt",
+  "wonamt",
+  "taxamt",
+  "totamt",
+  "qty",
+  "inqty",
+  "inamt",
+];
 type TdataArr = {
   rowstatus_s: string[];
   purseq_s: string[];
@@ -1504,8 +1513,8 @@ const MA_A2000W: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          // : numberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -1578,8 +1587,8 @@ const MA_A2000W: React.FC = () => {
                     footerCell={
                       item.sortOrder === 0
                         ? detailTotalFooterCell
-                        // : numberField.includes(item.fieldName)
-                        // ? gridSumQtyFooterCell2
+                        : numberField2.includes(item.fieldName)
+                        ? gridSumQtyFooterCell2
                         : undefined
                     }
                   />

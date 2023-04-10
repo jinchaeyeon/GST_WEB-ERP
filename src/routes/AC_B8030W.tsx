@@ -494,9 +494,9 @@ const AC_B8030W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            : // : numberField.includes(item.fieldName)
-                              // ? gridSumQtyFooterCell2
-                              undefined
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
+                            : undefined
                         }
                       ></GridColumn>
                     )

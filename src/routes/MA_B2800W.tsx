@@ -613,7 +613,7 @@ const MA_B2800W: React.FC = () => {
         title={"수량"}
         width="100px"
         cell={NumberCell}
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(
@@ -622,7 +622,6 @@ const MA_B2800W: React.FC = () => {
         title={"단가"}
         width="100px"
         cell={NumberCell}
-        // footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(
@@ -631,7 +630,7 @@ const MA_B2800W: React.FC = () => {
         title={"원화금액"}
         width="100px"
         cell={NumberCell}
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(<GridColumn field={"amtunit"} title={"화폐"} width="150px" />);
@@ -662,7 +661,7 @@ const MA_B2800W: React.FC = () => {
         title={"수량"}
         width="100px"
         cell={NumberCell}
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(
@@ -671,7 +670,7 @@ const MA_B2800W: React.FC = () => {
         title={"원화금액"}
         width="100px"
         cell={NumberCell}
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(<GridColumn field={"amtunit"} title={"화폐"} width="150px" />);
@@ -687,7 +686,7 @@ const MA_B2800W: React.FC = () => {
         title={"수량"}
         width="100px"
         cell={NumberCell}
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     array.push(
@@ -696,7 +695,7 @@ const MA_B2800W: React.FC = () => {
         title={"원화금액"}
         width="100px"
         cell={NumberCell}
-        // footerCell={gridSumQtyFooterCell}
+        footerCell={gridSumQtyFooterCell}
       />
     );
     return array;

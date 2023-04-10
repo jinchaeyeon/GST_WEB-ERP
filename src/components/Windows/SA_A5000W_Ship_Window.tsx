@@ -855,14 +855,14 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="판매수량"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="janqty"
               title="잔량"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="doqty"
@@ -882,28 +882,28 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="금액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="wonamt"
               title="원화금액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="totamt"
               title="합계금액"
               width="120px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="remark" title="비고" width="300px" />
             <GridColumn

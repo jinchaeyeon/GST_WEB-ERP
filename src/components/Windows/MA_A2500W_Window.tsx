@@ -986,7 +986,6 @@ const CopyWindow = ({
               title="수량"
               width="100px"
               cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="qtyunit"
@@ -999,7 +998,6 @@ const CopyWindow = ({
               title="중량"
               width="100px"
               cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="wgtunit" title="중량단위" width="100px" />
             <GridColumn

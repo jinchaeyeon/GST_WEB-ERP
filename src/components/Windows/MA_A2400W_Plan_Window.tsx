@@ -447,7 +447,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -493,7 +493,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-
+   
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -1133,7 +1133,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                 title="처리량"
                 width="120px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
               />
               <GridColumn field="remark" title="비고" width="300px" />
             </Grid>

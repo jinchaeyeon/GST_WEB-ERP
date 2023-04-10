@@ -57,7 +57,7 @@ import { gridList } from "../store/columns/MA_B2100W_C";
 const dateField = ["indt"];
 const DATA_ITEM_KEY = "reckey";
 const numberField = ["qty", "unp", "amt", "wonamt", "taxamt", "totamt"];
-
+const numberField2 =["qty", "amt", "wonamt", "taxamt", "totamt"];
 const MA_B2100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -814,8 +814,8 @@ const MA_B2100W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            // : numberField.includes(item.fieldName)
-                            // ? gridSumQtyFooterCell2
+                            : numberField2.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
                             : undefined
                         }
                         locked={item.fixed === "None" ? false : true}

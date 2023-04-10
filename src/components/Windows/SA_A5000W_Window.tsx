@@ -440,6 +440,7 @@ const CopyWindow = ({
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
+ 
     var parts = sum.toString().split(".");
     return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
@@ -1140,7 +1141,7 @@ const CopyWindow = ({
               title="수량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="qtyunit"
@@ -1165,28 +1166,28 @@ const CopyWindow = ({
               title="금액"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="wonamt"
               title="원화금액"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="totamt"
               title="합계금액"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="dlramt"
@@ -1199,14 +1200,12 @@ const CopyWindow = ({
               title="단량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="totwgt"
               title="총중량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="wgtunit" title="중량단위" width="100px" />
             <GridColumn field="remark" title="비고" width="300px" />

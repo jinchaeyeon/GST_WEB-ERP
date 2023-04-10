@@ -1116,14 +1116,12 @@ const CopyWindow = ({
                 title="단량"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="totwgt"
                 title="총중량"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="wgtunit"

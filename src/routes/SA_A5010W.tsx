@@ -80,6 +80,11 @@ const numberField = [
   "unp",
   "totwgt",
 ];
+const numberField2 =[  "qty",
+"amt",
+"wonamt",
+"taxamt",
+"totamt",]
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -468,7 +473,7 @@ const SA_A5010W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -1586,8 +1591,8 @@ const SA_A5010W: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          // : numberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -1658,8 +1663,8 @@ const SA_A5010W: React.FC = () => {
                     footerCell={
                       item.sortOrder === 0
                         ? detailTotalFooterCell
-                        // : numberField.includes(item.fieldName)
-                        // ? gridSumQtyFooterCell2
+                        : numberField2.includes(item.fieldName)
+                        ? gridSumQtyFooterCell2
                         : undefined
                     }
                   />

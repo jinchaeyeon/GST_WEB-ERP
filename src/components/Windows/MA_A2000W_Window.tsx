@@ -1515,7 +1515,6 @@ const CopyWindow = ({
                 title="발주량"
                 width="100px"
                 cell={NumberCell}
-                // footerCell={gridSumQtyFooterCell}
                 headerCell={RequiredHeader}
               />
               <GridColumn
@@ -1541,28 +1540,28 @@ const CopyWindow = ({
                 title="금액"
                 width="100px"
                 cell={NumberCell}
-                // footerCell={gridSumQtyFooterCell}
+                footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="wonamt"
                 title="원화금액"
                 width="100px"
                 cell={NumberCell}
-                // footerCell={gridSumQtyFooterCell}
+                footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="taxamt"
                 title="세액"
                 width="100px"
                 cell={NumberCell}
-                // footerCell={gridSumQtyFooterCell}
+                footerCell={gridSumQtyFooterCell}
               />
               <GridColumn
                 field="totamt"
                 title="합계금액"
                 width="100px"
                 cell={NumberCell}
-                // footerCell={gridSumQtyFooterCell}
+                footerCell={gridSumQtyFooterCell}
               />
               <GridColumn field="remark" title="비고" width="280px" />
               <GridColumn

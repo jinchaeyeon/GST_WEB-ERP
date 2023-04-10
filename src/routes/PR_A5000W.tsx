@@ -77,6 +77,15 @@ const numberField = [
   "unp",
   "prntqty",
 ];
+
+const numberField2 = [
+  "inqty",
+  "amt",
+  "wonamt",
+  "taxamt",
+  "totamt",
+  "prntqty",
+];
 type TdataArr = {
   rekey_s: string[];
   recdt_s: string[];
@@ -1018,8 +1027,8 @@ const PR_A5000W: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          // : numberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -1147,8 +1156,8 @@ const PR_A5000W: React.FC = () => {
                     footerCell={
                       item.sortOrder === 0
                         ? detailTotalFooterCell
-                        // : numberField.includes(item.fieldName)
-                        // ? gridSumQtyFooterCell2
+                        : numberField2.includes(item.fieldName)
+                        ? gridSumQtyFooterCell2
                         : undefined
                     }
                   />

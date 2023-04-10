@@ -492,7 +492,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -525,7 +525,7 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -854,22 +854,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-    );
-    var parts = sum.toString().split(".");
-    return parts[0] != "NaN" ? (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    ) : (
-      <td></td>
-    );
-  };
-
-  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
-    detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
     var parts = sum.toString().split(".");
@@ -1316,7 +1300,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
               title="불량수량"
               width="120px"
               cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="janqty"
@@ -1385,7 +1368,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                 title="단위수량"
                 width="130px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell2}
               />
             </Grid>
           </GridContainer>
@@ -1479,7 +1461,6 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
                 field="doqty"
                 title="처리량"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell3}
                 width="100px"
               />
             </Grid>

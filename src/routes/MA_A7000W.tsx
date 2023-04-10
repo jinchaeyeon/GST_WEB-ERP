@@ -145,6 +145,7 @@ type TdataArr = {
 
 const DATA_ITEM_KEY = "num";
 const numberField = ["qty", "wgt", "len", "wonamt", "taxamt", "totamt"];
+const numberField2 = ["qty", "wonamt", "taxamt", "totamt"];
 const requiredfield = ["itemcd", "itemacnt", "lotnum", "qty"];
 const customField = ["qtyunit", "load_place"];
 const itemcdField = ["itemcd"];
@@ -1800,9 +1801,9 @@ const MA_A7000W: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? mainTotalFooterCell
-                              : // : numberField.includes(item.fieldName)
-                                // ? gridSumQtyFooterCell
-                                undefined
+                                : numberField2.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
+                                : undefined
                           }
                         ></GridColumn>
                       )

@@ -646,8 +646,8 @@ const MA_B3100: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? gridTotalFooterCell
-                                // : numberField.includes(item.fieldName)
-                                // ? gridSumQtyFooterCell
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
                                 : undefined
                             }
                           />
@@ -724,8 +724,8 @@ const MA_B3100: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? gridTotalFooterCell
-                                // : numberField.includes(item.fieldName)
-                                // ? gridSumQtyFooterCell
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
                                 : undefined
                             }
                           />
@@ -864,25 +864,25 @@ const MA_B3100: React.FC = () => {
                               title={"1/4분기"}
                               cell={NumberCell}
                               field={item.caption === "전기" ? "jm1" : "dm1"}
-                              // footerCell={gridSumQtyFooterCell}
+                              footerCell={gridSumQtyFooterCell}
                             />
                             <GridColumn
                               title={"2/4분기"}
                               cell={NumberCell}
                               field={item.caption === "전기" ? "jm2" : "dm2"}
-                              // footerCell={gridSumQtyFooterCell}
+                              footerCell={gridSumQtyFooterCell}
                             />
                             <GridColumn
                               title={"3/4분기"}
                               cell={NumberCell}
                               field={item.caption === "전기" ? "jm3" : "dm3"}
-                              // footerCell={gridSumQtyFooterCell}
+                              footerCell={gridSumQtyFooterCell}
                             />
                             <GridColumn
                               title={"4/4분기"}
                               cell={NumberCell}
                               field={item.caption === "전기" ? "jm4" : "dm4"}
-                              // footerCell={gridSumQtyFooterCell}
+                              footerCell={gridSumQtyFooterCell}
                             />
                             <GridColumn
                               title={"합계"}
@@ -890,7 +890,7 @@ const MA_B3100: React.FC = () => {
                               field={
                                 item.caption === "전기" ? "jtotal" : "dtotal"
                               }
-                              // footerCell={gridSumQtyFooterCell}
+                              footerCell={gridSumQtyFooterCell}
                             />
                           </GridColumn>
                         ) : (
@@ -901,8 +901,8 @@ const MA_B3100: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? gridTotalFooterCell
-                                // : numberField.includes(item.fieldName)
-                                // ? gridSumQtyFooterCell
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
                                 : undefined
                             }
                           />

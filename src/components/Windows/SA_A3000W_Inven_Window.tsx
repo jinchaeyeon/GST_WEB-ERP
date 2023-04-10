@@ -1100,21 +1100,21 @@ const CopyWindow = ({
               title="수주량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="reqqty"
               title="지시량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="doqty"
               title="잔량"
               width="100px"
               cell={NumberCell}
-              // footerCell={gridSumQtyFooterCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="qtyunit" title="단위" width="100px" />
             <GridColumn field="remark" title="비고" width="250px" />

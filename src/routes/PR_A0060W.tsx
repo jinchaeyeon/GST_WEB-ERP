@@ -2014,8 +2014,8 @@ const PR_A0060: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          // : NumberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell
+                          : NumberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -2428,8 +2428,6 @@ const PR_A0060: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? subTotalFooterCell
-                            // : NumberField.includes(item.fieldName)
-                            // ? gridSumQtyFooterCell
                             : undefined
                         }
                       />

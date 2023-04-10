@@ -280,7 +280,7 @@ const AC_B1100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -661,9 +661,9 @@ const AC_B1100W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            : // : numberField.includes(item.fieldName)
-                              // ? gridSumQtyFooterCell2
-                              undefined
+                              : numberField.includes(item.fieldName)
+                              ? gridSumQtyFooterCell2
+                              : undefined
                         }
                       ></GridColumn>
                     )

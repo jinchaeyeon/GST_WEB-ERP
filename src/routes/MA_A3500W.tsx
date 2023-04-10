@@ -89,6 +89,12 @@ const numberField = [
   "now_qty",
   "doqty",
 ];
+const numberField2 = [
+  "amt",
+  "wonamt",
+  "taxamt",
+  "totamt",
+];
 const requiredField = ["doqty"];
 type TdataArr = {
   rowstatus_s: string[];
@@ -663,7 +669,7 @@ const MA_A2400W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -2364,8 +2370,8 @@ const MA_A2400W: React.FC = () => {
                       footerCell={
                         item.sortOrder === 0
                           ? mainTotalFooterCell
-                          // : numberField.includes(item.fieldName)
-                          // ? gridSumQtyFooterCell
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
                           : undefined
                       }
                     />
@@ -2513,8 +2519,8 @@ const MA_A2400W: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? subTotalFooterCell
-                                // : numberField.includes(item.fieldName)
-                                // ? gridSumQtyFooterCell2
+                                : numberField2.includes(item.fieldName)
+                                ? gridSumQtyFooterCell2
                                 : undefined
                             }
                             headerCell={
@@ -2761,8 +2767,8 @@ const MA_A2400W: React.FC = () => {
                                 footerCell={
                                   item.sortOrder === 0
                                     ? BOMTotalFooterCell2
-                                    // : numberField.includes(item.fieldName)
-                                    // ? gridSumQtyFooterCell3
+                                    : numberField2.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell3
                                     : undefined
                                 }
                                 headerCell={
