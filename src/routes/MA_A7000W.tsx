@@ -6,7 +6,6 @@ import React, {
   useContext,
   createContext,
 } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -148,6 +147,22 @@ const numberField = ["qty", "wgt", "len", "wonamt", "taxamt", "totamt"];
 const requiredfield = ["itemcd", "itemacnt", "lotnum", "qty"];
 const customField = ["qtyunit", "load_place"];
 const itemcdField = ["itemcd"];
+type TItemInfo = {
+  itemcd: string;
+  itemnm: string;
+  itemacnt: string;
+  insiz: string;
+  bnatur: string;
+  spec: string;
+};
+const defaultItemInfo = {
+  itemcd: "",
+  itemnm: "",
+  itemacnt: "",
+  insiz: "",
+  bnatur: "",
+  spec: "",
+};
 let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -174,20 +189,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 export const FormContext = createContext<{
-  itemcd: string;
-  itemnm: string;
-  itemacnt: string;
-  insiz: string;
-  bnatur: string;
-  spec: string;
-  setItemcd: (d: any) => void;
-  setItemnm: (d: any) => void;
-  setItemacnt: (d: any) => void;
-  setInsiz: (d: any) => void;
-  setBnatur: (d: any) => void;
-  setSpec: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
+  itemInfo: TItemInfo;
+  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
 }>({} as any);
 
 const ColumnCommandCell = (props: GridCellProps) => {
@@ -200,22 +203,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const {
-    itemcd,
-    itemnm,
-    itemacnt,
-    insiz,
-    bnatur,
-    spec,
-    setItemcd,
-    setItemnm,
-    setInsiz,
-    setItemacnt,
-    setBnatur,
-    setSpec,
-    mainDataState,
-    setMainDataState,
-  } = useContext(FormContext);
+  const { setItemInfo } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -240,13 +228,9 @@ const ColumnCommandCell = (props: GridCellProps) => {
     }
   };
 
-  const setItemData2 = (data: IItemData) => {
-    setItemcd(data.itemcd);
-    setItemnm(data.itemnm);
-    setInsiz(data.insiz);
-    setItemacnt(data.itemacnt);
-    setBnatur(data.bnatur);
-    setSpec(data.spec);
+  const setItemData = (data: IItemData) => {
+    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
+    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
   };
 
   const defaultRendering = (
@@ -280,8 +264,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {itemWindowVisible2 && (
         <ItemsWindow
           setVisible={setItemWindowVisible2}
-          workType={"FILTER"}
-          setData={setItemData2}
+          workType={"ROW_ADD"}
+          setData={setItemData}
         />
       )}
     </>
@@ -303,18 +287,8 @@ const MA_A7000W: React.FC = () => {
   UsePermissions(setPermissions);
 
   //FormContext 데이터 state
-  const [itemcd, setItemcd] = useState<string>("");
-  const [itemnm, setItemnm] = useState<string>("");
-  const [itemcd2, setItemcd2] = useState<string>("");
-  const [itemnm2, setItemnm2] = useState<string>("");
-  const [itemacnt, setItemacnt] = useState<string>("");
-  const [insiz, setInsiz] = useState<string>("");
-  const [bnatur, setBnatur] = useState<string>("");
-  const [spec, setSpec] = useState<string>("");
-  const [itemacnt2, setItemacnt2] = useState<string>("");
-  const [insiz2, setInsiz2] = useState<string>("");
-  const [bnatur2, setBnatur2] = useState<string>("");
-  const [spec2, setSpec2] = useState<string>("");
+  const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -369,43 +343,17 @@ const MA_A7000W: React.FC = () => {
     }
   }, [bizComponentData]);
 
-  //데이터 변환 시 set
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
       item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         ? {
             ...item,
-            itemcd: itemcd,
-            itemnm: itemnm,
-            itemacnt: itemacnt,
-            insiz: insiz,
-            bnatur: bnatur,
-            spec: spec,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [itemcd, itemacnt, insiz, bnatur, spec]);
-
-  useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemcd2,
-            itemnm: itemnm2,
-            itemacnt: itemacnt2,
-            insiz: insiz2,
-            bnatur: bnatur2,
-            spec: spec2,
+            itemcd: itemInfo.itemcd,
+            itemnm: itemInfo.itemnm,
+            itemacnt: itemInfo.itemacnt,
+            insiz: itemInfo.insiz,
+            bnatur: itemInfo.bnatur,
+            spec: itemInfo.spec,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
@@ -420,7 +368,7 @@ const MA_A7000W: React.FC = () => {
         total: prev.total,
       };
     });
-  }, [itemcd2, itemnm2, itemacnt2, insiz2, bnatur2, spec2]);
+  }, [itemInfo]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -444,52 +392,27 @@ const MA_A7000W: React.FC = () => {
     }
   }, []);
 
-  const getItemData = (itemcd: string) => {
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
 
-    fetchData(queryStr);
-  };
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
 
-  const fetchData = React.useCallback(async (queryStr: string) => {
-    let data: any;
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
 
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-      if (rowCount > 0) {
-        setItemcd(rows[0].itemcd);
-        setItemnm(rows[0].itemnm);
-        setInsiz(rows[0].insiz);
-        setItemacnt(rows[0].itemacnt);
-        setBnatur(rows[0].bnatur);
-        setSpec(rows[0].spec);
-      }
-    }
-  }, []);
-
-  const getItemData2 = (itemcd: string, mainDataResult: any) => {
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData2(queryStr, mainDataResult);
-  };
-
-  const fetchData2 = React.useCallback(
-    async (queryStr: string, mainDataResults: any) => {
+  const fetchItemData = React.useCallback(
+    async (itemcd: string) => {
       let data: any;
-
+      const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
       const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -507,14 +430,10 @@ const MA_A7000W: React.FC = () => {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
         if (rowCount > 0) {
-          setItemcd2(rows[0].itemcd);
-          setItemnm2(rows[0].itemnm);
-          setInsiz2(rows[0].insiz);
-          setItemacnt2(rows[0].itemacnt);
-          setBnatur2(rows[0].bnatur);
-          setSpec2(rows[0].spec);
+          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
+          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
         } else {
-          const newData = mainDataResults.map((item: any) =>
+          const newData = mainDataResult.data.map((item: any) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
               ? {
                   ...item,
@@ -540,25 +459,8 @@ const MA_A7000W: React.FC = () => {
         }
       }
     },
-    []
+    [mainDataResult]
   );
-
-  const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
-  });
-
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
-  );
-
-  const [selectedState, setSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-  const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -991,7 +893,7 @@ const MA_A7000W: React.FC = () => {
     } else {
       mainDataResult.data.map((item) => {
         if (editIndex === item.num) {
-          getItemData2(item.itemcd, mainDataResult.data);
+          fetchItemData(item.itemcd);
         }
       });
     }
@@ -1510,16 +1412,16 @@ const MA_A7000W: React.FC = () => {
     }
   };
 
-  const [values2, setValues2] = React.useState<boolean>(false);
+  const [values, setValues] = React.useState<boolean>(false);
 
-  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+  const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        chk: !values2,
+        chk: !values,
         [EDIT_FIELD]: props.field,
       }));
-      setValues2(!values2);
+      setValues(!values);
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -1530,7 +1432,7 @@ const MA_A7000W: React.FC = () => {
 
     return (
       <div style={{ textAlign: "center" }}>
-        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+        <Checkbox value={values} onClick={changeCheck}></Checkbox>
       </div>
     );
   };
@@ -1555,17 +1457,15 @@ const MA_A7000W: React.FC = () => {
             <tr>
               <th>연월</th>
               <td>
-                <td>
-                  <DatePicker
-                    name="yyyymm"
-                    value={filters.yyyymm}
-                    format="yyyy"
-                    onChange={filterInputChange}
-                    calendar={YearCalendar}
-                    className="required"
-                    placeholder=""
-                  />
-                </td>
+                <DatePicker
+                  name="yyyymm"
+                  value={filters.yyyymm}
+                  format="yyyy"
+                  onChange={filterInputChange}
+                  calendar={YearCalendar}
+                  className="required"
+                  placeholder=""
+                />
               </td>
               <th>품목코드</th>
               <td>
@@ -1652,21 +1552,8 @@ const MA_A7000W: React.FC = () => {
       </FilterBoxWrap>
       <FormContext.Provider
         value={{
-          itemcd,
-          itemnm,
-          itemacnt,
-          insiz,
-          bnatur,
-          spec,
-          setItemcd,
-          setItemnm,
-          setItemacnt,
-          setInsiz,
-          setBnatur,
-          setSpec,
-          mainDataState,
-          setMainDataState,
-          // fetchGrid,
+          itemInfo,
+          setItemInfo,
         }}
       >
         <GridContainer>
@@ -1769,7 +1656,7 @@ const MA_A7000W: React.FC = () => {
                 field="chk"
                 title=" "
                 width="45px"
-                headerCell={CustomCheckBoxCell2}
+                headerCell={CustomCheckBoxCell}
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&
