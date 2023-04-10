@@ -405,7 +405,7 @@ const AC_B5080W: React.FC = () => {
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
+        setMainDataResult2((prev) => {
           return {
             data: [...prev.data, ...rows],
             total: totalRowCnt,
@@ -1453,7 +1453,7 @@ const AC_B5080W: React.FC = () => {
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = "";
-    rowsOfDataResult(mainDataResult2).forEach((item) =>
+    mainDataResult2.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
 
@@ -1682,7 +1682,7 @@ const AC_B5080W: React.FC = () => {
             <Grid
               style={{ height: "73vh" }}
               data={process(
-                mainDataResult.data.map((row) => ({
+                mainDataResult2.data.map((row) => ({
                   ...row,
                   taxtype: taxtypeListData.find(
                     (item: any) => item.sub_code === row.taxtype
