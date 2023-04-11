@@ -133,14 +133,26 @@ type Idata = {
 let deletedMainRows: object[] = [];
 
 export const FormContext = createContext<{
+  itemInfo: TItemInfo;
+  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
+}>({} as any);
+
+type TItemInfo = {
   itemcd: string;
   itemnm: string;
-  setItemcd: (d: any) => void;
-  setItemnm: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
-  // fetchGrid: (n: number) => any;
-}>({} as any);
+  itemacnt: string;
+  insiz: string;
+  bnatur: string;
+  spec: string;
+};
+const defaultItemInfo = {
+  itemcd: "",
+  itemnm: "",
+  itemacnt: "",
+  insiz: "",
+  bnatur: "",
+  spec: "",
+};
 
 interface IItemData {
   itemcd: string;
@@ -190,14 +202,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const {
-    itemcd,
-    itemnm,
-    setItemcd,
-    setItemnm,
-    mainDataState,
-    setMainDataState,
-  } = useContext(FormContext);
+  const { setItemInfo } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -221,8 +226,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
     }
   };
   const setItemData2 = (data: IItemData) => {
-      setItemcd(data.itemcd);
-      setItemnm(data.itemnm);
+    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
+    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
   };
   const defaultRendering = (
     <td
@@ -255,7 +260,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {itemWindowVisible2 && (
         <ItemsWindow
           setVisible={setItemWindowVisible2}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setItemData2}
         />
       )}
@@ -295,10 +300,7 @@ const CopyWindow = ({
     width: 1600,
     height: 900,
   });
-  const [itemcd, setItemcd] = useState<string>("");
-  const [itemnm, setItemnm] = useState<string>("");
-  const [itemcd2, setItemcd2] = useState<string>("");
-  const [itemnm2, setItemnm2] = useState<string>("");
+  const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
@@ -464,32 +466,15 @@ const CopyWindow = ({
 
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
-    item[DATA_ITEM_KEY] == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemcd,
-            itemnm: itemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [itemcd, itemnm]);
-
-  useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
       item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         ? {
             ...item,
-            itemcd: itemcd2,
-            itemnm: itemnm2,
+            itemcd: itemInfo.itemcd,
+            itemnm: itemInfo.itemnm,
+            itemacnt: itemInfo.itemacnt,
+            insiz: itemInfo.insiz,
+            bnatur: itemInfo.bnatur,
+            spec: itemInfo.spec,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
@@ -498,14 +483,66 @@ const CopyWindow = ({
             [EDIT_FIELD]: undefined,
           }
     );
-    console.log(itemnm2);
     setMainDataResult((prev) => {
       return {
         data: newData,
         total: prev.total,
       };
     });
-  }, [itemcd2, itemnm2]);
+  }, [itemInfo]);
+
+  const fetchItemData = React.useCallback(
+    async (itemcd: string) => {
+      let data: any;
+      const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+        if (rowCount > 0) {
+          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
+          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+        } else {
+          const newData = mainDataResult.data.map((item: any) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              ? {
+                  ...item,
+                  itemcd: item.itemcd,
+                  itemnm: "",
+                  insiz: "",
+                  itemacnt: "",
+                  bnatur: "",
+                  spec: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult]
+  );
 
   interface ICustData {
     custcd: string;
@@ -906,90 +943,6 @@ const CopyWindow = ({
     }
   };
 
-  const getItemData = (itemcd: string) => {
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData(queryStr);
-  };
-
-  const fetchData = React.useCallback(async (queryStr: string) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-      if (rowCount > 0) {
-        setItemcd(rows[0].itemcd);
-        setItemnm(rows[0].itemnm);
-      }
-    }
-  }, []);
-
-  const getItemData2 = (itemcd: string, mainDataResult: any) => {
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData2(queryStr, mainDataResult);
-  };
-
-  const fetchData2 = React.useCallback(async (queryStr: string, mainDataResults: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-      if (rowCount > 0) {
-        setItemcd2(rows[0].itemcd);
-        setItemnm2(rows[0].itemnm);
-      } else {
-        const newData = mainDataResults.map((item: any) =>
-        item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-          ? {
-              ...item,
-              itemcd: item.itemcd,
-              itemnm: "",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      }
-    }
-  }, []);
-
   const exitEdit = () => {
     if (editedField !== "itemcd") {
       const newData = mainDataResult.data.map((item) => ({
@@ -1007,7 +960,7 @@ const CopyWindow = ({
     } else {
       mainDataResult.data.map((item) => {
         if (editIndex === item.num) {
-          getItemData2(item.itemcd, mainDataResult.data);
+          fetchItemData(item.itemcd);
         }
       });
     }
@@ -1270,13 +1223,8 @@ const CopyWindow = ({
         </FormBoxWrap>
         <FormContext.Provider
           value={{
-            itemcd,
-            itemnm,
-            setItemcd,
-            setItemnm,
-            mainDataState,
-            setMainDataState,
-            // fetchGrid,
+            itemInfo,
+            setItemInfo,
           }}
         >
         <GridContainer>

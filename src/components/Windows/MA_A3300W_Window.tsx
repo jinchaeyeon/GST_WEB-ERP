@@ -82,14 +82,26 @@ type IWindow = {
 };
 
 export const FormContext = createContext<{
+  itemInfo: TItemInfo;
+  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
+}>({} as any);
+
+type TItemInfo = {
   itemcd: string;
   itemnm: string;
-  setItemcd: (d: any) => void;
-  setItemnm: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
-  // fetchGrid: (n: number) => any;
-}>({} as any);
+  itemacnt: string;
+  insiz: string;
+  bnatur: string;
+  spec: string;
+};
+const defaultItemInfo = {
+  itemcd: "",
+  itemnm: "",
+  itemacnt: "",
+  insiz: "",
+  bnatur: "",
+  spec: "",
+};
 
 type Idata = {
   orgdiv: string;
@@ -203,14 +215,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const {
-    itemcd,
-    itemnm,
-    setItemcd,
-    setItemnm,
-    mainDataState,
-    setMainDataState,
-  } = useContext(FormContext);
+  const { setItemInfo } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -230,8 +235,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
     setItemWindowVisible2(true);
   };
   const setItemData2 = (data: IItemData) => {
-    setItemcd(data.itemcd);
-    setItemnm(data.itemnm);
+    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
+    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
   };
   const defaultRendering = (
     <td
@@ -264,7 +269,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {itemWindowVisible2 && (
         <ItemsWindow
           setVisible={setItemWindowVisible2}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setItemData2}
         />
       )}
@@ -291,10 +296,7 @@ const CopyWindow = ({
   const DATA_ITEM_KEY = "num";
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  const [itemcd, setItemcd] = useState<string>("");
-  const [itemnm, setItemnm] = useState<string>("");
-  const [itemcd2, setItemcd2] = useState<string>("");
-  const [itemnm2, setItemnm2] = useState<string>("");
+  const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -442,50 +444,6 @@ const CopyWindow = ({
     }
   }, [bizComponentData]);
 
-  useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-            itemcd: itemcd,
-            itemnm: itemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [itemcd, itemnm]);
-
-  useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemcd2,
-            itemnm: itemnm2,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [itemcd2, itemnm2]);
-
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
 
@@ -508,16 +466,37 @@ const CopyWindow = ({
     }
   }, []);
 
-  const getItemData2 = (itemcd: string, mainDataResult: any) => {
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            itemcd: itemInfo.itemcd,
+            itemnm: itemInfo.itemnm,
+            itemacnt: itemInfo.itemacnt,
+            insiz: itemInfo.insiz,
+            bnatur: itemInfo.bnatur,
+            spec: itemInfo.spec,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemInfo]);
 
-    fetchData2(queryStr, mainDataResult);
-  };
-
-  const fetchData2 = React.useCallback(
-    async (queryStr: string, mainDataResults: any) => {
+  const fetchItemData = React.useCallback(
+    async (itemcd: string) => {
       let data: any;
-
+      const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
       const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -535,15 +514,19 @@ const CopyWindow = ({
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
         if (rowCount > 0) {
-          setItemcd2(rows[0].itemcd);
-          setItemnm2(rows[0].itemnm);
+          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
+          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
         } else {
-          const newData = mainDataResults.map((item: any) =>
+          const newData = mainDataResult.data.map((item: any) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
               ? {
                   ...item,
                   itemcd: item.itemcd,
                   itemnm: "",
+                  insiz: "",
+                  itemacnt: "",
+                  bnatur: "",
+                  spec: "",
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -560,7 +543,7 @@ const CopyWindow = ({
         }
       }
     },
-    []
+    [mainDataResult]
   );
 
   const processApi = useApi();
@@ -1051,38 +1034,6 @@ const CopyWindow = ({
     }
   };
 
-  const getItemData = (itemcd: string) => {
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData(queryStr);
-  };
-
-  const fetchData = React.useCallback(async (queryStr: string) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-      if (rowCount > 0) {
-        setItemcd(rows[0].itemcd);
-        setItemnm(rows[0].itemnm);
-      }
-    }
-  }, []);
-
   const exitEdit = () => {
     if (editedField !== "itemcd") {
       const newData = mainDataResult.data.map((item) => ({
@@ -1120,7 +1071,7 @@ const CopyWindow = ({
     } else {
       mainDataResult.data.map((item) => {
         if (editIndex === item.num) {
-          getItemData2(item.itemcd, mainDataResult.data);
+          fetchItemData(item.itemcd);
         }
       });
     }
@@ -1381,13 +1332,8 @@ const CopyWindow = ({
         </FormBoxWrap>
         <FormContext.Provider
           value={{
-            itemcd,
-            itemnm,
-            setItemcd,
-            setItemnm,
-            mainDataState,
-            setMainDataState,
-            // fetchGrid,
+            itemInfo,
+            setItemInfo,
           }}
         >
           <GridContainer height="calc(100% - 310px) ">

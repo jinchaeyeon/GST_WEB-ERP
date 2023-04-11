@@ -78,14 +78,26 @@ import NameCell from "../components/Cells/NameCell";
 import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
 
 export const FormContext = createContext<{
+  itemInfo: TItemInfo;
+  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
+}>({} as any);
+
+type TItemInfo = {
   itemcd: string;
   itemnm: string;
-  setItemcd: (d: any) => void;
-  setItemnm: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
-  // fetchGrid: (n: number) => any;
-}>({} as any);
+  itemacnt: string;
+  insiz: string;
+  bnatur: string;
+  spec: string;
+};
+const defaultItemInfo = {
+  itemcd: "",
+  itemnm: "",
+  itemacnt: "",
+  insiz: "",
+  bnatur: "",
+  spec: "",
+};
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "sub_code";
@@ -166,14 +178,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const {
-    itemcd,
-    itemnm,
-    setItemcd,
-    setItemnm,
-    mainDataState,
-    setMainDataState,
-  } = useContext(FormContext);
+  const { setItemInfo } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -200,8 +205,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
 
   const setItemData2 = (data: IItemData) => {
-    setItemcd(data.itemcd);
-    setItemnm(data.itemnm);
+    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
+    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
   };
 
   const defaultRendering = (
@@ -235,7 +240,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {itemWindowVisible2 && (
         <ItemsWindow
           setVisible={setItemWindowVisible2}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setItemData2}
         />
       )}
@@ -259,10 +264,8 @@ const BA_A0080: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
 
   //FormContext에서 받아오기위해 state
-  const [itemcd, setItemcd] = useState<string>("");
-  const [itemnm, setItemnm] = useState<string>("");
-  const [itemcd2, setItemcd2] = useState<string>("");
-  const [itemnm2, setItemnm2] = useState<string>("");
+  const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
+
   UsePermissions(setPermissions);
 
   //메시지 조회
@@ -320,6 +323,33 @@ const BA_A0080: React.FC = () => {
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
     }
   }, [bizComponentData]);
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            itemcd: itemInfo.itemcd,
+            itemnm: itemInfo.itemnm,
+            itemacnt: itemInfo.itemacnt,
+            insiz: itemInfo.insiz,
+            bnatur: itemInfo.bnatur,
+            spec: itemInfo.spec,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemInfo]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -476,6 +506,59 @@ const BA_A0080: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchItemData = React.useCallback(
+    async (itemcd: string) => {
+      let data: any;
+      const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+        if (rowCount > 0) {
+          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
+          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+        } else {
+          const newData = mainDataResult.data.map((item: any) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              ? {
+                  ...item,
+                  itemcd: item.itemcd,
+                  itemnm: "",
+                  insiz: "",
+                  itemacnt: "",
+                  bnatur: "",
+                  spec: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult]
+  );
+
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
@@ -516,135 +599,6 @@ const BA_A0080: React.FC = () => {
       }
     }
   }, [mainDataResult]);
-
-  //FormContext에서 데이터 변경시 set && 입력 시 set
-  useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemcd,
-            itemnm: itemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [itemcd, itemnm]);
-
-  useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemcd2,
-            itemnm: itemnm2,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [itemcd2, itemnm2]);
-
-  const getItemData = (itemcd: string) => {
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData(queryStr);
-  };
-
-  const fetchData = React.useCallback(async (queryStr: string) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-      if (rowCount > 0) {
-        setItemcd(rows[0].itemcd);
-        setItemnm(rows[0].itemnm);
-      }
-    }
-  }, []);
-
-  const getItemData2 = (itemcd: string, mainDataResult: any) => {
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData2(queryStr, mainDataResult);
-  };
-
-  const fetchData2 = React.useCallback(async (queryStr: string, mainDataResults: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-      if (rowCount > 0) {
-        setItemcd2(rows[0].itemcd);
-        setItemnm2(rows[0].itemnm);
-      } else {
-        const newData = mainDataResults.map((item: any) =>
-        item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-          ? {
-              ...item,
-              itemcd: item.itemcd,
-              itemnm: "",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      }
-    }
-  }, []);
 
   useEffect(() => {
     if (ifSelectFirstRow) {
@@ -895,7 +849,6 @@ const BA_A0080: React.FC = () => {
         ...item,
         [EDIT_FIELD]: undefined,
       }));
-      setIfSelectFirstRow(false);
 
       setMainDataResult((prev) => {
         return {
@@ -906,7 +859,7 @@ const BA_A0080: React.FC = () => {
     } else {
       mainDataResult.data.map((item) => {
         if (editIndex === item.num) {
-          getItemData2(item.itemcd, mainDataResult.data);
+          fetchItemData(item.itemcd);
         }
       });
     }
@@ -1402,13 +1355,8 @@ const BA_A0080: React.FC = () => {
         </GridContainer>
         <FormContext.Provider
           value={{
-            itemcd,
-            itemnm,
-            setItemcd,
-            setItemnm,
-            mainDataState,
-            setMainDataState,
-            // fetchGrid,
+            itemInfo,
+            setItemInfo,
           }}
         >
           <GridContainer width={`calc(78% - ${GAP}px)`}>

@@ -676,17 +676,23 @@ const MA_A7000W: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : 0
     );
-    var parts = sum.toString().split(".");
-    return parts[0] != "NaN" ? (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    ) : (
-      <td></td>
-    );
+
+    if(sum != undefined){
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>
+    }
   };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅

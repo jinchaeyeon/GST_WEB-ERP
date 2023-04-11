@@ -67,7 +67,7 @@ const checkField = [
   "daycalyn",
 ];
 const radioField = ["fraction"];
-
+const editField = ["payitemcd"]
 type TdataArr = {
   rowstatus_s: string[];
   payitemcd_s: string[];
@@ -545,14 +545,14 @@ const HU_A3020W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-    console.log(mainDataResult)
+
   const enterEdit = (dataItem: any, field: string) => {
-    if (
-      !(
-        field == "payitemcd" &&
-        (dataItem.rowstatus == undefined || dataItem.rowstatus == "U")
-      )
-    ) {
+    // if (
+    //   !(
+    //     field == "payitemcd" &&
+    //     (dataItem.rowstatus == undefined || dataItem.rowstatus == "U")
+    //   )
+    // ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -569,7 +569,7 @@ const HU_A3020W: React.FC = () => {
           total: prev.total,
         };
       });
-    }
+    // }
   };
 
   const exitEdit = () => {
@@ -1319,6 +1319,11 @@ const HU_A3020W: React.FC = () => {
                           field={item.fieldName}
                           title={item.caption}
                           width={item.width}
+                          className={
+                            editField.includes(item.fieldName)
+                            ? "editable-new-only"
+                            : undefined
+                          }
                           cell={
                             NumberField.includes(item.fieldName)
                               ? NumberCell
