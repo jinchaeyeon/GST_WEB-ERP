@@ -1224,7 +1224,6 @@ const MA_A7000W: React.FC = () => {
         alert("LOT NO가 중복되었습니다.");
         return false;
       }
-
       if (valid == true) {
         let dataArr: TdataArr = {
           itemcd_s: [],
@@ -1734,7 +1733,6 @@ const MA_A7000W: React.FC = () => {
       {CopyWindowVisible && (
         <CopyWindow2
           setVisible={setCopyWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
           itemacnt={""}
         />

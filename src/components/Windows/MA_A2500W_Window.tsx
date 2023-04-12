@@ -1068,14 +1068,13 @@ const CopyWindow = ({
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
-          workType={workType}
+          workType={"ROW_ADD"}
           setData={setCustData}
         />
       )}
       {CopyWindowVisible && (
         <CopyWindow2
           setVisible={setCopyWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
         />
       )}

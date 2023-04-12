@@ -961,7 +961,7 @@ const CM_B1101W: React.FC = () => {
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setCustData}
         />
       )}

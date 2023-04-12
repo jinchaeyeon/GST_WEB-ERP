@@ -207,7 +207,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {prsnnumWindowVisible && (
         <PrsnnumWindow
           setVisible={setPrsnnumWindowVisible}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setPrsnnumData}
         />
       )}

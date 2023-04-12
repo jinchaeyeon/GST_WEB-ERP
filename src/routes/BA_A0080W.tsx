@@ -1523,14 +1523,13 @@ const BA_A0080: React.FC = () => {
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setItemData}
         />
       )}
       {CopyWindowVisible && (
         <CopyWindow
           setVisible={setCopyWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
           itemacnt={filters.itemacnt}
         />

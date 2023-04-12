@@ -1245,14 +1245,12 @@ const CopyWindow = ({
       {CopyWindowVisible && (
         <CopyWindow2
           setVisible={setCopyWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
         />
       )}
       {CopyWindowVisible2 && (
         <CopyWindow3
           setVisible={setCopyWindowVisible2}
-          workType={"FILTER"}
           setData={setCopyData2}
         />
       )}

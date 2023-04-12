@@ -1229,7 +1229,6 @@ const CopyWindow = ({
       {CopyWindowVisible && (
         <CopyWindow2
           setVisible={setCopyWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
         />
       )}
@@ -1243,7 +1242,7 @@ const CopyWindow = ({
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setItemData}
         />
       )}

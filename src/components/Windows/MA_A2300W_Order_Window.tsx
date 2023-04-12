@@ -56,7 +56,6 @@ import NumberCell from "../Cells/NumberCell";
 import DateCell from "../Cells/DateCell";
 
 type IWindow = {
-  workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   custcd?: string | undefined;
   custnm?: string | undefined;
   setVisible(t: boolean): void;
@@ -66,7 +65,6 @@ type IWindow = {
 const CopyWindow = ({
   custcd,
   custnm,
-  workType,
   setVisible,
   setData,
 }: IWindow) => {
@@ -1137,14 +1135,14 @@ const CopyWindow = ({
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
-          workType={workType}
+          workType={"ROW_ADD"}
           setData={setCustData}
         />
       )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setItemData}
         />
       )}

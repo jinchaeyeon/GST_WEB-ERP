@@ -24,7 +24,7 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -45,12 +45,14 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import TopButtons from "../components/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import { gridList } from "../store/columns/AC_B8030W_C";
+import { gridList } from "../store/columns/AC_A1000W_C";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const DATA_ITEM_KEY = "num";
 
-const AC_B1300W: React.FC = () => {
+const AC_A1000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -73,7 +75,17 @@ const AC_B1300W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        closeyn: defaultOption.find((item: any) => item.id === "closeyn")
+        slipdiv: defaultOption.find((item: any) => item.id === "slipdiv")
+          .valueCode,
+          location: defaultOption.find((item: any) => item.id === "location")
+          .valueCode,
+          position: defaultOption.find((item: any) => item.id === "position")
+          .valueCode,
+          inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
+          .valueCode,
+          person: defaultOption.find((item: any) => item.id === "person")
+          .valueCode,
+          inputpath: defaultOption.find((item: any) => item.id === "inputpath")
           .valueCode,
       }));
     }
@@ -107,6 +119,15 @@ const AC_B1300W: React.FC = () => {
     }));
   };
 
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
@@ -120,16 +141,22 @@ const AC_B1300W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
+    location: "",
     frdt: new Date(),
     todt: new Date(),
     acntcd: "",
     acntnm: "",
     custcd: "",
     custnm: "",
-    remark: "",
-    slipamt: -999999999,
-    slipamt2: 999999999,
-    closeyn: "%",
+    slipdiv: "",
+    framt: -999999999,
+    toamt: 999999999,
+    acnum: "",
+    remark3: "",
+    chkyn: "",
+    position: "",
+    inoutdiv: "",
+    person: "",
     inputpath: "",
     find_row_value: "",
     scrollDirrection: "down",
@@ -140,23 +167,39 @@ const AC_B1300W: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_AC_B1300W_Q",
+    procedureName: "P_AC_A1000W_Q",
     pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "Q",
+      "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
+      "@p_actdt": "",
+      "@p_acseq1": 0,
+      "@p_acnum": filters.acnum,
+      "@p_acseq2" : 0,
+      "@p_acntcd": filters.acntcd,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
-      "@p_acntcd": filters.acntcd,
-      "@p_acntnm": filters.acntnm,
+      "@p_location": filters.location,
+      "@p_person": filters.person,
+      "@p_inputpath": filters.inputpath,
       "@p_custcd": filters.custcd,
       "@p_custnm": filters.custnm,
-      "@p_remark": filters.remark,
-      "@p_slipamt": filters.slipamt,
-      "@p_slipamt2": filters.slipamt2,
-      "@p_closeyn": filters.closeyn,
-      "@p_inputpath": filters.inputpath,
+      "@p_slipdiv": filters.slipdiv,
+      "@p_remark3": filters.remark3,
+      "@p_maxacseq2": 0,
+      "@p_framt": filters.framt,
+      "@p_toamt": filters.toamt,
+      "@p_position": filters.position,
+      "@p_inoutdiv": filters.inoutdiv,
+      "@p_drcrdiv": "",
+      "@p_actdt_s": "",
+      "@p_acseq1_s": "",
+      "@p_printcnt_s": "",
+      "@p_rowstatus_s": "",
+      "@p_chk_s": "",
+      "@p_ackey_s": "",
+      "@p_acntnm": filters.acntnm,
     },
   };
 
@@ -296,7 +339,7 @@ const AC_B1300W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -308,7 +351,7 @@ const AC_B1300W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -432,7 +475,7 @@ const AC_B1300W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>분개장</Title>
+        <Title>대체전표</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -457,6 +500,7 @@ const AC_B1300W: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     placeholder=""
+                    className="required"
                   />
                   ~
                   <DatePicker
@@ -465,36 +509,52 @@ const AC_B1300W: React.FC = () => {
                     format="yyyy-MM-dd"
                     onChange={filterInputChange}
                     placeholder=""
+                    className="required"
                   />
                 </div>
               </td>
-              <th>계정코드</th>
+              <th>전표구분</th>
               <td>
-                <Input
-                  name="acntcd"
-                  type="text"
-                  value={filters.acntcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onAccountWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="slipdiv"
+                    value={filters.slipdiv}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
                   />
-                </ButtonInInput>
+                )}
               </td>
-              <th>계정코드 명</th>
+              <th>전표번호</th>
               <td>
                 <Input
-                  name="acntnm"
+                  name="acnum"
                   type="text"
-                  value={filters.acntnm}
+                  value={filters.acnum}
                   onChange={filterInputChange}
                 />
               </td>
             </tr>
             <tr>
+              <th>적요</th>
+              <td colSpan={3}>
+                <Input
+                  name="remark"
+                  type="text"
+                  value={filters.remark3}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>경로</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="inputpath"
+                    value={filters.inputpath}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -520,12 +580,11 @@ const AC_B1300W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>적요</th>
-              <td colSpan={3}>
-                <Input
-                  name="remark"
-                  type="text"
-                  value={filters.remark}
+              <td>
+                <Checkbox
+                  name="chkyn"
+                  label={" "}
+                  value={filters.chkyn}
                   onChange={filterInputChange}
                 />
               </td>
@@ -535,38 +594,92 @@ const AC_B1300W: React.FC = () => {
               <td colSpan={3}>
                 <div className="filter-item-wrap">
                   <Input
-                    name="slipamt"
+                    name="framt"
                     type="number"
-                    value={filters.slipamt}
+                    value={filters.framt}
                     onChange={filterInputChange}
                   />
                   ~
                   <Input
-                    name="slipamt2"
+                    name="toamt"
                     type="number"
-                    value={filters.slipamt2}
+                    value={filters.toamt}
                     onChange={filterInputChange}
                   />
                 </div>
               </td>
-              <th>전표입력경로</th>
-              <td>
-                <Input
-                  name="inputpath"
-                  type="text"
-                  value={filters.inputpath}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>승인여부</th>
+              <th>사업장</th>
               <td>
                 {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="closeyn"
+                  <CustomOptionComboBox
+                    name="location"
+                    value={filters.location}
                     customOptionData={customOptionData}
-                    changeData={filterRadioChange}
+                    changeData={filterComboBoxChange}
                   />
                 )}
+              </td>
+              <th>사업부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="position"
+                    value={filters.position}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>구분</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="inoutdiv"
+                    value={filters.inoutdiv}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>등록자</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="person"
+                    value={filters.person}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="user_name"
+                    valueField="user_id"
+                  />
+                )}
+              </td>
+              <th>계정코드</th>
+              <td>
+                <Input
+                  name="acntcd"
+                  type="text"
+                  value={filters.acntcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onAccountWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>계정코드 명</th>
+              <td>
+                <Input
+                  name="acntnm"
+                  type="text"
+                  value={filters.acntnm}
+                  onChange={filterInputChange}
+                />
               </td>
             </tr>
           </tbody>
@@ -614,38 +727,24 @@ const AC_B1300W: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn
-              field="actkey"
-              title="전표번호"
-              width="120px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn
-              field="acseq2"
-              title="순서"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn title="차변">{createColumn()}</GridColumn>
-            <GridColumn title="대변">{createColumn2()}</GridColumn>
-            <GridColumn field="remark3" title="적요" width="200px" />
-            <GridColumn field="custcd" title="업체코드" width="120px" />
-            <GridColumn field="custnm" title="업체명" width="120px" />
-            <GridColumn field="mngdata1" title="관리항목코드" width="120px" />
-            <GridColumn field="mngdatanm1" title="관리항목명" width="120px" />
-            <GridColumn field="inputpath" title="입력경로" width="100px" />
-            <GridColumn
-              field="insert_userid"
-              title="등록자 아이디"
-              width="150px"
-            />
-            <GridColumn field="user_name" title="등록자명" width="120px" />
-            <GridColumn
-              field="insert_time"
-              title="등록날짜"
-              width="120px"
-              cell={DateCell}
-            />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        footerCell={
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -679,4 +778,4 @@ const AC_B1300W: React.FC = () => {
   );
 };
 
-export default AC_B1300W;
+export default AC_A1000W;

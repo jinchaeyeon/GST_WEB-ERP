@@ -1112,7 +1112,6 @@ const CopyWindow = ({
       {CopyWindowVisible && (
         <CopyWindow2
           setVisible={setCopyWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
         />
       )}

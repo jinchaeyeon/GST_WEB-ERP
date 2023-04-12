@@ -1495,7 +1495,6 @@ const CopyWindow = ({
       {itemMultiWindowVisible && (
         <ItemsMultiWindow
           setVisible={setItemMultiWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
           itemacnt={""}
         />

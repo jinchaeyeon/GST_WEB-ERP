@@ -67,7 +67,7 @@ const checkField = [
   "daycalyn",
 ];
 const radioField = ["fraction"];
-const editField = ["payitemcd"]
+
 type TdataArr = {
   rowstatus_s: string[];
   payitemcd_s: string[];
@@ -1319,11 +1319,6 @@ const HU_A3020W: React.FC = () => {
                           field={item.fieldName}
                           title={item.caption}
                           width={item.width}
-                          className={
-                            editField.includes(item.fieldName)
-                            ? "editable-new-only"
-                            : undefined
-                          }
                           cell={
                             NumberField.includes(item.fieldName)
                               ? NumberCell

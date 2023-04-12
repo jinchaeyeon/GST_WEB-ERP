@@ -1552,21 +1552,18 @@ const CopyWindow = ({
       {CopyWindowVisible && (
         <CopyWindow1
           setVisible={setCopyWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
         />
       )}
       {CopyWindowVisible2 && (
         <CopyWindow2
           setVisible={setCopyWindowVisible2}
-          workType={"FILTER"}
           setData={setCopyData}
         />
       )}
       {CopyWindowVisible3 && (
         <CopyWindow3
           setVisible={setCopyWindowVisible3}
-          workType={"FILTER"}
           setData={setCopyData}
           itemacnt={""}
         />
@@ -1574,7 +1571,6 @@ const CopyWindow = ({
       {CopyWindowVisible4 && (
         <CopyWindow4
           setVisible={setCopyWindowVisible4}
-          workType={"FILTER"}
           setData={setCopyData}
         />
       )}

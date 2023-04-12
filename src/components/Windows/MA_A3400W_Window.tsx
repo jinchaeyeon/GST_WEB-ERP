@@ -1044,7 +1044,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       {CopyWindowVisible && (
         <CopyWindow2
           setVisible={setCopyWindowVisible}
-          workType={"FILTER"}
           setData={setCopyData}
           itemacnt={""}
         />
@@ -1052,7 +1051,6 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       {CopyWindowVisible2 && (
         <CopyWindow3
           setVisible={setCopyWindowVisible2}
-          workType={"FILTER"}
           setData={setCopyData2}
           itemacnt={"1"}
         />

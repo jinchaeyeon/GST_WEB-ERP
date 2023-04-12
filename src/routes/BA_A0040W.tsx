@@ -2152,7 +2152,7 @@ const BA_A0040: React.FC = () => {
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setItemData}
         />
       )}

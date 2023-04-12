@@ -61,12 +61,11 @@ import NumberCell from "../Cells/NumberCell";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 type IWindow = {
-  workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
-const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
+const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -1574,14 +1573,14 @@ const CopyWindow = ({ workType, setVisible, setData }: IWindow) => {
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
-          workType={workType}
+          workType={"ROW_ADD"}
           setData={setCustData}
         />
       )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setData={setItemData}
         />
       )}

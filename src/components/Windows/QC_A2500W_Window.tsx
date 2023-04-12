@@ -688,7 +688,7 @@ const CopyWindow = ({
       )}
        {itemWindowVisible && (
         <ItemsWindow
-          workType={"FILTER"}
+          workType={"ROW_ADD"}
           setVisible={setItemWindowVisible}
           setData={setItemData}
         />
