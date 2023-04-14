@@ -1350,10 +1350,7 @@ const AC_A0020W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
-      filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      filters.isSearch 
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();

@@ -2219,7 +2219,7 @@ const PR_A1100W: React.FC = () => {
         <TabStripTab title="리스트">
           <GridContainerWrap>
             <GridContainer
-              clientWidth={CLIENT_WIDTH - MTR_GRID_WIDTH + 15} //= 소요자재리스트 500 + margin 15
+              clientWidth={CLIENT_WIDTH - MTR_GRID_WIDTH - 50} //= 소요자재리스트 500 + margin 15
               inTab={true}
             >
               <ExcelExport

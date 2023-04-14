@@ -5,12 +5,13 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
+  GridCellProps,
   GridEvent,
-  GridDataStateChangeEvent,
-  getSelectedState,
   GridSelectionChangeEvent,
+  getSelectedState,
+  GridDataStateChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DataResult, process, State, getter } from "@progress/kendo-data-query";
+import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
 import {
   BottomContainer,
@@ -24,44 +25,72 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
 import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
+import { IWindowPosition } from "../../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
-import {handleKeyPressSearch} from "../../CommonFunction";
 
-type IKendoWindow = {
+interface IMng {
+  mngitemcd1: string;
+  mngitemcd2: string;
+  mngitemcd3: string;
+  mngitemcd4: string;
+  mngitemcd5: string;
+  mngitemcd6: string;
+}
+
+type IWindow = {
+  workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
-  setData(data: object): void;
-  para?: Iparameters;
+  setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  mngitemcd: IMng;
+  index: number;
 };
 
-const DATA_ITEM_KEY = "stdrmkcd";
-
-const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
+const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 600,
+    width: 800,
     height: 800,
   });
-
-  const setLoading = useSetRecoilState(isLoading);
-
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA026,R_USEYN",
-    //업체구분, 사용여부,
-    setBizComponentData
-  );
-
+  const DATA_ITEM_KEY = "item1";
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
+  useEffect(() => {
+    let mng = "";
+    if(index == 1){
+      mng = mngitemcd.mngitemcd1;
+    } else if(index == 2){
+      mng = mngitemcd.mngitemcd2;
+    }
+    else if(index == 3){
+      mng = mngitemcd.mngitemcd3;
+    }
+    else if(index == 4){
+      mng = mngitemcd.mngitemcd4;
+    }
+    else if(index == 5){
+      mng = mngitemcd.mngitemcd5;
+    }
+    else if(index == 6){
+      mng = mngitemcd.mngitemcd6;
+    }
+    setFilters((prev) => ({
+      ...prev,
+      mngitemcd: mng,
+    }))
+  }, [])
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "R_USEYN",
+    //사용여부,
+    setBizComponentData
+  );
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -83,14 +112,6 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
     }));
   };
 
-  //조회조건 DropDownList Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅
-  const filterDropDownListChange = (name: string, data: TCommonCodeData) => {
-    setFilters((prev) => ({
-      ...prev,
-      [name]: data.sub_code,
-    }));
-  };
-
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -108,71 +129,72 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
   };
 
   const processApi = useApi();
+  const [isInitSearch, setIsInitSearch] = useState(false);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+  const [mainPgNum, setMainPgNum] = useState(1);
 
-  //조회조건 초기값
   const [filters, setFilters] = useState({
-    stdrmkcd: "",
-    stdrmknm1: "",
+    mngitemcd: "",
+    sub_code: "",
+    code_name: "",
+    div: "",
   });
 
-  //팝업 조회 파라미터
-  const parameters = {
-    para:
-      "popup-data?id=" +
-      "P_AC024T" +
-      "&page=" +
-      mainPgNum +
-      "&pageSize=" +
-      PAGE_SIZE,
-    stdrmkcd: filters.stdrmkcd,
-    stdrmknm1: filters.stdrmknm1,
+  //조회조건 파라미터
+  const parameters: Iparameters = {
+    procedureName: "P_AC_A0020W_POP_Q",
+    pageNumber: mainPgNum,
+    pageSize: PAGE_SIZE,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": "01",
+      "@p_mngitemcd": filters.mngitemcd,
+      "@p_sub_code": filters.sub_code,
+      "@p_code_name": filters.code_name,
+      "@p_div": filters.div,
+    },
   };
-
   useEffect(() => {
     fetchMainGrid();
   }, [mainPgNum]);
-
-  //요약정보 조회
+  useEffect(() => {
+    if (isInitSearch === false) {
+      fetchMainGrid();
+    }
+  }, [filters]);
+  //그리드 조회
   const fetchMainGrid = async () => {
     let data: any;
-    setLoading(true);
 
     try {
-      data = await processApi<any>("popup-data", parameters);
+      data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
-   
-    if (data !== null) {
-      const totalRowCnt = data.data.TotalRowCount;
-      const rows = data.data.Rows;
 
-      if (totalRowCnt) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
-      }
-    } else {
-      console.log(data);
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult((prev) => {
+        return {
+          data: [...prev.data, ...rows],
+          total: totalRowCnt,
+        };
+      });
+      setIsInitSearch(true);
     }
-    setLoading(false);
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
+    setMainDataResult(process([], {}));
   };
 
   //스크롤 핸들러 => 한번에 pageSize만큼 조회
@@ -190,21 +212,36 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const onRowDoubleClick = (props: any) => {
-    // 부모로 데이터 전달, 창 닫기
-    const rowData = props.dataItem;
-    setData(rowData);
-    onClose();
+  const CommandCell = (props: GridCellProps) => {
+    const onSelectClick = () => {
+      // 부모로 데이터 전달, 창 닫기
+      const selectedData = props.dataItem;
+      setData(selectedData);
+      if (workType === "ROW_ADD") onClose();
+    };
+
+    return (
+      <td className="k-command-cell">
+        <Button
+          className="k-grid-edit-command"
+          themeColor={"primary"}
+          fillMode="outline"
+          onClick={onSelectClick}
+          icon="check"
+        ></Button>
+      </td>
+    );
   };
 
-  const onConfirmClick = (props: any) => {
-    const rowData = mainDataResult.data.find(
-      (row: any) => row.stdrmkcd === Object.keys(selectedState)[0]
-    );
+  const onRowDoubleClick = (props: any) => {
+    const selectedData = props.dataItem;
+    selectData(selectedData);
+  };
 
-    // 부모로 데이터 전달, 창 닫기
-    setData(rowData);
-    onClose();
+  // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
+  const selectData = (selectedData: any) => {
+    setData(selectedData);
+    if (workType === "ROW_ADD") onClose();
   };
 
   //메인 그리드 선택 이벤트
@@ -227,14 +264,9 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
     );
   };
 
-  const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
-  }
-  
   return (
     <Window
-      title={"단축코드리스트"}
+      title={"기준정보팝업"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
@@ -242,7 +274,7 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
       onClose={onClose}
     >
       <TitleContainer>
-        <Title />
+        <Title></Title>
         <ButtonContainer>
           <Button
             onClick={() => {
@@ -257,24 +289,25 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
         </ButtonContainer>
       </TitleContainer>
       <FilterBoxWrap>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+        <FilterBox>
           <tbody>
             <tr>
-            <th>단축코드</th>
+              <th>코드</th>
               <td>
                 <Input
-                  name="stdrmkcd"
+                  name="sub_code"
                   type="text"
-                  value={filters.stdrmkcd}
+                  value={filters.sub_code}
                   onChange={filterInputChange}
                 />
               </td>
-              <th>단축계정명</th>
+
+              <th>예적금코드명</th>
               <td>
                 <Input
-                  name="stdrmknm1"
+                  name="code_name"
                   type="text"
-                  value={filters.stdrmknm1}
+                  value={filters.code_name}
                   onChange={filterInputChange}
                 />
               </td>
@@ -282,9 +315,9 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
           </tbody>
         </FilterBox>
       </FilterBoxWrap>
-      <GridContainer height="calc(100% - 170px)">
+      <GridContainer>
         <Grid
-          style={{ height: "100%" }}
+          style={{ height: "500px" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -302,7 +335,7 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
             mode: "single",
           }}
           onSelectionChange={onMainSelectionChange}
-          //스크롤 조회 기능
+          //스크롤 조회기능
           fixedScroll={true}
           total={mainDataResult.total}
           onScroll={onScrollHandler}
@@ -317,21 +350,21 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
           onRowDoubleClick={onRowDoubleClick}
         >
           <GridColumn
-            field="stdrmkcd"
-            title="단축코드"
-            width="100px"
+            field="item1"
+            title="코드"
+            width="150px"
             footerCell={mainTotalFooterCell}
           />
-          <GridColumn field="stdrmknm1" title="단축계정명" width="150px" />
-          <GridColumn field="acntcd" title="계정코드" width="100px" />
-          <GridColumn field="acntnm" title="계정명" width="150px" />
+
+          <GridColumn field="item2" title="예적금코드명" width="400px" />
+          <GridColumn field="item3" title="계좌번호" width="250px" />
         </Grid>
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onConfirmClick}>
+          {/* <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인
-          </Button>
+          </Button> */}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>
@@ -341,4 +374,4 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
   );
 };
 
-export default KendoWindow;
+export default StandardWindow;
