@@ -14,7 +14,6 @@ import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -56,6 +55,7 @@ import TopButtons from "../components/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
+import FilterContainer from "../components/FilterContainer";
 
 const numberField = [
   "safeqty",
@@ -248,7 +248,7 @@ const MA_B7000: React.FC = () => {
     cboItemlvl2: "",
     cboItemlvl3: "",
     radUseyn: "", //filterData.find((item: any) => item.name === "useyn").value,
-        find_row_value: "",
+    find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
@@ -318,7 +318,7 @@ const MA_B7000: React.FC = () => {
       "@p_itemlvl3": filters.cboItemlvl3,
       "@p_useyn": filters.radUseyn,
       "@p_itemgrade": filters.itemgrade,
-      "@p_company_code": "2207A046"
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -344,7 +344,7 @@ const MA_B7000: React.FC = () => {
       "@p_itemlvl3": "",
       "@p_useyn": detailFilters1.useyn,
       "@p_itemgrade": filters.itemgrade,
-      "@p_company_code": "2207A046"
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -370,7 +370,7 @@ const MA_B7000: React.FC = () => {
       "@p_itemlvl3": "",
       "@p_useyn": "",
       "@p_itemgrade": detailFilters1.itemgrade,
-      "@p_company_code": "2207A046"
+      "@p_company_code": "2207A046",
     },
   };
 
@@ -579,7 +579,7 @@ const MA_B7000: React.FC = () => {
       ...prev,
       itemacnt: selectedRowData.itemacnt,
       itemcd: selectedRowData.itemcd,
-      itemgrade: itemgrades == undefined ? "": itemgrades,
+      itemgrade: itemgrades == undefined ? "" : itemgrades,
       work_type: "DETAIL1",
     }));
   };
@@ -595,7 +595,7 @@ const MA_B7000: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
- 
+
     setDetailFilters2({
       ...detailFilters2,
       lotnum: selectedRowData.lotnum,
@@ -776,7 +776,7 @@ const MA_B7000: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -961,8 +961,7 @@ const MA_B7000: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
-
+      </FilterContainer>
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
