@@ -95,6 +95,11 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import { Input } from "@progress/kendo-react-inputs";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { bytesToBase64 } from "byte-base64";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 
 let deletedRows: object[] = [];
 const idGetter = getter(FORM_DATA_INDEX);
@@ -1034,6 +1039,14 @@ const KendoWindow = ({
     height: 800,
   });
 
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+
   // 업체별 단가 처리에 사용 (수주일자, 업체코드)
   const [orddt, setOrddt] = useState("");
   const [custcd, setCustcd] = useState("");
@@ -1065,6 +1078,8 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
+    if (unsavedAttadatnums.length > 0)
+      setDeletedAttadatnums(unsavedAttadatnums);
     getVisible(false);
   };
 
@@ -1468,6 +1483,9 @@ const KendoWindow = ({
         reloadData("U");
         fetchMain();
         fetchGrid();
+
+        // 초기화
+        setUnsavedAttadatnums([]);
       } else {
         getVisible(false);
         reloadData("N");
@@ -1827,6 +1845,9 @@ const KendoWindow = ({
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!initialVal.attdatnum && !changedAttachmentInfo.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
     setChangedAttachmentInfo({
       files:
         data.original_name +
@@ -2298,7 +2319,11 @@ const KendoWindow = ({
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
-          para={initialVal.attdatnum}
+          para={
+            initialVal.attdatnum
+              ? initialVal.attdatnum
+              : changedAttachmentInfo.attdatnum
+          }
         />
       )}
     </Window>
