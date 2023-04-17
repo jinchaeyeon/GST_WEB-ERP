@@ -15,7 +15,7 @@ const FilterHideToggleButtonBox = ({
       onClick={toggleFilterHide}
       themeColor={"secondary"}
       fillMode={"flat"}
-      icon={isFilterHide ? "x" : "chevron-down"}
+      icon={isFilterHide ? "chevron-down" : "x"}
       style={{
         paddingRight: 0,
       }}

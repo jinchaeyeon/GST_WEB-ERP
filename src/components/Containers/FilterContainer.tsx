@@ -15,7 +15,7 @@ const FilterContainer = ({ children }: TChildren) => {
           toggleFilterHide={() => setIsFilterHide((prev) => !prev)}
         />
       </div>
-      {isFilterHide && <FilterBoxWrap>{children}</FilterBoxWrap>}
+      {!isFilterHide && <FilterBoxWrap>{children}</FilterBoxWrap>}
     </>
   );
 };
