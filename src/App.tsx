@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import React from "react";
 import "./index.scss";
 import { createGlobalStyle } from "styled-components";
-import PanelBarNavContainer from "./components/PanelBarNavContainer";
+import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
 import AuthRoute from "./components/AuthRoute";
 import Login from "./routes/Login";
 import Main from "./routes/Main";
@@ -386,13 +386,13 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/AC_A1000W" component={AC_A1000W} exact />
                 <AuthRoute path="/AC_B1100W" component={AC_B1100W} exact />
                 <AuthRoute path="/AC_B1280W" component={AC_B1280W} exact />
-                <AuthRoute path="/AC_B1300W" component={AC_B1300W} exact />  
-                <AuthRoute path="/AC_B5000W" component={AC_B5000W} exact />  
+                <AuthRoute path="/AC_B1300W" component={AC_B1300W} exact />
+                <AuthRoute path="/AC_B5000W" component={AC_B5000W} exact />
                 <AuthRoute path="/AC_B5080W" component={AC_B5080W} exact />
                 <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
-                <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact /> 
+                <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
                 {/* 목형관리 */}
-                <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact /> 
+                <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />
                 {/* CHAT BOT */}
                 <AuthRoute path="/CHAT_A0001W" component={CHAT_A0001W} exact />
                 <AuthRoute path="/CHAT_A0002W" component={CHAT_A0002W} exact />

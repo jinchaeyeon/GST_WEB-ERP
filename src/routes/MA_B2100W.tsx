@@ -48,7 +48,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -57,7 +57,7 @@ import { gridList } from "../store/columns/MA_B2100W_C";
 const dateField = ["indt"];
 const DATA_ITEM_KEY = "reckey";
 const numberField = ["qty", "unp", "amt", "wonamt", "taxamt", "totamt"];
-const numberField2 =["qty", "amt", "wonamt", "taxamt", "totamt"];
+const numberField2 = ["qty", "amt", "wonamt", "taxamt", "totamt"];
 const MA_B2100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -251,7 +251,7 @@ const MA_B2100W: React.FC = () => {
     service_id: "20190218001",
     ordnum: "",
     doexdiv: "",
-        find_row_value: "",
+    find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
@@ -429,7 +429,7 @@ const MA_B2100W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -441,7 +441,7 @@ const MA_B2100W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -536,7 +536,7 @@ const MA_B2100W: React.FC = () => {
   const search = () => {
     resetAllGrid();
   };
-  
+
   return (
     <>
       <TitleContainer>

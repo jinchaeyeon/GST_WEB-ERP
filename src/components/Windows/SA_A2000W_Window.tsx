@@ -93,7 +93,7 @@ import {
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { Input } from "@progress/kendo-react-inputs";
-import RequiredHeader from "../RequiredHeader";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { bytesToBase64 } from "byte-base64";
 
 let deletedRows: object[] = [];
@@ -389,7 +389,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [itemMultiWindowVisible, setItemMultiWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
   //스크롤 핸들러
   const scrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
@@ -485,54 +485,54 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       const unpData: any = unpList.filter(
         (item: any) => item.recdt <= orddt && item.itemcd === itemData.itemcd
       );
-  
+
       if (index === undefined) {
         //신규생성
-          fieldArrayRenderProps.onPush({
-            value: {
-              rowstatus: "N",
-              itemcd: itemData.itemcd,
-              itemnm: itemData.itemnm,
-              insiz: itemData.insiz,
-              itemacnt: itemData.itemacnt,
-              qtyunit: COM_CODE_DEFAULT_VALUE,
-              qty: 0,
-              specialunp: 0,
-              specialamt: 0,
-              unp: unpData.length > 0 ? unpData[0].unp : 0,
-              amt: 0,
-              wonamt: 0,
-              taxamt: 0,
-              totamt: 0,
-              outqty: 0,
-              sale_qty: 0,
-              finyn: "N",
-              bf_qty: 0,
-              ordseq: 0,
-              poregseq: 0,
-              totwgt: 0,
-              len: 0,
-              totlen: 0,
-              thickness: 0,
-              width: 0,
-              length: 0,
-              dlramt: 0,
-              chk: "N",
-            },
-          });
+        fieldArrayRenderProps.onPush({
+          value: {
+            rowstatus: "N",
+            itemcd: itemData.itemcd,
+            itemnm: itemData.itemnm,
+            insiz: itemData.insiz,
+            itemacnt: itemData.itemacnt,
+            qtyunit: COM_CODE_DEFAULT_VALUE,
+            qty: 0,
+            specialunp: 0,
+            specialamt: 0,
+            unp: unpData.length > 0 ? unpData[0].unp : 0,
+            amt: 0,
+            wonamt: 0,
+            taxamt: 0,
+            totamt: 0,
+            outqty: 0,
+            sale_qty: 0,
+            finyn: "N",
+            bf_qty: 0,
+            ordseq: 0,
+            poregseq: 0,
+            totwgt: 0,
+            len: 0,
+            totlen: 0,
+            thickness: 0,
+            width: 0,
+            length: 0,
+            dlramt: 0,
+            chk: "N",
+          },
+        });
       } else {
         //기존 행 업데이트
         const dataItem = orgDataItem ? orgDataItem : editedRowData;
-  
+
         let { unp, wonamt, taxamt, totamt, qty } = dataItem;
-  
+
         if (unpData.length > 0) {
           unp = unpData[0].unp;
           wonamt = unp * qty;
           taxamt = wonamt / 10;
           totamt = wonamt + taxamt;
         }
-  
+
         fieldArrayRenderProps.onReplace({
           index: index,
           value: {
@@ -551,7 +551,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           },
         });
       }
-    })
+    });
   };
   const onItemWndClick = () => {
     setEditIndex(undefined);
@@ -562,7 +562,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setItemMultiWindowVisible(true);
   };
   const enterEdit = (dataItem: any, field: string | undefined) => {
-    if(field != "outqty" && field != "sale_qty"){
+    if (field != "outqty" && field != "sale_qty") {
       fieldArrayRenderProps.onReplace({
         index: dataItem[FORM_DATA_INDEX],
         value: {
@@ -571,7 +571,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           [EDIT_FIELD]: field,
         },
       });
-  
+
       setEditIndex(dataItem[FORM_DATA_INDEX]);
       if (field) setEditedField(field);
     }

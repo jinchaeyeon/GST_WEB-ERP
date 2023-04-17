@@ -59,7 +59,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -79,13 +79,7 @@ const numberField = [
   "wgt",
   "unp",
 ];
-const numberField2= [
-  "purqty",
-  "amt",
-  "wonamt",
-  "taxamt",
-  "totamt",
-];
+const numberField2 = ["purqty", "amt", "wonamt", "taxamt", "totamt"];
 type TdataArr = {
   rowstatus_s: string[];
   purseq_s: string[];
@@ -477,7 +471,7 @@ const MA_A2400W: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -768,7 +762,7 @@ const MA_A2400W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -780,7 +774,7 @@ const MA_A2400W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -789,7 +783,7 @@ const MA_A2400W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -801,7 +795,7 @@ const MA_A2400W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -835,7 +829,7 @@ const MA_A2400W: React.FC = () => {
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
-  
+
   const onDeleteClick = (e: any) => {
     if (!window.confirm(questionToDelete)) {
       return false;

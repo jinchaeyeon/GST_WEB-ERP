@@ -51,7 +51,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -77,7 +77,7 @@ const NumberField = [
   "payamt12",
 ];
 
-interface IPrsnnum{
+interface IPrsnnum {
   prsnnum: string;
   prsnnm: string;
   dptcd: string;
@@ -1119,17 +1119,17 @@ const HU_B3140W: React.FC = () => {
     );
   };
 
-    const mainTotalFooterCell6 = (props: GridFooterCellProps) => {
-      var parts = mainDataResult6.total.toString().split(".");
-      return (
-        <td colSpan={props.colSpan} style={props.style}>
-          총{" "}
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-          건
-        </td>
-      );
-    };
+  const mainTotalFooterCell6 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult6.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
 
   //그리드 정렬 이벤트
   const onMainSortChange = (e: any) => {
@@ -1286,7 +1286,7 @@ const HU_B3140W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       prsnnum: data.prsnnum,
-      prsnnm: data.prsnnm
+      prsnnm: data.prsnnm,
     }));
   };
 
@@ -1346,7 +1346,7 @@ const HU_B3140W: React.FC = () => {
     mainDataResult4.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    
+
     var parts = parseInt(sum).toString().split(".");
 
     return parts[0] != "NaN" ? (

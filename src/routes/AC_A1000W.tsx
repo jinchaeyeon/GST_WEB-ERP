@@ -59,7 +59,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1000W_C";
@@ -1449,12 +1449,10 @@ const AC_A1000W: React.FC = () => {
   };
 
   const onPrint = () => {
-    const datas = mainDataResult.data.filter(
-      (item: any) => item.chk == true
-    );
-      //전표일자 => 전표번호 + 순번
-      //계정과목 => 계정명
-      //적요 => 1줄 : 적요 / 2줄: 업체코드, 업체명
+    const datas = mainDataResult.data.filter((item: any) => item.chk == true);
+    //전표일자 => 전표번호 + 순번
+    //계정과목 => 계정명
+    //적요 => 1줄 : 적요 / 2줄: 업체코드, 업체명
     try {
       if (datas.length == 0) {
         throw findMessage(messagesData, "AC_A1000W_001");

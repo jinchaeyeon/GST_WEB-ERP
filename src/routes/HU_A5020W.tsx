@@ -61,7 +61,7 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -69,7 +69,7 @@ import { gridList } from "../store/columns/HU_A5020W_C";
 import { Button } from "@progress/kendo-react-buttons";
 import { bytesToBase64 } from "byte-base64";
 import NumberCell from "../components/Cells/NumberCell";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import MonthDateCell from "../components/Cells/MonthDateCell";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 
@@ -96,7 +96,6 @@ interface IPrsnnum {
   user_id: string;
   user_name: string;
 }
-
 
 interface IPrsnnumMulti {
   prsnnum: string;
@@ -305,7 +304,7 @@ const HU_A5020W: React.FC = () => {
   const [files, setFiles] = useState<string>("");
 
   const pathname: string = window.location.pathname.replace("/", "");
-  
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
@@ -383,10 +382,10 @@ const HU_A5020W: React.FC = () => {
   }>({});
 
   const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
 
   const [prsnnumMultiWindowVisible, setPrsnnumMultiWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -921,7 +920,7 @@ const HU_A5020W: React.FC = () => {
       seq = item.num + 1;
     });
 
-    data.map((item)=> {
+    data.map((item) => {
       const newDataItem = {
         [DATA_ITEM_KEY]: seq,
         amt: 0,
@@ -936,7 +935,7 @@ const HU_A5020W: React.FC = () => {
         remark: "",
         rowstatus: "N",
       };
-  
+
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, newDataItem],
@@ -944,7 +943,7 @@ const HU_A5020W: React.FC = () => {
         };
       });
       seq++;
-    })
+    });
   };
 
   //FormContext 데이터 set

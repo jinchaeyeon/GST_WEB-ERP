@@ -45,7 +45,7 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -216,12 +216,12 @@ const CM_A1710W: React.FC = () => {
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (ifSelectFirstRow) {
-    if (mainDataResult.total > 0) {
-      const firstRowData = mainDataResult.data[0];
-      setSelectedState({ [firstRowData.num]: true });
-      setIfSelectFirstRow(true);
+      if (mainDataResult.total > 0) {
+        const firstRowData = mainDataResult.data[0];
+        setSelectedState({ [firstRowData.num]: true });
+        setIfSelectFirstRow(true);
+      }
     }
-  }
   }, [mainDataResult]);
 
   useEffect(() => {
@@ -593,9 +593,9 @@ const CM_A1710W: React.FC = () => {
                   row.rowstatus == undefined
                     ? ""
                     : row.rowstatus,
-                    birdt: row.birdt
-                    ? new Date(dateformat(row.birdt))
-                    : new Date(dateformat("19991231")),
+                birdt: row.birdt
+                  ? new Date(dateformat(row.birdt))
+                  : new Date(dateformat("19991231")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

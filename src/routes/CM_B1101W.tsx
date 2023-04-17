@@ -38,11 +38,8 @@ import {
   UseCustomOption,
   setDefaultDate,
 } from "../components/CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_B1101W_C";
@@ -439,7 +436,7 @@ const CM_B1101W: React.FC = () => {
       fetchMainGrid();
     }
   }, [mainPgNum]);
-  
+
   useEffect(() => {
     if (bizComponentData !== null) {
       fetchMainGrid2();
@@ -635,7 +632,7 @@ const CM_B1101W: React.FC = () => {
     );
   };
 
-    const onCustWndClick = () => {
+  const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
 
@@ -670,7 +667,7 @@ const CM_B1101W: React.FC = () => {
     }
     setTabSelected(e.selected);
   };
-  
+
   return (
     <>
       <TitleContainer>

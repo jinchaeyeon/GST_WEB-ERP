@@ -59,7 +59,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -78,13 +78,7 @@ const NumberField = [
   "amt",
 ];
 
-const NumberField2 = [
-  "qty",
-  "wonamt",
-  "taxamt",
-  "totamt",
-  "amt",
-];
+const NumberField2 = ["qty", "wonamt", "taxamt", "totamt", "amt"];
 type TdataArr = {
   rowstatus_s: string[];
   itemgrade_s: string[];
@@ -322,7 +316,7 @@ const MA_A3300W: React.FC = () => {
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
- 
+
   const [detailPgNum, setDetailPgNum] = useState(1);
   const [reload, setreload] = useState<boolean>(false);
   const [workType, setWorkType] = useState<"N" | "U">("N");
@@ -1039,12 +1033,12 @@ const MA_A3300W: React.FC = () => {
     );
   };
 
-   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -1056,7 +1050,7 @@ const MA_A3300W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -1065,7 +1059,7 @@ const MA_A3300W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -1077,7 +1071,7 @@ const MA_A3300W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
   const detailTotalFooterCell = (props: GridFooterCellProps) => {

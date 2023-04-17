@@ -57,7 +57,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -587,16 +587,16 @@ const MA_A2000W: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-      if (detailDataResult.total > 0) {
-        const firstRowData = detailDataResult.data[0];
-      }
+    if (detailDataResult.total > 0) {
+      const firstRowData = detailDataResult.data[0];
+    }
   }, [detailDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
     setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));    
+    setDetailDataResult(process([], detailDataState));
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
@@ -634,7 +634,7 @@ const MA_A2000W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
-  
+
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();
@@ -699,12 +699,12 @@ const MA_A2000W: React.FC = () => {
     );
   };
 
-   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -716,7 +716,7 @@ const MA_A2000W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -725,7 +725,7 @@ const MA_A2000W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -737,7 +737,7 @@ const MA_A2000W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -1193,7 +1193,7 @@ const MA_A2000W: React.FC = () => {
   };
 
   const [reload, setreload] = useState<boolean>(false);
-  
+
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);

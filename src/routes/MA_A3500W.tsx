@@ -66,11 +66,11 @@ import {
   EDIT_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const DATA_ITEM_KEY = "num";
@@ -89,12 +89,7 @@ const numberField = [
   "now_qty",
   "doqty",
 ];
-const numberField2 = [
-  "amt",
-  "wonamt",
-  "taxamt",
-  "totamt",
-];
+const numberField2 = ["amt", "wonamt", "taxamt", "totamt"];
 const requiredField = ["doqty"];
 type TdataArr = {
   rowstatus_s: string[];
@@ -669,7 +664,7 @@ const MA_A2400W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data)
+    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -818,7 +813,12 @@ const MA_A2400W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      customOptionData != null &&
+      filters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
+    ) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
 
       if (isInitSearch2 == false) {
@@ -1350,7 +1350,7 @@ const MA_A2400W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -1362,7 +1362,7 @@ const MA_A2400W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
@@ -1370,7 +1370,7 @@ const MA_A2400W: React.FC = () => {
     subDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -1382,7 +1382,7 @@ const MA_A2400W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
   const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
@@ -1390,7 +1390,7 @@ const MA_A2400W: React.FC = () => {
     BOMDataResult2.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -1402,10 +1402,10 @@ const MA_A2400W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
-  
+
   const onAddClick = () => {
     let seq = 1;
     let valid = 0;
@@ -1512,7 +1512,7 @@ const MA_A2400W: React.FC = () => {
 
     if (valid == true) {
       const newData = BOMDataResult2.data.map((item) =>
-      item.chk == true
+        item.chk == true
           ? {
               ...item,
               now_qty: item.now_qty - item.doqty,
@@ -1582,8 +1582,8 @@ const MA_A2400W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setIsInitSearch2(false);// 한번만 조회되도록
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true })); 
+      setIsInitSearch2(false); // 한번만 조회되도록
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1951,7 +1951,7 @@ const MA_A2400W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true })); 
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       fetchSubGrid();
       fetchSubGrid2();
       fetchSubGrid3();

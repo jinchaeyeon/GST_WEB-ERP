@@ -61,7 +61,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 
@@ -85,7 +85,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
     "L_PR010,L_BA011,L_sysUserMaster_001,L_BA015",
-      // 공정, 외주여부, 사용자, 수량단위, 공정단위
+    // 공정, 외주여부, 사용자, 수량단위, 공정단위
     setBizComponentData
   );
 
@@ -372,7 +372,6 @@ const BA_A0050: React.FC = () => {
             ...prev,
             itemcd: firstRowData.itemcd,
           }));
-  
         }
       }
     } else {
@@ -449,11 +448,7 @@ const BA_A0050: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      customOptionData != null &&
-      filters.isSearch &&
-      permissions !== null
-    ) {
+    if (customOptionData != null && filters.isSearch && permissions !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
     }
@@ -594,7 +589,7 @@ const BA_A0050: React.FC = () => {
       });
       seq++;
     }
-    setIfSelectFirstRow2(false)
+    setIfSelectFirstRow2(false);
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: seq,
       chlditemcd: "",
@@ -620,7 +615,7 @@ const BA_A0050: React.FC = () => {
       rowstatus: "N",
     };
     setSelectedsubDataState({ [newDataItem.num]: true });
- 
+
     setSubDataResult((prev) => {
       return {
         data: [...prev.data, newDataItem],
@@ -741,7 +736,7 @@ const BA_A0050: React.FC = () => {
     //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
     setCopyWindowVisible2(true);
   };
-  
+
   interface IItemData {
     itemcd: string;
     itemno: string;

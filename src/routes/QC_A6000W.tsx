@@ -4,7 +4,7 @@ import React, {
   useState,
   createContext,
   useContext,
-  useRef
+  useRef,
 } from "react";
 import * as ReactDOM from "react-dom";
 import {
@@ -36,9 +36,7 @@ import {
   ButtonInGridInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Input,
-} from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -66,7 +64,7 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -388,10 +386,12 @@ const QC_A6000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (      customOptionData != null &&
+    if (
+      customOptionData != null &&
       filters.isSearch &&
       permissions !== null &&
-      bizComponentData !== null) {
+      bizComponentData !== null
+    ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
     }
@@ -428,7 +428,7 @@ const QC_A6000: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
-    setFilters((prev) => ({ ...prev, pgNum: 1,isSearch: true }));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -728,12 +728,12 @@ const QC_A6000: React.FC = () => {
     });
   };
 
-   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -745,7 +745,7 @@ const QC_A6000: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 

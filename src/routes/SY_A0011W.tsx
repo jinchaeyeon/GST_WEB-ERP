@@ -64,7 +64,7 @@ import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 import DetailWindow from "../components/Windows/SY_A0011W_Window";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 
 //그리드 별 키 필드값

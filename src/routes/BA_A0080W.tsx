@@ -69,11 +69,11 @@ import {
   GAP,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import NameCell from "../components/Cells/NameCell";
 import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
 

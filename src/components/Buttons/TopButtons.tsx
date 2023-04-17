@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { Button } from "@progress/kendo-react-buttons";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { menusState } from "../store/atoms";
-import { TPermissions } from "../store/types";
-import { useApi } from "../hooks/api";
-import { UseGetValueFromSessionItem } from "./CommonFunction";
+import { menusState } from "../../store/atoms";
+import { TPermissions } from "../../store/types";
+import { useApi } from "../../hooks/api";
+import { UseGetValueFromSessionItem } from "../CommonFunction";
 
 interface ITopButtons {
   search: () => void;

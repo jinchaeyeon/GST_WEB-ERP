@@ -41,12 +41,12 @@ import {
 } from "../components/CommonFunction";
 import NumberCell from "../components/Cells/NumberCell";
 import { SELECTED_FIELD, EDIT_FIELD } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A0010W_C";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 
 type TdataArr = {
   row_status_s: string[];

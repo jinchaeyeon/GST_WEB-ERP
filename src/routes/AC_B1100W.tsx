@@ -46,7 +46,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -280,7 +280,7 @@ const AC_B1100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data)
+    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -406,13 +406,13 @@ const AC_B1100W: React.FC = () => {
       </td>
     );
   };
-  
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -424,7 +424,7 @@ const AC_B1100W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -615,8 +615,12 @@ const AC_B1100W: React.FC = () => {
                   (item: any) => item.user_id === row.insert_userid
                 )?.user_name,
                 proc_time: convertDateToStrWithTime2(new Date(row.proc_time)),
-                insert_time:convertDateToStrWithTime2(new Date(row.insert_time)),
-                update_time: convertDateToStrWithTime2(new Date(row.update_time)),
+                insert_time: convertDateToStrWithTime2(
+                  new Date(row.insert_time)
+                ),
+                update_time: convertDateToStrWithTime2(
+                  new Date(row.update_time)
+                ),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -666,9 +670,9 @@ const AC_B1100W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell2
-                              : undefined
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
+                            : undefined
                         }
                       ></GridColumn>
                     )

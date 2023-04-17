@@ -13,13 +13,14 @@ import {
   passwordExpirationInfoState,
   loginResultState,
   isMenuOpendState,
-} from "../store/atoms";
-import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
-import ChangePasswordWindow from "./Windows/CommonWindows/ChangePasswordWindow";
-import SystemOptionWindow from "./Windows/CommonWindows/SystemOptionWindow";
-import { useApi } from "../hooks/api";
-import { Iparameters, TLogParaVal, TPath } from "../store/types";
-import Loading from "./Loading";
+  accessTokenState,
+} from "../../store/atoms";
+import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
+import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
+import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
+import { useApi } from "../../hooks/api";
+import { Iparameters, TLogParaVal, TPath } from "../../store/types";
+import Loading from "../Loading";
 import {
   AppName,
   ButtonContainer,
@@ -31,18 +32,19 @@ import {
   PageWrap,
   TopTitle,
   Wrapper,
-} from "../CommonStyled";
-import { getBrowser, resetLocalStorage, UseGetIp } from "./CommonFunction";
+} from "../../CommonStyled";
+import { getBrowser, resetLocalStorage, UseGetIp } from "../CommonFunction";
 import {
   AutoComplete,
   AutoCompleteCloseEvent,
 } from "@progress/kendo-react-dropdowns";
+import cookie from "react-cookies";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
   const [loginResult] = useRecoilState(loginResultState);
-  const accessToken = localStorage.getItem("accessToken");
+  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const [token] = useState(accessToken);
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   useEffect(() => {
@@ -339,11 +341,14 @@ const PanelBarNavContainer = (props: any) => {
 
   const selected = setSelectedIndex(props.location.pathname);
 
-  const logout = useCallback(() => {
+  const logout = () => {
     fetchLogout();
+
+    setAccessToken(null);
+    cookie.remove("refreshToken", { path: "/" }); // localStorage.removeItem("refreshToken");
     resetLocalStorage();
     window.location.href = "/";
-  }, []);
+  };
 
   const fetchLogout = async () => {
     let data: any;

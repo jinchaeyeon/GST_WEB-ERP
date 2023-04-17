@@ -43,13 +43,13 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/HU_A2100W_C";
 import { Button } from "@progress/kendo-react-buttons";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 //그리드 별 키 필드값
@@ -434,11 +434,7 @@ const HU_A2100W: React.FC = () => {
         );
       });
       dataItem.map((item) => {
-        if (
-          item.paycd == undefined ||
-          item.paycd == null ||
-          item.paycd == ""
-        ) {
+        if (item.paycd == undefined || item.paycd == null || item.paycd == "") {
           valid = false;
         }
         if (
@@ -462,30 +458,43 @@ const HU_A2100W: React.FC = () => {
         ) {
           valid = false;
         }
-        if(item.work_strtime != ""){
-          if(!isNaN(item.work_strtime) == false|| item.work_strtime.length != 4){
+        if (item.work_strtime != "") {
+          if (
+            !isNaN(item.work_strtime) == false ||
+            item.work_strtime.length != 4
+          ) {
             valid2 = false;
           } else {
-            if(parseInt((item.work_strtime).substring(0,2)) > 24 ||
-            parseInt((item.work_strtime).substring(0,2)) < 0
-            ){
+            if (
+              parseInt(item.work_strtime.substring(0, 2)) > 24 ||
+              parseInt(item.work_strtime.substring(0, 2)) < 0
+            ) {
               valid2 = false;
             }
-            if(parseInt((item.work_strtime).substring(2,4)) > 60||
-            parseInt((item.work_strtime).substring(2,4)) < 0){
+            if (
+              parseInt(item.work_strtime.substring(2, 4)) > 60 ||
+              parseInt(item.work_strtime.substring(2, 4)) < 0
+            ) {
               valid2 = false;
             }
           }
-        } else if(item.work_endtime != ""){
-          if(!isNaN(item.work_endtime) == false|| item.work_endtime.length != 4){
+        } else if (item.work_endtime != "") {
+          if (
+            !isNaN(item.work_endtime) == false ||
+            item.work_endtime.length != 4
+          ) {
             valid2 = false;
           } else {
-            if(parseInt((item.work_endtime).substring(0,2)) > 24||
-            parseInt((item.work_endtime).substring(0,2)) < 0){
+            if (
+              parseInt(item.work_endtime.substring(0, 2)) > 24 ||
+              parseInt(item.work_endtime.substring(0, 2)) < 0
+            ) {
               valid2 = false;
             }
-            if(parseInt((item.work_endtime).substring(2,4)) > 60||
-            parseInt((item.work_endtime).substring(2,4)) < 0){
+            if (
+              parseInt(item.work_endtime.substring(2, 4)) > 60 ||
+              parseInt(item.work_endtime.substring(2, 4)) < 0
+            ) {
               valid2 = false;
             }
           }
@@ -504,7 +513,7 @@ const HU_A2100W: React.FC = () => {
         worktime_s: [],
         paycd_s: [],
       };
-      if(valid2 == true){
+      if (valid2 == true) {
         if (valid == true) {
           if (dataItem.length === 0 && deletedMainRows.length == 0)
             return false;
@@ -519,8 +528,8 @@ const HU_A2100W: React.FC = () => {
               work_strtime = "",
               work_endtime = "",
               use_yn = "",
-              worktime= "",
-              paycd= "",
+              worktime = "",
+              paycd = "",
             } = item;
             dataArr.rowstatus_s.push(rowstatus);
             dataArr.workgb_s.push(workgb);
@@ -545,8 +554,8 @@ const HU_A2100W: React.FC = () => {
               work_strtime = "",
               work_endtime = "",
               use_yn = "",
-              worktime= "",
-              paycd= "",
+              worktime = "",
+              paycd = "",
             } = item;
             dataArr.rowstatus_s.push(rowstatus);
             dataArr.workgb_s.push(workgb);
@@ -576,10 +585,10 @@ const HU_A2100W: React.FC = () => {
           }));
         } else {
           alert("필수항목을 채워주세요.");
-        }      
+        }
       } else {
         alert("시간 형식을 맞춰주세요.(ex. 1404 )");
-      }  
+      }
     } catch (e) {
       alert(e);
     }
@@ -604,7 +613,7 @@ const HU_A2100W: React.FC = () => {
     userid: userId,
     pc: pc,
     form_id: "HU_A2100W",
-    company_code: "2207A046"
+    company_code: "2207A046",
   });
 
   const para: Iparameters = {
@@ -629,7 +638,7 @@ const HU_A2100W: React.FC = () => {
       "@p_paycd_s": ParaData.paycd_s,
       "@p_pc": pc,
       "@p_form_id": "HU_A2100W",
-      "@p_companycode": ParaData.company_code
+      "@p_companycode": ParaData.company_code,
     },
   };
 
@@ -662,7 +671,7 @@ const HU_A2100W: React.FC = () => {
         userid: userId,
         pc: pc,
         form_id: "HU_A2100W",
-        company_code: "2207A046"
+        company_code: "2207A046",
       });
       deletedMainRows = [];
       resetAllGrid();
@@ -801,9 +810,7 @@ const HU_A2100W: React.FC = () => {
           }}
         >
           <GridTitleContainer>
-            <GridTitle>
-              기본정보
-            </GridTitle>
+            <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
               <Button
                 onClick={onAddClick}
@@ -873,9 +880,9 @@ const HU_A2100W: React.FC = () => {
                       cell={
                         customField.includes(item.fieldName)
                           ? CustomComboBoxCell
-                          // : centerField.includes(item.fieldName)
-                          // ? CenterCell
-                          : undefined
+                          : // : centerField.includes(item.fieldName)
+                            // ? CenterCell
+                            undefined
                       }
                       headerCell={
                         requiredField.includes(item.fieldName)

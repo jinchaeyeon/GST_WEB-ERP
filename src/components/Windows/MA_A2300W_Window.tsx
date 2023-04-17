@@ -71,7 +71,7 @@ import DateCell from "../Cells/DateCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
-import RequiredHeader from "../RequiredHeader";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -533,7 +533,7 @@ const CopyWindow = ({
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -545,7 +545,7 @@ const CopyWindow = ({
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -804,23 +804,24 @@ const CopyWindow = ({
     const newData = mainDataResult.data.map((item) => ({
       ...item,
       amt:
-      filters.amtunit == "KRW"
-        ? item.qty * item.unp
-        : item.qty * item.unp * filters.wonchgrat,
+        filters.amtunit == "KRW"
+          ? item.qty * item.unp
+          : item.qty * item.unp * filters.wonchgrat,
       wonamt:
-      filters.amtunit == "KRW"
+        filters.amtunit == "KRW"
           ? item.qty * item.unp
           : item.qty * item.unp * filters.wonchgrat,
       taxamt:
-      filters.amtunit == "KRW"
+        filters.amtunit == "KRW"
           ? (item.qty * item.unp) / 10
           : (item.qty * item.unp * filters.wonchgrat) / 10,
       totamt:
-      filters.amtunit == "KRW"
-      ? Math.round((item.qty * item.unp) + (item.qty * item.unp) / 10)
-      : Math.round(
-          (item.qty * item.unp * filters.wonchgrat) + (item.qty * item.unp * filters.wonchgrat) / 10
-        ),
+        filters.amtunit == "KRW"
+          ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
+          : Math.round(
+              item.qty * item.unp * filters.wonchgrat +
+                (item.qty * item.unp * filters.wonchgrat) / 10
+            ),
       [EDIT_FIELD]: undefined,
     }));
     setIfSelectFirstRow(false);
@@ -1017,175 +1018,175 @@ const CopyWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>상세정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                ></Button>
-                <Button
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  onClick={onCopyWndClick}
-                  icon="folder-open"
-                >
-                  발주
-                </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "500px" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  rowstatus:
-                    row.rowstatus == null ||
-                    row.rowstatus == "" ||
-                    row.rowstatus == undefined
-                      ? ""
-                      : row.rowstatus,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-                mainDataState
-              )}
-              onDataStateChange={onMainDataStateChange}
-              {...mainDataState}
-              //선택 subDataState
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              onScroll={onMainScrollHandler}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onMainItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn field="rowstatus" title=" " width="50px" />
-              <GridColumn
-                field="PAC"
-                title="도/사급"
-                width="150px"
-                cell={CustomComboBoxCell}
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn field="itemcd" title="품목코드" width="150px" />
-              <GridColumn field="itemnm" title="품목명" width="150px" />
-              <GridColumn field="insiz" title="규격" width="120px" />
-              <GridColumn
-                field="itemacnt"
-                title="품목계정"
-                width="120px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn field="lotnum" title="LOT NO" width="120px" />
-              <GridColumn
-                field="load_place"
-                title="적재장소"
-                width="100px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="qty"
-                title="수량"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-                headerCell={RequiredHeader}
-              />
-              <GridColumn
-                field="qtyunit"
-                title="수량단위"
-                width="120px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="unitwgt"
-                title="단량"
-                width="100px"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="totwgt"
-                title="총중량"
-                width="100px"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="wgtunit"
-                title="중량단위"
-                width="120px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="unpcalmeth"
-                title="단가산정방법"
-                width="120px"
-                cell={CustomComboBoxCell}
-              />
-              <GridColumn
-                field="unp"
-                title="단가"
-                width="100px"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="amt"
-                title="금액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="wonamt"
-                title="원화금액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="dlramt"
-                title="달러금액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="taxamt"
-                title="세액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="totamt"
-                title="합계금액"
-                width="100px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn field="remark" title="비고" width="280px" />
-              <GridColumn field="purkey" title="발주번호" width="150px" />
-              <GridColumn field="reckey" title="입고번호" width="150px" />
-            </Grid>
-          </GridContainer>
+        <GridContainer>
+          <GridTitleContainer>
+            <GridTitle>상세정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+              ></Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyWndClick}
+                icon="folder-open"
+              >
+                발주
+              </Button>
+            </ButtonContainer>
+          </GridTitleContainer>
+          <Grid
+            style={{ height: "500px" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                rowstatus:
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
+            )}
+            onDataStateChange={onMainDataStateChange}
+            {...mainDataState}
+            //선택 subDataState
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange}
+            //스크롤 조회기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            onScroll={onMainScrollHandler}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender}
+            rowRender={customRowRender}
+            editField={EDIT_FIELD}
+          >
+            <GridColumn field="rowstatus" title=" " width="50px" />
+            <GridColumn
+              field="PAC"
+              title="도/사급"
+              width="150px"
+              cell={CustomComboBoxCell}
+              footerCell={mainTotalFooterCell}
+            />
+            <GridColumn field="itemcd" title="품목코드" width="150px" />
+            <GridColumn field="itemnm" title="품목명" width="150px" />
+            <GridColumn field="insiz" title="규격" width="120px" />
+            <GridColumn
+              field="itemacnt"
+              title="품목계정"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn field="lotnum" title="LOT NO" width="120px" />
+            <GridColumn
+              field="load_place"
+              title="적재장소"
+              width="100px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="qty"
+              title="수량"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+              headerCell={RequiredHeader}
+            />
+            <GridColumn
+              field="qtyunit"
+              title="수량단위"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="unitwgt"
+              title="단량"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="totwgt"
+              title="총중량"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="wgtunit"
+              title="중량단위"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="unpcalmeth"
+              title="단가산정방법"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="unp"
+              title="단가"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="amt"
+              title="금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="wonamt"
+              title="원화금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="dlramt"
+              title="달러금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="taxamt"
+              title="세액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="totamt"
+              title="합계금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn field="remark" title="비고" width="280px" />
+            <GridColumn field="purkey" title="발주번호" width="150px" />
+            <GridColumn field="reckey" title="입고번호" width="150px" />
+          </Grid>
+        </GridContainer>
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>

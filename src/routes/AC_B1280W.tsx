@@ -41,7 +41,7 @@ import CodeWindow from "../components/Windows/CommonWindows/CodeWindow";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1280W_C";
@@ -89,8 +89,7 @@ const AC_B1280W: React.FC = () => {
 
   const [accountWindowVisible, setAccountWindowVisible] =
     useState<boolean>(false);
-  const [codeWindowVisible, setCodeWindowVisible] =
-    useState<boolean>(false);
+  const [codeWindowVisible, setCodeWindowVisible] = useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -267,13 +266,13 @@ const AC_B1280W: React.FC = () => {
       </td>
     );
   };
-  
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -285,7 +284,7 @@ const AC_B1280W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -519,8 +518,8 @@ const AC_B1280W: React.FC = () => {
                           item.sortOrder === 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell2
-                              : undefined
+                            ? gridSumQtyFooterCell2
+                            : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
@@ -536,10 +535,7 @@ const AC_B1280W: React.FC = () => {
         />
       )}
       {codeWindowVisible && (
-        <CodeWindow
-          setVisible={setCodeWindowVisible}
-          setData={setCodeData}
-        />
+        <CodeWindow setVisible={setCodeWindowVisible} setData={setCodeData} />
       )}
       {previewVisible && (
         <Window

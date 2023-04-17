@@ -55,7 +55,7 @@ import {
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
