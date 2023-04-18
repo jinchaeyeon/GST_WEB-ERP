@@ -1332,7 +1332,35 @@ const MA_A2700W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-    setParaData(filter);
+    setParaData((prev) => ({
+      ...prev,
+      workType: workType,
+      outdt: filter.outdt,
+      recdt: filter.recdt,
+      seq1: filter.seq1,
+      position: filter.position,
+      doexdiv: filter.doexdiv,
+      amtunit: filter.amtunit,
+      inuse: filter.inuse,
+      inoutdiv: filter.inoutdiv,
+      indt: filter.indt,
+      custcd: filter.custcd,
+      custnm: filter.custnm,
+      rcvcustcd: filter.rcvcustcd,
+      rcvcustnm: filter.rcvcustnm,
+      taxdiv: filter.taxdiv,
+      taxloca: filter.taxloca,
+      taxtype: filter.taxtype,
+      taxnum: filter.taxnum,
+      taxdt: filter.taxdt,
+      person: filter.person,
+      attdatnum: filter.attdatnum,
+      remark: filter.remark,
+      baseamt: filter.baseamt,
+      importnum: filter.importnum,
+      auto_transfer: filter.auto_transfer,
+      pac: filter.pac,
+    }));
     if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
 
     let dataArr: TdataArr = {

@@ -736,10 +736,19 @@ const CopyWindow = ({
     const { value, name } = e.target;
 
     if (
-      mainDataResult.data.filter(
+      (mainDataResult.data.filter(
         (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-      )[0].controltype2 == "D" &&
-      name == "mngdata2"
+      )[0].controltype1 == "D" && name == "mngdata1") || (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype2 == "D" && name == "mngdata2") || (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype3 == "D" && name == "mngdata3") || (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype4 == "D" && name == "mngdata4") || (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype5 == "D" && name == "mngdata5") || (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype6 == "D" && name == "mngdata6")
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
