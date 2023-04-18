@@ -43,11 +43,11 @@ import {
   SELECTED_FIELD,
   EDIT_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import { Button } from "@progress/kendo-react-buttons";
@@ -553,22 +553,22 @@ const HU_A3020W: React.FC = () => {
     //     (dataItem.rowstatus == undefined || dataItem.rowstatus == "U")
     //   )
     // ) {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
-              [EDIT_FIELD]: field,
-            }
-          : { ...item, [EDIT_FIELD]: undefined }
-      );
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: field,
+          }
+        : { ...item, [EDIT_FIELD]: undefined }
+    );
 
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
     // }
   };
 

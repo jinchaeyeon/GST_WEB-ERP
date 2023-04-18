@@ -69,7 +69,7 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/MA_B3100W_C";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 
@@ -377,7 +377,7 @@ const MA_B3100: React.FC = () => {
     gridDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -389,7 +389,7 @@ const MA_B3100: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 

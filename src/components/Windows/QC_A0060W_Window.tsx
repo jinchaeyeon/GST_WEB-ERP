@@ -65,7 +65,7 @@ import DateCell from "../Cells/DateCell";
 import { FormComboBoxCell, FormComboBox } from "../Editors";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import { NumberInput } from "adaptivecards";
-import RequiredHeader from "../RequiredHeader";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 
 type IWindow = {
   workType: "N" | "U" | "R";
@@ -1227,10 +1227,7 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow2
-          setVisible={setCopyWindowVisible}
-          setData={setCopyData}
-        />
+        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow

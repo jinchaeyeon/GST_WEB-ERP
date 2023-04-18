@@ -66,7 +66,7 @@ import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { isLoading } from "../store/atoms";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { bytesToBase64 } from "byte-base64";
 

@@ -4,7 +4,7 @@ import React, {
   useState,
   createContext,
   useContext,
-  useRef
+  useRef,
 } from "react";
 import * as ReactDOM from "react-dom";
 import {
@@ -77,7 +77,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -182,7 +182,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
-    
+
   const onAttWndClick2 = () => {
     setAttachmentsWindowVisible(true);
   };
@@ -450,7 +450,7 @@ const QC_A2000: React.FC = () => {
     pgNum: 1,
     isSearch: true,
     pgGap: 0,
-  })
+  });
 
   const [detailFilters2, setDetailFilters2] = useState({
     pgSize: PAGE_SIZE,
@@ -828,7 +828,8 @@ const QC_A2000: React.FC = () => {
   const onDetailScrollHandler = (event: GridEvent) => {
     if (detailFilters.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
-    detailFilters.pgNum + (detailFilters.scrollDirrection === "up" ? detailFilters.pgGap : 0);
+      detailFilters.pgNum +
+      (detailFilters.scrollDirrection === "up" ? detailFilters.pgGap : 0);
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -843,7 +844,8 @@ const QC_A2000: React.FC = () => {
     }
 
     pgNumWithGap =
-    detailFilters.pgNum - (detailFilters.scrollDirrection === "down" ? detailFilters.pgGap : 0);
+      detailFilters.pgNum -
+      (detailFilters.scrollDirrection === "down" ? detailFilters.pgGap : 0);
     // 스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setDetailFilters((prev) => ({
@@ -884,7 +886,7 @@ const QC_A2000: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -896,7 +898,7 @@ const QC_A2000: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -905,7 +907,7 @@ const QC_A2000: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -917,7 +919,7 @@ const QC_A2000: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -926,7 +928,7 @@ const QC_A2000: React.FC = () => {
     detailDataResult2.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -938,7 +940,7 @@ const QC_A2000: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -1362,7 +1364,12 @@ const QC_A2000: React.FC = () => {
   };
 
   const enterEdit3 = (dataItem: any, field: string) => {
-    if (field == "doqty" || field == "remark" || field == " files" || field == "chk") {
+    if (
+      field == "doqty" ||
+      field == "remark" ||
+      field == " files" ||
+      field == "chk"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1726,8 +1733,7 @@ const QC_A2000: React.FC = () => {
   //FormContext에서 데이터 받아 set
   useEffect(() => {
     const items = mainDataResult.data.filter(
-      (item: any) =>
-        item.num == Object.getOwnPropertyNames(selectedState)[0]
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
     const datas = mainDataResult.data.map((item: any) =>
       item.num == items.num
@@ -2030,12 +2036,12 @@ const QC_A2000: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell}
-              cell={CheckBoxCell}
-            />
+                      field="chk"
+                      title=" "
+                      width="45px"
+                      headerCell={CustomCheckBoxCell}
+                      cell={CheckBoxCell}
+                    />
                     <GridColumn title="검사입력정보">
                       {createColumn()}
                     </GridColumn>

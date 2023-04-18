@@ -57,7 +57,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -493,7 +493,7 @@ const MA_B7200W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -608,7 +608,7 @@ const MA_B7200W: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -620,8 +620,9 @@ const MA_B7200W: React.FC = () => {
             " : " +
             proccdListData.find((item: any) => item.sub_code === row.proccd)
               ?.code_name,
-          qtyunit: qtyunitListData.find((item: any) => item.sub_code === row.qtyunit)
-          ?.code_name,
+          qtyunit: qtyunitListData.find(
+            (item: any) => item.sub_code === row.qtyunit
+          )?.code_name,
         };
       });
 
@@ -766,7 +767,6 @@ const MA_B7200W: React.FC = () => {
     fetchDetailGrid2();
   }, [detailPgNum]);
 
-  
   useEffect(() => {
     fetchDetailGrid3();
     fetchDetailGrid4();
@@ -984,8 +984,8 @@ const MA_B7200W: React.FC = () => {
       ...prev,
       itemcd: selectedRowData.itemcd,
       proccd: selectedRowData.proccd,
-      lotnum: selectedRowData.lotnum
-    }))
+      lotnum: selectedRowData.lotnum,
+    }));
   };
 
   const onDetailSelectionChange3 = (event: GridSelectionChangeEvent) => {
@@ -1060,7 +1060,8 @@ const MA_B7200W: React.FC = () => {
   const onMainScrollHandler2 = (event: GridEvent) => {
     if (filters2.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
-      filters2.pgNum + (filters2.scrollDirrection === "up" ? filters2.pgGap : 0);
+      filters2.pgNum +
+      (filters2.scrollDirrection === "up" ? filters2.pgGap : 0);
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -1075,7 +1076,8 @@ const MA_B7200W: React.FC = () => {
     }
 
     pgNumWithGap =
-      filters2.pgNum - (filters2.scrollDirrection === "down" ? filters2.pgGap : 0);
+      filters2.pgNum -
+      (filters2.scrollDirrection === "down" ? filters2.pgGap : 0);
     // 스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setFilters2((prev) => ({
@@ -1097,7 +1099,6 @@ const MA_B7200W: React.FC = () => {
     if (chkScrollHandler(event, detailPgNum4, PAGE_SIZE))
       setDetailPgNum4((prev) => prev + 1);
   };
-
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
@@ -1122,7 +1123,7 @@ const MA_B7200W: React.FC = () => {
   const onDetailDataStateChange4 = (event: GridDataStateChangeEvent) => {
     setDetailDataState4(event.dataState);
   };
-  
+
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataTotal.toString().split(".");
@@ -1138,8 +1139,8 @@ const MA_B7200W: React.FC = () => {
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = detailDataResult.total.toString().split(".");
-    if(parts[0] == "-1") {
-      parts[0]= "0"
+    if (parts[0] == "-1") {
+      parts[0] = "0";
     }
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -1153,8 +1154,8 @@ const MA_B7200W: React.FC = () => {
 
   const detailTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = detailDataResult2.total.toString().split(".");
-    if(parts[0] == "-1") {
-      parts[0]= "0"
+    if (parts[0] == "-1") {
+      parts[0] = "0";
     }
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -1180,8 +1181,8 @@ const MA_B7200W: React.FC = () => {
 
   const detailTotalFooterCell3 = (props: GridFooterCellProps) => {
     var parts = detailDataResult3.total.toString().split(".");
-    if(parts[0] == "-1") {
-      parts[0]= "0"
+    if (parts[0] == "-1") {
+      parts[0] = "0";
     }
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -1195,8 +1196,8 @@ const MA_B7200W: React.FC = () => {
 
   const detailTotalFooterCell4 = (props: GridFooterCellProps) => {
     var parts = detailDataResult4.total.toString().split(".");
-    if(parts[0] == "-1") {
-      parts[0]= "0"
+    if (parts[0] == "-1") {
+      parts[0] = "0";
     }
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -1211,66 +1212,66 @@ const MA_B7200W: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = "";
     rowsOfDataResult(mainDataResult).forEach((item) =>
-        props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-      );
-      var parts = sum.toString().split(".");
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    };
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return parts[0] != "NaN" ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    ) : (
+      <td></td>
+    );
+  };
 
-    const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-      let sum = 0;
-      detailDataResult.data.forEach((item) =>
-        props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-      );
-      var parts = sum.toString().split(".");
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    };
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    detailDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return parts[0] != "NaN" ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    ) : (
+      <td></td>
+    );
+  };
 
-    const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
-      let sum = 0;
-      detailDataResult2.data.forEach((item) =>
-        props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-      );
-      var parts = sum.toString().split(".");
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    };
+  const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    detailDataResult2.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return parts[0] != "NaN" ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    ) : (
+      <td></td>
+    );
+  };
 
   const gridSumQtyFooterCell4 = (props: GridFooterCellProps) => {
     let sum = "";
     rowsOfDataResult(mainDataResult2).forEach((item) =>
-        props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-      );
-      var parts = sum.toString().split(".");
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    };
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    var parts = sum.toString().split(".");
+    return parts[0] != "NaN" ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    ) : (
+      <td></td>
+    );
+  };
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
@@ -1419,7 +1420,10 @@ const MA_B7200W: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "MA_B7200W_001");
-      } else if(convertDateToStr(filters.todt).substring(0, 4) != convertDateToStr(filters.frdt).substring(0, 4)) {
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) !=
+        convertDateToStr(filters.frdt).substring(0, 4)
+      ) {
         throw findMessage(messagesData, "MA_B7200W_002");
       } else {
         resetAllGrid();
@@ -1433,9 +1437,23 @@ const MA_B7200W: React.FC = () => {
 
   const createColumn = () => {
     const array = [];
-    array.push(<GridColumn field={"inqty"} title={"입고수량"} width="100px" footerCell ={gridSumQtyFooterCell4} cell={NumberCell}/>);
     array.push(
-      <GridColumn field={"outqty"} title={"출고수량"} width="100px" footerCell ={gridSumQtyFooterCell4}  cell={NumberCell}/>
+      <GridColumn
+        field={"inqty"}
+        title={"입고수량"}
+        width="100px"
+        footerCell={gridSumQtyFooterCell4}
+        cell={NumberCell}
+      />
+    );
+    array.push(
+      <GridColumn
+        field={"outqty"}
+        title={"출고수량"}
+        width="100px"
+        footerCell={gridSumQtyFooterCell4}
+        cell={NumberCell}
+      />
     );
     return array;
   };
@@ -1828,7 +1846,12 @@ const MA_B7200W: React.FC = () => {
                   onExpandChange={onExpandChange2}
                   expandField="expanded"
                 >
-                  <GridColumn field="itemcd" title="품목코드" width="150px" footerCell={mainTotalFooterCell2} />
+                  <GridColumn
+                    field="itemcd"
+                    title="품목코드"
+                    width="150px"
+                    footerCell={mainTotalFooterCell2}
+                  />
                   <GridColumn field="itemnm" title="품목명" width="130px" />
                   <GridColumn field="insiz" title="규격" width="150px" />
                   <GridColumn field="qtyunit" title="단위" width="120px" />
@@ -1837,10 +1860,16 @@ const MA_B7200W: React.FC = () => {
                     title="기간이전재고"
                     width="150px"
                     cell={NumberCell}
-                    footerCell ={gridSumQtyFooterCell4}
+                    footerCell={gridSumQtyFooterCell4}
                   />
                   <GridColumn title="기간내재고">{createColumn()}</GridColumn>
-                  <GridColumn field="stockqty" title="재고수량" width="100px"  cell={NumberCell} footerCell ={gridSumQtyFooterCell4}/>
+                  <GridColumn
+                    field="stockqty"
+                    title="재고수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={gridSumQtyFooterCell4}
+                  />
                   <GridColumn field="lotnum" title="LOT NO" width="150px" />
                 </Grid>
               </ExcelExport>

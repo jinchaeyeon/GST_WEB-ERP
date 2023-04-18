@@ -13,13 +13,16 @@ import {
   passwordExpirationInfoState,
   loginResultState,
   isMenuOpendState,
-} from "../store/atoms";
-import UserOptionsWindow from "./Windows/CommonWindows/UserOptionsWindow";
-import ChangePasswordWindow from "./Windows/CommonWindows/ChangePasswordWindow";
-import SystemOptionWindow from "./Windows/CommonWindows/SystemOptionWindow";
-import { useApi } from "../hooks/api";
-import { Iparameters, TLogParaVal, TPath } from "../store/types";
-import Loading from "./Loading";
+  accessTokenState,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
+import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
+import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
+import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
+import { useApi } from "../../hooks/api";
+import { Iparameters, TLogParaVal, TPath } from "../../store/types";
+import Loading from "../Loading";
 import {
   AppName,
   ButtonContainer,
@@ -31,18 +34,20 @@ import {
   PageWrap,
   TopTitle,
   Wrapper,
-} from "../CommonStyled";
-import { getBrowser, resetLocalStorage, UseGetIp } from "./CommonFunction";
+} from "../../CommonStyled";
+import { getBrowser, resetLocalStorage, UseGetIp } from "../CommonFunction";
 import {
   AutoComplete,
   AutoCompleteCloseEvent,
 } from "@progress/kendo-react-dropdowns";
+import cookie from "react-cookies";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
+  const history = useHistory();
   const [loginResult] = useRecoilState(loginResultState);
-  const accessToken = localStorage.getItem("accessToken");
+  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const [token] = useState(accessToken);
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   useEffect(() => {
@@ -53,6 +58,17 @@ const PanelBarNavContainer = (props: any) => {
     isMobileMenuOpendState
   );
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
+    deletedAttadatnumsState
+  );
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
   const loginKey = loginResult ? loginResult.loginKey : "";
@@ -103,9 +119,48 @@ const PanelBarNavContainer = (props: any) => {
   //   };
   // }, []);
 
+  // 새로고침하거나 Path 변경 시, unsavedAttadatnums가 있으면 삭제처리
+  useEffect(() => {
+    const handleTabClose = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+
+      return (event.returnValue = "true");
+    };
+
+    const handleUnload = () => {
+      if (unsavedAttadatnums.length > 0) {
+        setDeletedAttadatnums(unsavedAttadatnums);
+      }
+    };
+
+    const unlisten = history.listen(() => {
+      handleUnload();
+    });
+
+    window.addEventListener("beforeunload", handleTabClose);
+    window.addEventListener("unload", handleUnload);
+
+    return () => {
+      unlisten();
+      window.removeEventListener("beforeunload", handleTabClose);
+      window.removeEventListener("unload", handleUnload);
+    };
+  }, [unsavedAttadatnums, setUnsavedAttadatnums, history]);
+
   useEffect(() => {
     if (token && menus === null) fetchMenus();
   }, [menus]);
+
+  // 첨부파일 삭제
+  useEffect(() => {
+    if (deletedAttadatnums.length > 0) {
+      fetchToDeletedAttachment(deletedAttadatnums);
+
+      // 초기화
+      setUnsavedAttadatnums([]);
+      setDeletedAttadatnums([]);
+    }
+  }, [deletedAttadatnums]);
 
   useEffect(() => {
     // console.log("caches" in window);
@@ -134,6 +189,24 @@ const PanelBarNavContainer = (props: any) => {
     } catch (e: any) {
       console.log("menus error", e);
     }
+  }, []);
+
+  const fetchToDeletedAttachment = useCallback(async (attdatnums: string[]) => {
+    let data: any;
+
+    attdatnums.forEach(async (attdatnum) => {
+      try {
+        data = await processApi<any>("attachment-delete", {
+          attached: `attached?attachmentNumber=${attdatnum}`,
+        });
+      } catch (error) {
+        data = null;
+      }
+
+      if (data === null) {
+        console.log("An error occured to delete a file of " + attdatnum);
+      }
+    });
   }, []);
 
   let paths: Array<TPath> = [];
@@ -339,11 +412,14 @@ const PanelBarNavContainer = (props: any) => {
 
   const selected = setSelectedIndex(props.location.pathname);
 
-  const logout = useCallback(() => {
+  const logout = () => {
     fetchLogout();
+
+    setAccessToken(null);
+    cookie.remove("refreshToken", { path: "/" }); // localStorage.removeItem("refreshToken");
     resetLocalStorage();
     window.location.href = "/";
-  }, []);
+  };
 
   const fetchLogout = async () => {
     let data: any;
@@ -444,8 +520,6 @@ const PanelBarNavContainer = (props: any) => {
       .map((menu) => ({ id: menu.formId, text: menu.menuName }));
   }
   const [searchedMenu, setSearchedMenu] = useState("");
-
-  const history = useHistory();
 
   const openSelctedMenu = (e: AutoCompleteCloseEvent) => {
     const { value } = e.target;

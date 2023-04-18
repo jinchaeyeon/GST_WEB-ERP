@@ -32,7 +32,7 @@ import {
 import { CLIENT_WIDTH, PAGE_SIZE } from "../components/CommonString";
 import NumberCell from "../components/Cells/NumberCell";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";

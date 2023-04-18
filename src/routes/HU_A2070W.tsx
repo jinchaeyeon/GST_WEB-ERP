@@ -49,7 +49,7 @@ import {
   EDIT_FIELD,
   COM_CODE_DEFAULT_VALUE,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -59,7 +59,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { bytesToBase64 } from "byte-base64";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 //그리드 별 키 필드값
@@ -345,7 +345,7 @@ const HU_A2070W: React.FC = () => {
   };
 
   let gridRef: any = useRef(null);
-  
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -597,31 +597,31 @@ const HU_A2070W: React.FC = () => {
         ) {
           valid = false;
         }
-        if (!isNaN(item.shh) == false|| item.shh.length != 2) {
+        if (!isNaN(item.shh) == false || item.shh.length != 2) {
           valid2 = false;
         } else {
-          if(item.shh > 24 || item.shh < 0) {
+          if (item.shh > 24 || item.shh < 0) {
             valid2 = false;
           }
         }
-        if (!isNaN(item.smm) == false|| item.smm.length != 2) {
-          valid2 = false;
-        }else {
-          if(item.smm > 60|| item.smm < 0) {
-            valid2 = false;
-          }
-        }
-        if (!isNaN(item.ehh) == false|| item.ehh.length != 2) {
+        if (!isNaN(item.smm) == false || item.smm.length != 2) {
           valid2 = false;
         } else {
-          if(item.ehh > 24|| item.ehh < 0) {
+          if (item.smm > 60 || item.smm < 0) {
             valid2 = false;
           }
         }
-        if (!isNaN(item.emm) == false|| item.emm.length != 2) {
+        if (!isNaN(item.ehh) == false || item.ehh.length != 2) {
           valid2 = false;
-        }else {
-          if(item.emm > 60|| item.emm < 0) {
+        } else {
+          if (item.ehh > 24 || item.ehh < 0) {
+            valid2 = false;
+          }
+        }
+        if (!isNaN(item.emm) == false || item.emm.length != 2) {
+          valid2 = false;
+        } else {
+          if (item.emm > 60 || item.emm < 0) {
             valid2 = false;
           }
         }
@@ -820,28 +820,28 @@ const HU_A2070W: React.FC = () => {
           if (!isNaN(newData2.shh) == false || newData2.ssh.length != 2) {
             valid2 = false;
           } else {
-            if(newData2.shh > 24 || newData2.shh < 0) {
+            if (newData2.shh > 24 || newData2.shh < 0) {
               valid2 = false;
             }
           }
-          if (!isNaN(newData2.smm) == false|| newData2.smm.length != 2) {
-            valid2 = false;
-          }else {
-            if(newData2.smm > 60 || newData2.smm < 0) {
-              valid2 = false;
-            }
-          }
-          if (!isNaN(newData2.ehh) == false|| newData2.ehh.length != 2) {
+          if (!isNaN(newData2.smm) == false || newData2.smm.length != 2) {
             valid2 = false;
           } else {
-            if(newData2.ehh > 24 || newData2.ehh < 0) {
+            if (newData2.smm > 60 || newData2.smm < 0) {
               valid2 = false;
             }
           }
-          if (!isNaN(newData2.emm) == false|| newData2.emm.length != 2) {
+          if (!isNaN(newData2.ehh) == false || newData2.ehh.length != 2) {
             valid2 = false;
-          }else {
-            if(newData2.emm > 60 || newData2.emm < 0) {
+          } else {
+            if (newData2.ehh > 24 || newData2.ehh < 0) {
+              valid2 = false;
+            }
+          }
+          if (!isNaN(newData2.emm) == false || newData2.emm.length != 2) {
+            valid2 = false;
+          } else {
+            if (newData2.emm > 60 || newData2.emm < 0) {
               valid2 = false;
             }
           }
@@ -874,31 +874,31 @@ const HU_A2070W: React.FC = () => {
           ) {
             valid = false;
           }
-          if (!isNaN(newData.shh) == false|| newData.shh.length != 2) {
+          if (!isNaN(newData.shh) == false || newData.shh.length != 2) {
             valid2 = false;
           } else {
-            if(newData.shh > 24 || newData.shh < 0) {
+            if (newData.shh > 24 || newData.shh < 0) {
               valid2 = false;
             }
           }
-          if (!isNaN(newData.smm) == false|| newData.smm.length != 2) {
-            valid2 = false;
-          }else {
-            if(newData.smm > 60 || newData.smm < 0) {
-              valid2 = false;
-            }
-          }
-          if (!isNaN(newData.ehh) == false|| newData.ehh.length != 2) {
+          if (!isNaN(newData.smm) == false || newData.smm.length != 2) {
             valid2 = false;
           } else {
-            if(newData.ehh > 24 || newData.ehh < 0) {
+            if (newData.smm > 60 || newData.smm < 0) {
               valid2 = false;
             }
           }
-          if (!isNaN(newData.emm) == false|| newData.emm.length != 2) {
+          if (!isNaN(newData.ehh) == false || newData.ehh.length != 2) {
             valid2 = false;
-          }else {
-            if(newData.emm > 60 || newData.emm < 0) {
+          } else {
+            if (newData.ehh > 24 || newData.ehh < 0) {
+              valid2 = false;
+            }
+          }
+          if (!isNaN(newData.emm) == false || newData.emm.length != 2) {
+            valid2 = false;
+          } else {
+            if (newData.emm > 60 || newData.emm < 0) {
               valid2 = false;
             }
           }

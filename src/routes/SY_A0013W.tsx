@@ -71,7 +71,7 @@ import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import GroupWindow from "../components/Windows/SY_A0013W_Window";
 import { bytesToBase64 } from "byte-base64";
 

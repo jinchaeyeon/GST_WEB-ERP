@@ -39,7 +39,7 @@ import {
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 

@@ -61,7 +61,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1000W_C";

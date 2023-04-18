@@ -59,7 +59,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -80,11 +80,7 @@ const numberField = [
   "unp",
   "totwgt",
 ];
-const numberField2 =[  "qty",
-"amt",
-"wonamt",
-"taxamt",
-"totamt",]
+const numberField2 = ["qty", "amt", "wonamt", "taxamt", "totamt"];
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -473,7 +469,7 @@ const SA_A5010W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data)
+    console.log(data);
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -534,11 +530,11 @@ const SA_A5010W: React.FC = () => {
           };
         });
 
-        if (detailFilters.find_row_value === "" && data.pageNumber === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setDetailSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-        }
+      if (detailFilters.find_row_value === "" && data.pageNumber === 1) {
+        // 첫번째 행 선택하기
+        const firstRowData = rows[0];
+        setDetailSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+      }
     }
     setLoading(false);
   };
@@ -555,7 +551,8 @@ const SA_A5010W: React.FC = () => {
     if (
       customOptionData != null &&
       permissions !== null &&
-      bizComponentData !== null && detailFilters.isSearch
+      bizComponentData !== null &&
+      detailFilters.isSearch
     ) {
       resetDetailGrid();
       if (mainDataResult.total > 0) {
@@ -662,7 +659,6 @@ const SA_A5010W: React.FC = () => {
     setDetailSelectedState(newSelectedState);
   };
 
-
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -762,7 +758,7 @@ const SA_A5010W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -774,7 +770,7 @@ const SA_A5010W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -791,7 +787,7 @@ const SA_A5010W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -803,7 +799,7 @@ const SA_A5010W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 

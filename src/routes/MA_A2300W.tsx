@@ -57,7 +57,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -77,14 +77,7 @@ const numberField = [
   "unp",
   "inqty",
 ];
-const numberField2 = [
-  "amt",
-  "wonamt",
-  "taxamt",
-  "totamt",
-  "dlramt",
-  "qty",
-];
+const numberField2 = ["amt", "wonamt", "taxamt", "totamt", "dlramt", "qty"];
 type TdataArr = {
   rowstatus_s: string[];
   seq2_s: string[];
@@ -712,7 +705,7 @@ const MA_A2000W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -724,7 +717,7 @@ const MA_A2000W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -733,7 +726,7 @@ const MA_A2000W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -745,7 +738,7 @@ const MA_A2000W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -771,7 +764,7 @@ const MA_A2000W: React.FC = () => {
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
-  
+
   const onDeleteClick = (e: any) => {
     if (!window.confirm(questionToDelete)) {
       return false;
@@ -1053,11 +1046,12 @@ const MA_A2000W: React.FC = () => {
         purnum = "",
         purseq = "",
       } = item;
-      const itemacnts = itemacntListData.find(
-        (item: any) => item.code_name === itemacnt
-      )?.sub_code == undefined ? "" : itemacntListData.find(
-        (item: any) => item.code_name === itemacnt
-      )?.sub_code
+      const itemacnts =
+        itemacntListData.find((item: any) => item.code_name === itemacnt)
+          ?.sub_code == undefined
+          ? ""
+          : itemacntListData.find((item: any) => item.code_name === itemacnt)
+              ?.sub_code;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq2_s.push(seq2 == undefined || seq2 == "" ? 0 : seq2);
       dataArr.pac_s.push(PAC == undefined ? "" : PAC);
@@ -1595,7 +1589,7 @@ const MA_A2000W: React.FC = () => {
                 (item: any) => item.sub_code === row.unpcalmeth
               )?.code_name,
               PAC: pacListData.find((item: any) => item.sub_code === row.PAC)
-              ?.code_name,
+                ?.code_name,
               [SELECTED_FIELD]: detailselectedState[detailIdGetter(row)],
             })),
             detailDataState

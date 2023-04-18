@@ -54,11 +54,11 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 
 const DATA_ITEM_KEY = "num";
 
@@ -497,18 +497,18 @@ const QC_A0060W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
-    ) {
+    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid();
     }
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (detailFilters.isSearch &&customOptionData !== null && mainDataResult.total > 0) {
+    if (
+      detailFilters.isSearch &&
+      customOptionData !== null &&
+      mainDataResult.total > 0
+    ) {
       setDetailFilters((prev) => ({ ...prev, isSearch: false }));
       fetchDetailGrid();
     }
@@ -520,56 +520,55 @@ const QC_A0060W: React.FC = () => {
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = mainDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value
-        );
+    // 저장 후, 선택 행 스크롤 유지 처리
+    if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+      const ROW_HEIGHT = 35.56;
+      const idx = mainDataResult.data.findIndex(
+        (item) => idGetter(item) === filters.find_row_value
+      );
 
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+      const scrollHeight = ROW_HEIGHT * idx;
+      gridRef.vs.container.scroll(0, scrollHeight);
 
-        //초기화
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-        }));
-      }
-      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
-      }
+      //초기화
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+      }));
+    }
+    // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+    // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+    else if (filters.scrollDirrection === "up") {
+      gridRef.vs.container.scroll(0, 20);
+    }
   }, [mainDataResult]);
 
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    // 저장 후, 선택 행 스크롤 유지 처리
+    if (detailFilters.find_row_value !== "" && detailDataResult.total > 0) {
+      const ROW_HEIGHT = 35.56;
+      const idx = detailDataResult.data.findIndex(
+        (item) => idGetter(item) === detailFilters.find_row_value
+      );
 
-    //메인 그리드 데이터 변경 되었을 때
-    useEffect(() => {
-        // 저장 후, 선택 행 스크롤 유지 처리
-        if (detailFilters.find_row_value !== "" && detailDataResult.total > 0) {
-          const ROW_HEIGHT = 35.56;
-          const idx = detailDataResult.data.findIndex(
-            (item) => idGetter(item) === detailFilters.find_row_value
-          );
-  
-          const scrollHeight = ROW_HEIGHT * idx;
-          gridRef.vs.container.scroll(0, scrollHeight);
-  
-          //초기화
-          setDetailFilters((prev) => ({
-            ...prev,
-            find_row_value: "",
-            isSearch: true,
-          }));
-        }
-        // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-        // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-        else if (detailFilters.scrollDirrection === "up") {
-          gridRef.vs.container.scroll(0, 20);
-        }
-    }, [detailDataResult]);
-    
+      const scrollHeight = ROW_HEIGHT * idx;
+      gridRef.vs.container.scroll(0, scrollHeight);
+
+      //초기화
+      setDetailFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: true,
+      }));
+    }
+    // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+    // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+    else if (detailFilters.scrollDirrection === "up") {
+      gridRef.vs.container.scroll(0, 20);
+    }
+  }, [detailDataResult]);
+
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
@@ -702,7 +701,7 @@ const QC_A0060W: React.FC = () => {
       </td>
     );
   };
-  
+
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>

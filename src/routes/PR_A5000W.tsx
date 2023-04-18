@@ -10,7 +10,7 @@ import {
   GridFooterCellProps,
   GridHeaderSelectionChangeEvent,
   GridItemChangeEvent,
-  GridHeaderCellProps
+  GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -45,7 +45,7 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
   findMessage,
-  getGridItemChangedData
+  getGridItemChangedData,
 } from "../components/CommonFunction";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import DateCell from "../components/Cells/DateCell";
@@ -54,10 +54,10 @@ import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
-  EDIT_FIELD
+  EDIT_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -78,14 +78,7 @@ const numberField = [
   "prntqty",
 ];
 
-const numberField2 = [
-  "inqty",
-  "amt",
-  "wonamt",
-  "taxamt",
-  "totamt",
-  "prntqty",
-];
+const numberField2 = ["inqty", "amt", "wonamt", "taxamt", "totamt", "prntqty"];
 type TdataArr = {
   rekey_s: string[];
   recdt_s: string[];
@@ -220,7 +213,7 @@ const PR_A5000W: React.FC = () => {
   }>({});
 
   const [barcodeWindowVisible, setBarcodeWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -634,12 +627,12 @@ const PR_A5000W: React.FC = () => {
     );
   };
 
-   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -651,7 +644,7 @@ const PR_A5000W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -660,7 +653,7 @@ const PR_A5000W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -672,7 +665,7 @@ const PR_A5000W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -838,9 +831,7 @@ const PR_A5000W: React.FC = () => {
   };
 
   const onPrint = () => {
-    const datas = detailDataResult.data.filter(
-      (item: any) => item.chk == true
-    );
+    const datas = detailDataResult.data.filter((item: any) => item.chk == true);
 
     try {
       if (datas == null || datas == undefined) {
@@ -877,7 +868,6 @@ const PR_A5000W: React.FC = () => {
     );
   };
 
-  
   const [values2, setValues2] = React.useState<boolean>(false);
   const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
     const changeCheck = () => {
@@ -901,7 +891,7 @@ const PR_A5000W: React.FC = () => {
       </div>
     );
   };
-  
+
   return (
     <>
       <TitleContainer>
@@ -1013,7 +1003,7 @@ const PR_A5000W: React.FC = () => {
             rowRender={customRowRender3}
             editField={EDIT_FIELD}
           >
-           <GridColumn
+            <GridColumn
               field="chk"
               title=" "
               width="45px"
@@ -1140,13 +1130,13 @@ const PR_A5000W: React.FC = () => {
           rowRender={customRowRender2}
           editField={EDIT_FIELD}
         >
-         <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell2}
-              cell={CheckBoxCell}
-            />
+          <GridColumn
+            field="chk"
+            title=" "
+            width="45px"
+            headerCell={CustomCheckBoxCell2}
+            cell={CheckBoxCell}
+          />
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList2"].map(
               (item: any, idx: number) =>
@@ -1178,12 +1168,10 @@ const PR_A5000W: React.FC = () => {
       {barcodeWindowVisible && (
         <BarcodeWindow
           setVisible={setBarcodeWindowVisible}
-          data={detailDataResult.data.filter(
-            (item: any) => item.chk == true
-          )}
-          total={detailDataResult.data.filter(
-            (item: any) => item.chk == true
-          ).length}
+          data={detailDataResult.data.filter((item: any) => item.chk == true)}
+          total={
+            detailDataResult.data.filter((item: any) => item.chk == true).length
+          }
         />
       )}
       {gridList.map((grid: any) =>

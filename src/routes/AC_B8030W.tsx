@@ -38,7 +38,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B8030W_C";
@@ -286,7 +286,7 @@ const AC_B8030W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -298,7 +298,7 @@ const AC_B8030W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -344,7 +344,7 @@ const AC_B8030W: React.FC = () => {
       alert(e);
     }
   };
-  
+
   return (
     <>
       <TitleContainer>

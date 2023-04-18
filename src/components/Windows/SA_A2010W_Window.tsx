@@ -96,7 +96,7 @@ import {
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { Input } from "@progress/kendo-react-inputs";
-import RequiredHeader from "../RequiredHeader";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { bytesToBase64 } from "byte-base64";
 
 let deletedRows: object[] = [];
@@ -1920,366 +1920,370 @@ const KendoWindow = ({
           render={(formRenderProps: FormRenderProps) => (
             <FormElement horizontal={true}>
               <FormFieldWrap>
-              <fieldset
-                style={{
-                  width: `48%`,
-                }}
-              >
-                <button
-                  id="valueChanged"
-                  style={{ display: "none" }}
-                  onClick={(e) => {
-                    e.preventDefault(); // Changing desired field value
-                    formRenderProps.onChange("valueChanged", {
-                      value: "1",
-                    });
+                <fieldset
+                  style={{
+                    width: `48%`,
                   }}
-                ></button>
-                <button
-                  id="custcdChanged"
-                  style={{ display: "none" }}
-                  onClick={(e) => {
-                    e.preventDefault();
+                >
+                  <button
+                    id="valueChanged"
+                    style={{ display: "none" }}
+                    onClick={(e) => {
+                      e.preventDefault(); // Changing desired field value
+                      formRenderProps.onChange("valueChanged", {
+                        value: "1",
+                      });
+                    }}
+                  ></button>
+                  <button
+                    id="custcdChanged"
+                    style={{ display: "none" }}
+                    onClick={(e) => {
+                      e.preventDefault();
 
-                    formRenderProps.onChange("custcd", {
-                      value: changedCustInfo.custcd,
-                    });
-                    formRenderProps.onChange("custnm", {
-                      value: changedCustInfo.custnm,
-                    });
-                  }}
-                ></button>
-                <button
-                  id="rcvcustcdChanged"
-                  style={{ display: "none" }}
-                  onClick={(e) => {
-                    e.preventDefault();
+                      formRenderProps.onChange("custcd", {
+                        value: changedCustInfo.custcd,
+                      });
+                      formRenderProps.onChange("custnm", {
+                        value: changedCustInfo.custnm,
+                      });
+                    }}
+                  ></button>
+                  <button
+                    id="rcvcustcdChanged"
+                    style={{ display: "none" }}
+                    onClick={(e) => {
+                      e.preventDefault();
 
-                    formRenderProps.onChange("rcvcustcd", {
-                      value: changedRcvcustInfo.rcvcustcd,
-                    });
-                    formRenderProps.onChange("rcvcustnm", {
-                      value: changedRcvcustInfo.rcvcustnm,
-                    });
-                  }}
-                ></button>
-                <button
-                  id="attachmentChanged"
-                  style={{ display: "none" }}
-                  onClick={(e) => {
-                    e.preventDefault();
+                      formRenderProps.onChange("rcvcustcd", {
+                        value: changedRcvcustInfo.rcvcustcd,
+                      });
+                      formRenderProps.onChange("rcvcustnm", {
+                        value: changedRcvcustInfo.rcvcustnm,
+                      });
+                    }}
+                  ></button>
+                  <button
+                    id="attachmentChanged"
+                    style={{ display: "none" }}
+                    onClick={(e) => {
+                      e.preventDefault();
 
-                    formRenderProps.onChange("files", {
-                      value: changedAttachmentInfo.files,
-                    });
-                    formRenderProps.onChange("attdatnum", {
-                      value: changedAttachmentInfo.attdatnum,
-                    });
-                  }}
-                ></button>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    name={"ordnum"}
-                    label={"수주번호"}
-                    component={FormReadOnly}
-                    className="readonly"
-                  />
-                  {customOptionData !== null && (
+                      formRenderProps.onChange("files", {
+                        value: changedAttachmentInfo.files,
+                      });
+                      formRenderProps.onChange("attdatnum", {
+                        value: changedAttachmentInfo.attdatnum,
+                      });
+                    }}
+                  ></button>
+                  <FieldWrap fieldWidth="50%">
                     <Field
-                      name={"doexdiv"}
-                      label={"내수구분"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "doexdiv"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "doexdiv"
-                        ).bizComponentItems
-                      }
+                      name={"ordnum"}
+                      label={"수주번호"}
+                      component={FormReadOnly}
+                      className="readonly"
+                    />
+                    {customOptionData !== null && (
+                      <Field
+                        name={"doexdiv"}
+                        label={"내수구분"}
+                        component={FormComboBox}
+                        queryStr={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "doexdiv"
+                          ).query
+                        }
+                        columns={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "doexdiv"
+                          ).bizComponentItems
+                        }
+                        className="required"
+                      />
+                    )}
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    {customOptionData !== null && (
+                      <Field
+                        name={"taxdiv"}
+                        label={"과세구분"}
+                        component={FormComboBox}
+                        queryStr={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "taxdiv"
+                          ).query
+                        }
+                        columns={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "taxdiv"
+                          ).bizComponentItems
+                        }
+                        className="required"
+                      />
+                    )}
+                    {customOptionData !== null && (
+                      <Field
+                        name={"location"}
+                        label={"사업장"}
+                        component={FormComboBox}
+                        queryStr={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "location"
+                          ).query
+                        }
+                        columns={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "location"
+                          ).bizComponentItems
+                        }
+                      />
+                    )}
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    <Field
+                      label={"수주일자"}
+                      name={"orddt"}
+                      component={FormDatePicker}
+                      className="required"
+                      onChange={onChangeOrddt}
+                    />
+                    <Field
+                      label={"납기일자"}
+                      name={"dlvdt"}
+                      component={FormDatePicker}
                       className="required"
                     />
-                  )}
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  {customOptionData !== null && (
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    {customOptionData !== null && (
+                      <Field
+                        name={"ordsts"}
+                        label={"수주상태"}
+                        component={FormComboBox}
+                        queryStr={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "ordsts"
+                          ).query
+                        }
+                        columns={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "ordsts"
+                          ).bizComponentItems
+                        }
+                      />
+                    )}
+
+                    {customOptionData !== null && (
+                      <Field
+                        name={"ordtype"}
+                        label={"수주형태"}
+                        component={FormComboBox}
+                        queryStr={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "ordtype"
+                          ).query
+                        }
+                        columns={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "ordtype"
+                          ).bizComponentItems
+                        }
+                      />
+                    )}
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
                     <Field
-                      name={"taxdiv"}
-                      label={"과세구분"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "taxdiv"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "taxdiv"
-                        ).bizComponentItems
-                      }
+                      label={"업체코드"}
+                      name={"custcd"}
+                      component={FormCustInput}
+                      validator={validator}
                       className="required"
                     />
-                  )}
-                  {customOptionData !== null && (
+                    <ButtonInFieldWrap>
+                      <ButtonInField>
+                        <Button
+                          type={"button"}
+                          onClick={onCustWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInField>
+                    </ButtonInFieldWrap>
                     <Field
-                      name={"location"}
-                      label={"사업장"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "location"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "location"
-                        ).bizComponentItems
-                      }
+                      label={"업체명"}
+                      name={"custnm"}
+                      component={FormInput}
+                      validator={validator}
+                      className="required"
                     />
-                  )}
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    label={"수주일자"}
-                    name={"orddt"}
-                    component={FormDatePicker}
-                    className="required"
-                    onChange={onChangeOrddt}
-                  />
-                  <Field
-                    label={"납기일자"}
-                    name={"dlvdt"}
-                    component={FormDatePicker}
-                    className="required"
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  {customOptionData !== null && (
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
                     <Field
-                      name={"ordsts"}
-                      label={"수주상태"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "ordsts"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "ordsts"
-                        ).bizComponentItems
-                      }
+                      name={"rcvcustcd"}
+                      component={FormCustInput}
+                      label={"인수처코드"}
                     />
-                  )}
+                    <ButtonInFieldWrap>
+                      <ButtonInField>
+                        <Button
+                          type={"button"}
+                          onClick={onRcvcustWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInField>
+                    </ButtonInFieldWrap>
+                    <Field
+                      name={"rcvcustnm"}
+                      component={FormInput}
+                      label={"인수처"}
+                    />
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    <Field
+                      name={"project"}
+                      component={FormInput}
+                      label={"프로젝트"}
+                    />
 
-                  {customOptionData !== null && (
-                    <Field
-                      name={"ordtype"}
-                      label={"수주형태"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "ordtype"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "ordtype"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    label={"업체코드"}
-                    name={"custcd"}
-                    component={FormCustInput}
-                    validator={validator}
-                    className="required"
-                  />
-                  <ButtonInFieldWrap>
-                    <ButtonInField>
-                      <Button
-                        type={"button"}
-                        onClick={onCustWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
+                    {customOptionData !== null && (
+                      <Field
+                        name={"dptcd"}
+                        label={"부서"}
+                        component={FormComboBox}
+                        queryStr={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "dptcd"
+                          ).query
+                        }
+                        textField={"dptnm"}
+                        valueField={"dptcd"}
+                        columns={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "dptcd"
+                          ).bizComponentItems
+                        }
                       />
-                    </ButtonInField>
-                  </ButtonInFieldWrap>
-                  <Field
-                    label={"업체명"}
-                    name={"custnm"}
-                    component={FormInput}
-                    validator={validator}
-                    className="required"
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    name={"rcvcustcd"}
-                    component={FormCustInput}
-                    label={"인수처코드"}
-                  />
-                  <ButtonInFieldWrap>
-                    <ButtonInField>
-                      <Button
-                        type={"button"}
-                        onClick={onRcvcustWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
+                    )}
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    {customOptionData !== null && (
+                      <Field
+                        name={"person"}
+                        label={"담당자"}
+                        component={FormComboBox}
+                        queryStr={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "person"
+                          ).query
+                        }
+                        valueField={"user_id"}
+                        textField={"user_name"}
+                        columns={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "person"
+                          ).bizComponentItems
+                        }
                       />
-                    </ButtonInField>
-                  </ButtonInFieldWrap>
-                  <Field
-                    name={"rcvcustnm"}
-                    component={FormInput}
-                    label={"인수처"}
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    name={"project"}
-                    component={FormInput}
-                    label={"프로젝트"}
-                  />
-
-                  {customOptionData !== null && (
-                    <Field
-                      name={"dptcd"}
-                      label={"부서"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "dptcd"
-                        ).query
-                      }
-                      textField={"dptnm"}
-                      valueField={"dptcd"}
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "dptcd"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  {customOptionData !== null && (
-                    <Field
-                      name={"person"}
-                      label={"담당자"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "person"
-                        ).query
-                      }
-                      valueField={"user_id"}
-                      textField={"user_name"}
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "person"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-                  {customOptionData !== null && (
-                    <Field
-                      name={"amtunit"}
-                      label={"화폐단위"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "amtunit"
-                        ).query
-                      }
-                      textField={"code_name"}
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "amtunit"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    name={"quokey"}
-                    component={FormReadOnly}
-                    label={"견적번호"}
-                  />
-                  <Field
-                    name={"prcterms"}
-                    component={FormInput}
-                    label={"인도조건"}
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    name={"paymeth"}
-                    component={FormInput}
-                    label={"지불조건"}
-                  />
-                  <Field
-                    name={"dlv_method"}
-                    component={FormInput}
-                    label={"납기조건"}
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    name={"portnm"}
-                    component={FormInput}
-                    label={"선적지"}
-                  />
-                  <Field
-                    name={"ship_method"}
-                    component={FormInput}
-                    label={"선적방법"}
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field
-                    name={"poregnum"}
-                    component={FormInput}
-                    label={"PO번호"}
-                  />
-                  <Field
-                    name={"files"}
-                    component={FormReadOnly}
-                    label={"첨부파일"}
-                  />
-                  <ButtonInFieldWrap>
-                    <ButtonInField>
-                      <Button
-                        type={"button"}
-                        onClick={onAttachmentsWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
+                    )}
+                    {customOptionData !== null && (
+                      <Field
+                        name={"amtunit"}
+                        label={"화폐단위"}
+                        component={FormComboBox}
+                        queryStr={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "amtunit"
+                          ).query
+                        }
+                        textField={"code_name"}
+                        columns={
+                          customOptionData.menuCustomDefaultOptions.new.find(
+                            (item: any) => item.id === "amtunit"
+                          ).bizComponentItems
+                        }
                       />
-                    </ButtonInField>
-                  </ButtonInFieldWrap>
-                </FieldWrap>
-                <FieldWrap fieldWidth="50%">
-                  <Field name={"remark"} component={FormInput} label={"비고"} />
-                </FieldWrap>
-              </fieldset>
-              <div
-                style={{
-                  width: `47%`,
-                }}
-              >
-                <FieldArray
-                  name="orderDetails"
-                  dataItemKey={FORM_DATA_INDEX}
-                  component={FormGrid}
-                  validator={arrayLengthValidator}
-                />
-              </div>
+                    )}
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    <Field
+                      name={"quokey"}
+                      component={FormReadOnly}
+                      label={"견적번호"}
+                    />
+                    <Field
+                      name={"prcterms"}
+                      component={FormInput}
+                      label={"인도조건"}
+                    />
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    <Field
+                      name={"paymeth"}
+                      component={FormInput}
+                      label={"지불조건"}
+                    />
+                    <Field
+                      name={"dlv_method"}
+                      component={FormInput}
+                      label={"납기조건"}
+                    />
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    <Field
+                      name={"portnm"}
+                      component={FormInput}
+                      label={"선적지"}
+                    />
+                    <Field
+                      name={"ship_method"}
+                      component={FormInput}
+                      label={"선적방법"}
+                    />
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    <Field
+                      name={"poregnum"}
+                      component={FormInput}
+                      label={"PO번호"}
+                    />
+                    <Field
+                      name={"files"}
+                      component={FormReadOnly}
+                      label={"첨부파일"}
+                    />
+                    <ButtonInFieldWrap>
+                      <ButtonInField>
+                        <Button
+                          type={"button"}
+                          onClick={onAttachmentsWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInField>
+                    </ButtonInFieldWrap>
+                  </FieldWrap>
+                  <FieldWrap fieldWidth="50%">
+                    <Field
+                      name={"remark"}
+                      component={FormInput}
+                      label={"비고"}
+                    />
+                  </FieldWrap>
+                </fieldset>
+                <div
+                  style={{
+                    width: `47%`,
+                  }}
+                >
+                  <FieldArray
+                    name="orderDetails"
+                    dataItemKey={FORM_DATA_INDEX}
+                    component={FormGrid}
+                    validator={arrayLengthValidator}
+                  />
+                </div>
               </FormFieldWrap>
               <BottomContainer>
                 <ButtonContainer>

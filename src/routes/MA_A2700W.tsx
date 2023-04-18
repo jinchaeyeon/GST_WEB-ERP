@@ -59,7 +59,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -77,12 +77,7 @@ const NumberField = [
   "width",
 ];
 
-const NumberField2 = [
-  "qty",
-  "wonamt",
-  "taxamt",
-  "totamt",
-];
+const NumberField2 = ["qty", "wonamt", "taxamt", "totamt"];
 type TdataArr = {
   rowstatus_s: string[];
   itemgrade_s: string[];
@@ -1064,7 +1059,7 @@ const MA_A2700W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -1076,7 +1071,7 @@ const MA_A2700W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -1085,7 +1080,7 @@ const MA_A2700W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -1097,7 +1092,7 @@ const MA_A2700W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
   const detailTotalFooterCell = (props: GridFooterCellProps) => {

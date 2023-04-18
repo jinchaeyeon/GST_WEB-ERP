@@ -59,7 +59,7 @@ import {
   isValidDate,
   findMessage,
   setDefaultDate,
-  getItemQuery
+  getItemQuery,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -75,7 +75,7 @@ import DateCell from "../Cells/DateCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
-import RequiredHeader from "../RequiredHeader";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -700,7 +700,7 @@ const CopyWindow = ({
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -712,7 +712,7 @@ const CopyWindow = ({
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -1002,22 +1002,23 @@ const CopyWindow = ({
       const newData = mainDataResult.data.map((item) => ({
         ...item,
         amt:
-        filters.amtunit == "KRW"
-          ? item.qty * item.unp
-          : item.qty * item.unp * filters.wonchgrat,
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
         wonamt:
-        filters.amtunit == "KRW"
+          filters.amtunit == "KRW"
             ? item.qty * item.unp
             : item.qty * item.unp * filters.wonchgrat,
         taxamt:
-        filters.amtunit == "KRW"
+          filters.amtunit == "KRW"
             ? (item.qty * item.unp) / 10
             : (item.qty * item.unp * filters.wonchgrat) / 10,
         totamt:
-        filters.amtunit == "KRW"
-            ? Math.round((item.qty * item.unp) + (item.qty * item.unp) / 10)
+          filters.amtunit == "KRW"
+            ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
             : Math.round(
-                (item.qty * item.unp * filters.wonchgrat) + (item.qty * item.unp * filters.wonchgrat) / 10
+                item.qty * item.unp * filters.wonchgrat +
+                  (item.qty * item.unp * filters.wonchgrat) / 10
               ),
         [EDIT_FIELD]: undefined,
       }));
@@ -1550,16 +1551,10 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow1
-          setVisible={setCopyWindowVisible}
-          setData={setCopyData}
-        />
+        <CopyWindow1 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}
       {CopyWindowVisible2 && (
-        <CopyWindow2
-          setVisible={setCopyWindowVisible2}
-          setData={setCopyData}
-        />
+        <CopyWindow2 setVisible={setCopyWindowVisible2} setData={setCopyData} />
       )}
       {CopyWindowVisible3 && (
         <CopyWindow3
@@ -1569,10 +1564,7 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible4 && (
-        <CopyWindow4
-          setVisible={setCopyWindowVisible4}
-          setData={setCopyData}
-        />
+        <CopyWindow4 setVisible={setCopyWindowVisible4} setData={setCopyData} />
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow

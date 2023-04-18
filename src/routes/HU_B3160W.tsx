@@ -41,12 +41,9 @@ import {
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import NumberCell from "../components/Cells/NumberCell";
 import { gridList } from "../store/columns/HU_B3160W_C";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 
@@ -95,7 +92,8 @@ const HU_B3160W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] = useState<boolean>(false);
+  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -143,7 +141,7 @@ const HU_B3160W: React.FC = () => {
       "@p_prsnnum": filters.prsnnum,
       "@p_prsnnm": filters.prsnnm,
       "@p_paytype": filters.paytype,
-      "@p_payyrmm": convertDateToStr(filters.payyrmm).substring(0,6),
+      "@p_payyrmm": convertDateToStr(filters.payyrmm).substring(0, 6),
     },
   };
 
@@ -184,11 +182,7 @@ const HU_B3160W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      customOptionData != null &&
-      filters.isSearch &&
-      permissions !== null
-    ) {
+    if (customOptionData != null && filters.isSearch && permissions !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
     }
@@ -301,7 +295,7 @@ const HU_B3160W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -313,7 +307,7 @@ const HU_B3160W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -321,19 +315,19 @@ const HU_B3160W: React.FC = () => {
     setPrsnnumWindowVisible(true);
   };
 
-  interface IPrsnnum{
+  interface IPrsnnum {
     prsnnum: string;
     prsnnm: string;
     dptcd: string;
     abilcd: string;
     postcd: string;
   }
-  
+
   const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
       prsnnum: data.prsnnum,
-      prsnnm: data.prsnnm
+      prsnnm: data.prsnnm,
     }));
   };
 
@@ -343,9 +337,7 @@ const HU_B3160W: React.FC = () => {
 
   const search = () => {
     try {
-      if (
-        convertDateToStr(filters.payyrmm).substring(0, 4) < "1997"
-      ) {
+      if (convertDateToStr(filters.payyrmm).substring(0, 4) < "1997") {
         throw findMessage(messagesData, "HU_B3160W_001");
       } else if (
         filters.paytype == null ||

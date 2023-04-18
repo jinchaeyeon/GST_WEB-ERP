@@ -65,13 +65,13 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 
 const DATA_ITEM_KEY = "fxcode";
 const SUB_DATA_ITEM_KEY = "fxseq";
@@ -774,7 +774,7 @@ const PR_A0060: React.FC = () => {
     subDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -786,7 +786,7 @@ const PR_A0060: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -2431,9 +2431,7 @@ const PR_A0060: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
-                            ? subTotalFooterCell
-                            : undefined
+                          item.sortOrder === 0 ? subTotalFooterCell : undefined
                         }
                       />
                     )

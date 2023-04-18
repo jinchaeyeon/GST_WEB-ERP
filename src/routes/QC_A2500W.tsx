@@ -57,7 +57,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -502,10 +502,10 @@ const QC_A2500W: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-      if (detailDataResult.total > 0) {
-        const firstRowData = detailDataResult.data[0];
-        setDetailSelectedState({ [firstRowData.num]: true });
-      }
+    if (detailDataResult.total > 0) {
+      const firstRowData = detailDataResult.data[0];
+      setDetailSelectedState({ [firstRowData.num]: true });
+    }
   }, [detailDataResult]);
 
   //그리드 리셋
@@ -619,7 +619,7 @@ const QC_A2500W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -631,7 +631,7 @@ const QC_A2500W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -640,7 +640,7 @@ const QC_A2500W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -652,7 +652,7 @@ const QC_A2500W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 

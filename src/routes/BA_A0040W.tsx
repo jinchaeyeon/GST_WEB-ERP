@@ -68,7 +68,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -1024,7 +1024,6 @@ const BA_A0040: React.FC = () => {
     }));
   };
 
-  
   const getAttachmentsData = (data: IAttachmentData) => {
     setInfomation((prev) => {
       return {

@@ -60,7 +60,7 @@ import {
   EDIT_FIELD,
   GAP,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -69,7 +69,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import { Button } from "@progress/kendo-react-buttons";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 
@@ -1349,9 +1349,7 @@ const AC_A0020W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters.isSearch 
-    ) {
+    if (filters.isSearch) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
     }

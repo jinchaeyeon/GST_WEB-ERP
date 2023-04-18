@@ -1,5 +1,5 @@
-import { useRecoilState } from "recoil";
 import { loginResultState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import axios from "axios";
 import { resetLocalStorage } from "../components/CommonFunction";
 
@@ -54,7 +54,11 @@ const domain: any = {
     action: "get",
     url: "api/files/attached/:attached",
   },
-  "file-delete": { action: "delete", url: "api/files/attached/:attached" },
+  "file-delete": { action: "delete", url: "api/files/attached/:attached" }, // 하나의 AttachmentNum에 할당된 파일을 삭제
+  "attachment-delete": {
+    action: "delete",
+    url: "api/files/:attached",
+  }, // AttachmentNum 자체를 삭제
 };
 let isTokenRefreshing = false;
 let refreshSubscribers: any[] = [];

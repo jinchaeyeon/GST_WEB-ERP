@@ -57,7 +57,7 @@ import {
 } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 import { useRecoilState } from "recoil";
-import RequiredHeader from "../../RequiredHeader";
+import RequiredHeader from "../../HeaderCells/RequiredHeader";
 
 let deletedRows: object[] = [];
 

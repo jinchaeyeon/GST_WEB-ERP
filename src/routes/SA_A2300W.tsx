@@ -58,7 +58,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -308,7 +308,7 @@ const SA_A2300: React.FC = () => {
     gubun2: "A",
     cboDoexdiv: "",
     reckey: "",
-       find_row_value: "",
+    find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
@@ -469,18 +469,18 @@ const SA_A2300: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0){
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt
+            total: totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
           // 첫번째 행 선택하기
           const firstRowData = rows[0];
           setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-          
+
           setDetailFilters((prev) => ({
             ...prev,
             reckey: firstRowData.recdtfind,
@@ -577,10 +577,10 @@ const SA_A2300: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-      if (detailDataResult.total > 0) {
-        const firstRowData = detailDataResult.data[0];
-        setDetailSelectedState({ [firstRowData.num]: true });
-      }
+    if (detailDataResult.total > 0) {
+      const firstRowData = detailDataResult.data[0];
+      setDetailSelectedState({ [firstRowData.num]: true });
+    }
   }, [detailDataResult]);
 
   //그리드 리셋
@@ -696,7 +696,7 @@ const SA_A2300: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -708,7 +708,7 @@ const SA_A2300: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -717,7 +717,7 @@ const SA_A2300: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -729,7 +729,7 @@ const SA_A2300: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -1273,7 +1273,7 @@ const SA_A2300: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th style={{width: "250px"}}>
+              <th style={{ width: "250px" }}>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
                     name="gubun1"

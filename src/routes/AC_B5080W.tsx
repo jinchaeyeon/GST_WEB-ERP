@@ -44,7 +44,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -52,7 +52,18 @@ import DateCell from "../components/Cells/DateCell";
 
 const DATA_ITEM_KEY = "num";
 const DateField = ["outdt", "recdt", "indt", "actdt"];
-const NumberField = ["qty", "wonamt", "taxamt", "amt", "wonchgrat", "splyamt", "acseq1", "dramt", "cramt", "dcamt"];
+const NumberField = [
+  "qty",
+  "wonamt",
+  "taxamt",
+  "amt",
+  "wonchgrat",
+  "splyamt",
+  "acseq1",
+  "dramt",
+  "cramt",
+  "dcamt",
+];
 
 const AC_B5080W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -2124,9 +2135,9 @@ const AC_B5080W: React.FC = () => {
                         width={item.width}
                         cell={
                           NumberField.includes(item.fieldName)
-                          ? NumberCell
-                          : DateField.includes(item.fieldName)
-                          ? DateCell
+                            ? NumberCell
+                            : DateField.includes(item.fieldName)
+                            ? DateCell
                             : undefined
                         }
                         footerCell={

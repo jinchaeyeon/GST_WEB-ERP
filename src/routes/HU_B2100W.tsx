@@ -50,14 +50,27 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 
 const DATA_ITEM_KEY = "num";
 const dateField = ["dutydt"];
-const numberField = ["wrkday", "wrktime", "fixovertime", "overtime","nightwork", "worklate", "workend", "workout", "yeruse", "extrawork", "extraovertime","extranight"];
+const numberField = [
+  "wrkday",
+  "wrktime",
+  "fixovertime",
+  "overtime",
+  "nightwork",
+  "worklate",
+  "workend",
+  "workout",
+  "yeruse",
+  "extrawork",
+  "extraovertime",
+  "extranight",
+];
 
 const HU_B2100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -83,8 +96,7 @@ const HU_B2100W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd")
-          .valueCode,
+        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -156,7 +168,8 @@ const HU_B2100W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] = useState<boolean>(false);
+  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -212,7 +225,7 @@ const HU_B2100W: React.FC = () => {
       "@p_orgdiv": filters.orgdiv,
       "@p_prsnnum": filters.prsnnum,
       "@p_dptcd": filters.dptcd,
-      "@p_dutydt": convertDateToStr(filters.dutydt).substring(0,6),
+      "@p_dutydt": convertDateToStr(filters.dutydt).substring(0, 6),
     },
   };
 
@@ -225,7 +238,7 @@ const HU_B2100W: React.FC = () => {
       "@p_orgdiv": filters.orgdiv,
       "@p_prsnnum": detailFilters.prsnnum,
       "@p_dptcd": filters.dptcd,
-      "@p_dutydt": convertDateToStr(filters.dutydt).substring(0,6),
+      "@p_dutydt": convertDateToStr(filters.dutydt).substring(0, 6),
     },
   };
 
@@ -256,7 +269,12 @@ const HU_B2100W: React.FC = () => {
           const firstRowData = rows[0];
           setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
           resetDetailGrid();
-          setDetailFilters((prev) => ({ ...prev, prsnnum: firstRowData.prsnnum, pgNum: 1, isSearch: true }));
+          setDetailFilters((prev) => ({
+            ...prev,
+            prsnnum: firstRowData.prsnnum,
+            pgNum: 1,
+            isSearch: true,
+          }));
         }
       }
     }
@@ -315,17 +333,19 @@ const HU_B2100W: React.FC = () => {
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (customOptionData != null &&
+    if (
+      customOptionData != null &&
       detailFilters.isSearch &&
       permissions !== null &&
-      bizComponentData !== null) {
+      bizComponentData !== null
+    ) {
       setDetailFilters((prev) => ({ ...prev, isSearch: false }));
       fetchDetailGrid();
     }
   }, [detailFilters]);
 
   let gridRef: any = useRef(null);
-  
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -403,7 +423,12 @@ const HU_B2100W: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     resetDetailGrid();
-    setDetailFilters((prev) => ({ ...prev,prsnnum: selectedRowData.prsnnum, pgNum: 1, isSearch: true }));
+    setDetailFilters((prev) => ({
+      ...prev,
+      prsnnum: selectedRowData.prsnnum,
+      pgNum: 1,
+      isSearch: true,
+    }));
   };
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -458,7 +483,8 @@ const HU_B2100W: React.FC = () => {
   const onDetailScrollHandler = (event: GridEvent) => {
     if (detailFilters.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
-    detailFilters.pgNum + (detailFilters.scrollDirrection === "up" ? detailFilters.pgGap : 0);
+      detailFilters.pgNum +
+      (detailFilters.scrollDirrection === "up" ? detailFilters.pgGap : 0);
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -473,7 +499,8 @@ const HU_B2100W: React.FC = () => {
     }
 
     pgNumWithGap =
-    detailFilters.pgNum - (detailFilters.scrollDirrection === "down" ? detailFilters.pgGap : 0);
+      detailFilters.pgNum -
+      (detailFilters.scrollDirrection === "down" ? detailFilters.pgGap : 0);
     // 스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setDetailFilters((prev) => ({
@@ -555,7 +582,7 @@ const HU_B2100W: React.FC = () => {
   interface IPrsnnum {
     user_id: string;
   }
-  
+
   const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
@@ -572,9 +599,7 @@ const HU_B2100W: React.FC = () => {
 
   const search = () => {
     try {
-      if (
-        convertDateToStr(filters.dutydt).substring(0, 4) < "1997"
-      ) {
+      if (convertDateToStr(filters.dutydt).substring(0, 4) < "1997") {
         throw findMessage(messagesData, "HU_B2100W_001");
       } else {
         resetAllGrid();

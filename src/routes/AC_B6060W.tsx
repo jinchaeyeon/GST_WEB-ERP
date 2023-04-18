@@ -8,7 +8,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
-  GRID_COL_INDEX_ATTRIBUTE
+  GRID_COL_INDEX_ATTRIBUTE,
 } from "@progress/kendo-react-grid";
 import { gridList } from "../store/columns/AC_B5080W_C";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -45,7 +45,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -233,8 +233,7 @@ const AC_B6060W: React.FC = () => {
         frdt: value,
         todt: todts,
       }));
-    }
-    else if (tabSelected == 1 && name == "frdt") {
+    } else if (tabSelected == 1 && name == "frdt") {
       var todts = new Date(
         value.getFullYear(),
         value.getMonth(),
@@ -978,8 +977,7 @@ const AC_B6060W: React.FC = () => {
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = mainDataResult2.total.toString().split(".");
     return (
-      <td         colSpan={props.colSpan}
-      style={props.style}>
+      <td colSpan={props.colSpan} style={props.style}>
         총{" "}
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -991,7 +989,12 @@ const AC_B6060W: React.FC = () => {
   const mainTotalFooterCell3 = (props: GridFooterCellProps) => {
     var parts = mainDataResult3.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} className={"k-grid-footer-sticky"} {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }} style={props.style}>
+      <td
+        colSpan={props.colSpan}
+        className={"k-grid-footer-sticky"}
+        {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
+        style={props.style}
+      >
         총{" "}
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1003,7 +1006,12 @@ const AC_B6060W: React.FC = () => {
   const mainTotalFooterCell4 = (props: GridFooterCellProps) => {
     var parts = mainDataResult4.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} className={"k-grid-footer-sticky"} {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}  style={props.style}>
+      <td
+        colSpan={props.colSpan}
+        className={"k-grid-footer-sticky"}
+        {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
+        style={props.style}
+      >
         총{" "}
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}

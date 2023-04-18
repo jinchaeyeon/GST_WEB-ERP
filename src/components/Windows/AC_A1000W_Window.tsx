@@ -61,7 +61,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
-import RequiredHeader from "../RequiredHeader";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 import AccountWindow from "./CommonWindows/AccountWindow";
 import StandardWindow from "./CommonWindows/StandardWindow";
 import CodeWindow from "./CommonWindows/CodeWindow";
@@ -492,7 +492,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   reload,
-  chkyn
+  chkyn,
 }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -1270,26 +1270,26 @@ const CopyWindow = ({
       return false;
     }
     if (valid == true) {
-        const newData = mainDataResult.data.map((item) =>
-          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
-                [EDIT_FIELD]: field,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-        );
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-        setIfSelectFirstRow(false);
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
+      setIfSelectFirstRow(false);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     }
   };
 
@@ -1342,8 +1342,7 @@ const CopyWindow = ({
       approvaldt: filters.approvaldt,
       attdatnum: "",
       autorecnum: "",
-      bizregnum:
-      chkyn == true ? datas.bizregnum : "",
+      bizregnum: chkyn == true ? datas.bizregnum : "",
       budgcd: "",
       budgyn: "N",
       closeyn: filters.closeyn,

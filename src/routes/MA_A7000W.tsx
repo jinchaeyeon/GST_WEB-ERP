@@ -72,13 +72,13 @@ import {
   EDIT_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A7000W_C";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 interface IItemData {
@@ -679,7 +679,7 @@ const MA_A7000W: React.FC = () => {
       props.field !== undefined ? (sum = item["total_" + props.field]) : 0
     );
 
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -691,7 +691,7 @@ const MA_A7000W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -1693,9 +1693,9 @@ const MA_A7000W: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? mainTotalFooterCell
-                                : numberField2.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
-                                : undefined
+                              : numberField2.includes(item.fieldName)
+                              ? gridSumQtyFooterCell
+                              : undefined
                           }
                         ></GridColumn>
                       )

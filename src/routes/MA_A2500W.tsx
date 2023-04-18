@@ -57,7 +57,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -74,14 +74,7 @@ const numberField = [
   "totwgt",
   "unp",
 ];
-const numberField2 = [
-  "inqty",
-  "amt",
-  "wonamt",
-  "taxamt",
-  "totamt",
-  "qty",
-];
+const numberField2 = ["inqty", "amt", "wonamt", "taxamt", "totamt", "qty"];
 type TdataArr = {
   rowstatus_s: string[];
   recdt_s: string[];
@@ -449,7 +442,7 @@ const MA_A2500W: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -530,7 +523,7 @@ const MA_A2500W: React.FC = () => {
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
-  
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (customOptionData !== null) {
@@ -661,7 +654,7 @@ const MA_A2500W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -673,7 +666,7 @@ const MA_A2500W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -682,7 +675,7 @@ const MA_A2500W: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -694,7 +687,7 @@ const MA_A2500W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 

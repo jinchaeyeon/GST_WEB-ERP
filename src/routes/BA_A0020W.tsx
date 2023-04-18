@@ -72,13 +72,13 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
@@ -103,7 +103,6 @@ const requiredField = ["prsnnm", "yyyy"];
 const commandField = ["attdatnum"];
 const editField = ["custprsncd"];
 const YearDateField = ["yyyy"];
-
 
 type TdataArr = {
   rowstatus: string[];
@@ -262,7 +261,7 @@ const BA_A0020: React.FC = () => {
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
   const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
-   useState<boolean>(false);
+    useState<boolean>(false);
   const [subPgNum, setSubPgNum] = useState(1);
   const [subPgNum2, setSubPgNum2] = useState(1);
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -665,7 +664,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -2341,7 +2340,7 @@ const BA_A0020: React.FC = () => {
       fetchTodoGridSaved();
     }
   }, [paraData]);
-  
+
   const [rows, setrows] = useState<number>(0);
 
   const CommandCell = (props: GridCellProps) => {

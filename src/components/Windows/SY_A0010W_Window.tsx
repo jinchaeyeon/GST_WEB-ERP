@@ -73,7 +73,7 @@ import {
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
-import RequiredHeader from "../RequiredHeader";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { isLoading } from "../../store/atoms";
 import { useSetRecoilState } from "recoil";
 

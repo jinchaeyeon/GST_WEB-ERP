@@ -57,7 +57,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -473,7 +473,6 @@ const SA_A2300: React.FC = () => {
             ...prev,
             reqnum: firstRowData.reqnum,
           }));
-  
         }
       }
     }
@@ -568,7 +567,7 @@ const SA_A2300: React.FC = () => {
       const firstRowData = detailDataResult.data[0];
       setDetailSelectedState({ [firstRowData.num]: true });
     }
-}, [detailDataResult]);
+  }, [detailDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -600,7 +599,7 @@ const SA_A2300: React.FC = () => {
       reqnum: selectedRowData.reqnum,
     }));
   };
-  
+
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -681,7 +680,7 @@ const SA_A2300: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -693,7 +692,7 @@ const SA_A2300: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -702,7 +701,7 @@ const SA_A2300: React.FC = () => {
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -714,7 +713,7 @@ const SA_A2300: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -788,7 +787,7 @@ const SA_A2300: React.FC = () => {
     compclass: string;
     ceonm: string;
   }
-  
+
   interface IItemData {
     itemcd: string;
     itemno: string;

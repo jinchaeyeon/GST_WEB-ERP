@@ -57,7 +57,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -110,8 +110,7 @@ const PR_A6000W: React.FC = () => {
     "L_PR011, L_fxcode, L_sysUserMaster_001",
     //비가동유형, 설비, 사용자
     setBizComponentData
-  ); 
-
+  );
 
   //공통코드 리스트 조회 ()
   const [stopcdListData, setStopcdListData] = useState([
@@ -123,7 +122,7 @@ const PR_A6000W: React.FC = () => {
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-  
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const stopcdQueryStr = getQueryFromBizComponent(
@@ -137,7 +136,7 @@ const PR_A6000W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      
+
       fetchQuery(stopcdQueryStr, setStopcdListData);
       fetchQuery(prodmacQueryStr, setProdmacListData);
       fetchQuery(usersQueryStr, setUsersListData);
@@ -197,8 +196,8 @@ const PR_A6000W: React.FC = () => {
       setDetailWindowVisible(true);
     };
 
-    if(props.dataItem.field == 'group_category_name'){
-      return <td></td>
+    if (props.dataItem.field == "group_category_name") {
+      return <td></td>;
     } else {
       return (
         <td className="k-command-cell">
@@ -239,7 +238,7 @@ const PR_A6000W: React.FC = () => {
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
-    
+
   const [mainPgNum, setMainPgNum] = useState(1);
   const [mainPgNum2, setMainPgNum2] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -365,7 +364,7 @@ const PR_A6000W: React.FC = () => {
       "@p_endtime": convertDateToStrWithTime2(new Date()),
       "@p_prodmac": "",
       "@p_prodemp": "",
-      "@p_remark" : "",
+      "@p_remark": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "PR_A6000W",
@@ -382,7 +381,7 @@ const PR_A6000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -417,10 +416,7 @@ const PR_A6000W: React.FC = () => {
         return {
           ...row,
           groupId: row.recdt + "recdt",
-          group_category_name:
-            "비가동일자" +
-            " : " +
-           row.recdt
+          group_category_name: "비가동일자" + " : " + row.recdt,
         };
       });
 
@@ -448,7 +444,6 @@ const PR_A6000W: React.FC = () => {
     }
     setLoading(false);
   };
-
 
   const [detailDataTotal, setDetailDataTotal] = useState<number>(0);
 
@@ -731,7 +726,7 @@ const PR_A6000W: React.FC = () => {
     const data = rowsOfDataResult(detailDataResult).filter(
       (item) => item.num == Object.getOwnPropertyNames(detailselectedState)[0]
     )[0];
- 
+
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
@@ -843,7 +838,7 @@ const PR_A6000W: React.FC = () => {
       "@p_endtime": convertDateToStrWithTime2(ParaData.endtime),
       "@p_prodmac": ParaData.prodmac,
       "@p_prodemp": ParaData.prodemp,
-      "@p_remark" : ParaData.remark,
+      "@p_remark": ParaData.remark,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "PR_A6000W",
@@ -873,7 +868,7 @@ const PR_A6000W: React.FC = () => {
         prodmac: "",
         prodemp: "",
         remark: "",
-      })
+      });
       resetAllGrid();
       fetchMainGrid();
       fetchDetailGrid();
@@ -1198,7 +1193,8 @@ const PR_A6000W: React.FC = () => {
               ? ""
               : rowsOfDataResult(detailDataResult).filter(
                   (item: any) =>
-                    item.num == Object.getOwnPropertyNames(detailselectedState)[0]
+                    item.num ==
+                    Object.getOwnPropertyNames(detailselectedState)[0]
                 )[0]
           }
           reload={reload}

@@ -64,7 +64,7 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import { Window } from "@progress/kendo-react-dialogs";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { isLoading, loginResultState } from "../store/atoms";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import CommentsGrid from "../components/Grids/CommentsGrid";
 

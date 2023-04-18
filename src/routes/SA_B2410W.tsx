@@ -49,7 +49,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -276,11 +276,11 @@ const SA_B2410: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0){
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt
+            total: totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -503,7 +503,7 @@ const SA_B2410: React.FC = () => {
   const search = () => {
     resetAllGrid();
   };
-  
+
   return (
     <>
       <TitleContainer>

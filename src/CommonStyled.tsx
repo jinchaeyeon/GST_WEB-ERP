@@ -734,6 +734,10 @@ export const AppName = styled.h1`
   background-color: #fff;
   border-right: 1px solid #ebebeb;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    border-right: none;
+  }
 `;
 
 export const MenuSearchBox = styled.div`

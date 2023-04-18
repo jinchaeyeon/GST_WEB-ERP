@@ -11,7 +11,7 @@ import {
   GridCellProps,
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
-import RequiredHeader from "../components/RequiredHeader";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -52,7 +52,7 @@ import {
   GAP,
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -140,7 +140,7 @@ const EA_A1000: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_dptcd_001,L_HU005, L_sysUserMaster_004, L_EA001",
-    //부서, 직위(직책), 사용자, 결재구분, 
+    //부서, 직위(직책), 사용자, 결재구분,
     setBizComponentData
   );
 
@@ -1313,40 +1313,40 @@ const EA_A1000: React.FC = () => {
     setDataResult: setMainDataResult,
   };
 
-    //메인 그리드 데이터 변경 되었을 때
-    useEffect(() => {
-      if (ifSelectFirstRow) {
-        if (mainDataResult.total > 0) {
-          const firstRowData = mainDataResult.data[0];
-          setSelectedState({ [firstRowData.num]: true });
-  
-          setIfSelectFirstRow(true);
-        }
-      }
-    }, [mainDataResult]);
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (ifSelectFirstRow) {
+      if (mainDataResult.total > 0) {
+        const firstRowData = mainDataResult.data[0];
+        setSelectedState({ [firstRowData.num]: true });
 
-    useEffect(() => {
-      if (ifSelectFirstRow) {
-        if (mainData3Result.total > 0) {
-          const firstRowData = mainData3Result.data[0];
-          setSelected3State({ [firstRowData.num]: true });
-  
-          setIfSelectFirstRow(true);
-        }
+        setIfSelectFirstRow(true);
       }
-    }, [mainData3Result]);
+    }
+  }, [mainDataResult]);
 
-    useEffect(() => {
-      if (ifSelectFirstRow) {
-        if (mainData2Result.total > 0) {
-          const firstRowData = mainData2Result.data[0];
-          setSelected2State({ [firstRowData.num]: true });
-  
-          setIfSelectFirstRow(true);
-        }
+  useEffect(() => {
+    if (ifSelectFirstRow) {
+      if (mainData3Result.total > 0) {
+        const firstRowData = mainData3Result.data[0];
+        setSelected3State({ [firstRowData.num]: true });
+
+        setIfSelectFirstRow(true);
       }
-    }, [mainData2Result]);
-    
+    }
+  }, [mainData3Result]);
+
+  useEffect(() => {
+    if (ifSelectFirstRow) {
+      if (mainData2Result.total > 0) {
+        const firstRowData = mainData2Result.data[0];
+        setSelected2State({ [firstRowData.num]: true });
+
+        setIfSelectFirstRow(true);
+      }
+    }
+  }, [mainData2Result]);
+
   return (
     <>
       <TitleContainer>

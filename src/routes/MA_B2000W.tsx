@@ -49,7 +49,7 @@ import {
 } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
@@ -58,8 +58,8 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const dateField = ["purdt"];
 const DATA_ITEM_KEY = "purno";
-const numberField = ["qty", "unp", "amt", "taxamt", "totamt","inqty"];
-const numberField2 = ["qty", "amt", "taxamt", "totamt","inqty"];
+const numberField = ["qty", "unp", "amt", "taxamt", "totamt", "inqty"];
+const numberField2 = ["qty", "amt", "taxamt", "totamt", "inqty"];
 const checkboxField = ["finyn"];
 
 const MA_B2000W: React.FC = () => {
@@ -391,7 +391,7 @@ const MA_B2000W: React.FC = () => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -403,7 +403,7 @@ const MA_B2000W: React.FC = () => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -498,7 +498,7 @@ const MA_B2000W: React.FC = () => {
   const search = () => {
     resetAllGrid();
   };
-  
+
   return (
     <>
       <TitleContainer>

@@ -66,7 +66,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
-import TopButtons from "../components/TopButtons";
+import TopButtons from "../components/Buttons/TopButtons";
 
 const DATA_ITEM_KEY = "idx";
 let deletedTodoRows: object[] = [];
