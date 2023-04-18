@@ -5,6 +5,7 @@ import {
   TMenu,
   TPasswordExpirationInfo,
   TSessionItem,
+  TToken
 } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
