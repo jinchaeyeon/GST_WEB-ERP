@@ -15,9 +15,9 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import calculateSize from "calculate-size";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -674,7 +674,7 @@ const Page: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -751,7 +751,7 @@ const Page: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <GridContainerWrap>
         <GridContainer width={"500px"}>

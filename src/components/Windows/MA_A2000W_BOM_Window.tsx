@@ -41,7 +41,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   Title,
   TitleContainer,
@@ -82,7 +81,7 @@ import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberTreeCell from "../Cells/NumberTreeCell";
 import { FilterDescriptor, SortDescriptor } from "@progress/kendo-data-query";
 import CheckBoxTreeListCell from "../Cells/CheckBoxTreeListCell";
-
+import FilterContainer from "../Containers/FilterContainer";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -1063,7 +1062,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterBoxWrap>
+        <FilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -1160,7 +1159,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               </tr>
             </tbody>
           </FilterBox>
-        </FilterBoxWrap>
+        </FilterContainer>
         <GridContainer>
           <Grid
             style={{ height: "200px" }}

@@ -17,7 +17,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   Title,
   TitleContainer,
@@ -29,7 +28,7 @@ import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-
+import FilterContainer from "../../../components/Containers/FilterContainer";
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
@@ -252,7 +251,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox>
           <tbody>
             <tr>
@@ -291,7 +290,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainer>
         <Grid
           style={{ height: "500px" }}

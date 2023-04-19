@@ -15,9 +15,9 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/MA_A2400W_C";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -1278,7 +1278,7 @@ const MA_A2400W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1416,7 +1416,7 @@ const MA_A2400W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <GridContainer>
         <ExcelExport

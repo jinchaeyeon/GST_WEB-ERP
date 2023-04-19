@@ -19,7 +19,6 @@ import CopyWindow from "../components/Windows/BA_A0050W_Copy_Window";
 import CopyWindow2 from "../components/Windows/CommonWindows/PatternWindow";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -31,6 +30,7 @@ import {
   FormBoxWrap,
   GridContainerWrap,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
@@ -1273,7 +1273,7 @@ const BA_A0050: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1337,7 +1337,7 @@ const BA_A0050: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainerWrap>
         <GridContainer width={`21%`}>
           <GridTitleContainer>

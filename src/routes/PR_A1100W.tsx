@@ -17,9 +17,9 @@ import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import calculateSize from "calculate-size";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -1894,7 +1894,7 @@ const PR_A1100W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -2075,7 +2075,7 @@ const PR_A1100W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="처리">

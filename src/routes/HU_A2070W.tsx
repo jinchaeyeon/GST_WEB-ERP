@@ -17,7 +17,6 @@ import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -25,6 +24,7 @@ import {
   ButtonContainer,
   GridTitleContainer,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -968,7 +968,7 @@ const HU_A2070W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1068,7 +1068,7 @@ const HU_A2070W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <GridContainer>
         <ExcelExport

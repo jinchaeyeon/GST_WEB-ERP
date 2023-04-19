@@ -27,9 +27,9 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -1706,7 +1706,7 @@ const CM_A4100W: React.FC = () => {
       </TitleContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="교육기준정보">
-          <FilterBoxWrap>
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -1735,7 +1735,7 @@ const CM_A4100W: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
+          </FilterContainer>
           <GridContainer width="87vw">
             <ExcelExport
               data={mainDataResult.data}
@@ -1950,7 +1950,7 @@ const CM_A4100W: React.FC = () => {
           </FormBoxWrap>
         </TabStripTab>
         <TabStripTab title="교육참여/진행관리">
-          <FilterBoxWrap>
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -2000,7 +2000,7 @@ const CM_A4100W: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
+          </FilterContainer>
           <GridContainerWrap style={{ width: "87vw" }}>
             <GridContainer width="35%">
               <GridTitleContainer>

@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { getter } from "@progress/kendo-react-common";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   TitleContainer,
   ButtonContainer,
@@ -518,7 +518,7 @@ const PR_A3000W: React.FC = () => {
         <Title className="iot-title">생산실적</Title>
       </TitleContainer>
 
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody className="PR_A3000W">
             <tr>
@@ -585,9 +585,9 @@ const PR_A3000W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody className="PR_A3000W">
             <tr>
@@ -633,7 +633,7 @@ const PR_A3000W: React.FC = () => {
             )}
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <ButtonContainer>
         {permissions && (

@@ -16,7 +16,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   Title,
   TitleContainer,
@@ -31,7 +30,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
 import {handleKeyPressSearch} from "../../CommonFunction"
 import { bytesToBase64 } from "byte-base64";
-
+import FilterContainer from "../../../components/Containers/FilterContainer";
 interface IPrsnnumMulti {
   prsnnum: string;
   prsnnm: string;
@@ -313,7 +312,7 @@ const UserWindow = ({ setVisible, setData }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -338,7 +337,7 @@ const UserWindow = ({ setVisible, setData }: IWindow) => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       {/* **Grid Height를 Window Height에 맞춰 동적으로 세팅하기
       ...<GridContainer height="calc(100% - {그리드 높이를 제외한 나머지 요소의 높이값})" >
             <Grid

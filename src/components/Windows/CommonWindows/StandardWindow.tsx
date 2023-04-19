@@ -17,7 +17,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   Title,
   TitleContainer,
@@ -29,7 +28,7 @@ import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-
+import FilterContainer from "../../../components/Containers/FilterContainer";
 interface IMng {
   mngitemcd1: string;
   mngitemcd2: string;
@@ -288,7 +287,7 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox>
           <tbody>
             <tr>
@@ -314,7 +313,7 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainer>
         <Grid
           style={{ height: "500px" }}
@@ -362,9 +361,6 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          {/* <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
-            확인
-          </Button> */}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

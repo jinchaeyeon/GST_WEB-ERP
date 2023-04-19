@@ -22,7 +22,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   Title,
   TitleContainer,
@@ -32,6 +31,7 @@ import {
   GridContainerWrap,
 } from "../../CommonStyled";
 import { Input } from "@progress/kendo-react-inputs";
+import FilterContainer from "../Containers/FilterContainer";
 import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import {
@@ -915,7 +915,7 @@ const CopyWindow = ({
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterBoxWrap>
+        <FilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -1036,7 +1036,7 @@ const CopyWindow = ({
               </tr>
             </tbody>
           </FilterBox>
-        </FilterBoxWrap>
+        </FilterContainer>
         <GridContainerWrap>
           <GridContainer width={`60%`}>
           <GridTitleContainer>

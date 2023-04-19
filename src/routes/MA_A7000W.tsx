@@ -25,9 +25,9 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import CopyWindow2 from "../components/Windows/BA_A0080W_Copy_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -1457,7 +1457,7 @@ const MA_A7000W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1555,7 +1555,7 @@ const MA_A7000W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <FormContext.Provider
         value={{
           itemInfo,

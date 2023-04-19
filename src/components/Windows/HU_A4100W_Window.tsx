@@ -12,7 +12,6 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";

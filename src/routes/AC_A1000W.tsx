@@ -18,7 +18,6 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -34,6 +33,7 @@ import { Iparameters, TPermissions } from "../store/types";
 import DetailWindow from "../components/Windows/AC_A1000W_Window";
 import AC_A1000W_Receive_Window from "../components/Windows/AC_A1000W_Receive_Window";
 import AC_A1000W_Payment_Window from "../components/Windows/AC_A1000W_Payment_Window";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -1492,7 +1492,7 @@ const AC_A1000W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1689,7 +1689,7 @@ const AC_A1000W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}

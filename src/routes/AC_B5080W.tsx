@@ -16,7 +16,6 @@ import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   TitleContainer,
@@ -24,6 +23,7 @@ import {
 } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
@@ -1579,7 +1579,7 @@ const AC_B5080W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1610,7 +1610,7 @@ const AC_B5080W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="TAX미발(매출)">
           <GridContainer width="87vw">

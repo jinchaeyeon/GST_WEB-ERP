@@ -15,7 +15,6 @@ import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
-  FilterBoxWrap,
   FilterBox,
   GridTitleContainer,
   GridTitle,
@@ -32,6 +31,7 @@ import {
   UseParaPc,
   getQueryFromBizComponent,
 } from "../../CommonFunction";
+import FilterContainer from "../../../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../../CommonString";

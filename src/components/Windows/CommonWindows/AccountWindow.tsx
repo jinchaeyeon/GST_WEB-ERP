@@ -16,7 +16,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   Title,
   TitleContainer,
@@ -32,6 +31,7 @@ import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
 import {handleKeyPressSearch} from "../../CommonFunction";
+import FilterContainer from "../../../components/Containers/FilterContainer";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -256,7 +256,7 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -281,7 +281,7 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainer height="calc(100% - 170px)">
         <Grid
           style={{ height: "100%" }}

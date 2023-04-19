@@ -29,9 +29,9 @@ import { gridList } from "../store/columns/QC_A2000W_C";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { IAttachmentData } from "../hooks/interfaces";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -1793,7 +1793,7 @@ const QC_A2000: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1956,7 +1956,7 @@ const QC_A2000: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="발주정보">
           <GridContainerWrap>
