@@ -79,8 +79,12 @@ import {
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { TextArea } from "@progress/kendo-react-inputs";
 
@@ -218,6 +222,12 @@ const CM_A4100W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
   //FormContext의 데이터 state
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
@@ -1085,6 +1095,8 @@ const CM_A4100W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (unsavedAttadatnums.length > 0)
+      setDeletedAttadatnums(unsavedAttadatnums);
     setTabSelected(e.selected);
     resetAllGrid();
     if (e.selected == 0) {
@@ -1131,6 +1143,10 @@ const CM_A4100W: React.FC = () => {
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!infomation.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setInfomation((prev) => {
       return {
         ...prev,
@@ -1258,6 +1274,7 @@ const CM_A4100W: React.FC = () => {
     work_type: "",
     edunum: "",
     datnum: "",
+    attdatnum: "",
   });
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -1282,6 +1299,7 @@ const CM_A4100W: React.FC = () => {
           work_type: "D",
           edunum: selectRow.edunum,
           datnum: "",
+          attdatnum: selectRow.attdatnum,
         }));
       }
     } else {
@@ -1294,6 +1312,7 @@ const CM_A4100W: React.FC = () => {
         work_type: "D1",
         edunum: selectRow.edunum,
         datnum: selectRow.datnum,
+        attdatnum: selectRow.attdatnum,
       }));
     }
   };
@@ -1567,15 +1586,22 @@ const CM_A4100W: React.FC = () => {
           tab: 1,
         }));
       }
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.edunum = "";
-    paraDataDeleted.datnum = "";
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      edunum: "",
+      datnum: "",
+      attdatnum: "",
+    }));
   };
 
   const onSaveClick = async () => {
@@ -1627,6 +1653,7 @@ const CM_A4100W: React.FC = () => {
         tab: 0,
       }));
       deletedMainRows = [];
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);

@@ -68,7 +68,11 @@ import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import DateCell from "../Cells/DateCell";
@@ -310,6 +314,15 @@ const CopyWindow = ({
   UseMessages(pathname, setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -527,6 +540,9 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    if (unsavedAttadatnums.length > 0)
+      setDeletedAttadatnums(unsavedAttadatnums);
+
     setVisible(false);
   };
 
@@ -765,6 +781,10 @@ const CopyWindow = ({
     setCopyWindowVisible4(true);
   };
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!filters.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -893,6 +913,7 @@ const CopyWindow = ({
           if (valid == true) {
             setData(mainDataResult.data, filters, deletedMainRows);
             deletedMainRows = [];
+            setUnsavedAttadatnums([]);
             if (workType == "N") {
               onClose();
             }

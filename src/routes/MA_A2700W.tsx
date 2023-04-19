@@ -61,8 +61,12 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../store/atoms";
 const DateField = ["recdt", "enddt"];
 
 const NumberField = [
@@ -143,6 +147,14 @@ const MA_A2700W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -680,6 +692,7 @@ const MA_A2700W: React.FC = () => {
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -698,6 +711,7 @@ const MA_A2700W: React.FC = () => {
     work_type: "D",
     recdt: "",
     seq1: 0,
+    attdatnum: "",
   });
 
   //삭제 프로시저 파라미터
@@ -1135,6 +1149,7 @@ const MA_A2700W: React.FC = () => {
       work_type: "D",
       recdt: datas.recdt,
       seq1: datas.seq1,
+      attdatnum: datas.attdatnum,
     }));
   };
 
@@ -1149,15 +1164,22 @@ const MA_A2700W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.recdt = "";
-    paraDataDeleted.seq1 = 0;
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      recdt: "",
+      seq1: 0,
+      attdatnum: "",
+    }));
   };
 
   interface ICustData {

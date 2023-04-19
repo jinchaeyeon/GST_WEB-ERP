@@ -71,8 +71,12 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { bytesToBase64 } from "byte-base64";
+import {
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 
 const idGetter = getter(FORM_DATA_INDEX);
 
@@ -324,6 +328,14 @@ const KendoWindow = ({
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -354,6 +366,9 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
+    if (unsavedAttadatnums.length > 0)
+      setDeletedAttadatnums(unsavedAttadatnums);
+
     getVisible(false);
   };
 
@@ -739,6 +754,8 @@ const KendoWindow = ({
         getVisible(false);
         reloadData("N");
       }
+      // 초기화
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -844,6 +861,10 @@ const KendoWindow = ({
     useState<boolean>(false);
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!initialVal.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setInitialVal((prev) => {
       return {
         ...prev,

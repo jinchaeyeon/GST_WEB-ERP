@@ -61,7 +61,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 
 const DATA_ITEM_KEY = "num";
 
@@ -111,6 +111,9 @@ const SA_A2300: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -386,6 +389,7 @@ const SA_A2300: React.FC = () => {
     work_type: "",
     recdt: "",
     seq1: 0,
+    attdatnum: "",
   });
 
   //삭제 프로시저 파라미터
@@ -768,6 +772,7 @@ const SA_A2300: React.FC = () => {
       work_type: "D",
       recdt: data.recdt,
       seq1: data.seq1,
+      attdatnum: data.attdatnum,
     }));
   };
 
@@ -782,15 +787,23 @@ const SA_A2300: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
+
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.recdt = "";
-    paraDataDeleted.seq1 = 0;
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      recdt: "",
+      seq1: 0,
+      attdatnum: "",
+    }));
   };
 
   interface ICustData {

@@ -69,8 +69,12 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
 const DATA_ITEM_KEY = "num";
@@ -127,6 +131,11 @@ const QC_A3000: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -174,6 +183,9 @@ const QC_A3000: React.FC = () => {
   const [inspeccdListData, setInspeccdListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -478,6 +490,7 @@ const QC_A3000: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     qcno: "",
+    attdatnum: "",
   });
 
   //삭제 프로시저 파라미터
@@ -1024,6 +1037,7 @@ const QC_A3000: React.FC = () => {
           ...prev,
           work_type: "D",
           qcno: data.qcno,
+          attdatnum: data.attdatnum,
         }));
       }
     } catch (e) {
@@ -1042,14 +1056,21 @@ const QC_A3000: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.qcno = "";
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      qcno: "",
+      attdatnum: "",
+    }));
   };
 
   interface IItemData {
@@ -1216,6 +1237,9 @@ const QC_A3000: React.FC = () => {
     if (data.isSuccess === true) {
       resetAllGrid();
       fetchDetailGrid();
+
+      // 초기화
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1247,6 +1271,10 @@ const QC_A3000: React.FC = () => {
   );
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!information.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setInformation((prev) => {
       return {
         ...prev,

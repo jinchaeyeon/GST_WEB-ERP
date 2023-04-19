@@ -52,7 +52,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/CM_A0000W_C";
 import DetailWindow from "../components/Windows/CM_A0000W_Window";
@@ -77,6 +77,8 @@ const CM_A0000W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -216,6 +218,7 @@ const CM_A0000W: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     datnum: "",
+    attdatnum: "",
   });
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -226,11 +229,14 @@ const CM_A0000W: React.FC = () => {
     }
 
     const datnum = Object.getOwnPropertyNames(selectedState)[0];
-
+    const data = mainDataResult.data.filter(
+      (item) => item.datnum === datnum
+    )[0];
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
       datnum: datnum,
+      attdatnum: data.attdatnum,
     }));
   };
 
@@ -417,14 +423,21 @@ const CM_A0000W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
+
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
-
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.datnum = "";
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      datnum: "",
+      attdatnum: "",
+    }));
   };
 
   useEffect(() => {

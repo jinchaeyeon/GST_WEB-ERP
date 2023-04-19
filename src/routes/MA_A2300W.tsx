@@ -60,7 +60,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -117,6 +117,8 @@ const MA_A2000W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -412,6 +414,7 @@ const MA_A2000W: React.FC = () => {
     work_type: "",
     seq1: 0,
     recdt: "",
+    attdatnum: "",
   });
 
   //삭제 프로시저 파라미터
@@ -778,6 +781,7 @@ const MA_A2000W: React.FC = () => {
       work_type: "D",
       seq1: data.seq1,
       recdt: data.recdt,
+      attdatnum: data.attdatnum,
     }));
   };
 
@@ -792,15 +796,22 @@ const MA_A2000W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
+
+                  // 첨부파일 삭제
+                  if (paraDataDeleted.attdatnum)
+                  setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.recdt = "";
-    paraDataDeleted.seq1 = 0;
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      recdt: "",
+      seq1: 0,
+      attdatnum: "",
+    }));
   };
 
   interface ICustData {

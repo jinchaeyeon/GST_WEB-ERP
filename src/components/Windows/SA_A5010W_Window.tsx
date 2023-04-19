@@ -18,10 +18,14 @@ import {
   GridDataStateChangeEvent,
   GridItemChangeEvent,
   GridCellProps,
-  GridHeaderCellProps
+  GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { TextArea, InputChangeEvent, Checkbox } from "@progress/kendo-react-inputs";
+import {
+  TextArea,
+  InputChangeEvent,
+  Checkbox,
+} from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -51,15 +55,19 @@ import {
   convertDateToStr,
   getGridItemChangedData,
   findMessage,
-  getItemQuery
+  getItemQuery,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
@@ -306,6 +314,13 @@ const CopyWindow = ({
     setMainDataResult(process([], mainDataState));
     fetchMainGrid();
   }, [reload]);
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   const [editIndex, setEditIndex] = useState<number | undefined>();
@@ -346,7 +361,6 @@ const CopyWindow = ({
 
   useEffect(() => {
     if (bizComponentData !== null) {
-
     }
   }, [bizComponentData]);
 
@@ -452,6 +466,9 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    if (unsavedAttadatnums.length > 0)
+      setDeletedAttadatnums(unsavedAttadatnums);
+
     setVisible(false);
   };
   const onCustWndClick2 = () => {
@@ -601,7 +618,7 @@ const CopyWindow = ({
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -613,7 +630,7 @@ const CopyWindow = ({
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -693,6 +710,10 @@ const CopyWindow = ({
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!filters.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -794,6 +815,8 @@ const CopyWindow = ({
         if (valid == true) {
           setData(mainDataResult.data, filters, deletedMainRows);
           deletedMainRows = [];
+          setUnsavedAttadatnums([]);
+
           if (workType == "N") {
             onClose();
           }
@@ -865,32 +888,32 @@ const CopyWindow = ({
       field != "itemnm" &&
       field != "totamt" &&
       field != "dlramt" &&
-      field != "rowstatus" 
+      field != "rowstatus"
     ) {
-      if(!(field == "itemcd" && dataItem.rowstatus != "N")){
+      if (!(field == "itemcd" && dataItem.rowstatus != "N")) {
         const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
-              [EDIT_FIELD]: field,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-      setEditIndex(dataItem[DATA_ITEM_KEY]);
-      if (field) {
-        setEditedField(field);
-      }
-      setIfSelectFirstRow(false);
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus === "N" ? "N" : "U",
+                [EDIT_FIELD]: field,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setEditIndex(dataItem[DATA_ITEM_KEY]);
+        if (field) {
+          setEditedField(field);
+        }
+        setIfSelectFirstRow(false);
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
       }
     }
   };
@@ -952,25 +975,25 @@ const CopyWindow = ({
       const newData = mainDataResult.data.map((item) => ({
         ...item,
         amt:
-        filters.amtunit == "KRW"
-          ? item.qty * item.unp
-          : item.qty * item.unp * filters.wonchgrat,
-      wonamt:
-        filters.amtunit == "KRW"
-          ? item.qty * item.unp
-          : item.qty * item.unp * filters.wonchgrat,
-      taxamt:
-        filters.amtunit == "KRW"
-          ? (item.qty * item.unp) / 10
-          : (item.qty * item.unp * filters.wonchgrat) / 10,
-      totamt:
-        filters.amtunit == "KRW"
-          ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
-          : Math.round(
-              item.qty * item.unp * filters.wonchgrat +
-                (item.qty * item.unp * filters.wonchgrat) / 10
-            ),
-      dlramt: filters.amtunit == "KRW" ? item.qty / filters.wonchgrat : 0,
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
+        wonamt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
+        taxamt:
+          filters.amtunit == "KRW"
+            ? (item.qty * item.unp) / 10
+            : (item.qty * item.unp * filters.wonchgrat) / 10,
+        totamt:
+          filters.amtunit == "KRW"
+            ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
+            : Math.round(
+                item.qty * item.unp * filters.wonchgrat +
+                  (item.qty * item.unp * filters.wonchgrat) / 10
+              ),
+        dlramt: filters.amtunit == "KRW" ? item.qty / filters.wonchgrat : 0,
         [EDIT_FIELD]: undefined,
       }));
       setIfSelectFirstRow(false);
@@ -1366,12 +1389,12 @@ const CopyWindow = ({
             >
               <GridColumn field="rowstatus" title=" " width="50px" />
               <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell2}
-              cell={CheckBoxCell}
-            />
+                field="chk"
+                title=" "
+                width="45px"
+                headerCell={CustomCheckBoxCell2}
+                cell={CheckBoxCell}
+              />
               <GridColumn
                 field="itemcd"
                 title="품목코드"

@@ -74,8 +74,9 @@ import {
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
-import { isLoading } from "../../store/atoms";
-import { useSetRecoilState } from "recoil";
+import { isLoading,  deletedAttadatnumsState,
+  unsavedAttadatnumsState, } from "../../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 const requiredField = ["sub_code", "code_name"];
 const numberField = [
@@ -514,6 +515,13 @@ const KendoWindow = ({
         )
       : "";
 
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
   // 그룹 카테고리 조회
   useEffect(() => {
     if (bizComponentData.length > 0) {
@@ -566,6 +574,9 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
+    if (unsavedAttadatnums.length > 0)
+    setDeletedAttadatnums(unsavedAttadatnums);
+
     setVisible(false);
   };
 
@@ -855,7 +866,9 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      //
+              // 초기화
+        setUnsavedAttadatnums([]);
+
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1056,6 +1069,10 @@ const KendoWindow = ({
     useState<boolean>(false);
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!initialVal.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setInitialVal((prev) => {
       return {
         ...prev,
