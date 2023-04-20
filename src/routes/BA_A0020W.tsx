@@ -26,7 +26,6 @@ import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -38,6 +37,7 @@ import {
   FormBox,
   GridContainerWrap,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
@@ -74,8 +74,12 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
@@ -145,6 +149,14 @@ const BA_A0020: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -1138,6 +1150,8 @@ const BA_A0020: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (unsavedAttadatnums.length > 0)
+      setDeletedAttadatnums(unsavedAttadatnums);
     setTabSelected(e.selected);
   };
 
@@ -1184,6 +1198,10 @@ const BA_A0020: React.FC = () => {
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!infomation.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setInfomation((prev) => {
       return {
         ...prev,
@@ -1353,6 +1371,7 @@ const BA_A0020: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     custcd: "",
+    attdatnum: "",
   });
 
   const onDeleteClick = (e: any) => {
@@ -1405,11 +1424,14 @@ const BA_A0020: React.FC = () => {
       return false;
     }
 
-    const item = Object.getOwnPropertyNames(selectedState)[0];
+    const items = Object.getOwnPropertyNames(selectedState)[0];
+    const data = mainDataResult.data.filter((item) => item.custcd === items)[0];
+
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      custcd: item,
+      custcd: items,
+      attdatnum: data.attdatnum,
     }));
   };
 
@@ -2237,14 +2259,19 @@ const BA_A0020: React.FC = () => {
     if (data.isSuccess === true) {
       resetAllGrid();
       fetchMainGrid();
+
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
-
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.custcd = "";
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      custcd: "",
+      attdatnum: "",
+    }));
   };
 
   const onSaveClick2 = async () => {
@@ -2302,6 +2329,8 @@ const BA_A0020: React.FC = () => {
       setMainDataResult(process([], mainDataState));
 
       fetchMainGrid();
+      // 초기화
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -2402,7 +2431,7 @@ const BA_A0020: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -2475,7 +2504,7 @@ const BA_A0020: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainerWrap>
         <GridContainer width={`30%`}>
           <ExcelExport

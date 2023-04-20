@@ -20,7 +20,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   Title,
   TitleContainer,
@@ -47,6 +46,8 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import CheckBoxCell from "../Cells/CheckBoxCell";
+import FilterContainer from "../Containers/FilterContainer";
+
 type IWindow = {
   itemacnt?: string | number | undefined;
   setVisible(t: boolean): void;
@@ -600,7 +601,7 @@ const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterBoxWrap>
+        <FilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -718,7 +719,7 @@ const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
               </tr>
             </tbody>
           </FilterBox>
-        </FilterBoxWrap>
+        </FilterContainer>
         <GridContainer>
           <Grid
             style={{ height: "290px" }}

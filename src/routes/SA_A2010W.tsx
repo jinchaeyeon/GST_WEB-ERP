@@ -14,9 +14,9 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import calculateSize from "calculate-size";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -60,7 +60,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
@@ -80,6 +80,9 @@ const SA_B2000: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -397,6 +400,7 @@ const SA_B2000: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     ordnum: "",
+    attdatnum: "",
   });
 
   //삭제 프로시저 파라미터
@@ -751,10 +755,15 @@ const SA_B2000: React.FC = () => {
 
     const ordnum = Object.getOwnPropertyNames(selectedState)[0];
 
+    const data = mainDataResult.data.filter(
+      (item) => item.ordnum === ordnum
+    )[0];
+
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
       ordnum: ordnum,
+      attdatnum: data.attdatnum,
     }));
   };
 
@@ -777,14 +786,20 @@ const SA_B2000: React.FC = () => {
         isSearch: true,
         pgGap: 0,
       }));
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
-
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.ordnum = "";
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      ordnum: "",
+      attdatnum: "",
+    }));
   };
 
   const reloadData = (workType: string) => {
@@ -900,7 +915,7 @@ const SA_B2000: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1089,7 +1104,7 @@ const SA_B2000: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <GridContainerWrap>
         <GridContainer width={`50%`}>

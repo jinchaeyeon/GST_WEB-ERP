@@ -19,13 +19,13 @@ import MonthCalendar from "../components/Calendars/MonthCalendar";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   TitleContainer,
   ButtonContainer,
 } from "../CommonStyled";
 import { useApi } from "../hooks/api";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { Iparameters, TPermissions } from "../store/types";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
@@ -2098,7 +2098,7 @@ const AC_B6060W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -2166,7 +2166,7 @@ const AC_B6060W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="기간별">
           <GridContainer width="87vw">

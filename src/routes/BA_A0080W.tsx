@@ -26,7 +26,6 @@ import { DataResult, process, State } from "@progress/kendo-data-query";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -37,6 +36,7 @@ import {
   GridContainerWrap,
   ButtonInGridInput,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
@@ -1249,7 +1249,7 @@ const BA_A0080: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1313,7 +1313,7 @@ const BA_A0080: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainerWrap>
         <GridContainer width={`22%`}>
           <GridTitleContainer>

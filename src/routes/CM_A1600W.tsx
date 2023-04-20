@@ -28,9 +28,9 @@ import {
   GridTitleContainer,
   TitleContainer,
   Title,
-  FilterBoxWrap,
   FilterBox,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
@@ -975,7 +975,7 @@ const CM_A1600: React.FC = () => {
       <GridContainerWrap>
         <GridContainer>
           <GridTitleContainer>
-            <FilterBoxWrap>
+            <FilterContainer>
               <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                 <tbody>
                   <tr>
@@ -1017,7 +1017,7 @@ const CM_A1600: React.FC = () => {
                   </tr>
                 </tbody>
               </FilterBox>
-            </FilterBoxWrap>
+            </FilterContainer>
           </GridTitleContainer>
           <GridTitleContainer>
             <GridTitle>개인 스케줄러</GridTitle>
@@ -1043,7 +1043,7 @@ const CM_A1600: React.FC = () => {
           >
             <GridContainer>
               <GridTitleContainer>
-                <FilterBoxWrap>
+                <FilterContainer>
                   <FilterBox
                     onKeyPress={(e) => handleKeyPressSearch(e, search)}
                   >
@@ -1091,7 +1091,7 @@ const CM_A1600: React.FC = () => {
                       </tr>
                     </tbody>
                   </FilterBox>
-                </FilterBoxWrap>
+                </FilterContainer>
               </GridTitleContainer>
 
               <GridTitleContainer>

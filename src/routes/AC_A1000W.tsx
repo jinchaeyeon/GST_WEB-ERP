@@ -18,7 +18,6 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -32,6 +31,9 @@ import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import DetailWindow from "../components/Windows/AC_A1000W_Window";
+import AC_A1000W_Receive_Window from "../components/Windows/AC_A1000W_Receive_Window";
+import AC_A1000W_Payment_Window from "../components/Windows/AC_A1000W_Payment_Window";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -63,11 +65,10 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1000W_C";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { bytesToBase64 } from "byte-base64";
-
+import AC_A1000W_Print_Window from "../components/Windows/AC_A1000W_Print_Window";
 const DATA_ITEM_KEY = "num";
 const dateField = ["acntdt"];
 const numberField = ["sumslipamt_1", "sumslipamt_2", "sumslipamt"];
@@ -251,7 +252,9 @@ const AC_A1000W: React.FC = () => {
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
-
+  const [printWindow, setPrintWindowVisible] = useState<boolean>(false);
+  const [receiveWindow, setReceiveWindowVisible] = useState<boolean>(false);
+  const [paymentWindow, setPaymentWindowVisible] = useState<boolean>(false);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -1450,17 +1453,27 @@ const AC_A1000W: React.FC = () => {
 
   const onPrint = () => {
     const datas = mainDataResult.data.filter((item: any) => item.chk == true);
-    //전표일자 => 전표번호 + 순번
-    //계정과목 => 계정명
-    //적요 => 1줄 : 적요 / 2줄: 업체코드, 업체명
+
     try {
       if (datas.length == 0) {
         throw findMessage(messagesData, "AC_A1000W_001");
       } else {
-        // onBarcodeWndClick();
+        setPrintWindowVisible(true);
       }
     } catch (e) {
       alert(e);
+    }
+  };
+
+  const onReceive = () => {
+    setReceiveWindowVisible(true);
+  };
+  const onPayment = () => {
+    setPaymentWindowVisible(true);
+  };
+  const setOK = (Ok: boolean) => {
+    if (Ok == true) {
+      resetAllGrid();
     }
   };
 
@@ -1479,7 +1492,7 @@ const AC_A1000W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1676,7 +1689,7 @@ const AC_A1000W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -1688,14 +1701,14 @@ const AC_A1000W: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
             <ButtonContainer>
               <Button
-                onClick={onDeleteClick}
+                onClick={onReceive}
                 themeColor={"primary"}
                 icon="track-changes-accept"
               >
                 받을어음
               </Button>
               <Button
-                onClick={onDeleteClick}
+                onClick={onPayment}
                 themeColor={"primary"}
                 icon="track-changes-accept"
               >
@@ -1846,6 +1859,51 @@ const AC_A1000W: React.FC = () => {
           }
           reload={reload}
           chkyn={filters.chkyn}
+        />
+      )}
+      {printWindow && (
+        <AC_A1000W_Print_Window
+          setVisible={setPrintWindowVisible}
+          data={
+            mainDataResult.data.filter((item: any) => item.chk == true) ==
+            undefined
+              ? []
+              : mainDataResult.data.filter((item: any) => item.chk == true)
+          }
+        />
+      )}
+      {receiveWindow && (
+        <AC_A1000W_Receive_Window
+          setVisible={setReceiveWindowVisible}
+          data={
+            mainDataResult.data.filter(
+              (item: any) =>
+                item.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0] == undefined
+              ? ""
+              : mainDataResult.data.filter(
+                  (item: any) =>
+                    item.num == Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+          }
+          setData={setOK}
+        />
+      )}
+      {paymentWindow && (
+        <AC_A1000W_Payment_Window
+          setVisible={setPaymentWindowVisible}
+          data={
+            mainDataResult.data.filter(
+              (item: any) =>
+                item.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0] == undefined
+              ? ""
+              : mainDataResult.data.filter(
+                  (item: any) =>
+                    item.num == Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+          }
+          setData={setOK}
         />
       )}
       {gridList.map((grid: any) =>

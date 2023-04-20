@@ -17,7 +17,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   GridTitle,
   GridTitleContainer,
@@ -45,7 +44,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
 import PrsnnumWindow from "./PrsnnumWindow";
 import { bytesToBase64 } from "byte-base64";
-
+import FilterContainer from "../../../components/Containers/FilterContainer";
 interface IPrsnnumMulti {
   prsnnum: string;
   prsnnm: string;
@@ -408,7 +407,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox>
           <tbody>
             <tr>
@@ -452,7 +451,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainer height="calc(100% - 470px)">
         <GridTitleContainer>
           <GridTitle>사용자 리스트</GridTitle>

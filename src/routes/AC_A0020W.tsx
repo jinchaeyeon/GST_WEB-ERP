@@ -25,7 +25,6 @@ import { DataResult, process, State } from "@progress/kendo-data-query";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   TitleContainer,
@@ -35,6 +34,7 @@ import {
   GridContainerWrap,
   ButtonInInput,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import { Iparameters, TPermissions } from "../store/types";
@@ -3696,7 +3696,7 @@ const AC_A0020W: React.FC = () => {
       </TitleContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="관리항목">
-          <FilterBoxWrap>
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -3721,7 +3721,7 @@ const AC_A0020W: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
+          </FilterContainer>
           <GridContainer width="87vw">
             <GridTitleContainer>
               <GridTitle></GridTitle>
@@ -3818,7 +3818,7 @@ const AC_A0020W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="재무제표">
-          <FilterBoxWrap>
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -3848,7 +3848,7 @@ const AC_A0020W: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
+          </FilterContainer>
           <GridContainerWrap style={{ width: "87vw" }}>
             <GridContainer width={`12%`}>
               <GridTitleContainer>
@@ -4076,7 +4076,7 @@ const AC_A0020W: React.FC = () => {
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="단축코드">
-          <FilterBoxWrap>
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -4101,7 +4101,7 @@ const AC_A0020W: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
+          </FilterContainer>
           <GridContainer width="87vw">
             <GridTitleContainer>
               <GridTitle></GridTitle>
@@ -4189,7 +4189,7 @@ const AC_A0020W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="자동전표기준">
-          <FilterBoxWrap>
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -4208,7 +4208,7 @@ const AC_A0020W: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
+          </FilterContainer>
           <GridContainer width="87vw">
             <FormContext2.Provider
               value={{

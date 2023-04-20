@@ -17,7 +17,6 @@ import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
-  FilterBoxWrap,
   FilterBox,
   ButtonInInput,
   GridTitleContainer,
@@ -43,7 +42,7 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import { FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
 import { FormCheckBoxCell } from "../Editors";
 import NumberCell from "../Cells/NumberCell";
-
+import FilterContainer from "../Containers/FilterContainer";
 const SUB_DATA_ITEM_KEY = "pattern_id";
 const DATA_ITEM_KEY = "itemcd";
 
@@ -720,7 +719,7 @@ const KendoWindow = ({
                   });
                 }}
               ></button>
-              <FilterBoxWrap>
+              <FilterContainer>
                 <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
                     <tr>
@@ -772,7 +771,7 @@ const KendoWindow = ({
                     </tr>
                   </tbody>
                 </FilterBox>
-              </FilterBoxWrap>
+              </FilterContainer>
             </fieldset>
             <GridContainerWrap>
               <GridContainer width={`45%`}>

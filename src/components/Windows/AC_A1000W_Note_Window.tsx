@@ -5,52 +5,81 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
+  GridCellProps,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
 } from "@progress/kendo-react-grid";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   Title,
   TitleContainer,
-} from "../../../CommonStyled";
+} from "../../CommonStyled";
 import { Input } from "@progress/kendo-react-inputs";
+import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
-import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
-import { IWindowPosition } from "../../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
-import {handleKeyPressSearch} from "../../CommonFunction"
-import FilterContainer from "../../../components/Containers/FilterContainer";
+import FilterContainer from "../Containers/FilterContainer";
+import {
+  chkScrollHandler,
+  convertDateToStr,
+  setDefaultDate,
+  UseBizComponent,
+  UseCustomOption,
+} from "../CommonFunction";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
+
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
-  setData(data: object): void; // 선택한 품목 데이터를 전달하는 함수
+  setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
-const DATA_ITEM_KEY = "itemcd";
-
-const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
+const AC_A1000W_Note_Window = ({
+  workType,
+  setVisible,
+  setData,
+}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
+    width: 1000,
     height: 800,
   });
-
-  const setLoading = useSetRecoilState(isLoading);
+  const DATA_ITEM_KEY = "notenum";
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const pathname: string = window.location.pathname.replace("/", "");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      setFilters((prev) => ({
+        ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
+        notediv: defaultOption.find((item: any) => item.id === "notediv")
+          .valueCode,
+      }));
+    }
+  }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -96,7 +125,7 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
   };
 
   const processApi = useApi();
-
+  const [isInitSearch, setIsInitSearch] = useState(false);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -106,68 +135,62 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [mainPgNum, setMainPgNum] = useState(1);
 
   const [filters, setFilters] = useState({
-    itemcd: "",
-    itemnm: "",
-    insiz: "",
-    bnatur: "",
-    spec: "",
-    itemacnt: "",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
+    notenum: "",
+    notediv: "",
+    frdt: new Date(),
+    todt: new Date(),
     custcd: "",
     custnm: "",
-    dwgno: "",
-    useyn: "Y",
   });
 
-  //팝업 조회 파라미터
-  const parameters = {
-    para:
-      "popup-data?id=" +
-      "P_ITEMCD" +
-      "&page=" +
-      mainPgNum +
-      "&pageSize=" +
-      PAGE_SIZE,
-    itemcd: filters.itemcd,
-    itemnm: filters.itemnm,
-    insiz: filters.insiz,
-    useyn:
-      filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
+  //조회조건 파라미터
+  const parameters: Iparameters = {
+    procedureName: "P_AC_A0020W_P_Q",
+    pageNumber: mainPgNum,
+    pageSize: PAGE_SIZE,
+    parameters: {
+      "@p_work_type": "Q",
+      "@p_orgdiv": "01",
+      "@p_notenum": filters.notenum,
+      "@p_notediv": filters.notediv,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+    },
   };
-
   useEffect(() => {
     fetchMainGrid();
   }, [mainPgNum]);
 
+  useEffect(() => {
+    if (isInitSearch === false) {
+      fetchMainGrid();
+    }
+  }, [filters]);
+
   //그리드 조회
   const fetchMainGrid = async () => {
     let data: any;
-    setLoading(true);
 
     try {
-      data = await processApi<any>("popup-data", parameters);
+      data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data !== null) {
-      const totalRowCnt = data.data.TotalRowCount;
-      const rows = data.data.Rows;
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
 
-      if (totalRowCnt) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
-      }
-    } else {
-      console.log(data);
+      setMainDataResult((prev) => {
+        return {
+          data: [...prev.data, ...rows],
+          total: totalRowCnt,
+        };
+      });
+      setIsInitSearch(true);
     }
-    setLoading(false);
   };
 
   //그리드 리셋
@@ -196,17 +219,10 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
     selectData(selectedData);
   };
 
-  const onConfirmBtnClick = (props: any) => {
-    const selectedData = mainDataResult.data.find(
-      (row: any) => row.itemcd === Object.keys(selectedState)[0]
-    );
-    selectData(selectedData);
-  };
-
-  // 부모로 데이터 전달, 창 닫기 (여러 행을 추가하는 경우 Close 제외)
+  // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     setData(selectedData);
-    if (workType !== "ROWS_ADD") onClose();
+    if (workType === "ROW_ADD") onClose();
   };
 
   //메인 그리드 선택 이벤트
@@ -228,15 +244,32 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
       </td>
     );
   };
-
-  const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const onCustWndClick = () => {
+    setCustWindowVisible(true);
+  };
+  interface ICustData {
+    custcd: string;
+    custnm: string;
+    custabbr: string;
+    bizregnum: string;
+    custdivnm: string;
+    useyn: string;
+    remark: string;
+    compclass: string;
+    ceonm: string;
   }
-  
+  const setCustData = (data: ICustData) => {
+    setFilters((prev) => ({
+      ...prev,
+      custcd: data.custcd,
+      custnm: data.custnm,
+    }));
+  };
+
   return (
     <Window
-      title={"품목마스터"}
+      title={"기준정보팝업"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
@@ -259,95 +292,84 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+        <FilterBox>
           <tbody>
             <tr>
-              <th>품목코드</th>
+              <th>어음구분</th>
               <td>
-                <Input
-                  name="itemcd"
-                  type="text"
-                  value={filters.itemcd}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>품목명</th>
-              <td>
-                <Input
-                  name="itemnm"
-                  type="text"
-                  value={filters.itemnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>규격</th>
-              <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사용여부</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentRadioGroup
-                    name="useyn"
-                    value={filters.useyn}
-                    bizComponentId="R_USEYN"
-                    bizComponentData={bizComponentData}
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="notediv"
+                    customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
                 )}
               </td>
+              <th>만기일자</th>
+              <td colSpan={3}>
+                <div className="filter-item-wrap">
+                  <DatePicker
+                    name="frdt"
+                    value={filters.frdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    placeholder=""
+                    className="required"
+                  />
+                  ~
+                  <DatePicker
+                    name="todt"
+                    value={filters.todt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    placeholder=""
+                    className="required"
+                  />
+                </div>
+              </td>
             </tr>
-            {/* <tr>
-              <th>사양</th>
+            <tr>
+              <th>어음번호</th>
               <td>
                 <Input
-                  name="spec"
+                  name="notenum"
                   type="text"
-                  value={filters.spec}
+                  value={filters.notenum}
                   onChange={filterInputChange}
                 />
               </td>
-
-              <th>재질</th>
+              <th>업체코드</th>
               <td>
                 <Input
-                  name="bnatur"
+                  name="custcd"
                   type="text"
-                  value={filters.bnatur}
+                  value={filters.custcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onCustWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>업체명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
                   onChange={filterInputChange}
                 />
               </td>
-
-              <th>품목계정</th>
-              <td>
-                <Input
-                  name="itenacnt"
-                  type="text"
-                  value={filters.itemacnt}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th></th>
-              <td></td>
-            </tr> */}
+            </tr>
           </tbody>
         </FilterBox>
       </FilterContainer>
-      {/* **Grid Height를 Window Height에 맞춰 동적으로 세팅하기
-      ...<GridContainer height="calc(100% - {그리드 높이를 제외한 나머지 요소의 높이값})" >
-            <Grid
-          style={{ height: "100%" }}...
-       */}
-      <GridContainer height="calc(100% - 170px)">
+      <GridContainer>
         <Grid
-          style={{ height: "100%" }}
+          style={{ height: "500px" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -380,40 +402,35 @@ const ItemsWindow = ({ workType, setVisible, setData }: IWindow) => {
           onRowDoubleClick={onRowDoubleClick}
         >
           <GridColumn
-            field="itemcd"
-            title="품목코드"
-            width="200px"
+            field="notenum"
+            title="어음번호"
+            width="150px"
             footerCell={mainTotalFooterCell}
           />
-
-          <GridColumn field="itemnm" title="품목명" width="200px" />
-          <GridColumn field="insiz" title="규격" width="120px" />
-          <GridColumn field="model" title="MODEL" width="120px" />
-          <GridColumn field="spec" title="사양" width="120px" />
-          <GridColumn field="itemacntnm" title="품목계정" width="120px" />
-          <GridColumn field="bnatur" title="재질" width="120px" />
-          <GridColumn field="invunitnm" title="수량단위" width="120px" />
-          <GridColumn field="unitwgt" title="단중" width="120px" />
-          <GridColumn field="useyn" title="사용여부" width="120px" />
-          <GridColumn field="wgtunitnm" title="중량단위" width="120px" />
-          <GridColumn field="maker" title="메이커" width="120px" />
-          <GridColumn field="remark" title="비고" width="120px" />
+          <GridColumn field="enddt" title="만기일자" cell={DateCell} width="120px" />
+          <GridColumn field="bankcd" title="지급은행" width="120px" />
+          <GridColumn field="custnm" title="업체명" width="180px" />
+          <GridColumn field="pubamt" title="발행금액" cell={NumberCell} width="100px" />
+          <GridColumn field="pubperson" title="발행인" width="120px" />
+          <GridColumn field="pubbank" title="발행은행명" width="120px" />
         </Grid>
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          {workType !== "ROWS_ADD" && (
-            <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
-              확인
-            </Button>
-          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>
         </ButtonContainer>
       </BottomContainer>
+      {custWindowVisible && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible}
+          workType={"N"}
+          setData={setCustData}
+        />
+      )}
     </Window>
   );
 };
 
-export default ItemsWindow;
+export default AC_A1000W_Note_Window;

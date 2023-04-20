@@ -15,9 +15,9 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import calculateSize from "calculate-size";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -57,7 +57,7 @@ import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { isLoading } from "../store/atoms";
+import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 
 const numberField = [
@@ -83,6 +83,9 @@ const Page: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   const [mainDataState, setMainDataState] = useState<State>({
     group: [
@@ -254,6 +257,7 @@ const Page: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     [DATA_ITEM_KEY]: "",
+    attdatnum: "",
   });
 
   //삭제 프로시저 파라미터
@@ -581,10 +585,15 @@ const Page: React.FC = () => {
 
     const group_code = Object.getOwnPropertyNames(selectedState)[0];
 
+    const data = mainDataResult.data.filter(
+      (item) => item.group_code == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
       group_code: group_code,
+      attdatnum: data.attdatnum,
     }));
   };
 
@@ -600,14 +609,21 @@ const Page: React.FC = () => {
     if (data.isSuccess === true) {
       resetAllGrid();
       fetchMainGrid();
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
 
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.group_code = "";
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      group_code: "",
+      attdatnum: "",
+    }));
   };
 
   const setGroupCode = (groupCode: string) => {
@@ -674,7 +690,7 @@ const Page: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -751,7 +767,7 @@ const Page: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <GridContainerWrap>
         <GridContainer width={"500px"}>

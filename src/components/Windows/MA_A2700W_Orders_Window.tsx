@@ -22,7 +22,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   Title,
   TitleContainer,
@@ -32,6 +31,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
+import FilterContainer from "../Containers/FilterContainer";
 import {
   chkScrollHandler,
   UseBizComponent,
@@ -629,7 +629,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterBoxWrap>
+        <FilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -819,7 +819,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               </tr>
             </tbody>
           </FilterBox>
-        </FilterBoxWrap>
+        </FilterContainer>
         <GridContainer height="calc(50% - 120px)" minHeight="200px">
           <Grid
             style={{ height: "calc(100% - 5px)" }} //5px = margin bottom 값

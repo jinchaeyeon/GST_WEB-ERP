@@ -13,7 +13,7 @@ import {
   passwordExpirationInfoState,
   loginResultState,
   isMenuOpendState,
-  accessTokenState,
+  // accessTokenState,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
 } from "../../store/atoms";
@@ -47,12 +47,12 @@ const PanelBarNavContainer = (props: any) => {
   const location = useLocation();
   const history = useHistory();
   const [loginResult] = useRecoilState(loginResultState);
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-  const [token] = useState(accessToken);
+  // const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  // const [token] = useState(accessToken);
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
-  useEffect(() => {
-    if (token === null) fetchMenus();
-  }, [token]);
+  // useEffect(() => {
+  //   if (token === null) fetchMenus();
+  // }, [token]);
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMobileMenuOpend, setIsMobileMenuOpend] = useRecoilState(
     isMobileMenuOpendState
@@ -148,7 +148,8 @@ const PanelBarNavContainer = (props: any) => {
   }, [unsavedAttadatnums, setUnsavedAttadatnums, history]);
 
   useEffect(() => {
-    if (token && menus === null) fetchMenus();
+    // if (token && menus === null) fetchMenus();
+    if(menus === null) fetchMenus();
   }, [menus]);
 
   // 첨부파일 삭제
@@ -321,7 +322,8 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   useEffect(() => {
-    if (token && ip !== null) {
+    // if (token && ip !== null) {
+    if (ip !== null) {
       const pathname = location.pathname.replace("/", "");
 
       // 폼 로그 처리
@@ -413,31 +415,31 @@ const PanelBarNavContainer = (props: any) => {
   const selected = setSelectedIndex(props.location.pathname);
 
   const logout = () => {
-    fetchLogout();
+    // fetchLogout();
 
-    setAccessToken(null);
+    // setAccessToken(null);
     cookie.remove("refreshToken", { path: "/" }); // localStorage.removeItem("refreshToken");
     resetLocalStorage();
     window.location.href = "/";
   };
 
-  const fetchLogout = async () => {
-    let data: any;
+  // const fetchLogout = async () => {
+  //   let data: any;
 
-    const para = {
-      accessToken: accessToken,
-    };
+  //   const para = {
+  //     accessToken: accessToken,
+  //   };
 
-    try {
-      data = await processApi<any>("logout", para);
-    } catch (error) {
-      data = null;
-    }
-    if (data === null) {
-      console.log("[An error occured to log for logout]");
-      console.log(data);
-    }
-  };
+  //   try {
+  //     data = await processApi<any>("logout", para);
+  //   } catch (error) {
+  //     data = null;
+  //   }
+  //   if (data === null) {
+  //     console.log("[An error occured to log for logout]");
+  //     console.log(data);
+  //   }
+  // };
 
   const onMenuBtnClick = () => {
     setIsMobileMenuOpend((prev) => !prev);

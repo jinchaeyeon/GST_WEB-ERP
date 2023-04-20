@@ -56,7 +56,7 @@ import {
   getGridItemChangedData,
   dateformat,
   isValidDate,
-  getItemQuery
+  getItemQuery,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -65,7 +65,11 @@ import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import DateCell from "../Cells/DateCell";
@@ -99,7 +103,6 @@ const defaultItemInfo = {
   bnatur: "",
   spec: "",
 };
-
 
 type Idata = {
   orgdiv: string;
@@ -291,6 +294,14 @@ const CopyWindow = ({
   const DATA_ITEM_KEY = "num";
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -470,6 +481,8 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    if (unsavedAttadatnums.length > 0)
+      setDeletedAttadatnums(unsavedAttadatnums);
     setVisible(false);
   };
 
@@ -891,6 +904,10 @@ const CopyWindow = ({
     setCopyWindowVisible4(true);
   };
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!filters.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setFilters((prev: any) => {
       return {
         ...prev,

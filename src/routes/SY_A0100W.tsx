@@ -9,9 +9,9 @@ import {
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   TitleContainer,
@@ -486,7 +486,7 @@ const App: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox>
           <tbody>
             <tr>
@@ -554,7 +554,7 @@ const App: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="데이터 등록 현황">

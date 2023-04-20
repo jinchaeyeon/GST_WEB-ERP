@@ -65,6 +65,7 @@ import RequiredHeader from "../HeaderCells/RequiredHeader";
 import AccountWindow from "./CommonWindows/AccountWindow";
 import StandardWindow from "./CommonWindows/StandardWindow";
 import CodeWindow from "./CommonWindows/CodeWindow";
+import AC_A1000W_Note_Window from "./AC_A1000W_Note_Window";
 
 type IWindow = {
   workType: "N" | "A";
@@ -708,6 +709,7 @@ const CopyWindow = ({
     useState<boolean>(false);
   const [standardWindowVisible, setStandardWindowVisible] =
     useState<boolean>(false);
+  const [noteWindowVisible, setNoteWindowVisible] = useState<boolean>(false);
   const [isInitSearch, setIsInitSearch] = useState(false);
   const [mainPgNum, setMainPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -736,10 +738,30 @@ const CopyWindow = ({
     const { value, name } = e.target;
 
     if (
-      mainDataResult.data.filter(
+      (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype1 == "D" &&
+        name == "mngdata1") ||
+      (mainDataResult.data.filter(
         (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0].controltype2 == "D" &&
-      name == "mngdata2"
+        name == "mngdata2") ||
+      (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype3 == "D" &&
+        name == "mngdata3") ||
+      (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype4 == "D" &&
+        name == "mngdata4") ||
+      (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype5 == "D" &&
+        name == "mngdata5") ||
+      (mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].controltype6 == "D" &&
+        name == "mngdata6")
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -834,6 +856,11 @@ const CopyWindow = ({
     setIndex(1);
     setStandardWindowVisible(true);
   };
+  const onNoteWndClick = () => {
+    setIndex(1);
+    setNoteWindowVisible(true);
+  };
+
   const onStandardWndClick2 = () => {
     setIndex(2);
     setStandardWindowVisible(true);
@@ -870,6 +897,15 @@ const CopyWindow = ({
     item1: string;
     item2: string;
     item3: string;
+  }
+
+  interface INote {
+    notenum: string;
+    custnm: string;
+    pubdt: string;
+    enddt: string;
+    pubbank: string;
+    pubperson: string;
   }
 
   const setStandardData = (data: IStandard) => {
@@ -914,6 +950,33 @@ const CopyWindow = ({
       };
     });
   };
+
+  const setNoteData = (data: INote) => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            mngdata1: data.notenum,
+            mngdatanm1: data.custnm,
+            mngdata2: data.pubdt, 
+            mngdata3: data.enddt,
+            mngdata4: data.pubbank,
+            mngdata5: data.pubperson
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
   const processApi = useApi();
 
   const [filters, setFilters] = useState({
@@ -1940,34 +2003,68 @@ const CopyWindow = ({
                       (item: any) =>
                         item.num == Object.getOwnPropertyNames(selectedState)[0]
                     )[0].controltype1 == "B" ? (
-                    <div className="filter-item-wrap">
-                      <Input
-                        name="mngdata1"
-                        type="text"
-                        value={
-                          mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? ""
-                            : mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata1
-                        }
-                        onChange={InputChange}
-                      />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onStandardWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                    mainDataResult.data.filter(
+                      (item: any) =>
+                        item.num == Object.getOwnPropertyNames(selectedState)[0]
+                    )[0].mngitemcd1 == "C2" ? (
+                      <div className="filter-item-wrap">
+                        <Input
+                          name="mngdata1"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata1
+                          }
+                          onChange={InputChange}
                         />
-                      </ButtonInInput>
-                    </div>
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onNoteWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </div>
+                    ) : (
+                      <div className="filter-item-wrap">
+                        <Input
+                          name="mngdata1"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata1
+                          }
+                          onChange={InputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onStandardWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </div>
+                    )
                   ) : mainDataResult.data.filter(
                       (item: any) =>
                         item.num == Object.getOwnPropertyNames(selectedState)[0]
@@ -3322,6 +3419,13 @@ const CopyWindow = ({
                 )[0]
           }
           index={index}
+        />
+      )}
+      {noteWindowVisible && (
+        <AC_A1000W_Note_Window
+          setVisible={setNoteWindowVisible}
+          workType={"ROW_ADD"}
+          setData={setNoteData}
         />
       )}
       {attachmentsWindowVisible && (

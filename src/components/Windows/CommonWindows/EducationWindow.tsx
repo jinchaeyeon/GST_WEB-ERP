@@ -16,7 +16,6 @@ import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
-  FilterBoxWrap,
   FilterBox,
   GridTitleContainer,
   GridTitle,
@@ -46,6 +45,7 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../../CommonString";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
+import FilterContainer from "../../../components/Containers/FilterContainer";
 const SUB_DATA_ITEM_KEY = "edunum";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -300,7 +300,7 @@ TKendoWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -325,7 +325,7 @@ TKendoWindow) => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainerWrap height="calc(100% - 160px)">
         <GridContainer>
           <GridTitleContainer>

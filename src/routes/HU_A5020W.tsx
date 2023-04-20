@@ -26,9 +26,9 @@ import { DataResult, process, State } from "@progress/kendo-data-query";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import PrsnnumMultiWindow from "../components/Windows/CommonWindows/UserMultiWindow";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   GridContainer,
   GridTitle,
@@ -1015,7 +1015,7 @@ const HU_A5020W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1070,7 +1070,7 @@ const HU_A5020W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <GridContainer>
         <FormContext.Provider

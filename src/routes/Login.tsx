@@ -226,7 +226,7 @@ const Login: React.FC = () => {
               {ifShowCompanyList ? (
                 <Field
                   name={"companyCode"}
-                  label={"업체코드"}
+                  label={"회사코드"}
                   component={FormComboBox}
                   data={companyCodesData}
                   valueField="company_code"
@@ -237,7 +237,7 @@ const Login: React.FC = () => {
               ) : (
                 <Field
                   name={"companyCode"}
-                  label={"업체코드"}
+                  label={"회사코드"}
                   component={FormInput}
                   onKeyDown={companyCodesKeyDown}
                 />

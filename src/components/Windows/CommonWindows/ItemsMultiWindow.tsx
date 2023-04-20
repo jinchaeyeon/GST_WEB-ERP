@@ -17,7 +17,6 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   GridTitle,
   GridTitleContainer,
@@ -34,7 +33,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
-
+import FilterContainer from "../../../components/Containers/FilterContainer";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: IItemData[]): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -305,7 +304,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox>
           <tbody>
             <tr>
@@ -386,7 +385,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
             </tr> */}
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
       <GridContainer height="calc(100% - 470px)">
         <GridTitleContainer>
           <GridTitle>품목리스트</GridTitle>

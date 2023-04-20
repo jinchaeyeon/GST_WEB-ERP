@@ -49,6 +49,10 @@ export type TCommonCode = {
   code_name: string;
 };
 
+export type TToken = {
+  accessToken: string;
+};
+
 export type TSessionItem = {
   code: TSessionItemCode;
   value: string;

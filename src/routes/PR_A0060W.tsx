@@ -19,9 +19,9 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
-  FilterBoxWrap,
   FilterBox,
   FormBox,
   FormBoxWrap,
@@ -67,8 +67,12 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
@@ -96,6 +100,14 @@ const PR_A0060: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -901,6 +913,10 @@ const PR_A0060: React.FC = () => {
   };
 
   const getAttachmentsData2 = (data: IAttachmentData) => {
+    if (!subDataResult.data[rows].attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     const items = parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0]);
     const datas = subDataResult.data.map((item: any) =>
       item.fxseq == items
@@ -923,6 +939,10 @@ const PR_A0060: React.FC = () => {
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!infomation.attdatnum) {
+      setUnsavedAttadatnums([data.attdatnum]);
+    }
+
     setInfomation((prev) => {
       return {
         ...prev,
@@ -1132,6 +1152,7 @@ const PR_A0060: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     fxcode: "",
+    attdatnum: "",
   });
 
   const onDeleteClick = (e: any) => {
@@ -1169,6 +1190,7 @@ const PR_A0060: React.FC = () => {
           ...prev,
           work_type: "D",
           fxcode: items,
+          attdatnum: "",
         }));
       } else if (items == item.fxcode && item.useyn == "Y") {
         alert(findMessage(messagesData, "PR_A0060W_005"));
@@ -1650,6 +1672,10 @@ const PR_A0060: React.FC = () => {
     if (data.isSuccess === true) {
       resetAllGrid();
       fetchMainGrid();
+
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1704,6 +1730,8 @@ const PR_A0060: React.FC = () => {
       setMainDataResult(process([], mainDataState));
 
       fetchMainGrid();
+      // 초기화
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1783,7 +1811,7 @@ const PR_A0060: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1912,7 +1940,7 @@ const PR_A0060: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <GridContainer>
         <ExcelExport
