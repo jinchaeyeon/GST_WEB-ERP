@@ -2,16 +2,21 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Form, Field, FormElement } from "@progress/kendo-react-form";
 import { KeyboardEvent, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { passwordExpirationInfoState, loginResultState } from "../store/atoms";
+import {
+  passwordExpirationInfoState,
+  loginResultState,
+  accessTokenState,
+} from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { IComboBoxColumns } from "../hooks/interfaces";
 import { useSetRecoilState } from "recoil";
 import { FormInput, FormComboBox } from "../components/Editors";
 import { AppName, LoginAppName, LoginBox, Logo } from "../CommonStyled";
-import { UseGetIp } from "../components/CommonFunction";
+
 import { isLoading } from "../store/atoms";
 import Loading from "../components/Loading";
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
+import cookie from "react-cookies";
 
 interface IFormData {
   langCode: string;
@@ -66,6 +71,7 @@ const Login: React.FC = () => {
   const setLoginResult = useSetRecoilState(loginResultState);
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
+  const setAccessToken = useSetRecoilState(accessTokenState);
   const [ifShowCompanyList, setIfShowCompanyList] = useState(false);
 
   useEffect(() => {
@@ -120,6 +126,16 @@ const Login: React.FC = () => {
 
         localStorage.setItem("accessToken", token);
         localStorage.setItem("refreshToken", refreshToken);
+        // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
+        // setAccessToken(token);
+        // const expires = new Date();
+        // expires.setMinutes(expires.getMinutes() + 60);
+        // cookie.save("refreshToken", refreshToken, {
+        //   path: "/",
+        //   expires,
+        //   // secure: true,
+        //   // httpOnly: true,
+        // });
 
         setLoginResult({
           langCode: formData.langCode
