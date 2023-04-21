@@ -29,6 +29,11 @@ const localStorageEffect: <T>(key: string) => AtomEffect<T> =
       }
     });
   };
+export const accessTokenState = atom<String | null>({
+  key: "accessTokenState",
+  default: null as any,
+});
+
 export const loginResultState = atom<TLoginResult>({
   key: "loginResultState",
   default: null as any,

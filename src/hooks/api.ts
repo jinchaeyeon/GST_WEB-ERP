@@ -1,7 +1,8 @@
-import { loginResultState } from "../store/atoms";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import { accessTokenState, loginResultState } from "../store/atoms";
 import axios from "axios";
 import { resetLocalStorage } from "../components/CommonFunction";
+import cookie from "react-cookies";
 
 let BASE_URL = process.env.REACT_APP_API_URL;
 const cachios = require("cachios");
@@ -109,6 +110,7 @@ const generateUrl = (url: string, params: any) => {
 
 export const useApi = () => {
   const token = localStorage.getItem("accessToken");
+  // const [token] = useRecoilState(accessTokenState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
@@ -227,6 +229,8 @@ axiosInstance.interceptors.response.use(
       if (!isTokenRefreshing) {
         let token = localStorage.getItem("accessToken");
         let refreshToken = localStorage.getItem("refreshToken");
+        // const [token, setAccessToken] = useRecoilState(accessTokenState);
+        // let refreshToken = cookie.load("refreshToken");
 
         isTokenRefreshing = true;
 
@@ -236,6 +240,7 @@ axiosInstance.interceptors.response.use(
         // refresh token을 이용하여 access token 재발행 받기
         p = axios.post(url, {
           accessToken: token,
+          // accessToken: token ?? refreshToken,
           refreshToken: refreshToken,
         });
 
@@ -244,6 +249,16 @@ axiosInstance.interceptors.response.use(
 
           localStorage.setItem("accessToken", token);
           localStorage.setItem("refreshToken", refreshToken);
+          // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
+          /*setAccessToken(token);
+          const expires = new Date();
+          expires.setMinutes(expires.getMinutes() + 60);
+          cookie.save("refreshToken", refreshToken, {
+            path: "/",
+            expires,
+            // secure: true,
+            // httpOnly: true,
+          });*/
 
           isTokenRefreshing = false;
           originalRequest.headers.Authorization = `Bearer ${token}`;
