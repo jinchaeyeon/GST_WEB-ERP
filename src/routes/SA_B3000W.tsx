@@ -251,7 +251,7 @@ const SA_B3000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+ 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
 

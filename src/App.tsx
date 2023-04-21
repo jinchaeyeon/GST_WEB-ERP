@@ -7,6 +7,7 @@ import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
 import AuthRoute from "./components/AuthRoute";
 import Login from "./routes/Login";
 import Main from "./routes/Main";
+import AC_A0000W from "./routes/AC_A0000W";
 import AC_A0020W from "./routes/AC_A0020W";
 import AC_A1000W from "./routes/AC_A1000W";
 import AC_B1100W from "./routes/AC_B1100W";
@@ -21,6 +22,7 @@ import BA_A0040W from "./routes/BA_A0040W";
 import BA_A0050W from "./routes/BA_A0050W";
 import BA_A0070W from "./routes/BA_A0070W";
 import BA_A0080W from "./routes/BA_A0080W";
+import BA_A0100W from "./routes/BA_A0100W";
 import MA_A0010W from "./routes/MA_A0010W";
 import MA_A2000W from "./routes/MA_A2000W";
 import MA_A2300W from "./routes/MA_A2300W";
@@ -67,6 +69,7 @@ import SY_A0125W from "./routes/SY_A0125W";
 import SY_A0011W from "./routes/SY_A0011W";
 import CM_A1600W from "./routes/CM_A1600W";
 import CM_A1710W from "./routes/CM_A1710W";
+import CM_B8100W from "./routes/CM_B8100W";
 import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
 import PR_A0060W from "./routes/PR_A0060W";
@@ -297,11 +300,14 @@ const AppInner: React.FC = () => {
                 {/* 메인 홈 */}
                 <AuthRoute path="/Home" component={Main} exact />
                 {/* 기준정보 */}
+                <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
                 <AuthRoute path="/BA_A0020W" component={BA_A0020W} exact />
                 <AuthRoute path="/BA_A0040W" component={BA_A0040W} exact />
                 <AuthRoute path="/BA_A0050W" component={BA_A0050W} exact />
                 <AuthRoute path="/BA_A0070W" component={BA_A0070W} exact />
                 <AuthRoute path="/BA_A0080W" component={BA_A0080W} exact />
+                <AuthRoute path="/BA_A0100W" component={BA_A0100W} exact />
+                <AuthRoute path="/CM_B8100W" component={CM_B8100W} exact />
                 <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
                 {/* 물류관리 */}
                 <AuthRoute path="/MA_A0010W" component={MA_A0010W} exact />

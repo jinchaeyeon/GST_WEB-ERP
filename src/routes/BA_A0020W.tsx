@@ -182,8 +182,8 @@ const BA_A0020: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA026,L_BA027",
-    //업체구분, 사업자구분
+    "L_BA026,L_BA027,L_BA008",
+    //업체구분, 사업자구분, 매출단가항목(매입단가항목)
     setBizComponentData
   );
 
@@ -2283,23 +2283,23 @@ const BA_A0020: React.FC = () => {
 
     let valid = true;
     try {
-      if (!infomation.custnm) {
+      if (infomation.custnm == "") {
         throw findMessage(messagesData, "BA_A0020W_001");
       }
 
-      if (!infomation.custdiv) {
+      if (infomation.custdiv== "") {
         throw findMessage(messagesData, "BA_A0020W_002");
       }
 
-      if (!infomation.bizdiv) {
+      if (infomation.bizdiv== "") {
         throw findMessage(messagesData, "BA_A0020W_003");
       }
 
-      if (!infomation.inunpitem) {
+      if (infomation.inunpitem== "") {
         throw findMessage(messagesData, "BA_A0020W_004");
       }
 
-      if (!infomation.unpitem) {
+      if (infomation.unpitem== "") {
         throw findMessage(messagesData, "BA_A0020W_005");
       }
 

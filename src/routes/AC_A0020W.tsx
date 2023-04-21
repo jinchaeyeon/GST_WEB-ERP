@@ -1585,6 +1585,7 @@ const AC_A0020W: React.FC = () => {
       const selectedIdx = event.startRowIndex;
       const selectedRowData = event.dataItems[selectedIdx];
       setMainDataResult3(process([], mainDataState3));
+      setMainDataResult4(process([], mainDataState4));
       const report = reportgbListData.find(
         (item: any) => item.code_name === selectedRowData.reportgb
       )?.sub_code;
