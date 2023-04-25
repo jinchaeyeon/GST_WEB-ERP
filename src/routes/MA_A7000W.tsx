@@ -709,6 +709,7 @@ const MA_A7000W: React.FC = () => {
   };
 
   const search = () => {
+    deletedMainRows = [];
     try {
       if (convertDateToStr(filters.yyyymm).substring(0, 4) < "1997") {
         throw findMessage(messagesData, "MA_A7000W_001");

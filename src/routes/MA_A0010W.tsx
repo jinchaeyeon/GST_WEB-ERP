@@ -281,6 +281,7 @@ const MA_A0010W: React.FC = () => {
   };
 
   const search = () => {
+    deletedMainRows = [];
     resetAllGrid();
   };
 

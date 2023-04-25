@@ -2039,6 +2039,8 @@ const AC_A0020W: React.FC = () => {
         pgGap: 0,
       }));
     }
+    deletedMainRows = [];
+    deletedMainRows2 = [];
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {

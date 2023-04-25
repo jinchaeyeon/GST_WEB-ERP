@@ -590,6 +590,7 @@ const HU_A5020W: React.FC = () => {
   }, [filters, permissions]);
 
   const search = () => {
+    deletedMainRows = [];
     try {
       if (convertDateToStr(filters.payyrmm).substring(0, 4) < "1997") {
         throw findMessage(messagesData, "HU_A5020W_001");

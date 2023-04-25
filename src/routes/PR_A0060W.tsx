@@ -1075,6 +1075,7 @@ const PR_A0060: React.FC = () => {
   };
 
   const search = () => {
+    deletedMainRows = [];
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
     setMainPgNum(1);

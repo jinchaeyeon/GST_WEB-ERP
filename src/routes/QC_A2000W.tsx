@@ -1122,6 +1122,8 @@ const QC_A2000: React.FC = () => {
   };
 
   const search = () => {
+    deletedMainRows = [];
+    deletedMainRows2 = [];
     try {
       if (
         convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||

@@ -458,6 +458,7 @@ const HU_A2070W: React.FC = () => {
   }, [filters, permissions]);
 
   const search = () => {
+      deletedMainRows = [];
     try {
       if (
         convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||

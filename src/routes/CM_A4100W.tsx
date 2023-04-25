@@ -1180,6 +1180,7 @@ const CM_A4100W: React.FC = () => {
   };
 
   const search = () => {
+    deletedMainRows = [];
     resetAllGrid();
     if (tabSelected == 0) {
       setFilters((prev: any) => ({

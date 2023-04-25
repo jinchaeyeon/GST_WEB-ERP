@@ -1,16 +1,27 @@
 import { GridCellProps } from "@progress/kendo-react-grid";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
+import CheckBoxReadOnlyCell from "./CheckBoxReadOnlyCell";
 
 const CheckBoxCell = (props: GridCellProps) => {
-  const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange } =
-    props;
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field,
+    render,
+    onChange,
+    className = "",
+  } = props;
+  let isInEdit = field === dataItem.inEdit;
   let value = dataItem[field ?? ""];
   if (value === "Y" || value === true) {
     value = true;
   } else {
     value = false;
   }
-
+  if (className.includes("read-only")) {
+    isInEdit = false;
+  }
   const handleChange = (e: CheckboxChangeEvent) => {
     if (onChange) {
       onChange({
@@ -37,7 +48,11 @@ const CheckBoxCell = (props: GridCellProps) => {
       aria-colindex={ariaColumnIndex}
       data-grid-col-index={columnIndex}
     >
-      <Checkbox value={value} onChange={handleChange}></Checkbox>
+      {isInEdit ? (
+        <Checkbox value={value} onChange={handleChange}></Checkbox>
+      ) : (
+        <Checkbox value={value} />
+      )}
     </td>
   );
 

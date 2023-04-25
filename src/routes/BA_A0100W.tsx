@@ -503,6 +503,8 @@ const BA_A0100W: React.FC = () => {
   const search = () => {
     resetAllGrid();
     fetchMainGrid();
+    deletedMainRows = [];
+    deletedMainRows2 = [];
   };
 
   const enterEdit = (dataItem: any, field: string) => {

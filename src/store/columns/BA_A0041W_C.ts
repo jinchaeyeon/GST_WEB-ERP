@@ -1,0 +1,165 @@
+import { TGrid } from "../types";
+
+export const gridList: Array<TGrid> = [
+  {
+    gridName: "grdList",
+    columns: [
+      {
+        id: "col_auto",
+        field: "auto",
+        caption: "자동생성",
+        width: 100,
+      },
+      {
+        id: "col_itemcd",
+        field: "itemcd",
+        caption: "품목코드",
+        width: 150,
+      },
+      {
+        id: "col_itemnm",
+        field: "itemnm",
+        caption: "품목명",
+        width: 150,
+      },
+      {
+        id: "col_itemacnt",
+        field: "itemacnt",
+        caption: "품목계정",
+        width: 120,
+      },
+      {
+        id: "col_bnatur",
+        field: "bnatur",
+        caption: "재질",
+        width: 120,
+      },
+      {
+        id: "col_insiz",
+        field: "insiz",
+        caption: "규격",
+        width: 120,
+      },
+      {
+        id: "col_model",
+        field: "model",
+        caption: "MODEL",
+        width: 120,
+      },
+      {
+        id: "col_spec",
+        field: "spec",
+        caption: "사양",
+        width: 120,
+      },
+      {
+        id: "col_maker",
+        field: "maker",
+        caption: "메이커",
+        width: 100,
+      },
+      {
+        id: "col_itemlvl1",
+        field: "itemlvl1",
+        caption: "대분류",
+        width: 120,
+      },
+      {
+        id: "col_itemlvl2",
+        field: "itemlvl2",
+        caption: "중분류",
+        width: 120,
+      },
+      {
+        id: "col_itemlvl3",
+        field: "itemlvl3",
+        caption: "소분류",
+        width: 120,
+      },
+      {
+        id: "col_load_place",
+        field: "load_place",
+        caption: "적재장소",
+        width: 120,
+      },
+      {
+        id: "col_unitwgt",
+        field: "unitwgt",
+        caption: "단위중량",
+        width: 120,
+      },
+      {
+        id: "col_len",
+        field: "len",
+        caption: "단위길이",
+        width: 120,
+      },
+      {
+        id: "col_invunit",
+        field: "invunit",
+        caption: "구매단위",
+        width: 120,
+      },
+      {
+        id: "col_safeqty",
+        field: "safeqty",
+        caption: "안전재고량",
+        width: 120,
+      },
+      {
+        id: "col_purqty",
+        field: "purqty",
+        caption: "재발주량",
+        width: 120,
+      },
+      {
+        id: "col_useyn",
+        field: "useyn",
+        caption: "사용여부",
+        width: 120,
+      },
+      {
+        id: "col_itemno",
+        field: "itemno",
+        caption: "품번",
+        width: 150,
+      },
+      {
+        id: "col_qcyn",
+        field: "qcyn",
+        caption: "검사여부",
+        width: 120,
+      },
+      {
+        id: "col_bomyn",
+        field: "bomyn",
+        caption: "BOM여부",
+        width: 120,
+      },
+      {
+        id: "col_dwgno",
+        field: "dwgno",
+        caption: "도면번호",
+        width: 120,
+      },
+      {
+        id: "col_remark",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+      {
+        id: "col_files",
+        field: "files",
+        caption: "첨부파일",
+        width: 120,
+      },
+      {
+        id: "col_ctunp",
+        field: "ctunp",
+        caption: "원가용단가",
+        width: 120,
+      },
+    ],
+  },
+];

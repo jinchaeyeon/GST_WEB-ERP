@@ -494,6 +494,7 @@ const HU_A3020W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
+    deletedMainRows = [];
     if (tabSelected == 0) {
       setFilters((prev: any) => ({
         ...prev,

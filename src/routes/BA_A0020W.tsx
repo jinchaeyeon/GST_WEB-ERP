@@ -1234,6 +1234,8 @@ const BA_A0020: React.FC = () => {
     fetchMainGrid();
     fetchSubGrid();
     fetchSubGrid2();
+    deletedMainRows = [];
+    deletedMainRows2 = [];
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {

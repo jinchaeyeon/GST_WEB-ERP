@@ -506,6 +506,7 @@ const EA_A1000: React.FC = () => {
   };
 
   const search = () => {
+    deletedMainRows = [];
     try {
       if (
         filters.pgmgb == null ||

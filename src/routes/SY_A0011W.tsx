@@ -1119,6 +1119,7 @@ const Page: React.FC = () => {
   };
 
   const search = () => {
+    deletedMainRows = [];
     resetAllGrid();
     fetchMainGrid();
     fetchAllMenuGrid();

@@ -19,6 +19,7 @@ import AC_B6060W from "./routes/AC_B6060W";
 import AC_B8030W from "./routes/AC_B8030W";
 import BA_A0020W from "./routes/BA_A0020W";
 import BA_A0040W from "./routes/BA_A0040W";
+import BA_A0041W from "./routes/BA_A0041W";
 import BA_A0050W from "./routes/BA_A0050W";
 import BA_A0070W from "./routes/BA_A0070W";
 import BA_A0080W from "./routes/BA_A0080W";
@@ -303,6 +304,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
                 <AuthRoute path="/BA_A0020W" component={BA_A0020W} exact />
                 <AuthRoute path="/BA_A0040W" component={BA_A0040W} exact />
+                <AuthRoute path="/BA_A0041W" component={BA_A0041W} exact />
                 <AuthRoute path="/BA_A0050W" component={BA_A0050W} exact />
                 <AuthRoute path="/BA_A0070W" component={BA_A0070W} exact />
                 <AuthRoute path="/BA_A0080W" component={BA_A0080W} exact />

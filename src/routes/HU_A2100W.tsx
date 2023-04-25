@@ -346,6 +346,7 @@ const HU_A2100W: React.FC = () => {
   }, [filters, permissions]);
 
   const search = () => {
+    deletedMainRows = [];
     resetAllGrid();
   };
 

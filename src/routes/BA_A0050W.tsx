@@ -820,6 +820,7 @@ const BA_A0050: React.FC = () => {
   const search = () => {
     resetAllGrid();
     fetchSubGrid();
+    deletedMainRows = [];
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {

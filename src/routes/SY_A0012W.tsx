@@ -649,6 +649,7 @@ const SY_A0120: React.FC = () => {
   };
 
   const search = () => {
+    deletedMainRows = [];
     resetAllGrid();
     fetchMainGrid();
   };
