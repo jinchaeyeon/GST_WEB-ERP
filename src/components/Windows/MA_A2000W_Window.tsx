@@ -1061,17 +1061,7 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
+       let seq = mainDataResult.total + deletedMainRows.length + 1;
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
       amt: 0,
@@ -1121,7 +1111,7 @@ const CopyWindow = ({
 
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

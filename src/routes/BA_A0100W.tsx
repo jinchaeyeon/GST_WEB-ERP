@@ -640,16 +640,8 @@ const BA_A0100W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
 
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
       animalkind: "",
@@ -669,23 +661,15 @@ const BA_A0100W: React.FC = () => {
     setIfSelectFirstRow(false);
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
   };
 
   const onAddClick2 = () => {
-    let seq = 1;
+    let seq = subDataResult.total + deletedMainRows2.length + 1;
 
-    if (subDataResult.total > 0) {
-      subDataResult.data.forEach((item) => {
-        if (item[SUB_DATA_ITEM_KEY] > seq) {
-          seq = item[SUB_DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
     const data = mainDataResult.data.filter((item) => item.num == Object.getOwnPropertyNames(selectedState)[0])[0];
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: seq,
@@ -700,7 +684,7 @@ const BA_A0100W: React.FC = () => {
     setIfSelectFirstRow(false);
     setSubDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

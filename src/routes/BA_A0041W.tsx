@@ -710,9 +710,7 @@ const BA_A0041W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
-
-    seq = mainDataResult.total + deletedMainRows.length + 1;
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -759,7 +757,7 @@ const BA_A0041W: React.FC = () => {
     setSelectedState({ [newDataItem.num]: true });
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

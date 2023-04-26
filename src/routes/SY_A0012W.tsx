@@ -397,16 +397,7 @@ const SY_A0120: React.FC = () => {
   );
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
 
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
@@ -429,7 +420,7 @@ const SY_A0120: React.FC = () => {
     };
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

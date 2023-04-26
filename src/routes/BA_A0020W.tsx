@@ -1059,16 +1059,8 @@ const BA_A0020: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (subDataResult.total > 0) {
-      subDataResult.data.forEach((item) => {
-        if (item[SUB_DATA_ITEM_KEY] > seq) {
-          seq = item[SUB_DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    let seq = subDataResult.total + deletedMainRows.length + 1;
+    
 
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: seq,
@@ -1098,24 +1090,15 @@ const BA_A0020: React.FC = () => {
     setSelectedsubDataState({ [newDataItem.num]: true });
     setSubDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
   };
 
   const onAddClick3 = () => {
-    let seq = 1;
-
-    if (subDataResult2.total > 0) {
-      subDataResult2.data.forEach((item) => {
-        if (item[SUB_DATA_ITEM_KEY2] > seq) {
-          seq = item[SUB_DATA_ITEM_KEY2];
-        }
-      });
-      seq++;
-    }
-
+    let seq = subDataResult2.total + deletedMainRows2.length + 1;
+    
     const newDataItem = {
       [SUB_DATA_ITEM_KEY2]: seq,
       custcd: infomation.custcd,
@@ -1135,7 +1118,7 @@ const BA_A0020: React.FC = () => {
     setSelectedsubDataState2({ [newDataItem.num]: true });
     setSubDataResult2((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

@@ -711,8 +711,10 @@ const HU_A2100W: React.FC = () => {
   };
 
   const onAddClick = () => {
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
+
     const newDataItem = {
-      [DATA_ITEM_KEY]: mainDataResult.total + 1,
+      [DATA_ITEM_KEY]: seq,
       apply_start_date: "",
       orgdiv: "",
       paycd: "",
@@ -729,7 +731,7 @@ const HU_A2100W: React.FC = () => {
 
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

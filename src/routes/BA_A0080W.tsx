@@ -895,16 +895,7 @@ const BA_A0080: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
 
     try {
       if (filters.itemacnt != "") {
@@ -931,7 +922,7 @@ const BA_A0080: React.FC = () => {
         setIfSelectFirstRow(false);
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });

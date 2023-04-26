@@ -655,8 +655,10 @@ const HU_A3020W: React.FC = () => {
   };
 
   const onAddClick = () => {
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
+
     const newDataItem = {
-      [DATA_ITEM_KEY]: mainDataResult.total + 1,
+      [DATA_ITEM_KEY]: seq,
       avgwageyn: "N",
       daycalyn: "N",
       empinsuranceyn: "N",
@@ -680,7 +682,7 @@ const HU_A3020W: React.FC = () => {
 
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
@@ -1186,8 +1188,10 @@ const HU_A3020W: React.FC = () => {
   }, [ParaData]);
 
   const onAddClick2 = () => {
+    let seq = mainDataResult2.total + deletedMainRows.length + 1;
+
     const newDataItem = {
-      [DATA_ITEM_KEY]: mainDataResult2.total + 1,
+      [DATA_ITEM_KEY]: seq,
       fraction: "0",
       orgdiv: "01",
       payitemcd: "",
@@ -1201,7 +1205,7 @@ const HU_A3020W: React.FC = () => {
 
     setMainDataResult2((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

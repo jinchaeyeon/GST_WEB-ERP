@@ -604,16 +604,9 @@ const CopyWindow = ({
     };
   const onRowDoubleClick = (props: any) => {
     let arr: any = [];
-    let seq = 1;
     let valid = true;
-    if (subDataResult.total > 0) {
-      subDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    let seq = subDataResult.total + 1;
+
 
     for (const [key, value] of Object.entries(selectedState)) {
       if (value == true) {
@@ -689,7 +682,7 @@ const CopyWindow = ({
         setSelectedState({});
         setSubDataResult((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });

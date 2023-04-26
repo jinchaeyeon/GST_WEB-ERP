@@ -961,16 +961,8 @@ const QC_A2000: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
+    let seq = detailDataResult2.total + deletedMainRows2.length + 1;
 
-    if (detailDataResult2.total > 0) {
-      detailDataResult2.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -986,7 +978,7 @@ const QC_A2000: React.FC = () => {
     setIfSelectFirstRow(false);
     setDetailDataResult2((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

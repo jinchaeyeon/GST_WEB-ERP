@@ -926,15 +926,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     } else if (datas.doqty > datas.nowqty) {
       alert("수량이 초과되었습니다.");
     } else {
-      let seq = 1;
-      if (subDataResult.total > 0) {
-        subDataResult.data.forEach((item) => {
-          if (item[DATA_ITEM_KEY] > seq) {
-            seq = item[DATA_ITEM_KEY];
-          }
-        });
-        seq++;
-      }
+      let seq = subDataResult.total + 1;
       const selectRow = detailDataResult2.data.filter(
         (item: any) =>
           item.num == Object.getOwnPropertyNames(detailselectedState2)[0]
@@ -982,7 +974,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         };
         setSubDataResult((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });

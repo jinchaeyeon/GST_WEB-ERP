@@ -576,19 +576,17 @@ const BA_A0050: React.FC = () => {
     });
 
     setSelectedsubData2State(newSelectedState);
-    let seq = 1;
     let proseq = 1;
     if (subDataResult.total > 0) {
       subDataResult.data.forEach((item) => {
-        if (item[SUB_DATA_ITEM_KEY] > seq) {
-          seq = item[SUB_DATA_ITEM_KEY];
-        }
         if (item.procseq >= proseq) {
           proseq = item.procseq + 1;
         }
       });
-      seq++;
     }
+
+    let seq = subDataResult.total + deletedMainRows.length + 1;
+
     setIfSelectFirstRow2(false);
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: seq,
@@ -618,7 +616,7 @@ const BA_A0050: React.FC = () => {
 
     setSubDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
@@ -1215,15 +1213,7 @@ const BA_A0050: React.FC = () => {
 
   const reloadData2 = (data: any) => {
     for (var i = 0; i < data.length; i++) {
-      let seq = 1;
-      if (subDataResult.total > 0) {
-        subDataResult.data.forEach((item) => {
-          if (item[SUB_DATA_ITEM_KEY] > seq) {
-            seq = item[SUB_DATA_ITEM_KEY];
-          }
-        });
-        seq++;
-      }
+      let seq = subDataResult.total + deletedMainRows.length + 1;
 
       const newDataItem = {
         [SUB_DATA_ITEM_KEY]: seq,
@@ -1252,7 +1242,7 @@ const BA_A0050: React.FC = () => {
 
       setSubDataResult((prev) => {
         return {
-          data: [...prev.data, newDataItem],
+             data: [newDataItem, ...prev.data],
           total: prev.total + 1,
         };
       });

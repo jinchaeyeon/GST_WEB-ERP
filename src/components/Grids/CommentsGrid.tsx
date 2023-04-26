@@ -221,17 +221,8 @@ const CommentsGrid = (props: {
   };
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (dataResult.total > 0) {
-      dataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
+    let seq = dataResult.total + deletedRows.length + 1;
+    
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
       //Number(plandataResult.data[0].idx) ??
@@ -250,7 +241,7 @@ const CommentsGrid = (props: {
       user_name: user_name,
     };
     setDataResult((prev) => {
-      return process([...prev.data, newDataItem], dataState);
+      return process([newDataItem, ...prev.data], dataState);
     });
   };
 

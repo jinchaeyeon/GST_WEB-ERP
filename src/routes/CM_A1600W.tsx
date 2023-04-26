@@ -643,16 +643,8 @@ const CM_A1600: React.FC = () => {
   );
 
   const onAddClick = () => {
-    let seq = 1;
+    let seq = todoDataResult.total + deletedTodoRows.length + 1;
 
-    if (todoDataResult.total > 0) {
-      todoDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
 
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
@@ -672,7 +664,7 @@ const CM_A1600: React.FC = () => {
     };
     setTodoDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

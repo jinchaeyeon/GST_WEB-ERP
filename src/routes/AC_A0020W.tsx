@@ -2361,20 +2361,8 @@ const AC_A0020W: React.FC = () => {
     });
   };
   const onAddClick = () => {
-    let seq = 1;
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
 
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    if (seq < mainDataResult.total) {
-      seq = mainDataResult.total + 1;
-    }
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -2394,27 +2382,14 @@ const AC_A0020W: React.FC = () => {
 
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
   };
 
   const onAddClick2 = () => {
-    let seq = 1;
-
-    if (mainDataResult3.total > 0) {
-      mainDataResult3.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    if (seq < mainDataResult3.total) {
-      seq = mainDataResult3.total + 1;
-    }
+    let seq = mainDataResult3.total + deletedMainRows.length + 1;
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -2438,27 +2413,14 @@ const AC_A0020W: React.FC = () => {
 
     setMainDataResult3((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
   };
 
   const onAddClick3 = () => {
-    let seq = 1;
-
-    if (mainDataResult4.total > 0) {
-      mainDataResult4.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    if (seq < mainDataResult4.total) {
-      seq = mainDataResult4.total + 1;
-    }
+    let seq = mainDataResult4.total + deletedMainRows.length + 1;
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -2470,27 +2432,14 @@ const AC_A0020W: React.FC = () => {
 
     setMainDataResult4((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
   };
 
   const onAddClick4 = () => {
-    let seq = 1;
-
-    if (mainDataResult5.total > 0) {
-      mainDataResult5.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    if (seq < mainDataResult5.total) {
-      seq = mainDataResult5.total + 1;
-    }
+    let seq = mainDataResult5.total + deletedMainRows.length + 1;
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -2504,27 +2453,14 @@ const AC_A0020W: React.FC = () => {
 
     setMainDataResult5((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
   };
 
   const onAddClick5 = () => {
-    let seq = 1;
-
-    if (mainDataResult6.total > 0) {
-      mainDataResult6.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    if (seq < mainDataResult6.total) {
-      seq = mainDataResult6.total + 1;
-    }
+    let seq = mainDataResult6.total + deletedMainRows.length + 1;
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -2544,7 +2480,7 @@ const AC_A0020W: React.FC = () => {
 
     setMainDataResult6((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

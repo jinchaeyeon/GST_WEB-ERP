@@ -836,11 +836,8 @@ const HU_A4100W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 0;
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
 
-    mainDataResult.data.map((item) => {
-      seq = item.num + 1;
-    });
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
       Semiannualgb: "1",
@@ -855,7 +852,7 @@ const HU_A4100W: React.FC = () => {
 
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
@@ -872,11 +869,7 @@ const HU_A4100W: React.FC = () => {
   };
 
   const setAmtData = (data: number) => {
-    let seq = 0;
-
-    mainDataResult.data.map((item) => {
-      seq = item.num + 1;
-    });
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
 
     mainDataResult2.data.map((item) => {
       const newDataItem = {
@@ -893,7 +886,7 @@ const HU_A4100W: React.FC = () => {
 
       setMainDataResult((prev) => {
         return {
-          data: [...prev.data, newDataItem],
+          data: [newDataItem, ...prev.data],
           total: prev.total + 1,
         };
       });

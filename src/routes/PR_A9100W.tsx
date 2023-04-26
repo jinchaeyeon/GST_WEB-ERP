@@ -520,16 +520,7 @@ const PR_A9100W: React.FC = () => {
   );
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    let seq = mainDataResult.total + deletedRows.length + 1;
 
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
@@ -548,7 +539,7 @@ const PR_A9100W: React.FC = () => {
     };
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

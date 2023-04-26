@@ -899,17 +899,8 @@ const BA_A0040: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (subData2Result.total > 0) {
-      subData2Result.data.forEach((item) => {
-        if (item[SUB_DATA_ITEM_KEY2] > seq) {
-          seq = item[SUB_DATA_ITEM_KEY2];
-        }
-      });
-      seq++;
-    }
-
+    let seq = subData2Result.total + deletedMainRows.length + 1;
+    
     const newDataItem = {
       [SUB_DATA_ITEM_KEY2]: seq,
       recdt: convertDateToStr(new Date()),
@@ -924,7 +915,7 @@ const BA_A0040: React.FC = () => {
     setSelectedsubData2State({ [newDataItem.num]: true });
     setSubData2Result((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

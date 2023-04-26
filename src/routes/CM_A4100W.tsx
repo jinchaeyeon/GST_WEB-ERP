@@ -1053,16 +1053,8 @@ const CM_A4100W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
+    let seq = subDataResult.total + deletedMainRows.length + 1;
 
-    if (subDataResult.total > 0) {
-      subDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -1080,7 +1072,7 @@ const CM_A4100W: React.FC = () => {
     setSelectedsubDataState({ [newDataItem.num]: true });
     setSubDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });

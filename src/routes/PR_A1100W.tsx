@@ -959,20 +959,15 @@ const PR_A1100W: React.FC = () => {
   // };
 
   const onPlanAddClick = () => {
-    let seq = 1;
+    let seq = planDataResult.total + 1;
+
     let planseq = 1;
     if (planDataResult.total > 0) {
       planDataResult.data.forEach((item) => {
-        if (item[PLAN_DATA_ITEM_KEY] > seq) {
-          seq = item[PLAN_DATA_ITEM_KEY];
-        }
-
         if (item["planseq"] > planseq) {
           planseq = item["planseq"];
         }
       });
-
-      seq++;
       planseq++;
     }
 
@@ -1002,23 +997,14 @@ const PR_A1100W: React.FC = () => {
 
     setPlanDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+          data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
   };
 
   const onMtrAddClick = () => {
-    let seq = 1;
-
-    if (materialDataResult.total > 0) {
-      materialDataResult.data.forEach((item) => {
-        if (item[MATERIAL_DATA_ITEM_KEY] > seq) {
-          seq = item[MATERIAL_DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    let seq = materialDataResult.total + 1;
 
     const idx: number =
       Number(Object.getOwnPropertyNames(planSelectedState)[0]) ??
@@ -1041,7 +1027,7 @@ const PR_A1100W: React.FC = () => {
     };
     setMaterialDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total,
       };
     });

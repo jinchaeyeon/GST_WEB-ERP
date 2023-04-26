@@ -1407,17 +1407,9 @@ const MA_A2400W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
     let valid = 0;
+    let seq = subDataResult.total + 1;
 
-    if (subDataResult2.total > 0) {
-      subDataResult2.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
 
     const selectRows = subDataResult.data.filter(
       (item: any) => item.chk == true
@@ -1475,7 +1467,7 @@ const MA_A2400W: React.FC = () => {
 
         setSubDataResult2((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -1490,16 +1482,10 @@ const MA_A2400W: React.FC = () => {
   };
 
   const onAddClick2 = () => {
-    let seq = 1;
+
     let valid = true;
-    if (subDataResult2.total > 0) {
-      subDataResult2.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    let seq = BOMDataResult2.total + 1;
+
 
     const selectRows = BOMDataResult2.data.filter(
       (item: any) => item.chk == true
@@ -1555,7 +1541,7 @@ const MA_A2400W: React.FC = () => {
 
         setSubDataResult2((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });

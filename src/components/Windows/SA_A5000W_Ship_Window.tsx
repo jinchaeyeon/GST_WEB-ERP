@@ -544,15 +544,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     });
 
     if (valid == true) {
-      let seq = 1;
-      if (subDataResult.total > 0) {
-        subDataResult.data.forEach((item) => {
-          if (item[DATA_ITEM_KEY] > seq) {
-            seq = item[DATA_ITEM_KEY];
-          }
-        });
-        seq++;
-      }
+      let seq = subDataResult.total + 1;
 
       const newDataItem = {
         [DATA_ITEM_KEY]: seq + 1,
@@ -636,7 +628,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
 
       setSubDataResult((prev) => {
         return {
-          data: [...prev.data, newDataItem],
+          data: [newDataItem, ...prev.data],
           total: prev.total + 1,
         };
       });

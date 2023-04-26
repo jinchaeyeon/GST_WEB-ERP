@@ -675,7 +675,7 @@ const EA_A1000: React.FC = () => {
         setIfSelectFirstRow(false);
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -738,7 +738,7 @@ const EA_A1000: React.FC = () => {
         setIfSelectFirstRow(false);
         setMainData3Result((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -801,7 +801,7 @@ const EA_A1000: React.FC = () => {
         setIfSelectFirstRow(false);
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -864,7 +864,7 @@ const EA_A1000: React.FC = () => {
         setIfSelectFirstRow(false);
         setMainData2Result((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });

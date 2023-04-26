@@ -751,20 +751,7 @@ const MA_A7000W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
-    if (mainDataResult.total > seq) {
-      seq = mainDataResult.total + 1;
-    }
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
 
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
@@ -810,7 +797,7 @@ const MA_A7000W: React.FC = () => {
 
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
@@ -1408,7 +1395,7 @@ const MA_A7000W: React.FC = () => {
         };
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
