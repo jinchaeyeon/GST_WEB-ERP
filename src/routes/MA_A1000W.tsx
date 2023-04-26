@@ -14,7 +14,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import { gridList } from "../store/columns/MA_A2000W_C";
+import { gridList } from "../store/columns/MA_A1000W_C";
 import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
@@ -45,7 +45,7 @@ import {
   UseGetValueFromSessionItem,
   useSysMessage,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/MA_A2000W_Window";
+import DetailWindow from "../components/Windows/MA_A1000W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
@@ -61,34 +61,28 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading, deletedAttadatnumsState } from "../store/atoms";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
-const dateField = ["purdt"];
+const dateField = ["recdt", "inexpdt"];
 const numberField = [
-  "purqty",
   "amt",
+  "unp",
   "wonamt",
   "taxamt",
   "totamt",
   "qty",
-  "unitwgt",
-  "wgt",
-  "unp",
-  "inqty",
-  "inamt",
-  "cnt",
 ];
 const numberField2 = [
-  "purqty",
   "amt",
   "wonamt",
   "taxamt",
   "totamt",
   "qty",
-  "inqty",
-  "inamt",
 ];
+const checkField = ["finyn"]
 type TdataArr = {
   rowstatus_s: string[];
   purseq_s: string[];
@@ -156,7 +150,7 @@ const MA_A1000W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA020, L_BA019, L_MA036,L_sysUserMaster_001,L_BA061,L_BA015,L_finyn",
+    "L_LOADPLACE, L_BA020, L_BA019, L_dptcd_001, L_MA036,L_sysUserMaster_001,L_BA061,L_BA015,L_finyn",
     //화폐단위, 단가산정방법, 발주상태, 사용자, 품목계정, 수량단위, 사용여부
     setBizComponentData
   );
@@ -181,11 +175,21 @@ const MA_A1000W: React.FC = () => {
   const [amtunitListData, setAmtunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [dptcdListData, setDptcdListData] = React.useState([
+    { dptcd: "", dptnm: "" },
+  ]);
+  const [loadplaceListData, setLoadPlaceListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const purstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_MA036")
+      );
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
       );
       const unpcalmethQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
@@ -207,6 +211,12 @@ const MA_A1000W: React.FC = () => {
       const amtunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
       );
+      const loadplaceQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_LOADPLACE"
+        )
+      );
+      fetchQuery(loadplaceQueryStr, setLoadPlaceListData);
       fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
       fetchQuery(purstsQueryStr, setPurstsListData);
@@ -214,6 +224,7 @@ const MA_A1000W: React.FC = () => {
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(finynQueryStr, setFinynListData);
+      fetchQuery(dptcdQueryStr, setDptcdListData);
     }
   }, [bizComponentData]);
 
@@ -376,6 +387,7 @@ const MA_A1000W: React.FC = () => {
       "@p_load_place": filters.load_place,
       "@p_dptcd": filters.dptcd,
       "@p_appyn": filters.appyn,
+      "@p_find_row_value" : "",
     },
   };
 
@@ -400,6 +412,7 @@ const MA_A1000W: React.FC = () => {
       "@p_load_place": filters.load_place,
       "@p_dptcd": filters.dptcd,
       "@p_appyn": filters.appyn,
+      "@p_find_row_value" : "",
     },
   };
 
@@ -477,7 +490,7 @@ const MA_A1000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -588,6 +601,8 @@ const MA_A1000W: React.FC = () => {
   useEffect(() => {
     if (detailDataResult.total > 0) {
       const firstRowData = detailDataResult.data[0];
+
+      setDetailSelectedState({ [firstRowData.num]: true });
     }
   }, [detailDataResult]);
 
@@ -1459,9 +1474,9 @@ const MA_A1000W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                amtunit: amtunitListData.find(
-                  (item: any) => item.sub_code === row.amtunit
-                )?.code_name,
+                dptcd: dptcdListData.find(
+                  (item: any) => item.dptcd === row.dptcd
+                )?.dptnm,
                 person: usersListData.find(
                   (item: any) => item.user_id === row.person
                 )?.user_name,
@@ -1495,7 +1510,7 @@ const MA_A1000W: React.FC = () => {
             resizable={true}
           >
             <GridColumn cell={CommandCell} width="60px" />
-            {/* {customOptionData !== null &&
+            {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
@@ -1520,7 +1535,7 @@ const MA_A1000W: React.FC = () => {
                       }
                     />
                   )
-              )} */}
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1536,14 +1551,16 @@ const MA_A1000W: React.FC = () => {
               itemacnt: itemacntListData.find(
                 (item: any) => item.sub_code === row.itemacnt
               )?.code_name,
-              finyn: finynListData.find((item: any) => item.code === row.finyn)
-                ?.name,
+              finyn: row.finyn == "Y" ? true : false,
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
+              load_place: loadplaceListData.find(
+                (items: any) => items.code_name == row.load_place
+              )?.sub_code,
               unpcalmeth: unpcalmethListData.find(
-                (item: any) => item.sub_code === row.unpcalmeth
-              )?.code_name,
+                (items: any) => items.code_name == row.unpcalmeth
+              )?.sub_code,
               [SELECTED_FIELD]: detailselectedState[detailIdGetter(row)],
             })),
             detailDataState
@@ -1569,7 +1586,7 @@ const MA_A1000W: React.FC = () => {
           //컬럼너비조정
           resizable={true}
         >
-          {/* {customOptionData !== null &&
+          {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList2"].map(
               (item: any, idx: number) =>
                 item.sortOrder !== -1 && (
@@ -1583,6 +1600,8 @@ const MA_A1000W: React.FC = () => {
                         ? NumberCell
                         : dateField.includes(item.fieldName)
                         ? DateCell
+                        : checkField.includes(item.fieldName)
+                        ? CheckBoxReadOnlyCell
                         : undefined
                     }
                     footerCell={
@@ -1594,7 +1613,7 @@ const MA_A1000W: React.FC = () => {
                     }
                   />
                 )
-            )} */}
+            )}
         </Grid>
       </GridContainer>
       {detailWindowVisible && (
