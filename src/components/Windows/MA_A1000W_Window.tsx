@@ -607,7 +607,7 @@ const CopyWindow = ({
     } catch (error) {
       data = null;
     }
-    console.log(parameters);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -798,51 +798,21 @@ const CopyWindow = ({
     if (valid == true) {
       try {
         if (mainDataResult.data.length == 0) {
-          throw findMessage(messagesData, "MA_A2000W_004");
+          throw findMessage(messagesData, "MA_A1000W_001");
         } else if (
-          convertDateToStr(filters.purdt).substring(0, 4) < "1997" ||
-          convertDateToStr(filters.purdt).substring(6, 8) > "31" ||
-          convertDateToStr(filters.purdt).substring(6, 8) < "01" ||
-          convertDateToStr(filters.purdt).substring(6, 8).length != 2
+          convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
+          convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
+          convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
+          convertDateToStr(filters.recdt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "MA_A2400W_001");
+          throw findMessage(messagesData, "MA_A1000W_002");
         } else if (
-          filters.doexdiv == null ||
-          filters.doexdiv == "" ||
-          filters.doexdiv == undefined
+          filters.person == null ||
+          filters.person == "" ||
+          filters.person == undefined
         ) {
-          throw findMessage(messagesData, "MA_A2000W_003");
-        } else if (
-          filters.location == null ||
-          filters.location == "" ||
-          filters.location == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2000W_002");
-        } else if (
-          filters.custcd == null ||
-          filters.custcd == "" ||
-          filters.custcd == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2000W_005");
-        } else if (
-          filters.custnm == null ||
-          filters.custnm == "" ||
-          filters.custnm == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2000W_006");
-        } else if (
-          filters.taxdiv == null ||
-          filters.taxdiv == "" ||
-          filters.taxdiv == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2400W_006");
-        } else if (
-          filters.amtunit == null ||
-          filters.amtunit == "" ||
-          filters.amtunit == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2000W_007");
-        } else {
+          throw findMessage(messagesData, "MA_A1000W_003");
+        }  else {
           if (valid == true) {
             setData(mainDataResult.data, filters, deletedMainRows);
             deletedMainRows = [];
@@ -879,7 +849,7 @@ const CopyWindow = ({
 
     setMainDataState({});
   };
-
+  
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -992,41 +962,37 @@ const CopyWindow = ({
       });
     }
   };
-
+ 
   const onAddClick = () => {
     let seq = mainDataResult.total + deletedMainRows.length + 1;
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
       amt: 0,
-      attdatnum: "",
-      boxmeth: "",
-      contractyn: "",
-      custcd: "",
-      custnm: "",
-      dlv_method: "",
-      dptcd: "",
-      finaldes: "",
+      chk: "",
       finyn: "",
-      modiv: "",
-      paymeth: "",
-      person: "",
-      pgmdiv: "",
-      poregnum: "",
-      project: "",
-      qcmeth: "",
-      qty: 0,
-      recdt: "",
+      inexpdt: convertDateToStr(new Date()),
+      insiz: "",
+      itemacnt: "",
+      itemcd: "",
+      itemnm: "",
+      load_place: "",
+      location: "",
+      orgdiv: "01",
+      qty: 1,
+      qtyunit: "",
       remark: "",
-      reportyn: "",
       reqkey: "",
       reqnum: "",
+      reqrev: 0,
       reqseq: 0,
       taxamt: 0,
-      taxdiv: "",
       totamt: 0,
+      unp: 0,
+      unpcalmeth: "",
+      wonamt: 0,
       rowstatus: "N",
     };
-
+  
     setMainDataResult((prev) => {
       return {
         data: [newDataItem, ...prev.data],
@@ -1118,6 +1084,7 @@ const CopyWindow = ({
                       changeData={filterComboBoxChange}
                       textField="user_name"
                       valueField="user_id"
+                      className="required"
                     />
                   )}
                 </td>
@@ -1250,7 +1217,7 @@ const CopyWindow = ({
                     row.inexpdt == "" ||
                     row.inexpdt == undefined
                       ? new Date()
-                      : row.inexpdt,
+                      : toDate(row.inexpdt),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState
