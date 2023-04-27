@@ -119,18 +119,21 @@ const PanelBarNavContainer = (props: any) => {
   //   };
   // }, []);
 
-  // 새로고침하거나 Path 변경 시, unsavedAttadatnums가 있으면 삭제처리
+  // 새로고침하거나 Path 변경 시
   useEffect(() => {
     const handleTabClose = (event: BeforeUnloadEvent) => {
       event.preventDefault();
-
       return (event.returnValue = "true");
     };
 
     const handleUnload = () => {
+      // unsavedAttadatnums가 있으면 삭제처리
       if (unsavedAttadatnums.length > 0) {
         setDeletedAttadatnums(unsavedAttadatnums);
       }
+
+      // menus 리셋 (새로고침하면 메뉴 다시 조회하도록)
+      localStorage.removeItem("menus");
     };
 
     const unlisten = history.listen(() => {
@@ -145,11 +148,16 @@ const PanelBarNavContainer = (props: any) => {
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("unload", handleUnload);
     };
-  }, [unsavedAttadatnums, setUnsavedAttadatnums, history]);
+  }, [
+    unsavedAttadatnums,
+    setUnsavedAttadatnums,
+    history,
+    setDeletedAttadatnums,
+  ]);
 
   useEffect(() => {
     // if (token && menus === null) fetchMenus();
-    if(menus === null) fetchMenus();
+    if (menus === null) fetchMenus();
   }, [menus]);
 
   // 첨부파일 삭제
