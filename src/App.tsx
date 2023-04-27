@@ -158,6 +158,8 @@ load(
 type TGlobalStyle = {
   isMobileMenuOpend: boolean;
 };
+
+// 전역 CSS
 const GlobalStyle = createGlobalStyle<TGlobalStyle>`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
 html, body, div, span, applet, object, iframe,
@@ -218,52 +220,6 @@ a {
   text-decoration:none;
 }
 
-.k-grid .k-grid-header .k-header .k-cell-inner > .k-link {
-  justify-content: center; /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
-}
-
-.k-window{
-  z-index: 10100 !important; /* 버그 : 메뉴바가 window 위로 올라오는 현상 수정  */
-}
-
-ul.required,
-ul.required:hover,
-ul.required.k-hover,
-span.required,
-span.required:hover,
-span.required.k-hover,
-input.required,
-input.required:hover,
-input.required.k-hover {
-  background-color: #fff0ef;
-}
-ul.readonly,
-span.readonly,
-input.readonly {
-  background-color: #efefef;
-}
-.k-radio-label{
-  font-size:14px;
-  line-height: 1.4285714286; 
-}
-
-// 그리드 행높이 조절 
-.k-grid tbody tr,
-.k-grid tbody tr td,
-.k-grid td.k-state-selected, 
-.k-grid td.k-selected, 
-.k-grid tr.k-state-selected > td, 
-.k-grid tr.k-selected > td{
-  height: 34px;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.k-tabstrip > .k-content.k-active,
-.k-tabstrip > .k-content.k-active > div.k-animation-container{
-  width: inherit;
-}
-
 `;
 
 const App: React.FC = () => {
@@ -272,7 +228,6 @@ const App: React.FC = () => {
       <AppInner></AppInner>
     </RecoilRoot>
   );
-  //}
 };
 const AppInner: React.FC = () => {
   const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
