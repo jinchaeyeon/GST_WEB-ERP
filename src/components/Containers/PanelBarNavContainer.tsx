@@ -131,9 +131,6 @@ const PanelBarNavContainer = (props: any) => {
       if (unsavedAttadatnums.length > 0) {
         setDeletedAttadatnums(unsavedAttadatnums);
       }
-
-      // menus 리셋 (새로고침하면 메뉴 다시 조회하도록)
-      localStorage.removeItem("menus");
     };
 
     const unlisten = history.listen(() => {
