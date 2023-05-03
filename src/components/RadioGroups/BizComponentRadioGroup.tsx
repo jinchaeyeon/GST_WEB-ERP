@@ -11,7 +11,7 @@ type TBizComponentRadioGroup = {
   bizComponentId: string;
   bizComponentData: any;
   data?: { value: any; label: string }[];
-  changeData(e: any): void;
+  changeData?(e: any): void;
   className?: string;
   excludedCodes?: any[]; // 제외할 코드값
 };
@@ -67,14 +67,18 @@ const BizComponentRadioGroup = ({
   }
 
   useEffect(() => {
-    changeData({ name, value });
+    if(changeData != undefined) {
+      changeData({ name, value });
+    }
   }, []);
 
   const onChangeHandle = (e: RadioGroupChangeEvent) => {
     const { value } = e;
     const { name } = e.syntheticEvent.currentTarget;
 
-    changeData({ name, value });
+    if(changeData != undefined) {
+      changeData({ name, value });
+    }
   };
 
   return (

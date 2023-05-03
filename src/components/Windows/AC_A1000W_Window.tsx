@@ -1871,7 +1871,7 @@ const CopyWindow = ({
                       }
                       customOptionData={customOptionData}
                       changeData={ComboBoxChange}
-                      textField="creditnum"
+                      textField="Column1"
                       valueField="creditcd"
                     />
                   )}

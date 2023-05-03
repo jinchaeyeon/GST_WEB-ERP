@@ -933,7 +933,7 @@ const KendoWindow = ({
       const { sub_code } = item;
 
       const paraSaved: Iparameters = {
-        procedureName: "P_SY_A0010_S1",
+        procedureName: "P_SY_A0010W_S1",
         pageNumber: 1,
         pageSize: 10,
         parameters: {

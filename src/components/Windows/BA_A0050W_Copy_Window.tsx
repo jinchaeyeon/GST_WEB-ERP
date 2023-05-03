@@ -298,7 +298,7 @@ const KendoWindow = ({
   };
 
   const parameters3: Iparameters = {
-    procedureName: "P_BA_A0050W_Sub1_Q ",
+    procedureName: "P_BA_A0050W_Sub1_Q",
     pageNumber: filters3.pgNum,
     pageSize: filters3.pgSize,
     parameters: {

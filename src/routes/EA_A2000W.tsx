@@ -682,7 +682,7 @@ const EA_A2000: React.FC = () => {
   });
 
   const detailParaSaved: Iparameters = {
-    procedureName: "P_EA_A2000W_S ",
+    procedureName: "P_EA_A2000W_S",
     pageNumber: 1,
     pageSize: 10,
     parameters: {
