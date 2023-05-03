@@ -713,6 +713,14 @@ export const getCustinfoQuery = (custcd: string) => {
       `;
 };
 
+export const getCustDataQuery = (custcd: string) => {
+  return `
+  SELECT custcd, address, phonenum 
+    FROM ba020t 
+    WHERE BA020T.custcd =  '${custcd}'    
+      `;
+};
+
 export const getUnpQuery = (custcd: string) => {
   return `
   SELECT * 
