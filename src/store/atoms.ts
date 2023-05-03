@@ -5,7 +5,7 @@ import {
   TMenu,
   TPasswordExpirationInfo,
   TSessionItem,
-  TToken
+  TToken,
 } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
@@ -43,7 +43,6 @@ export const loginResultState = atom<TLoginResult>({
 export const menusState = atom<Array<TMenu>>({
   key: "menusState",
   default: null as any,
-  effects_UNSTABLE: [localStorageEffect("menus")],
 });
 
 export const sessionItemState = atom<Array<TSessionItem>>({

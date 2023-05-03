@@ -39,7 +39,14 @@ export const toDate2 = (date_str: string) => {
   var hh = yyyyMMdd.substring(11, 13);
   var mm = yyyyMMdd.substring(14, 16);
   var dd = yyyyMMdd.substring(17, 19);
-  return new Date(Number(sYear), Number(sMonth) - 1, Number(sDate), Number(hh), Number(mm), Number(dd));
+  return new Date(
+    Number(sYear),
+    Number(sMonth) - 1,
+    Number(sDate),
+    Number(hh),
+    Number(mm),
+    Number(dd)
+  );
 };
 
 //String타입 Date로 반환
@@ -51,7 +58,6 @@ export const toDate = (date_str: string) => {
 
   return new Date(Number(sYear), Number(sMonth) - 1, Number(sDate));
 };
-
 
 //Date 타입 인수를 8자리 YYYYMMDD string로 날짜 변환하여 반환 (ex. => 20220101)
 export const convertDateToStr = (date: Date | null) => {
@@ -153,11 +159,9 @@ export const dateformat4 = (str: string) => {
   return date_str;
 };
 
-
 export const dateformat5 = (str: string) => {
   //구분자 -> '-'
-  const date_str =
-    str.substring(0, 4) + "-" + str.substring(4, 6);
+  const date_str = str.substring(0, 4) + "-" + str.substring(4, 6);
   return date_str;
 };
 
@@ -929,7 +933,6 @@ export const resetLocalStorage = () => {
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("passwordExpirationInfo");
   localStorage.removeItem("loginResult");
-  localStorage.removeItem("menus");
   localStorage.removeItem("sessionItem");
 };
 
