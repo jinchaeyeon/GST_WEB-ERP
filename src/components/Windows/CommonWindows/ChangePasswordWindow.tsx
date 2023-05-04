@@ -99,7 +99,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     if (data !== null) {
       alert("처리가 완료되었습니다.");
       setVisible(false);
-      setPwExpInfo((prev) => ({ ...prev, useExpiration: false }));
+      setPwExpInfo((prev) => ({ ...prev, status: "Ok", useExpiration: false }));
     }
   };
 
