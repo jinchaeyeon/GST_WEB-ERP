@@ -27,6 +27,7 @@ const domain: any = {
     action: "post",
     url: "api/data/password-requirements",
   },
+  "change-password": { action: "post", url: "api/auth/change-password" },
   menus: { action: "get", url: "api/data/:para" },
   "default-list": {
     action: "get",
@@ -225,7 +226,7 @@ axiosInstance.interceptors.response.use(
       errResponseURL = error.request.responseURL;
     } catch (e) {}
 
-    if (errResponseStatus === 401 && !["auth/login"].includes(errResponseURL)) {
+    if (errResponseStatus === 401 && !errResponseURL.includes("auth/login")) {
       if (!isTokenRefreshing) {
         let token = localStorage.getItem("accessToken");
         let refreshToken = localStorage.getItem("refreshToken");
