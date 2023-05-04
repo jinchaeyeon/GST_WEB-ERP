@@ -271,7 +271,7 @@ const AC_A1000W: React.FC = () => {
   const [accountWindowVisible, setAccountWindowVisible] =
     useState<boolean>(false);
 
-  const [workType, setWorkType] = useState<"N" | "A">("N");
+  const [workType, setWorkType] = useState<"N" | "A" | "C">("N");
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -1451,6 +1451,11 @@ const AC_A1000W: React.FC = () => {
     setDetailWindowVisible(true);
   };
 
+  const onCopyClick = () => {
+    setWorkType("C");
+    setDetailWindowVisible(true);
+  };
+
   const onPrint = () => {
     const datas = mainDataResult.data.filter((item: any) => item.chk == true);
 
@@ -1719,6 +1724,7 @@ const AC_A1000W: React.FC = () => {
                 fillMode="outline"
                 onClick={onPrint}
                 icon="print"
+                style={{ marginRight: "8px" }}
               >
                 출력
               </Button>
@@ -1728,6 +1734,9 @@ const AC_A1000W: React.FC = () => {
                 icon="file-add"
               >
                 대체전표생성
+              </Button>
+              <Button onClick={onCopyClick} themeColor={"primary"} icon="copy">
+                대체전표복사
               </Button>
               <Button
                 onClick={onDeleteClick}

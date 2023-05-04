@@ -18,15 +18,22 @@ import CenterCell from "../../Cells/CenterCell";
 import { convertDateToStrWithTime2 } from "../../CommonFunction";
 import { SELECTED_FIELD } from "../../CommonString";
 
+type permission = {
+  upload: boolean;
+  download: boolean;
+  delete: boolean;
+}
+
 type IKendoWindow = {
   setVisible(arg: boolean): void;
   setData?(data: object): void;
   para: string;
+  permission?: permission;
 };
 
 const DATA_ITEM_KEY = "saved_name";
 
-const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
+const KendoWindow = ({ setVisible, setData, para = "", permission}: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -295,6 +302,7 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
             themeColor={"primary"}
             fillMode={"outline"}
             icon={"upload"}
+            disabled={permission != undefined ? (permission.upload == true ? false : true) : false}
           >
             업로드
             <input
@@ -318,6 +326,7 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
             themeColor={"primary"}
             fillMode={"outline"}
             icon={"download"}
+            disabled={permission != undefined ? (permission.download == true ? false : true) : false}
           >
             다운로드
           </Button>
@@ -326,6 +335,8 @@ const KendoWindow = ({ setVisible, setData, para = "" }: IKendoWindow) => {
             themeColor={"primary"}
             fillMode={"outline"}
             icon={"delete"}
+            
+            disabled={permission != undefined ? (permission.delete == true ? false : true) : false}
           >
             삭제
           </Button>

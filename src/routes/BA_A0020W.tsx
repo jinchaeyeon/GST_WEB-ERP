@@ -1242,7 +1242,7 @@ const BA_A0020: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus") {
+    if (field != "rowstatus" && field != "files") {
       const newData = subDataResult.data.map((item) =>
         item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
           ? {

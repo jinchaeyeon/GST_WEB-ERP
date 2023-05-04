@@ -66,9 +66,10 @@ import AccountWindow from "./CommonWindows/AccountWindow";
 import StandardWindow from "./CommonWindows/StandardWindow";
 import CodeWindow from "./CommonWindows/CodeWindow";
 import AC_A1000W_Note_Window from "./AC_A1000W_Note_Window";
+import ComboBoxCell from "../Cells/ComboBoxCell";
 
 type IWindow = {
-  workType: "N" | "A";
+  workType: "N" | "A" | "C";
   data?: Idata;
   setVisible(t: boolean): void;
   setData(
@@ -129,6 +130,8 @@ interface ICustData {
 interface ICodeData {
   stdrmkcd: string;
   stdrmknm1: string;
+  acntcd: string;
+  acntnm: string;
 }
 
 const FormContext = createContext<{
@@ -154,6 +157,10 @@ const FormContext3 = createContext<{
   setStdrmkcd: (d: any) => void;
   stdrmknm: string;
   setStdrmknm: (d: any) => void;
+  acntcd: string;
+  setAcntcd: (d: any) => void;
+  acntnm: string;
+  setAcntnm: (d: any) => void;
   mainDataState: State;
   setMainDataState: (d: any) => void;
 }>({} as any);
@@ -343,8 +350,12 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
   const {
     stdrmkcd,
     stdrmknm,
+    acntcd,
+    acntnm,
     setStdrmkcd,
     setStdrmknm,
+    setAcntcd,
+    setAcntnm,
     mainDataState,
     setMainDataState,
   } = useContext(FormContext3);
@@ -371,6 +382,8 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
   const setCodeData = (data: ICodeData) => {
     setStdrmkcd(data.stdrmkcd);
     setStdrmknm(data.stdrmknm1);
+    setAcntcd(data.acntcd);
+    setAcntnm(data.acntnm);
   };
 
   const defaultRendering = (
@@ -481,9 +494,28 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
+          permission={{upload: false, download: true, delete: false}}
         />
       )}
     </>
+  );
+};
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_AC001", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal = field === "drcrdiv" ? "L_AC001" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
   );
 };
 
@@ -522,7 +554,8 @@ const CopyWindow = ({
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -608,6 +641,8 @@ const CopyWindow = ({
       item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         ? {
             ...item,
+            acntcd: acntcd,
+            acntnm: acntnm,
             stdrmkcd: stdrmkcd,
             stdrmknm: stdrmknm,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
@@ -644,30 +679,37 @@ const CopyWindow = ({
       };
     });
   }, [attdatnum, files]);
-
+  
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_PR010, L_AC023T",
+    "L_AC023T, L_acntcd, L_AC024",
     //공정, 관리항목리스트
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [proccdListData, setProccdListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
+  const [acntListData, setAcntListData] = useState([
+    { acntcd: "", acntnm: "", mngitemnm1: "",mngitemnm2: "", mngitemnm3: "", mngitemnm4:"", mngitemnm5: "",mngitemnm6: ""},
+  ]);
+  const [codeListData, setCodeListData] = useState([
+    { acntcd: "", acntnm: "", stdrmkcd: "", stdrmknm1: ""},
   ]);
   const [mngItemListData, setMngItemListData] = React.useState([
     { mngitemcd: "", mngitemnm: "" },
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      const acntQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_acntcd")
+      );     
+      const codeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_AC024")
       );
       const mngitemQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_AC023T")
       );
-      fetchQuery(proccdQueryStr, setProccdListData);
+      fetchQuery(acntQueryStr, setAcntListData);
+      fetchQuery(codeQueryStr, setCodeListData);
       fetchQuery(mngitemQueryStr, setMngItemListData);
     }
   }, [bizComponentData]);
@@ -733,7 +775,7 @@ const CopyWindow = ({
       [name]: value,
     }));
   };
-
+ 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -959,10 +1001,10 @@ const CopyWindow = ({
             rowstatus: item.rowstatus === "N" ? "N" : "U",
             mngdata1: data.notenum,
             mngdatanm1: data.custnm,
-            mngdata2: data.pubdt, 
+            mngdata2: data.pubdt,
             mngdata3: data.enddt,
             mngdata4: data.pubbank,
-            mngdata5: data.pubperson
+            mngdata5: data.pubperson,
           }
         : {
             ...item,
@@ -1065,19 +1107,30 @@ const CopyWindow = ({
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
-        return {
-          ...row,
-        };
-      });
-      if (totalRowCnt > 0) {
+      const rows = data.tables[0].Rows;
+
+      if (workType == "C") {
+        const newData = rows.map((item: any) => ({
+          ...item,
+          rowstatus: "N",
+        }));
+        setWorkType("N");
         setMainDataResult((prev) => {
           return {
-            data: rows,
-            total: totalRowCnt,
+            data: newData,
+            total: prev.total,
           };
         });
-        setIsInitSearch(true);
+      } else {
+        if (totalRowCnt > 0) {
+          setMainDataResult((prev) => {
+            return {
+              data: rows,
+              total: totalRowCnt,
+            };
+          });
+          setIsInitSearch(true);
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -1099,7 +1152,7 @@ const CopyWindow = ({
   }, [mainPgNum]);
 
   useEffect(() => {
-    if (worktype === "A" && data != undefined) {
+    if ((worktype === "A" || worktype === "C") && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         location: data.location,
@@ -1215,6 +1268,11 @@ const CopyWindow = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
+    if(filters.location == undefined || filters.location == null || filters.location == ""){
+      alert("사업장을 채워주세요.");
+      valid = false;
+      return false;
+    }
     mainDataResult.data.map((item) => {
       if (item.acntcd == "" && valid == true) {
         alert("계정코드를 채워주세요.");
@@ -1263,22 +1321,6 @@ const CopyWindow = ({
     }));
 
     setMainDataState({});
-  };
-
-  const onCopyClick = (e: any) => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      rowstatus: "N",
-    }));
-
-    setWorkType("N");
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -1337,6 +1379,11 @@ const CopyWindow = ({
             }
       );
 
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
+
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -1348,6 +1395,7 @@ const CopyWindow = ({
   };
 
   const exitEdit = () => {
+    if (editedField !== "acntcd" && editedField !== "stdrmkcd") {
     const newData = mainDataResult.data.map((item) => ({
       ...item,
       slipamt_1: item.drcrdiv == "2" ? 0 : item.slipamt_1,
@@ -1362,6 +1410,121 @@ const CopyWindow = ({
         total: prev.total,
       };
     });
+  } else if (editedField == "stdrmkcd"){
+    mainDataResult.data.map((item) => {
+      if (editIndex === item.num) {
+        const data = codeListData.find(
+          (items :any) => items.stdrmkcd == item.stdrmkcd
+        );
+        if(data == undefined) {
+          const newData = mainDataResult.data.map((item: any) =>
+          item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+            ? {
+                ...item,
+                stdrmkcd: item.stdrmkcd,
+                stdrmknm: "",
+                acntcd: "",
+                acntnm: "",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        } else {
+          const newData = mainDataResult.data.map((item: any) =>
+          item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+            ? {
+                ...item,
+                stdrmkcd: data.stdrmkcd,
+                stdrmknm:data.stdrmknm1,
+                acntcd: data.acntcd,
+                acntnm: data.acntnm,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        }
+      }
+    });
+  } else {
+      mainDataResult.data.map((item) => {
+        if (editIndex === item.num) {
+          const data = acntListData.find(
+            (items :any) => items.acntcd == item.acntcd
+          );
+          if(data == undefined) {
+            const newData = mainDataResult.data.map((item: any) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              ? {
+                  ...item,
+                  acntcd: item.acntcd,
+                  acntnm: "",
+                  mngitemnm1: "",
+                  mngitemnm2: "",
+                  mngitemnm3: "",
+                  mngitemnm4: "",
+                  mngitemnm5: "",
+                  mngitemnm6: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+          } else {
+            const newData = mainDataResult.data.map((item: any) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              ? {
+                  ...item,
+                  acntcd: data.acntcd,
+                  acntnm: data.acntnm,
+                  mngitemnm1: data.mngitemnm1,
+                  mngitemnm2: data.mngitemnm2,
+                  mngitemnm3: data.mngitemnm3,
+                  mngitemnm4: data.mngitemnm4,
+                  mngitemnm5: data.mngitemnm5,
+                  mngitemnm6: data.mngitemnm6,
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+          }
+        }
+      });
+    }
   };
 
   const onAddClick = () => {
@@ -1477,7 +1640,13 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={worktype === "N" ? "대체전표생성" : "대체전표정보"}
+        title={
+          worktype === "N"
+            ? "대체전표생성"
+            : worktype === "C"
+            ? "대체전표복사"
+            : "대체전표정보"
+        }
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1582,6 +1751,10 @@ const CopyWindow = ({
               value={{
                 stdrmkcd,
                 stdrmknm,
+                acntcd,
+                acntnm,
+                setAcntcd,
+                setAcntnm,
                 setStdrmkcd,
                 setStdrmknm,
                 mainDataState,
@@ -1616,14 +1789,6 @@ const CopyWindow = ({
                         themeColor={"primary"}
                         icon="minus"
                       ></Button>
-                      <Button
-                        onClick={onCopyClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="copy"
-                      >
-                        행 복사
-                      </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
                   <Grid
@@ -1679,6 +1844,7 @@ const CopyWindow = ({
                       field="drcrdiv"
                       title="차대구분"
                       width="100px"
+                      cell={CustomComboBoxCell}
                     />
                     <GridColumn
                       field="acntcd"

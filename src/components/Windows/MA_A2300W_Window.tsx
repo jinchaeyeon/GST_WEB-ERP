@@ -992,16 +992,7 @@ const CopyWindow = ({
                     type="text"
                     value={filters.files}
                     className="readonly"
-                    onChange={filterInputChange}
                   />
-                  <ButtonInInput>
-                    <Button
-                      type={"button"}
-                      onClick={onAttachmentsWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
                 </td>
                 <th>과세구분</th>
                 <td>

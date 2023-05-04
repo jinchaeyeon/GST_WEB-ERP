@@ -280,7 +280,6 @@ const ReplaceTaxReport = (data?: any) => {
           mainDataResult.data.map((item: any, idx: number) => (
             <div>
               {idx != 0 ? ( <div style={{ pageBreakAfter: "always" }}/>) : (<div/>)}
-              ==
               <div className="title_container">
                 <h1 className="title">대체전표</h1>
                 <table className="tb_approval right">
