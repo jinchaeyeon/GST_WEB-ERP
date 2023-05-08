@@ -145,6 +145,7 @@ const CopyWindow = ({
   UseParaPc(setPc);
   const DATA_ITEM_KEY = "num";
 
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -302,7 +303,7 @@ const CopyWindow = ({
     userid: userId,
     pc: pc,
     form_id: "MA_A2400W",
-    serviceid: "2207A046",
+    serviceid: companyCode,
     recdt: new Date(),
     seq1: 0,
   });
@@ -326,7 +327,7 @@ const CopyWindow = ({
       "@p_doexdiv": "",
       "@p_recdt": convertDateToStr(filters.recdt),
       "@p_seq1": filters.seq1,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

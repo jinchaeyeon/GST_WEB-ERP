@@ -51,7 +51,8 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading,   deletedAttadatnumsState,
-  unsavedAttadatnumsState, } from "../../store/atoms";
+  unsavedAttadatnumsState,
+  loginResultState, } from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
@@ -160,7 +161,8 @@ const CopyWindow = ({
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-  
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -397,7 +399,7 @@ const CopyWindow = ({
       "@p_ordkey": "",
       "@p_recdt": convertDateToStr(filters.recdt),
       "@p_seq1": filters.seq1,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

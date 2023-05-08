@@ -79,6 +79,7 @@ import {
   isLoading,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
+  loginResultState,
 } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -147,6 +148,8 @@ const BA_A0020: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -407,7 +410,7 @@ const BA_A0020: React.FC = () => {
     bizregnum: "",
     ceonm: "",
     raduseyn: "Y",
-    company_code: "2207A046",
+    company_code: companyCode,
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
@@ -477,7 +480,7 @@ const BA_A0020: React.FC = () => {
             )?.sub_code,
       "@p_bizregnum": subfilters.bizregnum,
       "@p_ceonm": subfilters.ceonm,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": null,
     },
   };
@@ -502,7 +505,7 @@ const BA_A0020: React.FC = () => {
             )?.sub_code,
       "@p_bizregnum": subfilters2.bizregnum,
       "@p_ceonm": subfilters2.ceonm,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": null,
     },
   };
@@ -1490,7 +1493,7 @@ const BA_A0020: React.FC = () => {
     user_id: userId,
     pc: pc,
     form_id: "BA_A0020W",
-    company_code: "2207A046",
+    company_code: companyCode,
     auto: "Y",
   });
 
@@ -1583,7 +1586,7 @@ const BA_A0020: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1667,7 +1670,7 @@ const BA_A0020: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1760,7 +1763,7 @@ const BA_A0020: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1910,7 +1913,7 @@ const BA_A0020: React.FC = () => {
           "@p_userid": userId,
           "@p_pc": pc,
           "@p_form_id": "BA_A0020W",
-          "@p_company_code": "2207A046",
+          "@p_company_code": companyCode,
         },
       };
       let data: any;
@@ -2143,7 +2146,7 @@ const BA_A0020: React.FC = () => {
           "@p_userid": userId,
           "@p_pc": pc,
           "@p_form_id": "BA_A0020W",
-          "@p_company_code": "2207A046",
+          "@p_company_code": companyCode,
         },
       };
       let data: any;

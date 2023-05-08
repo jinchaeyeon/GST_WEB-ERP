@@ -148,6 +148,7 @@ const CopyWindow = ({
     height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -404,7 +405,7 @@ const CopyWindow = ({
     userid: userId,
     pc: pc,
     form_id: "SA_A2300W",
-    serviceid: "2207A046",
+    serviceid: companyCode,
     files: "",
   });
 

@@ -56,8 +56,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading, deletedAttadatnumsState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, deletedAttadatnumsState, loginResultState } from "../store/atoms";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 
 const DATA_ITEM_KEY = "num";
@@ -103,7 +103,8 @@ const QC_A0060W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -900,7 +901,7 @@ const QC_A0060W: React.FC = () => {
       userid: userId,
       pc: pc,
       form_id: "MA_A2400W",
-      serviceid: "2207A046",
+      serviceid: companyCode,
     }));
     let dataArr: TdataArr = {
       rowstatus_d: [],

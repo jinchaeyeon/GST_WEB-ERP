@@ -68,8 +68,8 @@ import {
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
@@ -123,7 +123,8 @@ const MA_A2400W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   let gridRef: any = useRef(null);
 
   //커스텀 옵션 조회
@@ -569,7 +570,7 @@ const MA_A2400W: React.FC = () => {
       "@p_itemacnt": filters.itemacnt,
       "@p_reckey_s": filters.reckey_s,
       "@p_find_row_value": filters.find_row_value,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -596,7 +597,7 @@ const MA_A2400W: React.FC = () => {
       "@p_itemacnt": infomation.itemacnt,
       "@p_reckey_s": filters.reckey_s,
       "@p_find_row_value": infomation.find_row_value,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -623,7 +624,7 @@ const MA_A2400W: React.FC = () => {
       "@p_itemacnt": filters.itemacnt,
       "@p_reckey_s": filters.reckey_s,
       "@p_find_row_value": infomation2.find_row_value,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -650,7 +651,7 @@ const MA_A2400W: React.FC = () => {
       "@p_itemacnt": filters.itemacnt,
       "@p_reckey_s": filters.reckey_s,
       "@p_find_row_value": infomation3.find_row_value,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

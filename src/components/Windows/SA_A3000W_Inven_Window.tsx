@@ -49,8 +49,8 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../../store/atoms";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
@@ -77,7 +77,8 @@ const CopyWindow = ({
   });
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
@@ -379,7 +380,7 @@ const CopyWindow = ({
       "@p_finyn": filters.finyn,
       "@p_ordnum": filters.ordnum,
       "@p_ordsts": filters.ordsts,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_lotnum": filters.lotnum,
       "@p_yyyymm": filters.yyyymm,
     },

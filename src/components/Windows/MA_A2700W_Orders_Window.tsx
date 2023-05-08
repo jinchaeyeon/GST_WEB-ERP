@@ -46,8 +46,8 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../../store/atoms";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
@@ -69,6 +69,10 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
+
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
+  
   //메시지 조회
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -348,7 +352,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       "@p_person": filters.person,
       "@p_finyn": filters.finyn,
       "@p_remark": filters.remark,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
   //그리드 데이터 조회
@@ -361,7 +365,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-    console.log(data)
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {

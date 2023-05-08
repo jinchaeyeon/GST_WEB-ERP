@@ -19,6 +19,7 @@ import {
   GridCellProps,
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
+import { useRecoilState } from "recoil";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -63,7 +64,9 @@ import {
 } from "../components/CommonString";
 import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { isLoading,  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+  loginResultState, } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/HU_A5020W_C";
 import { Button } from "@progress/kendo-react-buttons";
@@ -302,7 +305,16 @@ const HU_A5020W: React.FC = () => {
   const [prsnnum, setPrsnnum] = useState<string>("");
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
-
+  const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
+    deletedAttadatnumsState
+  );
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
+    // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+    const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+      unsavedAttadatnumsState
+    );
+  
   const pathname: string = window.location.pathname.replace("/", "");
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -435,7 +447,7 @@ const HU_A5020W: React.FC = () => {
       "@p_prsnnm": filters.prsnnm,
       "@p_prsnnum": filters.prsnnum,
       "@p_payyrmm": convertDateToStr(filters.payyrmm).substring(0, 6),
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -755,6 +767,10 @@ const HU_A5020W: React.FC = () => {
           dataArr.amt_s.push(amt);
           dataArr.remark_s.push(remark);
           dataArr.attdatnum_s.push(attdatnum);
+          setDeletedAttadatnums((prev)=> ([
+            ...prev,
+            item.attdatnum
+          ]));
         });
         setParaData((prev) => ({
           ...prev,
@@ -807,7 +823,7 @@ const HU_A5020W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "HU_A5020W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -833,6 +849,8 @@ const HU_A5020W: React.FC = () => {
         remark_s: "",
         attdatnum_s: "",
       });
+      setUnsavedAttadatnums([]);
+      setDeletedAttadatnums([]);
       deletedMainRows = [];
       resetAllGrid();
     } else {
@@ -859,6 +877,7 @@ const HU_A5020W: React.FC = () => {
           ...item,
           rowstatus: "D",
         };
+
         deletedMainRows.push(newData2);
       }
     });
@@ -975,6 +994,10 @@ const HU_A5020W: React.FC = () => {
             ...item,
           }
     );
+    setUnsavedAttadatnums((prev)=> ([
+      ...prev,
+      attdatnum
+    ]));
     setMainDataResult((prev) => {
       return {
         data: newData,

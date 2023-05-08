@@ -43,6 +43,8 @@ import { FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
 import { FormCheckBoxCell } from "../Editors";
 import NumberCell from "../Cells/NumberCell";
 import FilterContainer from "../Containers/FilterContainer";
+import { loginResultState } from "../../store/atoms";
+import { useRecoilState } from "recoil";
 const SUB_DATA_ITEM_KEY = "pattern_id";
 const DATA_ITEM_KEY = "itemcd";
 
@@ -77,6 +79,9 @@ const KendoWindow = ({
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
+  
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSub2PgNum] = useState(1);
   const [sub2PgNum, setSubPgNum] = useState(1);
@@ -214,7 +219,7 @@ const KendoWindow = ({
       "@p_itemnm": filters.itemnm,
       "@p_insiz": filters.insiz,
       "@p_itemacnt": filters.itemacnt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -293,7 +298,7 @@ const KendoWindow = ({
       "@p_itemnm": filters2.itemnm,
       "@p_insiz": filters2.insiz,
       "@p_itemacnt": filters2.itemacnt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -308,7 +313,7 @@ const KendoWindow = ({
       "@p_itemnm": filters.itemnm,
       "@p_insiz": filters.insiz,
       "@p_itemacnt": filters.itemacnt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

@@ -255,8 +255,7 @@ const TO_B0011W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(parameters);
-    console.log(data);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;

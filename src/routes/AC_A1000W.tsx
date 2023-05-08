@@ -62,8 +62,8 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useSetRecoilState,useRecoilState } from "recoil";
+import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1000W_C";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
@@ -139,7 +139,9 @@ const AC_A1000W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
+  const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
+    deletedAttadatnumsState
+  );
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -1093,6 +1095,7 @@ const AC_A1000W: React.FC = () => {
         acntcd = "",
         acntchr = "",
         alcchr = "",
+        attdatnum = "",
         acntbaldiv = "",
         budgyn = "",
         partacnt = "",
@@ -1212,6 +1215,9 @@ const AC_A1000W: React.FC = () => {
       dataArr.reason_intax_deduction_s.push(
         reason_intax_deduction == undefined ? "" : reason_intax_deduction
       );
+      if(attdatnum != ""){
+        setDeletedAttadatnums([attdatnum]);
+      }
     });
     setParaData((prev) => ({
       ...prev,
@@ -1367,6 +1373,7 @@ const AC_A1000W: React.FC = () => {
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
+      setDeletedAttadatnums([]);
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "W",

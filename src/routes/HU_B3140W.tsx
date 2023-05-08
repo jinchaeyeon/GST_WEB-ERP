@@ -53,8 +53,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import MonthDateCell from "../components/Cells/MonthDateCell";
@@ -92,7 +92,8 @@ const HU_B3140W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //상단 필터 state
   const [multi, setMulti] = useState<boolean>(true);
 
@@ -321,7 +322,7 @@ const HU_B3140W: React.FC = () => {
       "@p_prsnnm": filters.prsnnm,
       "@p_dptcd": filters.dptcd,
       "@p_rtrdt": filters.rtrdt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -340,7 +341,7 @@ const HU_B3140W: React.FC = () => {
       "@p_prsnnm": filters.prsnnm,
       "@p_dptcd": filters.dptcd,
       "@p_rtrdt": filters.rtrdt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -359,7 +360,7 @@ const HU_B3140W: React.FC = () => {
       "@p_prsnnm": filters.prsnnm,
       "@p_dptcd": filters.dptcd,
       "@p_rtrdt": filters.rtrdt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -378,7 +379,7 @@ const HU_B3140W: React.FC = () => {
       "@p_prsnnm": filters.prsnnm,
       "@p_dptcd": filters.dptcd,
       "@p_rtrdt": filters.rtrdt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -397,7 +398,7 @@ const HU_B3140W: React.FC = () => {
       "@p_prsnnm": filters.prsnnm,
       "@p_dptcd": filters.dptcd,
       "@p_rtrdt": filters.rtrdt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -416,7 +417,7 @@ const HU_B3140W: React.FC = () => {
       "@p_prsnnm": filters.prsnnm,
       "@p_dptcd": filters.dptcd,
       "@p_rtrdt": filters.rtrdt,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

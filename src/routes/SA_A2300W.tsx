@@ -60,8 +60,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading, deletedAttadatnumsState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, deletedAttadatnumsState, loginResultState } from "../store/atoms";
 
 const DATA_ITEM_KEY = "num";
 
@@ -107,7 +107,8 @@ const SA_A2300: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -970,7 +971,7 @@ const SA_A2300: React.FC = () => {
     rcvcustnm: "",
     unitqty: "",
     form_id: "SA_A2300W",
-    serviceid: "2207A046",
+    serviceid: companyCode,
   });
 
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
@@ -1012,7 +1013,7 @@ const SA_A2300: React.FC = () => {
       userid: userId,
       pc: pc,
       form_id: "SA_A2300W",
-      serviceid: "2207A046",
+      serviceid: companyCode,
       files: filter.files,
     }));
     if (dataItem.length === 0 && deletedMainRows.length == 0) return false;

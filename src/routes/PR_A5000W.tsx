@@ -59,8 +59,8 @@ import {
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { Checkbox } from "@progress/kendo-react-inputs";
 
@@ -97,7 +97,8 @@ const PR_A5000W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -273,7 +274,7 @@ const PR_A5000W: React.FC = () => {
       "@p_finyn": filters.finyn,
       "@p_lotnum_s": filters.lotnum_s,
       "@p_prntqty_s": filters.prntqty_s,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -291,7 +292,7 @@ const PR_A5000W: React.FC = () => {
       "@p_finyn": filters.finyn,
       "@p_lotnum_s": filters.lotnum_s,
       "@p_prntqty_s": filters.prntqty_s,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -750,7 +751,7 @@ const PR_A5000W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "PR_A5000W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

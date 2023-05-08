@@ -59,8 +59,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading, deletedAttadatnumsState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, deletedAttadatnumsState, loginResultState } from "../store/atoms";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -119,7 +119,8 @@ const MA_A2000W: React.FC = () => {
   UsePermissions(setPermissions);
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -469,7 +470,7 @@ const MA_A2000W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_MA_A2300W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1225,7 +1226,7 @@ const MA_A2000W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_MA_A2300W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
   const [reload, setreload] = useState<boolean>(false);

@@ -61,8 +61,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading, deletedAttadatnumsState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, deletedAttadatnumsState, loginResultState } from "../store/atoms";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -113,7 +113,8 @@ const MA_A2400W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -357,7 +358,7 @@ const MA_A2400W: React.FC = () => {
       "@p_person": filters.person,
       "@p_pursts": filters.pursts,
       "@p_finyn": filters.finyn,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -380,7 +381,7 @@ const MA_A2400W: React.FC = () => {
       "@p_person": filters.person,
       "@p_pursts": filters.pursts,
       "@p_finyn": filters.finyn,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -403,7 +404,7 @@ const MA_A2400W: React.FC = () => {
       "@p_person": filters.person,
       "@p_pursts": filters.pursts,
       "@p_finyn": filters.finyn,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -461,7 +462,7 @@ const MA_A2400W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_MA_A2400W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1026,7 +1027,7 @@ const MA_A2400W: React.FC = () => {
     taxamt_s: "",
     remark_s: "",
     form_id: "MA_A2400W",
-    serviceid: "2207A046",
+    serviceid: companyCode,
   });
 
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
@@ -1064,7 +1065,7 @@ const MA_A2400W: React.FC = () => {
       userid: userId,
       pc: pc,
       form_id: "MA_A2400W",
-      serviceid: "2207A046",
+      serviceid: companyCode,
     }));
     if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
 
@@ -1245,7 +1246,7 @@ const MA_A2400W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_MA_A2400W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
   const [reload, setreload] = useState<boolean>(false);

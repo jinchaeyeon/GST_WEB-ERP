@@ -40,8 +40,8 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../../../store/atoms";
 import PrsnnumWindow from "./PrsnnumWindow";
 import { bytesToBase64 } from "byte-base64";
 import FilterContainer from "../../../components/Containers/FilterContainer";
@@ -74,6 +74,8 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     height: 850,
   });
   const setLoading = useSetRecoilState(isLoading);
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const idGetter = getter(DATA_ITEM_KEY);
   const keepingIdGetter = getter(KEEPING_DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -215,7 +217,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       "@p_prsnnum": filters.prsnnum,
       "@p_prsnnm": filters.prsnnm,
       "@p_rtryn": filters.rtryn,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
   useEffect(() => {

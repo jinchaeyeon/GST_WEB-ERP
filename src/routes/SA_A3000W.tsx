@@ -59,8 +59,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const DATA_ITEM_KEY = "num";
@@ -121,7 +121,8 @@ const SA_A2300: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -345,7 +346,7 @@ const SA_A2300: React.FC = () => {
       "@p_itemno": filters.itemno,
       "@p_reqnum_s": filters.reqnum_s,
       "@p_reqseq_s": filters.reqseq_s,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -371,7 +372,7 @@ const SA_A2300: React.FC = () => {
       "@p_itemno": filters.itemno,
       "@p_reqnum_s": filters.reqnum_s,
       "@p_reqseq_s": filters.reqseq_s,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -438,7 +439,7 @@ const SA_A2300: React.FC = () => {
       "@p_pc": pc,
       "@p_outlot_s": "",
       "@p_form_id": "P_SA_A3000W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -929,7 +930,7 @@ const SA_A2300: React.FC = () => {
     pc: pc,
     outlot_s: "",
     form_id: "SA_A3000W",
-    serviceid: "2207A046",
+    serviceid: companyCode,
   });
 
   const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
@@ -1186,7 +1187,7 @@ const SA_A2300: React.FC = () => {
       "@p_pc": pc,
       "@p_outlot_s": ParaData.outlot_s,
       "@p_form_id": "P_SA_A3000W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1256,7 +1257,7 @@ const SA_A2300: React.FC = () => {
         pc: pc,
         outlot_s: "",
         form_id: "SA_A3000W",
-        serviceid: "2207A046",
+        serviceid: companyCode,
       });
     } else {
       console.log("[오류 발생]");

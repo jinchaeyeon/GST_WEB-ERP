@@ -77,7 +77,7 @@ const DATA_ITEM_KEY = "num";
 const customField = ["controltype", "acntgrpgb", "grpchr"];
 const checkField = ["system_yn", "p_line", "p_border", "p_color"];
 const numberField = ["p_seq"];
-const requiredField = ["acntgrpnm", "acntcd", "stdrmkcd"];
+const requiredField = ["acntgrpnm", "acntcd", "stdrmkcd","stdrmknm1"];
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
 
@@ -2974,6 +2974,12 @@ const AC_A0020W: React.FC = () => {
           item.stdrmkcd == ""
         ) {
           valid = false;
+        } else if (
+          item.stdrmknm1 == undefined ||
+          item.stdrmknm1 == null ||
+          item.stdrmknm1 == ""
+        ) {
+          valid = false;
         }
       });
 
@@ -3518,6 +3524,7 @@ const AC_A0020W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage)
     }
     setLoading(false);
   };

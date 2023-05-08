@@ -120,7 +120,7 @@ const BA_A0070W: React.FC = () => {
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
-      console.log(defaultOption);
+
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -203,6 +203,7 @@ const BA_A0070W: React.FC = () => {
   const [mainPgNum, setMainPgNum] = useState(1);
 
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+  const [ifSelectFirstRow2, setIfSelectFirstRow2] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -304,7 +305,7 @@ const BA_A0070W: React.FC = () => {
         });
       }
 
-      setIfSelectFirstRow(true);
+      setIfSelectFirstRow2(true);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -384,13 +385,13 @@ const BA_A0070W: React.FC = () => {
           setSelectedState({});
         }
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow(false);
       }
     }
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (ifSelectFirstRow) {
+    if (ifSelectFirstRow2) {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
 
@@ -404,7 +405,7 @@ const BA_A0070W: React.FC = () => {
         } else {
           setSelectedsubDataState({});
         }
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow2(false);
       }
     }
   }, [subDataResult]);
@@ -430,7 +431,7 @@ const BA_A0070W: React.FC = () => {
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: selectedsubDataState,
       dataItemKey: SUB_DATA_ITEM_KEY,
     });
     setSelectedsubDataState(newSelectedState);
@@ -496,9 +497,9 @@ const BA_A0070W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       if (
-        (dataItem.rowstatus == "N" && field == "basedt") ||
-        (dataItem.rowstatus == "N" && field == "amtunit")
-      ) {
+        !((dataItem.rowstatus != "N" && field == "basedt") ||
+        (dataItem.rowstatus != "N" && field == "amtunit")
+      )) {
         const newData = mainDataResult.data.map((item) =>
           item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
             ? {
@@ -762,8 +763,7 @@ const BA_A0070W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data);
+
     if (data.isSuccess === true) {
       fetchMainGrid();
       setParaData({
@@ -906,19 +906,23 @@ const BA_A0070W: React.FC = () => {
               </td>
               <th>환율정보</th>
               <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="site"
-                    value={filters.site}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <td>
-                <Button onClick={onSite} themeColor={"primary"}>
-                  이동
-                </Button>
+                <div className="filter-item-wrap">
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="site"
+                      value={filters.site}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                  <Button
+                    style={{ marginLeft: "5px" }}
+                    onClick={onSite}
+                    themeColor={"primary"}
+                  >
+                    이동
+                  </Button>
+                </div>
               </td>
             </tr>
           </tbody>

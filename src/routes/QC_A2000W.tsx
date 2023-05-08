@@ -80,9 +80,15 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import { useRecoilState } from "recoil";
+
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
 
@@ -261,7 +267,13 @@ const QC_A2000: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
+    deletedAttadatnumsState
+  );
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
   //FormContext 데이터 state
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
@@ -963,7 +975,6 @@ const QC_A2000: React.FC = () => {
   const onAddClick = () => {
     let seq = detailDataResult2.total + deletedMainRows2.length + 1;
 
-
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
       badcd: "",
@@ -1003,6 +1014,7 @@ const QC_A2000: React.FC = () => {
           ...item,
           rowstatus: "D",
         };
+        setDeletedAttadatnums((prev) => [...prev, item.attdatnum]);
         deletedMainRows.push(newData2);
       }
     });
@@ -1199,6 +1211,8 @@ const QC_A2000: React.FC = () => {
 
     if (data.isSuccess === true) {
       setSelectedState({});
+      setUnsavedAttadatnums([]);
+      setDeletedAttadatnums([]);
       resetAllGrid();
       fetchDetailGrid2();
     } else {
@@ -1739,7 +1753,7 @@ const QC_A2000: React.FC = () => {
           }
         : { ...item }
     );
-
+    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
     setMainDataResult((prev) => {
       return {
         data: datas,

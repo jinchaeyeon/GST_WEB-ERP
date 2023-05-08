@@ -62,8 +62,8 @@ import {
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 
 const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY = "num";
@@ -155,7 +155,8 @@ const BA_A0050: React.FC = () => {
       }));
     }
   }, [customOptionData]);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -274,7 +275,7 @@ const BA_A0050: React.FC = () => {
       "@p_itemacnt": filters.itemacnt,
       "@p_useyn": filters.raduseyn,
       "@p_proccd": filters.proccd,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": filters.row_values,
     },
   };
@@ -306,7 +307,7 @@ const BA_A0050: React.FC = () => {
       "@p_itemacnt": subfilters.itemacnt,
       "@p_useyn": subfilters.raduseyn,
       "@p_proccd": subfilters.proccd,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": subfilters.row_values,
     },
   };
@@ -337,7 +338,7 @@ const BA_A0050: React.FC = () => {
       "@p_itemacnt": subfilters2.itemacnt,
       "@p_useyn": subfilters2.raduseyn,
       "@p_proccd": subfilters2.proccd,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": subfilters2.row_values,
     },
   };
@@ -941,7 +942,7 @@ const BA_A0050: React.FC = () => {
     userid: userId,
     pc: pc,
     form_id: "BA_A0050W",
-    company_code: "2207A046",
+    company_code: companyCode,
   });
 
   const [paraData2, setParaData2] = useState({
@@ -953,7 +954,7 @@ const BA_A0050: React.FC = () => {
     userid: userId,
     pc: pc,
     form_id: "BA_A0050W_Sub1",
-    company_code: "2207A046",
+    company_code: companyCode,
   });
 
   const para2: Iparameters = {

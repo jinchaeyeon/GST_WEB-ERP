@@ -136,6 +136,7 @@ const CopyWindow = ({
     height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -348,7 +349,7 @@ const CopyWindow = ({
     userid: userId,
     pc: pc,
     form_id: "MA_A2400W",
-    serviceid: "2207A046",
+    serviceid: companyCode
   });
 
   const parameters: Iparameters = {
@@ -370,7 +371,7 @@ const CopyWindow = ({
       "@p_person": "",
       "@p_pursts": "",
       "@p_finyn": "",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode
     },
   };
 

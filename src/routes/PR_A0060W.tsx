@@ -72,6 +72,7 @@ import {
   isLoading,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
+  loginResultState,
 } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -100,7 +101,8 @@ const PR_A0060: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -906,7 +908,10 @@ const PR_A0060: React.FC = () => {
 
   const getAttachmentsData2 = (data: IAttachmentData) => {
     if (!subDataResult.data[rows].attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
+      setUnsavedAttadatnums((prev)=> ([
+        ...prev,
+        data.attdatnum
+      ]));
     }
 
     const items = parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0]);
@@ -1159,6 +1164,7 @@ const PR_A0060: React.FC = () => {
           ...item,
           rowstatus: "D",
         };
+
         deletedMainRows.push(newData2);
       }
     });
@@ -1307,7 +1313,7 @@ const PR_A0060: React.FC = () => {
       "@p_remark1_s": paraData.remark1_s,
       "@p_attdatnum_s": paraData.attdatnum_s,
       "@p_stdtime_s": paraData.stdtime_s,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1375,7 +1381,7 @@ const PR_A0060: React.FC = () => {
       "@p_remark1_s": "",
       "@p_attdatnum_s": "",
       "@p_stdtime_s": "",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1443,7 +1449,7 @@ const PR_A0060: React.FC = () => {
       "@p_remark1_s": "",
       "@p_attdatnum_s": "",
       "@p_stdtime_s": "",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1582,7 +1588,7 @@ const PR_A0060: React.FC = () => {
           "@p_remark1_s": item.remark1,
           "@p_attdatnum_s": item.attdatnum,
           "@p_stdtime_s": 0,
-          "@p_company_code": "2207A046",
+          "@p_company_code": companyCode,
         },
       };
       let data: any;
@@ -1594,10 +1600,15 @@ const PR_A0060: React.FC = () => {
       }
 
       if (data.isSuccess !== true) {
+        setDeletedAttadatnums((prev)=> ([
+          ...prev,
+          item.attdatnum
+        ]));
         console.log("[오류 발생]");
         console.log(data);
-      }
+      } 
     });
+    setDeletedAttadatnums([]);
     deletedMainRows = [];
 
     setParaData((prev) => ({
@@ -1744,6 +1755,8 @@ const PR_A0060: React.FC = () => {
     if (data.isSuccess === true) {
       setSubPgNum(1);
       setSubDataResult(process([], subDataState));
+      setUnsavedAttadatnums([]);
+      setDeletedAttadatnums([]);
 
       fetchSubGrid();
     } else {

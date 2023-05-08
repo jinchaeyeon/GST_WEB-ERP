@@ -52,8 +52,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2205W_C";
 
 const dateField = ["orddt", "dlvdt"];
@@ -80,7 +80,8 @@ const SA_B2205: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -253,7 +254,7 @@ const SA_B2205: React.FC = () => {
       "@p_ordnum": filters.ordnum,
       "@p_poregnum": filters.poregnum,
       "@p_project": filters.project,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

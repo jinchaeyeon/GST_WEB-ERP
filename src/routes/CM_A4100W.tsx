@@ -1087,8 +1087,9 @@ const CM_A4100W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
-    if (unsavedAttadatnums.length > 0)
+    if (unsavedAttadatnums[0] != ''){
       setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setTabSelected(e.selected);
     resetAllGrid();
     if (e.selected == 0) {
@@ -1401,7 +1402,16 @@ const CM_A4100W: React.FC = () => {
     if (data.isSuccess === true) {
       setMainDataResult2(process([], mainDataState2));
       setSubPgNum(1);
+   
+      deletedMainRows.map((item: any) => 
+        setDeletedAttadatnums([
+          item.attdatnum
+        ])
+      );
+
       setSubDataResult(process([], subDataState));
+      setUnsavedAttadatnums([]);
+      setDeletedAttadatnums([]);
 
       setInfomation((prev) => ({
         ...prev,
@@ -1678,7 +1688,10 @@ const CM_A4100W: React.FC = () => {
           }
         : { ...item }
     );
-
+    setUnsavedAttadatnums((prev)=> ([
+      ...prev,
+      attdatnum
+    ]));
     setSubDataResult((prev) => {
       return {
         data: datas,
@@ -1698,6 +1711,7 @@ const CM_A4100W: React.FC = () => {
           ...item,
           rowstatus: "D",
         };
+
         deletedMainRows.push(newData2);
       }
     });

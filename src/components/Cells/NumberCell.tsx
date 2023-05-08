@@ -39,7 +39,7 @@ const NumberCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
     >
       {isInEdit ? (
-        <NumericTextBox value={value} onChange={handleChange} />
+        <NumericTextBox value={value} format={"0"} onChange={handleChange} />
       ) : (
         numberWithCommas(value)
       )}

@@ -61,8 +61,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading, deletedAttadatnumsState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, deletedAttadatnumsState, loginResultState } from "../store/atoms";
 
 const DATA_ITEM_KEY = "num";
 
@@ -111,7 +111,8 @@ const SA_A5010W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -459,7 +460,7 @@ const SA_A5010W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_SA_A5010W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -473,7 +474,7 @@ const SA_A5010W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -1063,7 +1064,7 @@ const SA_A5010W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_SA_A5010W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
   const [reload, setreload] = useState<boolean>(false);
@@ -1167,7 +1168,7 @@ const SA_A5010W: React.FC = () => {
         userid: userId,
         pc: pc,
         form_id: "SA_A2300W",
-        serviceid: "2207A046",
+        serviceid: companyCode,
         files: filter.files,
       }));
     } else {
@@ -1284,7 +1285,7 @@ const SA_A5010W: React.FC = () => {
         userid: userId,
         pc: pc,
         form_id: "SA_A2300W",
-        serviceid: "2207A046",
+        serviceid: companyCode,
         files: filter.files,
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         seq2_s: dataArr.seq2_s.join("|"),

@@ -76,8 +76,8 @@ import {
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import DepartmentsWindow from "../components/Windows/CommonWindows/DepartmentsWindow";
@@ -133,7 +133,8 @@ const SY_A0125W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [departmentWindowVisible, setDepartmentWindowVisible] =
     useState<boolean>(false);
 
@@ -340,7 +341,7 @@ const SY_A0125W: React.FC = () => {
     dptcd: "",
     dptnm: "",
     user_name: "",
-    serviceid: "2207A046",
+    serviceid: companyCode,
   });
 
   //조회조건 파라미터
@@ -366,7 +367,7 @@ const SY_A0125W: React.FC = () => {
     dptcd: infomation.dptcd,
     dptnm: "",
     user_name: "",
-    serviceid: "2207A046",
+    serviceid: companyCode,
     location: "01",
   });
 

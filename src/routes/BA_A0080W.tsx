@@ -70,8 +70,8 @@ import {
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import NameCell from "../components/Cells/NameCell";
@@ -262,7 +262,8 @@ const BA_A0080: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //FormContext에서 받아오기위해 state
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
@@ -455,7 +456,7 @@ const BA_A0080: React.FC = () => {
       "@p_itemacnt": filters.itemacnt,
       "@p_unpitem": filters.unpitem,
       "@p_amtunit": filters.amtunit,
-      "@p_serviceid": "2207A046",
+      "@p_serviceid": companyCode,
     },
   };
 

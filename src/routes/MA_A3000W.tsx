@@ -918,14 +918,14 @@ const MA_A3000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
-    if (!window.confirm(questionToDelete)) {
-      return false;
-    }
     const data = mainDataResult.data.filter((item) => item.chk == true);
 
     if (data.length == 0) {
       alert("삭제할 데이터가 없습니다.");
     } else {
+      if (!window.confirm(questionToDelete)) {
+        return false;
+      }
       let dataArr: TdataArr = {
         rowstatus_s: [],
         fxmngnum_s: [],
@@ -1910,10 +1910,10 @@ const MA_A3000W: React.FC = () => {
 
   const onPrint = () => {
     const datas = mainDataResult.data.filter(
-      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
+      (item) => item.chk == true
+    );
     try {
-      if (datas == null || datas == undefined) {
+      if (datas.length == 0) {
         throw findMessage(messagesData, "MA_A3000W_001");
       } else {
         onBarcodeWndClick();

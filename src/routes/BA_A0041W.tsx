@@ -767,7 +767,7 @@ const BA_A0041W: React.FC = () => {
     let newData: any[] = [];
 
     mainDataResult.data.forEach((item: any, index: number) => {
-      if (!selectedState[item[DATA_ITEM_KEY]]) {
+      if (item.chk != true) {
         newData.push(item);
       } else {
         const newData2 = {
@@ -779,7 +779,7 @@ const BA_A0041W: React.FC = () => {
     });
     setMainDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - deletedMainRows.length,
     }));
 
     setMainDataState({});
@@ -893,7 +893,9 @@ const BA_A0041W: React.FC = () => {
     mainDataResult.data.map((item) => {
       mainDataResult.data.map((item2) => {
         if (item.num != item2.num && item.itemcd == item2.itemcd) {
-          valid2 = false;
+          if(item.itemcd != "") {
+            valid2 = false;
+          }
         }
       });
     });
@@ -1108,10 +1110,6 @@ const BA_A0041W: React.FC = () => {
   };
 
   const onDeleteClick2 = async () => {
-    if (!window.confirm("선택한 품목들을 삭제하시겠습니까?")) {
-      return false;
-    }
-
     let valid = true;
 
     const dataItem = mainDataResult.data.filter((item: any) => {
@@ -1133,6 +1131,9 @@ const BA_A0041W: React.FC = () => {
 
     if (dataItem.length === 0) {
       alert("데이터가 없습니다.");
+      return false;
+    }
+    if (!window.confirm("선택한 품목들을 삭제하시겠습니까?")) {
       return false;
     }
     let dataArr: TdataArr = {

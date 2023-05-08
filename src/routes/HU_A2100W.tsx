@@ -44,8 +44,8 @@ import {
   EDIT_FIELD,
 } from "../components/CommonString";
 import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/HU_A2100W_C";
 import { Button } from "@progress/kendo-react-buttons";
@@ -120,7 +120,8 @@ const HU_A2100W: React.FC = () => {
   UseMessages(pathname, setMessagesData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
@@ -614,7 +615,7 @@ const HU_A2100W: React.FC = () => {
     userid: userId,
     pc: pc,
     form_id: "HU_A2100W",
-    company_code: "2207A046",
+    company_code: companyCode,
   });
 
   const para: Iparameters = {
@@ -672,7 +673,7 @@ const HU_A2100W: React.FC = () => {
         userid: userId,
         pc: pc,
         form_id: "HU_A2100W",
-        company_code: "2207A046",
+        company_code: companyCode,
       });
       deletedMainRows = [];
       resetAllGrid();

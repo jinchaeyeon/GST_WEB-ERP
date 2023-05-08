@@ -256,7 +256,7 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+
     if (data !== null) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -270,6 +270,7 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
         });
       }
     } else {
+      console.log("[오류 발생]")
       console.log(data);
     }
     setLoading(false);

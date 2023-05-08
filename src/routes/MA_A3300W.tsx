@@ -66,6 +66,7 @@ import {
   isLoading,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
+  loginResultState,
 } from "../store/atoms";
 const DateField = ["recdt", "enddt"];
 
@@ -146,7 +147,8 @@ const MA_A3300W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -536,7 +538,7 @@ const MA_A3300W: React.FC = () => {
     remark_s: "",
     load_place_s: "",
     form_id: "MA_A3300W",
-    serviceid: "2207A046",
+    serviceid: companyCode,
     reckey: "",
     serialno_s: "",
   });
@@ -706,7 +708,7 @@ const MA_A3300W: React.FC = () => {
         remark_s: "",
         load_place_s: "",
         form_id: "MA_A3300W",
-        serviceid: "2207A046",
+        serviceid: companyCode,
         reckey: "",
         serialno_s: "",
       });

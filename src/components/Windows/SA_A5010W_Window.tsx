@@ -67,6 +67,7 @@ import {
   isLoading,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
+  loginResultState,
 } from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
@@ -325,6 +326,8 @@ const CopyWindow = ({
   const setLoading = useSetRecoilState(isLoading);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -563,7 +566,7 @@ const CopyWindow = ({
       "@p_ordkey": "",
       "@p_recdt": convertDateToStr(filters.recdt),
       "@p_seq1": filters.seq1,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

@@ -19,7 +19,11 @@ import {
   GridCellProps,
 } from "@progress/kendo-react-grid";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { TextArea, InputChangeEvent } from "@progress/kendo-react-inputs";
+import {
+  TextArea,
+  InputChangeEvent,
+  NumericTextBox,
+} from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -53,7 +57,11 @@ import {
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { loginResultState } from "../../store/atoms";
+import {
+  loginResultState,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
@@ -82,6 +90,46 @@ type IWindow = {
   chkyn: boolean;
 };
 
+type Acnt = {
+  acntbaldiv: string;
+  acntchr: string;
+  acntdiv: string;
+  acntgrp: string;
+  acseq2: number;
+  budgyn: string;
+  controltype1: string;
+  controltype2: string;
+  controltype3: string;
+  controltype4: string;
+  controltype5: string;
+  controltype6: string;
+  diststd: string;
+  makesha: string;
+  mngcramtyn: string;
+  mngcrcustyn: string;
+  mngcrrateyn: string;
+  mngdramtyn: string;
+  mngdrcustyn: string;
+  mngdrrateyn: string;
+  mngitemcd1: string;
+  mngitemcd2: string;
+  mngitemcd3: string;
+  mngitemcd4: string;
+  mngitemcd5: string;
+  mngitemcd6: string;
+  prodyn: string;
+  profitchr: string;
+  profitsha: string;
+  relacntcd: string;
+  relacntgrp: string;
+  show_collect_yn: string;
+  show_payment_yn: string;
+  sho_pur_sal_yn: string;
+  slipentyn: string;
+  soyn: string;
+  system_yn: string;
+  useyn: string;
+};
 type Idata = {
   location: string;
   acntdt: string;
@@ -494,7 +542,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{upload: false, download: true, delete: false}}
+          permission={{ upload: false, download: true, delete: false }}
         />
       )}
     </>
@@ -550,12 +598,18 @@ const CopyWindow = ({
   const [files, setFiles] = useState<string>("");
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
   //메시지 조회
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
+  const [AcntDatas, setAcntDatas] = useState<Acnt | undefined>();
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -595,24 +649,126 @@ const CopyWindow = ({
   }, [customOptionData]);
 
   useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            acntcd: acntcd,
-            acntnm: acntnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if(acntcd != "" && acntcd != undefined) {
+      const data = acntListData.find((items: any) => items.acntcd == acntcd);
+      async function fetchDatas() {
+        let datas: any;
+        const select = mainDataResult.data.filter(
+          (item) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        )[0];
+  
+        const parameters2: Iparameters = {
+          procedureName: "P_AC_A1000W_Q",
+          pageNumber: mainPgNum,
+          pageSize: filters.pgSize,
+          parameters: {
+            "@p_work_type": "ITEM",
+            "@p_orgdiv": filters.orgdiv,
+            "@p_actdt": "",
+            "@p_acseq1": 0,
+            "@p_acnum": "",
+            "@p_acseq2": 0,
+            "@p_acntcd": acntcd,
+            "@p_frdt": "",
+            "@p_todt": "",
+            "@p_location": "",
+            "@p_person": "",
+            "@p_inputpath": "",
+            "@p_custcd": "",
+            "@p_custnm": "",
+            "@p_slipdiv": "",
+            "@p_remark3": "",
+            "@p_maxacseq2": 0,
+            "@p_framt": 0,
+            "@p_toamt": 0,
+            "@p_position": "",
+            "@p_inoutdiv": "",
+            "@p_drcrdiv": select == undefined ? "" : select.drcrdiv,
+            "@p_actdt_s": "",
+            "@p_acseq1_s": "",
+            "@p_printcnt_s": "",
+            "@p_rowstatus_s": "",
+            "@p_chk_s": "",
+            "@p_ackey_s": "",
+            "@p_acntnm": "",
+            "@p_find_row_value": "",
+          },
+        };
+  
+        try {
+          datas = await processApi<any>("procedure", parameters2);
+        } catch (error) {
+          datas = null;
+        }
+        const rows = datas.tables[0].Rows[0];
+        if (data != undefined) {
+          const newData = mainDataResult.data.map((item) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              ? {
+                  ...item,
+                  acntcd: acntcd,
+                  acntnm: acntnm,
+                  mngitemnm1: data.mngitemnm1,
+                  mngitemnm2: data.mngitemnm2,
+                  mngitemnm3: data.mngitemnm3,
+                  mngitemnm4: data.mngitemnm4,
+                  mngitemnm5: data.mngitemnm5,
+                  mngitemnm6: data.mngitemnm6,
+                  acntbaldiv: rows.acntbaldiv,
+                  acntchr: rows.acntchr,
+                  acntdiv: rows.acntdiv,
+                  acntgrp: rows.acntgrp,
+                  budgyn: rows.budgyn,
+                  controltype1: rows.controltype1,
+                  controltype2: rows.controltype2,
+                  controltype3: rows.controltype3,
+                  controltype4: rows.controltype4,
+                  controltype5: rows.controltype5,
+                  controltype6: rows.controltype6,
+                  diststd: rows.diststd,
+                  makesha: rows.makesha,
+                  mngcramtyn: rows.mngcramtyn,
+                  mngcrcustyn: rows.mngcrcustyn,
+                  mngcrrateyn: rows.mngcrrateyn,
+                  mngdramtyn: rows.mngdramtyn,
+                  mngdrcustyn: rows.mngdrcustyn,
+                  mngdrrateyn: rows.mngdrrateyn,
+                  mngitemcd1: rows.mngitemcd1,
+                  mngitemcd2: rows.mngitemcd2,
+                  mngitemcd3: rows.mngitemcd3,
+                  mngitemcd4: rows.mngitemcd4,
+                  mngitemcd5: rows.mngitemcd5,
+                  mngitemcd6: rows.mngitemcd6,
+                  prodyn: rows.prodyn,
+                  profitchr: rows.profitchr,
+                  profitsha: rows.profitsha,
+                  relacntcd: rows.relacntcd,
+                  relacntgrp: rows.relacntgrp,
+                  show_collect_yn: rows.show_collect_yn,
+                  show_payment_yn: rows.show_payment_yn,
+                  sho_pur_sal_yn: rows.sho_pur_sal_yn,
+                  slipentyn: rows.slipentyn,
+                  soyn: rows.soyn,
+                  system_yn: rows.system_yn,
+                  useyn: rows.useyn,
+                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                }
+              : {
+                  ...item,
+                }
+          );
+  
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+      fetchDatas();
+    }
   }, [acntcd, acntnm]);
 
   useEffect(() => {
@@ -637,26 +793,127 @@ const CopyWindow = ({
   }, [custcd, custnm]);
 
   useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            acntcd: acntcd,
-            acntnm: acntnm,
-            stdrmkcd: stdrmkcd,
-            stdrmknm: stdrmknm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if(stdrmkcd != "" && stdrmknm != undefined) {
+      const data = acntListData.find((items: any) => items.acntcd == acntcd);
+      async function fetchDatas() {
+        let datas: any;
+        const select = mainDataResult.data.filter(
+          (item) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        )[0];
+  
+        const parameters2: Iparameters = {
+          procedureName: "P_AC_A1000W_Q",
+          pageNumber: mainPgNum,
+          pageSize: filters.pgSize,
+          parameters: {
+            "@p_work_type": "ITEM",
+            "@p_orgdiv": filters.orgdiv,
+            "@p_actdt": convertDateToStr(filters.acntdt),
+            "@p_acseq1": 0,
+            "@p_acnum": "",
+            "@p_acseq2": 0,
+            "@p_acntcd": acntcd,
+            "@p_frdt": "",
+            "@p_todt": "",
+            "@p_location": "",
+            "@p_person": "",
+            "@p_inputpath": "",
+            "@p_custcd": "",
+            "@p_custnm": "",
+            "@p_slipdiv": "",
+            "@p_remark3": "",
+            "@p_maxacseq2": 0,
+            "@p_framt": 0,
+            "@p_toamt": 0,
+            "@p_position": "",
+            "@p_inoutdiv": "",
+            "@p_drcrdiv": select== undefined ? "" : select.drcrdiv,
+            "@p_actdt_s": "",
+            "@p_acseq1_s": "",
+            "@p_printcnt_s": "",
+            "@p_rowstatus_s": "",
+            "@p_chk_s": "",
+            "@p_ackey_s": "",
+            "@p_acntnm": "",
+            "@p_find_row_value": "",
+          },
+        };
+  
+        try {
+          datas = await processApi<any>("procedure", parameters2);
+        } catch (error) {
+          datas = null;
+        }
+        const rows = datas.tables[0].Rows[0];
+        if (data != undefined) {
+          const newData = mainDataResult.data.map((item) =>
+            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              ? {
+                  ...item,
+                  acntcd: acntcd,
+                  acntnm: acntnm,
+                  stdrmkcd: stdrmkcd,
+                  stdrmknm: stdrmknm,
+                  mngitemnm1: data.mngitemnm1,
+                  mngitemnm2: data.mngitemnm2,
+                  mngitemnm3: data.mngitemnm3,
+                  mngitemnm4: data.mngitemnm4,
+                  mngitemnm5: data.mngitemnm5,
+                  mngitemnm6: data.mngitemnm6,
+                  acntbaldiv: rows.acntbaldiv,
+                  acntchr: rows.acntchr,
+                  acntdiv: rows.acntdiv,
+                  acntgrp: rows.acntgrp,
+                  budgyn: rows.budgyn,
+                  controltype1: rows.controltype1,
+                  controltype2: rows.controltype2,
+                  controltype3: rows.controltype3,
+                  controltype4: rows.controltype4,
+                  controltype5: rows.controltype5,
+                  controltype6: rows.controltype6,
+                  diststd: rows.diststd,
+                  makesha: rows.makesha,
+                  mngcramtyn: rows.mngcramtyn,
+                  mngcrcustyn: rows.mngcrcustyn,
+                  mngcrrateyn: rows.mngcrrateyn,
+                  mngdramtyn: rows.mngdramtyn,
+                  mngdrcustyn: rows.mngdrcustyn,
+                  mngdrrateyn: rows.mngdrrateyn,
+                  mngitemcd1: rows.mngitemcd1,
+                  mngitemcd2: rows.mngitemcd2,
+                  mngitemcd3: rows.mngitemcd3,
+                  mngitemcd4: rows.mngitemcd4,
+                  mngitemcd5: rows.mngitemcd5,
+                  mngitemcd6: rows.mngitemcd6,
+                  prodyn: rows.prodyn,
+                  profitchr: rows.profitchr,
+                  profitsha: rows.profitsha,
+                  relacntcd: rows.relacntcd,
+                  relacntgrp: rows.relacntgrp,
+                  show_collect_yn: rows.show_collect_yn,
+                  show_payment_yn: rows.show_payment_yn,
+                  sho_pur_sal_yn: rows.sho_pur_sal_yn,
+                  slipentyn: rows.slipentyn,
+                  soyn: rows.soyn,
+                  system_yn: rows.system_yn,
+                  useyn: rows.useyn,
+                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                }
+              : {
+                  ...item,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+      fetchDatas();
+    }
   }, [stdrmkcd, stdrmknm]);
 
   useEffect(() => {
@@ -672,6 +929,7 @@ const CopyWindow = ({
             ...item,
           }
     );
+    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -679,7 +937,7 @@ const CopyWindow = ({
       };
     });
   }, [attdatnum, files]);
-  
+
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_AC023T, L_acntcd, L_AC024",
@@ -689,10 +947,19 @@ const CopyWindow = ({
 
   //공통코드 리스트 조회 ()
   const [acntListData, setAcntListData] = useState([
-    { acntcd: "", acntnm: "", mngitemnm1: "",mngitemnm2: "", mngitemnm3: "", mngitemnm4:"", mngitemnm5: "",mngitemnm6: ""},
+    {
+      acntcd: "",
+      acntnm: "",
+      mngitemnm1: "",
+      mngitemnm2: "",
+      mngitemnm3: "",
+      mngitemnm4: "",
+      mngitemnm5: "",
+      mngitemnm6: "",
+    },
   ]);
   const [codeListData, setCodeListData] = useState([
-    { acntcd: "", acntnm: "", stdrmkcd: "", stdrmknm1: ""},
+    { acntcd: "", acntnm: "", stdrmkcd: "", stdrmknm1: "" },
   ]);
   const [mngItemListData, setMngItemListData] = React.useState([
     { mngitemcd: "", mngitemnm: "" },
@@ -701,7 +968,7 @@ const CopyWindow = ({
     if (bizComponentData !== null) {
       const acntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_acntcd")
-      );     
+      );
       const codeQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_AC024")
       );
@@ -775,10 +1042,9 @@ const CopyWindow = ({
       [name]: value,
     }));
   };
- 
+
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-
     if (
       (mainDataResult.data.filter(
         (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
@@ -887,6 +1153,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    setUnsavedAttadatnums([]);
     setVisible(false);
   };
 
@@ -1186,6 +1453,117 @@ const CopyWindow = ({
         creditcd: data.creditcd,
         reason_intax_deduction: data.reason_intax_deduction,
       }));
+    } else {
+      let seq = mainDataResult.total + deletedMainRows.length + 1;
+      const datas = mainDataResult.data[mainDataResult.data.length - 1];
+
+      for (var i = 1; i < 3; i++) {
+        const newDataItem = {
+          [DATA_ITEM_KEY]: seq,
+          ackey: filters.ackey,
+          acntbaldiv: "",
+          acntcd: "",
+          acntcd2: "",
+          acntchr: "",
+          acntdt: convertDateToStr(filters.acntdt),
+          acntnm: "",
+          acntses: "",
+          acseq1: 0,
+          acseq2: i,
+          actdt: convertDateToStr(filters.actdt),
+          alcchr: "",
+          apperson: "",
+          approvaldt: filters.approvaldt,
+          attdatnum: "",
+          autorecnum: "",
+          bizregnum: chkyn == true ? datas.bizregnum : "",
+          budgcd: "",
+          budgyn: "N",
+          closeyn: filters.closeyn,
+          consultdt: filters.consultdt,
+          consultnum: filters.consultnum,
+          consultseq: 0,
+          controltype1: "",
+          controltype2: "",
+          controltype3: "",
+          controltype4: "",
+          controltype5: "",
+          controltype6: "",
+          creditcd: "",
+          creditnm: "",
+          creditnum: "",
+          custcd: chkyn == true ? datas.custcd : "",
+          custnm: chkyn == true ? datas.custnm : "",
+          dptcd: filters.dptcd,
+          drcrdiv: i.toString(),
+          evidentialkind: "",
+          files: "",
+          inoutdiv: filters.inoutdiv,
+          inputpath: filters.inputpath,
+          location: filters.location,
+          mngamt: 0,
+          mngcramtyn: "",
+          mngcrctlyn1: "",
+          mngcrctlyn2: "",
+          mngcrctlyn3: "",
+          mngcrctlyn4: "",
+          mngcrctlyn5: "",
+          mngcrctlyn6: "",
+          mngcrcustyn: "",
+          mngcrrateyn: "",
+          mngdata1: "",
+          mngdata2: "",
+          mngdata3: "",
+          mngdata4: "",
+          mngdata5: "",
+          mngdata6: "",
+          mngdatanm1: "",
+          mngdatanm2: "",
+          mngdatanm3: "",
+          mngdatanm4: "",
+          mngdatanm5: "",
+          mngdatanm6: "",
+          mngdrctlyn1: "",
+          mngdrctlyn2: "",
+          mngdrctlyn3: "",
+          mngdrctlyn4: "",
+          mngdrctlyn5: "",
+          mngdrctlyn6: "",
+          mngdrrateyn: "",
+          mngitemcd1: "",
+          mngitemcd2: "",
+          mngitemcd3: "",
+          mngitemcd4: "",
+          mngitemcd5: "",
+          mngitemcd6: "",
+          mngsumcustyn: "",
+          orgdiv: "01",
+          partacnt: "",
+          position: filters.position,
+          propertykind: "",
+          rate: 0,
+          reason_intax_deduction: "",
+          remark3: chkyn == true ? datas.remark3 : "",
+          slipamt: 0,
+          slipamt_1: 0,
+          slipamt_2: 0,
+          slipdiv: filters.slipdiv,
+          stdrmkcd: "",
+          stdrmknm: "",
+          taxtype: "",
+          taxtypenm: "",
+          usedptcd: "",
+          rowstatus: "N",
+        };
+
+        setMainDataResult((prev) => {
+          return {
+            data: [newDataItem, ...prev.data],
+            total: prev.total + 1,
+          };
+        });
+        seq++;
+      }
     }
   }, []);
 
@@ -1194,7 +1572,9 @@ const CopyWindow = ({
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
+        if(firstRowData != undefined){
+          setSelectedState({ [firstRowData.num]: true });
+        }
 
         setIfSelectFirstRow(true);
       }
@@ -1268,7 +1648,11 @@ const CopyWindow = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
-    if(filters.location == undefined || filters.location == null || filters.location == ""){
+    if (
+      filters.location == undefined ||
+      filters.location == null ||
+      filters.location == ""
+    ) {
       alert("사업장을 채워주세요.");
       valid = false;
       return false;
@@ -1278,6 +1662,132 @@ const CopyWindow = ({
         alert("계정코드를 채워주세요.");
         valid = false;
         return false;
+      }
+      else if(item.controltype1 != "" && valid == true) {
+        if(item.controltype1 == "B") {
+          if(item.mngdata1 == "") {
+            alert("관리항목값코드1을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype1 == "D") {
+          if(parseInt(convertDateToStr(item.mngdata1).substring(0,4)) < 2000) {
+            alert("관리항목값코드1을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype1 == "T") {
+          if(item.mngdatanm1 == "") {
+            alert("관리항목값이름1을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        }
+      }
+      else if(item.controltype2 != "" && valid == true) {
+        if(item.controltype2 == "B") {
+          if(item.mngdata2 == "") {
+            alert("관리항목값코드2을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype2 == "D") {
+          if(parseInt(convertDateToStr(item.mngdata2).substring(0,4)) < 2000) {
+            alert("관리항목값코드2을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype2 == "T") {
+          if(item.mngdatanm2 == "") {
+            alert("관리항목값이름2을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        }
+      }
+      else if(item.controltype3 != "" && valid == true) {
+        if(item.controltype3 == "B") {
+          if(item.mngdata3 == "") {
+            alert("관리항목값코드3을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype3 == "D") {
+          if(parseInt(convertDateToStr(item.mngdata3).substring(0,4)) < 2000) {
+            alert("관리항목값코드3을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype3 == "T") {
+          if(item.mngdatanm3 == "") {
+            alert("관리항목값이름3을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        }
+      }
+      else if(item.controltype4 != "" && valid == true) {
+        if(item.controltype4 == "B") {
+          if(item.mngdata4 == "") {
+            alert("관리항목값코드4을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype4 == "D") {
+          if(parseInt(convertDateToStr(item.mngdata4).substring(0,4)) < 2000) {
+            alert("관리항목값코드4을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype4 == "T") {
+          if(item.mngdatanm4 == "") {
+            alert("관리항목값이름4을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        }
+      }
+      else if(item.controltype5 != "" && valid == true) {
+        if(item.controltype5 == "B") {
+          if(item.mngdata5 == "") {
+            alert("관리항목값코드5을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype5 == "D") {
+          if(parseInt(convertDateToStr(item.mngdata5).substring(0,4)) < 2000) {
+            alert("관리항목값코드5을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype5 == "T") {
+          if(item.mngdatanm5 == "") {
+            alert("관리항목값이름5을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        }
+      }
+      else if(item.controltype6 != "" && valid == true) {
+        if(item.controltype6 == "B") {
+          if(item.mngdata6 == "") {
+            alert("관리항목값코드6을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype6 == "D") {
+          if(parseInt(convertDateToStr(item.mngdata6).substring(0,4)) < 2000) {
+            alert("관리항목값코드6을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        } else if(item.controltype6== "T") {
+          if(item.mngdatanm6 == "") {
+            alert("관리항목값이름6을 입력해주세요.");
+            valid = false;
+            return false;
+          }
+        }
       }
     });
 
@@ -1311,6 +1821,7 @@ const CopyWindow = ({
           ...item,
           rowstatus: "D",
         };
+
         deletedMainRows.push(newData2);
       }
     });
@@ -1352,6 +1863,10 @@ const CopyWindow = ({
   );
 
   const enterEdit = (dataItem: any, field: string) => {
+    setEditIndex(dataItem[DATA_ITEM_KEY]);
+    if (field) {
+      setEditedField(field);
+    }
     let valid = true;
     if (
       field == "acntnm" ||
@@ -1365,6 +1880,7 @@ const CopyWindow = ({
       valid = false;
       return false;
     }
+
     if (valid == true) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -1379,11 +1895,6 @@ const CopyWindow = ({
             }
       );
 
-      setEditIndex(dataItem[DATA_ITEM_KEY]);
-      if (field) {
-        setEditedField(field);
-      }
-
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -1396,131 +1907,323 @@ const CopyWindow = ({
 
   const exitEdit = () => {
     if (editedField !== "acntcd" && editedField !== "stdrmkcd") {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      slipamt_1: item.drcrdiv == "2" ? 0 : item.slipamt_1,
-      slipamt_2: item.drcrdiv == "1" ? 0 : item.slipamt_2,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        slipamt_1: item.drcrdiv == "2" ? 0 : item.slipamt_1,
+        slipamt_2: item.drcrdiv == "1" ? 0 : item.slipamt_2,
+        [EDIT_FIELD]: undefined,
+      }));
+    
+      setIfSelectFirstRow(false);
 
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  } else if (editedField == "stdrmkcd"){
-    mainDataResult.data.map((item) => {
-      if (editIndex === item.num) {
-        const data = codeListData.find(
-          (items :any) => items.stdrmkcd == item.stdrmkcd
-        );
-        if(data == undefined) {
-          const newData = mainDataResult.data.map((item: any) =>
-          item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-            ? {
-                ...item,
-                stdrmkcd: item.stdrmkcd,
-                stdrmknm: "",
-                acntcd: "",
-                acntnm: "",
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-        );
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-        } else {
-          const newData = mainDataResult.data.map((item: any) =>
-          item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-            ? {
-                ...item,
-                stdrmkcd: data.stdrmkcd,
-                stdrmknm:data.stdrmknm1,
-                acntcd: data.acntcd,
-                acntnm: data.acntnm,
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-        );
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else if (editedField == "stdrmkcd") {
+      mainDataResult.data.map(async (item) => {
+        if (editIndex === item.num) {
+          const data = codeListData.find(
+            (items: any) => items.stdrmkcd == item.stdrmkcd
+          );
+  
+          if (data == undefined) {
+            const newData = mainDataResult.data.map((item: any) =>
+              item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                ? {
+                    ...item,
+                    stdrmkcd: item.stdrmkcd,
+                    stdrmknm: "",
+                    acntcd: "",
+                    acntnm: "",
+                    [EDIT_FIELD]: undefined,
+                  }
+                : {
+                    ...item,
+                    [EDIT_FIELD]: undefined,
+                  }
+            );
+            setMainDataResult((prev) => {
+              return {
+                data: newData,
+                total: prev.total,
+              };
+            });
+          } else {
+            const data2 = acntListData.find(
+              (items: any) => items.acntcd == data.acntcd
+            );
+
+            let datas: any;
+            const select = mainDataResult.data.filter(
+              (item) =>
+                item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+            )[0];
+            const parameters2: Iparameters = {
+              procedureName: "P_AC_A1000W_Q",
+              pageNumber: mainPgNum,
+              pageSize: filters.pgSize,
+              parameters: {
+                "@p_work_type": "ITEM",
+                "@p_orgdiv": filters.orgdiv,
+                "@p_actdt": convertDateToStr(filters.acntdt),
+                "@p_acseq1": 0,
+                "@p_acnum": "",
+                "@p_acseq2": 0,
+                "@p_acntcd": data2 == undefined ? "" : data2?.acntcd,
+                "@p_frdt": "",
+                "@p_todt": "",
+                "@p_location": "",
+                "@p_person": "",
+                "@p_inputpath": "",
+                "@p_custcd": "",
+                "@p_custnm": "",
+                "@p_slipdiv": "",
+                "@p_remark3": "",
+                "@p_maxacseq2": 0,
+                "@p_framt": 0,
+                "@p_toamt": 0,
+                "@p_position": "",
+                "@p_inoutdiv": "",
+                "@p_drcrdiv": select.drcrdiv,
+                "@p_actdt_s": "",
+                "@p_acseq1_s": "",
+                "@p_printcnt_s": "",
+                "@p_rowstatus_s": "",
+                "@p_chk_s": "",
+                "@p_ackey_s": "",
+                "@p_acntnm": "",
+                "@p_find_row_value": "",
+              },
+            };
+
+            try {
+              datas = await processApi<any>("procedure", parameters2);
+            } catch (error) {
+              datas = null;
+            }
+
+            const rows = datas.tables[0].Rows[0];
+            if (data != undefined && data2 != undefined) {
+              const newData = mainDataResult.data.map((item) =>
+                item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                  ? {
+                      ...item,
+                      acntcd: acntcd,
+                      acntnm: acntnm,
+                      stdrmkcd: stdrmkcd,
+                      stdrmknm: stdrmknm,
+                      mngitemnm1: data2.mngitemnm1,
+                      mngitemnm2: data2.mngitemnm2,
+                      mngitemnm3: data2.mngitemnm3,
+                      mngitemnm4: data2.mngitemnm4,
+                      mngitemnm5: data2.mngitemnm5,
+                      mngitemnm6: data2.mngitemnm6,
+                      acntbaldiv: rows.acntbaldiv,
+                      acntchr: rows.acntchr,
+                      acntdiv: rows.acntdiv,
+                      acntgrp: rows.acntgrp,
+                      budgyn: rows.budgyn,
+                      controltype1: rows.controltype1,
+                      controltype2: rows.controltype2,
+                      controltype3: rows.controltype3,
+                      controltype4: rows.controltype4,
+                      controltype5: rows.controltype5,
+                      controltype6: rows.controltype6,
+                      diststd: rows.diststd,
+                      makesha: rows.makesha,
+                      mngcramtyn: rows.mngcramtyn,
+                      mngcrcustyn: rows.mngcrcustyn,
+                      mngcrrateyn: rows.mngcrrateyn,
+                      mngdramtyn: rows.mngdramtyn,
+                      mngdrcustyn: rows.mngdrcustyn,
+                      mngdrrateyn: rows.mngdrrateyn,
+                      mngitemcd1: rows.mngitemcd1,
+                      mngitemcd2: rows.mngitemcd2,
+                      mngitemcd3: rows.mngitemcd3,
+                      mngitemcd4: rows.mngitemcd4,
+                      mngitemcd5: rows.mngitemcd5,
+                      mngitemcd6: rows.mngitemcd6,
+                      prodyn: rows.prodyn,
+                      profitchr: rows.profitchr,
+                      profitsha: rows.profitsha,
+                      relacntcd: rows.relacntcd,
+                      relacntgrp: rows.relacntgrp,
+                      show_collect_yn: rows.show_collect_yn,
+                      show_payment_yn: rows.show_payment_yn,
+                      sho_pur_sal_yn: rows.sho_pur_sal_yn,
+                      slipentyn: rows.slipentyn,
+                      soyn: rows.soyn,
+                      system_yn: rows.system_yn,
+                      useyn: rows.useyn,
+                      rowstatus: item.rowstatus === "N" ? "N" : "U",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            }
+          }
         }
-      }
-    });
-  } else {
-      mainDataResult.data.map((item) => {
+      });
+    } else {
+      mainDataResult.data.map(async (item) => {
         if (editIndex === item.num) {
           const data = acntListData.find(
-            (items :any) => items.acntcd == item.acntcd
+            (items: any) => items.acntcd == item.acntcd
           );
-          if(data == undefined) {
+          if (data == undefined) {
             const newData = mainDataResult.data.map((item: any) =>
-            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-              ? {
-                  ...item,
-                  acntcd: item.acntcd,
-                  acntnm: "",
-                  mngitemnm1: "",
-                  mngitemnm2: "",
-                  mngitemnm3: "",
-                  mngitemnm4: "",
-                  mngitemnm5: "",
-                  mngitemnm6: "",
-                  [EDIT_FIELD]: undefined,
-                }
-              : {
-                  ...item,
-                  [EDIT_FIELD]: undefined,
-                }
-          );
-          setMainDataResult((prev) => {
-            return {
-              data: newData,
-              total: prev.total,
-            };
-          });
+              item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                ? {
+                    ...item,
+                    acntcd: item.acntcd,
+                    acntnm: "",
+                    mngitemnm1: "",
+                    mngitemnm2: "",
+                    mngitemnm3: "",
+                    mngitemnm4: "",
+                    mngitemnm5: "",
+                    mngitemnm6: "",
+                    [EDIT_FIELD]: undefined,
+                  }
+                : {
+                    ...item,
+                    [EDIT_FIELD]: undefined,
+                  }
+            );
+            setMainDataResult((prev) => {
+              return {
+                data: newData,
+                total: prev.total,
+              };
+            });
           } else {
-            const newData = mainDataResult.data.map((item: any) =>
-            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-              ? {
-                  ...item,
-                  acntcd: data.acntcd,
-                  acntnm: data.acntnm,
-                  mngitemnm1: data.mngitemnm1,
-                  mngitemnm2: data.mngitemnm2,
-                  mngitemnm3: data.mngitemnm3,
-                  mngitemnm4: data.mngitemnm4,
-                  mngitemnm5: data.mngitemnm5,
-                  mngitemnm6: data.mngitemnm6,
-                  [EDIT_FIELD]: undefined,
-                }
-              : {
-                  ...item,
-                  [EDIT_FIELD]: undefined,
-                }
-          );
-          setMainDataResult((prev) => {
-            return {
-              data: newData,
-              total: prev.total,
+            let datas: any;
+            const select = mainDataResult.data.filter(
+              (item) =>
+                item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+            )[0];
+            const parameters2: Iparameters = {
+              procedureName: "P_AC_A1000W_Q",
+              pageNumber: mainPgNum,
+              pageSize: filters.pgSize,
+              parameters: {
+                "@p_work_type": "ITEM",
+                "@p_orgdiv": filters.orgdiv,
+                "@p_actdt": convertDateToStr(filters.acntdt),
+                "@p_acseq1": 0,
+                "@p_acnum": "",
+                "@p_acseq2": 0,
+                "@p_acntcd": data.acntcd,
+                "@p_frdt": "",
+                "@p_todt": "",
+                "@p_location": "",
+                "@p_person": "",
+                "@p_inputpath": "",
+                "@p_custcd": "",
+                "@p_custnm": "",
+                "@p_slipdiv": "",
+                "@p_remark3": "",
+                "@p_maxacseq2": 0,
+                "@p_framt": 0,
+                "@p_toamt": 0,
+                "@p_position": "",
+                "@p_inoutdiv": "",
+                "@p_drcrdiv": select.drcrdiv,
+                "@p_actdt_s": "",
+                "@p_acseq1_s": "",
+                "@p_printcnt_s": "",
+                "@p_rowstatus_s": "",
+                "@p_chk_s": "",
+                "@p_ackey_s": "",
+                "@p_acntnm": "",
+                "@p_find_row_value": "",
+              },
             };
-          });
+
+            try {
+              datas = await processApi<any>("procedure", parameters2);
+            } catch (error) {
+              datas = null;
+            }
+
+            const rows = datas.tables[0].Rows[0];
+            if (data != undefined) {
+              const newData = mainDataResult.data.map((item) =>
+                item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                  ? {
+                      ...item,
+                      acntcd: acntcd,
+                      acntnm: acntnm,
+                      mngitemnm1: data.mngitemnm1,
+                      mngitemnm2: data.mngitemnm2,
+                      mngitemnm3: data.mngitemnm3,
+                      mngitemnm4: data.mngitemnm4,
+                      mngitemnm5: data.mngitemnm5,
+                      mngitemnm6: data.mngitemnm6,
+                      acntbaldiv: rows.acntbaldiv,
+                      acntchr: rows.acntchr,
+                      acntdiv: rows.acntdiv,
+                      acntgrp: rows.acntgrp,
+                      budgyn: rows.budgyn,
+                      controltype1: rows.controltype1,
+                      controltype2: rows.controltype2,
+                      controltype3: rows.controltype3,
+                      controltype4: rows.controltype4,
+                      controltype5: rows.controltype5,
+                      controltype6: rows.controltype6,
+                      diststd: rows.diststd,
+                      makesha: rows.makesha,
+                      mngcramtyn: rows.mngcramtyn,
+                      mngcrcustyn: rows.mngcrcustyn,
+                      mngcrrateyn: rows.mngcrrateyn,
+                      mngdramtyn: rows.mngdramtyn,
+                      mngdrcustyn: rows.mngdrcustyn,
+                      mngdrrateyn: rows.mngdrrateyn,
+                      mngitemcd1: rows.mngitemcd1,
+                      mngitemcd2: rows.mngitemcd2,
+                      mngitemcd3: rows.mngitemcd3,
+                      mngitemcd4: rows.mngitemcd4,
+                      mngitemcd5: rows.mngitemcd5,
+                      mngitemcd6: rows.mngitemcd6,
+                      prodyn: rows.prodyn,
+                      profitchr: rows.profitchr,
+                      profitsha: rows.profitsha,
+                      relacntcd: rows.relacntcd,
+                      relacntgrp: rows.relacntgrp,
+                      show_collect_yn: rows.show_collect_yn,
+                      show_payment_yn: rows.show_payment_yn,
+                      sho_pur_sal_yn: rows.sho_pur_sal_yn,
+                      slipentyn: rows.slipentyn,
+                      soyn: rows.soyn,
+                      system_yn: rows.system_yn,
+                      useyn: rows.useyn,
+                      rowstatus: item.rowstatus === "N" ? "N" : "U",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            }
           }
         }
       });
@@ -1530,111 +2233,113 @@ const CopyWindow = ({
   const onAddClick = () => {
     let seq = mainDataResult.total + deletedMainRows.length + 1;
     const datas = mainDataResult.data[mainDataResult.data.length - 1];
-
-    const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
-      ackey: filters.ackey,
-      acntbaldiv: "",
-      acntcd: "",
-      acntcd2: "",
-      acntchr: "",
-      acntdt: convertDateToStr(filters.acntdt),
-      acntnm: "",
-      acntses: "",
-      acseq1: 0,
-      acseq2: mainDataResult.total + 1,
-      actdt: convertDateToStr(filters.actdt),
-      alcchr: "",
-      apperson: "",
-      approvaldt: filters.approvaldt,
-      attdatnum: "",
-      autorecnum: "",
-      bizregnum: chkyn == true ? datas.bizregnum : "",
-      budgcd: "",
-      budgyn: "N",
-      closeyn: filters.closeyn,
-      consultdt: filters.consultdt,
-      consultnum: filters.consultnum,
-      consultseq: 0,
-      controltype1: "",
-      controltype2: "",
-      controltype3: "",
-      controltype4: "",
-      controltype5: "",
-      controltype6: "",
-      creditcd: "",
-      creditnm: "",
-      creditnum: "",
-      custcd: chkyn == true ? datas.custcd : "",
-      custnm: chkyn == true ? datas.custnm : "",
-      dptcd: filters.dptcd,
-      drcrdiv: "1",
-      evidentialkind: "",
-      files: "",
-      inoutdiv: filters.inoutdiv,
-      inputpath: filters.inputpath,
-      location: filters.location,
-      mngamt: 0,
-      mngcramtyn: "",
-      mngcrctlyn1: "",
-      mngcrctlyn2: "",
-      mngcrctlyn3: "",
-      mngcrctlyn4: "",
-      mngcrctlyn5: "",
-      mngcrctlyn6: "",
-      mngcrcustyn: "",
-      mngcrrateyn: "",
-      mngdata1: "",
-      mngdata2: "",
-      mngdata3: "",
-      mngdata4: "",
-      mngdata5: "",
-      mngdata6: "",
-      mngdatanm1: "",
-      mngdatanm2: "",
-      mngdatanm3: "",
-      mngdatanm4: "",
-      mngdatanm5: "",
-      mngdatanm6: "",
-      mngdrctlyn1: "",
-      mngdrctlyn2: "",
-      mngdrctlyn3: "",
-      mngdrctlyn4: "",
-      mngdrctlyn5: "",
-      mngdrctlyn6: "",
-      mngdrrateyn: "",
-      mngitemcd1: "",
-      mngitemcd2: "",
-      mngitemcd3: "",
-      mngitemcd4: "",
-      mngitemcd5: "",
-      mngitemcd6: "",
-      mngsumcustyn: "",
-      orgdiv: "01",
-      partacnt: "",
-      position: filters.position,
-      propertykind: "",
-      rate: 0,
-      reason_intax_deduction: "",
-      remark3: chkyn == true ? datas.remark3 : "",
-      slipamt: 0,
-      slipamt_1: 0,
-      slipamt_2: 0,
-      slipdiv: filters.slipdiv,
-      stdrmkcd: "",
-      stdrmknm: "",
-      taxtype: "",
-      taxtypenm: "",
-      usedptcd: "",
-      rowstatus: "N",
-    };
-
-    setMainDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
+    for (var i = 1; i < 3; i++) {
+      const newDataItem = {
+        [DATA_ITEM_KEY]: seq,
+        ackey: filters.ackey,
+        acntbaldiv: "",
+        acntcd: "",
+        acntcd2: "",
+        acntchr: "",
+        acntdt: convertDateToStr(filters.acntdt),
+        acntnm: "",
+        acntses: "",
+        acseq1: 0,
+        acseq2: seq,
+        actdt: convertDateToStr(filters.actdt),
+        alcchr: "",
+        apperson: "",
+        approvaldt: filters.approvaldt,
+        attdatnum: "",
+        autorecnum: "",
+        bizregnum: chkyn == true ? datas.bizregnum : "",
+        budgcd: "",
+        budgyn: "N",
+        closeyn: filters.closeyn,
+        consultdt: filters.consultdt,
+        consultnum: filters.consultnum,
+        consultseq: 0,
+        controltype1: "",
+        controltype2: "",
+        controltype3: "",
+        controltype4: "",
+        controltype5: "",
+        controltype6: "",
+        creditcd: "",
+        creditnm: "",
+        creditnum: "",
+        custcd: chkyn == true ? datas.custcd : "",
+        custnm: chkyn == true ? datas.custnm : "",
+        dptcd: filters.dptcd,
+        drcrdiv: i.toString(),
+        evidentialkind: "",
+        files: "",
+        inoutdiv: filters.inoutdiv,
+        inputpath: filters.inputpath,
+        location: filters.location,
+        mngamt: 0,
+        mngcramtyn: "",
+        mngcrctlyn1: "",
+        mngcrctlyn2: "",
+        mngcrctlyn3: "",
+        mngcrctlyn4: "",
+        mngcrctlyn5: "",
+        mngcrctlyn6: "",
+        mngcrcustyn: "",
+        mngcrrateyn: "",
+        mngdata1: "",
+        mngdata2: "",
+        mngdata3: "",
+        mngdata4: "",
+        mngdata5: "",
+        mngdata6: "",
+        mngdatanm1: "",
+        mngdatanm2: "",
+        mngdatanm3: "",
+        mngdatanm4: "",
+        mngdatanm5: "",
+        mngdatanm6: "",
+        mngdrctlyn1: "",
+        mngdrctlyn2: "",
+        mngdrctlyn3: "",
+        mngdrctlyn4: "",
+        mngdrctlyn5: "",
+        mngdrctlyn6: "",
+        mngdrrateyn: "",
+        mngitemcd1: "",
+        mngitemcd2: "",
+        mngitemcd3: "",
+        mngitemcd4: "",
+        mngitemcd5: "",
+        mngitemcd6: "",
+        mngsumcustyn: "",
+        orgdiv: "01",
+        partacnt: "",
+        position: filters.position,
+        propertykind: "",
+        rate: 0,
+        reason_intax_deduction: "",
+        remark3: chkyn == true ? datas.remark3 : "",
+        slipamt: 0,
+        slipamt_1: 0,
+        slipamt_2: 0,
+        slipdiv: filters.slipdiv,
+        stdrmkcd: "",
+        stdrmknm: "",
+        taxtype: "",
+        taxtypenm: "",
+        usedptcd: "",
+        rowstatus: "N",
       };
-    });
+
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+      seq++;
+    }
   };
 
   return (
@@ -1853,13 +2558,13 @@ const CopyWindow = ({
                       headerCell={RequiredHeader}
                       width="150px"
                     />
+                    <GridColumn field="acntnm" title="계정명" width="150px" />
                     <GridColumn
                       field="stdrmkcd"
                       title="단축코드"
                       width="150px"
                       cell={ColumnCommandCell3}
                     />
-                    <GridColumn field="acntnm" title="계정명" width="150px" />
                     <GridColumn field="stdrmknm" title="단축명" width="150px" />
                     <GridColumn
                       field="slipamt_1"
@@ -1904,9 +2609,8 @@ const CopyWindow = ({
               <tr>
                 <th>관리금액</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="mngamt"
-                    type="number"
                     value={
                       mainDataResult.data.filter(
                         (item: any) =>
@@ -2181,6 +2885,7 @@ const CopyWindow = ({
                                 )[0].mngdata1
                           }
                           onChange={InputChange}
+                          className="required"
                         />
                         <ButtonInInput>
                           <Button
@@ -2210,6 +2915,7 @@ const CopyWindow = ({
                                 )[0].mngdata1
                           }
                           onChange={InputChange}
+                          className="required"
                         />
                         <ButtonInInput>
                           <Button
@@ -2248,6 +2954,7 @@ const CopyWindow = ({
                             )
                       }
                       format="yyyy-MM-dd"
+                      className="required"
                       onChange={InputChange}
                       placeholder=""
                     />
@@ -2317,6 +3024,7 @@ const CopyWindow = ({
                             )[0].mngdatanm1
                       }
                       onChange={InputChange}
+                      className="required"
                     />
                   ) : (
                     <Input
@@ -2451,6 +3159,7 @@ const CopyWindow = ({
                               )[0].mngdata2
                         }
                         onChange={InputChange}
+                        className="required"
                       />
                       <ButtonInInput>
                         <Button
@@ -2488,6 +3197,7 @@ const CopyWindow = ({
                             )
                       }
                       format="yyyy-MM-dd"
+                      className="required"
                       onChange={InputChange}
                       placeholder=""
                     />
@@ -2557,6 +3267,7 @@ const CopyWindow = ({
                             )[0].mngdatanm2
                       }
                       onChange={InputChange}
+                      className="required"
                     />
                   ) : (
                     <Input
@@ -2690,6 +3401,7 @@ const CopyWindow = ({
                                   Object.getOwnPropertyNames(selectedState)[0]
                               )[0].mngdata3
                         }
+                        className="required"
                         onChange={InputChange}
                       />
                       <ButtonInInput>
@@ -2729,6 +3441,7 @@ const CopyWindow = ({
                       }
                       format="yyyy-MM-dd"
                       onChange={InputChange}
+                      className="required"
                       placeholder=""
                     />
                   ) : (
@@ -2797,6 +3510,7 @@ const CopyWindow = ({
                             )[0].mngdatanm3
                       }
                       onChange={InputChange}
+                      className="required"
                     />
                   ) : (
                     <Input
@@ -2931,6 +3645,7 @@ const CopyWindow = ({
                               )[0].mngdata4
                         }
                         onChange={InputChange}
+                        className="required"
                       />
                       <ButtonInInput>
                         <Button
@@ -2969,6 +3684,7 @@ const CopyWindow = ({
                       }
                       format="yyyy-MM-dd"
                       onChange={InputChange}
+                      className="required"
                       placeholder=""
                     />
                   ) : (
@@ -3037,6 +3753,7 @@ const CopyWindow = ({
                             )[0].mngdatanm4
                       }
                       onChange={InputChange}
+                      className="required"
                     />
                   ) : (
                     <Input
@@ -3171,6 +3888,7 @@ const CopyWindow = ({
                               )[0].mngdata5
                         }
                         onChange={InputChange}
+                        className="required"
                       />
                       <ButtonInInput>
                         <Button
@@ -3209,6 +3927,7 @@ const CopyWindow = ({
                       }
                       format="yyyy-MM-dd"
                       onChange={InputChange}
+                      className="required"
                       placeholder=""
                     />
                   ) : (
@@ -3277,6 +3996,7 @@ const CopyWindow = ({
                             )[0].mngdatanm5
                       }
                       onChange={InputChange}
+                      className="required"
                     />
                   ) : (
                     <Input
@@ -3411,6 +4131,7 @@ const CopyWindow = ({
                               )[0].mngdata6
                         }
                         onChange={InputChange}
+                        className="required"
                       />
                       <ButtonInInput>
                         <Button
@@ -3449,6 +4170,7 @@ const CopyWindow = ({
                       }
                       format="yyyy-MM-dd"
                       onChange={InputChange}
+                      className="required"
                       placeholder=""
                     />
                   ) : (
@@ -3517,6 +4239,7 @@ const CopyWindow = ({
                             )[0].mngdatanm6
                       }
                       onChange={InputChange}
+                      className="required"
                     />
                   ) : (
                     <Input

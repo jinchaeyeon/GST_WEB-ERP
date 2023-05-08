@@ -607,7 +607,7 @@ const MA_B2700W: React.FC = () => {
                   name="custnm"
                   type="text"
                   value={filters.custnm}
-                  className="readonly"
+                  onChange={filterInputChange}
                 />
               </td>
               <th>시리얼No.</th>

@@ -22,6 +22,8 @@ import ReactToPrint from "react-to-print";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
 import { TabStripNavigation } from "@progress/kendo-react-layout";
+import { loginResultState } from "../../store/atoms";
+import { useRecoilState } from "recoil";
 
 type barcode = {
   barcode: string;
@@ -49,7 +51,8 @@ const CopyWindow = ({ setVisible, data, total }: IWindow) => {
     width: 800,
     height: 900,
   });
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -93,7 +96,7 @@ const CopyWindow = ({ setVisible, data, total }: IWindow) => {
       "@p_finyn": "",
       "@p_lotnum_s": barcodeFilters.lotnum_s,
       "@p_prntqty_s": barcodeFilters.prntqty_s,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

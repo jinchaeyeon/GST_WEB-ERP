@@ -75,6 +75,7 @@ import {
   isLoading,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
+  loginResultState,
 } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { TextArea } from "@progress/kendo-react-inputs";
@@ -125,6 +126,8 @@ const BA_A0040: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1245,7 +1248,7 @@ const BA_A0040: React.FC = () => {
       "@p_autocode": infomation.auto == null ? "N" : infomation.auto,
       "@p_person": infomation.person,
       "@p_extra_field2": infomation.extra_field2,
-      "@p_serviceid": "2207A046",
+      "@p_serviceid": companyCode,
       "@p_purleadtime": infomation.purleadtime,
       "@p_len": infomation.len,
       "@p_purqty": infomation.purqty,
@@ -1317,7 +1320,7 @@ const BA_A0040: React.FC = () => {
       "@p_autocode": infomation.auto == null ? "N" : infomation.auto,
       "@p_person": infomation.person,
       "@p_extra_field2": infomation.extra_field2,
-      "@p_serviceid": "2207A046",
+      "@p_serviceid": companyCode,
       "@p_purleadtime": infomation.purleadtime,
       "@p_len": infomation.len,
       "@p_purqty": infomation.purqty,

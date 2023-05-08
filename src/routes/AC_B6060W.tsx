@@ -221,19 +221,7 @@ const AC_B6060W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if (tabSelected == 0 && name == "frdt") {
-      var todts = new Date(
-        value.getFullYear(),
-        value.getMonth(),
-        value.getDate()
-      );
-      todts.setMonth(value.getMonth() + 3);
-      setFilters((prev) => ({
-        ...prev,
-        frdt: value,
-        todt: todts,
-      }));
-    } else if (tabSelected == 1 && name == "frdt") {
+    if (tabSelected == 1 && name == "frdt") {
       var todts = new Date(
         value.getFullYear(),
         value.getMonth(),
@@ -489,7 +477,6 @@ const AC_B6060W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        acntdt: item.acntdt == "이월" ? new Date() : item.acntdt,
       }));
 
       if (totalRowCnt > 0) {
@@ -1042,12 +1029,6 @@ const AC_B6060W: React.FC = () => {
     resetAllGrid();
 
     if (e.selected == 0) {
-      var todts = new Date(
-        filters.frdt.getFullYear(),
-        filters.frdt.getMonth(),
-        filters.frdt.getDate()
-      );
-      todts.setMonth(filters.frdt.getMonth() + 3);
       setFilters((prev: any) => ({
         ...prev,
         find_row_value: "",
@@ -1056,7 +1037,6 @@ const AC_B6060W: React.FC = () => {
         isSearch: true,
         pgGap: 0,
         tab: 0,
-        todt: todts,
       }));
     } else if (e.selected == 1) {
       var todts = new Date(
@@ -2212,7 +2192,7 @@ const AC_B6060W: React.FC = () => {
                   title="일자"
                   width="120px"
                   footerCell={mainTotalFooterCell}
-                  cell={DateCell}
+                  cell={CenterCell}
                 />
                 <GridColumn title="계획">{createColumn()}</GridColumn>
                 <GridColumn title="집행">{createColumn4()}</GridColumn>

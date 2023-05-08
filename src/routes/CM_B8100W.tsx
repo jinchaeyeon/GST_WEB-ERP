@@ -73,7 +73,11 @@ const cellWithBackGround = (props: GridCellProps) => {
   };
 
   return (
-    <td style={style}>
+    <td 
+    style={style}
+    aria-colindex={props.ariaColumnIndex}
+    data-grid-col-index={props.columnIndex}
+    >
       {props.dataItem[field]}
     </td>
   );

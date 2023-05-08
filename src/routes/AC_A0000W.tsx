@@ -828,7 +828,10 @@ const AC_A0000W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      <FormBoxWrap style={{ height: "40vh" }}>
+      <GridTitleContainer>
+            <GridTitle>세부정보</GridTitle>
+          </GridTitleContainer>
+      <FormBoxWrap border={true}>
         <FormBox>
           <tbody>
             <tr>

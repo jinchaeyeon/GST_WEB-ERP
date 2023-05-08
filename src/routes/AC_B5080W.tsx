@@ -1264,6 +1264,7 @@ const AC_B5080W: React.FC = () => {
       </td>
     );
   };
+
   //그리드 정렬 이벤트
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));

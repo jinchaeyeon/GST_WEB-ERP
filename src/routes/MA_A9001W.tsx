@@ -68,8 +68,8 @@ import {
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
@@ -123,7 +123,8 @@ const MA_A9001W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   let gridRef: any = useRef(null);
 
   //커스텀 옵션 조회
@@ -482,7 +483,7 @@ const MA_A9001W: React.FC = () => {
       "@p_paydiv": filters.paydiv,
       "@p_reqdt": convertDateToStr(filters.reqdt),
       "@p_seq": filters.seq,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": filters.find_row_value,
     },
   };
@@ -507,7 +508,7 @@ const MA_A9001W: React.FC = () => {
       "@p_paydiv": filters.paydiv,
       "@p_reqdt": convertDateToStr(subfilters.reqdt),
       "@p_seq": subfilters.seq,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": filters.find_row_value,
     },
   };
@@ -532,7 +533,7 @@ const MA_A9001W: React.FC = () => {
       "@p_paydiv": filters.paydiv,
       "@p_reqdt": convertDateToStr(subfilters.reqdt),
       "@p_seq": subfilters.seq,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": filters.find_row_value,
     },
   };
@@ -557,7 +558,7 @@ const MA_A9001W: React.FC = () => {
       "@p_paydiv": filters.paydiv,
       "@p_reqdt": convertDateToStr(subfilters.reqdt),
       "@p_seq": subfilters.seq,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
       "@p_find_row_value": filters.find_row_value,
     },
   };
@@ -1075,7 +1076,7 @@ const MA_A9001W: React.FC = () => {
           ? toDate(selectedRowData.reqdt)
           : new Date(),
     }));
-    console.log(selectedRowData)
+
     setInfomation((prev) => ({
       ...prev,
       acntdiv: selectedRowData.acntdiv,
@@ -1652,7 +1653,7 @@ const MA_A9001W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "MA_A9001W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1696,7 +1697,7 @@ const MA_A9001W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "MA_A9001W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1735,7 +1736,7 @@ const MA_A9001W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "MA_A9001W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

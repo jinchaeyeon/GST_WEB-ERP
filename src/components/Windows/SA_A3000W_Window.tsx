@@ -302,6 +302,7 @@ const CopyWindow = ({
   });
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -602,7 +603,7 @@ const CopyWindow = ({
     userid: userId,
     pc: pc,
     form_id: "SA_A2300W",
-    serviceid: "2207A046",
+    serviceid: companyCode,
     files: "",
     frdt: new Date(),
     todt: new Date(),
@@ -630,7 +631,7 @@ const CopyWindow = ({
       "@p_itemno": "",
       "@p_reqnum_s": "",
       "@p_reqseq_s": "",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode
     },
   };
 

@@ -66,6 +66,7 @@ import {
   isLoading,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
+  loginResultState,
 } from "../store/atoms";
 const DateField = ["recdt", "enddt"];
 
@@ -147,7 +148,8 @@ const MA_A2700W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -587,7 +589,7 @@ const MA_A2700W: React.FC = () => {
     enddt_s: "",
     extra_field1_s: "",
     form_id: "MA_A2700W",
-    serviceid: "2207A046",
+    serviceid: companyCode,
     reckey: "",
   });
 
@@ -673,7 +675,7 @@ const MA_A2700W: React.FC = () => {
       "@p_enddt_s": ParaData.enddt_s,
       "@p_extra_field1_s": ParaData.extra_field1_s,
       "@p_form_id": "MA_A2700W",
-      "@p_service_id": "2207A046",
+      "@p_service_id": companyCode,
       "@p_wonchgrat": "0",
       "@p_indt_s": "",
       "@p_person_s": "",
@@ -797,7 +799,7 @@ const MA_A2700W: React.FC = () => {
       "@p_enddt_s": ParaData.enddt_s,
       "@p_extra_field1_s": ParaData.extra_field1_s,
       "@p_form_id": "MA_A2700W",
-      "@p_service_id": "2207A046",
+      "@p_service_id": companyCode,
       "@p_wonchgrat": "0",
       "@p_indt_s": "",
       "@p_person_s": "",
@@ -1716,7 +1718,6 @@ const MA_A2700W: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
-    console.log(jsonArr);
 
     // let dataArr: TdataArr = {
     //   unpitem: [],

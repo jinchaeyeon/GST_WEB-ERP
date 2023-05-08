@@ -74,6 +74,7 @@ import {
   isLoading,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
+  loginResultState,
 } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
@@ -122,7 +123,8 @@ const QC_A3000: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -529,7 +531,7 @@ const QC_A3000: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_QC_A3000W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1221,7 +1223,7 @@ const QC_A3000: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "P_QC_A3000W",
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 

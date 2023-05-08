@@ -53,8 +53,8 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { gridList } from "../store/columns/MA_B7000W_C";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { isLoading } from "../store/atoms";
-import { useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import FilterContainer from "../components/Containers/FilterContainer";
 
 const numberField = [
@@ -86,7 +86,8 @@ const MA_B7000: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   // 권한
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -318,7 +319,7 @@ const MA_B7000: React.FC = () => {
       "@p_itemlvl3": filters.cboItemlvl3,
       "@p_useyn": filters.radUseyn,
       "@p_itemgrade": filters.itemgrade,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -344,7 +345,7 @@ const MA_B7000: React.FC = () => {
       "@p_itemlvl3": "",
       "@p_useyn": detailFilters1.useyn,
       "@p_itemgrade": filters.itemgrade,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
@@ -370,7 +371,7 @@ const MA_B7000: React.FC = () => {
       "@p_itemlvl3": "",
       "@p_useyn": "",
       "@p_itemgrade": detailFilters1.itemgrade,
-      "@p_company_code": "2207A046",
+      "@p_company_code": companyCode,
     },
   };
 
