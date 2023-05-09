@@ -1402,6 +1402,7 @@ const MA_A2000W: React.FC = () => {
                     value={filters.doexdiv}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    className="required"
                   />
                 )}
               </td>

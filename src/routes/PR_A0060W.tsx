@@ -601,7 +601,7 @@ const PR_A0060: React.FC = () => {
           fxcode: firstRowData.fxcode,
         }));
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow(false);
       }
     }
   }, [mainDataResult]);

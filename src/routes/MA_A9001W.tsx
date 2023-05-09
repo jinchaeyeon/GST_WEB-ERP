@@ -19,6 +19,7 @@ import { getter } from "@progress/kendo-react-common";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/MA_A9001W_C";
+import MA_A9001W_Window from "../components/Windows/MA_A9001W_Window";
 import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
@@ -109,6 +110,26 @@ type TdataArr = {
   reqdt_s: string[];
   seq_s: string[];
 };
+
+type TdataArr2 = {
+  rowstatus_s: string[];
+  paymentnum_s: string[];
+  paymentseq_s: string[];
+  drcrdiv_s: string[];
+  acntcd_s: string[];
+  amt1_s: string[];
+  amt2_s: string[];
+  remark_s: string[];
+  taxnum_s: string[];
+  acntnum_s: string[];
+  notenum_s: string[];
+  enddt_s: string[];
+  pubbank_s: string[];
+  pubdt_s: string[];
+  pubperson_s: string[];
+  advanceinfo_s: string[];
+};
+
 const MA_A9001W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -126,7 +147,7 @@ const MA_A9001W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   let gridRef: any = useRef(null);
-
+  const [reload, setreload] = useState<boolean>(false);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -290,7 +311,7 @@ const MA_A9001W: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
+  const [MA_A9001WVisible, setMA_A9001WVisible] = useState<boolean>(false);
   const [workType, setWorkType] = useState<"N" | "U">("U");
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -448,7 +469,36 @@ const MA_A9001W: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "",
     seq_s: "",
-    reqdt_s: ""
+    reqdt_s: "",
+  });
+
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "",
+    location: "",
+    position: "",
+    custcd: "",
+    custnm: "",
+    indt: "",
+    doexdiv: "",
+    amtunit: "",
+    wonchgrat: 0,
+    rowstatus_s: "",
+    paymentnum_s: "",
+    paymentseq_s: "",
+    drcrdiv_s: "",
+    acntcd_s: "",
+    amt1_s: "",
+    amt2_s: "",
+    remark_s: "",
+    taxnum_s: "",
+    acntnum_s: "",
+    notenum_s: "",
+    enddt_s: "",
+    pubbank_s: "",
+    pubdt_s: "",
+    pubperson_s: "",
+    advanceinfo_s: "",
   });
 
   //조회조건 초기값
@@ -980,6 +1030,12 @@ const MA_A9001W: React.FC = () => {
       alert("데이터가 없습니다");
     } else {
       selectRows.map((item: any) => {
+        if (item.exceptyn == "Y") {
+          alert("직접 입력인 경우 매입 전표 해제가 불가능합니다.");
+          return false;
+        }
+      });
+      selectRows.map((item: any) => {
         dataArr.reqdt_s.push(item.reqdt);
         dataArr.seq_s.push(item.seq);
       });
@@ -1008,6 +1064,12 @@ const MA_A9001W: React.FC = () => {
       alert("데이터가 없습니다");
     } else {
       selectRows.map((item: any) => {
+        if (item.exceptyn == "Y") {
+          alert("직접 입력인 경우 지급 전표 해제가 불가능합니다.");
+          return false;
+        }
+      });
+      selectRows.map((item: any) => {
         dataArr.reqdt_s.push(item.reqdt);
         dataArr.seq_s.push(item.seq);
       });
@@ -1017,6 +1079,40 @@ const MA_A9001W: React.FC = () => {
         seq_s: dataArr.seq_s.join("|"),
         reqdt_s: dataArr.reqdt_s.join("|"),
       }));
+    }
+  };
+
+  const onPurCreateClick = (e: any) => {
+    let valid = true;
+    const selectRows = mainDataResult.data.filter(
+      (item: any) => item.chk == true
+    );
+    let dataArr: TdataArr = {
+      reqdt_s: [],
+      seq_s: [],
+    };
+    if (selectRows.length == 0) {
+      alert("데이터가 없습니다");
+    } else {
+      selectRows.map((item: any) => {
+        if (item.exceptyn == "Y") {
+          alert("직접 입력인 경우 매입 전표 해제가 불가능합니다.");
+          valid = false;
+          return false;
+        }
+      });
+      if (valid == true) {
+        selectRows.map((item: any) => {
+          dataArr.reqdt_s.push(item.reqdt);
+          dataArr.seq_s.push(item.seq);
+        });
+        setParaMaker((prev) => ({
+          ...prev,
+          workType: "PURCREATE",
+          seq_s: dataArr.seq_s.join("|"),
+          reqdt_s: dataArr.reqdt_s.join("|"),
+        }));
+      }
     }
   };
 
@@ -1492,9 +1588,31 @@ const MA_A9001W: React.FC = () => {
   const onCustWndClick2 = () => {
     setCustWindowVisible2(true);
   };
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
+  const onPayCreateClick = () => {
+    let valid = true;
+    const selectRows = mainDataResult.data.filter(
+      (item: any) => item.chk == true
+    );
+    let dataArr: TdataArr = {
+      reqdt_s: [],
+      seq_s: [],
+    };
+    if (selectRows.length == 0) {
+      alert("데이터가 없습니다");
+    } else {
+      selectRows.map((item: any) => {
+        if (item.exceptyn == "Y") {
+          alert("직접 입력인 경우 매입 전표 해제가 불가능합니다.");
+          valid = false;
+          return false;
+        }
+      });
+      if (valid == true) {
+        setMA_A9001WVisible(true);
+      }
+    }
   };
+
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   interface ICustData {
@@ -1708,7 +1826,7 @@ const MA_A9001W: React.FC = () => {
     parameters: {
       "@p_work_type": ParaMaker.workType,
       "@p_orgdiv": "01",
-      "@p_location": "",
+      "@p_location": infomation.location,
       "@p_position": "",
       "@p_reqdt": "",
       "@p_seq": 0,
@@ -1736,6 +1854,44 @@ const MA_A9001W: React.FC = () => {
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "MA_A9001W",
+      "@p_company_code": companyCode,
+    },
+  };
+
+  const paraDatas: Iparameters = {
+    procedureName: "P_MA_A9001W_Sub2_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_location": ParaData.location,
+      "@p_position": ParaData.position,
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_indt": ParaData.indt,
+      "@p_doexdiv": ParaData.doexdiv == undefined ? "" : ParaData.doexdiv,
+      "@p_amtunit": ParaData.amtunit == undefined ? "" : ParaData.doexdiv,
+      "@p_wonchgrat": ParaData.wonchgrat,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_paymentnum_s": ParaData.paymentnum_s,
+      "@p_paymentseq_s": ParaData.paymentseq_s,
+      "@p_drcrdiv_s": ParaData.drcrdiv_s,
+      "@p_acntcd_s": ParaData.acntcd_s,
+      "@p_amt1_s": ParaData.amt1_s,
+      "@p_amt2_s": ParaData.amt2_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_taxnum_s": ParaData.taxnum_s,
+      "@p_acntnum_s": ParaData.acntnum_s,
+      "@p_notenum_s": ParaData.notenum_s,
+      "@p_enddt_s":ParaData.enddt_s,
+      "@p_pubbank_s":ParaData.pubbank_s,
+      "@p_pubdt_s":ParaData.pubdt_s,
+      "@p_pubperson_s":ParaData.pubperson_s,
+      "@p_advanceinfo_s":ParaData.advanceinfo_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "MA_A9001W_Sub2",
       "@p_company_code": companyCode,
     },
   };
@@ -1774,19 +1930,20 @@ const MA_A9001W: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       setParaMaker({
         pgSize: PAGE_SIZE,
         workType: "",
         seq_s: "",
-        reqdt_s: ""
+        reqdt_s: "",
       });
       resetAllGrid();
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -1856,6 +2013,160 @@ const MA_A9001W: React.FC = () => {
     });
   };
 
+  const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
+    let valid = true;
+
+    if (data.length === 0 && deletedMainRows.length == 0) return false;
+
+    let dataArr: TdataArr2 = {
+      rowstatus_s: [],
+      paymentnum_s: [],
+      paymentseq_s: [],
+      drcrdiv_s: [],
+      acntcd_s: [],
+      amt1_s: [],
+      amt2_s: [],
+      remark_s: [],
+      taxnum_s: [],
+      acntnum_s: [],
+      notenum_s: [],
+      enddt_s: [],
+      pubbank_s: [],
+      pubdt_s: [],
+      pubperson_s: [],
+      advanceinfo_s: [],
+    };
+    data.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        paymentnum = "",
+        paymentseq = "",
+        drcrdiv = "",
+        acntcd = "",
+        amt_1 = "",
+        amt_2 = "",
+        remark = "",
+        taxnum = "",
+        acntnum = "",
+        notenum = "",
+        enddt = "",
+        pubbank = "",
+        pubdt = "",
+        pubperson = "",
+        advanceinfo = "",
+      } = item;
+
+      dataArr.rowstatus_s.push("N");
+      dataArr.paymentnum_s.push(paymentnum);
+      dataArr.paymentseq_s.push(paymentseq);
+      dataArr.drcrdiv_s.push(drcrdiv);
+      dataArr.acntcd_s.push(acntcd);
+      dataArr.amt1_s.push(amt_1== "" ? 0 : amt_1);
+      dataArr.amt2_s.push(amt_2== "" ? 0 : amt_2);
+      dataArr.remark_s.push(remark);
+      dataArr.taxnum_s.push(taxnum);
+      dataArr.acntnum_s.push(acntnum);
+      dataArr.notenum_s.push(notenum);
+      dataArr.enddt_s.push(enddt);
+      dataArr.pubbank_s.push(pubbank);
+      dataArr.pubdt_s.push(pubdt);
+      dataArr.pubperson_s.push(pubperson);
+      dataArr.advanceinfo_s.push(advanceinfo == "" ? 0 : advanceinfo);
+    });
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        paymentnum = "",
+        paymentseq = "",
+        drcrdiv = "",
+        acntcd = "",
+        amt_1 = "",
+        amt_2 = "",
+        remark = "",
+        taxnum = "",
+        acntnum = "",
+        notenum = "",
+        enddt = "",
+        pubbank = "",
+        pubdt = "",
+        pubperson = "",
+        advanceinfo = "",
+      } = item;
+
+      dataArr.rowstatus_s.push("N");
+      dataArr.paymentnum_s.push(paymentnum);
+      dataArr.paymentseq_s.push(paymentseq);
+      dataArr.drcrdiv_s.push(drcrdiv);
+      dataArr.acntcd_s.push(acntcd);
+      dataArr.amt1_s.push(amt_1== "" ? 0 : amt_1);
+      dataArr.amt2_s.push(amt_2== "" ? 0 : amt_2);
+      dataArr.remark_s.push(remark);
+      dataArr.taxnum_s.push(taxnum);
+      dataArr.acntnum_s.push(acntnum);
+      dataArr.notenum_s.push(notenum);
+      dataArr.enddt_s.push(enddt);
+      dataArr.pubbank_s.push(pubbank);
+      dataArr.pubdt_s.push(pubdt);
+      dataArr.pubperson_s.push(pubperson);
+      dataArr.advanceinfo_s.push(advanceinfo == "" ? 0 : advanceinfo);
+    });
+    const select = mainDataResult.data.filter((item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0])[0];
+    setParaData((prev) => ({
+      ...prev,
+      workType: "N",
+      location: filter.location,
+      position: filter.position,
+      custcd: select.custcd,
+      custnm: select.custnm,
+      indt: convertDateToStr(filter.frdt),
+      doexdiv: select.doexdiv,
+      amtunit: select.amtunit,
+      wonchgrat: 0,
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      paymentnum_s: dataArr.paymentnum_s.join("|"),
+      paymentseq_s: dataArr.paymentseq_s.join("|"),
+      drcrdiv_s: dataArr.drcrdiv_s.join("|"),
+      acntcd_s: dataArr.acntcd_s.join("|"),
+      amt1_s: dataArr.amt1_s.join("|"),
+      amt2_s: dataArr.amt2_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      taxnum_s: dataArr.taxnum_s.join("|"),
+      acntnum_s: dataArr.acntnum_s.join("|"),
+      notenum_s: dataArr.notenum_s.join("|"),
+      enddt_s: dataArr.enddt_s.join("|"),
+      pubbank_s: dataArr.pubbank_s.join("|"),
+      pubdt_s: dataArr.pubdt_s.join("|"),
+      pubperson_s: dataArr.pubperson_s.join("|"),
+      advanceinfo_s: dataArr.advanceinfo_s.join("|"),
+    }));
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved2();
+    }
+  }, [ParaData]);
+
+
+  const fetchTodoGridSaved2 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", paraDatas);
+    } catch (error) {
+      data = null;
+    }
+    console.log(paraDatas);
+    console.log(data)
+    if (data.isSuccess === true) {
+      resetAllGrid();
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
   return (
     <>
       <TitleContainer>
@@ -2005,7 +2316,7 @@ const MA_A9001W: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
             <ButtonContainer>
               <Button
-                // onClick={onPayDropClick}
+                onClick={onPurCreateClick}
                 themeColor={"primary"}
                 icon="plus-outline"
               >
@@ -2020,7 +2331,7 @@ const MA_A9001W: React.FC = () => {
                 매입 전표 해제
               </Button>
               <Button
-                // onClick={onPayDropClick}
+                onClick={onPayCreateClick}
                 themeColor={"primary"}
                 icon="plus-outline"
               >
@@ -2620,6 +2931,20 @@ const MA_A9001W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+        />
+      )}
+      {MA_A9001WVisible && (
+        <MA_A9001W_Window
+          setVisible={setMA_A9001WVisible}
+          workType={workType} //신규 : N, 수정 : U
+          data={
+            mainDataResult.data.filter((item: any) => item.chk == true) ==
+            undefined
+              ? []
+              : mainDataResult.data.filter((item: any) => item.chk == true)
+          }
+          setData={setCopyData}
+          reload={reload}
         />
       )}
       {gridList.map((grid: any) =>

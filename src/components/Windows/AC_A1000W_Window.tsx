@@ -20,7 +20,6 @@ import {
 } from "@progress/kendo-react-grid";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import {
-  TextArea,
   InputChangeEvent,
   NumericTextBox,
 } from "@progress/kendo-react-inputs";
@@ -59,12 +58,11 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import {
   loginResultState,
-  deletedAttadatnumsState,
   unsavedAttadatnumsState,
 } from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
+import { EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -1935,9 +1933,9 @@ const CopyWindow = ({
                 ? {
                     ...item,
                     stdrmkcd: item.stdrmkcd,
-                    stdrmknm: "",
-                    acntcd: "",
-                    acntnm: "",
+                    stdrmknm: item.stdrmknm,
+                    acntcd: item.acntcd,
+                    acntnm: item.acntnm,
                     [EDIT_FIELD]: undefined,
                   }
                 : {
@@ -2011,10 +2009,10 @@ const CopyWindow = ({
                 item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
                   ? {
                       ...item,
-                      acntcd: acntcd,
-                      acntnm: acntnm,
-                      stdrmkcd: stdrmkcd,
-                      stdrmknm: stdrmknm,
+                      acntcd: data.acntcd,
+                      acntnm: data.acntnm,
+                      stdrmkcd: data.stdrmkcd,
+                      stdrmknm: data.stdrmknm1,
                       mngitemnm1: data2.mngitemnm1,
                       mngitemnm2: data2.mngitemnm2,
                       mngitemnm3: data2.mngitemnm3,
@@ -2079,22 +2077,24 @@ const CopyWindow = ({
     } else {
       mainDataResult.data.map(async (item) => {
         if (editIndex === item.num) {
+          let acntcds = item.acntcds;
           const data = acntListData.find(
             (items: any) => items.acntcd == item.acntcd
           );
+
           if (data == undefined) {
             const newData = mainDataResult.data.map((item: any) =>
               item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
                 ? {
                     ...item,
-                    acntcd: item.acntcd,
-                    acntnm: "",
-                    mngitemnm1: "",
-                    mngitemnm2: "",
-                    mngitemnm3: "",
-                    mngitemnm4: "",
-                    mngitemnm5: "",
-                    mngitemnm6: "",
+                    acntcd: acntcds,
+                    acntnm: item.acntnm,
+                    mngitemnm1:  item.mngitemnm1,
+                    mngitemnm2:  item.mngitemnm2,
+                    mngitemnm3:  item.mngitemnm3,
+                    mngitemnm4:  item.mngitemnm4,
+                    mngitemnm5:  item.mngitemnm5,
+                    mngitemnm6: item.mngitemnm6,
                     [EDIT_FIELD]: undefined,
                   }
                 : {
@@ -2164,8 +2164,8 @@ const CopyWindow = ({
                 item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
                   ? {
                       ...item,
-                      acntcd: acntcd,
-                      acntnm: acntnm,
+                      acntcd: data.acntcd,
+                      acntnm: data.acntnm,
                       mngitemnm1: data.mngitemnm1,
                       mngitemnm2: data.mngitemnm2,
                       mngitemnm3: data.mngitemnm3,

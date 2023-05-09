@@ -35,6 +35,7 @@ import {
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
+  UseMessages,
   UsePermissions,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -50,43 +51,49 @@ import {
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
-import { gridList } from "../store/columns/MA_B2700W_C";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CenterCell from "../components/Cells/CenterCell";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 
-const dateField = ["strdt", "enddt", "outdt"];
-const centerField = ["finyn"];
+let list: any[] = [];
+let list2: any[] = [];
 const DATA_ITEM_KEY = "num";
-const MA_B2700W: React.FC = () => {
+
+const BA_B0080W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+          .valueCode,
+        amtunit: defaultOption.find((item: any) => item.id === "amtunit")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA171,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
-    //대분류, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
+    "L_BA171,L_BA004,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173",
+    //대분류, 출고유형, 품목계정, 수량단위, 내수구분, 중분류, 소분류
     setBizComponentData
   );
 
@@ -95,6 +102,9 @@ const MA_B2700W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl1ListData, setItemlvl1ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [outkindListData, setOutkindstData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [doexdivListData, setDoexdivListData] = React.useState([
@@ -109,23 +119,14 @@ const MA_B2700W: React.FC = () => {
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [inkindListData, setInkindListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [usersListData, setUsersListData] = useState([
-    { user_id: "", user_name: "" },
-  ]);
-  const [amtunitListData, setAmtunitListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [PacListData, setPacListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+      );
+      const outkindQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA004")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
@@ -142,30 +143,14 @@ const MA_B2700W: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
-      const inkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA003")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
-      );
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
-      );
-      const pacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
-      );
+
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
+      fetchQuery(outkindQueryStr, setOutkindstData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
-      fetchQuery(inkindQueryStr, setInkindListData);
-      fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
-      fetchQuery(pacQueryStr, setPacListData);
     }
   }, [bizComponentData]);
 
@@ -199,12 +184,19 @@ const MA_B2700W: React.FC = () => {
     process([], mainDataState)
   );
 
+  const [listDataState, setListDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [listDataResult, setListDataResult] = useState<DataResult>(
+    process([], listDataState)
+  );
+
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
   const [workType, setWorkType] = useState<"N" | "U">("N");
@@ -212,16 +204,6 @@ const MA_B2700W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -241,20 +223,13 @@ const MA_B2700W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: PAGE_SIZE,
+    pgSize: PAGE_SIZE * 4,
     orgdiv: "01",
-    frdt: new Date(),
-    todt: new Date(),
-    custcd: "",
-    custnm: "",
     itemcd: "",
     itemnm: "",
-    fxmngnum: "",
-    outcustcd: "",
-    outcustnm: "",
-    serialno: "",
+    itemacnt: "",
     insiz: "",
-    finyn: "",
+    amtunit: "",
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
@@ -264,24 +239,18 @@ const MA_B2700W: React.FC = () => {
 
   //조회조건 파라미터
   const parameters: Iparameters = {
-    procedureName: "P_MA_B2700W_Q",
+    procedureName: "P_BA_B0080W_Q",
     pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "LIST",
+      "@p_work_type": "Q",
       "@p_orgdiv": filters.orgdiv,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
-      "@p_serialno": filters.serialno,
-      "@p_fxmngnum": filters.fxmngnum,
-      "@p_outcustcd": filters.outcustcd,
-      "@p_outcustnm": filters.outcustnm,
+      "@p_itemacnt": filters.itemacnt,
       "@p_insiz": filters.insiz,
-      "@p_finyn": filters.finyn,
+      "@p_amtunit": filters.amtunit,
+      "@p_serviceID": companyCode,
     },
   };
 
@@ -295,15 +264,109 @@ const MA_B2700W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+ 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0) {
+        const listname = rows.filter((item: { unpitem: any }, i: any) => {
+          return (
+            rows.findIndex((item2: { unpitem: any }, j: any) => {
+              return item.unpitem === item2.unpitem;
+            }) === i
+          );
+        });
+        const result = rows.filter(
+          (v: { 품목코드: any }, i: any) =>
+            rows.findIndex(
+              (x: { 품목코드: any }) => x.품목코드 === v.품목코드
+            ) === i
+        );
+        rows.map((item: any) => {
+          var unps = item.unp;
+          rows.map((item2: any) => {
+            if (
+              item.품목코드 == item2.품목코드 &&
+              item.unpitem == item2.unpitem &&
+              item.num != item2.num
+            ) {
+              unps = unps + item2.unp;
+            }
+          });
+          let object = {
+            품목코드: item.품목코드,
+            unpitem: item.unpitem,
+            unp: unps,
+          };
+          list.push(object);
+        });
+        const arrUnique = list.filter((character, idx, arr) => {
+          return (
+            arr.findIndex(
+              (item) =>
+                item.품목코드 === character.품목코드 &&
+                item.unpitem === character.unpitem
+            ) === idx
+          );
+        });
+
+        const arr = 
+          result.map((item:any) => {
+            let Object :any = {};
+            Object.amtunit = item.amtunit;
+            Object.invunit = item.invunit;
+            Object.num = item.num;
+            Object.orgdiv = item.orgdiv;
+            Object.remark = item.remark;
+            Object.규격 = item.규격;
+            Object.대분류 = item.대분류;
+            Object.소분류 = item.소분류;
+            Object.중분류 = item.중분류;
+            Object.품목계정 = item.품목계정;
+            Object.품목명 = item.품목명;
+            Object.품목코드 = item.품목코드;
+            Object.품번 = item.품번;
+            var arrs: string[] = [];
+            arrUnique.map((item2: any) => {
+              listname.map((item3: any) => {
+                if(item2.품목코드 == item3.품목코드 && item.품목코드 == item3.품목코드){
+                  if(item2.unpitem == item3.unpitem) {
+                    Object[`${item3.unpitem}_unp`] = item2.unp;
+                    Object[`${item3.unpitem}_unpitem`] = item3.unpitem;
+                    arrs.push(`${item3.unpitem}_unpitem`);
+                  } else if(!arrs.includes(`${item3.unpitem}_unpitem`)) {
+                    Object[`${item3.unpitem}_unp`] = "";
+                    Object[`${item3.unpitem}_unpitem`] = item3.unpitem;
+                    arrs.push(`${item3.unpitem}_unpitem`);
+                  }
+                }
+              })
+            }); 
+            return Object;
+          })
+ 
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: arr,
+            total: totalRowCnt,
+          };
+        });
+        let listnames = listname.sort(function (a: { unpitem: string; },b: { unpitem: string; }) {
+          let x = a.unpitem.toLowerCase();
+          let y = b.unpitem.toLowerCase();
+
+          if(x <y) {
+            return -1;
+          }
+          if(x>y) {
+            return 1;
+          }
+          return 0;
+        })
+        setListDataResult((prev) => {
+          return {
+            data: listnames,
             total: totalRowCnt,
           };
         });
@@ -319,6 +382,26 @@ const MA_B2700W: React.FC = () => {
       isSearch: false,
     }));
     setLoading(false);
+  };
+
+  const createColumn = () => {
+    const array: JSX.Element[] = [];
+
+    if (listDataResult.data.length > 0) {
+      listDataResult.data.map((item: any) => {
+        if(item.unpitem == "") {
+          array.push(
+            <GridColumn field={""} title={`${item.unpitem}`} width="120px" />
+          );
+        } else {
+          array.push(
+            <GridColumn field={`${item.unpitem}_unp`} title={`${item.unpitem}`} width="120px" />
+          );
+        }
+
+      });
+    }
+    return array;
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -413,36 +496,6 @@ const MA_B2700W: React.FC = () => {
     setMainDataState(event.dataState);
   };
 
-  //그리드 푸터
-  const mainTotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
-      </td>
-    );
-  };
-
-  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
-    mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-    );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
-
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
-  };
-
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -452,12 +505,6 @@ const MA_B2700W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-  const onCustWndClick2 = () => {
-    setCustWindowVisible2(true);
-  };
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
@@ -519,13 +566,7 @@ const MA_B2700W: React.FC = () => {
       custnm: data.custnm,
     }));
   };
-  const setCustData2 = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      outcustcd: data.custcd,
-      outcustnm: data.custnm,
-    }));
-  };
+
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
@@ -546,7 +587,7 @@ const MA_B2700W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>A/S 현황조회</Title>
+        <Title>단가조회</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -561,73 +602,6 @@ const MA_B2700W: React.FC = () => {
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
-            <tr>
-              <th>A/S 일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
-              <th>구매처코드</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={filters.custcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onCustWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>구매처명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>시리얼No.</th>
-              <td>
-                <Input
-                  name="serialno"
-                  type="text"
-                  value={filters.serialno}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>규격</th>
-              <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
-                  onChange={filterInputChange}
-                />
-              </td>
-            </tr>
             <tr>
               <th>품목코드</th>
               <td>
@@ -654,49 +628,36 @@ const MA_B2700W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>출하처코드</th>
-              <td>
-                <Input
-                  name="outcustcd"
-                  type="text"
-                  value={filters.outcustcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onCustWndClick2}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>출하처명</th>
-              <td>
-                <Input
-                  name="outcustnm"
-                  type="text"
-                  value={filters.outcustnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>장비관리번호</th>
-              <td>
-                <Input
-                  name="fxmngnum"
-                  type="text"
-                  value={filters.fxmngnum}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>완료여부</th>
+              <th>품목계정</th>
               <td>
                 {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="finyn"
+                  <CustomOptionComboBox
+                    name="itemacnt"
+                    value={filters.itemacnt}
                     customOptionData={customOptionData}
-                    changeData={filterRadioChange}
+                    changeData={filterComboBoxChange}
                   />
                 )}
+              </td>
+              <th>화폐단위</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="amtunit"
+                    value={filters.amtunit}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>규격</th>
+              <td>
+                <Input
+                  name="insiz"
+                  type="text"
+                  value={filters.insiz}
+                  onChange={filterInputChange}
+                />
               </td>
             </tr>
           </tbody>
@@ -714,39 +675,30 @@ const MA_B2700W: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "76vh" }}
+            style={{ height: "78vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
-                )?.code_name,
-                itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
-                )?.code_name,
-                itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
-                )?.code_name,
-                person: usersListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
-                inkind: inkindListData.find(
-                  (item: any) => item.sub_code === row.inkind
-                )?.code_name,
-                amtunit: amtunitListData.find(
-                  (item: any) => item.sub_code === row.amtunit
-                )?.code_name,
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                outkind: outkindListData.find(
+                  (item: any) => item.sub_code === row.outkind
                 )?.code_name,
                 doexdiv: doexdivListData.find(
                   (item: any) => item.sub_code === row.doexdiv
                 )?.code_name,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                대분류: itemlvl1ListData.find(
+                  (item: any) => item.sub_code === row.대분류
                 )?.code_name,
-                pac: PacListData.find(
-                  (item: any) => item.sub_code === row.inkind
+                중분류: itemlvl2ListData.find(
+                  (item: any) => item.sub_code === row.중분류
+                )?.code_name,
+                소분류: itemlvl3ListData.find(
+                  (item: any) => item.sub_code === row.소분류
+                )?.code_name,
+                qtyunit: qtyunitListData.find(
+                  (item: any) => item.sub_code === row.qtyunit
+                )?.code_name,
+                품목계정: itemacntListData.find(
+                  (item: any) => item.sub_code === row.품목계정
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -774,30 +726,44 @@ const MA_B2700W: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          dateField.includes(item.fieldName)
-                            ? DateCell
-                            : centerField.includes(item.fieldName)
-                            ? CenterCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+            <GridColumn
+              field="품목코드"
+              title="품목코드"
+              width="120px"
+              locked={true}
+            />
+            <GridColumn
+              field="품목명"
+              title="품목명"
+              width="150px"
+              locked={true}
+            />
+            <GridColumn
+              field="품목계정"
+              title="품목계정"
+              width="120px"
+              locked={true}
+            />
+            <GridColumn field="규격" title="규격" width="140px" locked={true} />
+            <GridColumn
+              field="대분류"
+              title="대분류"
+              width="120px"
+              locked={true}
+            />
+            <GridColumn
+              field="중분류"
+              title="중분류"
+              width="120px"
+              locked={true}
+            />
+            <GridColumn
+              field="소분류"
+              title="소분류"
+              width="120px"
+              locked={true}
+            />
+            {createColumn()}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -808,13 +774,6 @@ const MA_B2700W: React.FC = () => {
           setData={setCustData}
         />
       )}
-      {custWindowVisible2 && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible2}
-          workType={workType}
-          setData={setCustData2}
-        />
-      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
@@ -822,21 +781,8 @@ const MA_B2700W: React.FC = () => {
           setData={setItemData}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
-          <div
-            key={column.id}
-            id={column.id}
-            data-grid-name={grid.gridName}
-            data-field={column.field}
-            data-caption={column.caption}
-            data-width={column.width}
-            hidden
-          />
-        ))
-      )}
     </>
   );
 };
 
-export default MA_B2700W;
+export default BA_B0080W;

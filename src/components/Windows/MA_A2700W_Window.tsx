@@ -74,6 +74,7 @@ import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import DateCell from "../Cells/DateCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -1096,7 +1097,7 @@ const CopyWindow = ({
         (item.itemcd == "" || item.itemnm == "" || item.qty == 0) &&
         valid == true
       ) {
-        alert("필수항목(품목코드, 품목명, 수량을 채워주세요.");
+        alert("필수항목(품목코드, 품목명, 수량을 채워주세요.)");
         valid = false;
         return false;
       }
@@ -1553,10 +1554,11 @@ const CopyWindow = ({
                 field="itemcd"
                 title="품목코드"
                 width="200px"
+                headerCell={RequiredHeader}
                 footerCell={mainTotalFooterCell}
                 cell={ColumnCommandCell}
               />
-              <GridColumn field="itemnm" title="품목명" width="250px" />
+              <GridColumn field="itemnm" title="품목명" headerCell={RequiredHeader} width="250px" />
               <GridColumn
                 field="itemlvl1"
                 title="대분류"
@@ -1576,6 +1578,7 @@ const CopyWindow = ({
                 field="qty"
                 title="수량"
                 width="120px"
+                headerCell={RequiredHeader}
                 cell={NumberCell}
               />
               <GridColumn

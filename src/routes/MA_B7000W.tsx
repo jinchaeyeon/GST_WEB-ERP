@@ -480,7 +480,7 @@ const MA_B7000: React.FC = () => {
       if (totalRowCnt > 0)
         setDetail1DataResult((prev) => {
           return {
-            data: rows,
+            data: [...prev.data, ...rows],
             total: totalRowCnt,
           };
         });
