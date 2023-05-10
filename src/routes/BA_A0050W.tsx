@@ -396,7 +396,8 @@ const BA_A0050: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    setSub2PgNum(1);
+    setSubData2Result(process([], subData2State));
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -404,7 +405,7 @@ const BA_A0050: React.FC = () => {
       if (totalRowCnt > 0) {
         setSubData2Result((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt,
           };
         });
@@ -425,8 +426,6 @@ const BA_A0050: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    setSubPgNum(1);
-    setSubDataResult(process([], subDataState));
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;

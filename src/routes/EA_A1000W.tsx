@@ -249,6 +249,8 @@ const EA_A1000: React.FC = () => {
   const [main3PgNum, setMain3PgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+  const [ifSelectFirstRow2, setIfSelectFirstRow2] = useState(true);
+  const [ifSelectFirstRow3, setIfSelectFirstRow3] = useState(true);
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
@@ -735,7 +737,7 @@ const EA_A1000: React.FC = () => {
         count++;
         counts++;
         setSelected3State({ [newDataItem.num]: true });
-        setIfSelectFirstRow(false);
+        setIfSelectFirstRow3(false);
         setMainData3Result((prev) => {
           return {
             data: [newDataItem, ...prev.data],
@@ -1238,72 +1240,73 @@ const EA_A1000: React.FC = () => {
       alert("작성자의 행은 이동 불가능합니다.");
       return false;
     }
+    if (!(rowIndex == 0 && direction === "UP")) {
+      const newData = dataResult.data.map((item: any) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      let replaceData = 0;
+      if (direction === "UP" && rowIndex != 0) {
+        replaceData = dataResult.data[rowIndex - 1].appseq;
+      } else {
+        replaceData = dataResult.data[rowIndex + 1].appseq;
+      }
 
-    const newData = dataResult.data.map((item: any) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-    let replaceData = 0;
-    if (direction === "UP" && rowIndex != 0) {
-      replaceData = dataResult.data[rowIndex - 1].appseq;
-    } else {
-      replaceData = dataResult.data[rowIndex + 1].appseq;
-    }
+      newData.splice(rowIndex, 1);
+      newData.splice(rowIndex + (direction === "UP" ? -1 : 1), 0, rowData);
+      if (direction === "UP" && rowIndex != 0) {
+        const newDatas = newData.map((item) =>
+          item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+            ? {
+                ...item,
+                appseq: replaceData,
+                [EDIT_FIELD]: undefined,
+              }
+            : item[DATA_ITEM_KEY] === dataResult.data[rowIndex - 1].num
+            ? {
+                ...item,
+                appseq: rowData.appseq,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
 
-    newData.splice(rowIndex, 1);
-    newData.splice(rowIndex + (direction === "UP" ? -1 : 1), 0, rowData);
-    if (direction === "UP" && rowIndex != 0) {
-      const newDatas = newData.map((item) =>
-        item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
-          ? {
-              ...item,
-              appseq: replaceData,
-              [EDIT_FIELD]: undefined,
-            }
-          : item[DATA_ITEM_KEY] === dataResult.data[rowIndex - 1].num
-          ? {
-              ...item,
-              appseq: rowData.appseq,
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+        setDataResult((prev: any) => {
+          return {
+            data: newDatas,
+            total: prev.total,
+          };
+        });
+      } else {
+        const newDatas = newData.map((item) =>
+          item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+            ? {
+                ...item,
+                appseq: replaceData,
+                [EDIT_FIELD]: undefined,
+              }
+            : item[DATA_ITEM_KEY] === dataResult.data[rowIndex + 1].num
+            ? {
+                ...item,
+                appseq: rowData.appseq,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
 
-      setDataResult((prev: any) => {
-        return {
-          data: newDatas,
-          total: prev.total,
-        };
-      });
-    } else {
-      const newDatas = newData.map((item) =>
-        item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
-          ? {
-              ...item,
-              appseq: replaceData,
-              [EDIT_FIELD]: undefined,
-            }
-          : item[DATA_ITEM_KEY] === dataResult.data[rowIndex + 1].num
-          ? {
-              ...item,
-              appseq: rowData.appseq,
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-
-      setDataResult((prev: any) => {
-        return {
-          data: newDatas,
-          total: prev.total,
-        };
-      });
+        setDataResult((prev: any) => {
+          return {
+            data: newDatas,
+            total: prev.total,
+          };
+        });
+      }
     }
   };
 
@@ -1321,29 +1324,29 @@ const EA_A1000: React.FC = () => {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow(false);
       }
     }
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (ifSelectFirstRow) {
+    if (ifSelectFirstRow2) {
       if (mainData3Result.total > 0) {
         const firstRowData = mainData3Result.data[0];
         setSelected3State({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow2(true);
       }
     }
   }, [mainData3Result]);
 
   useEffect(() => {
-    if (ifSelectFirstRow) {
+    if (ifSelectFirstRow3) {
       if (mainData2Result.total > 0) {
         const firstRowData = mainData2Result.data[0];
         setSelected2State({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow3(true);
       }
     }
   }, [mainData2Result]);
