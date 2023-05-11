@@ -83,7 +83,7 @@ const KendoWindow = ({ setVisible, setData, para = "", permission}: IKendoWindow
     } catch (error) {
       data = null;
     }
-
+   
     if (data !== null) {
       if (data.attachmentNumber !== attachmentNumber) {
         setAttachmentNumber(data.attachmentNumber);
