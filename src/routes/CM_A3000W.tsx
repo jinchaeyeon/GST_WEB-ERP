@@ -1553,8 +1553,12 @@ const CM_A3000W: React.FC = () => {
                               const file = files[i];
                               uploadFile(file);
                             }
-                            resetAllGrid();
-                            fetchMainGrid();
+                            if(infomation.workType != "N") {
+                              resetAllGrid();
+                              fetchMainGrid();
+                            } else {
+                              fetchAttdatnumGrid();
+                            }
                           }}
                         />
                       </Button>

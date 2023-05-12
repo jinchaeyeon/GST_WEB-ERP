@@ -46,10 +46,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
@@ -65,6 +62,13 @@ const DATA_ITEM_KEY = "num";
 const checkField = ["chooses", "loadok"];
 const numberField = ["readok", "commcnt"];
 
+type TdataArr = {
+  user_id_s: string[];
+  chooses_s: string[];
+  loadok_s: string[];
+  readok_s: string[];
+};
+
 const CM_A2000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -75,8 +79,8 @@ const CM_A2000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
-    // 삭제할 첨부파일 리스트를 담는 함수
-    const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -86,7 +90,7 @@ const CM_A2000W: React.FC = () => {
   UseCustomOption(pathname, setCustomOptionData);
 
   const [detailWindowVisible, setDetailWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
 
   const [reload, setreload] = useState<boolean>(false);
 
@@ -99,13 +103,12 @@ const CM_A2000W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         person: defaultOption.find((item: any) => item.id === "person")
-        .valueCode,
+          .valueCode,
         rcvperson: defaultOption.find((item: any) => item.id === "rcvperson")
-        .valueCode,
-        endyn: defaultOption.find((item: any) => item.id === "endyn")
-        .valueCode,
+          .valueCode,
+        endyn: defaultOption.find((item: any) => item.id === "endyn").valueCode,
         loadyn: defaultOption.find((item: any) => item.id === "loadyn")
-        .valueCode,
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -234,7 +237,7 @@ const CM_A2000W: React.FC = () => {
       "@p_loadyn": filters.loadyn,
       "@p_datnum": filters.datnum,
       "@p_userid": userId,
-      "@p_find_row_value": filters.find_row_value
+      "@p_find_row_value": filters.find_row_value,
     },
   };
 
@@ -248,7 +251,7 @@ const CM_A2000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-   
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -399,11 +402,10 @@ const CM_A2000W: React.FC = () => {
       setSelectedState({ [rowData.num]: true });
 
       // setWorkType("U");
-      
+
       setWorkType("U");
       setDetailWindowVisible(true);
     };
-
 
     return (
       <td className="k-command-cell">
@@ -418,7 +420,108 @@ const CM_A2000W: React.FC = () => {
     );
   };
 
-  const setCopyData = (data: any, filter: any, deletedMainRows: any) => {
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "",
+    orgdiv: "01",
+    location: "01",
+    recno: "",
+    recdt: "",
+    person: "",
+    rcvperson: "",
+    endyn: "",
+    custcd: "",
+    title: "",
+    reqctns: "",
+    attdatnum: "",
+    reqdt: "",
+    finexpdt: "",
+    findt: "",
+    person2: "",
+    chooses: "",
+    loadok: "",
+    readok: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_CM_A2000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_location": ParaData.location,
+      "@p_recno": ParaData.recno,
+      "@p_recdt": ParaData.recdt,
+      "@p_person": ParaData.workType == "N" ? userId : ParaData.person,
+      "@p_rcvperson": ParaData.rcvperson,
+      "@p_endyn": ParaData.endyn,
+      "@p_custcd": ParaData.custcd,
+      "@p_title": ParaData.title,
+      "@p_reqctns": ParaData.reqctns,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_reqdt": ParaData.reqdt,
+      "@p_finexpdt": ParaData.finexpdt,
+      "@p_findt": ParaData.findt,
+      "@p_person2": ParaData.person2,
+      "@p_chooses": ParaData.chooses,
+      "@p_loadok": ParaData.loadok,
+      "@p_readok": ParaData.readok,
+      "@p_form_id": "CM_A2000W",
+      "@p_userid": userId,
+      "@p_pc": pc,
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setreload(!reload);
+      resetAllGrid();
+
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "",
+        orgdiv: "01",
+        location: "01",
+        recno: "",
+        recdt: "",
+        person: "",
+        rcvperson: "",
+        endyn: "",
+        custcd: "",
+        title: "",
+        reqctns: "",
+        attdatnum: "",
+        reqdt: "",
+        finexpdt: "",
+        findt: "",
+        person2: "",
+        chooses: "",
+        loadok: "",
+        readok: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if ((ParaData.recno != "" && ParaData.workType == "U") || ParaData.workType == "N") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  const setCopyData = (data: any, filter: any) => {
     let valid = true;
 
     const dataItem = data.filter((item: any) => {
@@ -427,137 +530,68 @@ const CM_A2000W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-
-    // setParaData((prev) => ({
-    //   ...prev,
-    //   workType: workType,
-    //   reqnum: filter.reqnum,
-    //   reqrev: filter.reqrev,
-    //   custcd: filter.custcd,
-    //   custnm: filter.custnm,
-    //   modiv: filter.modiv == undefined ? "" : filter.modiv,
-    //   dptcd: filter.dptcd,
-    //   person: filter.person,
-    //   recdt: filter.recdt,
-    //   finaldes: filter.finaldes == undefined ? "" : filter.finaldes,
-    //   qcmeth: filter.qcmeth == undefined ? "" : filter.qcmeth,
-    //   boxmeth: filter.boxmeth == undefined ? "" : filter.boxmeth,
-    //   dlv_method:filter.dlv_method == undefined ? "" : filter.dlv_method,
-    //   reportyn: filter.reportyn == undefined ? "" : filter.reportyn,
-    //   contractyn: filter.contractyn == undefined ? "" : filter.contractyn,
-    //   attdatnum: filter.attdatnum,
-    //   remark: filter.remark,
-    //   project: filter.project,
-    //   poregnum: filter.poregnum,
-    // }));
-    // if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
-
-    // let dataArr: TdataArr = {
-    //   rowstatus_s: [],
-    //   reqseq_s: [],
-    //   inexpdt_s: [],
-    //   itemcd_s: [],
-    //   itemnm_s: [],
-    //   qty_s: [],
-    //   qtyunit_s: [],
-    //   remark_s: [],
-    //   finyn_s: [],
-    //   unp_s: [],
-    //   amt_s: [],
-    //   wonamt_s: [],
-    //   taxamt_s: [],
-    //   load_place_s: [],
-    //   unpcalmeth_s: [],
-    // };
-
-    // dataItem.forEach((item: any, idx: number) => {
-    //   const {
-    //     rowstatus = "",
-    //     reqseq= "", 
-    //     inexpdt= "", 
-    //     itemcd= "", 
-    //     itemnm= "",
-    //     qty= "",
-    //     qtyunit= "", 
-    //     remark= "",
-    //     finyn= "", 
-    //     unp= "",
-    //     amt= "",
-    //     wonamt= "",
-    //     taxamt= "",
-    //     load_place= "",
-    //     unpcalmeth= "", 
-    //   } = item;
   
-    //   dataArr.rowstatus_s.push(rowstatus);
-    //   dataArr.reqseq_s.push(reqseq == undefined || reqseq == "" ? 0 : reqseq);
-    //   dataArr.inexpdt_s.push((inexpdt == undefined || inexpdt == "") ? convertDateToStr(new Date()) : inexpdt);
-    //   dataArr.itemcd_s.push(itemcd== undefined ? "" : itemcd);
-    //   dataArr.itemnm_s.push(itemnm== undefined ? "" : itemnm);
-    //   dataArr.qty_s.push(qty == undefined ? 0 : qty);
-    //   dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-    //   dataArr.remark_s.push(remark == undefined ? "" : remark);
-    //   dataArr.finyn_s.push(finyn == undefined ? "N" : finyn);
-    //   dataArr.unp_s.push(unp == undefined ? 0 : unp);
-    //   dataArr.amt_s.push(amt == undefined ? 0 : amt);
-    //   dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-    //   dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-    //   dataArr.load_place_s.push(load_place == undefined ? "" : load_place);
-    //   dataArr.unpcalmeth_s.push(unpcalmeth == undefined ? "" : unpcalmeth);
-    // });
-    // deletedMainRows.forEach((item: any, idx: number) => {
-    //   const {
-    //     rowstatus = "",
-    //     reqseq= "",
-    //     inexpdt= "",
-    //     itemcd= "",
-    //     itemnm= "",
-    //     qty= "",
-    //     qtyunit= "",
-    //     remark= "",
-    //     finyn= "",
-    //     unp= "",
-    //     amt= "",
-    //     wonamt= "",
-    //     taxamt= "",
-    //     load_place= "",
-    //     unpcalmeth= "",
-    //   } = item;
-    //   dataArr.rowstatus_s.push(rowstatus);
-    //   dataArr.reqseq_s.push(reqseq == undefined || reqseq == "" ? 0 : reqseq);
-    //   dataArr.inexpdt_s.push(inexpdt == undefined ? "" : inexpdt);
-    //   dataArr.itemcd_s.push(itemcd== undefined ? "" : itemcd);
-    //   dataArr.itemnm_s.push(itemnm== undefined ? "" : itemnm);
-    //   dataArr.qty_s.push(qty == undefined ? 0 : qty);
-    //   dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-    //   dataArr.remark_s.push(remark == undefined ? "" : remark);
-    //   dataArr.finyn_s.push(finyn == undefined ? "N" : finyn);
-    //   dataArr.unp_s.push(unp == undefined ? 0 : unp);
-    //   dataArr.amt_s.push(amt == undefined ? 0 : amt);
-    //   dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-    //   dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-    //   dataArr.load_place_s.push(load_place == undefined ? "" : load_place);
-    //   dataArr.unpcalmeth_s.push(unpcalmeth == undefined ? "" : unpcalmeth);
-    // });
-    // setParaData((prev) => ({
-    //   ...prev,
-    //   workType: workType,
-    //   rowstatus_s: dataArr.rowstatus_s.join("|"),
-    //   reqseq_s: dataArr.reqseq_s.join("|"),
-    //   inexpdt_s: dataArr.inexpdt_s.join("|"),
-    //   itemcd_s: dataArr.itemcd_s.join("|"),
-    //   itemnm_s: dataArr.itemnm_s.join("|"),
-    //   qty_s: dataArr.qty_s.join("|"),
-    //   qtyunit_s: dataArr.qtyunit_s.join("|"),
-    //   remark_s: dataArr.remark_s.join("|"),
-    //   finyn_s: dataArr.finyn_s.join("|"),
-    //   unp_s: dataArr.unp_s.join("|"),
-    //   amt_s: dataArr.amt_s.join("|"),
-    //   wonamt_s: dataArr.wonamt_s.join("|"),
-    //   taxamt_s: dataArr.taxamt_s.join("|"),
-    //   load_place_s: dataArr.load_place_s.join("|"),
-    //   unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
-    // }));
+    if (dataItem.length === 0) {
+      setParaData((prev: any) => ({
+        ...prev,
+        workType: workType,
+        recno: filter.recno,
+        recdt: convertDateToStr(filter.recdt),
+        person: filter.person,
+        rcvperson: filter.rcvperson,
+        endyn: filter.endyn,
+        custcd: filter.custcd,
+        title: filter.title,
+        reqctns: filter.reqctns,
+        attdatnum: filter.attdatnum,
+        reqdt: convertDateToStr(filter.reqdt),
+        finexpdt:
+          filter.finexpdt,
+        findt: filter.findt,
+      }));
+    } else {
+      let dataArr: TdataArr = {
+        user_id_s: [],
+        chooses_s: [],
+        loadok_s: [],
+        readok_s: [],
+      };
+      dataItem.forEach((item: any, idx: number) => {
+        const { user_id = "", chooses = "", loadok = "", readok = "" } = item;
+
+        dataArr.user_id_s.push(user_id);
+        dataArr.chooses_s.push(
+          chooses == true ? "Y" : chooses == false ? "N" : chooses
+        );
+        dataArr.loadok_s.push(
+          loadok == true ? "Y" : loadok == false ? "N" : loadok
+        );
+        dataArr.readok_s.push(
+          readok == true ? "Y" : readok == false ? "N" : readok
+        );
+      });
+      setParaData((prev: any) => ({
+        ...prev,
+        workType: workType,
+        recno: filter.recno,
+        recdt: convertDateToStr(filter.recdt),
+        person: filter.person,
+        rcvperson: filter.rcvperson,
+        endyn: filter.endyn,
+        custcd: filter.custcd,
+        title: filter.title,
+        reqctns: filter.reqctns,
+        attdatnum: filter.attdatnum,
+        reqdt: convertDateToStr(filter.reqdt),
+        finexpdt:
+          filter.finexpdt,
+        findt: filter.findt,
+        person2: dataArr.user_id_s.join("|"),
+        chooses: dataArr.chooses_s.join("|"),
+        loadok: dataArr.loadok_s.join("|"),
+        readok: dataArr.readok_s.join("|"),
+      }));
+    }
   };
 
   const onAddClick = () => {
@@ -580,7 +614,7 @@ const CM_A2000W: React.FC = () => {
       ...prev,
       work_type: "D",
       recno: datas.recno,
-      attdatnum: datas.attdatnum
+      attdatnum: datas.attdatnum,
     }));
   };
 
@@ -590,7 +624,6 @@ const CM_A2000W: React.FC = () => {
     attdatnum: "",
   });
 
-  
   useEffect(() => {
     if (paraDataDeleted.recno != "") fetchToDelete();
   }, [paraDataDeleted]);
@@ -619,40 +652,40 @@ const CM_A2000W: React.FC = () => {
     setParaDataDeleted((prev) => ({
       work_type: "D",
       recno: "",
-      attdatnum: ""
+      attdatnum: "",
     }));
   };
 
- //삭제 프로시저 파라미터
- const paraDeleted: Iparameters = {
-  procedureName: "P_CM_A2000W_S",
-  pageNumber: 0,
-  pageSize: 0,
-  parameters: {
-    "@p_work_type": paraDataDeleted.work_type,
-    "@p_orgdiv": "01",
-    "@p_location": "",
-    "@p_recno": paraDataDeleted.recno,
-    "@p_recdt": "",
-    "@p_person": "",
-    "@p_rcvperson": "",
-    "@p_endyn": "",
-    "@p_custcd": "",
-    "@p_title": "",
-    "@p_reqctns": "",
-    "@p_attdatnum": "",
-    "@p_reqdt": "",
-    "@p_finexpdt": "",
-    "@p_findt": "",
-    "@p_person2": "",
-    "@p_chooses": "",
-    "@p_loadok": "",
-    "@p_readok": "",
-    "@p_form_id": "CM_A2000W",
-    "@p_userid": userId,
-    "@p_pc": pc,
-  },
-};
+  //삭제 프로시저 파라미터
+  const paraDeleted: Iparameters = {
+    procedureName: "P_CM_A2000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraDataDeleted.work_type,
+      "@p_orgdiv": "01",
+      "@p_location": "",
+      "@p_recno": paraDataDeleted.recno,
+      "@p_recdt": "",
+      "@p_person": "",
+      "@p_rcvperson": "",
+      "@p_endyn": "",
+      "@p_custcd": "",
+      "@p_title": "",
+      "@p_reqctns": "",
+      "@p_attdatnum": "",
+      "@p_reqdt": "",
+      "@p_finexpdt": "",
+      "@p_findt": "",
+      "@p_person2": "",
+      "@p_chooses": "",
+      "@p_loadok": "",
+      "@p_readok": "",
+      "@p_form_id": "CM_A2000W",
+      "@p_userid": userId,
+      "@p_pc": pc,
+    },
+  };
   return (
     <>
       <TitleContainer>
@@ -761,7 +794,7 @@ const CM_A2000W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
             <ButtonContainer>
-            <Button
+              <Button
                 onClick={onAddClick}
                 themeColor={"primary"}
                 icon="file-add"
@@ -836,9 +869,7 @@ const CM_A2000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell
-                            : undefined
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
                         }
                       ></GridColumn>
                     )
@@ -883,4 +914,3 @@ const CM_A2000W: React.FC = () => {
 };
 
 export default CM_A2000W;
-

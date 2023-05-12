@@ -67,7 +67,7 @@ const KendoWindow = ({ setVisible, setData, para = "", permission}: IKendoWindow
   useEffect(() => {
     fetchGrid();
   }, [attachmentNumber]);
-
+  
   const uploadFile = async (files: File) => {
     let data: any;
 

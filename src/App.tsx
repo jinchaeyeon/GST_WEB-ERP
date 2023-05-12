@@ -78,11 +78,13 @@ import CM_A1600W from "./routes/CM_A1600W";
 import CM_A1710W from "./routes/CM_A1710W";
 import CM_A2000W from "./routes/CM_A2000W";
 import CM_A3000W from "./routes/CM_A3000W";
+import CM_A8210W from "./routes/CM_A8210W";
 import CM_A8250W from "./routes/CM_A8250W";
 import CM_B8100W from "./routes/CM_B8100W";
 import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
 import PR_A0030W from "./routes/PR_A0030W";
+import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
 import PR_A1100W from "./routes/PR_A1100W";
 import PR_A5000W from "./routes/PR_A5000W";
@@ -319,7 +321,8 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
                 <AuthRoute path="/SA_B3100W" component={SA_B3100W} exact />
                 {/* 생산관리 */}
-                <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />              
+                <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />   
+                <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />   
                 <AuthRoute path="/PR_A0060W" component={PR_A0060W} exact />
                 <AuthRoute path="/PR_A5000W" component={PR_A5000W} exact />
                 <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
@@ -350,9 +353,9 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/CM_A2000W" component={CM_A2000W} exact />
                 <AuthRoute path="/CM_A3000W" component={CM_A3000W} exact />
                 <AuthRoute path="/CM_A4100W" component={CM_A4100W} exact />
+                <AuthRoute path="/CM_A8210W" component={CM_A8210W} exact />
                 <AuthRoute path="/CM_A8250W" component={CM_A8250W} exact />
                 <AuthRoute path="/CM_B1101W" component={CM_B1101W} exact />
-                
                 {/* 전자결재 */}
                 <AuthRoute path="/EA_A1000W" component={EA_A1000W} exact />
                 <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />

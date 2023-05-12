@@ -91,7 +91,7 @@ type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void;
+  setData(data: object, filter: object): void;
   reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
@@ -310,7 +310,6 @@ const CopyWindow = ({
     [id: string]: boolean | number[];
   }>({});
 
-
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [CopyWindowVisible3, setCopyWindowVisible3] = useState<boolean>(false);
@@ -324,7 +323,7 @@ const CopyWindow = ({
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if(name == "finexpdt" || name == "findt") {
+    if (name == "finexpdt" || name == "findt") {
       setFilters((prev) => ({
         ...prev,
         [name]: convertDateToStr(value),
@@ -410,7 +409,7 @@ const CopyWindow = ({
     commcnt: 0,
     custcd: "",
     custnm: "",
-    endyn: "",
+    endyn: "N",
     endyn2: "",
     files: "",
     findt: "",
@@ -467,6 +466,8 @@ const CopyWindow = ({
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
+          chooses: row.chooses == "Y" ? true : false,
+          loadok: row.loadok == "Y" ? true : false,
         };
       });
       if (totalRowCnt > 0) {
@@ -506,7 +507,7 @@ const CopyWindow = ({
         commcnt: data.commcnt,
         custcd: data.custcd,
         custnm: data.custnm,
-        endyn: data.endyn,
+        endyn: data.endyn == "" ? "N" : data.endyn,
         endyn2: data.endyn2,
         files: data.files,
         findt: data.findt,
@@ -525,7 +526,6 @@ const CopyWindow = ({
         slnctns: data.slnctns,
         title: data.title,
       }));
-      
     }
   }, []);
 
@@ -574,15 +574,15 @@ const CopyWindow = ({
     setIfSelectFirstRow(false);
   };
 
-    //메인 그리드 선택 이벤트 => 디테일 그리드 조회
-    const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
-      const newSelectedState = getSelectedState({
-        event,
-        selectedState: subselectedState,
-        dataItemKey: DATA_ITEM_KEY,
-      });
-      setSubSelectedState(newSelectedState);
-    };
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: subselectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setSubSelectedState(newSelectedState);
+  };
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
@@ -652,7 +652,7 @@ const CopyWindow = ({
     );
   };
 
-    const subTotalFooterCell = (props: GridFooterCellProps) => {
+  const subTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = subDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -668,50 +668,57 @@ const CopyWindow = ({
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-const onSubSortChange = (e: any) => {
-  setSubDataState((prev) => ({ ...prev, sort: e.sort }));
-};
+  const onSubSortChange = (e: any) => {
+    setSubDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
-    let valid = true;
-    mainDataResult.data.map((item) => {
-      if (item.qty == 0 && valid == true) {
-        alert("수량을 채워주세요.");
-        valid = false;
-        return false;
-      }
-    });
-
-    if (valid == true) {
-      try {
-        if (mainDataResult.data.length == 0) {
-          throw findMessage(messagesData, "MA_A1000W_001");
-        } else if (
-          convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
-          convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
-          convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
-          convertDateToStr(filters.recdt).substring(6, 8).length != 2
-        ) {
-          throw findMessage(messagesData, "MA_A1000W_002");
-        } else if (
-          filters.person == null ||
-          filters.person == "" ||
-          filters.person == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A1000W_003");
-        } else {
-          if (valid == true) {
-            setData(mainDataResult.data, filters, deletedMainRows);
-            deletedMainRows = [];
-            if (workType == "N") {
-              onClose();
-            }
-          }
+    try {
+      if (
+        convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.recdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_001");
+      } else if (
+        filters.rcvperson == null ||
+        filters.rcvperson == "" ||
+        filters.rcvperson == undefined
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_003");
+      } else if (
+        filters.title == null ||
+        filters.title == "" ||
+        filters.title == undefined
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_002");
+      } else if (
+        userId == filters.rcvperson &&
+        (filters.findt.substring(0, 4) < "1997" ||
+          filters.findt.substring(6, 8) > "31" ||
+          filters.findt.substring(6, 8) < "01" ||
+          filters.findt.substring(6, 8).length != 2)
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_001");
+      } else if (
+        userId == filters.rcvperson &&
+        (filters.finexpdt.substring(0, 4) < "1997" ||
+          filters.finexpdt.substring(6, 8) > "31" ||
+          filters.finexpdt.substring(6, 8) < "01" ||
+          filters.finexpdt.substring(6, 8).length != 2)
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_001");
+      } else {
+        setData(mainDataResult.data, filters);
+        deletedMainRows = [];
+        if (workType == "N") {
+          onClose();
         }
-      } catch (e) {
-        alert(e);
       }
+    } catch (e) {
+      alert(e);
     }
   };
 
@@ -845,7 +852,7 @@ const onSubSortChange = (e: any) => {
   };
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
 
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
@@ -971,6 +978,7 @@ const onSubSortChange = (e: any) => {
                           type="text"
                           value={filters.title}
                           onChange={filterInputChange}
+                          className="required"
                         />
                       </td>
                     </tr>
