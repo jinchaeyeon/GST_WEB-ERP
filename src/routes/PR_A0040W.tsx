@@ -127,9 +127,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 type TdataArr = {
   rowstatus_s: string[];
   seq_s: string[];
+  itemcd_s: string[];
   proccd_s: string[];
   procseq_s: string[];
+  remark_s: string[];
   outprocyn_s: string[];
+  stdtime_s: string[];
+  procqty_s: string[];
+  procunit_s: string[];
+  workcnt_s: string[];
 };
 
 const initialFilter: CompositeFilterDescriptor = {
@@ -535,7 +541,7 @@ const PR_A0040W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -671,6 +677,7 @@ const PR_A0040W: React.FC = () => {
     setSub2PgNum(1);
     setSubDataResult(process([], subDataState));
     setSubData2Result(process([], subData2State));
+    fetchSubGrid2();
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -711,7 +718,16 @@ const PR_A0040W: React.FC = () => {
     });
     
     setSelectedsubData2State(newSelectedState);
-    let proseq = 1;
+
+    let valid = true;
+    subDataResult.data.forEach((item) => {
+      if(Object.getOwnPropertyNames(newSelectedState)[0] == item.proccd) {
+        valid = false;
+      }
+    });
+
+    if(valid == true) {
+      let proseq = 1;
     if (subDataResult.total > 0) {
       subDataResult.data.forEach((item) => {
         if (item.procseq >= proseq) {
@@ -722,6 +738,7 @@ const PR_A0040W: React.FC = () => {
 
     let seq = subDataResult.total + deletedMainRows.length + 1;
     const datas = mainDataResult.data.filter((item) => item.num == Object.getOwnPropertyNames(selectedState)[0])[0];
+
     setIfSelectFirstRow2(false);
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: seq,
@@ -748,6 +765,7 @@ const PR_A0040W: React.FC = () => {
       remark: "",
       seq: 0,
       unitqty: 0,
+      workcnt: 0,
       rowstatus: "N",
     };
     setSelectedsubDataState({ [newDataItem.num]: true });
@@ -758,6 +776,9 @@ const PR_A0040W: React.FC = () => {
         total: prev.total + 1,
       };
     });
+    } else {
+      alert("중복된 공정이 있습니다.");
+    }
   };
 
   //엑셀 내보내기
@@ -1042,11 +1063,44 @@ const PR_A0040W: React.FC = () => {
     />
   );
 
+  const onCopyClick = (e: any) => {
+    if (!window.confirm("공정 복사 처리 하시겠습니까?\n(주의, 대상의 공정은 삭제됩니다)")) {
+      return false;
+    }
+    const datas = mainDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+    const chk_org = mainDataResult.data.filter(
+      (item) => item.chk_org == true
+    )[0];
+    const chk_tar = mainDataResult.data.filter(
+      (item) => item.chk_tar == true
+    );
+ 
+    if(chk_org != undefined && chk_tar!= undefined){
+      let chk_tar_s: any[] = [];
+      chk_tar.forEach((item: any, idx: number) => {
+        const {
+          itemcd= "",
+        } = item;
+        chk_tar_s.push(itemcd);
+      });
+      setParaData((prev) => ({
+        ...prev,
+        workType: "COPY",
+        orgdiv: "01",
+        prntitemcd: datas.itemcd,
+        chk_itemcd_org: chk_org.itemcd,
+        chk_itemcd_tar: chk_tar_s.join("|"),
+      }));
+    } else {
+      alert("선택해주세요");
+    }
+  };
+
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "D",
-    pattern_id: "",
-    pattern_name: "",
-    location: "",
+    prntitemcd: "",
   });
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -1063,37 +1117,39 @@ const PR_A0040W: React.FC = () => {
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      pattern_id: datas.pattern_id,
-      pattern_name: datas.pattern_name,
-      location: datas.location,
+      prntitemcd: datas.itemcd,
     }));
   };
 
   const paraDeleted: Iparameters = {
-    procedureName: "P_PR_A0030W_S",
+    procedureName: "P_PR_A0040W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
-      "@p_location": paraDataDeleted.location,
-      "@p_pattern_id": paraDataDeleted.pattern_id,
-      "@p_pattern_name": paraDataDeleted.pattern_name,
-      "@p_remark": "",
       "@p_rowstatus_s": "",
+      "@p_orgdiv": "01",
+      "@p_prntitemcd": paraDataDeleted.prntitemcd,
       "@p_seq_s": "",
+      "@p_itemcd_s": "",
       "@p_proccd_s": "",
       "@p_procseq_s": "",
+      "@p_remark_s": "",
       "@p_outprocyn_s": "",
+      "@p_stdtime_s": "",
+      "@p_procqty_s": "",
+      "@p_procunit_s": "",
+      "@p_workcnt_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "PR_A0030W",
-      "@p_company_code": companyCode,
+      "@p_form_id": "PR_A0040W",
+      "@p_chk_itemcd_org": "",
+      "@p_chk_itemcd_tar": "",
     },
   };
 
   useEffect(() => {
-    if (paraDataDeleted.pattern_id != "") fetchToDelete();
+    if (paraDataDeleted.prntitemcd != "") fetchToDelete();
   }, [paraDataDeleted]);
 
   const fetchToDelete = async () => {
@@ -1114,9 +1170,7 @@ const PR_A0040W: React.FC = () => {
     }
 
     paraDataDeleted.work_type = "D"; //초기화
-    paraDataDeleted.pattern_id = "";
-    paraDataDeleted.pattern_name = "";
-    paraDataDeleted.location = "";
+    paraDataDeleted.prntitemcd = "";
   };
 
   const onDeleteClick2 = (e: any) => {
@@ -1145,138 +1199,158 @@ const PR_A0040W: React.FC = () => {
   const [paraData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
-    location: "",
-    pattern_id: "",
-    pattern_name: "",
-    remark: "",
     rowstatus_s: "",
+    orgdiv: "01",
+    prntitemcd: "",
     seq_s: "",
+    itemcd_s: "",
     proccd_s: "",
     procseq_s: "",
+    remark_s: "",
     outprocyn_s: "",
+    stdtime_s: "",
+    procqty_s: "",
+    procunit_s: "",
+    workcnt_s: "",
     userid: userId,
     pc: pc,
-    form_id: "PR_A0030W",
-    company_code: companyCode,
+    form_id: "PR_A0040W",
+    chk_itemcd_org: "",
+    chk_itemcd_tar: "",
   });
 
   const para: Iparameters = {
-    procedureName: "P_PR_A0030W_S",
+    procedureName: "P_PR_A0040W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
-      "@p_work_type": workType,
-      "@p_orgdiv": "01",
-      "@p_location": paraData.location,
-      "@p_pattern_id": paraData.pattern_id,
-      "@p_pattern_name": paraData.pattern_name,
-      "@p_remark": paraData.remark,
+      "@p_work_type": paraData.workType,
       "@p_rowstatus_s": paraData.rowstatus_s,
+      "@p_orgdiv": paraData.orgdiv,
+      "@p_prntitemcd": paraData.prntitemcd,
       "@p_seq_s": paraData.seq_s,
+      "@p_itemcd_s":paraData.itemcd_s,
       "@p_proccd_s": paraData.proccd_s,
-      "@p_procseq_s": paraData.procseq_s,
+      "@p_procseq_s":paraData.procseq_s,
+      "@p_remark_s": paraData.remark_s,
       "@p_outprocyn_s": paraData.outprocyn_s,
+      "@p_stdtime_s": paraData.stdtime_s,
+      "@p_procqty_s": paraData.procqty_s,
+      "@p_procunit_s": paraData.procunit_s,
+      "@p_workcnt_s": paraData.workcnt_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "PR_A0030W",
-      "@p_company_code": companyCode,
+      "@p_form_id": "PR_A0040W",
+      "@p_chk_itemcd_org": paraData.chk_itemcd_org,
+      "@p_chk_itemcd_tar": paraData.chk_itemcd_tar,
     },
   };
 
-  // const onSaveClick = async () => {
-  //   let valid = true;
-  //   if (infomation.pattern_id == "") {
-  //     alert("패턴ID를 입력해주세요.");
-  //     valid = false;
-  //     return false;
-  //   }
-  //   if (infomation.pattern_name == "") {
-  //     alert("패턴명를 입력해주세요.");
-  //     valid = false;
-  //     return false;
-  //   }
-  //   if (infomation.location == "") {
-  //     alert("사업장을 입력해주세요.");
-  //     valid = false;
-  //     return false;
-  //   }
+  const onSaveClick = async () => {
+    let valid = true;
 
-  //   const dataItem = subDataResult.data.filter((item: any) => {
-  //     return (
-  //       (item.rowstatus === "N" || item.rowstatus === "U") &&
-  //       item.rowstatus !== undefined
-  //     );
-  //   });
+    const dataItem = subDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
-  //   if (subDataResult.data.length == 0) {
-  //     alert("데이터가 없습니다.");
-  //     valid = false;
-  //     return false;
-  //   }
+    if (subDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+      valid = false;
+      return false;
+    }
 
-  //   if (dataItem.length === 0 && deletedMainRows.length === 0) {
-  //     setParaData((prev) => ({
-  //       ...prev,
-  //       workType: "U",
-  //       location: infomation.location,
-  //       pattern_id: infomation.pattern_id,
-  //       pattern_name: infomation.pattern_name,
-  //       remark: infomation.remark,
-  //     }));
-  //   } else {
-  //     let dataArr: TdataArr = {
-  //       rowstatus_s: [],
-  //       seq_s: [],
-  //       proccd_s: [],
-  //       procseq_s: [],
-  //       outprocyn_s: [],
-  //     };
-  //     dataItem.forEach((item: any, idx: number) => {
-  //       const {
-  //         rowstatus = "",
-  //         seq = "",
-  //         proccd = "",
-  //         procseq = "",
-  //         outprocyn = "",
-  //       } = item;
-  //       dataArr.rowstatus_s.push(rowstatus);
-  //       dataArr.seq_s.push(seq);
-  //       dataArr.proccd_s.push(proccd);
-  //       dataArr.procseq_s.push(procseq);
-  //       dataArr.outprocyn_s.push(outprocyn);
-  //     });
-  //     if (workType == "U") {
-  //       deletedMainRows.forEach((item: any, idx: number) => {
-  //         const {
-  //           rowstatus = "",
-  //           seq = "",
-  //           proccd = "",
-  //           procseq = "",
-  //           outprocyn = "",
-  //         } = item;
-  //         dataArr.rowstatus_s.push(rowstatus);
-  //         dataArr.seq_s.push(seq);
-  //         dataArr.proccd_s.push(proccd);
-  //         dataArr.procseq_s.push(procseq);
-  //         dataArr.outprocyn_s.push(outprocyn);
-  //       });
-  //     }
-  //     setParaData((prev) => ({
-  //       ...prev,
-  //       workType: "U",
-  //       location: infomation.location,
-  //       pattern_id: infomation.pattern_id,
-  //       pattern_name: infomation.pattern_name,
-  //       remark: infomation.remark,
-  //       rowstatus_s: dataArr.rowstatus_s.join("|"),
-  //       seq_s: dataArr.seq_s.join("|"),
-  //       proccd_s: dataArr.proccd_s.join("|"),
-  //       procseq_s: dataArr.procseq_s.join("|"),
-  //       outprocyn_s: dataArr.outprocyn_s.join("|"),
-  //     }));
-  //   }
-  // };
+    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+      let dataArr: TdataArr = {
+        rowstatus_s: [],
+        seq_s: [],
+        itemcd_s: [],
+        proccd_s: [],
+        procseq_s: [],
+        remark_s: [],
+        outprocyn_s: [],
+        stdtime_s: [],
+        procqty_s: [],
+        procunit_s: [],
+        workcnt_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus= "",
+          seq= "",
+          itemcd= "",
+          proccd= "",
+          procseq= "",
+          remark= "",
+          outprocyn= "",
+          stdtime= "",
+          procqty= "",
+          procunit= "",
+          workcnt= "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.seq_s.push(seq);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.proccd_s.push(proccd);
+        dataArr.procseq_s.push(procseq);
+        dataArr.remark_s.push(remark);
+        dataArr.outprocyn_s.push(outprocyn);
+        dataArr.stdtime_s.push(stdtime);
+        dataArr.procqty_s.push(procqty);
+        dataArr.procunit_s.push(procunit);
+        dataArr.workcnt_s.push(workcnt);
+      });
+
+      deletedMainRows.forEach((item: any, idx: number) => {
+        const {
+          rowstatus= "",
+          seq= "",
+          itemcd= "",
+          proccd= "",
+          procseq= "",
+          remark= "",
+          outprocyn= "",
+          stdtime= "",
+          procqty= "",
+          procunit= "",
+          workcnt= "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.seq_s.push(seq);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.proccd_s.push(proccd);
+        dataArr.procseq_s.push(procseq);
+        dataArr.remark_s.push(remark);
+        dataArr.outprocyn_s.push(outprocyn);
+        dataArr.stdtime_s.push(stdtime);
+        dataArr.procqty_s.push(procqty);
+        dataArr.procunit_s.push(procunit);
+        dataArr.workcnt_s.push(workcnt);
+      });
+      const datas = mainDataResult.data.filter(
+        (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      setParaData((prev) => ({
+        ...prev,
+        workType: "U",
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        orgdiv: "01",
+        prntitemcd: datas.itemcd,
+        seq_s: dataArr.seq_s.join("|"),
+        itemcd_s: dataArr.itemcd_s.join("|"),
+        proccd_s: dataArr.proccd_s.join("|"),
+        procseq_s: dataArr.procseq_s.join("|"),
+        remark_s: dataArr.remark_s.join("|"),
+        outprocyn_s: dataArr.outprocyn_s.join("|"),
+        stdtime_s: dataArr.stdtime_s.join("|"),
+        procqty_s: dataArr.procqty_s.join("|"),
+        procunit_s: dataArr.procunit_s.join("|"),
+        workcnt_s: dataArr.workcnt_s.join("|"),
+      }));
+  };
 
   const fetchTodoGridSaved = async () => {
     let data: any;
@@ -1291,22 +1365,26 @@ const PR_A0040W: React.FC = () => {
       resetAllGrid();
       setWorkType("U");
       setParaData({
-        workType: "",
         pgSize: PAGE_SIZE,
-        orgdiv: "01",
-        location: "",
-        pattern_id: "",
-        pattern_name: "",
-        remark: "",
+        workType: "",
         rowstatus_s: "",
+        orgdiv: "01",
+        prntitemcd: "",
         seq_s: "",
+        itemcd_s: "",
         proccd_s: "",
         procseq_s: "",
+        remark_s: "",
         outprocyn_s: "",
+        stdtime_s: "",
+        procqty_s: "",
+        procunit_s: "",
+        workcnt_s: "",
         userid: userId,
         pc: pc,
-        form_id: "PR_A0030W",
-        company_code: companyCode,
+        form_id: "PR_A0040W",
+        chk_itemcd_org: "",
+        chk_itemcd_tar: "",
       });
       deletedMainRows = [];
     } else {
@@ -1317,7 +1395,7 @@ const PR_A0040W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (paraData.rowstatus_s != "" || (paraData.chk_itemcd_org != "" && paraData.chk_itemcd_tar != "")) {
       fetchTodoGridSaved();
     }
   }, [paraData]);
@@ -1586,7 +1664,7 @@ const PR_A0040W: React.FC = () => {
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
           <Button
-              onClick={onDeleteClick}
+              onClick={onCopyClick}
               fillMode="outline"
               themeColor={"primary"}
               icon="copy"
@@ -1600,6 +1678,14 @@ const PR_A0040W: React.FC = () => {
               icon="delete"
             >
               삭제
+            </Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+            >
+              저장
             </Button>
           </ButtonContainer>
         </GridTitleContainer>
