@@ -57,6 +57,7 @@ import {
   dateformat,
   isValidDate,
   getItemQuery,
+  toDate2,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -672,12 +673,13 @@ const CopyWindow = ({
     )[0];
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq + 1,
+      [DATA_ITEM_KEY]: seq,
       amt: selectRow.amt,
       amtunit: selectRow.amtunit,
       chk: selectRow.chk,
       custcd: selectRow.custcd,
       custnm: selectRow.custnm,
+      enddt: selectRow.enddt,
       insiz: selectRow.insiz,
       itemacnt: selectRow.itemacnt,
       itemcd: selectRow.itemcd,
@@ -774,7 +776,7 @@ const CopyWindow = ({
       load_place: "",
       pac: "A",
       itemlvl1: "",
-      enddt: null,
+      enddt: new Date(),
       extra_field1: "",
       rowstatus: "N",
     };
@@ -936,9 +938,42 @@ const CopyWindow = ({
 
     try {
       data.map((item: any) => {
+        const newDataItem = {
+          [DATA_ITEM_KEY]: item.num,
+          amt: item.amt,
+          before_qty: item.befor_qty,
+          insiz: item.insiz,
+          itemacnt: item.itemacnt,
+          itemcd: item.itemcd,
+          itemgrade: item.itemgrade,
+          itemlvl1: item.itemlvl1,
+          itemlvl2: item.itemlvl2,
+          itemlvl3: item.itemlvl3,
+          itemnm: item.itemnm,
+          itemno: item.itemno,
+          enddt: new Date(),
+          itemthick: item.itemthick,
+          len: item.len,
+          load_place: item.load_place,
+          lotnum: item.lotnum,
+          nowqty: item.nowqty,
+          orglot: item.orglot,
+          out_qty: item.out_qty,
+          pac: item.pac,
+          qty: item.qty,
+          qtyunit: item.qtyunit,
+          rowstatus: "N",
+          safeqty: item.safeqty,
+          selected: item.selected,
+          taxamt: item.taxamt,
+          totwgt: item.totwgt,
+          unp: item.unp,
+          width: item.width,
+          wonamt: item.wonamt,
+        };
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, item],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -977,7 +1012,7 @@ const CopyWindow = ({
       data.map((item: any) => {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, item],
+            data: [item, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -1014,9 +1049,44 @@ const CopyWindow = ({
 
     try {
       data.map((item: any) => {
+        const newDataItem = {
+          [DATA_ITEM_KEY]: item.num,
+          amt: item.amt,
+          amtunit: item.amtunit,
+          chk: item.chk,
+          custcd: item.custcd,
+          custnm: item.custnm,
+          insiz: item.insiz,
+          itemacnt: item.itemacnt,
+          itemcd: item.itemcd,
+          itemlvl1: item.itemlvl1,
+          itemlvl2: item.itemlvl2,
+          itemlvl3: item.itemlvl3,
+          itemnm: item.itemnm,
+          itemno: item.itemno,
+          itemthick: 0,
+          len: 0,
+          enddt: new Date(),
+          lotnum: item.lotnum,
+          nowqty: 0,
+          ordkey: item.ordkey,
+          ordnum: item.ordnum,
+          qty: item.qty,
+          qtyunit: item.qtyunit,
+          rowstatus: "N",
+          safeqty: item.safeqty,
+          taxamt: item.taxamt,
+          taxdiv: item.taxdiv,
+          totwgt: item.totwgt,
+          unitwgt: item.unitwgt,
+          unp: item.unp,
+          wgtunit: item.wgtunit,
+          width: item.width,
+          wonamt: item.wonamt,
+        };
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, item],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -1058,11 +1128,45 @@ const CopyWindow = ({
       seq++;
     }
 
+
     try {
       data.map((item: any) => {
+        const newDataItem = {
+          [DATA_ITEM_KEY]: item.num,
+          amt: item.amt,
+          before_qty: item.befor_qty,
+          insiz: item.insiz,
+          itemacnt: item.itemacnt,
+          itemcd: item.itemcd,
+          itemgrade: item.itemgrade,
+          itemlvl1: item.itemlvl1,
+          itemlvl2: item.itemlvl2,
+          itemlvl3: item.itemlvl3,
+          itemnm: item.itemnm,
+          itemno: item.itemno,
+          enddt: new Date(),
+          itemthick: item.itemthick,
+          len: item.len,
+          load_place: item.load_place,
+          lotnum: item.lotnum,
+          nowqty: item.nowqty,
+          orglot: item.orglot,
+          out_qty: item.out_qty,
+          pac: item.pac,
+          qty: item.qty,
+          qtyunit: item.qtyunit,
+          rowstatus: "N",
+          safeqty: item.safeqty,
+          selected: item.selected,
+          taxamt: item.taxamt,
+          totwgt: item.totwgt,
+          unp: item.unp,
+          width: item.width,
+          wonamt: item.wonamt,
+        };
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, item],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -1509,10 +1613,7 @@ const CopyWindow = ({
                     row.rowstatus == undefined
                       ? ""
                       : row.rowstatus,
-                  enddt:
-                    workType == "U" && isValidDate(row.enddt)
-                      ? new Date(dateformat(row.enddt))
-                      : new Date(),
+                  enddt : typeof row.enddt === 'object' && row.enddt instanceof Date ? row.enddt : toDate(row.enddt),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState

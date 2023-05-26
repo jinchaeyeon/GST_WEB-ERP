@@ -698,6 +698,7 @@ const MA_A2700W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage)
     }
     setLoading(false);
   };
