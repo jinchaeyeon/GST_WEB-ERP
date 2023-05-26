@@ -299,7 +299,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   const loginResult = useRecoilValue(loginResultState);
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN" || role === "DEVELOPER" ? true : false;
+  const isAdmin = role === "ADMIN";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
 
   const [pc, setPc] = useState("");
