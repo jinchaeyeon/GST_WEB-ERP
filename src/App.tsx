@@ -97,6 +97,7 @@ import PR_A3000W from "./routes/PR_A3000W";
 import CT_A0111W from "./routes/CT_A0111W";
 import CM_A0000W from "./routes/CM_A0000W";
 import CM_A4100W from "./routes/CM_A4100W";
+import CM_A8000W from "./routes/CM_A8000W";
 import CM_B1101W from "./routes/CM_B1101W";
 import HU_A2070W from "./routes/HU_A2070W";
 import HU_A2100W from "./routes/HU_A2100W";
@@ -356,6 +357,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/CM_A2000W" component={CM_A2000W} exact />
                 <AuthRoute path="/CM_A3000W" component={CM_A3000W} exact />
                 <AuthRoute path="/CM_A4100W" component={CM_A4100W} exact />
+                <AuthRoute path="/CM_A8000W" component={CM_A8000W} exact />
                 <AuthRoute path="/CM_A8210W" component={CM_A8210W} exact />
                 <AuthRoute path="/CM_A8250W" component={CM_A8250W} exact />
                 <AuthRoute path="/CM_B1000W" component={CM_B1000W} exact />
