@@ -61,8 +61,8 @@ import {
 } from "../components/CommonString";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Input } from "@progress/kendo-react-inputs";
@@ -148,7 +148,8 @@ const CM_A8000W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1067,12 +1068,11 @@ const CM_A8000W: React.FC = () => {
 
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
-      console.log(dataItem)
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              useyn: item.useyn == true ? "Y": item.useyn == false ? "N" : item.useyn,
+              useyn: typeof item.useyn == "boolean" ? item.useyn : item.useyn == "Y" ? true : false,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
@@ -1532,6 +1532,83 @@ const CM_A8000W: React.FC = () => {
       };
     });
   };
+
+  const onPlusClick = async () => {
+    if (companyCode == "2207A046") {
+      //조회조건 파라미터
+      const parameters: Iparameters = {
+        procedureName: "P_CM_A8000W_Q",
+        pageNumber: 1,
+        pageSize: 20,
+        parameters: {
+          "@p_work_type": "PGM",
+          "@p_orgdiv": filters.orgdiv,
+          "@p_valueboxcd": filters.valueboxcd,
+          "@p_valueboxnm": filters.valueboxnm,
+          "@p_remark2": filters.remark2,
+          "@p_itemlvl1": filters.itemlvl1,
+          "@p_itemlvl2": filters.itemlvl2,
+          "@p_itemlvl3": filters.itemlvl3,
+          "@p_DesignPerson": filters.DesignPerson,
+          "@p_DevPerson": filters.DevPerson,
+        },
+      };
+      let data: any;
+      try {
+        data = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows.map((row: any) => {
+          return {
+            ...row,
+          };
+        });
+        console.log(rows);
+        if (totalRowCnt >= 0) {
+          let seq = mainDataResult.total + deletedMainRows.length + 1;
+
+          rows.map((row: any) => {
+            const newDataItem = {
+              [DATA_ITEM_KEY]: seq,
+              DesignPerson: row.DesignPerson,
+              DevPerson: row.DevPerson,
+              absolutedays: row.absolutedays,
+              exptime: row.exptime,
+              fnscore: row.fnscore,
+              itemlvl1: row.itemlvl1,
+              itemlvl2: row.itemlvl2,
+              itemlvl3: row.itemlvl3,
+              level: row.level,
+              orgdiv: row.orgdiv,
+              remark2: row.remark2,
+              useyn: row.useyn,
+              valBasecode: row.valBasecode,
+              valueboxcd:row.valueboxcd,
+              valueboxnm: row.valueboxnm,
+              rowstatus: "N",
+            };
+
+            setMainDataResult((prev) => {
+              return {
+                data: [newDataItem, ...prev.data],
+                total: prev.total + 1,
+              };
+            });
+            seq++;
+          })
+        }
+      } else {
+        console.log("[오류 발생]");
+        console.log(data);
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
   return (
     <>
       <TitleContainer>
@@ -1758,7 +1835,16 @@ const CM_A8000W: React.FC = () => {
             }}
           >
             <GridTitleContainer>
-              <GridTitle>상세정보</GridTitle>
+              <GridTitle>
+                상세정보{" "}
+                <Button
+                  onClick={onPlusClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                >
+                  [추가]
+                </Button>
+              </GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
@@ -1797,8 +1883,6 @@ const CM_A8000W: React.FC = () => {
                     row.rowstatus == undefined
                       ? ""
                       : row.rowstatus,
-                  useyn:
-                    row.useyn == "N" ? false : row.useyn == "Y" ? true : false,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
