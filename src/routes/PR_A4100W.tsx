@@ -11,6 +11,7 @@ import {
   GridHeaderCellProps,
   GridExpandChangeEvent,
   GridItemChangeEvent,
+  GridCellProps,
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -28,7 +29,11 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  CheckboxChangeEvent,
+  Input,
+} from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
@@ -388,7 +393,7 @@ const PR_A4100W: React.FC = () => {
       // 저장 후, 선택 행 스크롤 유지 처리
       if (filters.find_row_value !== "" && mainDataResult.total > 0) {
         const ROW_HEIGHT = 35.56;
-        const idx = mainDataResult.data.findIndex(
+        const idx = rowsOfDataResult(mainDataResult).findIndex(
           (item) => idGetter(item) === filters.find_row_value
         );
 
@@ -473,14 +478,14 @@ const PR_A4100W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총 {mainDataTotal}건
       </td>
     );
   };
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
-    mainDataResult.data.forEach((item) =>
+    rowsOfDataResult(mainDataResult).forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
     if (sum != undefined) {
@@ -607,6 +612,41 @@ const PR_A4100W: React.FC = () => {
     event.dataItem.expanded = !isExpanded;
 
     setMainDataResult({ ...mainDataResult });
+  };
+
+  const CustomCheckBoxCell = (props: GridCellProps) => {
+    const { ariaColumnIndex, columnIndex, dataItem, onChange, field } = props;
+    if (props.rowType === "groupHeader") {
+      return null;
+    }
+
+    // const handleChange = () => {
+    //   const newData = rowsOfDataResult(mainDataResult).map((item) =>
+    //     item.num == Object.getOwnPropertyNames(selectedState)[0] ?
+    //     {
+    //     ...item,
+    //     chk: (item.chk == "" || item.chk == false || item.chk == "N") ? true : false,
+    //     [EDIT_FIELD]: field,
+    //   } : {
+    //     ...item,
+    //     [EDIT_FIELD]: undefined,
+    //   });
+    //   console.log(newData)
+    //   setMainDataResult((prev) => process(newData, mainDataState));
+    // };
+
+    return (
+      <td
+        style={{ textAlign: "center" }}
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+      >
+        <Checkbox
+          value={dataItem.chk}
+          // onClick={handleChange}
+        ></Checkbox>
+      </td>
+    );
   };
 
   const [values2, setValues2] = React.useState<boolean>(false);
@@ -879,7 +919,7 @@ const PR_A4100W: React.FC = () => {
 
       <GridContainer>
         <ExcelExport
-          data={mainDataResult.data}
+          data={rowsOfDataResult(mainDataResult)}
           ref={(exporter) => {
             _export = exporter;
           }}
@@ -902,7 +942,7 @@ const PR_A4100W: React.FC = () => {
             onSelectionChange={onSelectionChange}
             //스크롤 조회 기능
             fixedScroll={true}
-            total={mainDataResult.total}
+            total={mainDataTotal}
             onScroll={onMainScrollHandler}
             //정렬기능
             sortable={true}
@@ -916,13 +956,6 @@ const PR_A4100W: React.FC = () => {
             onExpandChange={onExpandChange}
             expandField="expanded"
           >
-            <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell2}
-              cell={CheckBoxCell}
-            />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
                 .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
@@ -939,6 +972,13 @@ const PR_A4100W: React.FC = () => {
                             ? DateCell
                             : numberField.includes(item.fieldName)
                             ? NumberCell
+                            : checkField.includes(item.fieldName)
+                            ? CustomCheckBoxCell
+                            : undefined
+                        }
+                        headerCell={
+                          checkField.includes(item.fieldName)
+                            ? CustomCheckBoxCell2
                             : undefined
                         }
                         footerCell={
