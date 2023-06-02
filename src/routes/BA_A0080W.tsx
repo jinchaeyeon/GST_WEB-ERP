@@ -73,6 +73,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../store/atoms";
 import CopyWindow from "../components/Windows/BA_A0080W_Copy_Window";
+import CopyWindow2 from "../components/Windows/BA_A0080W_UnitCopy_Window";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import NameCell from "../components/Cells/NameCell";
 import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
@@ -404,6 +405,7 @@ const BA_A0080: React.FC = () => {
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
+  const [CopyWindowVisible2, setCopyWindowVisible2] = useState<boolean>(false);
 
   const [mainPgNum, setMainPgNum] = useState(1);
 
@@ -696,6 +698,11 @@ const BA_A0080: React.FC = () => {
     } catch (e) {
       alert(e);
     }
+  };
+
+  
+  const onCopyWndClick2 = () => {
+    setCopyWindowVisible2(true);
   };
 
   const onAttachmentsWndClick = () => {
@@ -1311,6 +1318,14 @@ const BA_A0080: React.FC = () => {
         <GridContainer width={`22%`}>
           <GridTitleContainer>
             <GridTitle>품목계정</GridTitle>
+            <ButtonContainer>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyWndClick2}
+                icon="copy"
+              ></Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "80vh" }}
@@ -1525,6 +1540,11 @@ const BA_A0080: React.FC = () => {
           setVisible={setCopyWindowVisible}
           setData={setCopyData}
           itemacnt={filters.itemacnt}
+        />
+      )}
+      {CopyWindowVisible2 && (
+        <CopyWindow2
+          setVisible={setCopyWindowVisible2}
         />
       )}
       {gridList.map((grid: any) =>

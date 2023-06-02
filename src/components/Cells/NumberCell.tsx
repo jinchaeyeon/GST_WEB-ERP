@@ -5,7 +5,15 @@ import {
 } from "@progress/kendo-react-inputs";
 import { numberWithCommas } from "../CommonFunction";
 
-const NumberCell = (props: GridCellProps) => {
+interface CustomCellProps extends GridCellProps {
+  myProp?: item[];
+}
+
+interface item {
+  color: string;
+}
+
+const NumberCell = (props: CustomCellProps) => {
   const {
     ariaColumnIndex,
     columnIndex,
@@ -14,6 +22,7 @@ const NumberCell = (props: GridCellProps) => {
     onChange,
     field = "",
     className = "",
+    myProp,
   } = props;
   let isInEdit = field === dataItem.inEdit;
   const value = dataItem[field];
@@ -32,19 +41,40 @@ const NumberCell = (props: GridCellProps) => {
     }
   };
 
-  const defaultRendering = (
-    <td
-      style={{ textAlign: "right" }}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-    >
-      {isInEdit ? (
-        <NumericTextBox value={value} format={"0"} onChange={handleChange} />
-      ) : (
-        numberWithCommas(value)
-      )}
-    </td>
-  );
+  const defaultRendering =
+    myProp == undefined ? (
+      <td
+        style={{ textAlign: "right" }}
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+      >
+        {isInEdit ? (
+          <NumericTextBox value={value} format={"0"} onChange={handleChange} />
+        ) : (
+          numberWithCommas(value)
+        )}
+      </td>
+    ) : (
+      <td
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+        style={{
+          textAlign: "right",
+          color:
+            field == "unp"
+              ? dataItem.overlap == "Y"
+                ? myProp[0].color
+                : myProp[1].color
+              : myProp[1].color,
+        }}
+      >
+        {isInEdit ? (
+          <NumericTextBox value={value} format={"0"} onChange={handleChange} />
+        ) : (
+          numberWithCommas(value)
+        )}
+      </td>
+    );
 
   return render === undefined
     ? defaultRendering

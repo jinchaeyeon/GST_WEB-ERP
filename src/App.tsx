@@ -40,6 +40,7 @@ import MA_A3500W from "./routes/MA_A3500W";
 import MA_A9001W from "./routes/MA_A9001W";
 import MA_B2000W from "./routes/MA_B2000W";
 import MA_B2100W from "./routes/MA_B2100W";
+import MA_B2500W from "./routes/MA_B2500W";
 import MA_B2700W from "./routes/MA_B2700W";
 import MA_B2800W from "./routes/MA_B2800W";
 import MA_B3000W from "./routes/MA_B3000W";
@@ -74,6 +75,7 @@ import SY_A0012W from "./routes/SY_A0012W";
 import SY_A0013W from "./routes/SY_A0013W";
 import SY_A0125W from "./routes/SY_A0125W";
 import SY_A0011W from "./routes/SY_A0011W";
+import SY_A0025W from "./routes/SY_A0025W";
 import CM_A1000W from "./routes/CM_A1000W";
 import CM_A1600W from "./routes/CM_A1600W";
 import CM_A1710W from "./routes/CM_A1710W";
@@ -89,6 +91,7 @@ import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
 import PR_A1100W from "./routes/PR_A1100W";
+import PR_A4100W from "./routes/PR_A4100W";
 import PR_A5000W from "./routes/PR_A5000W";
 import PR_A6000W from "./routes/PR_A6000W";
 import PR_A9100W from "./routes/PR_A9100W";
@@ -97,6 +100,7 @@ import PR_A3000W from "./routes/PR_A3000W";
 import CT_A0111W from "./routes/CT_A0111W";
 import CM_A0000W from "./routes/CM_A0000W";
 import CM_A4100W from "./routes/CM_A4100W";
+import CM_A8000W from "./routes/CM_A8000W";
 import CM_B1101W from "./routes/CM_B1101W";
 import HU_A2070W from "./routes/HU_A2070W";
 import HU_A2100W from "./routes/HU_A2100W";
@@ -297,6 +301,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/MA_A9001W" component={MA_A9001W} exact />
                 <AuthRoute path="/MA_B2000W" component={MA_B2000W} exact />
                 <AuthRoute path="/MA_B2100W" component={MA_B2100W} exact />
+                <AuthRoute path="/MA_B2500W" component={MA_B2500W} exact />
                 <AuthRoute path="/MA_B2700W" component={MA_B2700W} exact />
                 <AuthRoute path="/MA_B2800W" component={MA_B2800W} exact />
                 <AuthRoute path="/MA_B3000W" component={MA_B3000W} exact />
@@ -326,6 +331,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />   
                 <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />   
                 <AuthRoute path="/PR_A0060W" component={PR_A0060W} exact />
+                <AuthRoute path="/PR_A4100W" component={PR_A4100W} exact />
                 <AuthRoute path="/PR_A5000W" component={PR_A5000W} exact />
                 <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
                 <AuthRoute path="/PR_A9100W" component={PR_A9100W} exact />
@@ -348,6 +354,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/SY_A0013W" component={SY_A0013W} exact />
                 <AuthRoute path="/SY_A0011W" component={SY_A0011W} exact />
                 <AuthRoute path="/SY_A0100W" component={SY_A0100W} exact />
+                <AuthRoute path="/SY_A0025W" component={SY_A0025W} exact />
                 {/* 전사관리 */}
                 <AuthRoute path="/CM_A0000W" component={CM_A0000W} exact />
                 <AuthRoute path="/CM_A1000W" component={CM_A1000W} exact />
@@ -356,6 +363,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/CM_A2000W" component={CM_A2000W} exact />
                 <AuthRoute path="/CM_A3000W" component={CM_A3000W} exact />
                 <AuthRoute path="/CM_A4100W" component={CM_A4100W} exact />
+                <AuthRoute path="/CM_A8000W" component={CM_A8000W} exact />
                 <AuthRoute path="/CM_A8210W" component={CM_A8210W} exact />
                 <AuthRoute path="/CM_A8250W" component={CM_A8250W} exact />
                 <AuthRoute path="/CM_B1000W" component={CM_B1000W} exact />
