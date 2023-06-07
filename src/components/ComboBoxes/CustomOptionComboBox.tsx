@@ -5,6 +5,7 @@ import {
 } from "@progress/kendo-react-dropdowns";
 
 type TCustomOptionComboBox = {
+  type?: "new" | "query";
   name: string;
   value: string | number;
   customOptionData: any;
@@ -14,15 +15,16 @@ type TCustomOptionComboBox = {
   className?: string;
 };
 const CustomOptionComboBox = ({
+  type = "query",
   name,
   value,
   customOptionData,
   changeData,
   textField = "code_name",
   valueField = "sub_code",
-  className = ""
+  className = "",
 }: TCustomOptionComboBox) => {
-  const dataList = customOptionData.menuCustomDefaultOptions.query;
+  const dataList = customOptionData.menuCustomDefaultOptions[type];
   const dataItem = dataList.find((item: any) => item.id === name);
   const listData = dataItem.Rows;
 
@@ -31,7 +33,7 @@ const CustomOptionComboBox = ({
 
   if (className.includes("required")) {
     required = true;
-  } 
+  }
 
   if (dataList) {
     const columns = dataItem.bizComponentItems;
