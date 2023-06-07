@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -70,8 +70,8 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { gridList } from "../store/columns/MA_B3100W_C";
 import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
 
 const numberField: string[] = [
   "qty01",
@@ -88,7 +88,7 @@ const numberField: string[] = [
   "qty12",
 ];
 const dateField = ["recdt", "time"];
-const DATA_ITEM_KEY = "itemcd";
+const DATA_ITEM_KEY = "num";
 
 const MA_B3100: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -97,7 +97,8 @@ const MA_B3100: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -159,11 +160,30 @@ const MA_B3100: React.FC = () => {
     resetGrid();
   };
 
-  //그리드 데이터 변경 되었을 때
+  let gridRef: any = useRef(null);
   useEffect(() => {
-    if (gridDataResult.total > 0) {
-      const firstRowData = gridDataResult.data[0];
-      setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && gridDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = gridDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
+
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+        }));
+      }
+    }
+    // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+    // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+    else if (filters.scrollDirrection === "up") {
+      gridRef.vs.container.scroll(0, 20);
     }
   }, [gridDataResult]);
 
@@ -214,6 +234,12 @@ const MA_B3100: React.FC = () => {
     itemcd: "",
     itemnm: "",
     itemacnt: "",
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
+    pgSize: PAGE_SIZE,
   });
 
   //그리드 데이터 조회
@@ -224,19 +250,18 @@ const MA_B3100: React.FC = () => {
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_MA_B3100W_Q",
-      pageNumber: 0,
-      pageSize: 0,
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": workType,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.cboLocation,
         "@p_yyyy": convertDateToStr(filters.yyyy).substr(0, 4),
-        "@p_mm": filters.mm,
         "@p_amtdiv": filters.rdoAmtdiv,
         "@p_itemcd": itemcd ? itemcd : filters.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_itemacnt": filters.itemacnt,
-        "@p_service_id": "20190218001",
+        "@p_company_code": companyCode,
       },
     };
 
@@ -252,16 +277,25 @@ const MA_B3100: React.FC = () => {
       if (
         workType === "GRID" ||
         workType === "MONTH" ||
-        workType === "QUARTER" ||
-        workType === "5year"
+        workType === "QUARTER" 
       ) {
-        setGridDataResult(process(rows, gridDataState));
+        const totalRowCnt2 = data.tables[0].TotalRowCount;
+        setGridDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt2,
+          };
+        });
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
       }
       // 공통 차트
       else if (
         workType === "MCHART" ||
-        workType === "QCHART" ||
-        workType === "CHART"
+        workType === "QCHART"
       ) {
         setChartDataResult(rows);
       }
@@ -272,7 +306,7 @@ const MA_B3100: React.FC = () => {
         rows.forEach((row: any) => {
           if (!newRows.companies.includes(row.argument)) {
             newRows.companies.push(row.argument);
-            newRows.series.push(row.sort_amt);
+            newRows.series.push(row.value);
           }
         });
 
@@ -282,37 +316,62 @@ const MA_B3100: React.FC = () => {
         });
       }
     }
-
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
-
-  useEffect(() => {
-    const firstRowData = gridDataResult.data[0];
-    if (firstRowData != undefined) {
-      if (tabSelected === 3) {
-        fetchGrid("CHART", firstRowData.itemcd);
-      }
-    }
-  }, [gridDataResult]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
+      customOptionData != null &&
+      filters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
     ) {
-      fetchGrid("GRID");
-      fetchGrid("TOTAL");
+    setFilters((prev) => ({ ...prev, isSearch: false }));
 
-      setIsInitSearch(true);
+    const selectedRowData = gridDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+
+    if (selectedRowData != undefined) {
+      if (tabSelected === 0) {
+        fetchGrid("TOTAL");
+        fetchGrid("GRID");
+      } else if (tabSelected === 1) {
+        fetchGrid("MONTH");
+        fetchGrid("MCHART", selectedRowData.itemcd);
+      } else if (tabSelected === 2) {
+        fetchGrid("QUARTER");
+        fetchGrid("QCHART", selectedRowData.itemcd);
+      } 
+    } else {
+      if (tabSelected === 0) {
+        fetchGrid("TOTAL");
+        fetchGrid("GRID");
+      } else if (tabSelected === 1) {
+        fetchGrid("MONTH");
+        fetchGrid("MCHART");
+      } else if (tabSelected === 2) {
+        fetchGrid("QUARTER");
+        fetchGrid("QCHART");
+      } 
     }
+    setIsInitSearch(true);
+  }
   }, [filters, permissions]);
 
   //그리드 리셋
   const resetGrid = () => {
-    setGridPgNum(1);
     setGridDataResult(process([], gridDataState));
+    setAllChartDataResult({
+      companies: [""],
+      series: [0],
+    });
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -340,9 +399,7 @@ const MA_B3100: React.FC = () => {
       fetchGrid("MCHART", selectedRowData.itemcd);
     } else if (tabSelected === 2) {
       fetchGrid("QCHART", selectedRowData.itemcd);
-    } else if (tabSelected === 3) {
-      fetchGrid("CHART", selectedRowData.itemcd);
-    }
+    } 
   };
 
   //엑셀 내보내기
@@ -352,12 +409,38 @@ const MA_B3100: React.FC = () => {
       _export.save();
     }
   };
+//스크롤 핸들러
+const onGridScrollHandler = (event: GridEvent) => {
+  if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+  let pgNumWithGap =
+    filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
 
-  //스크롤 핸들러
-  const onGridScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, gridPgNum, PAGE_SIZE))
-      setGridPgNum((prev) => prev + 1);
-  };
+  // 스크롤 최하단 이벤트
+  if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+    setFilters((prev) => ({
+      ...prev,
+      scrollDirrection: "down",
+      pgNum: pgNumWithGap + 1,
+      pgGap: prev.pgGap + 1,
+      isSearch: true,
+    }));
+
+    return false;
+  }
+
+  pgNumWithGap =
+    filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+  // 스크롤 최상단 이벤트
+  if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+    setFilters((prev) => ({
+      ...prev,
+      scrollDirrection: "up",
+      pgNum: pgNumWithGap - 1,
+      pgGap: prev.pgGap + 1,
+      isSearch: true,
+    }));
+  }
+};
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -442,19 +525,7 @@ const MA_B3100: React.FC = () => {
   };
 
   const search = () => {
-    if (tabSelected === 0) {
-      fetchGrid("TOTAL");
-      fetchGrid("GRID");
-    } else if (tabSelected === 1) {
-      fetchGrid("MONTH");
-      fetchGrid("MCHART");
-    } else if (tabSelected === 2) {
-      fetchGrid("QUARTER");
-      fetchGrid("QCHART");
-    } else if (tabSelected === 3) {
-      fetchGrid("5year");
-      fetchGrid("CHART");
-    }
+    resetGrid();
   };
 
   return (

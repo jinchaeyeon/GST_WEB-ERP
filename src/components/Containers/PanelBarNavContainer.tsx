@@ -73,7 +73,7 @@ const PanelBarNavContainer = (props: any) => {
   const userId = loginResult ? loginResult.userId : "";
   const loginKey = loginResult ? loginResult.loginKey : "";
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN" || role === "DEVELOPER" ? true : false;
+  const isAdmin = role === "ADMIN";
 
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
@@ -461,7 +461,7 @@ const PanelBarNavContainer = (props: any) => {
     ...paths.filter((path) => path.path === "/Home"),
     ...paths.filter((path) => path.menuCategory === "GROUP"),
   ];
-  if (companyCode !== "2207C612") {
+  if (companyCode === "2207A046" && isAdmin) {
     panelBars.push({
       path: "/WORD_EDITOR",
       menuName: "EDITOR",
@@ -480,44 +480,44 @@ const PanelBarNavContainer = (props: any) => {
       menuCategory: "",
       isFavorite: false,
     });
-    panelBars.push({
-      path: "/",
-      menuName: "설정",
-      index: "",
-      menuId: "setting",
-      parentMenuId: "",
-      menuCategory: "WEB",
-      isFavorite: false,
-    });
+  }
+  panelBars.push({
+    path: "/",
+    menuName: "설정",
+    index: "",
+    menuId: "setting",
+    parentMenuId: "",
+    menuCategory: "WEB",
+    isFavorite: false,
+  });
+  paths.push({
+    path: "/",
+    menuName: "비밀번호 변경",
+    index: "",
+    menuId: "change-password",
+    parentMenuId: "setting",
+    menuCategory: "WEB",
+    isFavorite: false,
+  });
+  paths.push({
+    path: "/",
+    menuName: "사용자 옵션",
+    index: "",
+    menuId: "custom-option",
+    parentMenuId: "setting",
+    menuCategory: "WEB",
+    isFavorite: false,
+  });
+  if (isAdmin) {
     paths.push({
       path: "/",
-      menuName: "비밀번호 변경",
+      menuName: "시스템 옵션",
       index: "",
-      menuId: "change-password",
+      menuId: "system-option",
       parentMenuId: "setting",
       menuCategory: "WEB",
       isFavorite: false,
     });
-    paths.push({
-      path: "/",
-      menuName: "사용자 옵션",
-      index: "",
-      menuId: "custom-option",
-      parentMenuId: "setting",
-      menuCategory: "WEB",
-      isFavorite: false,
-    });
-    if (isAdmin) {
-      paths.push({
-        path: "/",
-        menuName: "시스템 옵션",
-        index: "",
-        menuId: "system-option",
-        parentMenuId: "setting",
-        menuCategory: "WEB",
-        isFavorite: false,
-      });
-    }
   }
 
   // Parent 그룹 없는 메뉴 Array
