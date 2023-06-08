@@ -616,6 +616,7 @@ const QC_B0200W: React.FC = () => {
   const resetDetailGrid2 = () => {
     setDetailPgNum2(1);
     setDetailDataResult2(process([], detailDataState2));
+    setDetailDataResult3(process([], detailDataState3));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
