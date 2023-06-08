@@ -69,6 +69,7 @@ import QC_A2500W from "./routes/QC_A2500W";
 import QC_A3000W from "./routes/QC_A3000W";
 import QC_A6000W from "./routes/QC_A6000W";
 import QC_B0200W from "./routes/QC_B0200W";
+import QC_B0300W from "./routes/QC_B0300W";
 import QC_B0040W from "./routes/QC_B0040W";
 import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0110W from "./routes/SY_A0110W";
@@ -349,6 +350,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/QC_A3000W" component={QC_A3000W} exact />
                 <AuthRoute path="/QC_A6000W" component={QC_A6000W} exact />
                 <AuthRoute path="/QC_B0200W" component={QC_B0200W} exact />
+                <AuthRoute path="/QC_B0300W" component={QC_B0300W} exact />
                 <AuthRoute path="/QC_B0040W" component={QC_B0040W} exact />
                 {/* 시스템 */}
                 <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
