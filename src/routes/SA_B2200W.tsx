@@ -19,20 +19,21 @@ import { Grid, GridColumn, GridDataStateChangeEvent, GridEvent, GridFooterCellPr
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
-import { useEffect, useState } from "react";
-import { UseCustomOption, chkScrollHandler, getQueryFromBizComponent, handleKeyPressSearch } from "../components/CommonFunction";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { UseBizComponent, UseCustomOption, chkScrollHandler, convertDateToStr, getQueryFromBizComponent, handleKeyPressSearch } from "../components/CommonFunction";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import React from "react";
-import { TPermissions } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 import { getter } from "@progress/kendo-react-common";
 import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
 import { gridList } from "../store/columns/SA_B2200W_C";
 import { useApi } from "../hooks/api";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isLoading, loginResultState } from "../store/atoms";
+import { bytesToBase64 } from "byte-base64";
 
-/* v1.2 */
+/* v1.3 */
 const dateField = ["ymdfrdt", "ymdtodt"];
 const DATA_ITEM_KEY = "num";
 const numberField = [
@@ -51,10 +52,14 @@ const numberField = [
 ];
 
 const SA_B2200 : React.FC = () => {
+  const setLoading = useSetRecoilState(isLoading);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);  
+  const processApi = useApi();
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -70,6 +75,62 @@ const SA_B2200 : React.FC = () => {
     setMainDataState(event.dataState);
   };  
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_SA002,L_BA061,L_BA015",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부, 수주일자/납기일자, 사업부구분, 대분류, 중분류, 소분류, 수량단위, 화폐단위
+    setBizComponentData
+  );
+
+  //조회조건 초기값
+  const [filters, setFilters] = useState({
+    pgSize: PAGE_SIZE,
+    orgdiv: "01",
+    location: "01",
+    ymdFrdt: new Date(),
+    ymdTodt: new Date(),
+    itemcd: "",
+    itemnm: "",
+    cboItemacnt: "",
+    poregnum: "",
+    radFinyn: "%",
+    cboOrdsts: "",
+    custcd: "",
+    custnm: "",
+    project: "",
+    ordnum: "",
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
+  });
+
+  //조회조건 파라미터
+  const parameters: Iparameters = {
+    procedureName: "P_SA_B2200W_Q",
+    pageNumber: filters.pgNum,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": filters.location,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_itemacnt": filters.cboItemacnt,
+      "@p_frdt": convertDateToStr(filters.ymdFrdt),
+      "@p_todt": convertDateToStr(filters.ymdTodt),
+      "@p_ordsts": filters.cboOrdsts,
+      "@p_finyn": filters.radFinyn,
+      "@p_ordnum": filters.ordnum,
+      "@p_poregnum": filters.poregnum,
+      "@p_project": filters.project,
+      "@p_company_code": companyCode,
+    },
+  };
+
   //공통코드 리스트 조회 ()
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -80,7 +141,125 @@ const SA_B2200 : React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
 
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
+
+  //그리드 데이터 조회
+  const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      if (totalRowCnt > 0) {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
+      }
+    }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const qtyunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+      );
+      const ordstsQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+      );
+      const itemacntQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+      );
+
+      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      fetchQuery(ordstsQueryStr, setOrdstsListData);
+      fetchQuery(itemacntQueryStr, setItemacntListData);
+    }
+  }, [bizComponentData]);
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (
+      customOptionData != null &&
+      filters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
+    ) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
+      fetchMainGrid();
+    }
+  }, [filters, permissions]);
+
+  let gridRef: any = useRef(null);
+
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = mainDataResult.data.findIndex(
+          (item) => idGetter(item) === filters.find_row_value
+        );
+
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          tab: 0,
+        }));
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (filters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
+      }
+    }
+  }, [mainDataResult]);
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
@@ -112,30 +291,6 @@ const SA_B2200 : React.FC = () => {
     });
     setSelectedState(newSelectedState);
   };
-
-  //조회조건 초기값
-  const [filters, setFilters] = useState({
-    pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
-    ymdFrdt: new Date(),
-    ymdTodt: new Date(),
-    itemcd: "",
-    itemnm: "",
-    cboItemacnt: "",
-    poregnum: "",
-    radFinyn: "%",
-    cboOrdsts: "",
-    custcd: "",
-    custnm: "",
-    project: "",
-    ordnum: "",
-    find_row_value: "",
-    scrollDirrection: "down",
-    pgNum: 1,
-    isSearch: true,
-    pgGap: 0,
-  });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
