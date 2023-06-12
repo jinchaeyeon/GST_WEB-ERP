@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { gridList } from "../store/columns/SA_B3101W_C";
-import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
+import { ButtonContainer, FilterBox, Title, TitleContainer } from "../CommonStyled";
 import { TPermissions } from "../store/types";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import TopButtons from "../components/Buttons/TopButtons";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { PAGE_SIZE } from "../components/CommonString";
-import { setDefaultDate } from "../components/CommonFunction";
+import { handleKeyPressSearch, setDefaultDate } from "../components/CommonFunction";
+import FilterContainer from "../components/Containers/FilterContainer";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import YearCalendar from "../components/Calendars/YearCalendar";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 
+/*v1.0*/
 const SA_B3101W: React.FC = () => {
     const [permissions] = useState<TPermissions | null>(null);
     const [gridDataState, setGridDataState] = useState<State>({
@@ -39,6 +44,26 @@ const SA_B3101W: React.FC = () => {
         }));
         }
     }, [customOptionData]);
+
+    //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+    const filterInputChange = (e: any) => {
+        const { value, name } = e.target;
+
+        setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        }));
+    };
+
+    //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+    const filterRadioChange = (e: any) => {
+        const { name, value } = e;
+
+        setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        }));
+    };
 
     //그리드 리셋
     const resetGrid = () => {
@@ -100,6 +125,37 @@ const SA_B3101W: React.FC = () => {
             )}
             </ButtonContainer>
         </TitleContainer>
+        <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                    <tr>
+                        <th data-control-name="lblYyyy">기준년도</th>
+                        <td>
+                            <DatePicker
+                                name="yyyy"
+                                value={filters.yyyy}
+                                format="yyyy"
+                                onChange={filterInputChange}
+                                calendar={YearCalendar}
+                                className="required"
+                                placeholder=""
+                            />
+                        </td>
+                        <th data-control-name="lblAmtdiv">단위</th>
+                        <td>
+                            {customOptionData !== null && (
+                            <CommonRadioGroup
+                                name="rdoAmtdiv"
+                                customOptionData={customOptionData}
+                                changeData={filterRadioChange}
+                            />
+                            )}
+                        </td>
+                    </tr>
+                </tbody>
+            </FilterBox>
+        </FilterContainer>
+        
         </>
     );
 }
