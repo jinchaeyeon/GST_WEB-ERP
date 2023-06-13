@@ -176,7 +176,6 @@ const KendoWindow = ({
     let response: any;
 
     parameters.forEach(async (parameter) => {
-      console.log(parameter);
       try {
         response = await processApi<any>("file-download", {
           attached: parameter,
@@ -200,17 +199,27 @@ const KendoWindow = ({
 
         // 다운로드 파일 이름을 추출하는 함수
         const extractDownloadFilename = (response: any) => {
-          console.log(response);
           if (response.headers) {
             const disposition = response.headers["content-disposition"];
             let filename = "";
+
             if (disposition) {
-              var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-              var matches = filenameRegex.exec(disposition);
+              const filenameRegex = /filename\*?=UTF-8''([^;\n]+)/;
+              const matches = filenameRegex.exec(disposition);
+
               if (matches != null && matches[1]) {
-                filename = matches[1].replace(/['"]/g, "");
+                const encodedFilename = matches[1].trim();
+                filename = decodeURIComponent(encodedFilename);
+              } else {
+                const fallbackRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const fallbackMatches = fallbackRegex.exec(disposition);
+
+                if (fallbackMatches != null && fallbackMatches[1]) {
+                  filename = fallbackMatches[1].replace(/['"]/g, "");
+                }
               }
             }
+
             return filename;
           } else {
             return "";
