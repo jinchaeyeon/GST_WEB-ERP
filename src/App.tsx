@@ -54,7 +54,6 @@ import SA_A2300W from "./routes/SA_A2300W";
 import SA_A3000W from "./routes/SA_A3000W";
 import SA_A5000W from "./routes/SA_A5000W";
 import SA_A5010W from "./routes/SA_A5010W";
-import SA_B2200W from "./routes/SA_B2200W";
 import SA_B2205W from "./routes/SA_B2205W";
 import SA_B2211W from "./routes/SA_B2211W";
 import SA_B2221W from "./routes/SA_B2221W";
@@ -62,6 +61,7 @@ import SA_B2410W from "./routes/SA_B2410W";
 import SA_B2410_290W from "./routes/SA_B2410_290W";
 import SA_B3000W from "./routes/SA_B3000W";
 import SA_B3100W from "./routes/SA_B3100W";
+import SA_B3101W from "./routes/SA_B3101W";
 import QC_A0060W from "./routes/QC_A0060W";
 import QC_A0120W from "./routes/QC_A0120W";
 import QC_A2000W from "./routes/QC_A2000W";
@@ -320,11 +320,11 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/SA_A3000W" component={SA_A3000W} exact />
                 <AuthRoute path="/SA_A5000W" component={SA_A5000W} exact />
                 <AuthRoute path="/SA_A5010W" component={SA_A5010W} exact />
-                <AuthRoute path="/SA_B2200W" component={SA_B2200W} exact />
                 <AuthRoute path="/SA_B2205W" component={SA_B2205W} exact />
                 <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
                 <AuthRoute path="/SA_B2221W" component={SA_B2221W} exact />
                 <AuthRoute path="/SA_B2410W" component={SA_B2410W} exact />
+                <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
                 <AuthRoute
                   path="/SA_B2410_290W"
                   component={SA_B2410_290W}
