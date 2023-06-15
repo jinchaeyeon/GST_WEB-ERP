@@ -26,7 +26,7 @@ import {
 } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import FilterContainer from "../components/Containers/FilterContainer";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
@@ -2358,8 +2358,8 @@ const AC_B6060W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
       </TabStrip>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

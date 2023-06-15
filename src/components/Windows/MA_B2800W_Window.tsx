@@ -19,7 +19,7 @@ import {
   Title,
   TitleContainer,
 } from "../../CommonStyled";
-import { Iparameters } from "../../store/types";
+import { TColumn, TGrid, Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition, TCommonCodeData } from "../../hooks/interfaces";
 import {
@@ -423,8 +423,8 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
           </Button>
         </ButtonContainer>
       </BottomContainer>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

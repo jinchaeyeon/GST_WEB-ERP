@@ -22,7 +22,7 @@ import {
   ButtonContainer,
 } from "../CommonStyled";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
@@ -2155,8 +2155,8 @@ const AC_B5080W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
       </TabStrip>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

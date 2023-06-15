@@ -29,7 +29,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import DetailWindow from "../components/Windows/AC_A1000W_Window";
 import AC_A1000W_Receive_Window from "../components/Windows/AC_A1000W_Receive_Window";
 import AC_A1000W_Payment_Window from "../components/Windows/AC_A1000W_Payment_Window";
@@ -1922,8 +1922,8 @@ const AC_A1000W: React.FC = () => {
           setData={setOK}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

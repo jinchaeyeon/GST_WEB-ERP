@@ -7,7 +7,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import TopButtons from "../components/Buttons/TopButtons";
 import { DataResult, State, process } from "@progress/kendo-data-query";
@@ -390,8 +390,8 @@ const SA_B3101W: React.FC = () => {
           setData={setItemData}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

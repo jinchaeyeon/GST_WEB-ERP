@@ -31,7 +31,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { gridList } from "../store/columns/PR_A0030W_C";
 import {
   chkScrollHandler,
@@ -1664,8 +1664,8 @@ const PR_A0030W: React.FC = () => {
           </GridContainerWrap>
         </GridContainer>
       </GridContainerWrap>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

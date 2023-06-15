@@ -1831,8 +1831,8 @@ const EA_A2000: React.FC = () => {
       )}
 
       {/* 컨트롤 네임 불러오기 용 */}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}
@@ -1842,7 +1842,7 @@ const EA_A2000: React.FC = () => {
             data-width={column.width}
             hidden
           />
-        )),
+        ))
       )}
 
       {previewVisible && (

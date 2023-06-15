@@ -37,7 +37,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -2059,8 +2059,8 @@ const QC_A3000: React.FC = () => {
           para={information.attdatnum}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}
