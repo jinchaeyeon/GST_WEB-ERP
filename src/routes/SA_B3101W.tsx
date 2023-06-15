@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { gridList } from "../store/columns/SA_B3101W_C";
 import { ButtonContainer
     , FilterBox
     , GridContainer
@@ -30,8 +31,6 @@ import { useApi } from "../hooks/api";
 import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 import { AnyTxtRecord } from "dns";
 import { ScrollDirection } from "@progress/kendo-react-dateinputs/dist/npm/virtualization/Virtualization";
-
-
 
 const DATA_ITEM_KEY = "num";
 const numberField: string[] = [
@@ -133,21 +132,22 @@ const SA_B3101W: React.FC = () => {
     const[customOptionData, setCustomOptionData] = React.useState<any>(null);
     UseCustomOption(pathname, setCustomOptionData);
 
-    // //customOptionData 조회 후 디폴트 값 세팅
-    // useEffect(() => {
-    //     if (customOptionData !== null) {
-    //     const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+    //customOptionData 조회 후 디폴트 값 세팅
+    useEffect(() => {
+        if (customOptionData !== null) {
+            console.log(customOptionData)
+        const defaultOption = customOptionData.menuCustomDefaultOptions.query;
 
-    //     setFilters((prev) => ({
-    //         ...prev,
-    //         yyyy: setDefaultDate(customOptionData, "yyyy"),
-    //         itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-    //         .valueCode,
-    //         rdoAmtdiv: defaultOption.find((item: any) => item.id === "rdoAmtdiv")
-    //         .valueCode,
-    //     }));
-    //     }
-    // }, [customOptionData]);
+        // setFilters((prev) => ({
+        //     ...prev,
+        //     yyyy: setDefaultDate(customOptionData, "yyyy"),
+        //     itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+        //     .valueCode,
+        //     rdoAmtdiv: defaultOption.find((item: any) => item.id === "rdoAmtdiv")
+        //     .valueCode,
+        // }));
+        }
+    }, [customOptionData]);
 
 
     //그리드 리셋
@@ -292,30 +292,30 @@ const SA_B3101W: React.FC = () => {
             </Chart>
             <GridContainer>
                 <Grid
-                    // style={{height: "32vh"}}
-                    // data={process(
-                    //     gridDataResult.data.map((row) => ({
-                    //     ...row,
-                    //     [SELECTED_FIELD]: selectedState[idGetter(row)],
-                    //     })),
-                    //     gridDataState
-                    // )}
-                    // {...gridDataState}
-                    // onDataStateChange={onGridDataStateChange}
-                    // //스크롤 조회 기증
-                    // fixedScroll={true}
-                    // total={gridDataResult.total}
-                    // onScroll={onGridScrollHandler}
-                    // //정렬기능
-                    // sortable={true}
-                    // onSortChange={onGridSortChange}
-                    // //컬럼순서조정
-                    // reorderable={true}
-                    // //컬럼너비조정
-                    // resizable={true}
+                    style={{height: "32vh"}}
+                    data={process(
+                        gridDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                        })),
+                        gridDataState
+                    )}
+                    {...gridDataState}
+                    onDataStateChange={onGridDataStateChange}
+                    //스크롤 조회 기증
+                    fixedScroll={true}
+                    total={gridDataResult.total}
+                    onScroll={onGridScrollHandler}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onGridSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
                 >
                     {/* {customOptionData !== null && 
-                        customOptionData.menuCustomColumnOptions["gridList"].map(
+                        customOptionData.menuCustomColumnOptions["grdList"].map(
                             (item: any, idx: number) =>
                                 item.sortOrder !== -1 &&
                                 (numberField.includes(item.fieldName) ? (
@@ -358,7 +358,7 @@ const SA_B3101W: React.FC = () => {
                     setData={setItemData}
                 />
             )}
-            {/* {gridList.map((grid: any) => 
+            {gridList.map((grid: any) => 
                 grid.columns.map((column: any) => (
                     <div
                         key={column.id}
@@ -370,11 +370,10 @@ const SA_B3101W: React.FC = () => {
                         hidden
                     />
                 ))
-            )} */}
+            )}
 
 
         </>
     );
 }
-
 export default SA_B3101W;
