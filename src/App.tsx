@@ -323,7 +323,6 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
                 <AuthRoute path="/SA_B2221W" component={SA_B2221W} exact />
                 <AuthRoute path="/SA_B2410W" component={SA_B2410W} exact />
-                <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
                 <AuthRoute
                   path="/SA_B2410_290W"
                   component={SA_B2410_290W}
@@ -331,6 +330,7 @@ const AppInner: React.FC = () => {
                 />
                 <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
                 <AuthRoute path="/SA_B3100W" component={SA_B3100W} exact />
+                <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
                 {/* 생산관리 */}
                 <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />   
                 <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />   
