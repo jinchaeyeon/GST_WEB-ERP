@@ -22,6 +22,8 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
+  UseMessages,
+  UsePermissions,
   chkScrollHandler,
   convertDateToStr,
   handleKeyPressSearch,
@@ -108,9 +110,29 @@ const numberField: string[] = [
 const SA_B3101W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
+  // //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+
+      setFilters((prev) => ({
+          ...prev,
+          yyyy: setDefaultDate(customOptionData, "yyyy"),
+        //   itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+        //   .valueCode,
+        //   rdoAmtdiv: defaultOption.find((item: any) => item.id === "rdoAmtdiv")
+        //   .valueCode,
+      }));
+    }
+  }, [customOptionData]);
 
   const [allChartDataResult, setAllChartDataResult] = useState({
     companies: [""],
@@ -163,21 +185,6 @@ const SA_B3101W: React.FC = () => {
     }));
   };
 
-  // //customOptionData 조회 후 디폴트 값 세팅
-  useEffect(() => {
-    if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
-
-      // setFilters((prev) => ({
-      //     ...prev,
-      //     yyyy: setDefaultDate(customOptionData, "yyyy"),
-      //     itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-      //     .valueCode,
-      //     rdoAmtdiv: defaultOption.find((item: any) => item.id === "rdoAmtdiv")
-      //     .valueCode,
-      // }));
-    }
-  }, [customOptionData]);
 
   //그리드 리셋
   const resetGrid = () => {
@@ -388,7 +395,7 @@ const SA_B3101W: React.FC = () => {
           <div
             key={column.id}
             id={column.id}
-            data-grid-name={grid.gridname}
+            data-grid-name={grid.gridName}
             data-field={column.field}
             data-caption={column.caption}
             data-width={column.width}
