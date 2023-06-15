@@ -31,6 +31,8 @@ import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 import { AnyTxtRecord } from "dns";
 import { ScrollDirection } from "@progress/kendo-react-dateinputs/dist/npm/virtualization/Virtualization";
 
+
+
 const DATA_ITEM_KEY = "num";
 const numberField: string[] = [
     "inamt1",
