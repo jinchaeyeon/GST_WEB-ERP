@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { gridList } from "../store/columns/SA_B3101W_C";
 import {
   ButtonContainer,
   FilterBox,
@@ -62,7 +63,6 @@ import { useApi } from "../hooks/api";
 import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 import { AnyTxtRecord } from "dns";
 import { ScrollDirection } from "@progress/kendo-react-dateinputs/dist/npm/virtualization/Virtualization";
-import { gridList } from "../store/columns/SA_B3101W_C";
 
 const DATA_ITEM_KEY = "num";
 const numberField: string[] = [
@@ -341,7 +341,7 @@ const SA_B3101W: React.FC = () => {
           resizable={true}
         >
           {/* {customOptionData !== null && 
-                        customOptionData.menuCustomColumnOptions["grdList"].map(
+                        customOptionData.menuCustomColumnOptions["gridList"].map(
                             (item: any, idx: number) =>
                                 item.sortOrder !== -1 &&
                                 (numberField.includes(item.fieldName) ? (
