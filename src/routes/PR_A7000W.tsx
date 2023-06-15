@@ -35,9 +35,6 @@ import { Iparameters, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
-  findMessage,
-  getGridItemChangedData,
-  getItemQuery,
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
@@ -56,17 +53,14 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import TopButtons from "../components/Buttons/TopButtons";
 import { gridList } from "../store/columns/PR_A7000W_C";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 import { IItemData } from "../hooks/interfaces";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import YearCalendar from "../components/Calendars/YearCalendar";
 import NumberCell from "../components/Cells/NumberCell";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -175,6 +169,12 @@ const PR_A7000W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id === "location")
+          .valueCode,
+        proccd: defaultOption.find((item: any) => item.id === "proccd")
+          .valueCode,
+        prodmac: defaultOption.find((item: any) => item.id === "prodmac")
+          .valueCode,
+        prodemp: defaultOption.find((item: any) => item.id === "prodemp")
           .valueCode,
         finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
       }));
@@ -319,9 +319,15 @@ const PR_A7000W: React.FC = () => {
     finyn: "",
     planno: "",
     ordnum: "",
+    plankey: "",
+    ordkey: "",
+    gokey: "",
     custcd: "",
     custnm: "",
     project: "",
+    proccd: "",
+    prodmac: "",
+    prodemp: "",
     companyCode: companyCode,
     find_row_value: "",
     scrollDirrection: "down",
@@ -388,6 +394,38 @@ const PR_A7000W: React.FC = () => {
       "@p_rcvcustnm": "",
       "@p_bnatur": "",
       "@p_project": filters.project,
+    },
+  };
+
+  //조회조건 파라미터
+  const parameters2: Iparameters = {
+    procedureName: "P_PR_A7000W_LIST_Q",
+    pageNumber: filters.pgNum,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": sessionItem.find(
+        (sessionItem) => sessionItem.code === "orgdiv"
+      )?.value,
+      "@p_location": filters.location,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_proccd": filters.proccd,
+      "@p_prodmac": filters.prodmac,
+      "@p_prodemp": filters.prodemp,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_ordkey": filters.ordkey,
+      "@p_plankey": filters.plankey,
+      "@p_gokey": filters.gokey,
+      "@p_finyn": filters.finyn,
+      "@p_gonum_s": "",
+      "@p_goseq_s": "",
+      "@p_dwgno": "",
+      "@p_project": filters.project,
+      "@p_bnatur": "",
     },
   };
 
@@ -469,7 +507,11 @@ const PR_A7000W: React.FC = () => {
     let data: any;
     setLoading(true);
     try {
-      data = await processApi<any>("procedure", parameters);
+      if(tabSelected == 0) {
+        data = await processApi<any>("procedure", parameters);
+      } else{
+        data = await processApi<any>("procedure", parameters2);
+      }
     } catch (error) {
       data = null;
     }
@@ -479,7 +521,7 @@ const PR_A7000W: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
       }));
-
+      console.log(data)
       if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
@@ -527,7 +569,7 @@ const PR_A7000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
@@ -917,15 +959,15 @@ const PR_A7000W: React.FC = () => {
     );
   };
 
-    //그리드 푸터
-    const detailTotalFooterCell = (props: GridFooterCellProps) => {
-      return (
-        <td colSpan={props.colSpan} style={props.style}>
-          총 {detailDataResult.total}건
-        </td>
-      );
-    };
-      //그리드 푸터
+  //그리드 푸터
+  const detailTotalFooterCell = (props: GridFooterCellProps) => {
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {detailDataResult.total}건
+      </td>
+    );
+  };
+  //그리드 푸터
   const detailTotalFooterCell2 = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -1082,29 +1124,30 @@ const PR_A7000W: React.FC = () => {
   const onAddClick = async () => {
     const data = detailDataResult.data.filter((item: any) => item.chk == true);
     const data2 = detailDataResult2.data.filter(
-      (item: any) => item.chk == true
+      (item: any) =>
+        item.num == Object.getOwnPropertyNames(detailselectedState2)[0]
     );
     let valid = true;
     let valid2 = true;
     data.map((item) => {
-      if(item.proccd == "") {
+      if (item.proccd == "") {
         valid = false;
       }
       data.map((item2) => {
-        if(item.procseq == item2.procseq && item.num != item2.num) {
+        if (item.procseq == item2.procseq && item.num != item2.num) {
           valid2 = false;
         }
-      })
-    })
+      });
+    });
 
     if (data.length == 0) {
       alert("생산계획상세를 선택해주세요.");
     } else if (data2.length == 0) {
       alert("작업지시를 선택해주세요.");
-    } else if(valid != true) {
-      alert("공정을 입력해주세요.")
-    } else if(valid2 != true) {
-      alert("공정 순서가 중복됩니다.")
+    } else if (valid != true) {
+      alert("공정을 입력해주세요.");
+    } else if (valid2 != true) {
+      alert("공정 순서가 중복됩니다.");
     } else {
       let dataArr: TdataArr = {
         planno_s: [],
@@ -1125,13 +1168,7 @@ const PR_A7000W: React.FC = () => {
         dataArr.prodemp_s.push(prodemp);
         dataArr.godt_s.push(godt);
       });
-      data2.forEach((item: any, idx: number) => {
-        const { gonum = "" } = item;
-
-        if (dataArr.gokey_s.includes(gonum) == false) {
-          dataArr.gokey_s.push(gonum);
-        }
-      });
+      dataArr.gokey_s.push(data2[0].gonum);
 
       const para: Iparameters = {
         procedureName: "P_PR_A7000W_S",
@@ -1162,7 +1199,7 @@ const PR_A7000W: React.FC = () => {
       } catch (error) {
         datas = null;
       }
-      console.log(datas);
+
       if (datas.isSuccess !== true) {
         console.log("[오류 발생]");
         console.log(datas);
@@ -1171,19 +1208,19 @@ const PR_A7000W: React.FC = () => {
       resetAllGrid();
     }
   };
-  
+
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onRemoveClick = async () => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
-    const dataItem = detailDataResult2.data.filter((item: any, index: number) => {
-      return (
-        item.chk == true
-      );
-    });
-    console.log(dataItem)
+    const dataItem = detailDataResult2.data.filter(
+      (item: any, index: number) => {
+        return item.chk == true;
+      }
+    );
+
     if (dataItem.length === 0) return false;
     type TRowsArr = {
       gokey_s: string[];
@@ -1194,9 +1231,7 @@ const PR_A7000W: React.FC = () => {
     };
 
     dataItem.forEach((item: any, idx: number) => {
-      const {
-        gokey = "",
-      } = item;
+      const { gokey = "" } = item;
 
       rowsArr.gokey_s.push(gokey);
     });
@@ -1224,129 +1259,93 @@ const PR_A7000W: React.FC = () => {
     };
     let datas: any;
 
-      try {
-        datas = await processApi<any>("procedure", para);
-      } catch (error) {
-        datas = null;
-      }
+    try {
+      datas = await processApi<any>("procedure", para);
+    } catch (error) {
+      datas = null;
+    }
 
-      if (datas.isSuccess !== true) {
-        console.log("[오류 발생]");
-        console.log(datas);
-        alert(datas.resultMessage);
-      }
-      resetAllGrid();
+    if (datas.isSuccess !== true) {
+      console.log("[오류 발생]");
+      console.log(datas);
+      alert(datas.resultMessage);
+    }
+    resetAllGrid();
   };
 
   const onSaveClick = async () => {
-    const dataItem = mainDataResult.data.filter((item: any) => {
+    const dataItem = detailDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0 && deletedRows.length === 0) return false;
+    if (dataItem.length === 0) return false;
 
-   
+    let dataArr: TdataArr = {
+      planno_s: [],
+      chkyn_s: [],
+      plankey_s: [],
+      prodmac_s: [],
+      prodemp_s: [],
+      gokey_s: [],
+      qty_s: [],
+      godt_s: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const { gokey = "", qty = "", godt = "" } = item;
 
-  };
+      dataArr.gokey_s.push(gokey);
+      dataArr.qty_s.push(qty);
+      dataArr.godt_s.push(godt);
+    });
 
-  const fetchGridSaved = async () => {
-    let data: any;
+    const para: Iparameters = {
+      procedureName: "P_PR_A7000W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "U",
+        "@p_orgdiv": "01",
+        "@p_location": "01",
+        "@p_planno_s": "",
+        "@p_chkyn_s": "",
+        "@p_plankey_s": "",
+        "@p_prodmac_s": "",
+        "@p_prodemp_s": "",
+        "@p_gokey_s": dataArr.gokey_s.join("|"),
+        "@p_qty_s": dataArr.qty_s.join("|"),
+        "@p_godt_s": dataArr.godt_s.join("|"),
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "PR_A7000W",
+      },
+    };
+
+    let datas: any;
 
     try {
-      data = await processApi<any>("procedure", paraSaved);
+      datas = await processApi<any>("procedure", para);
     } catch (error) {
-      data = null;
+      datas = null;
     }
 
-    if (data.isSuccess === true) {
-      deletedRows = []; //초기화
-      search();
-    } else {
+    if (datas.isSuccess !== true) {
       console.log("[오류 발생]");
-      console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      console.log(datas);
+      alert(datas.resultMessage);
     }
-
-    paraData.work_type = ""; //초기화
+    resetAllGrid();
   };
 
   const userId = UseGetValueFromSessionItem("user_id");
-
-  //프로시저 파라미터 초기값
-  const [paraData, setParaData] = useState({
-    work_type: "",
-    rowstatus_s: "",
-    orgdiv: sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")
-      ?.value,
-    yyyymm_s: "",
-    itemcd_s: "",
-    proccd_s: "",
-    lotnum_s: "",
-    location_s: "",
-    qty_s: "",
-    totwgt_s: "",
-    pgmdiv_s: "",
-    userid: userId,
-    pc: pc,
-    form_id: pathname,
-  });
-
-  const paraSaved: Iparameters = {
-    procedureName: "P_PR_A9100W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": paraData.work_type,
-      "@p_rowstatus_s": paraData.rowstatus_s,
-      "@p_orgdiv": paraData.orgdiv,
-      "@p_yyyymm_s": paraData.yyyymm_s,
-      "@p_itemcd_s": paraData.itemcd_s,
-      "@p_proccd_s": paraData.proccd_s,
-      "@p_lotnum_s": paraData.lotnum_s,
-      "@p_location_s": paraData.location_s,
-      "@p_qty_s": paraData.qty_s,
-      "@p_totwgt_s": paraData.totwgt_s,
-      "@p_pgmdiv_s": paraData.pgmdiv_s,
-      "@p_userid": paraData.userid,
-      "@p_pc": paraData.pc,
-      "@p_form_id": paraData.form_id,
-    },
-  };
-
-  useEffect(() => {
-    if (paraData.work_type !== "") fetchGridSaved();
-  }, [paraData]);
 
   const search = () => {
     resetAllGrid();
   };
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  const [editedRowData, setEditedRowData] = useState<any>({});
 
-  const ItemBtnCell = (props: GridCellProps) => {
-    const { dataIndex } = props;
-
-    const onRowItemWndClick = () => {
-      setEditIndex(dataIndex);
-      setEditedRowData(props.dataItem);
-      setItemWindowVisible(true);
-    };
-
-    return (
-      <td className="k-command-cell required">
-        <Button
-          type={"button"}
-          className="k-grid-save-command"
-          onClick={onRowItemWndClick}
-          icon="more-horizontal"
-          //disabled={isInEdit ? false : true}
-        />
-      </td>
-    );
-  };
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -1459,11 +1458,7 @@ const PR_A7000W: React.FC = () => {
     };
 
     return (
-      <td
-        style={{ textAlign: "center" }}
-        // aria-colindex={ariaColumnIndex}
-        // data-grid-col-index={columnIndex}
-      >
+      <td style={{ textAlign: "center" }}>
         <Checkbox value={dataItem["chk"]} onClick={handleChange}></Checkbox>
       </td>
     );
@@ -1522,13 +1517,7 @@ const PR_A7000W: React.FC = () => {
 
   const enterEdit3 = (dataItem: any, field: string) => {
     let valid = true;
-    if (
-      field == "chk" ||
-      field == "proccd" ||
-      field == "prodemp" ||
-      field == "prodmac" ||
-      field == "qty"
-    ) {
+    if (field == "chk" || field == "qty") {
       const newData = detailDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1931,13 +1920,19 @@ const PR_A7000W: React.FC = () => {
             <GridTitleContainer>
               <GridTitle>작업지시</GridTitle>
               <ButtonContainer>
-                  <Button
-                    onClick={onRemoveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                  ></Button>
-                </ButtonContainer>
+                <Button
+                  onClick={onRemoveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                ></Button>
+              </ButtonContainer>
             </GridTitleContainer>
             <Grid
               style={{ height: "30vh" }}
@@ -2013,13 +2008,195 @@ const PR_A7000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? detailTotalFooterCell2 : undefined
+                          item.sortOrder === 0
+                            ? detailTotalFooterCell2
+                            : undefined
                         }
                       />
                     )
                 )}
             </Grid>
           </GridContainer>
+        </TabStripTab>
+        <TabStripTab title="작업지시내역">
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>지시일자</th>
+                  <td colSpan={3}>
+                    <div className="filter-item-wrap">
+                      <DatePicker
+                        name="frdt"
+                        value={filters.frdt}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
+                        className="required"
+                      />
+                      ~
+                      <DatePicker
+                        name="todt"
+                        value={filters.todt}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
+                        className="required"
+                      />
+                    </div>
+                  </td>
+                  <th>사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="location"
+                        value={filters.location}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>공정</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="proccd"
+                        value={filters.proccd}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>생산계획번호</th>
+                  <td>
+                    <Input
+                      name="plankey"
+                      type="text"
+                      value={filters.plankey}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>품목코드</th>
+                  <td>
+                    <Input
+                      name="itemcd"
+                      type="text"
+                      value={filters.itemcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onItemWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>품목명</th>
+                  <td>
+                    <Input
+                      name="itemnm"
+                      type="text"
+                      value={filters.itemnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>수주번호</th>
+                  <td>
+                    <Input
+                      name="ordkey"
+                      type="text"
+                      value={filters.ordkey}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>설비</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="prodmac"
+                        value={filters.prodmac}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="fxfull"
+                        valueField="fxcode"
+                      />
+                    )}
+                  </td>
+                  <th>작업지시번호</th>
+                  <td>
+                    <Input
+                      name="gokey"
+                      type="text"
+                      value={filters.gokey}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>업체코드</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={filters.custcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>업체명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>공사명</th>
+                  <td>
+                    <Input
+                      name="project"
+                      type="text"
+                      value={filters.project}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>작업자</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="prodemp"
+                        value={filters.prodemp}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
+                  </td>
+                  <th>완료여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="finyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
         </TabStripTab>
       </TabStrip>
       {itemWindowVisible && (
