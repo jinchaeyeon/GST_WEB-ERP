@@ -2,7 +2,6 @@ import { TGrid } from "../types";
 
 export const gridList: Array<TGrid> = [
   {
-    /* v1.0 */
     gridName: "grdList",
     columns: [
       {
@@ -11,7 +10,6 @@ export const gridList: Array<TGrid> = [
         caption: "회사구분",
         width: 100,
       },   
-      //1월
       {
         id: "col_inamt1",
         field: "inamt1",
@@ -30,7 +28,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //2월
       {
         id: "col_inamt2",
         field: "inamt2",
@@ -49,7 +46,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //3월
       {
         id: "col_inamt3",
         field: "inamt3",
@@ -68,7 +64,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //4월
       {
         id: "col_inamt4",
         field: "inamt4",
@@ -87,7 +82,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //5월
       {
         id: "col_inamt5",
         field: "inamt5",
@@ -106,7 +100,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //6월
       {
         id: "col_inamt6",
         field: "inamt6",
@@ -125,7 +118,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //7월
       {
         id: "col_inamt7",
         field: "inamt7",
@@ -144,7 +136,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //8월
       {
         id: "col_inamt8",
         field: "inamt8",
@@ -163,7 +154,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //9월
       {
         id: "col_inamt9",
         field: "inamt9",
@@ -182,7 +172,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //10월
       {
         id: "col_inamt10",
         field: "inamt10",
@@ -201,7 +190,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //11월
       {
         id: "col_inamt11",
         field: "inamt11",
@@ -220,7 +208,6 @@ export const gridList: Array<TGrid> = [
         caption: "%",
         width: 100,
       },
-      //12월
       {
         id: "col_inamt12",
         field: "inamt12",
