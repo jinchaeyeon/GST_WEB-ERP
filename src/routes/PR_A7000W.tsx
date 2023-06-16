@@ -91,6 +91,7 @@ const numberField = [
   "badqty",
   "tot_jisiqty",
   "planqty",
+  "prodqty"
 ];
 const DateField = ["plandt", "finexpdt", "godt"];
 const customField = ["proccd", "prodmac", "prodemp"];
@@ -105,6 +106,21 @@ type TdataArr = {
   gokey_s: string[];
   qty_s: string[];
   godt_s: string[];
+};
+type TdataArr2 = {
+  rowstatus_s: string[];
+  gonum_s: string[];
+  goseq_s: string[];
+  location_s: string[];
+  godt_s: string[];
+  prodmac_s: string[];
+  prodemp_s: string[];
+  qty_s: string[];
+  planno_s: string[];
+  planseq_s: string[];
+  ordnum_s: string[];
+  ordseq_s: string[];
+  remark_s: string[];
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -1468,6 +1484,103 @@ const PR_A7000W: React.FC = () => {
     resetAllGrid();
   };
 
+  const onCompleteClick = async () => {
+    const data = mainDataResult2.data.filter((item: any) => item.chk == true);
+
+    if (data.length == 0) {
+      alert("작업지시내역을 선택해주세요.");
+    } else {
+      let dataArr: TdataArr2 = {
+        rowstatus_s: [],
+        gonum_s: [],
+        goseq_s: [],
+        location_s: [],
+        godt_s: [],
+        prodmac_s: [],
+        prodemp_s: [],
+        qty_s: [],
+        planno_s: [],
+        planseq_s: [],
+        ordnum_s: [],
+        ordseq_s: [],
+        remark_s: [],
+      };
+
+      data.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          gonum = "",
+          goseq = "",
+          location = "",
+          godt = "",
+          prodmac = "",
+          prodemp = "",
+          jisiqty = "",
+          planno = "",
+          planseq = "",
+          ordnum = "",
+          ordseq = "",
+          remark = "",
+        } = item;
+
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.gonum_s.push(gonum);
+        dataArr.goseq_s.push(goseq);
+        dataArr.location_s.push(location);
+        dataArr.godt_s.push(godt);
+        dataArr.prodmac_s.push(prodmac);
+        dataArr.prodemp_s.push(prodemp);
+        dataArr.qty_s.push(jisiqty);
+        dataArr.planno_s.push(planno);
+        dataArr.planseq_s.push(planseq);
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq);
+        dataArr.remark_s.push(remark);
+      });
+
+      const para: Iparameters = {
+        procedureName: "P_PR_A7000W_LIST_S",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_work_type": "FINYN",
+          "@p_orgdiv": "01",
+          "@p_rowstatus_s": dataArr.rowstatus_s.join("|"),
+          "@p_gonum_s": dataArr.gonum_s.join("|"),
+          "@p_goseq_s": dataArr.goseq_s.join("|"),
+          "@p_location_s": dataArr.location_s.join("|"),
+          "@p_godt_s": dataArr.godt_s.join("|"),
+          "@p_prodmac_s": dataArr.prodmac_s.join("|"),
+          "@p_prodemp_s": dataArr.prodemp_s.join("|"),
+          "@p_qty_s": dataArr.qty_s.join("|"),
+          "@p_planno_s": dataArr.planno_s.join("|"),
+          "@p_planseq_s": dataArr.planseq_s.join("|"),
+          "@p_ordnum_s": dataArr.ordnum_s.join("|"),
+          "@p_ordseq_s": dataArr.ordseq_s.join("|"),
+          "@p_remark_s": dataArr.remark_s.join("|"),
+          "@p_userid": userId,
+          "@p_pc": pc,
+          "@p_form_id": "PR_A7000W",
+        },
+      };
+
+      let datas: any;
+
+      try {
+        datas = await processApi<any>("procedure", para);
+      } catch (error) {
+        datas = null;
+      }
+
+      if (datas.isSuccess !== true) {
+        console.log("[오류 발생]");
+        console.log(datas);
+        alert(datas.resultMessage);
+      }
+      resetAllGrid();
+    }
+  };
+
   const userId = UseGetValueFromSessionItem("user_id");
 
   const search = () => {
@@ -1650,6 +1763,16 @@ const PR_A7000W: React.FC = () => {
     );
   };
 
+  const CustomCheckBoxCell6 = (props: GridCellProps) => {
+    if (props.rowType === "groupHeader") {
+      return null;
+    }
+
+    return (
+        <CheckBoxReadOnlyCell {...props}></CheckBoxReadOnlyCell>
+    );
+  };
+
   const onDetailItemChange2 = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
       event,
@@ -1661,8 +1784,8 @@ const PR_A7000W: React.FC = () => {
   const onMainItemChange2 = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
       event,
-      mainDataResult,
-      setMainDataResult,
+      mainDataResult2,
+      setMainDataResult2,
       DATA_ITEM_KEY
     );
   };
@@ -2459,7 +2582,7 @@ const PR_A7000W: React.FC = () => {
               <GridTitle>작업지시내역</GridTitle>
               <ButtonContainer>
                 <Button
-                  // onClick={onAddClick}
+                  onClick={onCompleteClick}
                   fillMode="outline"
                   themeColor={"primary"}
                 >
@@ -2540,7 +2663,7 @@ const PR_A7000W: React.FC = () => {
                             : DateField.includes(item.fieldName)
                             ? DateCell
                             : checkField.includes(item.fieldName)
-                            ? CheckBoxReadOnlyCell
+                            ? CustomCheckBoxCell6
                             : undefined
                         }
                         footerCell={
