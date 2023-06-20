@@ -10,7 +10,6 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -61,6 +60,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
@@ -98,7 +98,7 @@ const SA_B2000: React.FC = () => {
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
         cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
+          (item: any) => item.id === "cboLocation",
         ).valueCode,
         cboDptcd: defaultOption.find((item: any) => item.id === "cboDptcd")
           .valueCode,
@@ -120,7 +120,7 @@ const SA_B2000: React.FC = () => {
   UseBizComponent(
     "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
+    setBizComponentData,
   );
 
   //공통코드 리스트 조회 ()
@@ -154,35 +154,35 @@ const SA_B2000: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002"),
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005"),
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029"),
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002"),
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001",
+        ),
       );
       const departmentQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
+          (item: any) => item.bizComponentId === "L_dptcd_001",
+        ),
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061"),
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015"),
       );
       const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn"),
       );
 
       fetchQuery(ordstsQueryStr, setOrdstsListData);
@@ -258,11 +258,11 @@ const SA_B2000: React.FC = () => {
   };
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
+    process([], mainDataState),
   );
 
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
+    process([], detailDataState),
   );
 
   const [selectedState, setSelectedState] = useState<{
@@ -315,8 +315,33 @@ const SA_B2000: React.FC = () => {
     }));
   };
 
+  type TFilters = {
+    pgSize: number;
+    orgdiv: string;
+    itemcd: string;
+    itemnm: string;
+    custcd: string;
+    custnm: string;
+    ymdFrdt: Date | null;
+    ymdTodt: Date | null;
+    radFinyn: string;
+    poregnum: string;
+    ordnum: string;
+    cboLocation: string;
+    cboDptcd: string;
+    cboPerson: string;
+    cboDoexdiv: string;
+    cboOrdtype: string;
+    cboOrdsts: string;
+    find_row_value: string;
+    scrollDirrection: "up" | "down";
+    pgNum: number;
+    isSearch: boolean;
+    pgGap: number;
+  };
+
   //조회조건 초기값
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<TFilters>({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
     itemcd: "",
@@ -581,7 +606,7 @@ const SA_B2000: React.FC = () => {
       if (filters.find_row_value !== "" && mainDataResult.total > 0) {
         const ROW_HEIGHT = 35.56;
         const idx = mainDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value
+          (item) => idGetter(item) === filters.find_row_value,
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
@@ -735,7 +760,7 @@ const SA_B2000: React.FC = () => {
     const ordnum = Object.getOwnPropertyNames(selectedState)[0];
 
     const selectedRowData = mainDataResult.data.find(
-      (item) => item.ordnum === ordnum
+      (item) => item.ordnum === ordnum,
     );
 
     setDetailFilters((prev) => ({
@@ -759,7 +784,7 @@ const SA_B2000: React.FC = () => {
     const ordnum = Object.getOwnPropertyNames(selectedState)[0];
 
     const data = mainDataResult.data.filter(
-      (item) => item.ordnum === ordnum
+      (item) => item.ordnum === ordnum,
     )[0];
 
     setParaDataDeleted((prev) => ({
@@ -925,26 +950,21 @@ const SA_B2000: React.FC = () => {
           <tbody>
             <tr>
               <th>납기일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="ymdFrdt"
-                    value={filters.ymdFrdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="ymdTodt"
-                    value={filters.ymdTodt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
+              <td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.ymdFrdt,
+                    end: filters.ymdTodt,
+                  }}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      ymdFrdt: e.value.start,
+                      ymdTodt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
               </td>
 
               <th>사업장</th>
@@ -984,6 +1004,16 @@ const SA_B2000: React.FC = () => {
                     valueField="user_id"
                   />
                 )}
+              </td>
+
+              <th>PO번호</th>
+              <td>
+                <Input
+                  name="poregnum"
+                  type="text"
+                  value={filters.poregnum}
+                  onChange={filterInputChange}
+                />
               </td>
             </tr>
 
@@ -1087,17 +1117,8 @@ const SA_B2000: React.FC = () => {
                 />
               </td>
 
-              <th>PO번호</th>
-              <td>
-                <Input
-                  name="poregnum"
-                  type="text"
-                  value={filters.poregnum}
-                  onChange={filterInputChange}
-                />
-              </td>
               <th>완료여부</th>
-              <td>
+              <td colSpan={3}>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
                     name="radFinyn"
@@ -1152,29 +1173,29 @@ const SA_B2000: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 ordsts: ordstsListData.find(
-                  (item: any) => item.sub_code === row.ordsts
+                  (item: any) => item.sub_code === row.ordsts,
                 )?.code_name,
                 doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
+                  (item: any) => item.sub_code === row.doexdiv,
                 )?.code_name,
                 taxdiv: taxdivListData.find(
-                  (item: any) => item.sub_code === row.taxdiv
+                  (item: any) => item.sub_code === row.taxdiv,
                 )?.code_name,
                 location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
+                  (item: any) => item.sub_code === row.location,
                 )?.code_name,
                 person: usersListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id === row.person,
                 )?.user_name,
                 dptcd: departmentsListData.find(
-                  (item: any) => item.dptcd === row.dptcd
+                  (item: any) => item.dptcd === row.dptcd,
                 )?.dptnm,
                 finyn: finynListData.find(
-                  (item: any) => item.code === row.finyn
+                  (item: any) => item.code === row.finyn,
                 )?.name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
-              mainDataState
+              mainDataState,
             )}
             {...mainDataState}
             onDataStateChange={onMainDataStateChange}
@@ -1280,13 +1301,13 @@ const SA_B2000: React.FC = () => {
             detailDataResult.data.map((row) => ({
               ...row,
               itemacnt: itemacntListData.find(
-                (item: any) => item.sub_code === row.itemacnt
+                (item: any) => item.sub_code === row.itemacnt,
               )?.code_name,
               qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
+                (item: any) => item.sub_code === row.qtyunit,
               )?.code_name,
             })),
-            detailDataState
+            detailDataState,
           )}
           {...detailDataState}
           onDataStateChange={onDetailDataStateChange}

@@ -76,8 +76,13 @@ span.required:hover,
 span.required.k-hover,
 input.required,
 input.required:hover,
-input.required.k-hover {
+input.required.k-hover,
+.k-daterangepicker.required input {
   background-color: #fff0ef;
+}
+.k-daterangepicker.required,
+.k-daterangepicker.required:hover {
+  background-color: unset;
 }
 ul.readonly,
 span.readonly,
