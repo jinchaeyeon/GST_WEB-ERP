@@ -56,6 +56,10 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
+const topHeight = 140.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
+
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -95,7 +99,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   UseBizComponent(
     "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_YESNOALL,L_sysUserMaster_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
+    setBizComponentData,
   );
 
   //공통코드 리스트 조회 ()
@@ -112,15 +116,15 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061"),
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015"),
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001",
+        ),
       );
 
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -159,10 +163,10 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   });
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
+    process([], mainDataState),
   );
   const [subDataResult, setSubDataResult] = useState<DataResult>(
-    process([], subDataState)
+    process([], subDataState),
   );
 
   const [selectedState, setSelectedState] = useState<{
@@ -493,9 +497,9 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : "",
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -507,7 +511,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -533,7 +537,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const onRowDoubleClick = (props: any) => {
     let valid = true;
     const selectRow = mainDataResult.data.filter(
-      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0],
     )[0];
 
     subDataResult.data.map((item) => {
@@ -785,24 +789,24 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "calc(100% - 5px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id === row.person,
                 )?.user_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code === row.qtyunit,
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code === row.itemacnt,
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
-              mainDataState
+              mainDataState,
             )}
             onDataStateChange={onMainDataStateChange}
             {...mainDataState}
@@ -911,7 +915,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -923,22 +927,22 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "300px" }}
+            style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code === row.qtyunit,
                 )?.code_name,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id === row.person,
                 )?.user_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code === row.itemacnt,
                 )?.code_name,
                 [SELECTED_FIELD]: subselectedState[idGetter2(row)], //선택된 데이터
               })),
-              subDataState
+              subDataState,
             )}
             onDataStateChange={onSubDataStateChange}
             {...subDataState}
