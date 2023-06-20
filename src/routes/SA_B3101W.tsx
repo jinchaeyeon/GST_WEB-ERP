@@ -4,6 +4,8 @@ import {
   ButtonContainer,
   FilterBox,
   GridContainer,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
@@ -124,8 +126,8 @@ const SA_B3101W: React.FC = () => {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
 
       setFilters((prev) => ({
-          ...prev,
-          yyyy: setDefaultDate(customOptionData, "yyyy"),
+        ...prev,
+        yyyy: setDefaultDate(customOptionData, "yyyy"),
         //   itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
         //   .valueCode,
         //   rdoAmtdiv: defaultOption.find((item: any) => item.id === "rdoAmtdiv")
@@ -184,7 +186,6 @@ const SA_B3101W: React.FC = () => {
       [name]: value,
     }));
   };
-
 
   //그리드 리셋
   const resetGrid = () => {
@@ -318,12 +319,14 @@ const SA_B3101W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
-      <TitleContainer>
-        <Title>차트</Title>
-      </TitleContainer>
+      <GridTitleContainer>
+      <GridTitle>차트</GridTitle>
+      </GridTitleContainer>
       <Chart></Chart>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>차트</GridTitle>
+        </GridTitleContainer>
         <Grid
           style={{ height: "32vh" }}
           data={process(
