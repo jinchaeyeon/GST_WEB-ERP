@@ -70,42 +70,18 @@ import { ScrollDirection } from "@progress/kendo-react-dateinputs/dist/npm/virtu
 
 const DATA_ITEM_KEY = "num";
 const numberField: string[] = [
-  "inamt1",
-  "outamt1",
-  "per1",
-  "inamt2",
-  "outamt2",
-  "per2",
-  "inamt3",
-  "outamt3",
-  "per3",
-  "inamt4",
-  "outamt4",
-  "per4",
-  "inamt5",
-  "outamt5",
-  "per5",
-  "inamt6",
-  "outamt6",
-  "per6",
-  "inamt7",
-  "outamt7",
-  "per7",
-  "inamt8",
-  "outamt8",
-  "per8",
-  "inamt9",
-  "outamt9",
-  "per9",
-  "inamt10",
-  "outamt10",
-  "per10",
-  "inamt11",
-  "outamt11",
-  "per11",
-  "inamt12",
-  "outamt12",
-  "per12",
+  "qty01",
+  "qty02",
+  "qty03",
+  "qty04",
+  "qty05",
+  "qty06",
+  "qty07",
+  "qty08",
+  "qty09",
+  "qty10",
+  "qty11",
+  "qty12",
 ];
 
 /* v1.3 */
@@ -152,6 +128,14 @@ const SA_B3101W: React.FC = () => {
   const [gridDataResult, setGridDataResult] = useState<DataResult>(
     process([], gridDataState)
   );
+
+  const onMonthGridSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    })
+  }
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -282,15 +266,35 @@ const SA_B3101W: React.FC = () => {
     }));
   };
 
+  const search = () => {
+    resetGrid();
+  };
+
+  //엑셀 내보내기
+  let _export: ExcelExport | null | undefined;
+  const exportExcel = () => {
+    if (_export !== null && _export !== undefined){
+      _export.save();
+    }
+  };
+
   return (
     <>
       <TitleContainer>
         <Title>매입매출현황</Title>
-        <ButtonContainer></ButtonContainer>
-      </TitleContainer>
+          <ButtonContainer>
+            {permissions && (
+              <TopButtons
+                search={search}
+                exportExcel={exportExcel}
+                permissions={permissions}
+              />
+            )}
+          </ButtonContainer>
+      </TitleContainer>    
 
       <FilterContainer>
-        <FilterBox>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th data-contol-name="lblYyyy">기준년도</th>
@@ -307,13 +311,13 @@ const SA_B3101W: React.FC = () => {
               </td>
               <th data-control-name="lblradAmtdiv">단위</th>
               <td>
-                {/* {customOptionData !== null && (
+                {customOptionData !== null && (
                                 <CommonRadioGroup
                                     name="radAmtdiv"
                                     customOptionData={customOptionData}
                                     changeData={filterRadioChange}
                                 />
-                            )} */}
+                            )}
               </td>
             </tr>
           </tbody>
@@ -323,6 +327,7 @@ const SA_B3101W: React.FC = () => {
       <GridTitle>차트</GridTitle>
       </GridTitleContainer>
       <Chart></Chart>
+
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>차트</GridTitle>
@@ -338,7 +343,15 @@ const SA_B3101W: React.FC = () => {
           )}
           {...gridDataState}
           onDataStateChange={onGridDataStateChange}
-          //스크롤 조회 기증
+          //선택 기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single"
+          }}
+          onSelectionChange={onMonthGridSelectionChange}
+          //스크롤 조회 기능
           fixedScroll={true}
           total={gridDataResult.total}
           onScroll={onGridScrollHandler}
@@ -350,40 +363,56 @@ const SA_B3101W: React.FC = () => {
           //컬럼너비조정
           resizable={true}
         >
-          {/* {customOptionData !== null && 
-                        customOptionData.menuCustomColumnOptions["gridList"].map(
-                            (item: any, idx: number) =>
-                                item.sortOrder !== -1 &&
-                                (numberField.includes(item.fieldName) ? (
-                                    <GridColumn
-                                        key={idx}
-                                        field={item.fieldName}
-                                        title={item.caption}
-                                        footerCell={
-                                            item.sortOrder === 0
-                                            ? gridTotalFooterCell
-                                            : undefined
-                                        }
-                                    >
-
-                                    </GridColumn>
-                                    ) : (
-                                        <GridColumn
-                                            key={idx}
-                                            field={item.fieldName}
-                                            title={item.caption}
-                                            footerCell={
-                                                item.sortOrder === 0
-                                                ? gridTotalFooterCell
-                                                : numberField.includes(item.fieldName)
-                                                ? gridSumQtyFooterCell
-                                                : undefined
-                                            }
-                                        />
-                                    )
-                                )                                
-                        )
-                    } */}
+        {customOptionData !== null && 
+          customOptionData.menuCustomColumnOptions["grdList"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 &&
+                (numberField.includes(item.fieldName) ? (
+                  <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      footerCell={
+                          item.sortOrder === 0
+                          ? gridTotalFooterCell
+                          : undefined
+                      }
+                  >
+                    <GridColumn/>
+                    <GridColumn
+                      title={"매입액"}
+                      cell={NumberCell}
+                      field={item.fieldName}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      title={"매출액"}
+                      cell={NumberCell}
+                      field={item.fieldName}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      title={"%"}
+                      cell={NumberCell}
+                      field={item.fieldName}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                  </GridColumn>                          
+                  ) : (
+                    <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        footerCell={
+                            item.sortOrder === 0
+                            ? gridTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                    />                    
+                  ))                                
+              )}
         </Grid>
       </GridContainer>
       {itemWindowVisible && (
@@ -393,6 +422,7 @@ const SA_B3101W: React.FC = () => {
           setData={setItemData}
         />
       )}
+      {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
