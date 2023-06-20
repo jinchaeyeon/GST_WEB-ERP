@@ -155,6 +155,10 @@ type TItemInfo = {
   insiz: string;
   bnatur: string;
   spec: string;
+  invunitnm: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
 };
 const defaultItemInfo = {
   itemcd: "",
@@ -163,6 +167,10 @@ const defaultItemInfo = {
   insiz: "",
   bnatur: "",
   spec: "",
+  invunitnm: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
 };
 let deletedMainRows: object[] = [];
 
@@ -230,8 +238,30 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
 
   const setItemData = (data: IItemData) => {
-    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
-    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+    const {
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    } = data;
+    setItemInfo({
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    });
   };
 
   const defaultRendering = (
@@ -317,7 +347,7 @@ const MA_A7000W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_LOADPLACE, L_BA061",
+    "L_LOADPLACE, L_BA061,L_BA015",
     //적재장소, 품목계정
     setBizComponentData
   );
@@ -327,6 +357,9 @@ const MA_A7000W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [loadplaceListData, setLoadPlaceListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
@@ -339,6 +372,11 @@ const MA_A7000W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_LOADPLACE"
         )
       );
+      const qtyunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+      );
+
+      fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(loadplaceQueryStr, setLoadPlaceListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
     }
@@ -355,6 +393,17 @@ const MA_A7000W: React.FC = () => {
             insiz: itemInfo.insiz,
             bnatur: itemInfo.bnatur,
             spec: itemInfo.spec,
+            qtyunit:
+              qtyunitListData.find(
+                (item: any) => item.code_name === itemInfo.invunitnm
+              )?.sub_code != null
+                ? qtyunitListData.find(
+                    (item: any) => item.code_name === itemInfo.invunitnm
+                  )?.sub_code
+                : itemInfo.invunitnm,
+            itemlvl1: itemInfo.itemlvl1,
+            itemlvl2: itemInfo.itemlvl2,
+            itemlvl3: itemInfo.itemlvl3,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
@@ -431,8 +480,30 @@ const MA_A7000W: React.FC = () => {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
         if (rowCount > 0) {
-          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
-          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+          const invunitnm = rows[0].invunit;
+          const {
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          } = rows[0];
+          setItemInfo({
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            invunitnm,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          });
         } else {
           const newData = mainDataResult.data.map((item: any) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -444,6 +515,10 @@ const MA_A7000W: React.FC = () => {
                   itemacnt: "",
                   bnatur: "",
                   spec: "",
+                  qtyunit: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -1395,7 +1470,7 @@ const MA_A7000W: React.FC = () => {
         };
         setMainDataResult((prev) => {
           return {
-        data: [newDataItem, ...prev.data],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
@@ -1699,7 +1774,7 @@ const MA_A7000W: React.FC = () => {
           setData={setItemData}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

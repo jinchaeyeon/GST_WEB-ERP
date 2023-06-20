@@ -97,6 +97,10 @@ type TItemInfo = {
   insiz: string;
   bnatur: string;
   spec: string;
+  invunitnm: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
 };
 const defaultItemInfo = {
   itemcd: "",
@@ -105,6 +109,10 @@ const defaultItemInfo = {
   insiz: "",
   bnatur: "",
   spec: "",
+  invunitnm: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
 };
 
 type Idata = {
@@ -239,8 +247,30 @@ const ColumnCommandCell = (props: GridCellProps) => {
     setItemWindowVisible2(true);
   };
   const setItemData2 = (data: IItemData) => {
-    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
-    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+    const {
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    } = data;
+    setItemInfo({
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    });
   };
   const defaultRendering = (
     <td
@@ -437,25 +467,23 @@ const CopyWindow = ({
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_ITEM_TEST,L_BA020,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA005,L_BA029,L_BA173,R_YESNOALL",
+    "L_BA015",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-
-  const [itemListData, setItemListData] = useState([
-    { itemcd: "", itemnm: "" },
+  const [qtyunitListData, setQtyunitListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_ITEM_TEST"
-        )
+      const qtyunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
 
-      fetchQuery(itemQueryStr, setItemListData);
+      fetchQuery(qtyunitQueryStr, setQtyunitListData);
     }
   }, [bizComponentData]);
 
@@ -492,6 +520,17 @@ const CopyWindow = ({
             insiz: itemInfo.insiz,
             bnatur: itemInfo.bnatur,
             spec: itemInfo.spec,
+            qtyunit:
+              qtyunitListData.find(
+                (item: any) => item.code_name === itemInfo.invunitnm
+              )?.sub_code != null
+                ? qtyunitListData.find(
+                    (item: any) => item.code_name === itemInfo.invunitnm
+                  )?.sub_code
+                : itemInfo.invunitnm,
+            itemlvl1: itemInfo.itemlvl1,
+            itemlvl2: itemInfo.itemlvl2,
+            itemlvl3: itemInfo.itemlvl3,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
@@ -529,8 +568,30 @@ const CopyWindow = ({
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
         if (rowCount > 0) {
-          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
-          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+          const invunitnm = rows[0].invunit;
+          const {
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          } = rows[0];
+          setItemInfo({
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            invunitnm,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          });
         } else {
           const newData = mainDataResult.data.map((item: any) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -542,6 +603,10 @@ const CopyWindow = ({
                   itemacnt: "",
                   bnatur: "",
                   spec: "",
+                  qtyunit: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -713,8 +778,8 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-       let seq = mainDataResult.total + deletedMainRows.length + 1;
-       
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
+
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
       itemgrade: "",

@@ -173,7 +173,7 @@ const CM_A1000W: React.FC = () => {
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
-  const [workType, setWorkType] = useState<"N" | "U">("U");
+  const [workType, setWorkType] = useState<"N" | "U">("N");
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
@@ -182,6 +182,7 @@ const CM_A1000W: React.FC = () => {
     const { value, name } = e.target;
 
     if (name == undefined) {
+      setWorkType("N");
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -215,56 +216,84 @@ const CM_A1000W: React.FC = () => {
                 .Rows.filter((item: { custcd: any }) => item.custcd == value)[0]
                 .custnm,
       }));
-    } else if(name == "strhh") {
+    } else if (name == "strhh") {
       const date1 = new Date(2023, 5, 17, value, infomation.strmm, 0);
-      const date2 = new Date(2023, 5, 17, infomation.endhh, infomation.endmm, 0);
+      const date2 = new Date(
+        2023,
+        5,
+        17,
+        infomation.endhh,
+        infomation.endmm,
+        0
+      );
 
-      var elapsedMSec = date2.getTime() - date1.getTime(); 
-      var elapsedMin = elapsedMSec / 1000 / 60; 
+      var elapsedMSec = date2.getTime() - date1.getTime();
+      var elapsedMin = elapsedMSec / 1000 / 60;
 
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
-        usehh: Math.abs(elapsedMin/60) < 1 ? 0 : Math.floor(elapsedMin / 60),
+        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
         usemm: elapsedMin % 60,
       }));
-    } else if(name == "strmm") {
+    } else if (name == "strmm") {
       const date1 = new Date(2023, 5, 17, infomation.strhh, value, 0);
-      const date2 = new Date(2023, 5, 17, infomation.endhh, infomation.endmm, 0);
+      const date2 = new Date(
+        2023,
+        5,
+        17,
+        infomation.endhh,
+        infomation.endmm,
+        0
+      );
 
-      var elapsedMSec = date2.getTime() - date1.getTime(); 
-      var elapsedMin = elapsedMSec / 1000 / 60; 
+      var elapsedMSec = date2.getTime() - date1.getTime();
+      var elapsedMin = elapsedMSec / 1000 / 60;
 
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
-        usehh: Math.abs(elapsedMin/60) < 1 ? 0 : Math.floor(elapsedMin / 60),
+        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
         usemm: elapsedMin % 60,
       }));
-    } else if(name == "endhh") {
-      const date1 = new Date(2023, 5, 17, infomation.strhh, infomation.strmm, 0);
+    } else if (name == "endhh") {
+      const date1 = new Date(
+        2023,
+        5,
+        17,
+        infomation.strhh,
+        infomation.strmm,
+        0
+      );
       const date2 = new Date(2023, 5, 17, value, infomation.endmm, 0);
 
-      var elapsedMSec = date2.getTime() - date1.getTime(); 
-      var elapsedMin = elapsedMSec / 1000 / 60; 
+      var elapsedMSec = date2.getTime() - date1.getTime();
+      var elapsedMin = elapsedMSec / 1000 / 60;
 
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
-        usehh: Math.abs(elapsedMin/60) < 1 ? 0 : Math.floor(elapsedMin / 60),
+        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
         usemm: elapsedMin % 60,
       }));
-    } else if(name == "endmm") {
-      const date1 = new Date(2023, 5, 17, infomation.strhh, infomation.strmm, 0);
+    } else if (name == "endmm") {
+      const date1 = new Date(
+        2023,
+        5,
+        17,
+        infomation.strhh,
+        infomation.strmm,
+        0
+      );
       const date2 = new Date(2023, 5, 17, infomation.endhh, value, 0);
 
-      var elapsedMSec = date2.getTime() - date1.getTime(); 
-      var elapsedMin = elapsedMSec / 1000 / 60; 
+      var elapsedMSec = date2.getTime() - date1.getTime();
+      var elapsedMin = elapsedMSec / 1000 / 60;
 
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
-        usehh: Math.abs(elapsedMin/60) < 1 ? 0 : Math.floor(elapsedMin / 60),
+        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
         usemm: elapsedMin % 60,
       }));
     } else {
@@ -347,7 +376,7 @@ const CM_A1000W: React.FC = () => {
     custnm: "",
     custperson: "",
     datnum: "",
-    enddt: new Date(),
+    enddt: filters.todt,
     endhh: 0,
     endmm: 0,
     endtime: "",
@@ -366,7 +395,7 @@ const CM_A1000W: React.FC = () => {
     planyn: false,
     project: "",
     ref_key: "",
-    strdt: new Date(),
+    strdt: filters.todt,
     strhh: 0,
     strmm: 0,
     strtime: "",
@@ -448,7 +477,7 @@ const CM_A1000W: React.FC = () => {
           const firstRowData = rows[0];
           setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
           const row = data.tables[1].Rows[0];
-
+          setWorkType("U");
           setInfomation((prev) => ({
             ...prev,
             amt: firstRowData.amt,
@@ -489,6 +518,7 @@ const CM_A1000W: React.FC = () => {
           }));
         }
       } else {
+        setWorkType("N");
         setInfomation((prev) => ({
           ...prev,
           amt: 0,
@@ -498,7 +528,7 @@ const CM_A1000W: React.FC = () => {
           custnm: "",
           custperson: "",
           datnum: "",
-          enddt: new Date(),
+          enddt: filters.todt,
           endhh: 0,
           endmm: 0,
           endtime: "",
@@ -517,7 +547,7 @@ const CM_A1000W: React.FC = () => {
           planyn: false,
           project: "",
           ref_key: "",
-          strdt: new Date(),
+          strdt: filters.todt,
           strhh: 0,
           strmm: 0,
           strtime: "",
@@ -541,7 +571,7 @@ const CM_A1000W: React.FC = () => {
     // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
- 
+
     try {
       data = await processApi<any>("procedure", memoparameters);
     } catch (error) {
@@ -687,6 +717,7 @@ const CM_A1000W: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
+    setWorkType("U");
     setSelectedState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
@@ -904,7 +935,7 @@ const CM_A1000W: React.FC = () => {
       "@p_opengb": null,
       "@p_attdatnum": null,
       "@p_finyn": null,
-      "@p_person": memoparaData.person,
+      "@p_person": userId,
       "@p_custperson": null,
       "@p_planyn": null,
       "@p_usehh": 0,
@@ -944,7 +975,10 @@ const CM_A1000W: React.FC = () => {
       "@p_opengb": paraData.opengb,
       "@p_attdatnum": paraData.attdatnum,
       "@p_finyn": paraData.finyn,
-      "@p_person": paraData.person == undefined || paraData.person == "" ? userId : paraData.person,
+      "@p_person":
+        paraData.person == undefined || paraData.person == ""
+          ? userId
+          : paraData.person,
       "@p_custperson": paraData.custperson,
       "@p_planyn": paraData.planyn,
       "@p_usehh": paraData.usehh,
@@ -970,7 +1004,7 @@ const CM_A1000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       resetAllGrid();
       setMemoParaData((prev) => ({
@@ -1060,7 +1094,7 @@ const CM_A1000W: React.FC = () => {
       custnm: "",
       custperson: "",
       datnum: "",
-      enddt: new Date(),
+      enddt: filters.todt,
       endhh: 0,
       endmm: 0,
       endtime: "",
@@ -1079,7 +1113,7 @@ const CM_A1000W: React.FC = () => {
       planyn: false,
       project: "",
       ref_key: "",
-      strdt: new Date(),
+      strdt: filters.todt,
       strhh: 0,
       strmm: 0,
       strtime: "",
@@ -1092,14 +1126,20 @@ const CM_A1000W: React.FC = () => {
   };
 
   const onSaveClick = () => {
-    if(infomation.strhh.toString() == "" || infomation.strmm.toString() == "") {
-      alert("시작일을 입력해주세요")
-    } else if(infomation.endhh.toString() == "" || infomation.endmm.toString()== "") {
-      alert("종료일을 입력해주세요")
-    } else if(infomation.kind1 == "") {
-      alert("전체분류를 입력해주세요")
-    } else if(infomation.title == "") {
-      alert("제목을 입력해주세요.")
+    if (
+      infomation.strhh.toString() == "" ||
+      infomation.strmm.toString() == ""
+    ) {
+      alert("시작일을 입력해주세요");
+    } else if (
+      infomation.endhh.toString() == "" ||
+      infomation.endmm.toString() == ""
+    ) {
+      alert("종료일을 입력해주세요");
+    } else if (infomation.kind1 == "") {
+      alert("전체분류를 입력해주세요");
+    } else if (infomation.title == "") {
+      alert("제목을 입력해주세요.");
     } else {
       setParaData((prev) => ({
         ...prev,
@@ -1135,7 +1175,7 @@ const CM_A1000W: React.FC = () => {
         memo: "",
       }));
     }
-  }
+  };
 
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
@@ -1355,14 +1395,14 @@ const CM_A1000W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
                 <ButtonContainer>
-                <Button
-                  onClick={onPrintWndClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="print"
-                >
-                  미리보기
-                </Button>
+                  <Button
+                    onClick={onPrintWndClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="print"
+                  >
+                    미리보기
+                  </Button>
                   <Button
                     onClick={onAddClick}
                     themeColor={"primary"}
@@ -1461,17 +1501,18 @@ const CM_A1000W: React.FC = () => {
               <tbody>
                 <tr>
                   <th>시작일</th>
-                  <td colSpan={3}>
+                  <td>
+                    <DatePicker
+                      name="strdt"
+                      format="yyyy-MM-dd"
+                      value={infomation.strdt}
+                      onChange={InputChange}
+                      placeholder=""
+                      className="required"
+                    />
+                  </td>
+                  <td colSpan={2}>
                     <div style={{ display: "flex" }}>
-                      <DatePicker
-                        name="strdt"
-                        format="yyyy-MM-dd"
-                        value={infomation.strdt}
-                        onChange={InputChange}
-                        placeholder=""
-                        className="required"
-                      />
-                      &nbsp;
                       <Input
                         name="strhh"
                         type="number"
@@ -1500,20 +1541,15 @@ const CM_A1000W: React.FC = () => {
                       <Input
                         name="usehh"
                         type="number"
-                        max={24}
-                        min={0}
                         value={infomation.usehh}
-                        onChange={InputChange}
+                        className="readonly"
                       />
                       &nbsp;:&nbsp;
                       <Input
                         name="usemm"
                         type="number"
-                        max={60}
-                        min={0}
-                        step={5}
                         value={infomation.usemm}
-                        onChange={InputChange}
+                        className="readonly"
                       />
                     </div>
                   </td>
@@ -1532,17 +1568,18 @@ const CM_A1000W: React.FC = () => {
                 </tr>
                 <tr>
                   <th>종료일</th>
-                  <td colSpan={3}>
+                  <td>
+                    <DatePicker
+                      name="enddt"
+                      format="yyyy-MM-dd"
+                      value={infomation.enddt}
+                      onChange={InputChange}
+                      placeholder=""
+                      className="required"
+                    />
+                  </td>
+                  <td colSpan={2}>
                     <div style={{ display: "flex" }}>
-                      <DatePicker
-                        name="enddt"
-                        format="yyyy-MM-dd"
-                        value={infomation.enddt}
-                        onChange={InputChange}
-                        placeholder=""
-                        className="required"
-                      />
-                      &nbsp;
                       <Input
                         name="endhh"
                         type="number"
@@ -1681,7 +1718,7 @@ const CM_A1000W: React.FC = () => {
                       name="files"
                       type="text"
                       value={infomation.files}
-                      onChange={InputChange}
+                      className="readonly"
                     />
                     <ButtonInInput>
                       <Button
@@ -1731,7 +1768,7 @@ const CM_A1000W: React.FC = () => {
           <DaliyReport data={filters} />
         </Window>
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

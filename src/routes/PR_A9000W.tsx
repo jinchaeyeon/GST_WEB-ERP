@@ -81,6 +81,7 @@ import CenterCell from "../components/Cells/CenterCell";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 
 const DATA_ITEM_KEY = "num";
 
@@ -215,6 +216,10 @@ type TItemInfo = {
   insiz: string;
   bnatur: string;
   spec: string;
+  invunitnm: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
 };
 const defaultItemInfo = {
   itemcd: "",
@@ -223,6 +228,10 @@ const defaultItemInfo = {
   insiz: "",
   bnatur: "",
   spec: "",
+  invunitnm: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
 };
 
 const ColumnCommandCell = (props: GridCellProps) => {
@@ -255,8 +264,30 @@ const ColumnCommandCell = (props: GridCellProps) => {
     setItemWindowVisible2(true);
   };
   const setItemData2 = (data: IItemData) => {
-    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
-    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+    const {
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    } = data;
+    setItemInfo({
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    });
   };
   const defaultRendering = (
     <td
@@ -327,8 +358,30 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     setItemWindowVisible2(true);
   };
   const setItemData2 = (data: IItemData) => {
-    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
-    setItemInfo2({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+    const {
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    } = data;
+    setItemInfo2({
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    });
   };
   const defaultRendering = (
     <td
@@ -392,62 +445,25 @@ const PR_A9000W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-  //customOptionData 조회 후 디폴트 값 세팅
-  useEffect(() => {
-    if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
-
-      setFilters((prev) => ({
-        ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
-          .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-      }));
-    }
-  }, [customOptionData]);
-
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001, L_PR010, L_QC100,L_QC003",
+    "L_BA015",
     //사용자, 공정
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [proccdListData, setProccdListData] = useState([
+  const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [inspeccdListData, setInspeccdListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [divListData, setDivListData] = useState([COM_CODE_DEFAULT_VALUE]);
-  const [personListData, setPersonListData] = useState([
-    { user_id: "", user_name: "" },
-  ]);
-
+  console.log(qtyunitListData)
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+    if (bizComponentData != null) {
+      const qtyunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
-      const inspeccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC100")
-      );
-      const divQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC003")
-      );
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
-      );
-      fetchQuery(divQueryStr, setDivListData);
-      fetchQuery(proccdQueryStr, setProccdListData);
-      fetchQuery(inspeccdQueryStr, setInspeccdListData);
-      fetchQuery(personQueryStr, setPersonListData);
+
+      fetchQuery(qtyunitQueryStr, setQtyunitListData);
     }
   }, [bizComponentData]);
 
@@ -473,60 +489,104 @@ const PR_A9000W: React.FC = () => {
     }
   }, []);
 
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+
+      setFilters((prev) => ({
+        ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
+        proccd: defaultOption.find((item: any) => item.id === "proccd")
+          .valueCode,
+        location: defaultOption.find((item: any) => item.id === "location")
+          .valueCode,
+      }));
+    }
+  }, [customOptionData]);
+
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [itemInfo2, setItemInfo2] = useState<TItemInfo>(defaultItemInfo);
+
   useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemInfo.itemcd,
-            itemnm: itemInfo.itemnm,
-            itemacnt: itemInfo.itemacnt,
-            insiz: itemInfo.insiz,
-            bnatur: itemInfo.bnatur,
-            spec: itemInfo.spec,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (bizComponentData != null) {
+      const newData = mainDataResult.data.map((item) =>
+        item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+          ? {
+              ...item,
+              itemcd: itemInfo.itemcd,
+              itemnm: itemInfo.itemnm,
+              itemacnt: itemInfo.itemacnt,
+              insiz: itemInfo.insiz,
+              bnatur: itemInfo.bnatur,
+              spec: itemInfo.spec,
+              qtyunit:
+                qtyunitListData.find(
+                  (item: any) => item.code_name === itemInfo.invunitnm
+                )?.sub_code != null
+                  ? qtyunitListData.find(
+                      (item: any) => item.code_name === itemInfo.invunitnm
+                    )?.sub_code
+                  : itemInfo.invunitnm,
+              itemlvl1: itemInfo.itemlvl1,
+              itemlvl2: itemInfo.itemlvl2,
+              itemlvl3: itemInfo.itemlvl3,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   }, [itemInfo]);
 
   useEffect(() => {
-    const newData = detailDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(detailSelectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemInfo2.itemcd,
-            itemnm: itemInfo2.itemnm,
-            itemacnt: itemInfo2.itemacnt,
-            insiz: itemInfo2.insiz,
-            bnatur: itemInfo2.bnatur,
-            spec: itemInfo2.spec,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-    setDetailDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (bizComponentData != null) {
+      const newData = detailDataResult.data.map((item) =>
+        item.num == parseInt(Object.getOwnPropertyNames(detailSelectedState)[0])
+          ? {
+              ...item,
+              itemcd: itemInfo2.itemcd,
+              itemnm: itemInfo2.itemnm,
+              itemacnt: itemInfo2.itemacnt,
+              insiz: itemInfo2.insiz,
+              bnatur: itemInfo2.bnatur,
+              spec: itemInfo2.spec,
+              qtyunit:
+                qtyunitListData.find(
+                  (item: any) => item.code_name === itemInfo2.invunitnm
+                )?.sub_code != null
+                  ? qtyunitListData.find(
+                      (item: any) => item.code_name === itemInfo2.invunitnm
+                    )?.sub_code
+                  : itemInfo2.invunitnm,
+              itemlvl1: itemInfo2.itemlvl1,
+              itemlvl2: itemInfo2.itemlvl2,
+              itemlvl3: itemInfo2.itemlvl3,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   }, [itemInfo2]);
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -578,9 +638,32 @@ const PR_A9000W: React.FC = () => {
       if (data.isSuccess === true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
+
         if (rowCount > 0) {
-          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
-          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+          const invunitnm = rows[0].invunit;
+          const {
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          } = rows[0];
+          setItemInfo({
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            invunitnm,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          });
         } else {
           const newData = mainDataResult.data.map((item: any) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -592,6 +675,10 @@ const PR_A9000W: React.FC = () => {
                   itemacnt: "",
                   bnatur: "",
                   spec: "",
+                  qtyunit: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -632,8 +719,30 @@ const PR_A9000W: React.FC = () => {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
         if (rowCount > 0) {
-          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
-          setItemInfo2({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+          const invunitnm = rows[0].invunit;
+          const {
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          } = rows[0];
+          setItemInfo2({
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            invunitnm,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          });
         } else {
           const newData = detailDataResult.data.map((item: any) =>
             item.num ==
@@ -646,6 +755,10 @@ const PR_A9000W: React.FC = () => {
                   itemacnt: "",
                   bnatur: "",
                   spec: "",
+                  qtyunit: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -801,7 +914,7 @@ const PR_A9000W: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
       }));
-
+   
       if (totalRowCnt > 0) {
         setDetailDataResult((prev) => {
           return {
@@ -1191,7 +1304,15 @@ const PR_A9000W: React.FC = () => {
     );
   };
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "itemnm" && field != "insiz" && field != "rowstatus") {
+    if (
+      field != "itemnm" &&
+      field != "insiz" &&
+      !(field == "lotnum" && dataItem.rowstatus != "N") &&
+      field != "rowstatus" &&
+      field != "itemlvl1" &&
+      field != "itemlvl2" &&
+      field != "itemlvl3"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1244,10 +1365,14 @@ const PR_A9000W: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (
       !(field == "div" && dataItem.rowstatus != "N") &&
+      !(field == "lotnum" && dataItem.rowstatus != "N") &&
       field != "itemnm" &&
       field != "insiz" &&
       field != "rowstatus" &&
-      field != "remark"
+      field != "remark" &&
+      field != "itemlvl1" &&
+      field != "itemlvl2" &&
+      field != "itemlvl3"
     ) {
       const newData = detailDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -1695,12 +1820,13 @@ const PR_A9000W: React.FC = () => {
           planseq = "",
           len = "",
           keycode = "",
+          keyseq = "",
         } = item;
 
         dataArr.rowstatus_s.push(rowstatus);
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq == "" ? 0 : reseq);
-        dataArr.seq_s.push(reseq == "" ? 0 : reseq);
+        dataArr.seq_s.push(keyseq);
         dataArr.proddt_s.push(
           proddt.length == 8 ? proddt : convertDateToStr(proddt)
         );
@@ -1734,12 +1860,13 @@ const PR_A9000W: React.FC = () => {
           planseq = "",
           len = "",
           keycode = "",
+          keyseq = "",
         } = item;
 
         dataArr.rowstatus_s.push(rowstatus);
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq == "" ? 0 : reseq);
-        dataArr.seq_s.push(reseq == "" ? 0 : reseq);
+        dataArr.seq_s.push(keyseq);
         dataArr.proddt_s.push(
           proddt.length == 8 ? proddt : convertDateToStr(proddt)
         );
@@ -1807,9 +1934,14 @@ const PR_A9000W: React.FC = () => {
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
+  const [detailWindowVisible2, setDetailWindowVisible2] =
+    useState<boolean>(false);
 
   const onWndClick = () => {
     setDetailWindowVisible(true);
+  };
+  const onWndClick2 = () => {
+    setDetailWindowVisible2(true);
   };
   const setCopyData = (data: any) => {
     let seq = detailDataResult.total + deletedMainRows.length + 1;
@@ -1853,6 +1985,53 @@ const PR_A9000W: React.FC = () => {
       });
       seq++;
     });
+  };
+
+  const addItemData = (data: IItemData[]) => {
+    let seq = mainDataResult.total + deletedMainRows.length + 1;
+ 
+    data.map((item) => {
+      const newDataItem = {
+        [DATA_ITEM_KEY]: seq,
+        bnatur: item.bnatur,
+        custnm: item.custitemnm,
+        insiz: item.insiz,
+        itemacnt: item.itemacnt,
+        itemcd: item.itemcd,
+        itemlvl1: item.itemlvl1,
+        itemlvl2: item.itemlvl2,
+        itemlvl3: item.itemlvl3,
+        itemnm: item.itemnm,
+        keycode: "",
+        location: filters.location,
+        lotnum: "",
+        orgdiv: "01",
+        orglot: "",
+        pgmdiv: "",
+        planno: "",
+        planseq: 0,
+        proccd: "",
+        procseq: "",
+        proddt: new Date(),
+        prodemp: "",
+        prodmac: "",
+        qty: 0,
+        qtyunit: "",
+        remark: "",
+        renum: "",
+        reseq: "",
+        spec: "",
+        rowstatus: "N",
+      };
+
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + data.length,
+        };
+      });
+      seq++;  
+    })
   };
   return (
     <>
@@ -1992,6 +2171,12 @@ const PR_A9000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                     ></Button>
+                    <Button
+                    onClick={onWndClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="folder-open"
+                  ></Button>
                     <Button
                       onClick={onSaveClick}
                       fillMode="outline"
@@ -2213,6 +2398,12 @@ const PR_A9000W: React.FC = () => {
         <DetailWindow
           setVisible={setDetailWindowVisible}
           setData={setCopyData}
+        />
+      )}
+      {detailWindowVisible2 && (
+        <ItemsMultiWindow
+          setVisible={setDetailWindowVisible2}
+          setData={addItemData}
         />
       )}
       {gridList.map((grid: TGrid) =>

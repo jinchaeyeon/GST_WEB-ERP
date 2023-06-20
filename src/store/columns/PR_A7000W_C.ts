@@ -106,6 +106,12 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "col_reqty2",
+        field: "reqty",
+        caption: "지시량",
+        width: 100,
+      },
+      {
         id: "col_proccd",
         field: "proccd",
         caption: "공정",

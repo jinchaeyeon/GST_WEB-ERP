@@ -27,6 +27,8 @@ import {
   ButtonContainer,
   GridTitleContainer,
   GridContainerWrap,
+  FormBoxWrap,
+  FormBox,
 } from "../CommonStyled";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
@@ -1170,34 +1172,6 @@ const CM_A8210W: React.FC = () => {
             <GridContainer width={`calc(85% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>상세정보</GridTitle>
-              </GridTitleContainer>
-              <FilterContainer>
-                <FilterBox>
-                  <tbody>
-                    <tr>
-                      <th>입력일자</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <DatePicker
-                            name="recdt"
-                            value={filters.recdt}
-                            format="yyyy-MM-dd"
-                            onChange={filterInputChange}
-                            className="required"
-                            placeholder=""
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
-              <ExcelExport
-                data={mainDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-              >
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
@@ -1218,6 +1192,34 @@ const CM_A8210W: React.FC = () => {
                     icon="save"
                   ></Button>
                 </ButtonContainer>
+              </GridTitleContainer>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>입력일자</th>
+                      <td>
+                        <div className="filter-item-wrap">
+                          <DatePicker
+                            name="recdt"
+                            value={filters.recdt}
+                            format="yyyy-MM-dd"
+                            onChange={filterInputChange}
+                            className="required"
+                            placeholder=""
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+              >
                 <Grid
                   style={{ height: "67vh" }}
                   data={process(
@@ -1402,34 +1404,6 @@ const CM_A8210W: React.FC = () => {
             <GridContainer width={`calc(85% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>상세정보</GridTitle>
-              </GridTitleContainer>
-              <FilterContainer>
-                <FilterBox>
-                  <tbody>
-                    <tr>
-                      <th>입력일자</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <DatePicker
-                            name="recdt"
-                            value={filters.recdt}
-                            format="yyyy-MM-dd"
-                            onChange={filterInputChange}
-                            className="required"
-                            placeholder=""
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
-              <ExcelExport
-                data={mainDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-              >
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
@@ -1450,6 +1424,34 @@ const CM_A8210W: React.FC = () => {
                     icon="save"
                   ></Button>
                 </ButtonContainer>
+              </GridTitleContainer>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>입력일자</th>
+                      <td>
+                        <div className="filter-item-wrap">
+                          <DatePicker
+                            name="recdt"
+                            value={filters.recdt}
+                            format="yyyy-MM-dd"
+                            onChange={filterInputChange}
+                            className="required"
+                            placeholder=""
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+              >
                 <Grid
                   style={{ height: "67vh" }}
                   data={process(

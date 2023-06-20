@@ -670,7 +670,7 @@ const PR_A7000W: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
         godt: row.godt == "" ? convertDateToStr(new Date()) : row.godt,
-        chk: row.chk == "Y" ? true : row.chk == "N" ? false : row.chk,
+        chk: false,
       }));
 
       if (totalRowCnt > 0) {
@@ -1269,10 +1269,7 @@ const PR_A7000W: React.FC = () => {
 
   const onAddClick = async () => {
     const data = detailDataResult.data.filter((item: any) => item.chk == true);
-    const data2 = detailDataResult2.data.filter(
-      (item: any) =>
-        item.num == Object.getOwnPropertyNames(detailselectedState2)[0]
-    );
+
     let valid = true;
     let valid2 = true;
     data.map((item) => {
@@ -1288,8 +1285,6 @@ const PR_A7000W: React.FC = () => {
 
     if (data.length == 0) {
       alert("생산계획상세를 선택해주세요.");
-    } else if (data2.length == 0) {
-      alert("작업지시를 선택해주세요.");
     } else if (valid != true) {
       alert("공정을 입력해주세요.");
     } else if (valid2 != true) {
@@ -1306,15 +1301,16 @@ const PR_A7000W: React.FC = () => {
         godt_s: [],
       };
       data.forEach((item: any, idx: number) => {
-        const { plankey = "", prodmac = "", prodemp = "", godt = "" } = item;
+        const { plankey = "", prodmac = "", prodemp = "", godt = "", reqty = "" } = item;
 
         dataArr.chkyn_s.push("Y");
         dataArr.plankey_s.push(plankey);
         dataArr.prodmac_s.push(prodmac);
         dataArr.prodemp_s.push(prodemp);
         dataArr.godt_s.push(godt);
+        dataArr.qty_s.push(reqty);
       });
-      dataArr.gokey_s.push(data2[0].gonum);
+      // dataArr.gokey_s.push(data2[0].gonum);
 
       const para: Iparameters = {
         procedureName: "P_PR_A7000W_S",
@@ -1439,11 +1435,13 @@ const PR_A7000W: React.FC = () => {
       godt_s: [],
     };
     dataItem.forEach((item: any, idx: number) => {
-      const { gokey = "", qty = "", godt = "" } = item;
+      const { gokey = "", qty = "", godt = "", prodmac= "", prodemp="" } = item;
 
       dataArr.gokey_s.push(gokey);
       dataArr.qty_s.push(qty);
       dataArr.godt_s.push(godt);
+      dataArr.prodmac_s.push(prodmac);
+      dataArr.prodemp_s.push(prodemp);
     });
 
     const para: Iparameters = {
@@ -1457,8 +1455,8 @@ const PR_A7000W: React.FC = () => {
         "@p_planno_s": "",
         "@p_chkyn_s": "",
         "@p_plankey_s": "",
-        "@p_prodmac_s": "",
-        "@p_prodemp_s": "",
+        "@p_prodmac_s": dataArr.prodmac_s.join("|"),
+        "@p_prodemp_s": dataArr.prodemp_s.join("|"),
         "@p_gokey_s": dataArr.gokey_s.join("|"),
         "@p_qty_s": dataArr.qty_s.join("|"),
         "@p_godt_s": dataArr.godt_s.join("|"),
@@ -1833,7 +1831,7 @@ const PR_A7000W: React.FC = () => {
 
   const enterEdit3 = (dataItem: any, field: string) => {
     let valid = true;
-    if (field == "chk" || field == "qty") {
+    if (field == "chk" || field == "qty" || field == "prodemp" || field == "prodmac") {
       const newData = detailDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -2168,12 +2166,6 @@ const PR_A7000W: React.FC = () => {
                   rowRender={customRowRender}
                   editField={EDIT_FIELD}
                 >
-                  <GridColumn
-                    field="chk"
-                    title=" "
-                    width="45px"
-                    cell={CheckBoxCell}
-                  />
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList"].map(
                       (item: any, num: number) =>
@@ -2209,8 +2201,7 @@ const PR_A7000W: React.FC = () => {
                     onClick={onAddClick}
                     fillMode="outline"
                     themeColor={"primary"}
-                    icon="plus"
-                  ></Button>
+                  >저장</Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid

@@ -252,7 +252,7 @@ const PR_A9100W: React.FC = () => {
 
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, ...newData],
+        data: [...newData, ...prev.data],
         total: prev.total + data.length,
       };
     });
