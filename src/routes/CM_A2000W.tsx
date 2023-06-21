@@ -255,8 +255,8 @@ const CM_A2000W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
       if (totalRowCnt > 0) {
+
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
@@ -396,14 +396,35 @@ const CM_A2000W: React.FC = () => {
   };
 
   const CommandCell = (props: GridCellProps) => {
-    const onEditClick = () => {
+    const onEditClick = async () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.num]: true });
 
-      // setWorkType("U");
-
       setWorkType("U");
+
+      let data: any;
+
+      const parameters2: Iparameters = {
+        procedureName: "P_CM_A2000W_S2",
+        pageNumber: 0,
+        pageSize: filters.pgSize,
+        parameters: {
+          "@p_work_type": "U1",
+          "@p_orgdiv": "01",
+          "@p_datnum": rowData.recno,
+          "@p_person2": userId,
+          "@p_chooses": "",
+          "@p_loadok": "",
+          "@p_form_id": "CM_A2000W"
+        },
+      };
+
+      try {
+        data = await processApi<any>("procedure", parameters2);
+      } catch (error) {
+        data = null;
+      }
       setDetailWindowVisible(true);
     };
 
@@ -481,7 +502,7 @@ const CM_A2000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(para)
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
@@ -545,9 +566,8 @@ const CM_A2000W: React.FC = () => {
         reqctns: filter.reqctns,
         attdatnum: filter.attdatnum,
         reqdt: convertDateToStr(filter.reqdt),
-        finexpdt:
-          filter.finexpdt,
-        findt: filter.findt,
+        finexpdt: filter.finexpdt == null ? "" : convertDateToStr(filter.finexpdt),
+        findt: filter.findt == null ? "" : convertDateToStr(filter.findt),
       }));
     } else {
       let dataArr: TdataArr = {
@@ -583,9 +603,8 @@ const CM_A2000W: React.FC = () => {
         reqctns: filter.reqctns,
         attdatnum: filter.attdatnum,
         reqdt: convertDateToStr(filter.reqdt),
-        finexpdt:
-          filter.finexpdt,
-        findt: filter.findt,
+        finexpdt: filter.finexpdt == null ? "" : convertDateToStr(filter.finexpdt),
+        findt: filter.findt == null ? "" : convertDateToStr(filter.findt),
         person2: dataArr.user_id_s.join("|"),
         chooses: dataArr.chooses_s.join("|"),
         loadok: dataArr.loadok_s.join("|"),

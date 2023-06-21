@@ -164,7 +164,7 @@ const CommentsGrid = (props: {
   };
 
   const fetchGrid = async () => {
-    if (!permissions?.view) return;
+    // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -183,6 +183,10 @@ const CommentsGrid = (props: {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchGrid();
+  }, []);
 
   useEffect(() => {
     fetchGrid();

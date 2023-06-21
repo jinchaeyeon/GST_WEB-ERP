@@ -216,86 +216,6 @@ const CM_A1000W: React.FC = () => {
                 .Rows.filter((item: { custcd: any }) => item.custcd == value)[0]
                 .custnm,
       }));
-    } else if (name == "strhh") {
-      const date1 = new Date(2023, 5, 17, value, infomation.strmm, 0);
-      const date2 = new Date(
-        2023,
-        5,
-        17,
-        infomation.endhh,
-        infomation.endmm,
-        0
-      );
-
-      var elapsedMSec = date2.getTime() - date1.getTime();
-      var elapsedMin = elapsedMSec / 1000 / 60;
-
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
-        usemm: elapsedMin % 60,
-      }));
-    } else if (name == "strmm") {
-      const date1 = new Date(2023, 5, 17, infomation.strhh, value, 0);
-      const date2 = new Date(
-        2023,
-        5,
-        17,
-        infomation.endhh,
-        infomation.endmm,
-        0
-      );
-
-      var elapsedMSec = date2.getTime() - date1.getTime();
-      var elapsedMin = elapsedMSec / 1000 / 60;
-
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
-        usemm: elapsedMin % 60,
-      }));
-    } else if (name == "endhh") {
-      const date1 = new Date(
-        2023,
-        5,
-        17,
-        infomation.strhh,
-        infomation.strmm,
-        0
-      );
-      const date2 = new Date(2023, 5, 17, value, infomation.endmm, 0);
-
-      var elapsedMSec = date2.getTime() - date1.getTime();
-      var elapsedMin = elapsedMSec / 1000 / 60;
-
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
-        usemm: elapsedMin % 60,
-      }));
-    } else if (name == "endmm") {
-      const date1 = new Date(
-        2023,
-        5,
-        17,
-        infomation.strhh,
-        infomation.strmm,
-        0
-      );
-      const date2 = new Date(2023, 5, 17, infomation.endhh, value, 0);
-
-      var elapsedMSec = date2.getTime() - date1.getTime();
-      var elapsedMin = elapsedMSec / 1000 / 60;
-
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
-        usemm: elapsedMin % 60,
-      }));
     } else {
       setInfomation((prev) => ({
         ...prev,
@@ -341,6 +261,86 @@ const CM_A1000W: React.FC = () => {
                 .custcd,
         custnm: value,
       }));
+    } else if (name == "strhh") {
+      const date1 = new Date(2023, 5, 17, value, parseInt(infomation.strmm), 0);
+      const date2 = new Date(
+        2023,
+        5,
+        17,
+        parseInt(infomation.endhh),
+        parseInt(infomation.endmm),
+        0
+      );
+
+      var elapsedMSec = date2.getTime() - date1.getTime();
+      var elapsedMin = elapsedMSec / 1000 / 60;
+
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value,
+        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
+        usemm: elapsedMin % 60,
+      }));
+    } else if (name == "strmm") {
+      const date1 = new Date(2023, 5, 17, parseInt(infomation.strhh), value, 0);
+      const date2 = new Date(
+        2023,
+        5,
+        17,
+        parseInt(infomation.endhh),
+        parseInt(infomation.endmm),
+        0
+      );
+
+      var elapsedMSec = date2.getTime() - date1.getTime();
+      var elapsedMin = elapsedMSec / 1000 / 60;
+
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value,
+        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
+        usemm: elapsedMin % 60,
+      }));
+    } else if (name == "endhh") {
+      const date1 = new Date(
+        2023,
+        5,
+        17,
+        parseInt(infomation.strhh),
+        parseInt(infomation.strmm),
+        0
+      );
+      const date2 = new Date(2023, 5, 17, value, parseInt(infomation.endmm), 0);
+
+      var elapsedMSec = date2.getTime() - date1.getTime();
+      var elapsedMin = elapsedMSec / 1000 / 60;
+
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value,
+        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
+        usemm: elapsedMin % 60,
+      }));
+    } else if (name == "endmm") {
+      const date1 = new Date(
+        2023,
+        5,
+        17,
+        parseInt(infomation.strhh),
+        parseInt(infomation.strmm),
+        0
+      );
+      const date2 = new Date(2023, 5, 17, parseInt(infomation.endhh), value, 0);
+
+      var elapsedMSec = date2.getTime() - date1.getTime();
+      var elapsedMin = elapsedMSec / 1000 / 60;
+
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value,
+        usehh: Math.abs(elapsedMin / 60) < 1 ? 0 : Math.floor(elapsedMin / 60),
+        usemm: elapsedMin % 60,
+      }));
     } else {
       setInfomation((prev) => ({
         ...prev,
@@ -377,8 +377,8 @@ const CM_A1000W: React.FC = () => {
     custperson: "",
     datnum: "",
     enddt: filters.todt,
-    endhh: 0,
-    endmm: 0,
+    endhh: "00",
+    endmm: "00",
     endtime: "",
     exphh: 0,
     expmm: 0,
@@ -396,8 +396,8 @@ const CM_A1000W: React.FC = () => {
     project: "",
     ref_key: "",
     strdt: filters.todt,
-    strhh: 0,
-    strmm: 0,
+    strhh: "00",
+    strmm: "00",
     strtime: "",
     title: "",
     usehh: 0,
@@ -488,8 +488,8 @@ const CM_A1000W: React.FC = () => {
             custperson: firstRowData.custperson,
             datnum: firstRowData.datnum,
             enddt: toDate(firstRowData.enddt),
-            endhh: parseInt(firstRowData.endhh),
-            endmm: parseInt(firstRowData.endmm),
+            endhh: firstRowData.endhh,
+            endmm: firstRowData.endmm,
             endtime: firstRowData.endtime,
             exphh: firstRowData.exphh,
             expmm: firstRowData.expmm,
@@ -507,8 +507,8 @@ const CM_A1000W: React.FC = () => {
             project: firstRowData.project,
             ref_key: firstRowData.ref_key,
             strdt: toDate(firstRowData.strdt),
-            strhh: parseInt(firstRowData.strhh),
-            strmm: parseInt(firstRowData.strmm),
+            strhh: firstRowData.strhh,
+            strmm: firstRowData.strmm,
             strtime: firstRowData.strtime,
             title: firstRowData.title,
             usehh: parseInt(firstRowData.usehh),
@@ -529,8 +529,8 @@ const CM_A1000W: React.FC = () => {
           custperson: "",
           datnum: "",
           enddt: filters.todt,
-          endhh: 0,
-          endmm: 0,
+          endhh: "00",
+          endmm: "00",
           endtime: "",
           exphh: 0,
           expmm: 0,
@@ -548,8 +548,8 @@ const CM_A1000W: React.FC = () => {
           project: "",
           ref_key: "",
           strdt: filters.todt,
-          strhh: 0,
-          strmm: 0,
+          strhh: "00",
+          strmm: "00",
           strtime: "",
           title: "",
           usehh: 0,
@@ -734,8 +734,8 @@ const CM_A1000W: React.FC = () => {
       custperson: selectedRowData.custperson,
       datnum: selectedRowData.datnum,
       enddt: toDate(selectedRowData.enddt),
-      endhh: parseInt(selectedRowData.endhh),
-      endmm: parseInt(selectedRowData.endmm),
+      endhh: selectedRowData.endhh,
+      endmm: selectedRowData.endmm,
       endtime: selectedRowData.endtime,
       exphh: selectedRowData.exphh,
       expmm: selectedRowData.expmm,
@@ -753,8 +753,8 @@ const CM_A1000W: React.FC = () => {
       project: selectedRowData.project,
       ref_key: selectedRowData.ref_key,
       strdt: toDate(selectedRowData.strdt),
-      strhh: parseInt(selectedRowData.strhh),
-      strmm: parseInt(selectedRowData.strmm),
+      strhh: selectedRowData.strhh,
+      strmm: selectedRowData.strmm,
       strtime: selectedRowData.strtime,
       title: selectedRowData.title,
       usehh: parseInt(selectedRowData.usehh),
@@ -1095,8 +1095,8 @@ const CM_A1000W: React.FC = () => {
       custperson: "",
       datnum: "",
       enddt: filters.todt,
-      endhh: 0,
-      endmm: 0,
+      endhh: "00",
+      endmm: "00",
       endtime: "",
       exphh: 0,
       expmm: 0,
@@ -1114,8 +1114,8 @@ const CM_A1000W: React.FC = () => {
       project: "",
       ref_key: "",
       strdt: filters.todt,
-      strhh: 0,
-      strmm: 0,
+      strhh: "00",
+      strmm: "00",
       strtime: "",
       title: "",
       usehh: 0,
@@ -1261,8 +1261,12 @@ const CM_A1000W: React.FC = () => {
   };
 
   const onPrintWndClick = () => {
-    window.scrollTo(0, 0);
-    setPreviewVisible((prev) => !prev);
+    if(mainDataResult.data.length == 0) {
+      alert("조회된 자료가 없습니다");
+    } else {
+      window.scrollTo(0, 0);
+      setPreviewVisible((prev) => !prev);
+    }
   };
 
   return (
@@ -1513,26 +1517,25 @@ const CM_A1000W: React.FC = () => {
                   </td>
                   <td colSpan={2}>
                     <div style={{ display: "flex" }}>
-                      <Input
-                        name="strhh"
-                        type="number"
-                        max={24}
-                        min={0}
-                        value={infomation.strhh}
-                        onChange={InputChange}
-                        className="required"
-                      />
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="strhh"
+                          value={infomation.strhh}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          className="required"
+                        />
+                      )}
                       &nbsp;:&nbsp;
-                      <Input
-                        name="strmm"
-                        type="number"
-                        max={60}
-                        min={0}
-                        step={5}
-                        value={infomation.strmm}
-                        onChange={InputChange}
-                        className="required"
-                      />
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="strmm"
+                          value={infomation.strmm}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          className="required"
+                        />
+                      )}
                     </div>
                   </td>
                   <th>소요시간</th>
@@ -1580,26 +1583,25 @@ const CM_A1000W: React.FC = () => {
                   </td>
                   <td colSpan={2}>
                     <div style={{ display: "flex" }}>
-                      <Input
-                        name="endhh"
-                        type="number"
-                        max={24}
-                        min={0}
-                        value={infomation.endhh}
-                        onChange={InputChange}
-                        className="required"
-                      />
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="endhh"
+                          value={infomation.endhh}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          className="required"
+                        />
+                      )}
                       &nbsp;:&nbsp;
-                      <Input
-                        name="endmm"
-                        type="number"
-                        max={60}
-                        min={0}
-                        step={5}
-                        value={infomation.endmm}
-                        onChange={InputChange}
-                        className="required"
-                      />
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="endmm"
+                          value={infomation.endmm}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          className="required"
+                        />
+                      )}
                     </div>
                   </td>
                   <th>업체담당자</th>

@@ -168,25 +168,25 @@ const SY_A0025W: React.FC = () => {
     }));
   };
 
-    //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-    const InputChange = (e: any) => {
-      const { value, name } = e.target;
-  
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    };
-  
-    //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-    const ComboBoxChange = (e: any) => {
-      const { name, value } = e;
-  
-      setInfomation((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    };
+  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+
+    setInfomation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const ComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -235,6 +235,7 @@ const SY_A0025W: React.FC = () => {
   };
 
   const [infomation, setInfomation] = useState({
+    worktype: "U",
     numbering_id: "",
     use_yn: false,
     numbering_name: "",
@@ -290,6 +291,7 @@ const SY_A0025W: React.FC = () => {
           }));
 
           setInfomation({
+            worktype: "U",
             numbering_id: firstRowData.numbering_id,
             use_yn: firstRowData.use_yn == "Y" ? true : false,
             numbering_name: firstRowData.numbering_name,
@@ -452,6 +454,7 @@ const SY_A0025W: React.FC = () => {
       numbering_id: selectedRowData.numbering_id,
     }));
     setInfomation({
+      worktype: "U",
       numbering_id: selectedRowData.numbering_id,
       use_yn: selectedRowData.use_yn,
       numbering_name: selectedRowData.numbering_name,
@@ -569,7 +572,13 @@ const SY_A0025W: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && !(field == "number_prefix" && (dataItem.rowstatus == "" || dataItem.rowstatus == "U"))) {
+    if (
+      field != "rowstatus" &&
+      !(
+        field == "number_prefix" &&
+        (dataItem.rowstatus == "" || dataItem.rowstatus == "U")
+      )
+    ) {
       const newData = subDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -641,7 +650,7 @@ const SY_A0025W: React.FC = () => {
       [DATA_ITEM_KEY]: seq,
       number_prefix: "",
       last_serno: 0,
-      rowstatus: "N"
+      rowstatus: "N",
     };
     setSelectedsubDataState({ [newDataItem.num]: true });
 
@@ -658,7 +667,7 @@ const SY_A0025W: React.FC = () => {
     pageNumber: 0,
     pageSize: 0,
     parameters: {
-      "@p_work_type": "U",
+      "@p_work_type": infomation.worktype,
       "@p_numbering_id": infomation.numbering_id,
       "@p_numbering_name": infomation.numbering_name,
       "@p_number_length": infomation.numbering_length,
@@ -682,12 +691,18 @@ const SY_A0025W: React.FC = () => {
           : infomation.use_yn,
       "@p_userid": userId,
       "@p_pc": pc,
-    }
-  }
+    },
+  };
 
   const onSaveClick = async () => {
-    if(infomation.numbering_id == "" || infomation.numbering_name == "" || infomation.numbering_length == 0 || infomation.number_element1 == "" || infomation.start_serno == ""){
-      alert("필수항목을 채워주세요.")
+    if (
+      infomation.numbering_id == "" ||
+      infomation.numbering_name == "" ||
+      infomation.numbering_length == 0 ||
+      infomation.number_element1 == "" ||
+      infomation.start_serno == ""
+    ) {
+      alert("필수항목을 채워주세요.");
     } else {
       let data: any;
       try {
@@ -695,15 +710,15 @@ const SY_A0025W: React.FC = () => {
       } catch (error) {
         data = null;
       }
-  
-      if (data.isSuccess == true) {
+
+      if (data.isSuccess == true && infomation.worktype != "D") {
         const dataItem = subDataResult.data.filter((item: any) => {
           return (
             (item.rowstatus === "N" || item.rowstatus === "U") &&
             item.rowstatus !== undefined
           );
         });
-  
+
         dataItem.map(async (item) => {
           const para2: Iparameters = {
             procedureName: "P_SY_A0025W_S1",
@@ -715,13 +730,13 @@ const SY_A0025W: React.FC = () => {
               "@p_number_prefix": item.number_prefix,
               "@p_last_serno": item.last_serno,
             },
-          }
+          };
           try {
             data = await processApi<any>("procedure", para2);
           } catch (error) {
             data = null;
           }
-        })
+        });
         deletedMainRows.map(async (item) => {
           const para2: Iparameters = {
             procedureName: "P_SY_A0025W_S1",
@@ -733,16 +748,18 @@ const SY_A0025W: React.FC = () => {
               "@p_number_prefix": item.number_prefix,
               "@p_last_serno": item.last_serno,
             },
-          }
+          };
           try {
             data = await processApi<any>("procedure", para2);
           } catch (error) {
             data = null;
           }
-        })
-        if(data.isSuccess == true) {
+        });
+        if (data.isSuccess == true) {
           resetAllGrid();
         }
+      } else if(data.isSuccess == true && infomation.worktype == "D") {
+        resetAllGrid();
       } else {
         alert(data.resultMessage);
       }
@@ -769,6 +786,47 @@ const SY_A0025W: React.FC = () => {
     }));
 
     setSubDataState({});
+  };
+
+  const questionToDelete = useSysMessage("QuestionToDelete");
+  const onDeleteClick2 = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+    setInfomation((prev) => ({
+      ...prev,
+      worktype: "D",
+    }));
+  };
+
+  useEffect(() => {
+    if (customOptionData !== null && infomation.worktype == "D") {
+      onSaveClick();
+    }
+  }, [infomation]);
+
+  const onNewClick = async () => {
+    setInfomation({
+      worktype: "N",
+      numbering_id: "",
+      use_yn: true,
+      numbering_name: "",
+      numbering_length: 10,
+      memo: "",
+      number_element1: "",
+      number_element2: "",
+      number_element3: "",
+      number_element4: "",
+      number_element5: "",
+      number_value1: "",
+      number_value2: "",
+      number_value3: "",
+      number_value4: "",
+      number_value5: "",
+      start_serno: "1",
+      sampleno: "",
+    });
+    setSubDataResult(process([], subDataState));
   };
 
   const onSample = async () => {
@@ -923,11 +981,28 @@ const SY_A0025W: React.FC = () => {
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
               <Button
+                onClick={onNewClick}
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                신규
+              </Button>
+              <Button
+                onClick={onDeleteClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                삭제
+              </Button>
+              <Button
                 onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
-              ></Button>
+              >
+                저장
+              </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <FormBoxWrap style={{ paddingRight: "15%" }} border={true}>
@@ -935,14 +1010,26 @@ const SY_A0025W: React.FC = () => {
               <tbody>
                 <tr>
                   <th>관리번호ID</th>
-                  <td>
-                    <Input
-                      name="numbering_id"
-                      type="text"
-                      value={infomation.numbering_id}
-                      className="readonly"
-                    />
-                  </td>
+                  {infomation.worktype == "N" ? (
+                    <td>
+                      <Input
+                        name="numbering_id"
+                        type="text"
+                        value={infomation.numbering_id}
+                        onChange={InputChange}                      
+                        className="required"
+                      />
+                    </td>
+                  ) : (
+                    <td>
+                      <Input
+                        name="numbering_id"
+                        type="text"
+                        value={infomation.numbering_id}
+                        className="readonly"
+                      />
+                    </td>
+                  )}
                   <th>
                     <Checkbox
                       name="use_yn"
