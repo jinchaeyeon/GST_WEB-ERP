@@ -87,11 +87,15 @@ const numberField: string[] = [
 /* v1.3 */
 const SA_B3101W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
+  const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
+  const setLoading = useSetRecoilState(isLoading);
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -151,7 +155,6 @@ const SA_B3101W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    location: "",
     yyyy: new Date(),
     radAmtdiv: "A",
     find_row_value: "",
@@ -160,6 +163,35 @@ const SA_B3101W: React.FC = () => {
     isSearch: true,
     pgGap: 0,
   });
+  //그리드 데이터 조회
+  const fetchGrid = async (workType: string, itemcd?: string) => {
+    if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SA_B3101W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_yyyy": convertDateToStr(filters.yyyy).substr(0,4),
+        "@p_amtdiv": filters.radAmtdiv
+      }
+    };
+
+    try{
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
@@ -323,15 +355,14 @@ const SA_B3101W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridTitleContainer>
-      <GridTitle>차트</GridTitle>
-      </GridTitleContainer>
-      <Chart></Chart>
 
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>차트</GridTitle>
         </GridTitleContainer>
+        <Chart>
+
+        </Chart>
         <Grid
           style={{ height: "32vh" }}
           data={process(
@@ -378,25 +409,25 @@ const SA_B3101W: React.FC = () => {
                           : undefined
                       }
                   >
-                    <GridColumn/>
+                  <GridColumn/>
                     <GridColumn
                       title={"매입액"}
                       cell={NumberCell}
                       field={item.fieldName}
                       footerCell={gridSumQtyFooterCell}
-                    />
+                      />
                     <GridColumn
                       title={"매출액"}
                       cell={NumberCell}
                       field={item.fieldName}
                       footerCell={gridSumQtyFooterCell}
-                    />
+                      />
                     <GridColumn
                       title={"%"}
                       cell={NumberCell}
                       field={item.fieldName}
                       footerCell={gridSumQtyFooterCell}
-                    />
+                      />
                   </GridColumn>                          
                   ) : (
                     <GridColumn
