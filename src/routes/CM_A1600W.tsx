@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -10,7 +9,7 @@ import {
   GridItemChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 // ES2015 module syntax
 import {
@@ -63,10 +62,10 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import DateCell from "../components/Cells/DateCell";
 import { Button } from "@progress/kendo-react-buttons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import TopButtons from "../components/Buttons/TopButtons";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "idx";
 let deletedTodoRows: object[] = [];
@@ -645,7 +644,6 @@ const CM_A1600: React.FC = () => {
   const onAddClick = () => {
     let seq = todoDataResult.total + deletedTodoRows.length + 1;
 
-
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
@@ -945,10 +943,30 @@ const CM_A1600: React.FC = () => {
   };
 
   const search = () => {
-    setTodoPgNum(1);
-    setTodoDataResult(process([], todoDataState));
-    fetchTodoGrid();
-    fetchScheduler();
+    try {
+      if (
+        convertDateToStr(todoFilter.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(todoFilter.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(todoFilter.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(todoFilter.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A1600W_003");
+      } else if (
+        convertDateToStr(todoFilter.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(todoFilter.todt).substring(6, 8) > "31" ||
+        convertDateToStr(todoFilter.todt).substring(6, 8) < "01" ||
+        convertDateToStr(todoFilter.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A1600W_003");
+      } else {
+        setTodoPgNum(1);
+        setTodoDataResult(process([], todoDataState));
+        fetchTodoGrid();
+        fetchScheduler();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
   return (
     <>
@@ -1042,23 +1060,23 @@ const CM_A1600: React.FC = () => {
                     <tbody>
                       <tr>
                         <th>일자</th>
-                        <td colSpan={3}>
-                          <div className="filter-item-wrap">
-                            <DatePicker
-                              name="frdt"
-                              value={todoFilter.frdt}
-                              format="yyyy-MM-dd"
-                              onChange={filterInputChange}
-                              placeholder=""
-                            />
-                            <DatePicker
-                              name="todt"
-                              value={todoFilter.todt}
-                              format="yyyy-MM-dd"
-                              onChange={filterInputChange}
-                              placeholder=""
-                            />
-                          </div>
+                        <td>
+                          <CommonDateRangePicker
+                            value={{
+                              start: todoFilter.frdt,
+                              end: todoFilter.todt,
+                            }}
+                            onChange={(e: {
+                              value: { start: any; end: any };
+                            }) =>
+                              setTodoFilter((prev) => ({
+                                ...prev,
+                                frdt: e.value.start,
+                                todt: e.value.end,
+                              }))
+                            }
+                            className="required"
+                          />
                         </td>
                         <th>완료</th>
                         <td>
@@ -1096,6 +1114,7 @@ const CM_A1600: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="plus"
+                      title="행 추가"
                       disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
@@ -1103,6 +1122,7 @@ const CM_A1600: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
+                      title="행 삭제"
                       disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
@@ -1110,6 +1130,7 @@ const CM_A1600: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      title="저장"
                       disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>

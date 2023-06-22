@@ -9,7 +9,6 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -43,6 +42,7 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
   useSysMessage,
+  findMessage,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SA_A2010W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -61,6 +61,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
@@ -80,7 +81,8 @@ const SA_B2000: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -897,8 +899,28 @@ const SA_B2000: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.ymdFrdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A2010W_001");
+      } else if (
+        convertDateToStr(filters.ymdTodt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A2010W_001");
+      } else {
+        resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
   return (
     <>
@@ -920,28 +942,22 @@ const SA_B2000: React.FC = () => {
           <tbody>
             <tr>
               <th>납기일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="ymdFrdt"
-                    value={filters.ymdFrdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.ymdFrdt,
+                      end: filters.ymdTodt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        ymdFrdt: e.value.start,
+                        ymdTodt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="ymdTodt"
-                    value={filters.ymdTodt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
-
+                </td>
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (

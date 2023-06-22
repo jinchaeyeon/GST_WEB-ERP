@@ -9,7 +9,6 @@ import {
   getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -33,6 +32,8 @@ import {
   UseCustomOption,
   UsePermissions,
   handleKeyPressSearch,
+  findMessage,
+  UseMessages,
   //UseMenuDefaults,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -40,6 +41,7 @@ import { gridList } from "../store/columns/SY_A0110W_C";
 import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -51,7 +53,8 @@ const SY_A0110: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -240,8 +243,28 @@ const SY_A0110: React.FC = () => {
   }, [filters, permissions]);
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SY_0110W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SY_0110W_001");
+      } else {
+        resetAllGrid();
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   return (
@@ -265,23 +288,20 @@ const SY_A0110: React.FC = () => {
             <tr>
               <th>기간</th>
               <td>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                  />
-                </div>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
               </td>
               <th></th>
               <td></td>

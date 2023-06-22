@@ -1397,6 +1397,7 @@ const BA_A0080: React.FC = () => {
                 fillMode="outline"
                 onClick={onCopyWndClick2}
                 icon="copy"
+                title="단가복사"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1474,24 +1475,28 @@ const BA_A0080: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="plus"
+                    title="행 추가"
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
+                    title="행 삭제"
                   ></Button>
                   <Button
                     themeColor={"primary"}
                     fillMode="outline"
                     onClick={onCopyWndClick}
                     icon="folder-open"
+                    title="품목참조"
                   ></Button>
                   <Button
                     onClick={onSaveClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    title="저장"
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

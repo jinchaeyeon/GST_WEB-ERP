@@ -923,6 +923,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
               <Button
                 themeColor={"primary"}

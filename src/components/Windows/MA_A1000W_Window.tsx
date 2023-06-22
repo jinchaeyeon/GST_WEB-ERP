@@ -1259,18 +1259,21 @@ const CopyWindow = ({
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제"
                 ></Button>
                 <Button
                   themeColor={"primary"}
                   fillMode="outline"
                   onClick={onCopyWndClick3}
                   icon="folder-open"
+                  title="저장"
                 >
                   품목 참조
                 </Button>

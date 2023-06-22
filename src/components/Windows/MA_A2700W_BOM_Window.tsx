@@ -5,12 +5,10 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridCellProps,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
-  GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -23,7 +21,6 @@ import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  Title,
   TitleContainer,
   ButtonInInput,
   GridTitleContainer,
@@ -43,7 +40,6 @@ import {
   setDefaultDate,
   convertDateToStr,
 } from "../CommonFunction";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
@@ -52,6 +48,7 @@ import { isLoading } from "../../store/atoms";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -795,7 +792,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th colSpan={2}>
+                <th colSpan={3}>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="dtgb"
@@ -808,25 +805,21 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                     />
                   )}
                 </th>
-                <td colSpan={2}>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
+                <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
                 </td>
                 <th>내수구분</th>
                 <td>
@@ -1134,6 +1127,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                  title="행 삭제"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

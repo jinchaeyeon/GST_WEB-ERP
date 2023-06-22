@@ -46,6 +46,8 @@ import {
   toDate,
   UseParaPc,
   useSysMessage,
+  findMessage,
+  UseMessages,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -68,6 +70,7 @@ import CenterCell from "../components/Cells/CenterCell";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { IAttachmentData } from "../hooks/interfaces";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const checkField = ["finyn", "planyn"];
 const centerField = ["usetime"];
@@ -83,7 +86,8 @@ const CM_A1000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
-
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   UseParaPc(setPc);
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
@@ -844,7 +848,27 @@ const CM_A1000W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A1000W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A1000W_001");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
@@ -1302,6 +1326,7 @@ const CM_A1000W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                title="저장"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1319,26 +1344,21 @@ const CM_A1000W: React.FC = () => {
                 <tr>
                   <th>작성일</th>
                   <td>
-                    <div className="filter-item-wrap">
-                      <DatePicker
-                        name="frdt"
-                        value={filters.frdt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                      ~
-                      <DatePicker
-                        name="todt"
-                        value={filters.todt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                    </div>
-                  </td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
+                </td>
                   <th>전체분류</th>
                   <td>
                     {customOptionData !== null && (

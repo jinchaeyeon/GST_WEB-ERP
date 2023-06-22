@@ -11,9 +11,8 @@ import {
   GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { gridList } from "../store/columns/MA_A2700W_C";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -68,6 +67,7 @@ import {
   unsavedAttadatnumsState,
   loginResultState,
 } from "../store/atoms";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 const DateField = ["recdt", "enddt"];
 
 const NumberField = [
@@ -1854,27 +1854,22 @@ const MA_A2700W: React.FC = () => {
           <tbody>
             <tr>
               <th>입고일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>업체코드</th>
               <td>
                 <div className="filter-item-wrap">

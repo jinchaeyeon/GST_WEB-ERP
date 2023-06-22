@@ -64,6 +64,7 @@ import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import DateCell from "../Cells/DateCell";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
 type IWindow = {
   data?: Idata;
@@ -306,7 +307,7 @@ const CopyWindow = ({ data, setData, setVisible }: IWindow) => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -500,19 +501,27 @@ const CopyWindow = ({ data, setData, setVisible }: IWindow) => {
     let valid3 = true;
     const newData = mainDataResult.data.filter((item: any) => item.chk == true);
 
-    if((filters.notests == "1" || filters.notests == "4") && filters.custcd != "") {
+    if (
+      (filters.notests == "1" || filters.notests == "4") &&
+      filters.custcd != ""
+    ) {
       valid2 = false;
     }
-    if((filters.notests == "2" || filters.notests == "3"|| filters.notests == "5") && filters.custcd == "") {
+    if (
+      (filters.notests == "2" ||
+        filters.notests == "3" ||
+        filters.notests == "5") &&
+      filters.custcd == ""
+    ) {
       valid3 = false;
     }
 
     try {
       if (newData.length == 0) {
         throw findMessage(messagesData, "AC_A1000W_001");
-      } else if(valid2 != true){
+      } else if (valid2 != true) {
         throw findMessage(messagesData, "AC_A1000W_004");
-      } else if(valid3 != true){
+      } else if (valid3 != true) {
         throw findMessage(messagesData, "AC_A1000W_003");
       } else {
         let dataArr: TdataArr = {
@@ -734,24 +743,21 @@ const CopyWindow = ({ data, setData, setVisible }: IWindow) => {
               <tr>
                 <th>[조회]</th>
                 <th>만기일자</th>
-                <td colSpan={3}>
-                  <div className="filter-item-wrap" style={{ display: "flex" }}>
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
-                    &nbsp;~&nbsp;
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
-                  </div>
+                <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
                 </td>
                 <th>거래처코드</th>
                 <td>

@@ -830,6 +830,7 @@ const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

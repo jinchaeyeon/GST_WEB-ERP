@@ -40,7 +40,6 @@ import {
   setDefaultDate,
   convertDateToStr,
 } from "../CommonFunction";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
@@ -50,6 +49,7 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import CheckBoxCell from "../Cells/CheckBoxCell";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -701,7 +701,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th colSpan={2}>
+                <th colSpan={3}>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="saledtgb"
@@ -714,25 +714,21 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                     />
                   )}
                 </th>
-                <td colSpan={4}>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
+                <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
                 </td>
                 <th>내수구분</th>
                 <td>
@@ -755,6 +751,16 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                       changeData={filterComboBoxChange}
                       textField="user_name"
                       valueField="user_id"
+                    />
+                  )}
+                </td>
+                <th>완료여부</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="finyn"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
                     />
                   )}
                 </td>
@@ -853,16 +859,6 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                     value={filters.poregnum}
                     onChange={filterInputChange}
                   />
-                </td>
-                <th>완료여부</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionRadioGroup
-                      name="finyn"
-                      customOptionData={customOptionData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
                 </td>
               </tr>
             </tbody>
@@ -1020,6 +1016,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

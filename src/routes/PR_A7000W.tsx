@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -45,6 +44,7 @@ import {
   UseGetValueFromSessionItem,
   getQueryFromBizComponent,
   useSysMessage,
+  findMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -60,7 +60,6 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { gridList } from "../store/columns/PR_A7000W_C";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import NumberCell from "../components/Cells/NumberCell";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -76,6 +75,7 @@ import {
   RowRender as RowRender2,
 } from "../components/Renderers/GroupRenderers";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -91,11 +91,11 @@ const numberField = [
   "badqty",
   "tot_jisiqty",
   "planqty",
-  "prodqty"
+  "prodqty",
 ];
 const DateField = ["plandt", "finexpdt", "godt"];
 const customField = ["proccd", "prodmac", "prodemp"];
-const customHeaderField = ["proccd", "procseq"];
+const customHeaderField = ["proccd", "procseq" , "reqty"];
 const checkField = ["finyn"];
 type TdataArr = {
   planno_s: string[];
@@ -670,6 +670,7 @@ const PR_A7000W: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
         godt: row.godt == "" ? convertDateToStr(new Date()) : row.godt,
+        reqty : 0,
         chk: false,
       }));
 
@@ -1269,7 +1270,7 @@ const PR_A7000W: React.FC = () => {
 
   const onAddClick = async () => {
     const data = detailDataResult.data.filter((item: any) => item.chk == true);
-
+    console.log(data)
     let valid = true;
     let valid2 = true;
     data.map((item) => {
@@ -1301,7 +1302,13 @@ const PR_A7000W: React.FC = () => {
         godt_s: [],
       };
       data.forEach((item: any, idx: number) => {
-        const { plankey = "", prodmac = "", prodemp = "", godt = "", reqty = "" } = item;
+        const {
+          plankey = "",
+          prodmac = "",
+          prodemp = "",
+          godt = "",
+          reqty = "",
+        } = item;
 
         dataArr.chkyn_s.push("Y");
         dataArr.plankey_s.push(plankey);
@@ -1310,14 +1317,19 @@ const PR_A7000W: React.FC = () => {
         dataArr.godt_s.push(godt);
         dataArr.qty_s.push(reqty);
       });
-      // dataArr.gokey_s.push(data2[0].gonum);
-
+      const datas2 = mainDataResult.data.filter(
+        (item) =>
+          item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+      )[0];
+      dataArr.gokey_s.push(datas2.gokey);
+      dataArr.planno_s.push(datas2.planno);
+        console.log(datas2)
       const para: Iparameters = {
         procedureName: "P_PR_A7000W_S",
         pageNumber: 0,
         pageSize: 0,
         parameters: {
-          "@p_work_type": "ADD",
+          "@p_work_type": "N",
           "@p_orgdiv": "01",
           "@p_location": "01",
           "@p_planno_s": dataArr.planno_s.join("|"),
@@ -1341,7 +1353,7 @@ const PR_A7000W: React.FC = () => {
       } catch (error) {
         datas = null;
       }
-
+      console.log(para)
       if (datas.isSuccess !== true) {
         console.log("[오류 발생]");
         console.log(datas);
@@ -1435,7 +1447,13 @@ const PR_A7000W: React.FC = () => {
       godt_s: [],
     };
     dataItem.forEach((item: any, idx: number) => {
-      const { gokey = "", qty = "", godt = "", prodmac= "", prodemp="" } = item;
+      const {
+        gokey = "",
+        qty = "",
+        godt = "",
+        prodmac = "",
+        prodemp = "",
+      } = item;
 
       dataArr.gokey_s.push(gokey);
       dataArr.qty_s.push(qty);
@@ -1582,7 +1600,29 @@ const PR_A7000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_A7000W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_A7000W_001");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
+
+
   };
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
@@ -1766,9 +1806,7 @@ const PR_A7000W: React.FC = () => {
       return null;
     }
 
-    return (
-        <CheckBoxReadOnlyCell {...props}></CheckBoxReadOnlyCell>
-    );
+    return <CheckBoxReadOnlyCell {...props}></CheckBoxReadOnlyCell>;
   };
 
   const onDetailItemChange2 = (event: GridItemChangeEvent) => {
@@ -1831,7 +1869,12 @@ const PR_A7000W: React.FC = () => {
 
   const enterEdit3 = (dataItem: any, field: string) => {
     let valid = true;
-    if (field == "chk" || field == "qty" || field == "prodemp" || field == "prodmac") {
+    if (
+      field == "chk" ||
+      field == "qty" ||
+      field == "prodemp" ||
+      field == "prodmac"
+    ) {
       const newData = detailDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -1985,26 +2028,21 @@ const PR_A7000W: React.FC = () => {
               <tbody>
                 <tr>
                   <th>계획일자</th>
-                  <td colSpan={3}>
-                    <div className="filter-item-wrap">
-                      <DatePicker
-                        name="frdt"
-                        value={filters.frdt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        placeholder=""
-                        className="required"
-                      />
-                      ~
-                      <DatePicker
-                        name="todt"
-                        value={filters.todt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        placeholder=""
-                        className="required"
-                      />
-                    </div>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.frdt,
+                        end: filters.todt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          frdt: e.value.start,
+                          todt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
                   </td>
                   <th>업체코드</th>
                   <td>
@@ -2041,7 +2079,7 @@ const PR_A7000W: React.FC = () => {
                     />
                   </td>
                   <th>지시여부</th>
-                  <td>
+                  <td colSpan={3}>
                     {customOptionData !== null && (
                       <CustomOptionRadioGroup
                         name="finyn"
@@ -2201,7 +2239,9 @@ const PR_A7000W: React.FC = () => {
                     onClick={onAddClick}
                     fillMode="outline"
                     themeColor={"primary"}
-                  >저장</Button>
+                  >
+                    저장
+                  </Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
@@ -2296,12 +2336,14 @@ const PR_A7000W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="삭제"
                 ></Button>
                 <Button
                   onClick={onSaveClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -2395,27 +2437,22 @@ const PR_A7000W: React.FC = () => {
               <tbody>
                 <tr>
                   <th>지시일자</th>
-                  <td colSpan={3}>
-                    <div className="filter-item-wrap">
-                      <DatePicker
-                        name="frdt"
-                        value={filters.frdt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        placeholder=""
-                        className="required"
-                      />
-                      ~
-                      <DatePicker
-                        name="todt"
-                        value={filters.todt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        placeholder=""
-                        className="required"
-                      />
-                    </div>
-                  </td>
+                  <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
+                </td>
                   <th>사업장</th>
                   <td>
                     {customOptionData !== null && (

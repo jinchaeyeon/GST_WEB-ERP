@@ -1526,6 +1526,7 @@ const EA_A1000: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제" 
                 ></Button>
                 <Button
                   onClick={() =>
@@ -1537,6 +1538,7 @@ const EA_A1000: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="chevron-up"
+                  title="행 위로 이동" 
                 ></Button>
                 <Button
                   onClick={() =>
@@ -1548,12 +1550,14 @@ const EA_A1000: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="chevron-down"
+                  title="행 아래로 이동" 
                 ></Button>
                 <Button
                   onClick={onSaveClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                 >
                   저장
                 </Button>
@@ -1661,6 +1665,7 @@ const EA_A1000: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제" 
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -1745,6 +1750,7 @@ const EA_A1000: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제" 
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>

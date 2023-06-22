@@ -909,6 +909,7 @@ const PR_A9100W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                   disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
@@ -916,6 +917,7 @@ const PR_A9100W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제" 
                   disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
@@ -923,6 +925,7 @@ const PR_A9100W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                   disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>

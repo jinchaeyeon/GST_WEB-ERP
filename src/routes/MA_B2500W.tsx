@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -9,7 +8,6 @@ import {
   getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -38,6 +36,8 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseGetValueFromSessionItem,
+  findMessage,
+  UseMessages,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -54,6 +54,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2500W_C";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const dateField = ["indt"];
 const numberField = ["qty", "amt", "wonamt", "taxamt", "totamt"];
@@ -68,6 +69,9 @@ const MA_B2500W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -561,7 +565,27 @@ const MA_B2500W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_B2500W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_B2500W_001");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   return (
@@ -595,27 +619,22 @@ const MA_B2500W: React.FC = () => {
                 )}
               </td>
               <th>입고일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>업체코드</th>
               <td>
                 <Input

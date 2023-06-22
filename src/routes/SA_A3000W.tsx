@@ -10,7 +10,6 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -62,6 +61,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 
@@ -1293,27 +1293,22 @@ const SA_A2300: React.FC = () => {
           <tbody>
             <tr>
               <th>지시일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>품목코드</th>
               <td>
                 <Input

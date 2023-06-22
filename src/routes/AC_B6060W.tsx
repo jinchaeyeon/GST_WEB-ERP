@@ -38,6 +38,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   setDefaultDate,
+  findMessage,
 } from "../components/CommonFunction";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -51,6 +52,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import DateCell from "../components/Cells/DateCell";
 import CenterCell from "../components/Cells/CenterCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 
@@ -1086,144 +1088,164 @@ const AC_B6060W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    setDates(
-      convertDateToStr(filters.frdt).substring(0, 4) +
-        "년" +
-        convertDateToStr(filters.frdt).substring(4, 6) +
-        "월"
-    );
-    setDates2(
-      convertDateToStr(
-        new Date(
-          filters.frdt.getFullYear(),
-          filters.frdt.getMonth() + 1,
-          filters.frdt.getDate()
-        )
-      ).substring(0, 4) +
-        "년" +
-        convertDateToStr(
-          new Date(
-            filters.frdt.getFullYear(),
-            filters.frdt.getMonth() + 1,
-            filters.frdt.getDate()
-          )
-        ).substring(4, 6) +
-        "월"
-    );
-    setDates3(
-      convertDateToStr(
-        new Date(
-          filters.frdt.getFullYear(),
-          filters.frdt.getMonth() + 2,
-          filters.frdt.getDate()
-        )
-      ).substring(0, 4) +
-        "년" +
-        convertDateToStr(
-          new Date(
-            filters.frdt.getFullYear(),
-            filters.frdt.getMonth() + 2,
-            filters.frdt.getDate()
-          )
-        ).substring(4, 6) +
-        "월"
-    );
-    setDates4(
-      convertDateToStr(
-        new Date(
-          filters.frdt.getFullYear(),
-          filters.frdt.getMonth() + 3,
-          filters.frdt.getDate()
-        )
-      ).substring(0, 4) +
-        "년" +
-        convertDateToStr(
-          new Date(
-            filters.frdt.getFullYear(),
-            filters.frdt.getMonth() + 3,
-            filters.frdt.getDate()
-          )
-        ).substring(4, 6) +
-        "월"
-    );
-    setDates5(
-      convertDateToStr(
-        new Date(
-          filters.frdt.getFullYear(),
-          filters.frdt.getMonth() + 4,
-          filters.frdt.getDate()
-        )
-      ).substring(0, 4) +
-        "년" +
-        convertDateToStr(
-          new Date(
-            filters.frdt.getFullYear(),
-            filters.frdt.getMonth() + 4,
-            filters.frdt.getDate()
-          )
-        ).substring(4, 6) +
-        "월"
-    );
-    setDates6(
-      convertDateToStr(
-        new Date(
-          filters.frdt.getFullYear(),
-          filters.frdt.getMonth() + 5,
-          filters.frdt.getDate()
-        )
-      ).substring(0, 4) +
-        "년" +
-        convertDateToStr(
-          new Date(
-            filters.frdt.getFullYear(),
-            filters.frdt.getMonth() + 5,
-            filters.frdt.getDate()
-          )
-        ).substring(4, 6) +
-        "월"
-    );
-    setDates7(convertDateToStr(filters.frdt).substring(0, 4) + "년 01월");
-    if (tabSelected == 0) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 0,
-      }));
-    } else if (tabSelected == 1) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 1,
-      }));
-    } else if (tabSelected == 2) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 2,
-      }));
-    } else if (tabSelected == 3) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 3,
-      }));
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_B6060W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_B6060W_001");
+      } else {
+        resetAllGrid();
+        setDates(
+          convertDateToStr(filters.frdt).substring(0, 4) +
+            "년" +
+            convertDateToStr(filters.frdt).substring(4, 6) +
+            "월"
+        );
+        setDates2(
+          convertDateToStr(
+            new Date(
+              filters.frdt.getFullYear(),
+              filters.frdt.getMonth() + 1,
+              filters.frdt.getDate()
+            )
+          ).substring(0, 4) +
+            "년" +
+            convertDateToStr(
+              new Date(
+                filters.frdt.getFullYear(),
+                filters.frdt.getMonth() + 1,
+                filters.frdt.getDate()
+              )
+            ).substring(4, 6) +
+            "월"
+        );
+        setDates3(
+          convertDateToStr(
+            new Date(
+              filters.frdt.getFullYear(),
+              filters.frdt.getMonth() + 2,
+              filters.frdt.getDate()
+            )
+          ).substring(0, 4) +
+            "년" +
+            convertDateToStr(
+              new Date(
+                filters.frdt.getFullYear(),
+                filters.frdt.getMonth() + 2,
+                filters.frdt.getDate()
+              )
+            ).substring(4, 6) +
+            "월"
+        );
+        setDates4(
+          convertDateToStr(
+            new Date(
+              filters.frdt.getFullYear(),
+              filters.frdt.getMonth() + 3,
+              filters.frdt.getDate()
+            )
+          ).substring(0, 4) +
+            "년" +
+            convertDateToStr(
+              new Date(
+                filters.frdt.getFullYear(),
+                filters.frdt.getMonth() + 3,
+                filters.frdt.getDate()
+              )
+            ).substring(4, 6) +
+            "월"
+        );
+        setDates5(
+          convertDateToStr(
+            new Date(
+              filters.frdt.getFullYear(),
+              filters.frdt.getMonth() + 4,
+              filters.frdt.getDate()
+            )
+          ).substring(0, 4) +
+            "년" +
+            convertDateToStr(
+              new Date(
+                filters.frdt.getFullYear(),
+                filters.frdt.getMonth() + 4,
+                filters.frdt.getDate()
+              )
+            ).substring(4, 6) +
+            "월"
+        );
+        setDates6(
+          convertDateToStr(
+            new Date(
+              filters.frdt.getFullYear(),
+              filters.frdt.getMonth() + 5,
+              filters.frdt.getDate()
+            )
+          ).substring(0, 4) +
+            "년" +
+            convertDateToStr(
+              new Date(
+                filters.frdt.getFullYear(),
+                filters.frdt.getMonth() + 5,
+                filters.frdt.getDate()
+              )
+            ).substring(4, 6) +
+            "월"
+        );
+        setDates7(convertDateToStr(filters.frdt).substring(0, 4) + "년 01월");
+        if (tabSelected == 0) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 0,
+          }));
+        } else if (tabSelected == 1) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 1,
+          }));
+        } else if (tabSelected == 2) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 2,
+          }));
+        } else if (tabSelected == 3) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 3,
+          }));
+        }
+      }
+    } catch (e) {
+      alert(e);
     }
   };
 
@@ -2085,25 +2107,20 @@ const AC_B6060W: React.FC = () => {
               <th>기준일자</th>
               {tabSelected == 0 ? (
                 <td>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                    ~
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
                 </td>
               ) : tabSelected == 3 ? (
                 <td>

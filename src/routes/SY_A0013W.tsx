@@ -1393,6 +1393,7 @@ const Page: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    title="저장"
                     disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>

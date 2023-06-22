@@ -10,7 +10,6 @@ import {
   GridHeaderSelectionChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -68,6 +67,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import CommentsGrid from "../components/Grids/CommentsGrid";
 import WordText from "../components/WordText";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
@@ -875,26 +875,21 @@ const EA_A2000: React.FC = () => {
                   altText="작성일자"
                 />
               </th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="ymdStartDt"
-                    value={filters.ymdStartDt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.ymdStartDt,
+                      end: filters.ymdEndDt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        ymdStartDt: e.value.start,
+                        ymdEndDt: e.value.end,
+                      }))
+                    }
                   />
-                  ~
-                  <DatePicker
-                    name="ymdEndDt"
-                    value={filters.ymdEndDt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                  />
-                </div>
-              </td>
-
+                </td>
               <th>
                 <WordText
                   wordInfoData={wordInfoData}
@@ -955,6 +950,24 @@ const EA_A2000: React.FC = () => {
                   />
                 )}
               </td>
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblStddiv"
+                  altText="근태구분"
+                />
+              </th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="cboStddiv"
+                    value={filters.cboStddiv}
+                    bizComponentId="L_HU089"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
             </tr>
 
             <tr>
@@ -1008,7 +1021,7 @@ const EA_A2000: React.FC = () => {
                   altText="결재유무"
                 />
               </th>
-              <td>
+              <td colSpan={3}>
                 {customOptionData !== null && (
                   <CommonRadioGroup
                     name="radAppyn"
@@ -1024,24 +1037,6 @@ const EA_A2000: React.FC = () => {
                     bizComponentId="R_APPYN"
                     bizComponentData={bizComponentData}
                     changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-              <th>
-                <WordText
-                  wordInfoData={wordInfoData}
-                  controlName="lblStddiv"
-                  altText="근태구분"
-                />
-              </th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="cboStddiv"
-                    value={filters.cboStddiv}
-                    bizComponentId="L_HU089"
-                    bizComponentData={bizComponentData}
-                    changeData={filterComboBoxChange}
                   />
                 )}
               </td>

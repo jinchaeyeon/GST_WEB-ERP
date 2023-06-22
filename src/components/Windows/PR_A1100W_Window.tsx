@@ -474,6 +474,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             themeColor={"primary"}
             fillMode="outline"
             onClick={onAdd}
+            title="행 추가"
             icon="add"
           ></Button>
           <Button
@@ -481,6 +482,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             themeColor={"primary"}
             fillMode="outline"
             onClick={onRemove}
+            title="행 삭제"
             icon="minus"
           ></Button>
           <Button
@@ -919,6 +921,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             fillMode="outline"
             onClick={onAdd}
             icon="add"
+            title="행 추가"
           ></Button>
           <Button
             type={"button"}
@@ -926,6 +929,7 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             fillMode="outline"
             onClick={onRemove}
             icon="minus"
+            title="행 삭제"
           ></Button>
         </GridToolbar>
         <GridColumn

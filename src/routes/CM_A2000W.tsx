@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -10,7 +9,6 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -41,9 +39,8 @@ import {
   UseGetValueFromSessionItem,
   useSysMessage,
   UseParaPc,
+  findMessage,
 } from "../components/CommonFunction";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -56,6 +53,7 @@ import { gridList } from "../store/columns/CM_A2000W_C";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { Button } from "@progress/kendo-react-buttons";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const dateField = ["recdt", "reqdt", "finexpdt", "findt"];
 const DATA_ITEM_KEY = "num";
@@ -392,7 +390,27 @@ const CM_A2000W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_001");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const CommandCell = (props: GridCellProps) => {
@@ -725,27 +743,22 @@ const CM_A2000W: React.FC = () => {
           <tbody>
             <tr>
               <th>일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>작성자</th>
               <td>
                 {customOptionData !== null && (
@@ -781,7 +794,7 @@ const CM_A2000W: React.FC = () => {
             </tr>
             <tr>
               <th>제목</th>
-              <td colSpan={7}>
+              <td colSpan={5}>
                 <Input
                   name="title"
                   type="text"

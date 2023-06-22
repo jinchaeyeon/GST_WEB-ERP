@@ -48,6 +48,12 @@ import { useRecoilState } from "recoil";
 const SUB_DATA_ITEM_KEY = "pattern_id";
 const DATA_ITEM_KEY = "itemcd";
 
+
+const topHeight = 140.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
+
+
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = React.createContext<{
   onEdit: (dataItem: any, isNew: boolean) => void;
@@ -778,6 +784,7 @@ const KendoWindow = ({
                 </FilterBox>
               </FilterContainer>
             </fieldset>
+            <GridContainer  height={`calc(50% - ${leftOverHeight}px)`}>
             <GridContainerWrap>
               <GridContainer width={`45%`}>
                 <GridTitleContainer>
@@ -800,7 +807,7 @@ const KendoWindow = ({
                   }}
                   onScroll={onMainScrollHandler2}
                   onSelectionChange={onSubDataSelectionChange}
-                  style={{ height: "250px" }}
+                  style={{ height: "calc(100% - 5px)" }}
                 >
                   <GridColumn field="itemcd" title="품목코드" width="200px" />
                   <GridColumn field="itemnm" title="품목명" width="200PX" />
@@ -823,7 +830,7 @@ const KendoWindow = ({
                   total={detailDataResult3.total}
                   dataItemKey={DATA_ITEM_KEY}
                   onScroll={onMainScrollHandler}
-                  style={{ height: "250px" }}
+                  style={{ height: "calc(100% - 5px)" }}
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
@@ -848,12 +855,13 @@ const KendoWindow = ({
                 </Grid>
               </GridContainer>
             </GridContainerWrap>
-            <GridContainerWrap>
-              <GridContainer width={`99.9%`}>
+            </GridContainer>
+              <GridContainer height={`calc(50% - ${leftOverHeight}px)`} width={`99.9%`}>
                 <GridTitleContainer>
                   <GridTitle>BOM상세</GridTitle>
                 </GridTitleContainer>
                 <Grid
+                            style={{ height: "calc(100% - 40px)" }}
                   data={detailDataResult2.data.map((item: any) => ({
                     ...item,
                     proccd: proccdListData.find(
@@ -875,7 +883,6 @@ const KendoWindow = ({
                   total={detailDataResult2.total}
                   dataItemKey={FORM_DATA_INDEX}
                   onScroll={onSubScrollHandler}
-                  style={{ height: "200px" }}
                 >
                   <GridColumn field="proccd" title="공정" width="150px" />
                   <GridColumn
@@ -923,7 +930,6 @@ const KendoWindow = ({
                   <GridColumn field="remark" title="비고" width="200px" />
                 </Grid>
               </GridContainer>
-            </GridContainerWrap>
             <BottomContainer>
               <ButtonContainer>
                 <Button themeColor={"primary"} onClick={selectData}>

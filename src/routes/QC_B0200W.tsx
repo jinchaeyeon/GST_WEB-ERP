@@ -11,7 +11,6 @@ import {
   GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -62,6 +61,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../store/atoms";
 import { useRecoilState } from "recoil";
 import CenterCell from "../components/Cells/CenterCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 
@@ -890,14 +890,14 @@ const QC_B0200W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "QC_A2000W_001");
+        throw findMessage(messagesData, "QC_B0200W_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "QC_A2000W_001");
+        throw findMessage(messagesData, "QC_B0200W_001");
       }
     } catch (e) {
       alert(e);
@@ -943,27 +943,22 @@ const QC_B0200W: React.FC = () => {
           <tbody>
             <tr>
               <th>검사일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>공정</th>
               <td>
                 {customOptionData !== null && (

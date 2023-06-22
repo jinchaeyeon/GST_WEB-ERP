@@ -77,6 +77,7 @@ import {
   loginResultState,
 } from "../store/atoms";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 
@@ -1140,14 +1141,14 @@ const QC_A3000: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A5000W_001");
+        throw findMessage(messagesData, "QC_A3000W_006");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A5000W_001");
+        throw findMessage(messagesData, "QC_A3000W_006");
       }
     } catch (e) {
       alert(e);
@@ -1563,26 +1564,21 @@ const QC_A3000: React.FC = () => {
           <tbody>
             <tr>
               <th>일자구분</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
+              <td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
               </td>
               <th>공정</th>
               <td>

@@ -39,6 +39,7 @@ import {
   handleKeyPressSearch,
   UseParaPc,
   getQueryFromBizComponent,
+  findMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -49,12 +50,12 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { gridList } from "../store/columns/QC_B0300W_C";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, sessionItemState } from "../store/atoms";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../components/Cells/NumberCell";
 import { bytesToBase64 } from "byte-base64";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -414,13 +415,33 @@ const QC_B0300W: React.FC = () => {
   }, [filters, permissions]);
 
   const search = () => {
-    if(filters.location == "") {
-      alert("사업장을 채워주세요.");
-    } else if(filters.qcno == ""){
-      alert("검사차수를 채워주세요");
-    } else {
-      resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_B0300W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_B0300W_001");
+      } else if(filters.location == "" || filters.location == null || filters.location == undefined) {
+        throw findMessage(messagesData, "QC_B0300W_002");
+      } else if(filters.qcno == "" || filters.qcno == null || filters.qcno == undefined) {
+        throw findMessage(messagesData, "QC_B0300W_003");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
     }
+
+
   };
 
   return (
@@ -455,27 +476,22 @@ const QC_B0300W: React.FC = () => {
                 )}
               </td>
               <th>기간</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>설비번호</th>
               <td>
                 <Input
