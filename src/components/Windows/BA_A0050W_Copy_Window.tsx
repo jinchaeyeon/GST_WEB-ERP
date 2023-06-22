@@ -48,11 +48,9 @@ import { useRecoilState } from "recoil";
 const SUB_DATA_ITEM_KEY = "pattern_id";
 const DATA_ITEM_KEY = "itemcd";
 
-
-const topHeight = 140.13;
+const topHeight = 55.56;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
-
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = React.createContext<{
@@ -87,7 +85,7 @@ const KendoWindow = ({
 
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  
+
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSub2PgNum] = useState(1);
   const [sub2PgNum, setSubPgNum] = useState(1);
@@ -109,7 +107,7 @@ const KendoWindow = ({
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA061,L_PR010,L_BA011,L_sysUserMaster_001,L_BA015",
-    setBizComponentData
+    setBizComponentData,
   );
 
   const [itemacntListData, setItemacntListData] = React.useState([
@@ -161,15 +159,15 @@ const KendoWindow = ({
   });
 
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], dataState)
+    process([], dataState),
   );
 
   const [detailDataResult2, setDetailDataResult2] = useState<DataResult>(
-    process([], dataState)
+    process([], dataState),
   );
 
   const [detailDataResult3, setDetailDataResult3] = useState<DataResult>(
-    process([], dataState)
+    process([], dataState),
   );
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(FORM_DATA_INDEX);
@@ -246,7 +244,7 @@ const KendoWindow = ({
       if (filters.find_row_value !== "" && detailDataResult.total > 0) {
         const ROW_HEIGHT = 35.56;
         const idx = detailDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value
+          (item) => idGetter(item) === filters.find_row_value,
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
@@ -272,7 +270,7 @@ const KendoWindow = ({
       if (filters3.find_row_value !== "" && detailDataResult3.total > 0) {
         const ROW_HEIGHT = 35.56;
         const idx = detailDataResult3.data.findIndex(
-          (item) => idGetter(item) === filters3.find_row_value
+          (item) => idGetter(item) === filters3.find_row_value,
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
@@ -432,24 +430,24 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061"),
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010"),
       );
       const outprocynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA011")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA011"),
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001",
+        ),
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015"),
       );
       const procunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015"),
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -506,7 +504,7 @@ const KendoWindow = ({
       });
       setSelectedsubDataState2(newSelectedState);
     },
-    []
+    [],
   );
 
   interface IItemData {
@@ -657,7 +655,8 @@ const KendoWindow = ({
   const onMainScrollHandler = (event: GridEvent) => {
     if (filters3.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
-    filters3.pgNum + (filters3.scrollDirrection === "up" ? filters3.pgGap : 0);
+      filters3.pgNum +
+      (filters3.scrollDirrection === "up" ? filters3.pgGap : 0);
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -672,7 +671,8 @@ const KendoWindow = ({
     }
 
     pgNumWithGap =
-    filters3.pgNum - (filters3.scrollDirrection === "down" ? filters3.pgGap : 0);
+      filters3.pgNum -
+      (filters3.scrollDirrection === "down" ? filters3.pgGap : 0);
     // 스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setFilters3((prev) => ({
@@ -694,7 +694,7 @@ const KendoWindow = ({
     }
 
     const selectRows = detailDataResult3.data.filter(
-      (item: any) => arr.includes(item.itemcd) == true
+      (item: any) => arr.includes(item.itemcd) == true,
     );
 
     setData(selectRows, Object.getOwnPropertyNames(selectedsubDataState)[0]);
@@ -718,7 +718,7 @@ const KendoWindow = ({
           groupDetails2: detailDataResult2.data,
         }}
         render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true}>
+          <FormElement horizontal={true} style={{ height: "100%" }}>
             <fieldset className={"k-form-fieldset"}>
               <button
                 id="valueChanged"
@@ -784,8 +784,8 @@ const KendoWindow = ({
                 </FilterBox>
               </FilterContainer>
             </fieldset>
-            <GridContainer  height={`calc(50% - ${leftOverHeight}px)`}>
-            <GridContainerWrap>
+
+            <GridContainerWrap height={`calc(50% - ${leftOverHeight}px)`}>
               <GridContainer width={`45%`}>
                 <GridTitleContainer>
                   <GridTitle>품목리스트</GridTitle>
@@ -794,7 +794,7 @@ const KendoWindow = ({
                   data={detailDataResult.data.map((item: any) => ({
                     ...item,
                     itemacnt: itemacntListData.find(
-                      (items: any) => items.sub_code === item.itemacnt
+                      (items: any) => items.sub_code === item.itemacnt,
                     )?.code_name,
                     [SELECTED_FIELD]: selectedsubDataState[idGetter(item)],
                   }))}
@@ -823,7 +823,7 @@ const KendoWindow = ({
                   data={detailDataResult3.data.map((item: any) => ({
                     ...item,
                     itemacnt: itemacntListData.find(
-                      (items: any) => items.sub_code === item.itemacnt
+                      (items: any) => items.sub_code === item.itemacnt,
                     )?.code_name,
                     [SELECTED_FIELD]: selectedsubDataState2[idGetter(item)],
                   }))}
@@ -844,7 +844,7 @@ const KendoWindow = ({
                     width="45px"
                     headerSelectionValue={
                       detailDataResult3.data.findIndex(
-                        (item: any) => !selectedsubDataState2[idGetter(item)]
+                        (item: any) => !selectedsubDataState2[idGetter(item)],
                       ) === -1
                     }
                   />
@@ -855,81 +855,75 @@ const KendoWindow = ({
                 </Grid>
               </GridContainer>
             </GridContainerWrap>
+            <GridContainer
+              height={`calc(50% - ${leftOverHeight}px)`}
+              width={`99.9%`}
+            >
+              <GridTitleContainer>
+                <GridTitle>BOM상세</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "calc(100% - 40px)" }}
+                data={detailDataResult2.data.map((item: any) => ({
+                  ...item,
+                  proccd: proccdListData.find(
+                    (items: any) => items.sub_code === item.proccd,
+                  )?.code_name,
+                  outprocyn: outprocynListData.find(
+                    (items: any) => items.sub_code === item.outprocyn,
+                  )?.code_name,
+                  prodemp: prodempListData.find(
+                    (items: any) => items.user_id === item.prodemp,
+                  )?.user_name,
+                  qtyunit: qtyunitListData.find(
+                    (items: any) => items.sub_code === item.qtyunit,
+                  )?.code_name,
+                  procunit: procunitListData.find(
+                    (items: any) => items.sub_code === item.procunit,
+                  )?.code_name,
+                }))}
+                total={detailDataResult2.total}
+                dataItemKey={FORM_DATA_INDEX}
+                onScroll={onSubScrollHandler}
+              >
+                <GridColumn field="proccd" title="공정" width="150px" />
+                <GridColumn
+                  field="procseq"
+                  title="공정순서"
+                  width="100px"
+                  cell={NumberCell}
+                />
+                <GridColumn field="outprocyn" title="외주구분" width="100px" />
+                <GridColumn field="prodemp" title="작업자" width="150px" />
+                <GridColumn field="prodmac" title="설비" width="150px" />
+                <GridColumn
+                  field="chlditemcd"
+                  title="소요자재코드"
+                  width="150px"
+                />
+                <GridColumn
+                  field="chlditemnm"
+                  title="소요자재명"
+                  width="150px"
+                />
+                <GridColumn
+                  field="unitqty"
+                  title="단위수량"
+                  width="120px"
+                  cell={NumberCell}
+                />
+                <GridColumn field="qtyunit" title="수량단위" width="120px" />
+                <GridColumn field="outgb" title="불출구분" width="120px" />
+                <GridColumn
+                  field="procqty"
+                  title="재공생산량"
+                  width="120px"
+                  cell={NumberCell}
+                />
+                <GridColumn field="procunit" title="생산량단위" width="120px" />
+                <GridColumn field="remark" title="비고" width="200px" />
+              </Grid>
             </GridContainer>
-              <GridContainer height={`calc(50% - ${leftOverHeight}px)`} width={`99.9%`}>
-                <GridTitleContainer>
-                  <GridTitle>BOM상세</GridTitle>
-                </GridTitleContainer>
-                <Grid
-                            style={{ height: "calc(100% - 40px)" }}
-                  data={detailDataResult2.data.map((item: any) => ({
-                    ...item,
-                    proccd: proccdListData.find(
-                      (items: any) => items.sub_code === item.proccd
-                    )?.code_name,
-                    outprocyn: outprocynListData.find(
-                      (items: any) => items.sub_code === item.outprocyn
-                    )?.code_name,
-                    prodemp: prodempListData.find(
-                      (items: any) => items.user_id === item.prodemp
-                    )?.user_name,
-                    qtyunit: qtyunitListData.find(
-                      (items: any) => items.sub_code === item.qtyunit
-                    )?.code_name,
-                    procunit: procunitListData.find(
-                      (items: any) => items.sub_code === item.procunit
-                    )?.code_name,
-                  }))}
-                  total={detailDataResult2.total}
-                  dataItemKey={FORM_DATA_INDEX}
-                  onScroll={onSubScrollHandler}
-                >
-                  <GridColumn field="proccd" title="공정" width="150px" />
-                  <GridColumn
-                    field="procseq"
-                    title="공정순서"
-                    width="100px"
-                    cell={NumberCell}
-                  />
-                  <GridColumn
-                    field="outprocyn"
-                    title="외주구분"
-                    width="100px"
-                  />
-                  <GridColumn field="prodemp" title="작업자" width="150px" />
-                  <GridColumn field="prodmac" title="설비" width="150px" />
-                  <GridColumn
-                    field="chlditemcd"
-                    title="소요자재코드"
-                    width="150px"
-                  />
-                  <GridColumn
-                    field="chlditemnm"
-                    title="소요자재명"
-                    width="150px"
-                  />
-                  <GridColumn
-                    field="unitqty"
-                    title="단위수량"
-                    width="120px"
-                    cell={NumberCell}
-                  />
-                  <GridColumn field="qtyunit" title="수량단위" width="120px" />
-                  <GridColumn field="outgb" title="불출구분" width="120px" />
-                  <GridColumn
-                    field="procqty"
-                    title="재공생산량"
-                    width="120px"
-                    cell={NumberCell}
-                  />
-                  <GridColumn
-                    field="procunit"
-                    title="생산량단위"
-                    width="120px"
-                  />
-                  <GridColumn field="remark" title="비고" width="200px" />
-                </Grid>
-              </GridContainer>
             <BottomContainer>
               <ButtonContainer>
                 <Button themeColor={"primary"} onClick={selectData}>
