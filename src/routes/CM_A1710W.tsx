@@ -579,6 +579,7 @@ const CM_A1710W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                title="저장"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

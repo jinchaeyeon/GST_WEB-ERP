@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -10,7 +9,6 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -41,9 +39,8 @@ import {
   UseGetValueFromSessionItem,
   useSysMessage,
   UseParaPc,
+  findMessage,
 } from "../components/CommonFunction";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -56,6 +53,7 @@ import { gridList } from "../store/columns/CM_A2000W_C";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { Button } from "@progress/kendo-react-buttons";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const dateField = ["recdt", "reqdt", "finexpdt", "findt"];
 const DATA_ITEM_KEY = "num";
@@ -255,8 +253,8 @@ const CM_A2000W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
       if (totalRowCnt > 0) {
+
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
@@ -392,18 +390,59 @@ const CM_A2000W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A2000W_001");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const CommandCell = (props: GridCellProps) => {
-    const onEditClick = () => {
+    const onEditClick = async () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.num]: true });
 
-      // setWorkType("U");
-
       setWorkType("U");
+
+      let data: any;
+
+      const parameters2: Iparameters = {
+        procedureName: "P_CM_A2000W_S2",
+        pageNumber: 0,
+        pageSize: filters.pgSize,
+        parameters: {
+          "@p_work_type": "U1",
+          "@p_orgdiv": "01",
+          "@p_datnum": rowData.recno,
+          "@p_person2": userId,
+          "@p_chooses": "",
+          "@p_loadok": "",
+          "@p_form_id": "CM_A2000W"
+        },
+      };
+
+      try {
+        data = await processApi<any>("procedure", parameters2);
+      } catch (error) {
+        data = null;
+      }
       setDetailWindowVisible(true);
     };
 
@@ -481,7 +520,7 @@ const CM_A2000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(para)
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();
@@ -545,9 +584,8 @@ const CM_A2000W: React.FC = () => {
         reqctns: filter.reqctns,
         attdatnum: filter.attdatnum,
         reqdt: convertDateToStr(filter.reqdt),
-        finexpdt:
-          filter.finexpdt,
-        findt: filter.findt,
+        finexpdt: filter.finexpdt == null ? "" : convertDateToStr(filter.finexpdt),
+        findt: filter.findt == null ? "" : convertDateToStr(filter.findt),
       }));
     } else {
       let dataArr: TdataArr = {
@@ -583,9 +621,8 @@ const CM_A2000W: React.FC = () => {
         reqctns: filter.reqctns,
         attdatnum: filter.attdatnum,
         reqdt: convertDateToStr(filter.reqdt),
-        finexpdt:
-          filter.finexpdt,
-        findt: filter.findt,
+        finexpdt: filter.finexpdt == null ? "" : convertDateToStr(filter.finexpdt),
+        findt: filter.findt == null ? "" : convertDateToStr(filter.findt),
         person2: dataArr.user_id_s.join("|"),
         chooses: dataArr.chooses_s.join("|"),
         loadok: dataArr.loadok_s.join("|"),
@@ -706,27 +743,22 @@ const CM_A2000W: React.FC = () => {
           <tbody>
             <tr>
               <th>일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>작성자</th>
               <td>
                 {customOptionData !== null && (
@@ -762,7 +794,7 @@ const CM_A2000W: React.FC = () => {
             </tr>
             <tr>
               <th>제목</th>
-              <td colSpan={7}>
+              <td colSpan={5}>
                 <Input
                   name="title"
                   type="text"

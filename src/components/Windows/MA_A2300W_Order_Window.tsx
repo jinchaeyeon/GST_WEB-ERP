@@ -5,12 +5,10 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridCellProps,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
-  GridExpandChangeEvent,
   GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
@@ -23,7 +21,6 @@ import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  Title,
   TitleContainer,
   ButtonInInput,
   GridTitleContainer,
@@ -44,7 +41,6 @@ import {
   rowsOfDataResult,
   rowsWithSelectedDataResult,
 } from "../CommonFunction";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
@@ -54,6 +50,7 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import DateCell from "../Cells/DateCell";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
 type IWindow = {
   custcd?: string | undefined;
@@ -738,25 +735,21 @@ const CopyWindow = ({
             <tbody>
               <tr>
                 <th>발주일자</th>
-                <td colSpan={3}>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
+                <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
                 </td>
                 {filters.custcd != "" ? (
                   <>
@@ -910,6 +903,7 @@ const CopyWindow = ({
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="plus"
+                title="행 추가"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1039,6 +1033,7 @@ const CopyWindow = ({
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

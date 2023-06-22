@@ -10,7 +10,6 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -63,26 +62,14 @@ import { useSetRecoilState } from "recoil";
 import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
 const dateField = ["recdt", "inexpdt"];
-const numberField = [
-  "amt",
-  "unp",
-  "wonamt",
-  "taxamt",
-  "totamt",
-  "qty",
-];
-const numberField2 = [
-  "amt",
-  "wonamt",
-  "taxamt",
-  "totamt",
-  "qty",
-];
-const checkField = ["finyn"]
+const numberField = ["amt", "unp", "wonamt", "taxamt", "totamt", "qty"];
+const numberField2 = ["amt", "wonamt", "taxamt", "totamt", "qty"];
+const checkField = ["finyn"];
 type TdataArr = {
   rowstatus_s: string[];
   reqseq_s: string[];
@@ -382,7 +369,7 @@ const MA_A1000W: React.FC = () => {
       "@p_load_place": filters.load_place,
       "@p_dptcd": filters.dptcd,
       "@p_appyn": filters.appyn,
-      "@p_find_row_value" : "",
+      "@p_find_row_value": "",
     },
   };
 
@@ -407,7 +394,7 @@ const MA_A1000W: React.FC = () => {
       "@p_load_place": filters.load_place,
       "@p_dptcd": filters.dptcd,
       "@p_appyn": filters.appyn,
-      "@p_find_row_value" : "",
+      "@p_find_row_value": "",
     },
   };
 
@@ -448,7 +435,7 @@ const MA_A1000W: React.FC = () => {
       "@p_poregnum": "",
       "@p_rowstatus_s": "",
       "@p_reqseq_s": "",
-      "@p_inexpdt_s":"",
+      "@p_inexpdt_s": "",
       "@p_itemcd_s": "",
       "@p_itemnm_s": "",
       "@p_qty_s": "",
@@ -457,7 +444,7 @@ const MA_A1000W: React.FC = () => {
       "@p_finyn_s": "",
       "@p_unp_s": "",
       "@p_amt_s": "",
-      "@p_wonamt_s":"",
+      "@p_wonamt_s": "",
       "@p_taxamt_s": "",
       "@p_load_place_s": "",
       "@p_unpcalmeth_s": "",
@@ -887,14 +874,14 @@ const MA_A1000W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A2000W_001");
+        throw findMessage(messagesData, "MA_A1000W_002");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A2000W_001");
+        throw findMessage(messagesData, "MA_A1000W_002");
       } else if (
         filters.location == null ||
         filters.location == "" ||
@@ -931,7 +918,7 @@ const MA_A1000W: React.FC = () => {
     contractyn: "",
     attdatnum: "",
     remark: "",
-    project:"",
+    project: "",
     poregnum: "",
     rowstatus_s: "",
     reqseq_s: "",
@@ -977,7 +964,7 @@ const MA_A1000W: React.FC = () => {
       finaldes: filter.finaldes == undefined ? "" : filter.finaldes,
       qcmeth: filter.qcmeth == undefined ? "" : filter.qcmeth,
       boxmeth: filter.boxmeth == undefined ? "" : filter.boxmeth,
-      dlv_method:filter.dlv_method == undefined ? "" : filter.dlv_method,
+      dlv_method: filter.dlv_method == undefined ? "" : filter.dlv_method,
       reportyn: filter.reportyn == undefined ? "" : filter.reportyn,
       contractyn: filter.contractyn == undefined ? "" : filter.contractyn,
       attdatnum: filter.attdatnum,
@@ -1008,27 +995,31 @@ const MA_A1000W: React.FC = () => {
     dataItem.forEach((item: any, idx: number) => {
       const {
         rowstatus = "",
-        reqseq= "", 
-        inexpdt= "", 
-        itemcd= "", 
-        itemnm= "",
-        qty= "",
-        qtyunit= "", 
-        remark= "",
-        finyn= "", 
-        unp= "",
-        amt= "",
-        wonamt= "",
-        taxamt= "",
-        load_place= "",
-        unpcalmeth= "", 
+        reqseq = "",
+        inexpdt = "",
+        itemcd = "",
+        itemnm = "",
+        qty = "",
+        qtyunit = "",
+        remark = "",
+        finyn = "",
+        unp = "",
+        amt = "",
+        wonamt = "",
+        taxamt = "",
+        load_place = "",
+        unpcalmeth = "",
       } = item;
-  
+
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.reqseq_s.push(reqseq == undefined || reqseq == "" ? 0 : reqseq);
-      dataArr.inexpdt_s.push((inexpdt == undefined || inexpdt == "") ? convertDateToStr(new Date()) : inexpdt);
-      dataArr.itemcd_s.push(itemcd== undefined ? "" : itemcd);
-      dataArr.itemnm_s.push(itemnm== undefined ? "" : itemnm);
+      dataArr.inexpdt_s.push(
+        inexpdt == undefined || inexpdt == ""
+          ? convertDateToStr(new Date())
+          : inexpdt
+      );
+      dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+      dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
       dataArr.qty_s.push(qty == undefined ? 0 : qty);
       dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
       dataArr.remark_s.push(remark == undefined ? "" : remark);
@@ -1043,26 +1034,26 @@ const MA_A1000W: React.FC = () => {
     deletedMainRows.forEach((item: any, idx: number) => {
       const {
         rowstatus = "",
-        reqseq= "",
-        inexpdt= "",
-        itemcd= "",
-        itemnm= "",
-        qty= "",
-        qtyunit= "",
-        remark= "",
-        finyn= "",
-        unp= "",
-        amt= "",
-        wonamt= "",
-        taxamt= "",
-        load_place= "",
-        unpcalmeth= "",
+        reqseq = "",
+        inexpdt = "",
+        itemcd = "",
+        itemnm = "",
+        qty = "",
+        qtyunit = "",
+        remark = "",
+        finyn = "",
+        unp = "",
+        amt = "",
+        wonamt = "",
+        taxamt = "",
+        load_place = "",
+        unpcalmeth = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.reqseq_s.push(reqseq == undefined || reqseq == "" ? 0 : reqseq);
       dataArr.inexpdt_s.push(inexpdt == undefined ? "" : inexpdt);
-      dataArr.itemcd_s.push(itemcd== undefined ? "" : itemcd);
-      dataArr.itemnm_s.push(itemnm== undefined ? "" : itemnm);
+      dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+      dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
       dataArr.qty_s.push(qty == undefined ? 0 : qty);
       dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
       dataArr.remark_s.push(remark == undefined ? "" : remark);
@@ -1178,7 +1169,7 @@ const MA_A1000W: React.FC = () => {
         contractyn: "",
         attdatnum: "",
         remark: "",
-        project:"",
+        project: "",
         poregnum: "",
         rowstatus_s: "",
         reqseq_s: "",
@@ -1233,26 +1224,21 @@ const MA_A1000W: React.FC = () => {
           <tbody>
             <tr>
               <th>청구일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
+              <td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
               </td>
               <th>업체코드</th>
               <td>
@@ -1576,7 +1562,7 @@ const MA_A1000W: React.FC = () => {
           setData={setItemData}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

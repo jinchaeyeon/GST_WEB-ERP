@@ -16,7 +16,6 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
@@ -41,7 +40,6 @@ import {
   convertDateToStr,
   getGridItemChangedData,
 } from "../CommonFunction";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
@@ -51,6 +49,7 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import NumberCell from "../Cells/NumberCell";
 import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -653,25 +652,21 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             <tbody>
               <tr>
                 <th>일자</th>
-                <td colSpan={3}>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
+                <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
                 </td>
                 <th>규격</th>
                 <td>

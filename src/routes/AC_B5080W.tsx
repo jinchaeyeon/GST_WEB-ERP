@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -10,7 +9,6 @@ import {
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
 import { gridList } from "../store/columns/AC_B5080W_C";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -34,9 +32,9 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  rowsOfDataResult,
   setDefaultDate,
   convertDateToStrWithTime2,
+  findMessage,
 } from "../components/CommonFunction";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -49,6 +47,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import DateCell from "../components/Cells/DateCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 const DateField = ["outdt", "recdt", "indt", "actdt"];
@@ -1372,77 +1371,97 @@ const AC_B5080W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    if (tabSelected == 0) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 0,
-      }));
-    } else if (tabSelected == 1) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 1,
-      }));
-    } else if (tabSelected == 2) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 2,
-      }));
-    } else if (tabSelected == 3) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 3,
-      }));
-    } else if (tabSelected == 4) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 4,
-      }));
-    } else if (tabSelected == 5) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 5,
-      }));
-    } else {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 6,
-      }));
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_B5080W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_B5080W_001");
+      } else {
+        resetAllGrid();
+        if (tabSelected == 0) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 0,
+          }));
+        } else if (tabSelected == 1) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 1,
+          }));
+        } else if (tabSelected == 2) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 2,
+          }));
+        } else if (tabSelected == 3) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 3,
+          }));
+        } else if (tabSelected == 4) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 4,
+          }));
+        } else if (tabSelected == 5) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 5,
+          }));
+        } else {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 6,
+          }));
+        }
+      }
+    } catch (e) {
+      alert(e);
     }
   };
 
@@ -1586,26 +1605,21 @@ const AC_B5080W: React.FC = () => {
             <tr>
               <th>기준일자</th>
               <td>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th></th>
               <td></td>
             </tr>

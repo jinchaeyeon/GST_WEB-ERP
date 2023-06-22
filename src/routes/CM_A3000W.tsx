@@ -89,6 +89,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs/dist/npm/datepicker
 import DateCell from "../components/Cells/DateCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DateField = ["recdt"];
 
@@ -790,11 +791,31 @@ const CM_A3000W: React.FC = () => {
   };
 
   const search = () => {
-    setSubPgNum(1);
-    setSubDataResult(process([], subDataState));
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.recdt_s).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.recdt_s).substring(6, 8) > "31" ||
+        convertDateToStr(filters.recdt_s).substring(6, 8) < "01" ||
+        convertDateToStr(filters.recdt_s).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A3000W_003");
+      } else if (
+        convertDateToStr(filters.recdt_e).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.recdt_e).substring(6, 8) > "31" ||
+        convertDateToStr(filters.recdt_e).substring(6, 8) < "01" ||
+        convertDateToStr(filters.recdt_e).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A3000W_003");
+      } else {
+        setSubPgNum(1);
+        setSubDataResult(process([], subDataState));
+        setMainPgNum(1);
+        setMainDataResult(process([], mainDataState));
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -1192,27 +1213,22 @@ const CM_A3000W: React.FC = () => {
           <tbody>
             <tr>
               <th>작성일</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="recdt_s"
-                    value={filters.recdt_s}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.recdt_s,
+                      end: filters.recdt_e,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        recdt_s: e.value.start,
+                        recdt_e: e.value.end,
+                      }))
+                    }
                     className="required"
                   />
-                  ~
-                  <DatePicker
-                    name="recdt_e"
-                    value={filters.recdt_e}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                    className="required"
-                  />
-                </div>
-              </td>
+                </td>
               <th>부서코드</th>
               <td>
                 {customOptionData !== null && (

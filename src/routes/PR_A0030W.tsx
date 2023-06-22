@@ -1566,6 +1566,7 @@ const PR_A0030W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
+                      title="행 삭제" 
                     />
                     <Button
                       onClick={() =>
@@ -1577,6 +1578,7 @@ const PR_A0030W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="chevron-up"
+                      title="행 위로 이동" 
                     ></Button>
                     <Button
                       onClick={() =>
@@ -1588,6 +1590,7 @@ const PR_A0030W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="chevron-down"
+                      title="행 아래로 이동" 
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>

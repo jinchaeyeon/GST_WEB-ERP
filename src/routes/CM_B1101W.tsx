@@ -29,7 +29,6 @@ import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
-  convertDateToStr,
   UseBizComponent,
   UsePermissions,
   handleKeyPressSearch,
@@ -37,6 +36,9 @@ import {
   UseGetValueFromSessionItem,
   UseCustomOption,
   setDefaultDate,
+  UseMessages,
+  findMessage,
+  convertDateToStr,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import TopButtons from "../components/Buttons/TopButtons";
@@ -47,6 +49,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import CenterCell from "../components/Cells/CenterCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 const centerField = [
@@ -103,7 +106,8 @@ const CM_B1101W: React.FC = () => {
   const [ifSelectFirstRow2, setIfSelectFirstRow2] = useState(true);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
@@ -590,11 +594,31 @@ const CM_B1101W: React.FC = () => {
   }, [filters, permissions]);
 
   const search = () => {
-    resetAllGrid();
-    if (tabSelected == 0) {
-      fetchMainGrid();
-    } else {
-      fetchMainGrid2();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_B1101W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_B1101W_001");
+      } else {
+        resetAllGrid();
+        if (tabSelected == 0) {
+          fetchMainGrid();
+        } else {
+          fetchMainGrid2();
+        }
+      }
+    } catch (e) {
+      alert(e);
     }
   };
 
@@ -690,26 +714,21 @@ const CM_B1101W: React.FC = () => {
               <th>일자</th>
               {tabSelected == 0 ? (
                 <td>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                    ~
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               ) : (
                 <td>
                   <DatePicker

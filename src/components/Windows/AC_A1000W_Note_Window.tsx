@@ -36,10 +36,10 @@ import {
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
@@ -306,27 +306,22 @@ const AC_A1000W_Note_Window = ({
                 )}
               </td>
               <th>만기일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                    className="required"
-                  />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                    className="required"
-                  />
-                </div>
-              </td>
+              <td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any; }; }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+                </td>
             </tr>
             <tr>
               <th>어음번호</th>

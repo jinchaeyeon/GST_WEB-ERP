@@ -1040,6 +1040,7 @@ const CopyWindow = ({
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
               <Button
                 themeColor={"primary"}

@@ -781,6 +781,7 @@ const SY_A0120: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                   disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
@@ -788,6 +789,7 @@ const SY_A0120: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제" 
                   disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
@@ -795,6 +797,7 @@ const SY_A0120: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                   disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>

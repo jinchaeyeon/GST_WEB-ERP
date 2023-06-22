@@ -1334,6 +1334,7 @@ const SY_A0125W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                title="저장"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1415,7 +1416,7 @@ const SY_A0125W: React.FC = () => {
           setData={setDepartmentData}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

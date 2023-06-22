@@ -1360,7 +1360,7 @@ const PR_A0040W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(para)
     if (data.isSuccess === true) {
       resetAllGrid();
       setWorkType("U");
@@ -1834,6 +1834,7 @@ const PR_A0040W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
+                      title="행 삭제" 
                     />
                     <Button
                       onClick={() =>
@@ -1844,6 +1845,7 @@ const PR_A0040W: React.FC = () => {
                       }
                       fillMode="outline"
                       themeColor={"primary"}
+                      title="행 위로 이동" 
                       icon="chevron-up"
                     ></Button>
                     <Button
@@ -1856,6 +1858,7 @@ const PR_A0040W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="chevron-down"
+                      title="행 아래로 이동" 
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>

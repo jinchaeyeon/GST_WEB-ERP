@@ -956,7 +956,7 @@ const SA_B2000: React.FC = () => {
                     start: filters.ymdFrdt,
                     end: filters.ymdTodt,
                   }}
-                  onChange={(e) =>
+                  onChange={(e: { value: { start: any; end: any; }; }) =>
                     setFilters((prev) => ({
                       ...prev,
                       ymdFrdt: e.value.start,

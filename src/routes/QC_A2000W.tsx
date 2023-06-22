@@ -21,7 +21,6 @@ import {
   GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -88,6 +87,7 @@ import {
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { useRecoilState } from "recoil";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
@@ -1806,27 +1806,22 @@ const QC_A2000: React.FC = () => {
           <tbody>
             <tr>
               <th>발주일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>발주번호</th>
               <td>
                 <Input
@@ -1852,6 +1847,17 @@ const QC_A2000: React.FC = () => {
                   <CustomOptionComboBox
                     name="location"
                     value={filters.location}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>공정</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="proccd"
+                    value={filters.proccd}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
@@ -1901,17 +1907,6 @@ const QC_A2000: React.FC = () => {
                     name="finyn"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-              <th>공정</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="proccd"
-                    value={filters.proccd}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
                   />
                 )}
               </td>
@@ -1988,6 +1983,7 @@ const QC_A2000: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      title="저장"
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -2073,12 +2069,14 @@ const QC_A2000: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
+                    title="행 삭제" 
                   ></Button>
                   <Button
                     onClick={onSaveClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    title="저장"
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2169,18 +2167,21 @@ const QC_A2000: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="plus"
+                    title="행 추가"
                   ></Button>
                   <Button
                     onClick={onDeleteClick2}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
+                    title="행 삭제" 
                   ></Button>
                   <Button
                     onClick={onSaveClick2}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    title="저장"
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

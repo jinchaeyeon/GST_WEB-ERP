@@ -7,7 +7,6 @@ import {
   GridEvent,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -44,6 +43,8 @@ import {
   UseCustomOption,
   UsePermissions,
   handleKeyPressSearch,
+  findMessage,
+  UseMessages,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -56,6 +57,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const QC_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -68,7 +70,8 @@ const QC_A0120: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -458,6 +461,7 @@ const QC_A0120: React.FC = () => {
               themeColor={"primary"}
               fillMode={"outline"}
               icon="refresh"
+              title="동기화"
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>
@@ -544,9 +548,29 @@ const QC_A0120: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
-    fetchDetailGrid1();
+    try {
+      if (
+        convertDateToStr(filters.ymdFrdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_A0120W_001");
+      } else if (
+        convertDateToStr(filters.ymdTodt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_A0120W_001");
+      } else {
+        resetAllGrid();
+        fetchMainGrid();
+        fetchDetailGrid1();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   return (
@@ -569,26 +593,22 @@ const QC_A0120: React.FC = () => {
           <tbody>
             <tr>
               <th>불량일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="ymdFrdt"
-                    value={filters.ymdFrdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.ymdFrdt,
+                      end: filters.ymdTodt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        ymdFrdt: e.value.start,
+                        ymdTodt: e.value.end,
+                      }))
+                    }
+                    className="required"
                   />
-                  ~
-                  <DatePicker
-                    name="ymdTodt"
-                    value={filters.ymdTodt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                  />
-                </div>
-              </td>
-
+                </td>
               <th>품목코드</th>
               <td>
                 <Input
