@@ -6,13 +6,15 @@ import { UseGetValueFromSessionItem, convertDateToStr, numberWithCommas } from "
 import ReactToPrint from "react-to-print";
 import { Button } from "@progress/kendo-react-buttons";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../../store/atoms";
 
 const DaliyReport = (filters: any) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const setLoading = useSetRecoilState(isLoading);
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -43,6 +45,7 @@ const DaliyReport = (filters: any) => {
   const fetchMainGrid = async () => {
     // if (!permissions?.view) return;
     let data: any;
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -62,6 +65,7 @@ const DaliyReport = (filters: any) => {
         });
       }
     }
+    setLoading(false);
   };
 
   useEffect(() => {

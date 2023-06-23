@@ -756,8 +756,7 @@ const CopyWindow = ({
 
   const enterEdit = async (dataItem: any, field: string) => {
     if (
-      field == "chooses" ||
-      (field == "loadok" && userId == dataItem.user_id)
+      field == "chooses"
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -771,34 +770,7 @@ const CopyWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
-      if (
-        dataItem.loadok == false &&
-        field == "loadok" &&
-        userId == dataItem.user_id
-      ) {
-        let data: any;
 
-        const parameters2: Iparameters = {
-          procedureName: "P_CM_A2000W_S2",
-          pageNumber: 0,
-          pageSize: filters.pgSize,
-          parameters: {
-            "@p_work_type": "U",
-            "@p_orgdiv": "01",
-            "@p_datnum": filters.datnum,
-            "@p_person2": userId,
-            "@p_chooses": "",
-            "@p_loadok": "",
-            "@p_form_id": "CM_A2000W",
-          },
-        };
-
-        try {
-          data = await processApi<any>("procedure", parameters2);
-        } catch (error) {
-          data = null;
-        }
-      }
       setIfSelectFirstRow(false);
       setMainDataResult((prev) => {
         return {
@@ -806,6 +778,57 @@ const CopyWindow = ({
           total: prev.total,
         };
       });
+    }
+    if (
+      field == "loadok" &&
+      userId == dataItem.user_id
+    ) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setIfSelectFirstRow(false);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+
+      let data: any;
+      setLoading(true);
+
+      const parameters2: Iparameters = {
+        procedureName: "P_CM_A2000W_S2",
+        pageNumber: 0,
+        pageSize: filters.pgSize,
+        parameters: {
+          "@p_work_type": "U",
+          "@p_orgdiv": "01",
+          "@p_datnum": data?.recno == undefined
+          ? filters.recno
+          : data?.recno,
+          "@p_person2": userId,
+          "@p_chooses": "",
+          "@p_loadok": "",
+          "@p_form_id": "CM_A2000W",
+        },
+      };
+
+      try {
+        data = await processApi<any>("procedure", parameters2);
+      } catch (error) {
+        data = null;
+      }
+      setLoading(false);
     }
   };
 
