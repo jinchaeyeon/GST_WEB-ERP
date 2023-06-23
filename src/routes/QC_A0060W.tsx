@@ -596,7 +596,7 @@ const QC_A0060W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    setDetailDataResult(process([], detailDataState));
     setDetailFilters((prev) => ({
       ...prev,
       stdnum: selectedRowData.stdnum,
