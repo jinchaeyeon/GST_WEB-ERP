@@ -510,13 +510,58 @@ const CM_A3000W: React.FC = () => {
       }
     }
   };
+  const handleFileUpload = async (files: FileList | null) => {
+    if (files === null) return false;
 
-  const uploadFile = async (files: File) => {
+    let newAttachmentNumber = "";
+    const promises = [];
+ 
+    for (const file of files) {
+      // 최초 등록 시, 업로드 후 첨부번호를 가져옴 (다중 업로드 대응)
+      if (!attachmentNumber && !newAttachmentNumber) {
+        newAttachmentNumber = await uploadFile(file);
+        const promise = newAttachmentNumber;
+        promises.push(promise);
+        continue;
+      }
+
+      const promise = newAttachmentNumber
+        ? await uploadFile(file, newAttachmentNumber)
+        : await uploadFile(file);
+      promises.push(promise);
+    }
+
+    const results = await Promise.all(promises);
+
+    // 실패한 파일이 있는지 확인
+    if (results.includes(null)) {
+      alert("파일 업로드에 실패했습니다.");
+    } else {
+      // 모든 파일이 성공적으로 업로드된 경우
+      if (!attachmentNumber) {
+        setInfomation((prev) => ({
+          ...prev,
+          attdatnum: newAttachmentNumber
+        }))
+        setAttachmentNumber(newAttachmentNumber);
+      } else {
+        setInfomation((prev) => ({
+          ...prev,
+          attdatnum: attachmentNumber
+        }))
+        fetchAttdatnumGrid();
+      }
+    }
+  };
+
+  const uploadFile = async (files: File, newAttachmentNumber?: string) => {
     let data: any;
 
     const filePara = {
       attached: attachmentNumber
         ? "attached?attachmentNumber=" + attachmentNumber
+        : newAttachmentNumber
+        ? "attached?attachmentNumber=" + newAttachmentNumber
         : "attached",
       files: files, //.FileList,
     };
@@ -528,10 +573,9 @@ const CM_A3000W: React.FC = () => {
     }
 
     if (data !== null) {
-      if (data.attachmentNumber !== attachmentNumber) {
-        setUnsavedAttadatnums([data.attachmentNumber]);
-      }
-      fetchAttdatnumGrid();
+      return data.attachmentNumber;
+    } else {
+      return data;
     }
   };
 
@@ -576,12 +620,6 @@ const CM_A3000W: React.FC = () => {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
         setSelectedsubDataState({ [firstRowData[SUB_DATA_ITEM_KEY]]: true });
-        setAttDataResult((prev) => {
-          return {
-            data: [],
-            total: 0,
-          };
-        });
         if (firstRowData.attdatnum == "") {
           setAttachmentNumber("");
         } else {
@@ -630,7 +668,7 @@ const CM_A3000W: React.FC = () => {
       }
     }
   }, [subDataResult]);
-
+  console.log(infomation)
   useEffect(() => {
     if (customOptionData !== null) {
       fetchSubGrid();
@@ -679,14 +717,15 @@ const CM_A3000W: React.FC = () => {
     const user = userListData.find(
       (item: any) => item.user_name === selectedRowData.person
     )?.user_id;
-    setAttDataResult((prev) => {
-      return {
-        data: [],
-        total: 0,
-      };
-    });
+
     if (selectedRowData.attdatnum == "") {
       setAttachmentNumber("");
+      setAttDataResult((prev) => {
+        return {
+          data: [],
+          total: 0,
+        };
+      });
     } else {
       setAttachmentNumber(selectedRowData.attdatnum);
     }
@@ -920,7 +959,7 @@ const CM_A3000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(infopara)
     if (data.isSuccess === true) {
       resetAllGrid();
       fetchMainGrid();
@@ -1559,22 +1598,8 @@ const CM_A3000W: React.FC = () => {
                           style={{ display: "none" }}
                           type="file"
                           multiple
-                          ref={excelsInput}
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            const files = event.target.files;
-                            if (files === null) return false;
-                            for (let i = 0; i < files.length; ++i) {
-                              const file = files[i];
-                              uploadFile(file);
-                            }
-                            if(infomation.workType != "N") {
-                              resetAllGrid();
-                              fetchMainGrid();
-                            } else {
-                              fetchAttdatnumGrid();
-                            }
+                          ref={excelsInput}           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            handleFileUpload(event.target.files);
                           }}
                         />
                       </Button>
