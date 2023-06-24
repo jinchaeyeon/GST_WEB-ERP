@@ -456,7 +456,7 @@ const PR_A9000W: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  console.log(qtyunitListData)
+
   useEffect(() => {
     if (bizComponentData != null) {
       const qtyunitQueryStr = getQueryFromBizComponent(

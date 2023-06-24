@@ -1171,7 +1171,7 @@ const CM_A8000W: React.FC = () => {
     const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
-    console.log(data);
+
     const newDataItem = {
       [DATA_ITEM_KEY]: seq,
       DesignPerson: "",
@@ -1567,7 +1567,7 @@ const CM_A8000W: React.FC = () => {
             ...row,
           };
         });
-        console.log(rows);
+
         if (totalRowCnt >= 0) {
           let seq = mainDataResult.total + deletedMainRows.length + 1;
 

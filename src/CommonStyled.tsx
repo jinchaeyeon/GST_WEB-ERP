@@ -399,6 +399,30 @@ export const LandscapePrint = styled.div`
   }
 `;
 
+
+export const DeliyReportPrint = styled.div`
+  @media print {
+    @page {
+      size: 29.7cm 41.9958cm;
+      margin-top: 1cm;
+      margin-right: 1cm;
+      margin-bottom: 0cm;
+      margin-left: 1cm;
+    }
+    /* html, body { border:0; margin:0; padding:0; margin-top:0px; }
+	 */
+
+    .printable {
+      display: block;
+    }
+
+    #non-printable {
+      display: none;
+    }
+  }
+`;
+
+
 export const GridTitleContainer = styled.div`
   display: flex;
   justify-content: space-between;

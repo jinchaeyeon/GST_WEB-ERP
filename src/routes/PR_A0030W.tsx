@@ -423,7 +423,7 @@ const PR_A0030W: React.FC = () => {
     }
     setLoading(false);
   };
-  
+
   const fetchSubGrid = async () => {
     //if (!permissions?.view) return;
     let data: any;
@@ -471,7 +471,7 @@ const PR_A0030W: React.FC = () => {
     }
   }, [filters, permissions]);
 
-  useEffect(()=> {
+  useEffect(() => {
     fetchSubGrid2();
   }, []);
 
@@ -505,33 +505,33 @@ const PR_A0030W: React.FC = () => {
     }
   }, [mainDataResult]);
 
- //메인 그리드 데이터 변경 되었을 때
- useEffect(() => {
-  if (customOptionData !== null) {
-    // 저장 후, 선택 행 스크롤 유지 처리
-    if (subfilters.find_row_value !== "" && subDataResult.total > 0) {
-      const ROW_HEIGHT = 35.56;
-      const idx = subDataResult.data.findIndex(
-        (item) => idGetter(item) === subfilters.find_row_value
-      );
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (subfilters.find_row_value !== "" && subDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = subDataResult.data.findIndex(
+          (item) => idGetter(item) === subfilters.find_row_value
+        );
 
-      const scrollHeight = ROW_HEIGHT * idx;
-      gridRef.vs.container.scroll(0, scrollHeight);
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
 
-      //초기화
-      setsubFilters((prev) => ({
-        ...prev,
-        find_row_value: "",
-        tab: 0,
-      }));
+        //초기화
+        setsubFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          tab: 0,
+        }));
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (subfilters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
+      }
     }
-    // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-    // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-    else if (subfilters.scrollDirrection === "up") {
-      gridRef.vs.container.scroll(0, 20);
-    }
-  }
-}, [subDataResult]);
+  }, [subDataResult]);
 
   useEffect(() => {
     if (ifSelectFirstRow3) {
@@ -580,6 +580,7 @@ const PR_A0030W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
+    setWorkType("U");
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
     setInfomation((prev) => ({
@@ -705,7 +706,8 @@ const PR_A0030W: React.FC = () => {
   const onSubScrollHandler = (event: GridEvent) => {
     if (subfilters.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
-    subfilters.pgNum + (subfilters.scrollDirrection === "up" ? subfilters.pgGap : 0);
+      subfilters.pgNum +
+      (subfilters.scrollDirrection === "up" ? subfilters.pgGap : 0);
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -720,7 +722,8 @@ const PR_A0030W: React.FC = () => {
     }
 
     pgNumWithGap =
-    subfilters.pgNum - (subfilters.scrollDirrection === "down" ? subfilters.pgGap : 0);
+      subfilters.pgNum -
+      (subfilters.scrollDirrection === "down" ? subfilters.pgGap : 0);
     // 스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setsubFilters((prev) => ({
@@ -801,6 +804,7 @@ const PR_A0030W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
+    fetchSubGrid2();
     setWorkType("U");
     deletedMainRows = [];
   };
@@ -1129,7 +1133,7 @@ const PR_A0030W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      setWorkType("U")
+      setWorkType("U");
       setParaData({
         workType: "",
         pgSize: PAGE_SIZE,
@@ -1432,15 +1436,26 @@ const PR_A0030W: React.FC = () => {
               <tbody>
                 <tr>
                   <th>패턴ID</th>
-                  <td>
-                    <Input
-                      name="pattern_id"
-                      type="text"
-                      value={infomation.pattern_id}
-                      onChange={InputChange2}
-                      className="required"
-                    />
-                  </td>
+                  {workType == "U" ? (
+                    <td>
+                      <Input
+                        name="pattern_id"
+                        type="text"
+                        value={infomation.pattern_id}
+                        className="readonly"
+                      />
+                    </td>
+                  ) : (
+                    <td>
+                      <Input
+                        name="pattern_id"
+                        type="text"
+                        value={infomation.pattern_id}
+                        onChange={InputChange2}
+                        className="required"
+                      />
+                    </td>
+                  )}
                   <th>패턴명</th>
                   <td>
                     <Input
@@ -1566,7 +1581,7 @@ const PR_A0030W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
-                      title="행 삭제" 
+                      title="행 삭제"
                     />
                     <Button
                       onClick={() =>
@@ -1578,7 +1593,7 @@ const PR_A0030W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="chevron-up"
-                      title="행 위로 이동" 
+                      title="행 위로 이동"
                     ></Button>
                     <Button
                       onClick={() =>
@@ -1590,7 +1605,7 @@ const PR_A0030W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="chevron-down"
-                      title="행 아래로 이동" 
+                      title="행 아래로 이동"
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1667,7 +1682,7 @@ const PR_A0030W: React.FC = () => {
           </GridContainerWrap>
         </GridContainer>
       </GridContainerWrap>
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

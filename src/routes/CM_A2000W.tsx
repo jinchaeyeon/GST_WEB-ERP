@@ -520,7 +520,7 @@ const CM_A2000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para)
+
     if (data.isSuccess === true) {
       setreload(!reload);
       resetAllGrid();

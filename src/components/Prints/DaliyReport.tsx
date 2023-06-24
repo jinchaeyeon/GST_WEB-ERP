@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
-import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
+import { ButtonContainer, DeliyReportPrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
 import { UseGetValueFromSessionItem, convertDateToStr, numberWithCommas } from "../CommonFunction";
@@ -78,7 +78,7 @@ const DaliyReport = (filters: any) => {
   const componentRef = useRef(null);
 
   return (
-    <LandscapePrint>
+    <DeliyReportPrint>
       <ButtonContainer>
         <></>
         <ReactToPrint
@@ -92,8 +92,8 @@ const DaliyReport = (filters: any) => {
       </ButtonContainer>
 
       <div
-        id="WorkDailyReport"
-        className="printable landscape"
+        id="DailyReport"
+        className="printable portrait"
         ref={componentRef}
       >
         <div className="title_container">
@@ -181,7 +181,7 @@ const DaliyReport = (filters: any) => {
             )
           )}
       </div>
-    </LandscapePrint>
+    </DeliyReportPrint>
   );
 };
 

@@ -311,6 +311,8 @@ const MA_A9001W: React.FC = () => {
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
+  const [detailWindowVisible, setDetailWindowVisible] =
+  useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [MA_A9001WVisible, setMA_A9001WVisible] = useState<boolean>(false);
   const [workType, setWorkType] = useState<"N" | "U">("U");
@@ -2157,8 +2159,7 @@ const MA_A9001W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(paraDatas);
-    console.log(data)
+
     if (data.isSuccess === true) {
       resetAllGrid();
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
@@ -2168,6 +2169,12 @@ const MA_A9001W: React.FC = () => {
     }
     setLoading(false);
   };
+
+  const onAddClick = () => {
+    setWorkType("N");
+    setDetailWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -2340,6 +2347,14 @@ const MA_A9001W: React.FC = () => {
                 icon="minus-outline"
               >
                 지급 전표 해제
+              </Button>
+              <Button
+                onClick={onAddClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                매입 E-TAX(전표) 생성
               </Button>
               <Button
                 onClick={onDeleteClick2}

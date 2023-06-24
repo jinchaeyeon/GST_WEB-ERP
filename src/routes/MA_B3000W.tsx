@@ -265,7 +265,7 @@ const MA_B3000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data)
+
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
 

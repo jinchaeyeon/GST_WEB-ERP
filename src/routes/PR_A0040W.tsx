@@ -1360,7 +1360,7 @@ const PR_A0040W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(para)
+
     if (data.isSuccess === true) {
       resetAllGrid();
       setWorkType("U");

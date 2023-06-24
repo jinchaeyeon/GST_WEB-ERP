@@ -1270,7 +1270,7 @@ const PR_A7000W: React.FC = () => {
 
   const onAddClick = async () => {
     const data = detailDataResult.data.filter((item: any) => item.chk == true);
-    console.log(data)
+
     let valid = true;
     let valid2 = true;
     data.map((item) => {
@@ -1323,7 +1323,7 @@ const PR_A7000W: React.FC = () => {
       )[0];
       dataArr.gokey_s.push(datas2.gokey);
       dataArr.planno_s.push(datas2.planno);
-        console.log(datas2)
+
       const para: Iparameters = {
         procedureName: "P_PR_A7000W_S",
         pageNumber: 0,
@@ -1353,7 +1353,7 @@ const PR_A7000W: React.FC = () => {
       } catch (error) {
         datas = null;
       }
-      console.log(para)
+
       if (datas.isSuccess !== true) {
         console.log("[오류 발생]");
         console.log(datas);

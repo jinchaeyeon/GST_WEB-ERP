@@ -133,6 +133,7 @@ const CM_A3000W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const dptcd = UseGetValueFromSessionItem("dptcd");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -668,7 +669,7 @@ const CM_A3000W: React.FC = () => {
       }
     }
   }, [subDataResult]);
-  console.log(infomation)
+
   useEffect(() => {
     if (customOptionData !== null) {
       fetchSubGrid();
@@ -803,12 +804,12 @@ const CM_A3000W: React.FC = () => {
       attdatnum: "",
       contents: "",
       datnum: "",
-      dptcd: "",
+      dptcd: dptcd,
       files: "",
       itemlvl1: "",
       location: "",
       num: "",
-      person: "",
+      person: userId,
       recdt: new Date(),
       title: "",
     });
@@ -959,7 +960,7 @@ const CM_A3000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(infopara)
+
     if (data.isSuccess === true) {
       resetAllGrid();
       fetchMainGrid();
@@ -1045,7 +1046,6 @@ const CM_A3000W: React.FC = () => {
     let response: any;
 
     datas.forEach(async (parameter) => {
-      console.log(parameter.saved_name);
       try {
         response = await processApi<any>("file-download", {
           attached: parameter.saved_name,

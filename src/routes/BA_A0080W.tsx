@@ -86,7 +86,6 @@ export const FormContext = createContext<{
 type TItemInfo = {
   itemcd: string;
   itemnm: string;
-  itemacnt: string;
   insiz: string;
   bnatur: string;
   spec: string;
@@ -98,7 +97,6 @@ type TItemInfo = {
 const defaultItemInfo = {
   itemcd: "",
   itemnm: "",
-  itemacnt: "",
   insiz: "",
   bnatur: "",
   spec: "",
@@ -218,7 +216,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
       itemcd,
       itemnm,
       insiz,
-      itemacnt,
       bnatur,
       spec,
       invunitnm,
@@ -230,7 +227,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
       itemcd,
       itemnm,
       insiz,
-      itemacnt,
       bnatur,
       spec,
       invunitnm,
@@ -370,7 +366,6 @@ const BA_A0080: React.FC = () => {
             ...item,
             itemcd: itemInfo.itemcd,
             itemnm: itemInfo.itemnm,
-            itemacnt: itemInfo.itemacnt,
             insiz: itemInfo.insiz,
             bnatur: itemInfo.bnatur,
             spec: itemInfo.spec,
@@ -540,7 +535,7 @@ const BA_A0080: React.FC = () => {
 
       const totalRowCnt2 = data.tables[0].RowCount;
       const rows2 = data.tables[0].Rows;
-
+ 
       if (totalRowCnt2 > 0) {
         setSubDataResult((prev) => {
           return {
@@ -583,7 +578,6 @@ const BA_A0080: React.FC = () => {
             itemcd,
             itemnm,
             insiz,
-            itemacnt,
             bnatur,
             spec,
             itemlvl1,
@@ -594,7 +588,6 @@ const BA_A0080: React.FC = () => {
             itemcd,
             itemnm,
             insiz,
-            itemacnt,
             bnatur,
             spec,
             invunitnm,
@@ -610,7 +603,6 @@ const BA_A0080: React.FC = () => {
                   itemcd: item.itemcd,
                   itemnm: "",
                   insiz: "",
-                  itemacnt: "",
                   bnatur: "",
                   spec: "",
                   qtyunit: "",
@@ -1089,7 +1081,8 @@ const BA_A0080: React.FC = () => {
             item.num != items.num &&
             item.itemcd == items.itemcd &&
             item.recdt == items.recdt &&
-            item.itemnm == items.itemnm
+            item.itemnm == items.itemnm &&
+            item.itemacnt == items.itemacnt 
           ) {
             throw findMessage(messagesData, "BA_A0080W_006");
           }
@@ -1476,6 +1469,7 @@ const BA_A0080: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={filters.itemacnt == "" ? true : false}
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
