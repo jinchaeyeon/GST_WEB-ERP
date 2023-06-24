@@ -1669,7 +1669,7 @@ const PR_A0040W: React.FC = () => {
               themeColor={"primary"}
               icon="copy"
             >
-              복사
+              공정복사
             </Button>
             <Button
               onClick={onDeleteClick}
@@ -1677,7 +1677,7 @@ const PR_A0040W: React.FC = () => {
               themeColor={"primary"}
               icon="delete"
             >
-              삭제
+              공정삭제
             </Button>
             <Button
               onClick={onSaveClick}

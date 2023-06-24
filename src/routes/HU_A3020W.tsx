@@ -14,7 +14,7 @@ import {
 import { gridList } from "../store/columns/HU_A3020W_C";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
-import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
@@ -51,6 +51,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import { Button } from "@progress/kendo-react-buttons";
+import NameCell from "../components/Cells/NameCell";
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
 
@@ -1336,7 +1337,7 @@ const HU_A3020W: React.FC = () => {
                               ? CheckBoxCell
                               : radioField.includes(item.fieldName)
                               ? CustomRadioCell
-                              : undefined
+                              : NameCell
                           }
                           headerCell={
                             requiredField.includes(item.fieldName)
@@ -1439,7 +1440,7 @@ const HU_A3020W: React.FC = () => {
                             ? CheckBoxCell
                             : radioField.includes(item.fieldName)
                             ? CustomRadioCell
-                            : undefined
+                            : NameCell
                         }
                         headerCell={
                           requiredField.includes(item.fieldName)

@@ -1097,7 +1097,7 @@ const MA_A9001W: React.FC = () => {
     } else {
       selectRows.map((item: any) => {
         if (item.exceptyn == "Y") {
-          alert("직접 입력인 경우 매입 전표 해제가 불가능합니다.");
+          alert("직접 입력인 경우 매입 전표 생성가 불가능합니다.");
           valid = false;
           return false;
         }
@@ -1603,7 +1603,7 @@ const MA_A9001W: React.FC = () => {
     } else {
       selectRows.map((item: any) => {
         if (item.exceptyn == "Y") {
-          alert("직접 입력인 경우 매입 전표 해제가 불가능합니다.");
+          alert("직접 입력인 경우 매입 전표 생성가 불가능합니다.");
           valid = false;
           return false;
         }

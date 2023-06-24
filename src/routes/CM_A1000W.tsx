@@ -1310,9 +1310,6 @@ const CM_A1000W: React.FC = () => {
       </TitleContainer>
       <GridContainerWrap>
         <GridContainer width="19%" style={{ marginTop: "5px" }}>
-          <GridTitleContainer>
-            <GridTitle>달력</GridTitle>
-          </GridTitleContainer>
           <Calendar
             focusedDate={filters.todt}
             value={filters.todt}
