@@ -159,6 +159,9 @@ export const useApi = () => {
 
       if (name === "file-download") {
         getHeader.responseType = "blob";
+        // 캐싱 방지용 타임스탬프
+        url +=
+          (url.includes("?") ? "&" : "?") + "timestamp=" + new Date().getTime();
       }
 
       switch (info.action) {
@@ -287,5 +290,5 @@ axiosInstance.interceptors.response.use(
     }
     // 오류 발생 시 오류 내용 출력 후 요청 거절
     return Promise.reject(error);
-  }
+  },
 );
