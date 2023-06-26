@@ -399,7 +399,6 @@ export const LandscapePrint = styled.div`
   }
 `;
 
-
 export const DeliyReportPrint = styled.div`
   @media print {
     @page {
@@ -421,7 +420,6 @@ export const DeliyReportPrint = styled.div`
     }
   }
 `;
-
 
 export const GridTitleContainer = styled.div`
   display: flex;
@@ -663,6 +661,10 @@ export const Wrapper = styled.div<TWrapper>`
   display: flex;
   width: 100%;
   //overflow: ${(props) => (props.isMobileMenuOpend ? "hidden" : "auto")};
+  margin-bottom: 30px;
+  @media (max-width: 768px) {
+    margin-bottom: 0;
+  }
 `;
 
 type TGnv = TWrapper;
@@ -743,6 +745,31 @@ export const Content = styled.div<ContentType>`
 
 export const PageWrap = styled.div`
   padding: 0 15px;
+`;
+
+export const Footer = styled.div`
+  width: 100%;
+  height: 30px;
+  border-top: solid 1px #ebebeb;
+  position: fixed;
+  bottom: 0;
+  background-color: #656565;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  div {
+    line-height: 30px;
+    border-left: solid 1px gray;
+    color: #fff;
+    padding-right: 10px;
+    padding-left: 10px;
+    font-size: 13px;
+    font-weight: 100;
+  }
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export const AppName = styled.h1`
