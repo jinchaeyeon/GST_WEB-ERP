@@ -39,6 +39,8 @@ import {
   UseCustomOption,
   UseMessages,
   getQueryFromBizComponent,
+  findMessage,
+  toDate
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/HU_A1000W_Window";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
@@ -57,11 +59,12 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import { Button } from "@progress/kendo-react-buttons";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { bytesToBase64 } from "byte-base64";
+import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
+import DateCell from "../components/Cells/DateCell";
 
 const DATA_ITEM_KEY = "prsnnum";
 
 const HU_A1000W: React.FC = () => {
-
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -72,13 +75,18 @@ const HU_A1000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
+  const [isCopy, setIsCopy] = useState(false);
+  const [workType, setWorkType] = useState<"N" | "U">("N");
+  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+  const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  
   UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
@@ -90,27 +98,44 @@ const HU_A1000W: React.FC = () => {
         ...prev,
         cboDptcd: defaultOption.find((item: any) => item.id === "cboDptcd")
           .valueCode,
+        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
 
   // BizComponentID 세팅
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_dptcd_001", setBizComponentData);
+  UseBizComponent(
+    "L_dptcd_001, L_HU005",
+    // 부서, 직위
+    setBizComponentData
+  );  
 
   //공통코드 리스트 조회 ()
-  const [dptcdLstsListData, setdptcdListData] = useState([
+  const [dptcdLstsListData, setDptcdListData] = useState([
     { dptcd: "", dptnm: "" },
   ]);
 
+  const [postcdListData, setPostcdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+
   useEffect(() => {
     if (bizComponentData !== null) {
-      const departmentQueryStr = getQueryFromBizComponent(
+      const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_dptcd_001"
         )
       );
-      fetchQuery(departmentQueryStr, setdptcdListData);
+      const postcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_HU005"
+        )
+      );
+      fetchQuery(dptcdQueryStr,  setDptcdListData);
+      fetchQuery(postcdQueryStr, setPostcdListData);
     }
   }, [bizComponentData]);
 
@@ -135,6 +160,21 @@ const HU_A1000W: React.FC = () => {
       setListData(rows);
     }
   }, []);
+
+  //그리드 데이터 스테이트
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+
+  //그리드 데이터 결과값
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+
+  //선택 상태
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -168,62 +208,124 @@ const HU_A1000W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    cboDptcd: "",
+    work_type: "LIST",
+    orgdiv: "",
+    location: "",
+    dptcd: "",
     prsnnum: "",
     prsnnm: "",
+    rtrchk: "", // 재직여부
     pgNum: 1,
     isSearch: true,
     pgGap: 0,
-    isCopy : true,
+    isCopy: true,
+    find_row_value: "",
+    pgSize: PAGE_SIZE,
   });
 
-  const [UserWindowVisible, setUserWindowVisible] = useState<boolean>(false);
-
-  // 조회조건 사용자 버튼 팝업
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
-  };
-
-  //사용자정보 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setUserData = (data: IUserData) => {
-    setFilters((prev) => ({
-      ...prev,
-      prsnnum: data.prsnnum,
-      prsnnm: data.prsnnm,
-    }));
-  };
-  
-  interface IUserData {
-    prsnnum: string;
-    prsnnm: string;
-  }
-
-  const [selectedState, setSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-  
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
-    ordnum: "",
-  });
- 
-  const [isCopy, setIsCopy] = useState(false);  
-  const [workType, setWorkType] = useState<"N" | "U">("N");
+    prsnnum: "",
+  });  
 
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
-  const [detailWindowVisible, setDetailWindowVisible] =
-    useState<boolean>(false);
-    
+  //조회조건 파라미터
+  const parameters: Iparameters = {
+    procedureName: "P_HU_A1000W_Q",
+    pageNumber: filters.pgNum,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": filters.location,
+      "@p_dptcd": filters.dptcd,
+      "@p_prsnnum": filters.prsnnum,
+      "@p_prsnnm": filters.prsnnm,
+      "@p_rtrchk": filters.rtrchk,
+    },
+  };
+
+  const detailParameters: Iparameters = {
+    procedureName: "P_HU_A1000W_Q",
+    pageNumber: 0,
+    pageSize: detailFilters.pgSize,
+    parameters: {
+      "@p_work_type": "DETAIL",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": filters.location,
+      "@p_dptcd": "",
+      "@p_prsnnum": detailFilters.prsnnum,
+      "@p_prsnnm": "",
+      "@p_rtrchk": "",
+    },
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid = async () => {
+    if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      if (totalRowCnt > 0) {
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+        if (filters.find_row_value === "" && filters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
+      }
+    }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 리셋
+  const resetAllGrid = () => {
+    setMainDataResult(process([], mainDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+  };
+
+  // 최초 한번만 실행
+  useEffect(() => {
+    if (customOptionData != null && filters.isSearch && permissions !== null) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
+      fetchMainGrid();
+    }
+  }, [filters, permissions]);  
+  
+  const search = () => {
+    try {
+      resetAllGrid();
+    } catch (e) {
+      alert(e);
+    }
+  };
+
   const CommandCell = (props: GridCellProps) => {
-    const onEditClick = () => {
+ 
+    const onEditClick = () => {      
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.ordnum]: true });
+      setSelectedState({ [rowData.prsnnum]: true });
 
       setDetailFilters((prev) => ({
         ...prev,
-        location: rowData.location,
-        ordnum: rowData.ordnum,
+       prsnnum: rowData.prsnnum,
       }));
 
       setIsCopy(false);
@@ -237,23 +339,41 @@ const HU_A1000W: React.FC = () => {
           className="k-grid-edit-command"
           themeColor={"primary"}
           fillMode="outline"
-          onClick={onEditClick}
+          onClick={onEditClick}        
           icon="edit"
-          size={"small"}
         ></Button>
       </td>
     );
-  };  
-  
-  let deletedMainRows: object[] = [];
-  const search = () => {
-    deletedMainRows = [];
-  try {
-        
-  } catch (e) {
-    alert(e);
-  }
-};
+  };
+
+  const reloadData = (workType: string) => {
+    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
+    if (workType === "U") {
+      setIfSelectFirstRow(false);
+    } else {
+      setIfSelectFirstRow(true);
+    }
+
+    resetAllGrid();
+    setFilters((prev) => ({
+      ...prev,
+      find_row_value: "",
+      scrollDirrection: "down",
+      pgNum: 1,
+      isSearch: true,
+      pgGap: 0,
+    }));
+    
+    fetchMainGrid();
+  };
+
+  // 신규등록 
+  const onAddClick = () => {
+    setIsCopy(false);
+    setWorkType("N");
+    setDetailWindowVisible(true);
+  };
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -262,113 +382,10 @@ const HU_A1000W: React.FC = () => {
     }
   };
 
-  const onAddClick = () => {
-    setIsCopy(false);
-    setWorkType("N");
-    setDetailWindowVisible(true);
-  };
-  const onDeleteClick = (e: any) => {
-    // if (!window.confirm(questionToDelete)) {
-    //   return false;
-    }
-    const reloadData = (workType: string) => {
-      //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
-      if (workType === "U") {
-        setIfSelectFirstRow(false);
-      } else {
-        setIfSelectFirstRow(true);
-      }
-  
-      resetAllGrid();
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-      }));
-      fetchDetailGrid();
-    };
-    
-  const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
-  });
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-    const [mainDataResult, setMainDataResult] = useState<DataResult>(
-      process([], mainDataState)
-    );
-    const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-      process([], detailDataState)
-    );
-  
-    const [mainPgNum, setMainPgNum] = useState(1);
-  const [detailPgNum, setDetailPgNum] = useState(1);
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetailPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
-  };
-
-  const fetchDetailGrid = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", detailParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-
-      if (totalRowCnt > 0)
-        setDetailDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
-    }
-    setLoading(false);
-  };
-
-  const detailParameters: Iparameters = {
-    procedureName: "P_HU_A1000W_Q",
-    pageNumber: 0,
-    pageSize: detailFilters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": "",
-      "@p_location": "",
-      "@p_dtgb": "",
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_ordnum": detailFilters.ordnum,
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_itemcd": "",
-      "@p_itemnm": "",
-      "@p_person": "",
-      "@p_finyn": "",
-      "@p_dptcd": "",
-      "@p_ordsts": "",
-      "@p_doexdiv": "",
-      "@p_ordtype": "",
-      "@p_poregnum": "",
-    },
-  };
-
-
   return (
     <>
       <TitleContainer>
-        <Title>인사관리</Title>
+        <Title style={{ height: "10%" }}>인사관리</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons
@@ -381,7 +398,7 @@ const HU_A1000W: React.FC = () => {
       </TitleContainer>
 
       <FilterContainer>
-        <FilterBox>
+        <FilterBox style={{ height: "10%" }}>
           <tbody>
             <tr>
               <th>부서</th>
@@ -389,7 +406,7 @@ const HU_A1000W: React.FC = () => {
                 {customOptionData !== null && (
                   <CustomOptionComboBox
                     name="cboDptcd"
-                    value={filters.cboDptcd}
+                    value={filters.dptcd}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                     textField="dptnm"
@@ -407,7 +424,7 @@ const HU_A1000W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onUserWndClick}
+                    // onClick={onUserWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -436,54 +453,85 @@ const HU_A1000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-        <GridContainer>        
-            <GridTitleContainer>
-              <GridTitle>요약정보</GridTitle>       
-              <ButtonContainer>
-              <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  icon="file-add"
-                >
-                  신규등록
-                </Button>  
-                <Button
-                  onClick={onDeleteClick}
-                  icon="delete"
-                  fillMode="outline"
-                  themeColor={"primary"}
-                >
-                  삭제
-                </Button>
-              </ButtonContainer> 
-            </GridTitleContainer>
-            <Grid>
-              <GridColumn cell={CommandCell} width="55px" />
-              <GridColumn field="ordnum" title="부서" width="120px" />
-              <GridColumn field="custnm" title="직위" width="120px" />
-              <GridColumn field="ordsts" title="사번" width="150px" />
-              <GridColumn field="doexdiv" title="성명" width="150px" />
-              <GridColumn field="taxdiv" title="주민번호" width="200px" />    
-              <GridColumn field="location" title="입사일" width="120px" />
-              <GridColumn field="dptcd" title="퇴사일" width="120px" />
-              <GridColumn field="person" title="내선번호" width="150px" />
-              <GridColumn field="person" title="핸드폰번호" width="150px" />
-            </Grid>
-        </GridContainer>
-        {detailWindowVisible && (
+      <GridContainer>
+        <GridTitleContainer>
+          <GridTitle style={{ height: "10%" }}>요약정보</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              fillMode="outline"
+              icon="file-add"
+            >
+              신규등록
+            </Button>
+            <Button
+              // onClick={onDeleteClick}
+              icon="delete"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              삭제
+            </Button>
+          </ButtonContainer>
+        </GridTitleContainer>
+        <Grid
+          style={{ height: "70%" }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              dptcd: dptcdLstsListData.find(
+                (item: any) => item.dptcd === row.dptcd
+              )?.dptnm,
+              postcd: postcdListData.find(
+                (item: any) => item.sub_code === row.postcd
+              )?.code_name,
+              [SELECTED_FIELD]: selectedState[idGetter(row)],
+            })),
+            mainDataState
+          )}
+          {...mainDataState}
+          //선택 기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+        >
+          <GridColumn cell={CommandCell} width="55px" />
+          <GridColumn field="dptcd" title="부서" width="120px" />
+          <GridColumn field="postcd" title="직위" width="120px" />
+          <GridColumn field="prsnnum" title="사번" width="150px" />
+          <GridColumn field="prsnnm" title="성명" width="150px" />
+          <GridColumn field="perregnum" title="주민번호" width="200px" />
+          <GridColumn
+            field="regorgdt"
+            title="입사일"
+            cell={DateCell}
+            width="120px"
+          />
+          <GridColumn
+            field="rtrdt"
+            title="퇴사일"
+            cell={DateCell}
+            width="120px"
+          />
+          <GridColumn field="extnum" title="내선번호" width="150px" />
+          <GridColumn field="phonenum" title="핸드폰번호" width="150px" />
+        </Grid>
+      </GridContainer>
+      {detailWindowVisible && (
         <DetailWindow
           getVisible={setDetailWindowVisible}
-          workType={workType} //신규 : N, 수정 : U
-          ordnum={detailFilters.ordnum}
+          workType={workType} //신규 : N, 수정 : U 
+          prsnnum={detailFilters.prsnnum}
           isCopy={isCopy}
           reloadData={reloadData}
           para={detailParameters}
         />
       )}
-      {UserWindowVisible && (
-        <UserWindow setVisible={setUserWindowVisible} setData={setUserData} />
-      )}
+
     </>
   );
 };

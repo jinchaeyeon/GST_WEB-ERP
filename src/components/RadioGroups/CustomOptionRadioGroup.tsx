@@ -6,12 +6,14 @@ import {
 import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
 
 type TCustomOptionRadioGroup = {
+  type?:"new" | "query" ;
   name: string;
   customOptionData: any;
   changeData(e: any): void;
   excludedCodes?: any[]; // 제외할 코드값
 };
 const CustomOptionRadioGroup = ({
+  type = "query", 
   name,
   customOptionData,
   changeData,
@@ -20,7 +22,7 @@ const CustomOptionRadioGroup = ({
   //커스텀 옵션에 저장된 값으로 디폴트 값
   const dataList =
     customOptionData !== null
-      ? customOptionData.menuCustomDefaultOptions.query
+      ? customOptionData.menuCustomDefaultOptions[type]
       : null;
 
   let defaultValue = "";
