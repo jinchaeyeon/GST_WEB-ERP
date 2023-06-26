@@ -76,8 +76,13 @@ span.required:hover,
 span.required.k-hover,
 input.required,
 input.required:hover,
-input.required.k-hover {
+input.required.k-hover,
+.k-daterangepicker.required input {
   background-color: #fff0ef;
+}
+.k-daterangepicker.required,
+.k-daterangepicker.required:hover {
+  background-color: unset;
 }
 ul.readonly,
 span.readonly,
@@ -231,6 +236,75 @@ body {
   background-color: rgb(255, 233, 220);
 }
 
+/**************** 업무일지 ****************/
+
+#DailyReport {
+  width: 100%;
+}
+
+#DailyReport table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#DailyReport td,
+#DailyReport th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#DailyReport .title_container {
+  display: flex;
+  justify-content: space-between;
+}
+#DailyReport .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 3em;
+  width: 100%;
+}
+#DailyReport table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#DailyReport table.tb_approval th {
+  height: 0.7cm;
+}
+
+#DailyReport table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#DailyReport table.main_tb .center {
+  text-align: center;
+}
+#DailyReport table.main_tb .number {
+  text-align: right;
+}
+
+#DailyReport table.main_tb th,
+#DailyReport table.main_tb td {
+  padding: 0 0.1cm;
+  line-height: 0.6cm;
+  height: 1.2cm;
+  word-wrap: break-word;
+  font-size: 0.85em;
+}
+
+#DailyReport .right {
+  float: right;
+  clear: both;
+}
 /**************** 작업일보 ****************/
 
 #WorkDailyReport table {

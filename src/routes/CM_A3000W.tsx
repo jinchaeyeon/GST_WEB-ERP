@@ -48,7 +48,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -89,6 +89,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs/dist/npm/datepicker
 import DateCell from "../components/Cells/DateCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DateField = ["recdt"];
 
@@ -132,6 +133,7 @@ const CM_A3000W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const dptcd = UseGetValueFromSessionItem("dptcd");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -509,13 +511,58 @@ const CM_A3000W: React.FC = () => {
       }
     }
   };
+  const handleFileUpload = async (files: FileList | null) => {
+    if (files === null) return false;
 
-  const uploadFile = async (files: File) => {
+    let newAttachmentNumber = "";
+    const promises = [];
+ 
+    for (const file of files) {
+      // 최초 등록 시, 업로드 후 첨부번호를 가져옴 (다중 업로드 대응)
+      if (!attachmentNumber && !newAttachmentNumber) {
+        newAttachmentNumber = await uploadFile(file);
+        const promise = newAttachmentNumber;
+        promises.push(promise);
+        continue;
+      }
+
+      const promise = newAttachmentNumber
+        ? await uploadFile(file, newAttachmentNumber)
+        : await uploadFile(file);
+      promises.push(promise);
+    }
+
+    const results = await Promise.all(promises);
+
+    // 실패한 파일이 있는지 확인
+    if (results.includes(null)) {
+      alert("파일 업로드에 실패했습니다.");
+    } else {
+      // 모든 파일이 성공적으로 업로드된 경우
+      if (!attachmentNumber) {
+        setInfomation((prev) => ({
+          ...prev,
+          attdatnum: newAttachmentNumber
+        }))
+        setAttachmentNumber(newAttachmentNumber);
+      } else {
+        setInfomation((prev) => ({
+          ...prev,
+          attdatnum: attachmentNumber
+        }))
+        fetchAttdatnumGrid();
+      }
+    }
+  };
+
+  const uploadFile = async (files: File, newAttachmentNumber?: string) => {
     let data: any;
 
     const filePara = {
       attached: attachmentNumber
         ? "attached?attachmentNumber=" + attachmentNumber
+        : newAttachmentNumber
+        ? "attached?attachmentNumber=" + newAttachmentNumber
         : "attached",
       files: files, //.FileList,
     };
@@ -527,10 +574,9 @@ const CM_A3000W: React.FC = () => {
     }
 
     if (data !== null) {
-      if (data.attachmentNumber !== attachmentNumber) {
-        setUnsavedAttadatnums([data.attachmentNumber]);
-      }
-      fetchAttdatnumGrid();
+      return data.attachmentNumber;
+    } else {
+      return data;
     }
   };
 
@@ -575,12 +621,6 @@ const CM_A3000W: React.FC = () => {
       if (subDataResult.total > 0) {
         const firstRowData = subDataResult.data[0];
         setSelectedsubDataState({ [firstRowData[SUB_DATA_ITEM_KEY]]: true });
-        setAttDataResult((prev) => {
-          return {
-            data: [],
-            total: 0,
-          };
-        });
         if (firstRowData.attdatnum == "") {
           setAttachmentNumber("");
         } else {
@@ -678,14 +718,15 @@ const CM_A3000W: React.FC = () => {
     const user = userListData.find(
       (item: any) => item.user_name === selectedRowData.person
     )?.user_id;
-    setAttDataResult((prev) => {
-      return {
-        data: [],
-        total: 0,
-      };
-    });
+
     if (selectedRowData.attdatnum == "") {
       setAttachmentNumber("");
+      setAttDataResult((prev) => {
+        return {
+          data: [],
+          total: 0,
+        };
+      });
     } else {
       setAttachmentNumber(selectedRowData.attdatnum);
     }
@@ -763,12 +804,12 @@ const CM_A3000W: React.FC = () => {
       attdatnum: "",
       contents: "",
       datnum: "",
-      dptcd: "",
+      dptcd: dptcd,
       files: "",
       itemlvl1: "",
       location: "",
       num: "",
-      person: "",
+      person: userId,
       recdt: new Date(),
       title: "",
     });
@@ -790,11 +831,31 @@ const CM_A3000W: React.FC = () => {
   };
 
   const search = () => {
-    setSubPgNum(1);
-    setSubDataResult(process([], subDataState));
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.recdt_s).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.recdt_s).substring(6, 8) > "31" ||
+        convertDateToStr(filters.recdt_s).substring(6, 8) < "01" ||
+        convertDateToStr(filters.recdt_s).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A3000W_003");
+      } else if (
+        convertDateToStr(filters.recdt_e).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.recdt_e).substring(6, 8) > "31" ||
+        convertDateToStr(filters.recdt_e).substring(6, 8) < "01" ||
+        convertDateToStr(filters.recdt_e).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A3000W_003");
+      } else {
+        setSubPgNum(1);
+        setSubDataResult(process([], subDataState));
+        setMainPgNum(1);
+        setMainDataResult(process([], mainDataState));
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -985,7 +1046,6 @@ const CM_A3000W: React.FC = () => {
     let response: any;
 
     datas.forEach(async (parameter) => {
-      console.log(parameter.saved_name);
       try {
         response = await processApi<any>("file-download", {
           attached: parameter.saved_name,
@@ -1192,27 +1252,22 @@ const CM_A3000W: React.FC = () => {
           <tbody>
             <tr>
               <th>작성일</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="recdt_s"
-                    value={filters.recdt_s}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.recdt_s,
+                      end: filters.recdt_e,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        recdt_s: e.value.start,
+                        recdt_e: e.value.end,
+                      }))
+                    }
                     className="required"
                   />
-                  ~
-                  <DatePicker
-                    name="recdt_e"
-                    value={filters.recdt_e}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                    className="required"
-                  />
-                </div>
-              </td>
+                </td>
               <th>부서코드</th>
               <td>
                 {customOptionData !== null && (
@@ -1543,22 +1598,8 @@ const CM_A3000W: React.FC = () => {
                           style={{ display: "none" }}
                           type="file"
                           multiple
-                          ref={excelsInput}
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            const files = event.target.files;
-                            if (files === null) return false;
-                            for (let i = 0; i < files.length; ++i) {
-                              const file = files[i];
-                              uploadFile(file);
-                            }
-                            if(infomation.workType != "N") {
-                              resetAllGrid();
-                              fetchMainGrid();
-                            } else {
-                              fetchAttdatnumGrid();
-                            }
+                          ref={excelsInput}           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            handleFileUpload(event.target.files);
                           }}
                         />
                       </Button>
@@ -1586,8 +1627,8 @@ const CM_A3000W: React.FC = () => {
           </FormBoxWrap>
         </GridContainer>
       </GridContainerWrap>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

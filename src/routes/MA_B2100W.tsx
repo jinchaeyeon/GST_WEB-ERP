@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -9,7 +8,6 @@ import {
   getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -27,7 +25,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -37,6 +35,8 @@ import {
   UseCustomOption,
   UsePermissions,
   handleKeyPressSearch,
+  findMessage,
+  UseMessages,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -53,6 +53,7 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2100W_C";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const dateField = ["indt"];
 const DATA_ITEM_KEY = "reckey";
@@ -65,7 +66,8 @@ const MA_B2100W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -534,7 +536,27 @@ const MA_B2100W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.ymdFrdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_B2100W_001");
+      } else if (
+        convertDateToStr(filters.ymdTodt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "MA_B2100W_001");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   return (
@@ -568,46 +590,50 @@ const MA_B2100W: React.FC = () => {
                 )}
               </td>
               <th>입고일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="ymdFrdt"
-                    value={filters.ymdFrdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="ymdTodt"
-                    value={filters.ymdTodt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
-              <th>담당자</th>
               <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="person"
-                    value={filters.person}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="user_name"
-                    valueField="user_id"
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.ymdFrdt,
+                      end: filters.ymdTodt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        ymdFrdt: e.value.start,
+                        ymdTodt: e.value.end,
+                      }))
+                    }
+                    className="required"
                   />
-                )}
-              </td>
+                </td>
               <th>대분류</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
                     name="itemlvl1"
                     value={filters.itemlvl1}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>중분류</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemlvl2"
+                    value={filters.itemlvl2}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>소분류</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemlvl3"
+                    value={filters.itemlvl3}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                   />
@@ -660,17 +686,6 @@ const MA_B2100W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>중분류</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="itemlvl2"
-                    value={filters.itemlvl2}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
             </tr>
             <tr>
               <th>품목계정</th>
@@ -709,19 +724,19 @@ const MA_B2100W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>소분류</th>
+              <th>담당자</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="itemlvl3"
-                    value={filters.itemlvl3}
+                    name="person"
+                    value={filters.person}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    textField="user_name"
+                    valueField="user_id"
                   />
                 )}
               </td>
-              <th></th>
-              <td></td>
             </tr>
           </tbody>
         </FilterBox>
@@ -844,8 +859,8 @@ const MA_B2100W: React.FC = () => {
           setData={setItemData}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

@@ -41,7 +41,7 @@ import {
 } from "@progress/kendo-react-charts";
 import "hammerjs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
   chkScrollHandler,
@@ -88,7 +88,7 @@ const numberField: string[] = [
   "qty12",
 ];
 const dateField = ["recdt", "time"];
-const DATA_ITEM_KEY = "itemcd";
+const DATA_ITEM_KEY = "num";
 
 const SA_B3100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -355,7 +355,7 @@ const SA_B3100W: React.FC = () => {
       fetchGrid("TITLE1");
 
       const selectedRowData = gridDataResult.data.filter(
-        (item) => item.itemcd == Object.getOwnPropertyNames(selectedState)[0]
+        (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
 
       if (selectedRowData != undefined) {
@@ -393,8 +393,12 @@ const SA_B3100W: React.FC = () => {
 
   //그리드 리셋
   const resetGrid = () => {
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setGridDataResult(process([], gridDataState));
+    setAllChartDataResult({
+      companies: [""],
+      series: [0],
+    });
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -1556,8 +1560,8 @@ const SA_B3100W: React.FC = () => {
         />
       )}
       {/* 컨트롤 네임 불러오기 용 */}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

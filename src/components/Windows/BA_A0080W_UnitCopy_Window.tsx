@@ -40,6 +40,7 @@ import {
   getGridItemChangedData,
   UseGetValueFromSessionItem,
   UseParaPc,
+  findMessage,
 } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -78,12 +79,7 @@ const customData = [
 ];
 
 const CustomNumberCell = (props: GridCellProps) => {
-  return (
-    <NumberCell
-      myProp={customData}
-      {...props}
-    />
-  )
+  return <NumberCell myProp={customData} {...props} />;
 };
 
 const CopyWindow = ({ setVisible }: IWindow) => {
@@ -150,6 +146,7 @@ const CopyWindow = ({ setVisible }: IWindow) => {
   const [amtunitListData, setAmtunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
@@ -476,7 +473,7 @@ const CopyWindow = ({ setVisible }: IWindow) => {
       </div>
     );
   };
-  
+
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -567,43 +564,49 @@ const CopyWindow = ({ setVisible }: IWindow) => {
         newData.push(item);
       }
     });
+    try {
+      if (newData.length === 0) {
+        throw findMessage(messagesData, "BA_A0080W_008");
+      } else {
+        let dataArr: TdataArr = {
+          itemcd_s: [],
+          itemacnt_s: [],
+          recdt_s: [],
+          amtunit_s: [],
+          unp_s: [],
+          remark_s: [],
+        };
+        newData.forEach((item: any, idx: number) => {
+          const {
+            itemcd = "",
+            itemacnt = "",
+            recdt = "",
+            amtunit = "",
+            unp = "",
+            remark = "",
+          } = item;
 
-    if (newData.length === 0) return false;
-    let dataArr: TdataArr = {
-      itemcd_s: [],
-      itemacnt_s: [],
-      recdt_s: [],
-      amtunit_s: [],
-      unp_s: [],
-      remark_s: [],
-    };
-    newData.forEach((item: any, idx: number) => {
-      const {
-        itemcd = "",
-        itemacnt = "",
-        recdt = "",
-        amtunit = "",
-        unp = "",
-        remark = "",
-      } = item;
+          dataArr.itemcd_s.push(itemcd);
+          dataArr.itemacnt_s.push(itemacnt);
+          dataArr.recdt_s.push(recdt);
+          dataArr.amtunit_s.push(amtunit);
+          dataArr.unp_s.push(unp);
+          dataArr.remark_s.push(remark);
+        });
 
-      dataArr.itemcd_s.push(itemcd);
-      dataArr.itemacnt_s.push(itemacnt);
-      dataArr.recdt_s.push(recdt);
-      dataArr.amtunit_s.push(amtunit);
-      dataArr.unp_s.push(unp);
-      dataArr.remark_s.push(remark);
-    });
-
-    setParaData((prev) => ({
-      ...prev,
-      itemcd_s: dataArr.itemcd_s.join("|"),
-      unp_s: dataArr.unp_s.join("|"),
-      itemacnt_s: dataArr.itemacnt_s.join("|"),
-      remark_s: dataArr.remark_s.join("|"),
-      recdt_s: dataArr.recdt_s.join("|"),
-      amtunit_s: dataArr.amtunit_s.join("|"),
-    }));
+        setParaData((prev) => ({
+          ...prev,
+          itemcd_s: dataArr.itemcd_s.join("|"),
+          unp_s: dataArr.unp_s.join("|"),
+          itemacnt_s: dataArr.itemacnt_s.join("|"),
+          remark_s: dataArr.remark_s.join("|"),
+          recdt_s: dataArr.recdt_s.join("|"),
+          amtunit_s: dataArr.amtunit_s.join("|"),
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const [paraData, setParaData] = useState({
@@ -659,11 +662,11 @@ const CopyWindow = ({ setVisible }: IWindow) => {
         remark_s: "",
         recdt_s: "",
         amtunit_s: "",
-      })
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -673,7 +676,6 @@ const CopyWindow = ({ setVisible }: IWindow) => {
       fetchTodoGridSaved();
     }
   }, [paraData]);
-
 
   return (
     <>
@@ -689,10 +691,9 @@ const CopyWindow = ({ setVisible }: IWindow) => {
           <ButtonContainer>
             <Button
               onClick={() => {
-                if(filters.unpitem2 == "") {
-                  alert("대상단가항목을 채워주세요")
+                if (filters.unpitem2 == "") {
+                  alert("대상단가항목을 채워주세요");
                 } else {
-
                   resetAllGrid();
                   fetchMainGrid();
                 }
@@ -708,27 +709,25 @@ const CopyWindow = ({ setVisible }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-              <th>적용일</th>
-              <td>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="recdt"
-                    value={filters.recdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                <th>적용일</th>
+                <td>
+                  <div className="filter-item-wrap">
+                    <DatePicker
+                      name="recdt"
+                      value={filters.recdt}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
+                      className="required"
+                      placeholder=""
+                    />
+                  </div>
+                </td>
                 <th>기준단가항목</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="unpitem"
-                      value={
-                        filters.unpitem
-                      }
+                      value={filters.unpitem}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
                     />
@@ -739,9 +738,7 @@ const CopyWindow = ({ setVisible }: IWindow) => {
                   {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="unpitem2"
-                      value={
-                        filters.unpitem2
-                      }
+                      value={filters.unpitem2}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
                       className="required"
@@ -753,19 +750,21 @@ const CopyWindow = ({ setVisible }: IWindow) => {
           </FilterBox>
         </FilterContainer>
         <GridContainer>
-        <GridTitleContainer>
+          <GridTitleContainer>
             <ButtonContainer>
               <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
-                            <Button
+              <Button
                 onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                title="저장"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -836,11 +835,7 @@ const CopyWindow = ({ setVisible }: IWindow) => {
               cell={DateCell}
               footerCell={mainTotalFooterCell}
             />
-                        <GridColumn
-              field="itemcd"
-              title="품목코드"
-              width="150px"
-            />
+            <GridColumn field="itemcd" title="품목코드" width="150px" />
             <GridColumn field="itemnm" title="품목명" width="150px" />
             <GridColumn field="itemacnt" title="품목계정" width="150px" />
             <GridColumn
@@ -849,7 +844,7 @@ const CopyWindow = ({ setVisible }: IWindow) => {
               width="100px"
               cell={CustomNumberCell}
             />
-                        <GridColumn field="amtunit" title="화폐단위" width="150px" />
+            <GridColumn field="amtunit" title="화폐단위" width="150px" />
             <GridColumn field="remark" title="비고" width="250px" />
           </Grid>
         </GridContainer>

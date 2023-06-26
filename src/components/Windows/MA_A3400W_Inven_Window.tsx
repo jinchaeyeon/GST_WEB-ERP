@@ -5,12 +5,10 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridCellProps,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
-  GridExpandChangeEvent,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -22,7 +20,6 @@ import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  Title,
   TitleContainer,
   ButtonInInput,
   GridTitleContainer,
@@ -43,7 +40,6 @@ import {
   rowsOfDataResult,
   rowsWithSelectedDataResult,
 } from "../CommonFunction";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
@@ -52,6 +48,7 @@ import { isLoading } from "../../store/atoms";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
 type IWindow = {
   itemacnt?: string | number | undefined;
@@ -662,24 +659,20 @@ const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
               <tr>
                 <th>기준년월</th>
                 <td>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
                 </td>
                 <th>품목계정</th>
                 <td>
@@ -823,6 +816,7 @@ const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

@@ -87,6 +87,7 @@ import CheckBoxCell from "../Cells/CheckBoxCell";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
+import CommentsGrid from "../Grids/CommentsGrid";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -323,17 +324,10 @@ const CopyWindow = ({
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if (name == "finexpdt" || name == "findt") {
-      setFilters((prev) => ({
-        ...prev,
-        [name]: convertDateToStr(value),
-      }));
-    } else {
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const filterRadioChange = (e: any) => {
@@ -402,7 +396,7 @@ const CopyWindow = ({
   };
   const processApi = useApi();
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     attdatnum: "",
     chooses: 0,
@@ -412,8 +406,8 @@ const CopyWindow = ({
     endyn: "N",
     endyn2: "",
     files: "",
-    findt: "",
-    finexpdt: "",
+    findt: null,
+    finexpdt: null,
     loadok: 0,
     person: "",
     personnm: "",
@@ -424,7 +418,7 @@ const CopyWindow = ({
     recdt2: "",
     recno: "",
     reqctns: "",
-    reqdt: new Date(),
+    reqdt: null,
     slnctns: "",
     title: "",
   });
@@ -444,7 +438,12 @@ const CopyWindow = ({
       "@p_endyn": "",
       "@p_title": "",
       "@p_loadyn": "",
-      "@p_datnum": filters.recno,
+      "@p_datnum":
+        workType == "U"
+          ? data?.recno == undefined
+            ? filters.recno
+            : data?.recno
+          : "",
       "@p_userid": userId,
       "@p_find_row_value": "",
     },
@@ -466,8 +465,6 @@ const CopyWindow = ({
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
-          chooses: row.chooses == "Y" ? true : false,
-          loadok: row.loadok == "Y" ? true : false,
         };
       });
       if (totalRowCnt > 0) {
@@ -492,12 +489,6 @@ const CopyWindow = ({
     }
   }, [filters]);
 
-  // useEffect(() => {
-  //   if (workType != "N" && isInitSearch === false) {
-  //     fetchSubGrid();
-  //   }
-  // }, [subfilters]);
-
   useEffect(() => {
     if (workType === "U" && data != undefined) {
       setFilters((prev) => ({
@@ -510,8 +501,12 @@ const CopyWindow = ({
         endyn: data.endyn == "" ? "N" : data.endyn,
         endyn2: data.endyn2,
         files: data.files,
-        findt: data.findt,
-        finexpdt: data.finexpdt,
+        findt: isValidDate(data.findt)
+          ? new Date(dateformat(data.findt))
+          : null,
+        finexpdt: isValidDate(data.finexpdt)
+          ? new Date(dateformat(data.finexpdt))
+          : null,
         loadok: data.loadok,
         person: data.person,
         personnm: data.personnm,
@@ -522,7 +517,9 @@ const CopyWindow = ({
         recdt2: data.recdt2,
         recno: data.recno,
         reqctns: data.reqctns,
-        reqdt: toDate(data.reqdt),
+        reqdt: isValidDate(data.reqdt)
+          ? new Date(dateformat(data.reqdt))
+          : null,
         slnctns: data.slnctns,
         title: data.title,
       }));
@@ -694,22 +691,6 @@ const CopyWindow = ({
         filters.title == undefined
       ) {
         throw findMessage(messagesData, "CM_A2000W_002");
-      } else if (
-        userId == filters.rcvperson &&
-        (filters.findt.substring(0, 4) < "1997" ||
-          filters.findt.substring(6, 8) > "31" ||
-          filters.findt.substring(6, 8) < "01" ||
-          filters.findt.substring(6, 8).length != 2)
-      ) {
-        throw findMessage(messagesData, "CM_A2000W_001");
-      } else if (
-        userId == filters.rcvperson &&
-        (filters.finexpdt.substring(0, 4) < "1997" ||
-          filters.finexpdt.substring(6, 8) > "31" ||
-          filters.finexpdt.substring(6, 8) < "01" ||
-          filters.finexpdt.substring(6, 8).length != 2)
-      ) {
-        throw findMessage(messagesData, "CM_A2000W_001");
       } else {
         setData(mainDataResult.data, filters);
         deletedMainRows = [];
@@ -773,8 +754,10 @@ const CopyWindow = ({
     />
   );
 
-  const enterEdit = (dataItem: any, field: string) => {
-    if (field == "chooses") {
+  const enterEdit = async (dataItem: any, field: string) => {
+    if (
+      field == "chooses"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -795,6 +778,57 @@ const CopyWindow = ({
           total: prev.total,
         };
       });
+    }
+    if (
+      field == "loadok" &&
+      userId == dataItem.user_id
+    ) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setIfSelectFirstRow(false);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+
+      let data: any;
+      setLoading(true);
+
+      const parameters2: Iparameters = {
+        procedureName: "P_CM_A2000W_S2",
+        pageNumber: 0,
+        pageSize: filters.pgSize,
+        parameters: {
+          "@p_work_type": "U",
+          "@p_orgdiv": "01",
+          "@p_datnum": data?.recno == undefined
+          ? filters.recno
+          : data?.recno,
+          "@p_person2": userId,
+          "@p_chooses": "",
+          "@p_loadok": "",
+          "@p_form_id": "CM_A2000W",
+        },
+      };
+
+      try {
+        data = await processApi<any>("procedure", parameters2);
+      } catch (error) {
+        data = null;
+      }
+      setLoading(false);
     }
   };
 
@@ -1151,6 +1185,24 @@ const CopyWindow = ({
                     row.rowstatus == undefined
                       ? ""
                       : row.rowstatus,
+                  dptcd: dptcdListData.find(
+                    (item: any) => item.dptcd === row.dptcd
+                  )?.dptnm,
+                  postcd: postcdListData.find(
+                    (item: any) => item.sub_code === row.postcd
+                  )?.code_name,
+                  chooses:
+                    row.chooses == "Y"
+                      ? true
+                      : row.chooses == "N"
+                      ? false
+                      : row.chooses,
+                  loadok:
+                    row.loadok == "Y"
+                      ? true
+                      : row.loadok == "N"
+                      ? false
+                      : row.loadok,
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState
@@ -1202,7 +1254,12 @@ const CopyWindow = ({
                 width="60px"
                 cell={CheckBoxCell}
               />
-              <GridColumn field="readok" title="열람" width="60px" />
+              <GridColumn
+                field="readok"
+                title="열람"
+                width="60px"
+                cell={CheckBoxReadOnlyCell}
+              />
             </Grid>
           </GridContainer>
         </GridContainerWrap>
@@ -1271,7 +1328,7 @@ const CopyWindow = ({
                       <div className="filter-item-wrap">
                         <DatePicker
                           name="finexpdt"
-                          value={toDate(filters.finexpdt)}
+                          value={filters.finexpdt}
                           format="yyyy-MM-dd"
                           onChange={filterInputChange}
                           placeholder=""
@@ -1283,7 +1340,7 @@ const CopyWindow = ({
                       <div className="filter-item-wrap">
                         <DatePicker
                           name="findt"
-                          value={toDate(filters.findt)}
+                          value={filters.findt}
                           format="yyyy-MM-dd"
                           onChange={filterInputChange}
                           placeholder=""
@@ -1297,67 +1354,14 @@ const CopyWindow = ({
           </FormBoxWrap>
         </GridContainer>
         <GridContainer>
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-          </GridTitleContainer>
-          <Grid
+          <CommentsGrid
+            ref_key={data?.recno == undefined
+              ? filters.recno
+              : data?.recno}
+            form_id={pathname}
+            table_id={"EA100T"}
             style={{ height: "20vh" }}
-            data={process(
-              subDataResult.data.map((row) => ({
-                ...row,
-                // rowstatus:
-                //   row.rowstatus == null ||
-                //   row.rowstatus == "" ||
-                //   row.rowstatus == undefined
-                //     ? ""
-                //     : row.rowstatus,
-                // dptcd: dptcdListData.find(
-                //   (item: any) => item.dptcd === row.dptcd
-                // )?.dptnm,
-                // postcd: postcdListData.find(
-                //   (item: any) => item.sub_code === row.postcd
-                // )?.code_name,
-                [SELECTED_FIELD]: subselectedState[idGetter(row)], //선택된 데이터
-              })),
-              subDataState
-            )}
-            onDataStateChange={onSubDataStateChange}
-            {...subDataState}
-            //선택 subDataState
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSubSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={subDataResult.total}
-            onScroll={onSubScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onSubSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            // onItemChange={onMainItemChange}
-            // cellRender={customCellRender}
-            // rowRender={customRowRender}
-            // editField={EDIT_FIELD}
-          >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn
-              field="recdt"
-              title="작성일"
-              width="120px"
-              cell={DateCell}
-              footerCell={subTotalFooterCell}
-            />
-            <GridColumn field="insert_userid" title="작성자" width="120px" />
-            <GridColumn field="comment" title="코멘트" width="1200px" />
-          </Grid>
+          ></CommentsGrid>
         </GridContainer>
         <BottomContainer>
           <ButtonContainer>

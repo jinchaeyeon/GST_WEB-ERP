@@ -1202,6 +1202,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="plus"
+                title="행 추가"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1231,6 +1232,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

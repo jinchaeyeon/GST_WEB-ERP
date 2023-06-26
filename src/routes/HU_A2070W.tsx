@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -11,7 +10,6 @@ import {
   GridCellProps,
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -26,7 +24,7 @@ import {
 } from "../CommonStyled";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -61,6 +59,7 @@ import { bytesToBase64 } from "byte-base64";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -1024,27 +1023,22 @@ const HU_A2070W: React.FC = () => {
             </tr>
             <tr>
               <th>기준일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>지각</th>
               <td>
                 {customOptionData !== null && (
@@ -1091,18 +1085,21 @@ const HU_A2070W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="plus"
+                title="행 추가"
               ></Button>
               <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제" 
               ></Button>
               <Button
                 onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                title="저장"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1189,8 +1186,8 @@ const HU_A2070W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

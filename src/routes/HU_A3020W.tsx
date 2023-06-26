@@ -14,7 +14,7 @@ import {
 import { gridList } from "../store/columns/HU_A3020W_C";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Icon, getter } from "@progress/kendo-react-common";
-import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
@@ -25,7 +25,7 @@ import {
   GridTitle,
 } from "../CommonStyled";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
@@ -51,6 +51,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import { Button } from "@progress/kendo-react-buttons";
+import NameCell from "../components/Cells/NameCell";
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
 
@@ -1256,18 +1257,21 @@ const HU_A3020W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제" 
                 ></Button>
                 <Button
                   onClick={onSaveClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -1333,7 +1337,7 @@ const HU_A3020W: React.FC = () => {
                               ? CheckBoxCell
                               : radioField.includes(item.fieldName)
                               ? CustomRadioCell
-                              : undefined
+                              : NameCell
                           }
                           headerCell={
                             requiredField.includes(item.fieldName)
@@ -1362,18 +1366,21 @@ const HU_A3020W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                 ></Button>
                 <Button
                   onClick={onDeleteClick2}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제" 
                 ></Button>
                 <Button
                   onClick={onSaveClick2}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -1433,7 +1440,7 @@ const HU_A3020W: React.FC = () => {
                             ? CheckBoxCell
                             : radioField.includes(item.fieldName)
                             ? CustomRadioCell
-                            : undefined
+                            : NameCell
                         }
                         headerCell={
                           requiredField.includes(item.fieldName)
@@ -1452,8 +1459,8 @@ const HU_A3020W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
       </TabStrip>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

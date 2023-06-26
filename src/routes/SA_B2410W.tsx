@@ -9,7 +9,6 @@ import {
   getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -27,7 +26,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -38,6 +37,7 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
+  findMessage,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -55,6 +55,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2410W_C";
 import MultiSelectDrop from "../components/MultiSelect/MultiSelect";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const dateField = ["outdt"];
 const DATA_ITEM_KEY = "reckey";
@@ -501,7 +502,29 @@ const SA_B2410: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.ymdFrdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_B2410W_001");
+      } else if (
+        convertDateToStr(filters.ymdTodt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_B2410W_001");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
+
+
   };
 
   return (
@@ -524,27 +547,22 @@ const SA_B2410: React.FC = () => {
           <tbody>
             <tr>
               <th>출고일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="ymdFrdt"
-                    value={filters.ymdFrdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.ymdFrdt,
+                      end: filters.ymdTodt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        ymdFrdt: e.value.start,
+                        ymdTodt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="ymdTodt"
-                    value={filters.ymdTodt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -774,9 +792,8 @@ const SA_B2410: React.FC = () => {
           setData={setItemData}
         />
       )}
-
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

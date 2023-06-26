@@ -37,7 +37,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
@@ -3677,18 +3677,21 @@ const AC_A0020W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제"
                 ></Button>
                 <Button
                   onClick={onSaveClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -3846,18 +3849,21 @@ const AC_A0020W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="plus"
+                    title="행 추가"
                   ></Button>
                   <Button
                     onClick={onDeleteClick2}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
+                    title="행 삭제"
                   ></Button>
                   <Button
                     onClick={onSaveClick2}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    title="저장"
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -3951,18 +3957,21 @@ const AC_A0020W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="plus"
+                      title="행 추가"
                     ></Button>
                     <Button
                       onClick={onDeleteClick3}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
+                      title="행 삭제"
                     ></Button>
                     <Button
                       onClick={onSaveClick2}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      title="저장"
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -4057,18 +4066,21 @@ const AC_A0020W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                 ></Button>
                 <Button
                   onClick={onDeleteClick4}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제"
                 ></Button>
                 <Button
                   onClick={onSaveClick3}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -4208,18 +4220,21 @@ const AC_A0020W: React.FC = () => {
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="plus"
+                          title="행 추가"
                         ></Button>
                         <Button
                           onClick={onDeleteClick5}
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="minus"
+                          title="행 삭제"
                         ></Button>
                         <Button
                           onClick={onSaveClick4}
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="save"
+                          title="저장"
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -4294,8 +4309,8 @@ const AC_A0020W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
       </TabStrip>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

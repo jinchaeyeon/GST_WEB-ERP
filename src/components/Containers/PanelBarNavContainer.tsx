@@ -27,6 +27,7 @@ import {
   AppName,
   ButtonContainer,
   Content,
+  Footer,
   Gnv,
   Logo,
   MenuSearchBox,
@@ -55,25 +56,27 @@ const PanelBarNavContainer = (props: any) => {
   // }, [token]);
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMobileMenuOpend, setIsMobileMenuOpend] = useRecoilState(
-    isMobileMenuOpendState
+    isMobileMenuOpendState,
   );
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
-    deletedAttadatnumsState
+    deletedAttadatnumsState,
   );
 
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
+    unsavedAttadatnumsState,
   );
 
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const customerName = loginResult ? loginResult.customerName : "";
   const userId = loginResult ? loginResult.userId : "";
+  const userName = loginResult ? loginResult.userName : "";
   const loginKey = loginResult ? loginResult.loginKey : "";
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN" || role === "DEVELOPER" ? true : false;
+  const isAdmin = role === "ADMIN";
 
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
@@ -86,7 +89,7 @@ const PanelBarNavContainer = (props: any) => {
 
   // 반응형 처리
   const [clientWidth, setClientWidth] = useState(
-    document.documentElement.getBoundingClientRect().width
+    document.documentElement.getBoundingClientRect().width,
   );
   useEffect(() => {
     const handleWindowResize = () => {
@@ -262,7 +265,7 @@ const PanelBarNavContainer = (props: any) => {
         (menu: any) =>
           menu.menuCategory === "GROUP" &&
           menu.menuName !== "Home" &&
-          menu.menuName !== "PlusWin6"
+          menu.menuName !== "PlusWin6",
       )
       .forEach((menu: any, idx: number) => {
         paths.push({
@@ -281,7 +284,7 @@ const PanelBarNavContainer = (props: any) => {
       menus
         .filter(
           (menu: any) =>
-            menu.menuCategory === "WEB" && path.menuId === menu.parentMenuId
+            menu.menuCategory === "WEB" && path.menuId === menu.parentMenuId,
         )
         .forEach((menu: any, idx: number) => {
           paths.push({
@@ -337,7 +340,7 @@ const PanelBarNavContainer = (props: any) => {
       // 폼 로그 처리
       if (previousRoute === "") {
         const pathitem = paths.find(
-          (item) => item.path.replace("/", "") === pathname
+          (item) => item.path.replace("/", "") === pathname,
         );
 
         //최초 오픈
@@ -349,10 +352,10 @@ const PanelBarNavContainer = (props: any) => {
         });
       } else if (pathname !== previousRoute) {
         const pathitem = paths.find(
-          (item) => item.path.replace("/", "") === pathname
+          (item) => item.path.replace("/", "") === pathname,
         );
         const previousPathitem = paths.find(
-          (item) => item.path.replace("/", "") === previousRoute
+          (item) => item.path.replace("/", "") === previousRoute,
         );
         // 오픈, 클로즈
         fetchToLog({
@@ -461,7 +464,7 @@ const PanelBarNavContainer = (props: any) => {
     ...paths.filter((path) => path.path === "/Home"),
     ...paths.filter((path) => path.menuCategory === "GROUP"),
   ];
-  if (companyCode !== "2207C612") {
+  if (companyCode === "2207A046" && isAdmin) {
     panelBars.push({
       path: "/WORD_EDITOR",
       menuName: "EDITOR",
@@ -480,44 +483,44 @@ const PanelBarNavContainer = (props: any) => {
       menuCategory: "",
       isFavorite: false,
     });
-    panelBars.push({
-      path: "/",
-      menuName: "설정",
-      index: "",
-      menuId: "setting",
-      parentMenuId: "",
-      menuCategory: "WEB",
-      isFavorite: false,
-    });
+  }
+  panelBars.push({
+    path: "/",
+    menuName: "설정",
+    index: "",
+    menuId: "setting",
+    parentMenuId: "",
+    menuCategory: "WEB",
+    isFavorite: false,
+  });
+  paths.push({
+    path: "/",
+    menuName: "비밀번호 변경",
+    index: "",
+    menuId: "change-password",
+    parentMenuId: "setting",
+    menuCategory: "WEB",
+    isFavorite: false,
+  });
+  paths.push({
+    path: "/",
+    menuName: "사용자 옵션",
+    index: "",
+    menuId: "custom-option",
+    parentMenuId: "setting",
+    menuCategory: "WEB",
+    isFavorite: false,
+  });
+  if (isAdmin) {
     paths.push({
       path: "/",
-      menuName: "비밀번호 변경",
+      menuName: "시스템 옵션",
       index: "",
-      menuId: "change-password",
+      menuId: "system-option",
       parentMenuId: "setting",
       menuCategory: "WEB",
       isFavorite: false,
     });
-    paths.push({
-      path: "/",
-      menuName: "사용자 옵션",
-      index: "",
-      menuId: "custom-option",
-      parentMenuId: "setting",
-      menuCategory: "WEB",
-      isFavorite: false,
-    });
-    if (isAdmin) {
-      paths.push({
-        path: "/",
-        menuName: "시스템 옵션",
-        index: "",
-        menuId: "system-option",
-        parentMenuId: "setting",
-        menuCategory: "WEB",
-        isFavorite: false,
-      });
-    }
   }
 
   // Parent 그룹 없는 메뉴 Array
@@ -543,85 +546,86 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   return (
-    <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
-      <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
-      {isMenuOpend ? (
-        <Gnv isMobileMenuOpend={isMobileMenuOpend}>
-          <AppName onClick={() => setIsMenuOpend(false)}>
-            <Logo size="32px" />
-            GST ERP
-          </AppName>
-          {prgMenus && (
-            <MenuSearchBox>
-              {searchedMenu === "" && (
-                <span className="k-icon k-i-search"></span>
-              )}
-              <AutoComplete
-                style={{ width: "100%" }}
-                data={prgMenus}
-                textField="text"
-                value={searchedMenu}
-                onChange={(e) => setSearchedMenu(e.value)}
-                onBlur={(e) => setSearchedMenu("")}
-                onClose={openSelctedMenu}
-                size="small"
-                placeholder="Search menu.."
-              />
-            </MenuSearchBox>
-          )}
-          {paths.length > 0 && (
-            <PanelBar
-              selected={selected}
-              expandMode={"single"}
-              onSelect={onSelect}
-            >
-              {panelBars.map((path: TPath, idx: number) => {
-                return singleMenus.includes(path.path) ? (
-                  <PanelBarItem
-                    key={idx}
-                    title={path.menuName}
-                    route={path.path}
-                  />
-                ) : (
-                  <PanelBarItem
-                    key={idx}
-                    title={path.menuName}
-                    icon={
-                      path.menuId === "fav"
-                        ? "star"
-                        : path.menuId === "setting"
-                        ? "gear"
-                        : undefined
-                    }
-                    className={path.menuId === "fav" ? "fav-menu" : ""}
-                  >
-                    {paths
-                      .filter(
-                        (childPath: TPath) =>
-                          childPath.menuCategory === "WEB" &&
-                          childPath.parentMenuId === path.menuId
-                      )
-                      .map((childPath: TPath, childIdx: number) => (
-                        <PanelBarItem
-                          key={childIdx}
-                          title={childPath.menuName}
-                          route={
-                            path.menuId === "setting"
-                              ? undefined
-                              : childPath.path
-                          }
-                          className={childPath.menuId}
-                          icon={childPath.isFavorite ? "circle" : "circle"}
-                        ></PanelBarItem>
-                      ))}
-                  </PanelBarItem>
-                );
-              })}
-            </PanelBar>
-          )}
+    <>
+      <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
+        <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
+        {isMenuOpend ? (
+          <Gnv isMobileMenuOpend={isMobileMenuOpend}>
+            <AppName onClick={() => setIsMenuOpend(false)}>
+              <Logo size="32px" />
+              GST ERP
+            </AppName>
+            {prgMenus && (
+              <MenuSearchBox>
+                {searchedMenu === "" && (
+                  <span className="k-icon k-i-search"></span>
+                )}
+                <AutoComplete
+                  style={{ width: "100%" }}
+                  data={prgMenus}
+                  textField="text"
+                  value={searchedMenu}
+                  onChange={(e) => setSearchedMenu(e.value)}
+                  onBlur={(e) => setSearchedMenu("")}
+                  onClose={openSelctedMenu}
+                  size="small"
+                  placeholder="Search menu.."
+                />
+              </MenuSearchBox>
+            )}
+            {paths.length > 0 && (
+              <PanelBar
+                selected={selected}
+                expandMode={"single"}
+                onSelect={onSelect}
+              >
+                {panelBars.map((path: TPath, idx: number) => {
+                  return singleMenus.includes(path.path) ? (
+                    <PanelBarItem
+                      key={idx}
+                      title={path.menuName}
+                      route={path.path}
+                    />
+                  ) : (
+                    <PanelBarItem
+                      key={idx}
+                      title={path.menuName}
+                      icon={
+                        path.menuId === "fav"
+                          ? "star"
+                          : path.menuId === "setting"
+                          ? "gear"
+                          : undefined
+                      }
+                      className={path.menuId === "fav" ? "fav-menu" : ""}
+                    >
+                      {paths
+                        .filter(
+                          (childPath: TPath) =>
+                            childPath.menuCategory === "WEB" &&
+                            childPath.parentMenuId === path.menuId,
+                        )
+                        .map((childPath: TPath, childIdx: number) => (
+                          <PanelBarItem
+                            key={childIdx}
+                            title={childPath.menuName}
+                            route={
+                              path.menuId === "setting"
+                                ? undefined
+                                : childPath.path
+                            }
+                            className={childPath.menuId}
+                            icon={childPath.isFavorite ? "circle" : "circle"}
+                          ></PanelBarItem>
+                        ))}
+                    </PanelBarItem>
+                  );
+                })}
+              </PanelBar>
+            )}
 
-          {/* GST */}
-          {/* {companyCode === "2207C612" && (
+            {/* GST */}
+            {/* {companyCode === "2207C612" && (
         <PanelBar
           selected={selected}
           expandMode={"single"}
@@ -638,82 +642,92 @@ const PanelBarNavContainer = (props: any) => {
         </PanelBar>
       )} */}
 
-          <ButtonContainer
-            flexDirection={"column"}
-            style={{ marginTop: "10px", gap: "5px" }}
-          >
-            <Button
-              onClick={onClickChatbot}
-              icon={"hyperlink-open-sm"}
-              fillMode={"solid"}
-              themeColor={"secondary"}
-              rounded={"full"}
-              size="small"
+            <ButtonContainer
+              flexDirection={"column"}
+              style={{ marginTop: "10px", gap: "5px" }}
             >
-              Chatbot
-            </Button>
-            {isAdmin && (
               <Button
-                onClick={() => setUserOptionsWindowVisible(true)}
+                onClick={onClickChatbot}
+                icon={"hyperlink-open-sm"}
+                fillMode={"solid"}
+                themeColor={"secondary"}
+                rounded={"full"}
+                size="small"
+              >
+                Chatbot
+              </Button>
+              {isAdmin && (
+                <Button
+                  onClick={() => setUserOptionsWindowVisible(true)}
+                  fillMode={"flat"}
+                  themeColor={"secondary"}
+                >
+                  사용자 옵션
+                </Button>
+              )}
+              <Button
+                onClick={logout}
+                icon={"logout"}
                 fillMode={"flat"}
                 themeColor={"secondary"}
               >
-                사용자 옵션
+                로그아웃
               </Button>
-            )}
+            </ButtonContainer>
+          </Gnv>
+        ) : (
+          <div
+            style={{
+              paddingTop: "10px",
+              borderRight: "solid 1px #ebebeb",
+              height: "100vh",
+            }}
+          >
             <Button
-              onClick={logout}
-              icon={"logout"}
+              icon="menu"
               fillMode={"flat"}
-              themeColor={"secondary"}
-            >
-              로그아웃
-            </Button>
-          </ButtonContainer>
-        </Gnv>
-      ) : (
-        <div
-          style={{
-            paddingTop: "10px",
-            borderRight: "solid 1px #ebebeb",
-            height: "100vh",
-          }}
-        >
-          <Button
-            icon="menu"
-            fillMode={"flat"}
-            themeColor={"primary"}
-            onClick={() => setIsMenuOpend(true)}
-          />
-        </div>
-      )}
-      <Content isMenuOpen={isMenuOpend}>
-        <TopTitle>
-          <div style={{ width: "30px" }}></div>
-          <AppName>
-            <Logo size="32px" />
-          </AppName>
-          <Button
-            icon="menu"
-            themeColor={"primary"}
-            fillMode={"flat"}
-            onClick={onMenuBtnClick}
-          />
-        </TopTitle>
-        <PageWrap>{props.children}</PageWrap>
-      </Content>
-      {userOptionsWindowVisible && (
-        <UserOptionsWindow setVisible={setUserOptionsWindowVisible} />
-      )}
-      {changePasswordWindowVisible && (
-        <ChangePasswordWindow setVisible={setChangePasswordWindowVisible} />
-      )}
-      {systemOptionWindowWindowVisible && (
-        <SystemOptionWindow setVisible={setSystemOptionWindowVisible} />
-      )}
+              themeColor={"primary"}
+              onClick={() => setIsMenuOpend(true)}
+            />
+          </div>
+        )}
+        <Content isMenuOpen={isMenuOpend}>
+          <TopTitle>
+            <div style={{ width: "30px" }}></div>
+            <AppName>
+              <Logo size="32px" />
+            </AppName>
+            <Button
+              icon="menu"
+              themeColor={"primary"}
+              fillMode={"flat"}
+              onClick={onMenuBtnClick}
+            />
+          </TopTitle>
+          <PageWrap>{props.children}</PageWrap>
+        </Content>
+        {userOptionsWindowVisible && (
+          <UserOptionsWindow setVisible={setUserOptionsWindowVisible} />
+        )}
+        {changePasswordWindowVisible && (
+          <ChangePasswordWindow setVisible={setChangePasswordWindowVisible} />
+        )}
+        {systemOptionWindowWindowVisible && (
+          <SystemOptionWindow setVisible={setSystemOptionWindowVisible} />
+        )}
 
-      <Loading />
-    </Wrapper>
+        <Loading />
+      </Wrapper>
+      <Footer>
+        <div>
+          {userName}({userId})
+        </div>
+        <div>
+          {customerName}({companyCode})
+        </div>
+        <div>{ip}</div>
+      </Footer>
+    </>
   );
 };
 

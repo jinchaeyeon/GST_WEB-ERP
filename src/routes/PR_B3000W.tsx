@@ -27,7 +27,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -56,7 +56,6 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { gridList } from "../store/columns/PR_B3000W_C";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import NumberCell from "../components/Cells/NumberCell";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, sessionItemState } from "../store/atoms";
@@ -64,6 +63,7 @@ import CenterCell from "../components/Cells/CenterCell";
 import { Window } from "@progress/kendo-react-dialogs";
 import WorkDailyReport from "../components/Prints/WorkDailyReport";
 import { bytesToBase64 } from "byte-base64";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -767,8 +767,28 @@ const PR_B3000W: React.FC = () => {
   }, [paraData]);
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.ymdFrdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_B3000W_001");
+      } else if (
+        convertDateToStr(filters.ymdTodt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.ymdTodt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_B3000W_001");
+      } else {
+        resetAllGrid();
+        fetchMainGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
@@ -795,25 +815,22 @@ const PR_B3000W: React.FC = () => {
           <tbody>
             <tr>
               <th>생산일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="ymdFrdt"
-                    value={filters.ymdFrdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.ymdFrdt,
+                      end: filters.ymdTodt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        ymdFrdt: e.value.start,
+                        ymdTodt: e.value.end,
+                      }))
+                    }
+                    className="required"
                   />
-                  ~
-                  <DatePicker
-                    name="ymdTodt"
-                    value={filters.ymdTodt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
 
               <th>품목코드</th>
               <td>
@@ -1009,8 +1026,8 @@ const PR_B3000W: React.FC = () => {
       )}
 
       {/* 컨트롤 네임 불러오기 용 */}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

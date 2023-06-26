@@ -11,7 +11,6 @@ import {
   GridHeaderCellProps,
   GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
@@ -29,7 +28,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import DetailWindow from "../components/Windows/AC_A1000W_Window";
 import AC_A1000W_Receive_Window from "../components/Windows/AC_A1000W_Receive_Window";
 import AC_A1000W_Payment_Window from "../components/Windows/AC_A1000W_Payment_Window";
@@ -69,6 +68,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { bytesToBase64 } from "byte-base64";
 import AC_A1000W_Print_Window from "../components/Windows/AC_A1000W_Print_Window";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 const DATA_ITEM_KEY = "num";
 const dateField = ["acntdt"];
 const numberField = ["sumslipamt_1", "sumslipamt_2", "sumslipamt"];
@@ -1509,27 +1509,22 @@ const AC_A1000W: React.FC = () => {
           <tbody>
             <tr>
               <th>전표일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                    className="required"
-                  />
-                </div>
-              </td>
+                </td>
               <th>전표구분</th>
               <td>
                 {customOptionData !== null && (
@@ -1922,8 +1917,8 @@ const AC_A1000W: React.FC = () => {
           setData={setOK}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

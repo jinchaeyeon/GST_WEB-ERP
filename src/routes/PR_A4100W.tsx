@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -13,7 +12,6 @@ import {
   GridItemChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -31,11 +29,10 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import {
   Checkbox,
-  CheckboxChangeEvent,
   Input,
 } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -46,9 +43,11 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseGetValueFromSessionItem,
-  rowsOfDataResult,
-  rowsWithSelectedDataResult,
-  getGridItemChangedData,
+  toDate,
+  useSysMessage,
+  UseParaPc,
+  findMessage,
+  UseMessages,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -67,22 +66,75 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A4100W_C";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-const checkField = ["chk"];
+import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+
+const customField = ["outprocyn", "prodmac"];
 const dateField = ["plandt", "finexpdt"];
 const numberField = ["procseq", "prodqty", "qty", "badqty"];
 const DATA_ITEM_KEY = "num";
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_BA011, L_fxcode", setBizComponentData);
+  //수당종류, 세액구분
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "outprocyn" ? "L_BA011" : field === "prodmac" ? "L_fxcode" : "";
+
+  const fieldName = field === "prodmac" ? "fxfull" : undefined;
+  const filedValue = field === "prodmac" ? "fxcode" : undefined;
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      textField={fieldName}
+      valueField={filedValue}
+      {...props}
+    />
+  ) : (
+    <td />
+  );
+};
+
+type TdataArr = {
+  planno_s: string[];
+  planseq_s: string[];
+  qty_s: string[];
+  finyn_s: string[];
+};
+type TdataArr2 = {
+  planno_s: string[];
+  planseq_s: string[];
+  plandt_s: string[];
+  finexpdt_s: string[];
+  proccd_s: string[];
+  procseq_s: string[];
+  outprocyn_s: string[];
+  prodmac_s: string[];
+  qty_s: string[];
+  remark_s: string[];
+  finyn_s: string[];
+};
 const PR_A4100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -113,7 +165,7 @@ const PR_A4100W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA171,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
+    "L_PR010, L_BA171,L_BA061,L_BA015,L_BA005,L_BA172,L_BA173, L_BA003,L_sysUserMaster_001, L_BA020, L_BA016",
     //대분류, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
     setBizComponentData
   );
@@ -149,7 +201,9 @@ const PR_A4100W: React.FC = () => {
   const [PacListData, setPacListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [proccdListData, setProccdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
@@ -184,6 +238,10 @@ const PR_A4100W: React.FC = () => {
       const pacQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
       );
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
+      fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
@@ -355,9 +413,12 @@ const PR_A4100W: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         setMainDataTotal(totalRowCnt);
-        setMainDataResult((prev) =>
-          process([...rowsOfDataResult(prev), ...rows], mainDataState)
-        );
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
           // 첫번째 행 선택하기
           const firstRowData = rows[0];
@@ -371,7 +432,7 @@ const PR_A4100W: React.FC = () => {
     }));
     setLoading(false);
   };
-  console.log(mainDataResult);
+
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
@@ -393,7 +454,7 @@ const PR_A4100W: React.FC = () => {
       // 저장 후, 선택 행 스크롤 유지 처리
       if (filters.find_row_value !== "" && mainDataResult.total > 0) {
         const ROW_HEIGHT = 35.56;
-        const idx = rowsOfDataResult(mainDataResult).findIndex(
+        const idx = mainDataResult.data.findIndex(
           (item) => idGetter(item) === filters.find_row_value
         );
 
@@ -427,16 +488,6 @@ const PR_A4100W: React.FC = () => {
       _export.save();
     }
   };
-
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    setMainDataResult((prev) =>
-      process(
-        rowsWithSelectedDataResult(prev, selectedState, DATA_ITEM_KEY),
-        mainDataState
-      )
-    );
-  }, [selectedState]);
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
@@ -485,7 +536,7 @@ const PR_A4100W: React.FC = () => {
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
-    rowsOfDataResult(mainDataResult).forEach((item) =>
+    mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
     if (sum != undefined) {
@@ -601,7 +652,29 @@ const PR_A4100W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_A4100W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_A4100W_001");
+      } else {
+        resetAllGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
+
+
   };
 
   const onExpandChange = (event: GridExpandChangeEvent) => {
@@ -615,36 +688,41 @@ const PR_A4100W: React.FC = () => {
   };
 
   const CustomCheckBoxCell = (props: GridCellProps) => {
-    const { ariaColumnIndex, columnIndex, dataItem, onChange, field } = props;
+    const { ariaColumnIndex, columnIndex, dataItem, field } = props;
     if (props.rowType === "groupHeader") {
       return null;
     }
 
-    // const handleChange = () => {
-    //   const newData = rowsOfDataResult(mainDataResult).map((item) =>
-    //     item.num == Object.getOwnPropertyNames(selectedState)[0] ?
-    //     {
-    //     ...item,
-    //     chk: (item.chk == "" || item.chk == false || item.chk == "N") ? true : false,
-    //     [EDIT_FIELD]: field,
-    //   } : {
-    //     ...item,
-    //     [EDIT_FIELD]: undefined,
-    //   });
-    //   console.log(newData)
-    //   setMainDataResult((prev) => process(newData, mainDataState));
-    // };
+    const handleChange = () => {
+      const newData = mainDataResult.data.map((item) =>
+        item.num == dataItem.num
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              chk: typeof item.chk == "boolean" ? !item.chk : false,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
 
     return (
       <td
         style={{ textAlign: "center" }}
-        aria-colindex={ariaColumnIndex}
-        data-grid-col-index={columnIndex}
+        // aria-colindex={ariaColumnIndex}
+        // data-grid-col-index={columnIndex}
       >
-        <Checkbox
-          value={dataItem.chk}
-          // onClick={handleChange}
-        ></Checkbox>
+        <Checkbox value={dataItem["chk"]} onClick={handleChange}></Checkbox>
       </td>
     );
   };
@@ -652,13 +730,18 @@ const PR_A4100W: React.FC = () => {
   const [values2, setValues2] = React.useState<boolean>(false);
   const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
     const changeCheck = () => {
-      const newData = rowsOfDataResult(mainDataResult).map((item) => ({
+      const newData = mainDataResult.data.map((item) => ({
         ...item,
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
       setValues2(!values2);
-      setMainDataResult((prev) => process(newData, mainDataState));
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     };
 
     return (
@@ -668,10 +751,68 @@ const PR_A4100W: React.FC = () => {
     );
   };
 
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
+  const getGridItemChangedData = (
+    event: GridItemChangeEvent,
+    dataResult: any,
+    setDataResult: any,
+    DATA_ITEM_KEY: string
+  ) => {
+    let field = event.field || "";
+    event.dataItem[field] = event.value;
+    let newData = dataResult.data.map((item: any) => {
+      if (item[DATA_ITEM_KEY] === event.dataItem[DATA_ITEM_KEY]) {
+        item[field] = event.value;
+      }
+
+      return item;
+    });
+
+    if (event.value)
+      newData = newData.map((item: any) => {
+        const result =
+          item.inEdit &&
+          typeof event.value === "object" &&
+          !Array.isArray(event.value) &&
+          event.value !== null
+            ? {
+                ...item,
+                [field]: item[field].sub_code ?? "",
+              }
+            : item;
+
+        return result;
+      });
+
+    //return newData;
+
+    setDataResult((prev: any) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
   const enterEdit = (dataItem: any, field: string) => {
     let valid = true;
-    if (field == "chk") {
-      const newData = rowsOfDataResult(mainDataResult).map((item) =>
+    if (
+      field == "chk" ||
+      field == "finexpdt" ||
+      field == "outprocyn" ||
+      field == "prodmac" ||
+      field == "qty" ||
+      field == "remark"
+    ) {
+      const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
@@ -684,18 +825,26 @@ const PR_A4100W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
-
-      setMainDataResult((prev) => process(newData, mainDataState));
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     }
   };
 
   const exitEdit = () => {
-    const newData = rowsOfDataResult(mainDataResult).map((item) => ({
+    const newData = mainDataResult.data.map((item) => ({
       ...item,
       [EDIT_FIELD]: undefined,
     }));
-
-    setMainDataResult((prev) => process(newData, mainDataState));
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -715,6 +864,253 @@ const PR_A4100W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
+  const questionToDelete = useSysMessage("QuestionToDelete");
+
+  const onDeleteClick = async (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    const dataItem = mainDataResult.data.filter((item: any, index: number) => {
+      return (
+        (item.chk === true) &&
+        item.rowstatus !== undefined
+      );
+    });
+    if (dataItem.length === 0) return false;
+    let dataArr: TdataArr = {
+      planno_s: [],
+      planseq_s: [],
+      qty_s: [],
+      finyn_s: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        planno = "",
+        planseq= "",
+        qty = "",
+        finyn2 = "",
+      } = item;
+
+      dataArr.planno_s.push(planno);
+      dataArr.planseq_s.push(planseq);
+      dataArr.qty_s.push(qty);
+      dataArr.finyn_s.push(finyn2 == "완료" ? "Y" : "N");
+    });
+    const paraD: Iparameters = {
+      procedureName: "P_PR_A4100W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "D",
+        "@p_orgdiv": "01",
+        "@p_planno_s": dataArr.planno_s.join("|"),
+        "@p_planseq_s": dataArr.planseq_s.join("|"),
+        "@p_plandt_s": "",
+        "@p_finexpdt_s": "",
+        "@p_proccd_s": "",
+        "@p_procseq_s": "",
+        "@p_outprocyn_s": "",
+        "@p_prodmac_s": "",
+        "@p_qty_s": dataArr.qty_s.join("|"),
+        "@p_remark_s": "",
+        "@p_finyn_s":dataArr.finyn_s.join("|"),
+        "@p_rowstatus_s": "",
+        "@p_chlditemcd_s": "",
+        "@p_unitqty_s": "",
+        "@p_qtyunit_s": "",
+        "@p_outgb_s": "",
+        "@p_seq_s": "",
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "PR_A4100W",
+      },
+    };
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", paraD);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess !== true) {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage)
+    }
+    resetAllGrid();
+  };
+
+  const onCheckClick = async (e: any) => {
+    if (!window.confirm("선택한 자료를 완료/완료해제 처리합니다.")) {
+      return false;
+    }
+
+    const dataItem = mainDataResult.data.filter((item: any, index: number) => {
+      return (
+        (item.chk === true) &&
+        item.rowstatus !== undefined
+      );
+    });
+    if (dataItem.length === 0) return false;
+    let dataArr: TdataArr = {
+      planno_s: [],
+      planseq_s: [],
+      qty_s: [],
+      finyn_s: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        planno = "",
+        planseq= "",
+        qty = "",
+        finyn2 = "",
+      } = item;
+
+      dataArr.planno_s.push(planno);
+      dataArr.planseq_s.push(planseq);
+      dataArr.qty_s.push(qty);
+      dataArr.finyn_s.push(finyn2 == "완료" ? "Y" : "N");
+    });
+    const paraC: Iparameters = {
+      procedureName: "P_PR_A4100W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "FINYN",
+        "@p_orgdiv": "01",
+        "@p_planno_s": dataArr.planno_s.join("|"),
+        "@p_planseq_s": dataArr.planseq_s.join("|"),
+        "@p_plandt_s": "",
+        "@p_finexpdt_s": "",
+        "@p_proccd_s": "",
+        "@p_procseq_s": "",
+        "@p_outprocyn_s": "",
+        "@p_prodmac_s": "",
+        "@p_qty_s": dataArr.qty_s.join("|"),
+        "@p_remark_s": "",
+        "@p_finyn_s":dataArr.finyn_s.join("|"),
+        "@p_rowstatus_s": "",
+        "@p_chlditemcd_s": "",
+        "@p_unitqty_s": "",
+        "@p_qtyunit_s": "",
+        "@p_outgb_s": "",
+        "@p_seq_s": "",
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "PR_A4100W",
+      },
+    };
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", paraC);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess !== true) {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage)
+    }
+    resetAllGrid();
+  };
+
+  const onSaveClick = async (e: any) => {
+    const dataItem = mainDataResult.data.filter((item: any, index: number) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+    if (dataItem.length === 0) return false;
+    let dataArr: TdataArr2 = {
+      planno_s: [],
+      planseq_s: [],
+      plandt_s: [],
+      finexpdt_s: [],
+      proccd_s: [],
+      procseq_s: [],
+      outprocyn_s: [],
+      prodmac_s: [],
+      qty_s: [],
+      remark_s: [],
+      finyn_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        planno= "",
+        planseq= "",
+        plandt= "",
+        finexpdt= "",
+        proccd= "",
+        procseq= "",
+        outprocyn= "",
+        prodmac= "",
+        qty= "",
+        remark= "",
+        finyn2 = "",
+      } = item;
+
+      dataArr.planno_s.push(planno);
+      dataArr.planseq_s.push(planseq);
+      dataArr.plandt_s.push(plandt);
+      dataArr.finexpdt_s.push(finexpdt);
+      dataArr.proccd_s.push(proccd);
+      dataArr.procseq_s.push(procseq);
+      dataArr.outprocyn_s.push(outprocyn);
+      dataArr.prodmac_s.push(prodmac);
+      dataArr.qty_s.push(qty);
+      dataArr.remark_s.push(remark);
+      dataArr.finyn_s.push(finyn2 == "완료" ? "Y" : "N");
+    });
+    const para: Iparameters = {
+      procedureName: "P_PR_A4100W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "U",
+        "@p_orgdiv": "01",
+        "@p_planno_s": dataArr.planno_s.join("|"),
+        "@p_planseq_s": dataArr.planseq_s.join("|"),
+        "@p_plandt_s": dataArr.plandt_s.join("|"),
+        "@p_finexpdt_s":dataArr.finexpdt_s.join("|"),
+        "@p_proccd_s": dataArr.proccd_s.join("|"),
+        "@p_procseq_s": dataArr.procseq_s.join("|"),
+        "@p_outprocyn_s": dataArr.outprocyn_s.join("|"),
+        "@p_prodmac_s": dataArr.prodmac_s.join("|"),
+        "@p_qty_s": dataArr.qty_s.join("|"),
+        "@p_remark_s": dataArr.remark_s.join("|"),
+        "@p_finyn_s":dataArr.finyn_s.join("|"),
+        "@p_rowstatus_s": "",
+        "@p_chlditemcd_s": "",
+        "@p_unitqty_s": "",
+        "@p_qtyunit_s": "",
+        "@p_outgb_s": "",
+        "@p_seq_s": "",
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "PR_A4100W",
+      },
+    };
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess !== true) {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage)
+    }
+    resetAllGrid();
+  };
 
   return (
     <>
@@ -735,7 +1131,7 @@ const PR_A4100W: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th colSpan={2}>
+              <th colSpan={3}>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
                     name="dtgb"
@@ -748,27 +1144,22 @@ const PR_A4100W: React.FC = () => {
                   />
                 )}
               </th>
-              <td colSpan={2}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>작업자</th>
               <td>
                 {customOptionData !== null && (
@@ -919,17 +1310,59 @@ const PR_A4100W: React.FC = () => {
 
       <GridContainer>
         <ExcelExport
-          data={rowsOfDataResult(mainDataResult)}
+          data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
+            <ButtonContainer>
+            <Button
+                onClick={onCheckClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="check"
+                title="일괄처리"
+              ></Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제" 
+              ></Button>
+                        <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+              ></Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "74vh" }}
-            data={mainDataResult}
+            data={process(
+              mainDataResult.data.map((row, idx) => ({
+                ...row,
+                finexpdt: toDate(row.finexpdt),
+                proccd: proccdListData.find(
+                  (items: any) => items.sub_code === row.proccd
+                )?.code_name,
+                itemlvl1: itemlvl1ListData.find(
+                  (items: any) => items.sub_code === row.itemlvl1
+                )?.code_name,
+                itemlvl2: itemlvl2ListData.find(
+                  (items: any) => items.sub_code === row.itemlvl2
+                )?.code_name,
+                itemlvl3: itemlvl3ListData.find(
+                  (items: any) => items.sub_code === row.itemlvl3
+                )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)],
+              })),
+              mainDataState
+            )}
             {...mainDataState}
             onDataStateChange={onMainDataStateChange}
             //선택 기능
@@ -955,7 +1388,24 @@ const PR_A4100W: React.FC = () => {
             groupable={true}
             onExpandChange={onExpandChange}
             expandField="expanded"
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender}
+            rowRender={customRowRender}
+            editField={EDIT_FIELD}
           >
+            <GridColumn
+              field="rowstatus"
+              title=" "
+              width="40px"
+              editable={false}
+            />
+            <GridColumn
+              field="chk"
+              title=" "
+              width="45px"
+              headerCell={CustomCheckBoxCell2}
+              cell={CustomCheckBoxCell}
+            />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
                 .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
@@ -972,13 +1422,8 @@ const PR_A4100W: React.FC = () => {
                             ? DateCell
                             : numberField.includes(item.fieldName)
                             ? NumberCell
-                            : checkField.includes(item.fieldName)
-                            ? CustomCheckBoxCell
-                            : undefined
-                        }
-                        headerCell={
-                          checkField.includes(item.fieldName)
-                            ? CustomCheckBoxCell2
+                            : customField.includes(item.fieldName)
+                            ? CustomComboBoxCell
                             : undefined
                         }
                         footerCell={
@@ -1015,8 +1460,8 @@ const PR_A4100W: React.FC = () => {
           setData={setItemData}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

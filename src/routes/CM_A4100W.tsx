@@ -45,7 +45,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   chkScrollHandler,
@@ -87,6 +87,7 @@ import {
 } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { TextArea } from "@progress/kendo-react-inputs";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
@@ -1173,28 +1174,48 @@ const CM_A4100W: React.FC = () => {
   };
 
   const search = () => {
-    deletedMainRows = [];
-    resetAllGrid();
-    if (tabSelected == 0) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 0,
-      }));
-    } else {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: "",
-        scrollDirrection: "down",
-        pgNum: 1,
-        isSearch: true,
-        pgGap: 0,
-        tab: 1,
-      }));
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A4100W_003");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A4100W_003");
+      } else {
+        deletedMainRows = [];
+        resetAllGrid();
+        if (tabSelected == 0) {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 0,
+          }));
+        } else {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            scrollDirrection: "down",
+            pgNum: 1,
+            isSearch: true,
+            pgGap: 0,
+            tab: 1,
+          }));
+        }
+      }
+    } catch (e) {
+      alert(e);
     }
   };
 
@@ -1990,25 +2011,21 @@ const CM_A4100W: React.FC = () => {
                 <tr>
                   <th>교육일자</th>
                   <td>
-                    <div className="filter-item-wrap">
-                      <DatePicker
-                        name="frdt"
-                        value={filters.frdt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                      <DatePicker
-                        name="todt"
-                        value={filters.todt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                    </div>
-                  </td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
+                </td>
                   <th>제목/내용</th>
                   <td>
                     <Input
@@ -2265,12 +2282,14 @@ const CM_A4100W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="plus"
+                      title="행 추가"
                     ></Button>
                     <Button
                       onClick={onDeleteClick2}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
+                      title="행 삭제" 
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -2360,8 +2379,8 @@ const CM_A4100W: React.FC = () => {
           setData={getEducationData}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

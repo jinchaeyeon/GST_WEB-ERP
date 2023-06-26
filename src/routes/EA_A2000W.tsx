@@ -10,7 +10,6 @@ import {
   GridHeaderSelectionChangeEvent,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -67,6 +66,8 @@ import { isLoading, loginResultState } from "../store/atoms";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import CommentsGrid from "../components/Grids/CommentsGrid";
+import WordText from "../components/WordText";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const numberField: string[] = [];
 const dateField = ["recdt", "time"];
@@ -100,7 +101,7 @@ const EA_A2000: React.FC = () => {
           delete: true,
           print: true,
         }
-      : null
+      : null,
   );
 
   //커스텀 옵션 조회
@@ -117,7 +118,7 @@ const EA_A2000: React.FC = () => {
   UseBizComponent(
     "L_dptcd_001,L_sysUserMaster_001,L_EA002,L_HU089,L_appyn,L_USERS,L_HU005,L_EA004,R_APPGB,R_APPYN,L_EA001",
     //부서,담당자,결재문서,근태구분,결재유무,사용자,직위,결재라인,결재관리구분,결재유무,결재구분
-    setBizComponentData
+    setBizComponentData,
   );
 
   const [appynListData, setAppynListData] = React.useState([
@@ -142,24 +143,24 @@ const EA_A2000: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_USERS")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_USERS"),
       );
 
       const appynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_appyn")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_appyn"),
       );
 
       const pgmgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA002")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_EA002"),
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005"),
       );
       const applineQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA004")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_EA004"),
       );
       const appgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA001")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_EA001"),
       );
 
       fetchQuery(userQueryStr, setPersonListData);
@@ -208,15 +209,15 @@ const EA_A2000: React.FC = () => {
 
   //그리드 데이터 결과값
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
+    process([], mainDataState),
   );
 
   const [detail1DataResult, setDetail1DataResult] = useState<DataResult>(
-    process([], detail1DataState)
+    process([], detail1DataState),
   );
 
   const [detail2DataResult, setDetail2DataResult] = useState<DataResult>(
-    process([], detail2DataState)
+    process([], detail2DataState),
   );
 
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -536,7 +537,7 @@ const EA_A2000: React.FC = () => {
 
       setSelectedState(newSelectedState);
     },
-    []
+    [],
   );
 
   //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
@@ -736,7 +737,7 @@ const EA_A2000: React.FC = () => {
     const dataItem: { [name: string]: any } = mainDataResult.data.filter(
       (item: any) => {
         return selectedState[item[DATA_ITEM_KEY]];
-      }
+      },
     );
     if (dataItem.length === 0) {
       alert(findMessage(messagesData, "EA_A2000W_002"));
@@ -867,39 +868,34 @@ const EA_A2000: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th data-control-name="lblInsertdt">
-                {wordInfoData !== null
-                  ? wordInfoData.find(
-                      (item: any) => item.controlName === "lblInsertdt"
-                    ).wordText
-                  : "작성일자"}
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblInsertdt"
+                  altText="작성일자"
+                />
               </th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="ymdStartDt"
-                    value={filters.ymdStartDt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.ymdStartDt,
+                      end: filters.ymdEndDt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        ymdStartDt: e.value.start,
+                        ymdEndDt: e.value.end,
+                      }))
+                    }
                   />
-                  ~
-                  <DatePicker
-                    name="ymdEndDt"
-                    value={filters.ymdEndDt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                  />
-                </div>
-              </td>
-
-              <th data-control-name="lblDptcd">
-                {wordInfoData !== null
-                  ? wordInfoData.find(
-                      (item: any) => item.controlName === "lblDptcd"
-                    ).wordText
-                  : "부서"}
+                </td>
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblDptcd"
+                  altText="부서"
+                />
               </th>
               <td>
                 {bizComponentData !== null && (
@@ -915,12 +911,12 @@ const EA_A2000: React.FC = () => {
                 )}
               </td>
 
-              <th data-control-name="lblPerson">
-                {wordInfoData !== null
-                  ? wordInfoData.find(
-                      (item: any) => item.controlName === "lblPerson"
-                    ).wordText
-                  : "담당자"}
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblPerson"
+                  altText="담당자"
+                />
               </th>
               <td>
                 {bizComponentData !== null && (
@@ -936,12 +932,12 @@ const EA_A2000: React.FC = () => {
                 )}
               </td>
 
-              <th data-control-name="lblPgmgb">
-                {wordInfoData !== null
-                  ? wordInfoData.find(
-                      (item: any) => item.controlName === "lblPgmgb"
-                    ).wordText
-                  : "결재문서"}
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblPgmgb"
+                  altText="결재문서"
+                />
               </th>
               <td>
                 {bizComponentData !== null && (
@@ -954,15 +950,33 @@ const EA_A2000: React.FC = () => {
                   />
                 )}
               </td>
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblStddiv"
+                  altText="근태구분"
+                />
+              </th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="cboStddiv"
+                    value={filters.cboStddiv}
+                    bizComponentId="L_HU089"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
             </tr>
 
             <tr>
-              <th data-control-name="lblWorkType">
-                {wordInfoData !== null
-                  ? wordInfoData.find(
-                      (item: any) => item.controlName === "lblWorkType"
-                    ).wordText
-                  : "표시형식"}
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblWorkType"
+                  altText="표시형식"
+                />
               </th>
               <td colSpan={3}>
                 {customOptionData !== null && (
@@ -984,12 +998,12 @@ const EA_A2000: React.FC = () => {
                   // <RadioGroup name="radWorkType" data={RADIO_GROUP_DEFAULT_DATA} />
                 )}
               </td>
-              <th data-control-name="lblappnm">
-                {wordInfoData !== null
-                  ? wordInfoData.find(
-                      (item: any) => item.controlName === "lblappnm"
-                    ).wordText
-                  : "결재제목"}
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblappnm"
+                  altText="결재제목"
+                />
               </th>
               <td>
                 <Input
@@ -1000,14 +1014,14 @@ const EA_A2000: React.FC = () => {
                 />
               </td>
 
-              <th data-control-name="lblAppyn">
-                {wordInfoData !== null
-                  ? wordInfoData.find(
-                      (item: any) => item.controlName === "lblAppyn"
-                    ).wordText
-                  : "결재유무"}
+              <th>
+                <WordText
+                  wordInfoData={wordInfoData}
+                  controlName="lblAppyn"
+                  altText="결재유무"
+                />
               </th>
-              <td>
+              <td colSpan={3}>
                 {customOptionData !== null && (
                   <CommonRadioGroup
                     name="radAppyn"
@@ -1026,24 +1040,6 @@ const EA_A2000: React.FC = () => {
                   />
                 )}
               </td>
-              <th data-control-name="lblStddiv">
-                {wordInfoData !== null
-                  ? wordInfoData.find(
-                      (item: any) => item.controlName === "lblStddiv"
-                    ).wordText
-                  : "근태구분"}
-              </th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="cboStddiv"
-                    value={filters.cboStddiv}
-                    bizComponentId="L_HU089"
-                    bizComponentData={bizComponentData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
             </tr>
           </tbody>
         </FilterBox>
@@ -1059,8 +1055,12 @@ const EA_A2000: React.FC = () => {
                 }}
               >
                 <GridTitleContainer>
-                  <GridTitle data-control-name="grtlMyList">
-                    개인결재현황
+                  <GridTitle>
+                    <WordText
+                      wordInfoData={wordInfoData}
+                      controlName="grtlMyList"
+                      altText="개인결재현황"
+                    />
                   </GridTitle>
                 </GridTitleContainer>
                 <Grid
@@ -1069,17 +1069,17 @@ const EA_A2000: React.FC = () => {
                     mainDataResult.data.map((row) => ({
                       ...row,
                       person: personListData.find(
-                        (item: any) => item.code === row.person
+                        (item: any) => item.code === row.person,
                       )?.name,
                       appyn: appynListData.find(
-                        (item: any) => item.code === row.appyn
+                        (item: any) => item.code === row.appyn,
                       )?.name,
                       pgmgb: pgmgbListData.find(
-                        (item: any) => item.sub_code === row.pgmgb
+                        (item: any) => item.sub_code === row.pgmgb,
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
-                    mainDataState
+                    mainDataState,
                   )}
                   {...mainDataState}
                   onDataStateChange={onMainDataStateChange}
@@ -1135,7 +1135,7 @@ const EA_A2000: React.FC = () => {
                                 }
                                 locked={item.fixed === "None" ? false : true}
                               />
-                            )
+                            ),
                         )
                     : gridList
                         .find((grid: TGrid) => grid.gridName === "grdMyList")
@@ -1174,8 +1174,12 @@ const EA_A2000: React.FC = () => {
                 }}
               >
                 <GridTitleContainer>
-                  <GridTitle data-control-name="grtlUndecideList">
-                    미결함
+                  <GridTitle>
+                    <WordText
+                      wordInfoData={wordInfoData}
+                      controlName="grtlUndecideList"
+                      altText="미결함"
+                    />
                   </GridTitle>
 
                   {permissions && (
@@ -1211,17 +1215,17 @@ const EA_A2000: React.FC = () => {
                     mainDataResult.data.map((row) => ({
                       ...row,
                       person: personListData.find(
-                        (item: any) => item.code === row.person
+                        (item: any) => item.code === row.person,
                       )?.name,
                       appyn: appynListData.find(
-                        (item: any) => item.code === row.appyn
+                        (item: any) => item.code === row.appyn,
                       )?.name,
                       pgmgb: pgmgbListData.find(
-                        (item: any) => item.sub_code === row.pgmgb
+                        (item: any) => item.sub_code === row.pgmgb,
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
-                    mainDataState
+                    mainDataState,
                   )}
                   {...mainDataState}
                   onDataStateChange={onMainDataStateChange}
@@ -1251,7 +1255,7 @@ const EA_A2000: React.FC = () => {
                     width="45px"
                     headerSelectionValue={
                       mainDataResult.data.findIndex(
-                        (item: any) => !selectedState[idGetter(item)]
+                        (item: any) => !selectedState[idGetter(item)],
                       ) === -1
                     }
                   />
@@ -1290,11 +1294,11 @@ const EA_A2000: React.FC = () => {
                                 }
                                 locked={item.fixed === "None" ? false : true}
                               />
-                            )
+                            ),
                         )
                     : gridList
                         .find(
-                          (grid: TGrid) => grid.gridName === "grdUndecideList"
+                          (grid: TGrid) => grid.gridName === "grdUndecideList",
                         )
                         ?.columns.map((item: TColumn, idx: number) => (
                           <GridColumn
@@ -1332,8 +1336,12 @@ const EA_A2000: React.FC = () => {
                 }}
               >
                 <GridTitleContainer>
-                  <GridTitle data-control-name="grtlAlreadyList">
-                    기결함
+                  <GridTitle>
+                    <WordText
+                      wordInfoData={wordInfoData}
+                      controlName="grtlAlreadyList"
+                      altText="기결함"
+                    />
                   </GridTitle>
                 </GridTitleContainer>
                 <Grid
@@ -1342,17 +1350,17 @@ const EA_A2000: React.FC = () => {
                     mainDataResult.data.map((row) => ({
                       ...row,
                       person: personListData.find(
-                        (item: any) => item.code === row.person
+                        (item: any) => item.code === row.person,
                       )?.name,
                       appyn: appynListData.find(
-                        (item: any) => item.code === row.appyn
+                        (item: any) => item.code === row.appyn,
                       )?.name,
                       pgmgb: pgmgbListData.find(
-                        (item: any) => item.sub_code === row.pgmgb
+                        (item: any) => item.sub_code === row.pgmgb,
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
-                    mainDataState
+                    mainDataState,
                   )}
                   {...mainDataState}
                   onDataStateChange={onMainDataStateChange}
@@ -1409,11 +1417,11 @@ const EA_A2000: React.FC = () => {
                                 }
                                 locked={item.fixed === "None" ? false : true}
                               />
-                            )
+                            ),
                         )
                     : gridList
                         .find(
-                          (grid: TGrid) => grid.gridName === "grdAlreadyList"
+                          (grid: TGrid) => grid.gridName === "grdAlreadyList",
                         )
                         ?.columns.map((item: TColumn, idx: number) => (
                           <GridColumn
@@ -1450,8 +1458,12 @@ const EA_A2000: React.FC = () => {
                 }}
               >
                 <GridTitleContainer>
-                  <GridTitle data-control-name="grtlRefChkList">
-                    참조자확인
+                  <GridTitle>
+                    <WordText
+                      wordInfoData={wordInfoData}
+                      controlName="grtlRefChkList"
+                      altText="참조자확인"
+                    />
                   </GridTitle>
                 </GridTitleContainer>
                 <Grid
@@ -1460,17 +1472,17 @@ const EA_A2000: React.FC = () => {
                     mainDataResult.data.map((row) => ({
                       ...row,
                       person: personListData.find(
-                        (item: any) => item.code === row.person
+                        (item: any) => item.code === row.person,
                       )?.name,
                       appyn: appynListData.find(
-                        (item: any) => item.code === row.appyn
+                        (item: any) => item.code === row.appyn,
                       )?.name,
                       pgmgb: pgmgbListData.find(
-                        (item: any) => item.sub_code === row.pgmgb
+                        (item: any) => item.sub_code === row.pgmgb,
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
-                    mainDataState
+                    mainDataState,
                   )}
                   {...mainDataState}
                   onDataStateChange={onMainDataStateChange}
@@ -1527,11 +1539,11 @@ const EA_A2000: React.FC = () => {
                                 }
                                 locked={item.fixed === "None" ? false : true}
                               />
-                            )
+                            ),
                         )
                     : gridList
                         .find(
-                          (grid: TGrid) => grid.gridName === "grdRefChkList"
+                          (grid: TGrid) => grid.gridName === "grdRefChkList",
                         )
                         ?.columns.map((item: TColumn, idx: number) => (
                           <GridColumn
@@ -1562,7 +1574,13 @@ const EA_A2000: React.FC = () => {
           <GridContainerWrap>
             <GridContainer width={`55%`}>
               <GridTitleContainer>
-                <GridTitle data-control-name="grtlLineList">결재자</GridTitle>
+                <GridTitle>
+                  <WordText
+                    wordInfoData={wordInfoData}
+                    controlName="grtlLineList"
+                    altText="결재자"
+                  />
+                </GridTitle>
               </GridTitleContainer>
               <Grid
                 style={{ height: "20vh" }}
@@ -1570,17 +1588,17 @@ const EA_A2000: React.FC = () => {
                   detail1DataResult.data.map((row) => ({
                     ...row,
                     resno: personListData.find(
-                      (item: any) => item.code === row.resno
+                      (item: any) => item.code === row.resno,
                     )?.name,
                     postcd: postcdListData.find(
-                      (item: any) => item.sub_code === row.postcd
+                      (item: any) => item.sub_code === row.postcd,
                     )?.code_name,
                     appline: applineListData.find(
-                      (item: any) => item.sub_code === row.appline
+                      (item: any) => item.sub_code === row.appline,
                     )?.code_name,
                     [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
                   })),
-                  detail1DataState
+                  detail1DataState,
                 )}
                 {...detail1DataState}
                 onDataStateChange={onDetail1DataStateChange}
@@ -1633,7 +1651,7 @@ const EA_A2000: React.FC = () => {
                               }
                               locked={item.fixed === "None" ? false : true}
                             />
-                          )
+                          ),
                       )
                   : gridList
                       .find((grid: TGrid) => grid.gridName === "grdLineList")
@@ -1662,7 +1680,13 @@ const EA_A2000: React.FC = () => {
               </Grid>
 
               <GridTitleContainer>
-                <GridTitle data-control-name="grtlRefList">참조자</GridTitle>
+                <GridTitle>
+                  <WordText
+                    wordInfoData={wordInfoData}
+                    controlName="grtlRefList"
+                    altText="참조자"
+                  />
+                </GridTitle>
               </GridTitleContainer>
               <Grid
                 style={{ height: "21vh" }}
@@ -1670,17 +1694,17 @@ const EA_A2000: React.FC = () => {
                   detail2DataResult.data.map((row) => ({
                     ...row,
                     resno: personListData.find(
-                      (item: any) => item.code === row.resno
+                      (item: any) => item.code === row.resno,
                     )?.name,
                     postcd: postcdListData.find(
-                      (item: any) => item.sub_code === row.postcd
+                      (item: any) => item.sub_code === row.postcd,
                     )?.code_name,
                     appgb: appgbListData.find(
-                      (item: any) => item.sub_code === row.appgb
+                      (item: any) => item.sub_code === row.appgb,
                     )?.code_name,
                     [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
                   })),
-                  detail2DataState
+                  detail2DataState,
                 )}
                 {...detail2DataState}
                 onDataStateChange={onDetail2DataStateChange}
@@ -1722,7 +1746,7 @@ const EA_A2000: React.FC = () => {
                               }
                               locked={item.fixed === "None" ? false : true}
                             />
-                          )
+                          ),
                       )
                   : gridList
                       .find((grid: TGrid) => grid.gridName === "grdRefList")
@@ -1763,8 +1787,12 @@ const EA_A2000: React.FC = () => {
           width={`calc(40% - ${GAP}px)`}
         >
           <GridTitleContainer>
-            <GridTitle data-control-name="grtlPreview">
-              결재문서 미리보기
+            <GridTitle>
+              <WordText
+                wordInfoData={wordInfoData}
+                controlName="grtlPreview"
+                altText="결재문서 미리보기"
+              />
             </GridTitle>
           </GridTitleContainer>
           <GridContainer
@@ -1798,8 +1826,8 @@ const EA_A2000: React.FC = () => {
       )}
 
       {/* 컨트롤 네임 불러오기 용 */}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

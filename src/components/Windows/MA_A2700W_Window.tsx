@@ -96,6 +96,10 @@ type TItemInfo = {
   insiz: string;
   bnatur: string;
   spec: string;
+  invunitnm: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
 };
 const defaultItemInfo = {
   itemcd: "",
@@ -104,6 +108,10 @@ const defaultItemInfo = {
   insiz: "",
   bnatur: "",
   spec: "",
+  invunitnm: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
 };
 
 type Idata = {
@@ -233,8 +241,30 @@ const ColumnCommandCell = (props: GridCellProps) => {
     setItemWindowVisible2(true);
   };
   const setItemData2 = (data: IItemData) => {
-    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
-    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+    const {
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    } = data;
+    setItemInfo({
+      itemcd,
+      itemnm,
+      insiz,
+      itemacnt,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    });
   };
   const defaultRendering = (
     <td
@@ -321,31 +351,88 @@ const CopyWindow = ({
     fetchMainGrid();
   }, [reload]);
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA015",
+    //사용자, 공정
+    setBizComponentData
+  );
+
+  //공통코드 리스트 조회 ()
+  const [qtyunitListData, setQtyunitListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
   useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemInfo.itemcd,
-            itemnm: itemInfo.itemnm,
-            itemacnt: itemInfo.itemacnt,
-            insiz: itemInfo.insiz,
-            bnatur: itemInfo.bnatur,
-            spec: itemInfo.spec,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (bizComponentData != null) {
+      const qtyunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+      );
+
+      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (bizComponentData != null) {
+      const newData = mainDataResult.data.map((item) =>
+        item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+          ? {
+              ...item,
+              itemcd: itemInfo.itemcd,
+              itemnm: itemInfo.itemnm,
+              itemacnt: itemInfo.itemacnt,
+              insiz: itemInfo.insiz,
+              bnatur: itemInfo.bnatur,
+              spec: itemInfo.spec,
+              qtyunit:
+                qtyunitListData.find(
+                  (item: any) => item.code_name === itemInfo.invunitnm
+                )?.sub_code != null
+                  ? qtyunitListData.find(
+                      (item: any) => item.code_name === itemInfo.invunitnm
+                    )?.sub_code
+                  : itemInfo.invunitnm,
+              itemlvl1: itemInfo.itemlvl1,
+              itemlvl2: itemInfo.itemlvl2,
+              itemlvl3: itemInfo.itemlvl3,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   }, [itemInfo]);
 
   //customOptionData 조회 후 디폴트 값 세팅
@@ -419,8 +506,30 @@ const CopyWindow = ({
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
         if (rowCount > 0) {
-          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
-          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+          const invunitnm = rows[0].invunit;
+          const {
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          } = rows[0];
+          setItemInfo({
+            itemcd,
+            itemnm,
+            insiz,
+            itemacnt,
+            bnatur,
+            spec,
+            invunitnm,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          });
         } else {
           const newData = mainDataResult.data.map((item: any) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -432,6 +541,10 @@ const CopyWindow = ({
                   itemacnt: "",
                   bnatur: "",
                   spec: "",
+                  qtyunit: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -720,7 +833,7 @@ const CopyWindow = ({
 
     setMainDataResult((prev) => {
       return {
-           data: [newDataItem, ...prev.data],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
@@ -1127,7 +1240,6 @@ const CopyWindow = ({
       data[i].num = seq;
       seq++;
     }
-
 
     try {
       data.map((item: any) => {
@@ -1555,18 +1667,21 @@ const CopyWindow = ({
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제"
                 ></Button>
                 <Button
                   themeColor={"primary"}
                   fillMode="outline"
                   onClick={onCopyClick}
                   icon="copy"
+                  title="행 복사"
                 ></Button>
                 <Button
                   themeColor={"primary"}
@@ -1613,7 +1728,10 @@ const CopyWindow = ({
                     row.rowstatus == undefined
                       ? ""
                       : row.rowstatus,
-                  enddt : typeof row.enddt === 'object' && row.enddt instanceof Date ? row.enddt : toDate(row.enddt),
+                  enddt:
+                    typeof row.enddt === "object" && row.enddt instanceof Date
+                      ? row.enddt
+                      : toDate(row.enddt),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState
@@ -1659,7 +1777,12 @@ const CopyWindow = ({
                 footerCell={mainTotalFooterCell}
                 cell={ColumnCommandCell}
               />
-              <GridColumn field="itemnm" title="품목명" headerCell={RequiredHeader} width="250px" />
+              <GridColumn
+                field="itemnm"
+                title="품목명"
+                headerCell={RequiredHeader}
+                width="250px"
+              />
               <GridColumn
                 field="itemlvl1"
                 title="대분류"

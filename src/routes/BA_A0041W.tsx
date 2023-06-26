@@ -34,7 +34,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   findMessage,
@@ -1726,18 +1726,21 @@ const BA_A0041W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="plus"
+                title="행 추가"
               ></Button>
               <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
               <Button
                 onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                title="저장"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1843,8 +1846,8 @@ const BA_A0041W: React.FC = () => {
           para={"BA_A0041W"}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

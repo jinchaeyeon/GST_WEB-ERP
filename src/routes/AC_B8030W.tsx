@@ -8,7 +8,6 @@ import {
   getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -23,7 +22,7 @@ import {
 } from "../CommonStyled";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -42,6 +41,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B8030W_C";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 const numberField = ["amt", "taxamt", "totamt", "acseq1", "acseq2"];
@@ -376,26 +376,21 @@ const AC_B8030W: React.FC = () => {
                 )}
               </td>
               <th>기준일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="fdate"
-                    value={filters.fdate}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="tdate"
-                    value={filters.tdate}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
+              <td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.fdate,
+                    end: filters.tdate,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      fdate: e.value.start,
+                      tdate: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
               </td>
               <th>매입매출</th>
               <td>
@@ -509,8 +504,8 @@ const AC_B8030W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

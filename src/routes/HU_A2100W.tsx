@@ -25,7 +25,7 @@ import {
 } from "../CommonStyled";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   UseBizComponent,
@@ -821,18 +821,21 @@ const HU_A2100W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="plus"
+                title="행 추가"
               ></Button>
               <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
+                title="행 삭제"
               ></Button>
               <Button
                 onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                title="저장"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -902,8 +905,8 @@ const HU_A2100W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -13,9 +12,8 @@ import {
   GridItemChangeEvent,
   GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/MA_A3000W_C";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -36,7 +34,7 @@ import {
   Input,
 } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -73,6 +71,7 @@ import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 import MA_A3000W_Window from "../components/Windows/MA_A3000W_Window";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 let deletedMainRows: object[] = [];
 const DATA_ITEM_KEY = "num";
@@ -1092,14 +1091,14 @@ const MA_A3000W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A2000W_001");
+        throw findMessage(messagesData, "MA_A3000W_002");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A2000W_001");
+        throw findMessage(messagesData, "MA_A3000W_002");
       } else {
         resetAllGrid();
       }
@@ -2082,27 +2081,22 @@ const MA_A3000W: React.FC = () => {
             </tr>
             <tr>
               <th>구입일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>출하처코드</th>
               <td>
                 <div className="filter-item-wrap">
@@ -2295,18 +2289,21 @@ const MA_A3000W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="plus"
+              title="행 추가"
             ></Button>
             <Button
               onClick={onDeleteClick2}
               fillMode="outline"
               themeColor={"primary"}
               icon="minus"
+              title="행 삭제" 
             ></Button>
             <Button
               onClick={onSave2}
               fillMode="outline"
               themeColor={"primary"}
               icon="save"
+              title="저장"
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>
@@ -2425,8 +2422,8 @@ const MA_A3000W: React.FC = () => {
           setData={setCopyData}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

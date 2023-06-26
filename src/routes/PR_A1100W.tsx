@@ -11,7 +11,6 @@ import {
   GridCellProps,
   GridHeaderSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -33,7 +32,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useSetRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   checkIsDDLValid,
   chkScrollHandler,
@@ -69,6 +68,7 @@ import { isLoading } from "../store/atoms";
 import TopButtons from "../components/Buttons/TopButtons";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { bytesToBase64 } from "byte-base64";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "ordkey";
@@ -1861,9 +1861,29 @@ const PR_A1100W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
-    fetchPlanGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_A1100W_007");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_A1100W_007");
+      } else {
+        resetAllGrid();
+        fetchMainGrid();
+        fetchPlanGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
   return (
     <>
@@ -1885,25 +1905,21 @@ const PR_A1100W: React.FC = () => {
           <tbody>
             <tr>
               <th>수주일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    defaultValue={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    defaultValue={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -2222,18 +2238,21 @@ const PR_A1100W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="plus"
+                      title="행 추가"
                     ></Button>
                     <Button
                       onClick={onRemovePlanClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
+                      title="행 삭제" 
                     ></Button>
                     <Button
                       onClick={onSavePlanClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      title="저장"
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -2347,18 +2366,21 @@ const PR_A1100W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="plus"
+                    title="행 추가"
                   ></Button>
                   <Button
                     onClick={onRemoveMaterialClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
+                    title="행 삭제" 
                   ></Button>
                   <Button
                     onClick={onSaveMtrClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    title="저장"
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2471,8 +2493,8 @@ const PR_A1100W: React.FC = () => {
       )}
 
       {/* 컨트롤 네임 불러오기 용 */}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

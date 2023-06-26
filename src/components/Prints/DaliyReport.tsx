@@ -1,18 +1,20 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
-import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
+import { ButtonContainer, DeliyReportPrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
 import { UseGetValueFromSessionItem, convertDateToStr, numberWithCommas } from "../CommonFunction";
 import ReactToPrint from "react-to-print";
 import { Button } from "@progress/kendo-react-buttons";
 import { DataResult, process, State } from "@progress/kendo-data-query";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../../store/atoms";
 
 const DaliyReport = (filters: any) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const setLoading = useSetRecoilState(isLoading);
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -43,12 +45,13 @@ const DaliyReport = (filters: any) => {
   const fetchMainGrid = async () => {
     // if (!permissions?.view) return;
     let data: any;
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
-
+ 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -62,6 +65,7 @@ const DaliyReport = (filters: any) => {
         });
       }
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -74,7 +78,7 @@ const DaliyReport = (filters: any) => {
   const componentRef = useRef(null);
 
   return (
-    <LandscapePrint>
+    <DeliyReportPrint>
       <ButtonContainer>
         <></>
         <ReactToPrint
@@ -88,8 +92,8 @@ const DaliyReport = (filters: any) => {
       </ButtonContainer>
 
       <div
-        id="WorkDailyReport"
-        className="printable landscape"
+        id="DailyReport"
+        className="printable portrait"
         ref={componentRef}
       >
         <div className="title_container">
@@ -177,7 +181,7 @@ const DaliyReport = (filters: any) => {
             )
           )}
       </div>
-    </LandscapePrint>
+    </DeliyReportPrint>
   );
 };
 

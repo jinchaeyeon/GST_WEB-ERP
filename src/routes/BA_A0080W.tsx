@@ -40,7 +40,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -86,18 +86,24 @@ export const FormContext = createContext<{
 type TItemInfo = {
   itemcd: string;
   itemnm: string;
-  itemacnt: string;
   insiz: string;
   bnatur: string;
   spec: string;
+  invunitnm: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
 };
 const defaultItemInfo = {
   itemcd: "",
   itemnm: "",
-  itemacnt: "",
   insiz: "",
   bnatur: "",
   spec: "",
+  invunitnm: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
 };
 
 const DATA_ITEM_KEY = "num";
@@ -206,8 +212,28 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
 
   const setItemData2 = (data: IItemData) => {
-    const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = data;
-    setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+    const {
+      itemcd,
+      itemnm,
+      insiz,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    } = data;
+    setItemInfo({
+      itemcd,
+      itemnm,
+      insiz,
+      bnatur,
+      spec,
+      invunitnm,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+    });
   };
 
   const defaultRendering = (
@@ -294,7 +320,7 @@ const BA_A0080: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA171, L_BA172, L_BA173",
+    "L_BA015, L_BA171, L_BA172, L_BA173",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -305,6 +331,9 @@ const BA_A0080: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
 
@@ -319,7 +348,11 @@ const BA_A0080: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
+      const qtyunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+      );
 
+      fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
@@ -333,10 +366,20 @@ const BA_A0080: React.FC = () => {
             ...item,
             itemcd: itemInfo.itemcd,
             itemnm: itemInfo.itemnm,
-            itemacnt: itemInfo.itemacnt,
             insiz: itemInfo.insiz,
             bnatur: itemInfo.bnatur,
             spec: itemInfo.spec,
+            qtyunit:
+              qtyunitListData.find(
+                (item: any) => item.code_name === itemInfo.invunitnm
+              )?.sub_code != null
+                ? qtyunitListData.find(
+                    (item: any) => item.code_name === itemInfo.invunitnm
+                  )?.sub_code
+                : itemInfo.invunitnm,
+            itemlvl1: itemInfo.itemlvl1,
+            itemlvl2: itemInfo.itemlvl2,
+            itemlvl3: itemInfo.itemlvl3,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
@@ -492,7 +535,7 @@ const BA_A0080: React.FC = () => {
 
       const totalRowCnt2 = data.tables[0].RowCount;
       const rows2 = data.tables[0].Rows;
-
+ 
       if (totalRowCnt2 > 0) {
         setSubDataResult((prev) => {
           return {
@@ -530,8 +573,28 @@ const BA_A0080: React.FC = () => {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
         if (rowCount > 0) {
-          const { itemcd, itemnm, insiz, itemacnt, bnatur, spec } = rows[0];
-          setItemInfo({ itemcd, itemnm, insiz, itemacnt, bnatur, spec });
+          const invunitnm = rows[0].invunit;
+          const {
+            itemcd,
+            itemnm,
+            insiz,
+            bnatur,
+            spec,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          } = rows[0];
+          setItemInfo({
+            itemcd,
+            itemnm,
+            insiz,
+            bnatur,
+            spec,
+            invunitnm,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+          });
         } else {
           const newData = mainDataResult.data.map((item: any) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -540,9 +603,12 @@ const BA_A0080: React.FC = () => {
                   itemcd: item.itemcd,
                   itemnm: "",
                   insiz: "",
-                  itemacnt: "",
                   bnatur: "",
                   spec: "",
+                  qtyunit: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -700,7 +766,6 @@ const BA_A0080: React.FC = () => {
     }
   };
 
-  
   const onCopyWndClick2 = () => {
     setCopyWindowVisible2(true);
   };
@@ -776,7 +841,7 @@ const BA_A0080: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.unpitem.push(unpitem == "" ? filters.unpitem : unpitem);
       dataArr.itemcd.push(itemcd);
-      dataArr.unp.push(unp);
+      dataArr.unp.push(unp == 0 ? 1 : unp);
       dataArr.itemacnt.push(filters.itemacnt);
       dataArr.remark.push(remark);
       dataArr.recdt.push(convertDateToStr(new Date()));
@@ -1016,7 +1081,8 @@ const BA_A0080: React.FC = () => {
             item.num != items.num &&
             item.itemcd == items.itemcd &&
             item.recdt == items.recdt &&
-            item.itemnm == items.itemnm
+            item.itemnm == items.itemnm &&
+            item.itemacnt == items.itemacnt 
           ) {
             throw findMessage(messagesData, "BA_A0080W_006");
           }
@@ -1324,6 +1390,7 @@ const BA_A0080: React.FC = () => {
                 fillMode="outline"
                 onClick={onCopyWndClick2}
                 icon="copy"
+                title="단가복사"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1401,24 +1468,29 @@ const BA_A0080: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="plus"
+                    title="행 추가"
+                    disabled={filters.itemacnt == "" ? true : false}
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
+                    title="행 삭제"
                   ></Button>
                   <Button
                     themeColor={"primary"}
                     fillMode="outline"
                     onClick={onCopyWndClick}
                     icon="folder-open"
+                    title="품목참조"
                   ></Button>
                   <Button
                     onClick={onSaveClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    title="저장"
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1542,13 +1614,9 @@ const BA_A0080: React.FC = () => {
           itemacnt={filters.itemacnt}
         />
       )}
-      {CopyWindowVisible2 && (
-        <CopyWindow2
-          setVisible={setCopyWindowVisible2}
-        />
-      )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {CopyWindowVisible2 && <CopyWindow2 setVisible={setCopyWindowVisible2} />}
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

@@ -28,7 +28,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -252,7 +252,7 @@ const PR_A9100W: React.FC = () => {
 
     setMainDataResult((prev) => {
       return {
-        data: [...prev.data, ...newData],
+        data: [...newData, ...prev.data],
         total: prev.total + data.length,
       };
     });
@@ -909,6 +909,7 @@ const PR_A9100W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
+                  title="행 추가"
                   disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
@@ -916,6 +917,7 @@ const PR_A9100W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
+                  title="행 삭제" 
                   disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
@@ -923,6 +925,7 @@ const PR_A9100W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  title="저장"
                   disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
@@ -1027,8 +1030,8 @@ const PR_A9100W: React.FC = () => {
       )}
 
       {/* 컨트롤 네임 불러오기 용 */}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
 import {
   Grid,
   GridColumn,
@@ -12,7 +11,6 @@ import {
   GridItemChangeEvent,
   GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -32,7 +30,7 @@ import {
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -63,6 +61,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { Checkbox } from "@progress/kendo-react-inputs";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 const dateField = ["indt"];
@@ -793,7 +792,27 @@ const PR_A5000W: React.FC = () => {
   }, [ParaData]);
 
   const onSearch = () => {
-    fetchDetailGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_A5000W_003");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "PR_A5000W_003");
+      } else {
+        fetchDetailGrid();
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const onRemove = () => {
@@ -955,6 +974,7 @@ const PR_A5000W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                title="저장"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1049,23 +1069,21 @@ const PR_A5000W: React.FC = () => {
                 <tr>
                   <th>기준일자</th>
                   <td>
-                    <DatePicker
-                      name="frdt"
-                      value={filters.frdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
-                  </td>
-                  <td>
-                    <DatePicker
-                      name="todt"
-                      value={filters.todt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
-                  </td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
+                </td>
                 </tr>
               </tbody>
             </FormBox>
@@ -1076,6 +1094,7 @@ const PR_A5000W: React.FC = () => {
               fillMode="outline"
               onClick={onPrint}
               icon="print"
+              title="미리보기" 
               style={{ marginRight: "5px" }}
             ></Button>
             <Button
@@ -1083,12 +1102,14 @@ const PR_A5000W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="delete"
+              title="삭제" 
               style={{ marginRight: "5px" }}
             ></Button>
             <Button
               onClick={onSearch}
               themeColor={"primary"}
               icon="search"
+              title="조회" 
             ></Button>
           </div>
         </GridTitleContainer>
@@ -1175,8 +1196,8 @@ const PR_A5000W: React.FC = () => {
           }
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

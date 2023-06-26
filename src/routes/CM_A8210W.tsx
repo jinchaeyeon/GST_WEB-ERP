@@ -27,11 +27,13 @@ import {
   ButtonContainer,
   GridTitleContainer,
   GridContainerWrap,
+  FormBoxWrap,
+  FormBox,
 } from "../CommonStyled";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -46,6 +48,7 @@ import {
   UseGetValueFromSessionItem,
   setDefaultDate,
   toDate,
+  findMessage,
 } from "../components/CommonFunction";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
@@ -66,6 +69,7 @@ import { TabStrip } from "@progress/kendo-react-layout/dist/npm/tabstrip/TabStri
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { Input } from "@progress/kendo-react-inputs";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
@@ -542,9 +546,29 @@ const CM_A8210W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
-    deletedMainRows = [];
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A8210W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A8210W_001");
+      } else {
+        resetAllGrid();
+        fetchMainGrid();
+        deletedMainRows = [];
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const enterEdit = (dataItem: any, field: string) => {
@@ -1092,26 +1116,21 @@ const CM_A8210W: React.FC = () => {
                 <tr>
                   <th>일자</th>
                   <td>
-                    <div className="filter-item-wrap">
-                      <DatePicker
-                        name="frdt"
-                        value={filters.frdt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                      ~
-                      <DatePicker
-                        name="todt"
-                        value={filters.todt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                    </div>
-                  </td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
+                </td>
                   <th></th>
                   <td></td>
                 </tr>
@@ -1170,9 +1189,32 @@ const CM_A8210W: React.FC = () => {
             <GridContainer width={`calc(85% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>상세정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제" 
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </ButtonContainer>
               </GridTitleContainer>
-              <FilterContainer>
-                <FilterBox>
+              <FormBoxWrap border={true}>
+                <FormBox>
                   <tbody>
                     <tr>
                       <th>입력일자</th>
@@ -1190,34 +1232,14 @@ const CM_A8210W: React.FC = () => {
                       </td>
                     </tr>
                   </tbody>
-                </FilterBox>
-              </FilterContainer>
+                </FormBox>
+              </FormBoxWrap>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
                   _export = exporter;
                 }}
               >
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="plus"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  ></Button>
-                </ButtonContainer>
                 <Grid
                   style={{ height: "67vh" }}
                   data={process(
@@ -1303,26 +1325,21 @@ const CM_A8210W: React.FC = () => {
                 <tr>
                   <th>일자</th>
                   <td>
-                    <div className="filter-item-wrap">
-                      <DatePicker
-                        name="frdt"
-                        value={filters.frdt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                      ~
-                      <DatePicker
-                        name="todt"
-                        value={filters.todt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                    </div>
-                  </td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
+                </td>
                   <th>설비</th>
                   <td>
                     {customOptionData !== null && (
@@ -1402,9 +1419,32 @@ const CM_A8210W: React.FC = () => {
             <GridContainer width={`calc(85% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>상세정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제" 
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </ButtonContainer>
               </GridTitleContainer>
-              <FilterContainer>
-                <FilterBox>
+              <FormBoxWrap border={true}>
+                <FormBox>
                   <tbody>
                     <tr>
                       <th>입력일자</th>
@@ -1422,34 +1462,14 @@ const CM_A8210W: React.FC = () => {
                       </td>
                     </tr>
                   </tbody>
-                </FilterBox>
-              </FilterContainer>
+                </FormBox>
+              </FormBoxWrap>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
                   _export = exporter;
                 }}
               >
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="plus"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  ></Button>
-                </ButtonContainer>
                 <Grid
                   style={{ height: "67vh" }}
                   data={process(
@@ -1529,8 +1549,8 @@ const CM_A8210W: React.FC = () => {
           </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

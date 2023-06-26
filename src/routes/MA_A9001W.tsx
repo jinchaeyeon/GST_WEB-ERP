@@ -37,7 +37,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -76,6 +76,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import CenterCell from "../components/Cells/CenterCell";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 const dateField = ["purdt", "actdt", "paydt"];
@@ -310,6 +311,8 @@ const MA_A9001W: React.FC = () => {
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
+  const [detailWindowVisible, setDetailWindowVisible] =
+  useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [MA_A9001WVisible, setMA_A9001WVisible] = useState<boolean>(false);
   const [workType, setWorkType] = useState<"N" | "U">("U");
@@ -1096,7 +1099,7 @@ const MA_A9001W: React.FC = () => {
     } else {
       selectRows.map((item: any) => {
         if (item.exceptyn == "Y") {
-          alert("직접 입력인 경우 매입 전표 해제가 불가능합니다.");
+          alert("직접 입력인 경우 매입 전표 생성가 불가능합니다.");
           valid = false;
           return false;
         }
@@ -1602,7 +1605,7 @@ const MA_A9001W: React.FC = () => {
     } else {
       selectRows.map((item: any) => {
         if (item.exceptyn == "Y") {
-          alert("직접 입력인 경우 매입 전표 해제가 불가능합니다.");
+          alert("직접 입력인 경우 매입 전표 생성가 불가능합니다.");
           valid = false;
           return false;
         }
@@ -1712,14 +1715,14 @@ const MA_A9001W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A2400W_001");
+        throw findMessage(messagesData, "MA_A9001W_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A2400W_001");
+        throw findMessage(messagesData, "MA_A9001W_001");
       } else {
         resetAllGrid();
         setFilters((prev) => ({
@@ -2156,8 +2159,7 @@ const MA_A9001W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(paraDatas);
-    console.log(data)
+
     if (data.isSuccess === true) {
       resetAllGrid();
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
@@ -2167,6 +2169,12 @@ const MA_A9001W: React.FC = () => {
     }
     setLoading(false);
   };
+
+  const onAddClick = () => {
+    setWorkType("N");
+    setDetailWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -2187,27 +2195,22 @@ const MA_A9001W: React.FC = () => {
           <tbody>
             <tr>
               <th>계산서일자</th>
-              <td colSpan={3}>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
+              <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
                     className="required"
-                    placeholder=""
                   />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
-              </td>
+                </td>
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (
@@ -2344,6 +2347,14 @@ const MA_A9001W: React.FC = () => {
                 icon="minus-outline"
               >
                 지급 전표 해제
+              </Button>
+              <Button
+                onClick={onAddClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                매입 E-TAX(전표) 생성
               </Button>
               <Button
                 onClick={onDeleteClick2}
@@ -2947,8 +2958,8 @@ const MA_A9001W: React.FC = () => {
           reload={reload}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+     {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

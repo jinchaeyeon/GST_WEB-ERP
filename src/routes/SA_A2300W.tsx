@@ -10,7 +10,6 @@ import {
   GridFooterCellProps,
   GridCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -28,7 +27,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -61,7 +60,12 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, deletedAttadatnumsState, loginResultState } from "../store/atoms";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  loginResultState,
+} from "../store/atoms";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 
@@ -1297,25 +1301,20 @@ const SA_A2300: React.FC = () => {
                 )}
               </th>
               <td>
-                <div className="filter-item-wrap">
-                  <DatePicker
-                    name="frdt"
-                    value={filters.frdt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                  ~
-                  <DatePicker
-                    name="todt"
-                    value={filters.todt}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                  />
-                </div>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
               </td>
               <th>품목코드</th>
               <td>
@@ -1629,8 +1628,8 @@ const SA_A2300: React.FC = () => {
           setData={setItemData}
         />
       )}
-      {gridList.map((grid: any) =>
-        grid.columns.map((column: any) => (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
             id={column.id}

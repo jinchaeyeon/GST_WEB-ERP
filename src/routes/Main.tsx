@@ -272,8 +272,6 @@ const Main: React.FC = () => {
       lng = geoLocation.coordinates?.lng;
     }
 
-    console.log(lat, lng);
-
     const workTimeParaSaved: Iparameters = {
       procedureName: "P_HM_A1000W_S",
       pageNumber: 0,
