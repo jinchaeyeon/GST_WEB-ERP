@@ -111,6 +111,9 @@ input.readonly {
   width: inherit;
 }
 
+.k-daterange-picker .k-dateinput, .k-daterangepicker .k-dateinput{
+  width: 50% !important;
+}
 /* 모바일 결재문서 숨김 처리 */
 @media (max-width: 768px) {
   .visible-mobile-only {

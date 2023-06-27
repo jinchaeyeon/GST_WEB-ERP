@@ -89,25 +89,25 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_itemcd2",
         field: "itemcd",
-        caption: "제공품코드",
+        caption: "재공품코드",
         width: 120,
       },
       {
         id: "col_itemnm2",
         field: "itemnm",
-        caption: "제공품명",
+        caption: "재공품명",
         width: 120,
       },
       {
         id: "col_insiz2",
         field: "insiz",
-        caption: "제공품규격",
+        caption: "재공품규격",
         width: 120,
       },
       {
         id: "col_procqty",
         field: "procqty",
-        caption: "제공생산량",
+        caption: "재공생산량",
         width: 100,
       },
       {

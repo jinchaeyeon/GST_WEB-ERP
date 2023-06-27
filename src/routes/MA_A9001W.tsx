@@ -77,6 +77,7 @@ import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import CenterCell from "../components/Cells/CenterCell";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import MA_A9001W_IN_Window from "../components/Windows/MA_A9001W_IN_Window";
 
 const DATA_ITEM_KEY = "num";
 const dateField = ["purdt", "actdt", "paydt"];
@@ -195,11 +196,11 @@ const MA_A9001W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_AC014, L_AC401, L_AC406, L_sysUserMaster_001, R_Etax,R_INOUTDIV2, L_BA002, L_BA003, L_BA015, L_AC030T, L_BA061, L_AC001",
+    "L_AC013, L_AC401, L_AC406, L_sysUserMaster_001, R_Etax,R_INOUTDIV2, L_BA002, L_BA003, L_BA015, L_AC030T, L_BA061, L_AC001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
-
+ 
   //공통코드 리스트 조회 ()
   const [taxtypeListData, setTaxtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -220,7 +221,7 @@ const MA_A9001W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const taxtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC014")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_AC013")
       );
       const etaxQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_AC401")
@@ -312,11 +313,11 @@ const MA_A9001W: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [detailWindowVisible, setDetailWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [MA_A9001WVisible, setMA_A9001WVisible] = useState<boolean>(false);
   const [workType, setWorkType] = useState<"N" | "U">("U");
-
+  const [dataWindowVisible, setDataWindowVisible] = useState<boolean>(false);
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -1120,7 +1121,11 @@ const MA_A9001W: React.FC = () => {
   };
 
   const onSaveClick = (e: any) => {
-    fetchTodoGridSaved();
+    if(workType == "N") {
+      fetchTodoGridSaved3();
+    } else {
+      fetchTodoGridSaved();
+    }
   };
 
   //그리드 리셋
@@ -1416,6 +1421,79 @@ const MA_A9001W: React.FC = () => {
   };
   const onSubDataStateChange3 = (event: GridDataStateChangeEvent) => {
     setSubDataState3(event.dataState);
+  };
+
+  const setCopyData2 = (data: any) => {
+    setWorkType("N");
+    var qty = 0;
+    var splyamt = 0;
+    var taxamt = 0;
+    var seq = 0;
+    data.map((item: any) => {
+      qty = qty + item.qty;
+      splyamt = splyamt + item.wonamt;
+      taxamt = taxamt + item.taxamt;
+    });
+    setInfomation({
+      pgSize: PAGE_SIZE,
+      acntdiv: "",
+      acseq1: 0,
+      acseq2: 0,
+      actdt: new Date(),
+      actkey: "",
+      appnum: "",
+      appyn: "",
+      chk: "",
+      creditcd: "",
+      custcd: "",
+      custnm: "",
+      custregnum: "",
+      etax: "1",
+      etxyn: "",
+      exceptyn: "",
+      inoutdiv: "1",
+      insert_userid: "",
+      items: data[0].itemnm + " 외 " + data.length + "건",
+      janamt: 0,
+      location: "01",
+      orgdiv: "",
+      payactkey: "",
+      paydt: new Date(),
+      paymentamt: 0,
+      paymentnum: "",
+      paymeth: "",
+      position: "",
+      prtdiv: "",
+      qty: qty,
+      qtyunit: "",
+      remark: "",
+      reqdt: new Date(),
+      rtelno: "",
+      rtxisuyn: false,
+      seq: 0,
+      splyamt: splyamt,
+      taxamt: taxamt,
+      taxdt: new Date(),
+      taxnum: "",
+      taxtype: "110",
+      totamt: splyamt + taxamt,
+      unp: 0,
+      update_time: "",
+      update_userid: "",
+      wgt: 0,
+    });
+    const rows = data.map((prev: any) => ({
+      ...prev,
+      num : seq++
+    }));
+
+    setSubDataResult(process([], subDataState));
+    setSubDataResult((prev) => {
+      return {
+        data: rows,
+        total: data.length,
+      };
+    });
   };
 
   //그리드 푸터
@@ -1887,11 +1965,11 @@ const MA_A9001W: React.FC = () => {
       "@p_taxnum_s": ParaData.taxnum_s,
       "@p_acntnum_s": ParaData.acntnum_s,
       "@p_notenum_s": ParaData.notenum_s,
-      "@p_enddt_s":ParaData.enddt_s,
-      "@p_pubbank_s":ParaData.pubbank_s,
-      "@p_pubdt_s":ParaData.pubdt_s,
-      "@p_pubperson_s":ParaData.pubperson_s,
-      "@p_advanceinfo_s":ParaData.advanceinfo_s,
+      "@p_enddt_s": ParaData.enddt_s,
+      "@p_pubbank_s": ParaData.pubbank_s,
+      "@p_pubdt_s": ParaData.pubdt_s,
+      "@p_pubperson_s": ParaData.pubperson_s,
+      "@p_advanceinfo_s": ParaData.advanceinfo_s,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "MA_A9001W_Sub2",
@@ -2064,8 +2142,8 @@ const MA_A9001W: React.FC = () => {
       dataArr.paymentseq_s.push(paymentseq);
       dataArr.drcrdiv_s.push(drcrdiv);
       dataArr.acntcd_s.push(acntcd);
-      dataArr.amt1_s.push(amt_1== "" ? 0 : amt_1);
-      dataArr.amt2_s.push(amt_2== "" ? 0 : amt_2);
+      dataArr.amt1_s.push(amt_1 == "" ? 0 : amt_1);
+      dataArr.amt2_s.push(amt_2 == "" ? 0 : amt_2);
       dataArr.remark_s.push(remark);
       dataArr.taxnum_s.push(taxnum);
       dataArr.acntnum_s.push(acntnum);
@@ -2101,8 +2179,8 @@ const MA_A9001W: React.FC = () => {
       dataArr.paymentseq_s.push(paymentseq);
       dataArr.drcrdiv_s.push(drcrdiv);
       dataArr.acntcd_s.push(acntcd);
-      dataArr.amt1_s.push(amt_1== "" ? 0 : amt_1);
-      dataArr.amt2_s.push(amt_2== "" ? 0 : amt_2);
+      dataArr.amt1_s.push(amt_1 == "" ? 0 : amt_1);
+      dataArr.amt2_s.push(amt_2 == "" ? 0 : amt_2);
       dataArr.remark_s.push(remark);
       dataArr.taxnum_s.push(taxnum);
       dataArr.acntnum_s.push(acntnum);
@@ -2113,7 +2191,9 @@ const MA_A9001W: React.FC = () => {
       dataArr.pubperson_s.push(pubperson);
       dataArr.advanceinfo_s.push(advanceinfo == "" ? 0 : advanceinfo);
     });
-    const select = mainDataResult.data.filter((item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0])[0];
+    const select = mainDataResult.data.filter(
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
     setParaData((prev) => ({
       ...prev,
       workType: "N",
@@ -2150,7 +2230,6 @@ const MA_A9001W: React.FC = () => {
     }
   }, [ParaData]);
 
-
   const fetchTodoGridSaved2 = async () => {
     let data: any;
     setLoading(true);
@@ -2170,9 +2249,83 @@ const MA_A9001W: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchTodoGridSaved3 = async () => {
+    let dataArr: TdataArr = {
+      reqdt_s: [],
+      seq_s: [],
+    };
+    subDataResult.data.forEach((item: any, idx: number) => {
+      const {
+        recdt = "",
+        seq1 = "",
+      } = item;
+
+      dataArr.reqdt_s.push(recdt);
+      dataArr.seq_s.push(seq1);
+    });
+
+    const para2: Iparameters = {
+      procedureName: "P_MA_A9001W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": workType,
+        "@p_orgdiv": "01",
+        "@p_location": infomation.location,
+        "@p_position": infomation.position,
+        "@p_reqdt": convertDateToStr(infomation.reqdt),
+        "@p_seq": infomation.seq,
+        "@p_splyamt": infomation.splyamt,
+        "@p_taxamt": infomation.taxamt,
+        "@p_taxtype": infomation.taxtype,
+        "@p_taxdt": convertDateToStr(infomation.taxdt),
+        "@p_custcd": infomation.custcd,
+        "@p_custnm": infomation.custnm,
+        "@p_creditcd": infomation.creditcd,
+        "@p_custregnum": infomation.custregnum,
+        "@p_items": infomation.items,
+        "@p_qty": infomation.qty,
+        "@p_qtyunit": infomation.qtyunit,
+        "@p_exceptyn": infomation.exceptyn,
+        "@p_remark": infomation.remark,
+        "@p_paydt": convertDateToStr(infomation.paydt),
+        "@p_acntdiv": infomation.acntdiv,
+        "@p_rtxisuyn":
+          typeof infomation.rtxisuyn == "boolean"
+            ? infomation.rtxisuyn == true
+              ? "Y"
+              : "N"
+            : infomation.rtxisuyn,
+        "@p_etax": infomation.etax,
+        "@p_recdt_s": dataArr.reqdt_s.join("|"),
+        "@p_seq1_s": dataArr.seq_s.join("|"),
+        "@p_reqdt_s": "",
+        "@p_seq_s": "",
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "MA_A9001W",
+        "@p_company_code": companyCode,
+      },
+    };
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", para2);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      resetAllGrid();
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      setWorkType("U");
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  };
+
   const onAddClick = () => {
     setWorkType("N");
-    setDetailWindowVisible(true);
+    setDataWindowVisible(true);
   };
 
   return (
@@ -2196,21 +2349,21 @@ const MA_A9001W: React.FC = () => {
             <tr>
               <th>계산서일자</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.frdt,
-                      end: filters.todt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        frdt: e.value.start,
-                        todt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (
@@ -2639,7 +2792,7 @@ const MA_A9001W: React.FC = () => {
                       <BizComponentComboBox
                         name="taxtype"
                         value={infomation.taxtype}
-                        bizComponentId="L_AC014"
+                        bizComponentId="L_AC013"
                         bizComponentData={bizComponentData}
                         changeData={ComboBoxChange}
                         className="required"
@@ -2958,7 +3111,13 @@ const MA_A9001W: React.FC = () => {
           reload={reload}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {dataWindowVisible && (
+        <MA_A9001W_IN_Window
+          setVisible={setDataWindowVisible}
+          setData={setCopyData2}
+        />
+      )}
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

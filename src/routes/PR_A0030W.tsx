@@ -223,8 +223,6 @@ const PR_A0030W: React.FC = () => {
   //Form정보 Change
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    setSub2PgNum(1);
-    setSubData2Result(process([], subData2State));
     setsubFilters2((prev) => ({
       ...prev,
       [name]: value,
@@ -555,12 +553,6 @@ const PR_A0030W: React.FC = () => {
     if (customOptionData !== null) {
       fetchSubGrid2();
     }
-  }, [subfilters2]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchSubGrid2();
-    }
   }, [sub2PgNum]);
 
   //그리드 리셋
@@ -609,6 +601,65 @@ const PR_A0030W: React.FC = () => {
     setSelectedsubDataState(newSelectedState);
   };
 
+  const onAddRow = () => {
+    let proseq = 1;
+    let valid = true;
+    if (subDataResult.total > 0) {
+      const data = subData2Result.data.filter(
+        (item: any) =>
+          item.sub_code == Object.getOwnPropertyNames(selectedsubData2State)[0]
+      )[0];
+
+      subDataResult.data.forEach((item) => {
+        if (item.procseq >= proseq) {
+          proseq = item.procseq + 1;
+        }
+
+        if (item.proccd == data.sub_code && valid == true) {
+          valid = false;
+        }
+      });
+    }
+
+    if (valid != true) alert("동일한 공정이 존재합니다.");
+    else {
+      let seq = subDataResult.total + deletedMainRows.length + 1;
+
+      setIfSelectFirstRow2(false);
+      const newDataItem = {
+        [SUB_DATA_ITEM_KEY]: seq,
+        chlditemcd: "",
+        chlditemnm: "",
+        custcd: "",
+        custnm: "",
+        orgdiv: "01",
+        outgb: "",
+        outprocyn: "N",
+        prntitemcd: Object.getOwnPropertyNames(selectedState)[0],
+        proccd: Object.getOwnPropertyNames(selectedsubData2State)[0],
+        procitemcd: Object.getOwnPropertyNames(selectedState)[0],
+        procqty: 1,
+        procseq: proseq,
+        procunit: "",
+        prodemp: "",
+        prodmac: "",
+        qtyunit: "",
+        recdt: "",
+        remark: "",
+        seq: 0,
+        unitqty: 0,
+        rowstatus: "N",
+      };
+      setSelectedsubDataState({ [newDataItem.num]: true });
+
+      setSubDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    }
+  };
   const onSubData2SelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -617,50 +668,6 @@ const PR_A0030W: React.FC = () => {
     });
 
     setSelectedsubData2State(newSelectedState);
-    let proseq = 1;
-    if (subDataResult.total > 0) {
-      subDataResult.data.forEach((item) => {
-        if (item.procseq >= proseq) {
-          proseq = item.procseq + 1;
-        }
-      });
-    }
-
-    let seq = subDataResult.total + deletedMainRows.length + 1;
-
-    setIfSelectFirstRow2(false);
-    const newDataItem = {
-      [SUB_DATA_ITEM_KEY]: seq,
-      chlditemcd: "",
-      chlditemnm: "",
-      custcd: "",
-      custnm: "",
-      orgdiv: "01",
-      outgb: "",
-      outprocyn: "",
-      prntitemcd: Object.getOwnPropertyNames(selectedState)[0],
-      proccd: Object.getOwnPropertyNames(newSelectedState)[0],
-      procitemcd: Object.getOwnPropertyNames(selectedState)[0],
-      procqty: 1,
-      procseq: proseq,
-      procunit: "",
-      prodemp: "",
-      prodmac: "",
-      qtyunit: "",
-      recdt: "",
-      remark: "",
-      seq: 0,
-      unitqty: 0,
-      rowstatus: "N",
-    };
-    setSelectedsubDataState({ [newDataItem.num]: true });
-
-    setSubDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
-      };
-    });
   };
 
   //엑셀 내보내기
@@ -809,6 +816,12 @@ const PR_A0030W: React.FC = () => {
     deletedMainRows = [];
   };
 
+  const search2 = () => {
+    setSub2PgNum(1);
+    setSubData2Result(process([], subData2State));
+    fetchSubGrid2();
+  };
+
   const onSubItemChange = (event: GridItemChangeEvent) => {
     setSubDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -879,7 +892,7 @@ const PR_A0030W: React.FC = () => {
     setInfomation({
       pattern_id: "",
       pattern_name: "",
-      location: "",
+      location: "01",
       remark: "",
     });
     setSubDataResult(process([], subDataState));
@@ -951,6 +964,7 @@ const PR_A0030W: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
+      fetchSubGrid2();
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1152,6 +1166,7 @@ const PR_A0030W: React.FC = () => {
         form_id: "PR_A0030W",
         company_code: companyCode,
       });
+      fetchSubGrid2();
       deletedMainRows = [];
     } else {
       console.log("[오류 발생]");
@@ -1350,23 +1365,6 @@ const PR_A0030W: React.FC = () => {
         <GridContainer width={`37%`}>
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                생성
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                삭제
-              </Button>
-            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "77vh" }}
@@ -1421,6 +1419,21 @@ const PR_A0030W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                생성
+              </Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                삭제
+              </Button>
               <Button
                 onClick={onSaveClick}
                 fillMode="outline"
@@ -1498,7 +1511,7 @@ const PR_A0030W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>공정리스트</GridTitle>
               </GridTitleContainer>
-              <FormBoxWrap>
+              <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
                     <tr>
@@ -1511,12 +1524,17 @@ const PR_A0030W: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
+                      <th>
+                        <Button onClick={search2} themeColor={"primary"}>
+                          조회
+                        </Button>
+                      </th>
                     </tr>
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
               <Grid
-                style={{ height: "52.5vh" }}
+                style={{ height: "54.5vh" }}
                 data={process(
                   subData2Result.data.map((row) => ({
                     ...row,
@@ -1545,6 +1563,7 @@ const PR_A0030W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
+                onRowDoubleClick={onAddRow}
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList2"].map(
@@ -1610,7 +1629,7 @@ const PR_A0030W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "60.5vh" }}
+                  style={{ height: "61vh" }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,

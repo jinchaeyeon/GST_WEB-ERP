@@ -863,7 +863,6 @@ const PR_A0060: React.FC = () => {
   const onAddClick = () => {
     let seq = subDataResult.total + deletedMainRows.length + 1;
 
-
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: seq,
       rowstatus: "N",
@@ -908,10 +907,7 @@ const PR_A0060: React.FC = () => {
 
   const getAttachmentsData2 = (data: IAttachmentData) => {
     if (!subDataResult.data[rows].attdatnum) {
-      setUnsavedAttadatnums((prev)=> ([
-        ...prev,
-        data.attdatnum
-      ]));
+      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
     }
 
     const items = parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0]);
@@ -1600,13 +1596,10 @@ const PR_A0060: React.FC = () => {
       }
 
       if (data.isSuccess !== true) {
-        setDeletedAttadatnums((prev)=> ([
-          ...prev,
-          item.attdatnum
-        ]));
+        setDeletedAttadatnums((prev) => [...prev, item.attdatnum]);
         console.log("[오류 발생]");
         console.log(data);
-      } 
+      }
     });
     setDeletedAttadatnums([]);
     deletedMainRows = [];
@@ -2069,6 +2062,16 @@ const PR_A0060: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
+                  <th>설비코드</th>
+                  <td>
+                    <Input
+                      name="fxcode"
+                      type="text"
+                      value={infomation.fxcode}
+                      onChange={InputChange}
+                      className="readonly"
+                    />
+                  </td>
                   <th>설비번호</th>
                   <td>
                     <Input
@@ -2098,14 +2101,13 @@ const PR_A0060: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>설비코드</th>
+                  <th>사용여부</th>
                   <td>
-                    <Input
-                      name="fxcode"
-                      type="text"
-                      value={infomation.fxcode}
+                    <Checkbox
+                      name="useyn"
+                      value={infomation.useyn == "Y" ? true : false}
                       onChange={InputChange}
-                      className="readonly"
+                      style={{ float: "left" }}
                     />
                   </td>
                 </tr>
@@ -2122,136 +2124,23 @@ const PR_A0060: React.FC = () => {
                       />
                     )}
                   </td>
+                  <th>소속공정</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="proccd"
+                        value={infomation.proccd}
+                        bizComponentId="L_PR010"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
                   <th>사양</th>
                   <td colSpan={3}>
                     <Input
                       name="spec"
                       value={infomation.spec}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>가용시간</th>
-                  <td>
-                    <Input
-                      name="availabletime"
-                      type="number"
-                      value={infomation.availabletime}
-                      onChange={InputChange}
-                      style={{ textAlign: "right" }}
-                    />
-                  </td>
-                  <th>시간당생산수량</th>
-                  <td>
-                    <Input
-                      name="uph"
-                      type="number"
-                      value={infomation.uph}
-                      onChange={InputChange}
-                      style={{ textAlign: "right" }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>설비종류</th>
-                  <td colSpan={3}>
-                    <Input
-                      name="kind"
-                      type="text"
-                      value={infomation.kind}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>입력일자</th>
-                  <td>
-                    <DatePicker
-                      name="recdt"
-                      value={infomation.recdt}
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      placeholder=""
-                    />
-                  </td>
-                  <th>사용여부</th>
-                  <td>
-                    <Checkbox
-                      name="useyn"
-                      value={infomation.useyn == "Y" ? true : false}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>IOT설비번호</th>
-                  <td>
-                    <Input
-                      name="IOT_TER_ID"
-                      type="number"
-                      value={infomation.IOT_TER_ID}
-                      onChange={InputChange}
-                      style={{ textAlign: "right" }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>장소</th>
-                  <td colSpan={3}>
-                    <Input
-                      name="place"
-                      type="text"
-                      value={infomation.place}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>제조일자</th>
-                  <td>
-                    <DatePicker
-                      name="makedt"
-                      value={infomation.makedt}
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      placeholder=""
-                    />
-                  </td>
-                  <th>제조사</th>
-                  <td>
-                    <Input
-                      name="maker"
-                      type="text"
-                      value={infomation.maker}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>이더넷1</th>
-                  <td>
-                    <Input
-                      name="classnm1"
-                      type="text"
-                      value={infomation.classnm1}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>업체코드</th>
-                  <td>
-                    <Input
-                      name="custcd"
-                      type="text"
-                      value={infomation.custcd}
-                      onChange={InputChange}
-                    />
-                    <ButtonInInput>
-                      <Button
-                        onClick={onCustWndClick2}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td>
-                  <th>업체명</th>
-                  <td>
-                    <Input
-                      name="custnm"
-                      type="text"
-                      value={infomation.custnm}
                       onChange={InputChange}
                     />
                   </td>
@@ -2275,12 +2164,62 @@ const PR_A0060: React.FC = () => {
                       style={{ textAlign: "right" }}
                     />
                   </td>
-                  <th>분류2</th>
+                </tr>
+                <tr>
+                  <th>입력일자</th>
+                  <td>
+                    <DatePicker
+                      name="recdt"
+                      value={infomation.recdt}
+                      format="yyyy-MM-dd"
+                      onChange={InputChange}
+                      placeholder=""
+                    />
+                  </td>
+                  <th>IOT설비번호</th>
                   <td>
                     <Input
-                      name="classnm2"
+                      name="IOT_TER_ID"
+                      type="number"
+                      value={infomation.IOT_TER_ID}
+                      onChange={InputChange}
+                      style={{ textAlign: "right" }}
+                    />
+                  </td>
+                  <th>설비종류</th>
+                  <td>
+                    <Input
+                      name="kind"
                       type="text"
-                      value={infomation.classnm2}
+                      value={infomation.kind}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>장소</th>
+                  <td>
+                    <Input
+                      name="place"
+                      type="text"
+                      value={infomation.place}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>제조일자</th>
+                  <td>
+                    <DatePicker
+                      name="makedt"
+                      value={infomation.makedt}
+                      format="yyyy-MM-dd"
+                      onChange={InputChange}
+                      placeholder=""
+                    />
+                  </td>
+                  <th>제조사</th>
+                  <td>
+                    <Input
+                      name="maker"
+                      type="text"
+                      value={infomation.maker}
                       onChange={InputChange}
                     />
                   </td>
@@ -2314,24 +2253,85 @@ const PR_A0060: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>소속공정</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="proccd"
-                        value={infomation.proccd}
-                        bizComponentId="L_PR010"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>IOT I/F No</th>
+                  <th>업체코드</th>
                   <td>
                     <Input
-                      name="iotserialno"
+                      name="custcd"
                       type="text"
-                      value={infomation.iotserialno}
+                      value={infomation.custcd}
+                      onChange={InputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick2}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>업체명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={infomation.custnm}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>가용시간</th>
+                  <td>
+                    <Input
+                      name="availabletime"
+                      type="number"
+                      value={infomation.availabletime}
+                      onChange={InputChange}
+                      style={{ textAlign: "right" }}
+                    />
+                  </td>
+                  <th>시간당생산수량</th>
+                  <td>
+                    <Input
+                      name="uph"
+                      type="number"
+                      value={infomation.uph}
+                      onChange={InputChange}
+                      style={{ textAlign: "right" }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>첨부파일</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="files"
+                      type="text"
+                      value={infomation.files}
+                      className="readonly"
+                    />
+                    <ButtonInInput style={{ marginTop: "3vh" }}>
+                      <Button
+                        type={"button"}
+                        onClick={onAttachmentsWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>분류1</th>
+                  <td>
+                    <Input
+                      name="classnm1"
+                      type="text"
+                      value={infomation.classnm1}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>분류2</th>
+                  <td>
+                    <Input
+                      name="classnm2"
+                      type="text"
+                      value={infomation.classnm2}
                       onChange={InputChange}
                     />
                   </td>
@@ -2346,20 +2346,8 @@ const PR_A0060: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>첨부파일</th>
-                  <td colSpan={3}>
-                    <Input name="files" type="text" value={infomation.files} />
-                    <ButtonInInput style={{ marginTop: "3vh" }}>
-                      <Button
-                        type={"button"}
-                        onClick={onAttachmentsWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td>
                   <th>비고</th>
-                  <td colSpan={5}>
+                  <td colSpan={11}>
                     <TextArea
                       value={infomation.remark}
                       name="remark"
@@ -2389,7 +2377,7 @@ const PR_A0060: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
-                  title="행 삭제" 
+                  title="행 삭제"
                 ></Button>
                 <Button
                   onClick={onSaveClick}
@@ -2519,7 +2507,7 @@ const PR_A0060: React.FC = () => {
           para={subDataResult.data[rows].attdatnum}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
