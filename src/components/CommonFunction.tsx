@@ -45,7 +45,7 @@ export const toDate2 = (date_str: string) => {
     Number(sDate),
     Number(hh),
     Number(mm),
-    Number(dd)
+    Number(dd),
   );
 };
 
@@ -275,7 +275,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     let userId = "";
     const userIdObj = sessionItem.find(
-      (sessionItem) => sessionItem.code === "user_id"
+      (sessionItem) => sessionItem.code === "user_id",
     );
     if (userIdObj) {
       userId = userIdObj.value;
@@ -298,7 +298,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
         newOptionsData.forEach((optionsItem: any) => {
           if (optionsItem.sessionItem !== "" && optionsItem.valueCode === "") {
             optionsItem.valueCode = sessionItem.find(
-              (sessionItem) => sessionItem.code === optionsItem.sessionItem
+              (sessionItem) => sessionItem.code === optionsItem.sessionItem,
             )?.value;
           }
         });
@@ -307,7 +307,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
         queryOptionsData.forEach((optionsItem: any) => {
           if (optionsItem.sessionItem !== "" && optionsItem.valueCode === "") {
             optionsItem.valueCode = sessionItem.find(
-              (sessionItem) => sessionItem.code === optionsItem.sessionItem
+              (sessionItem) => sessionItem.code === optionsItem.sessionItem,
             )?.value;
           }
         });
@@ -337,9 +337,9 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       bizComponentIdArr.push(
         ...[
           Object.values(
-            queryOptionsData.map((item: any) => item.bizComponentId)
+            queryOptionsData.map((item: any) => item.bizComponentId),
           ),
-        ]
+        ],
       );
     }
 
@@ -347,7 +347,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       bizComponentIdArr.push(
         ...[
           Object.values(newOptionsData.map((item: any) => item.bizComponentId)),
-        ]
+        ],
       );
     }
 
@@ -355,7 +355,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     if (bizComponentId === "") {
       console.log(
-        "비즈니스 컴포넌트 ID 등록이 안 된 사용자 옵션 기본값이 존재함"
+        "비즈니스 컴포넌트 ID 등록이 안 된 사용자 옵션 기본값이 존재함",
       );
       setListData(customOptionData);
       return false;
@@ -510,6 +510,7 @@ export const UseBizComponent = (bizComponentId: string, setListData: any) => {
 
 //비즈니스 컴포넌트 객체를 인수로 받아서 쿼리문을 반환
 export const getQueryFromBizComponent = (bcItem: any) => {
+  if (!bcItem) return "";
   return (
     bcItem["querySelect"] +
     " " +
@@ -524,7 +525,7 @@ export const chkScrollHandler = (
   event: GridEvent,
   PgNum: number,
   PgSize: number,
-  dirrection: "up" | "down" = "down"
+  dirrection: "up" | "down" = "down",
 ) => {
   const totalNumber = event.target.props.total;
   const e = event.nativeEvent;
@@ -601,7 +602,7 @@ export const getGridItemChangedData = (
   event: GridItemChangeEvent,
   dataResult: any,
   setDataResult: any,
-  DATA_ITEM_KEY: string
+  DATA_ITEM_KEY: string,
 ) => {
   let field = event.field || "";
   event.dataItem[field] = event.value;
@@ -642,7 +643,7 @@ export const getGridItemChangedData = (
 //Date 디폴트 값 반환
 export const setDefaultDate = (customOptionData: any, id: string) => {
   const date = customOptionData.menuCustomDefaultOptions.query.find(
-    (item: any) => item.id === id
+    (item: any) => item.id === id,
   );
 
   const addYear = date ? date.addYear : 0;
@@ -698,13 +699,13 @@ export const getSelectedFirstData = (
     [id: string]: boolean | number[];
   },
   data: any[],
-  DATA_ITEM_KEY: string
+  DATA_ITEM_KEY: string,
 ) => {
   const selectedRowKeyVal: number =
     Number(Object.getOwnPropertyNames(selectedState)[0]) ?? null;
   if (selectedRowKeyVal === null) return false;
   const selectedRowData = data.find(
-    (item) => item[DATA_ITEM_KEY] === selectedRowKeyVal
+    (item) => item[DATA_ITEM_KEY] === selectedRowKeyVal,
   );
   return selectedRowData;
 };
@@ -880,7 +881,7 @@ export const isValidDate = (value: any) => {
 // gridData와 field명을 받아와서 계산된 컬럼 width 값을 반환 // 수정필요
 export const calculateGridColumnWidth = (
   field: string,
-  gridData: { [name: string]: any }[]
+  gridData: { [name: string]: any }[],
 ) => {
   let maxWidth = 0;
   gridData.forEach((item) => {
@@ -942,7 +943,7 @@ export const rowsWithSelectedDataResult = (
   selectedState: {
     [id: string]: boolean | number[];
   },
-  DATA_ITEM_KEY: string
+  DATA_ITEM_KEY: string,
 ) => {
   const idGetter = getter(DATA_ITEM_KEY);
   const newData: any = [];
