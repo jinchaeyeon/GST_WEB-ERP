@@ -757,6 +757,7 @@ export const Footer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  z-index: 10000;
 
   div {
     line-height: 30px;
