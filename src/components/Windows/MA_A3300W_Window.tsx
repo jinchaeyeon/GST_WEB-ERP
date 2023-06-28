@@ -1157,6 +1157,7 @@ const CopyWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));

@@ -1146,6 +1146,7 @@ const CM_A3000W: React.FC = () => {
     const changeCheck = () => {
       const newData = attDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1200,7 +1201,7 @@ const CM_A3000W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              chk: typeof item.chk == "boolean" ? item.chk : false,
+                      chk: typeof item.chk == "boolean" ? item.chk : item.chk =="Y" ? true : false,
               [EDIT_FIELD]: field,
             }
           : {

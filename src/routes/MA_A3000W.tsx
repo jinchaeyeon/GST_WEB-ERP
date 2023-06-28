@@ -1847,6 +1847,7 @@ const MA_A3000W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1875,7 +1876,8 @@ const MA_A3000W: React.FC = () => {
         item[DATA_ITEM_KEY] === props.dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              chk: !item.chk,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+        chk: !item.chk,
               [EDIT_FIELD]: props.field,
             }
           : {

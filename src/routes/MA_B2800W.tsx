@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -90,6 +90,66 @@ const CustomLockedCell = (props: GridCellProps) => {
   );
 };
 
+export const FormContext = createContext<{
+  purInfo: TPurData;
+  setPutInfo: (d: React.SetStateAction<TPurData>) => void;
+}>({} as any);
+
+type TPurData = {
+  purnum: string;
+  purseq: number;
+  recnum: string;
+};
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setPutInfo } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const setPurData = () => {
+    if(dataItem != undefined) {
+      setPutInfo({
+        purnum: dataItem.purnum,
+        purseq: dataItem.purseq,
+        recnum: dataItem.recnum
+      });
+    }
+  };
+
+  const defaultRendering = (
+    <td
+    style={props.style} // this applies styles that lock the column at a specific position
+    className={props.className} // this adds classes needed for locked columns
+    colSpan={props.colSpan}
+    {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
+  >
+    <Button
+      themeColor={"primary"}
+      fillMode="outline"
+      onClick={setPurData}
+      icon="edit"
+    ></Button>
+  </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+    </>
+  );
+};
+
 const MA_B2800W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -99,6 +159,25 @@ const MA_B2800W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
+  const [purInfo, setPutInfo] = useState<TPurData>({
+    purnum: "",
+    purseq: 0,
+    recnum: "",
+  });
+
+  useEffect(() => {
+    if(purInfo.purnum != "" && purInfo.recnum != "") {
+      setSelectedState({ [purInfo.recnum]: true });
+      
+      setDetailFilters((prev) => ({
+        ...prev,
+        purnum: purInfo.purnum,
+        purseq: purInfo.purseq,
+      }));
+  
+      setWindowVisible(true);
+    }
+  }, [purInfo]);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -729,7 +808,6 @@ const MA_B2800W: React.FC = () => {
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
-      console.log("zz")
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.recnum]: true });
@@ -1019,7 +1097,12 @@ const MA_B2800W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
+      <FormContext.Provider
+          value={{
+            purInfo,
+            setPutInfo,
+          }}
+        >
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -1072,7 +1155,7 @@ const MA_B2800W: React.FC = () => {
             rowRender={customRowRender2}
             editField={EDIT_FIELD}
           >
-            <GridColumn cell={CommandCell} locked={true} width="60px" />
+            <GridColumn cell={ColumnCommandCell} locked={true} width="60px" />
             <GridColumn locked={true} title="자료">
               {createColumn()}
             </GridColumn>
@@ -1083,6 +1166,7 @@ const MA_B2800W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
+      </FormContext.Provider>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

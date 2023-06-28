@@ -52,6 +52,7 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
   useSysMessage,
+  isValidDate,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -298,7 +299,7 @@ const PR_A0060: React.FC = () => {
     }));
   };
 
-  const [infomation, setInfomation] = useState({
+  const [infomation, setInfomation] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "U",
     orgdiv: "01",
@@ -313,9 +314,9 @@ const PR_A0060: React.FC = () => {
     dptcd: "",
     person: "",
     place: "",
-    makedt: new Date(),
+    makedt: null,
     maker: "",
-    indt: new Date(),
+    indt: null,
     custcd: "",
     kind: "",
     amt: 0,
@@ -554,15 +555,12 @@ const PR_A0060: React.FC = () => {
           dptcd: firstRowData.dptcd,
           person: firstRowData.person,
           place: firstRowData.place,
-          makedt:
-            firstRowData.makedt == ""
-              ? new Date()
-              : new Date(dateformat(firstRowData.makedt)),
-          maker: firstRowData.maker,
-          indt:
-            firstRowData.indt == ""
-              ? new Date()
-              : new Date(dateformat(firstRowData.indt)),
+          makedt:isValidDate(firstRowData.makedt)
+          ? new Date(dateformat(firstRowData.makedt))
+          : null,
+          indt: isValidDate(firstRowData.indt)
+          ? new Date(dateformat(firstRowData.indt))
+          : null,
           custcd: firstRowData.custcd,
           kind: firstRowData.kind,
           amt: firstRowData.amt,
@@ -681,15 +679,13 @@ const PR_A0060: React.FC = () => {
       dptcd: selectedRowData.dptcd,
       person: selectedRowData.person,
       place: selectedRowData.place,
-      makedt:
-        selectedRowData.makedt == ""
-          ? new Date()
-          : new Date(dateformat(selectedRowData.makedt)),
+      makedt:isValidDate(selectedRowData.makedt)
+      ? new Date(dateformat(selectedRowData.makedt))
+      : null,
       maker: selectedRowData.maker,
-      indt:
-        selectedRowData.indt == ""
-          ? new Date()
-          : new Date(dateformat(selectedRowData.indt)),
+      indt:isValidDate(selectedRowData.indt)
+      ? new Date(dateformat(selectedRowData.indt))
+      : null,
       custcd: selectedRowData.custcd,
       kind: selectedRowData.kind,
       amt: selectedRowData.amt,
@@ -827,9 +823,9 @@ const PR_A0060: React.FC = () => {
       dptcd: "",
       person: "",
       place: "",
-      makedt: new Date(),
+      makedt: null,
       maker: "",
-      indt: new Date(),
+      indt: null,
       custcd: "",
       kind: "",
       amt: 0,
@@ -1707,9 +1703,7 @@ const PR_A0060: React.FC = () => {
       }
 
       if (
-        convertDateToStr(infomation.recdt).length != 8 ||
-        convertDateToStr(infomation.makedt).length != 8 ||
-        convertDateToStr(infomation.indt).length != 8
+        convertDateToStr(infomation.recdt).length != 8 
       ) {
         throw findMessage(messagesData, "PR_A0060W_003");
       }
@@ -2178,6 +2172,7 @@ const PR_A0060: React.FC = () => {
                       format="yyyy-MM-dd"
                       onChange={InputChange}
                       placeholder=""
+                      className="required"
                     />
                   </td>
                   <th>IOT설비번호</th>

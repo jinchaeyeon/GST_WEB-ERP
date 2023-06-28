@@ -455,6 +455,7 @@ const CopyWindow = ({ setVisible }: IWindow) => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -508,7 +509,8 @@ const CopyWindow = ({ setVisible }: IWindow) => {
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              chk: typeof item.chk == "boolean" ? item.chk : false,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              chk: typeof item.chk == "boolean" ? item.chk : item.chk =="Y" ? true : false,
               [EDIT_FIELD]: field,
             }
           : {

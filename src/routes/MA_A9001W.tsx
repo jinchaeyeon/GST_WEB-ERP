@@ -54,6 +54,8 @@ import {
   useSysMessage,
   getGridItemChangedData,
   toDate,
+  isValidDate,
+  dateformat,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -200,7 +202,7 @@ const MA_A9001W: React.FC = () => {
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
- 
+
   //공통코드 리스트 조회 ()
   const [taxtypeListData, setTaxtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -378,6 +380,7 @@ const MA_A9001W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));
@@ -420,7 +423,7 @@ const MA_A9001W: React.FC = () => {
     pgGap: 0,
   });
 
-  const [infomation, setInfomation] = useState({
+  const [infomation, setInfomation] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     acntdiv: "",
     acseq1: 0,
@@ -444,7 +447,7 @@ const MA_A9001W: React.FC = () => {
     location: "",
     orgdiv: "",
     payactkey: "",
-    paydt: new Date(),
+    paydt: null,
     paymentamt: 0,
     paymentnum: "",
     paymeth: "",
@@ -682,8 +685,9 @@ const MA_A9001W: React.FC = () => {
           location: firstRowData.location,
           orgdiv: firstRowData.orgdiv,
           payactkey: firstRowData.payactkey,
-          paydt:
-            firstRowData.paydt != "" ? toDate(firstRowData.paydt) : new Date(),
+          paydt: isValidDate(firstRowData.paydt)
+            ? new Date(dateformat(firstRowData.paydt))
+            : null,
           paymentamt: firstRowData.paymentamt,
           paymentnum: firstRowData.paymentnum,
           paymeth: firstRowData.paymeth,
@@ -1121,7 +1125,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   const onSaveClick = (e: any) => {
-    if(workType == "N") {
+    if (workType == "N") {
       fetchTodoGridSaved3();
     } else {
       fetchTodoGridSaved();
@@ -1208,10 +1212,9 @@ const MA_A9001W: React.FC = () => {
       location: selectedRowData.location,
       orgdiv: selectedRowData.orgdiv,
       payactkey: selectedRowData.payactkey,
-      paydt:
-        selectedRowData.paydt != ""
-          ? toDate(selectedRowData.paydt)
-          : new Date(),
+      paydt: isValidDate(selectedRowData.paydt)
+        ? new Date(dateformat(selectedRowData.paydt))
+        : null,
       paymentamt: selectedRowData.paymentamt,
       paymentnum: selectedRowData.paymentnum,
       paymeth: selectedRowData.paymeth,
@@ -1458,7 +1461,7 @@ const MA_A9001W: React.FC = () => {
       location: "01",
       orgdiv: "",
       payactkey: "",
-      paydt: new Date(),
+      paydt: null,
       paymentamt: 0,
       paymentnum: "",
       paymeth: "",
@@ -1484,7 +1487,7 @@ const MA_A9001W: React.FC = () => {
     });
     const rows = data.map((prev: any) => ({
       ...prev,
-      num : seq++
+      num: seq++,
     }));
 
     setSubDataResult(process([], subDataState));
@@ -2063,7 +2066,7 @@ const MA_A9001W: React.FC = () => {
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              chk: typeof item.chk == "boolean" ? item.chk : false,
+                           chk: typeof item.chk == "boolean" ? item.chk : item.chk =="Y" ? true : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -2255,10 +2258,7 @@ const MA_A9001W: React.FC = () => {
       seq_s: [],
     };
     subDataResult.data.forEach((item: any, idx: number) => {
-      const {
-        recdt = "",
-        seq1 = "",
-      } = item;
+      const { recdt = "", seq1 = "" } = item;
 
       dataArr.reqdt_s.push(recdt);
       dataArr.seq_s.push(seq1);
