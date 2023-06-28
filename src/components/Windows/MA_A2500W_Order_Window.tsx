@@ -47,7 +47,7 @@ import {
   isValidDate,
 } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../../store/atoms";
@@ -59,6 +59,10 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
+
+const topHeight = 140.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 3;
 
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -395,7 +399,6 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     purseq: 0,
   });
 
-  
   const [detailFilters2, setDetailFilters2] = useState({
     pgSize: PAGE_SIZE,
     planno: "",
@@ -425,7 +428,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       "@p_itemnm": filters.itemnm,
       "@p_proccd": filters.proccd,
       "@p_finyn": filters.finyn,
-      "@p_company_code": companyCode
+      "@p_company_code": companyCode,
     },
   };
 
@@ -450,34 +453,34 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       "@p_itemnm": filters.itemnm,
       "@p_proccd": filters.proccd,
       "@p_finyn": filters.finyn,
-      "@p_company_code": companyCode
+      "@p_company_code": companyCode,
     },
   };
 
-    //조회조건 파라미터
-    const detailParameters2: Iparameters = {
-      procedureName: "P_MA_A2500W_Sub1_Q",
-      pageNumber: detailPgNum2,
-      pageSize: detailFilters2.pgSize,
-      parameters: {
-        "@p_work_type": "DETAIL_2",
-        "@p_orgdiv": "01",
-        "@p_location": filters.location,
-        "@p_frdt": convertDateToStr(filters.frdt),
-        "@p_todt": convertDateToStr(filters.todt),
-        "@p_purnum": detailFilters2.purnum,
-        "@p_purseq": detailFilters2.purseq,
-        "@p_planno": detailFilters2.planno,
-        "@p_planseq": detailFilters2.planseq,
-        "@p_custcd": filters.custcd,
-        "@p_custnm": filters.custnm,
-        "@p_itemcd": filters.itemcd,
-        "@p_itemnm": filters.itemnm,
-        "@p_proccd": filters.proccd,
-        "@p_finyn": filters.finyn,
-        "@p_company_code": companyCode
-      },
-    };
+  //조회조건 파라미터
+  const detailParameters2: Iparameters = {
+    procedureName: "P_MA_A2500W_Sub1_Q",
+    pageNumber: detailPgNum2,
+    pageSize: detailFilters2.pgSize,
+    parameters: {
+      "@p_work_type": "DETAIL_2",
+      "@p_orgdiv": "01",
+      "@p_location": filters.location,
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
+      "@p_purnum": detailFilters2.purnum,
+      "@p_purseq": detailFilters2.purseq,
+      "@p_planno": detailFilters2.planno,
+      "@p_planseq": detailFilters2.planseq,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_proccd": filters.proccd,
+      "@p_finyn": filters.finyn,
+      "@p_company_code": companyCode,
+    },
+  };
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     //if (!permissions?.view) return;
@@ -552,7 +555,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const datas = mainDataResult.data.filter(
         (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
@@ -571,7 +574,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
           planseq: datas.planseq,
         };
       });
-    
+
       setDetailDataResult2((prev) => {
         return {
           data: rows2,
@@ -625,7 +628,6 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       fetchDetailGrid2();
     }
   }, [detailPgNum2]);
-
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -852,7 +854,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -864,7 +866,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -873,7 +875,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     detailDataResult2.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -885,7 +887,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -1215,12 +1217,12 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer>
+        <GridContainer height={`calc(30% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "250px" }}
+                  style={{ height: "calc(100% - 5px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1306,13 +1308,13 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             <GridColumn field="purkey" title="발주번호" width="200px" />
           </Grid>
         </GridContainer>
-        <GridContainerWrap>
-          <GridContainer>
+        <GridContainerWrap height={`calc(35% - ${leftOverHeight}px)`}>
+          <GridContainer width={`calc(45%)`}>
             <GridTitleContainer>
               <GridTitle>소요자재리스트</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "200px", width: "600px" }}
+                  style={{ height: "calc(100% - 40px)" }}
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,
@@ -1365,12 +1367,12 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               />
             </Grid>
           </GridContainer>
-          <GridContainer>
+          <GridContainer width={`calc(55% - ${GAP}px)`}>
             <GridTitleContainer>
               <GridTitle>출고품목재고</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "200px", width: "900px" }}
+         style={{ height: "calc(100% - 40px)" }}
               data={process(
                 detailDataResult2.data.map((row) => ({
                   ...row,
@@ -1460,7 +1462,10 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </Grid>
           </GridContainer>
         </GridContainerWrap>
-        <GridContainer>
+        <GridContainer
+          height={`calc(35% - ${leftOverHeight}px)`}
+          width={`99.9%`}
+        >
           <GridTitleContainer>
             <GridTitle>Keeping</GridTitle>
             <ButtonContainer>
@@ -1474,7 +1479,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+       style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

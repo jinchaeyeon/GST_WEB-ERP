@@ -196,7 +196,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: 1600,
-    height: 900,
+    height: 920,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -1175,7 +1175,7 @@ const CopyWindow = ({
               <GridTitle>참조</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "40vh" }}
+              style={{ height: "37vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

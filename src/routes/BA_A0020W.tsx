@@ -1026,7 +1026,7 @@ const BA_A0020: React.FC = () => {
       bizdiv: "",
       repreregno: "",
       address_eng: "",
-      estbdt: new Date(),
+      estbdt: null,
       phonenum: "",
       bnkinfo: "",
       bankacntuser: "",

@@ -343,7 +343,7 @@ const CopyWindow = ({
 
   const processApi = useApi();
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     amt: 0,
     amtunit: "",
@@ -391,7 +391,7 @@ const CopyWindow = ({
     seq1: 0,
     seq2: 0,
     serialno: "",
-    shipdt: new Date(),
+    shipdt: null,
     taxamt: 0,
     totwgt: 0,
     unitqty: 0,
@@ -504,7 +504,9 @@ const CopyWindow = ({
         portnm: data.portnm,
         dvnm: data.dvnm,
         dvnum: data.dvnum,
-        shipdt: toDate(data.shipdt),
+        shipdt: isValidDate(data.shipdt)
+        ? new Date(dateformat(data.shipdt))
+        : null,
         cargocd: data.cargocd,
         trcost: data.trcost,
         files: data.files,

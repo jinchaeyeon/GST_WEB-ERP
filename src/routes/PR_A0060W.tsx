@@ -129,6 +129,12 @@ const PR_A0060: React.FC = () => {
           .valueCode,
         location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id === "fxdiv").valueCode,
+        proccd: defaultOption.find((item: any) => item.id === "proccd")
+          .valueCode,
+        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+        person: defaultOption.find((item: any) => item.id === "person")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1458,7 +1464,7 @@ const PR_A0060: React.FC = () => {
     try {
       subDataResult.data.map((item: any) => {
         subDataResult.data.map((items: any) => {
-          if (item.fxdt == items.fxdt) {
+          if (item.fxdt == items.fxdt && item.num != items.num) {
             throw findMessage(messagesData, "PR_A0060W_004");
           }
         });
@@ -1852,15 +1858,6 @@ const PR_A0060: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <th>제조사</th>
-              <td>
-                <Input
-                  name="maker"
-                  type="text"
-                  value={filters.maker}
-                  onChange={filterInputChange}
-                />
-              </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -1883,6 +1880,15 @@ const PR_A0060: React.FC = () => {
                   name="custnm"
                   type="text"
                   value={filters.custnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>제조사</th>
+              <td>
+                <Input
+                  name="maker"
+                  type="text"
+                  value={filters.maker}
                   onChange={filterInputChange}
                 />
               </td>
@@ -2114,24 +2120,22 @@ const PR_A0060: React.FC = () => {
                 <tr>
                   <th>설비구분</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
                         name="fxdiv"
                         value={infomation.fxdiv}
-                        bizComponentId="L_PR030"
-                        bizComponentData={bizComponentData}
+                        customOptionData={customOptionData}
                         changeData={ComboBoxChange}
                       />
                     )}
                   </td>
                   <th>소속공정</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
                         name="proccd"
                         value={infomation.proccd}
-                        bizComponentId="L_PR010"
-                        bizComponentData={bizComponentData}
+                        customOptionData={customOptionData}
                         changeData={ComboBoxChange}
                       />
                     )}
@@ -2227,29 +2231,27 @@ const PR_A0060: React.FC = () => {
                 <tr>
                   <th>담당부서</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
                         name="dptcd"
                         value={infomation.dptcd}
-                        bizComponentId="L_dptcd_001"
-                        bizComponentData={bizComponentData}
+                        customOptionData={customOptionData}
                         changeData={ComboBoxChange}
                         textField="dptnm"
-                        valueField="dptnm"
+                        valueField="dptcd"
                       />
                     )}
                   </td>
                   <th>책임자</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
                         name="person"
                         value={infomation.person}
-                        bizComponentId="L_sysUserMaster_001"
-                        bizComponentData={bizComponentData}
+                        customOptionData={customOptionData}
                         changeData={ComboBoxChange}
                         textField="user_name"
-                        valueField="user_name"
+                        valueField="user_id"
                       />
                     )}
                   </td>
@@ -2360,8 +2362,8 @@ const PR_A0060: React.FC = () => {
             </FormBox>
           </FormBoxWrap>
         </TabStripTab>
-        <TabStripTab title="설비이력관리">
-          <GridContainer>
+        <TabStripTab title="설비이력관리" >
+          <GridContainer width="89vw">
             <GridTitleContainer>
               <GridTitle>설비이력관리</GridTitle>
               <ButtonContainer>

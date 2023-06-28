@@ -56,6 +56,10 @@ import NumberCell from "../Cells/NumberCell";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
+const topHeight = 140.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
+
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -1007,7 +1011,7 @@ const CopyWindow = ({
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -1020,7 +1024,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "350px" }}
+           style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1113,7 +1117,7 @@ const CopyWindow = ({
             <GridColumn field="remark" title="비고" width="250px" />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -1126,7 +1130,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+         style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

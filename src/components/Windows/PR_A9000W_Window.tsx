@@ -61,7 +61,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1200,
-    height: 750,
+    height: 730,
   });
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";

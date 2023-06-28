@@ -56,6 +56,10 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
+const topHeight = 181.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
+
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -516,7 +520,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -528,7 +532,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -650,7 +654,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
 
       setSubDataResult((prev) => {
         return {
-         data: [newDataItem, ...prev.data],
+          data: [newDataItem, ...prev.data],
           total: prev.total + 1,
         };
       });
@@ -864,9 +868,9 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "calc(100% - 5px)" }} //5px = margin bottom 값
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1008,7 +1012,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             <GridColumn field="ordkey" title="수주번호" width="200px" />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -1021,7 +1025,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "300px" }}
+            style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

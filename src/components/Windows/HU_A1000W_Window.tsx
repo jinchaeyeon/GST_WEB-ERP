@@ -29,6 +29,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   dateformat,
+  isValidDate,
 } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
 import {
@@ -71,7 +72,7 @@ const KendoWindow = ({
   
   const processApi = useApi()
  
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
     location: "",
@@ -82,29 +83,29 @@ const KendoWindow = ({
     koraddr: "",  //주민등록지주소
     perregnum: "", //주민번호
     sexcd: "",  // 성별 
-    firredt : new Date(), //정산입사일
+    firredt : null, //정산입사일
     zipcode: "", //우편번호
-    birdt: new Date(), //생년월일
+    birdt: null, //생년월일
     bircd: "", // 양력, 음력여부
-    occudate: new Date(), //연차발생기준일
+    occudate: null, //연차발생기준일
     hmaddr: "", //실제거주지주소
-    regorgdt: new Date(), //입사일
+    regorgdt: null, //입사일
     extnum: "", //내선번호
     phonenum: "", // 전화번호
-    rtrdt: new Date(), //퇴사일
+    rtrdt: null, //퇴사일
     remark: "", //비고
 
     bankcd : "" ,// 은행
     banknm : "", // 은행명
     bankacnt : "", // 계좌번호
     payyn : "",// 급여지급여부
-    meddate : new Date(),// 건강보험취득일
+    meddate : null,// 건강보험취득일
                              // 계좌번호 
     bnskind : "" , // 상여금계산여부 
-    anudate : new Date(),// 국민연금취득일
+    anudate : null,// 국민연금취득일
     bankacntuser: "",// 예금주 
     workchk : "",// 근태관리여부 
-    hirdate : new Date(),// 고용보험취득일
+    hirdate :null,// 고용보험취득일
     bankdatnum : "",// 통장사본 
     hirinsuyn : "", // 고용보험여부 
     houseyn : "", // 세대주구분 
@@ -116,8 +117,8 @@ const KendoWindow = ({
     incgb : "" ,// 소득세조정률
     medgrad : "", //의료보험등급
     medinsunum  : "",  // 의료보험번호
-    exstartdt : new Date(),  // 감면시작 
-    exenddt : new Date(),  // 감면종료  
+    exstartdt : null,  // 감면시작 
+    exenddt : null,  // 감면종료  
     pnsgrad : "" ,   // 국민연금등급  
     rtrtype : "",     //퇴직급계산구분 
     yrchk :  "",    //연차관리여부 
@@ -248,29 +249,45 @@ const KendoWindow = ({
           koraddr: row.koraddr, //주민등록지주소
           perregnum: row.perregnum, //주민번호
           sexcd: row.sexcd, // 성별
-          firredt: new Date(dateformat(row.firredt)), //정산입사일
+          firredt: isValidDate(row.firredt)
+          ? new Date(dateformat(row.firredt))
+          : null, //정산입사일
           zipcode: row.zipcode, //우편번호
-          birdt: new Date(dateformat(row.birdt)), //생년월일
+          birdt: isValidDate(row.birdt)
+          ? new Date(dateformat(row.birdt))
+          : null,//생년월일
           bircd: row.bircd, // 양력, 음력여부
-          occudate: new Date(dateformat(row.occudate)), //연차발생기준일
+          occudate: isValidDate(row.occudate)
+          ? new Date(dateformat(row.occudate))
+          : null, //연차발생기준일
           hmaddr: row.hmaddr, //실제거주지주소
-          regorgdt: new Date(dateformat(row.regorgdt)), //입사일
+          regorgdt: isValidDate(row.regorgdt)
+          ? new Date(dateformat(row.regorgdt))
+          : null, //입사일
           extnum: row.extnum, //내선번호
           phonenum: row.phonenum, // 전화번호
-          rtrdt: new Date(dateformat(row.rtrdt)), //퇴사일
+          rtrdt: isValidDate(row.rtrdt)
+          ? new Date(dateformat(row.rtrdt))
+          : null, //퇴사일
           remark: row.remark, //비고
 
           bankcd: row.bankcd, // 은행
           banknm: row.banknm, // 은행명
           bankacnt: row.bankacnt, // 계좌번호
           payyn: row.payyn, // 급여지급여부
-          meddate: new Date(dateformat(row.meddate)), // 건강보험취득일
+          meddate: isValidDate(row.meddate)
+          ? new Date(dateformat(row.meddate))
+          : null, // 건강보험취득일
           // 계좌번호
           bnskind: row.bnskind, // 상여금계산여부
-          anudate: new Date(dateformat(row.anudate)), // 국민연금취득일
+          anudate: isValidDate(row.anudate)
+          ? new Date(dateformat(row.anudate))
+          : null, // 국민연금취득일
           bankacntuser: row.bankacntuser, // 예금주
           workchk: row.workchk, // 근태관리여부
-          hirdate: new Date(dateformat(row.hirdate)), // 고용보험취득일
+          hirdate: isValidDate(row.hirdate)
+          ? new Date(dateformat(row.hirdate))
+          : null, // 고용보험취득일
           bankdatnum: row.bankdatnum, // 통장사본
           hirinsuyn: row.hirinsuyn, // 고용보험여부
           houseyn: row.houseyn, // 세대주구분
@@ -282,8 +299,12 @@ const KendoWindow = ({
           incgb: row.incgb, // 소득세조정률
           medgrad: row.medgrad, //의료보험등급
           medinsunum: row.medinsunum, // 의료보험번호
-          exstartdt: new Date(dateformat(row.exstartdt)), // 감면시작
-          exenddt: new Date(dateformat(row.exenddt)), // 감면종료
+          exstartdt: isValidDate(row.exstartdt)
+          ? new Date(dateformat(row.exstartdt))
+          : null, // 감면시작
+          exenddt: isValidDate(row.exenddt)
+          ? new Date(dateformat(row.exenddt))
+          : null, // 감면종료
           pnsgrad: row.pnsgrad, // 국민연금등급
           rtrtype: row.rtrtype, //퇴직급계산구분
           yrchk: row.yrchk, //연차관리여부

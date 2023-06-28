@@ -668,8 +668,12 @@ const QC_A2500W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    setWorkType("N");
-    setDetailWindowVisible(true);
+    if(Object.getOwnPropertyNames(selectedState)[0] != undefined) {
+      setWorkType("N");
+      setDetailWindowVisible(true);
+    } else {
+      alert("선택된 데이터가 없습니다.");
+    }
   };
 
   const onCustWndClick = () => {

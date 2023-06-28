@@ -9,6 +9,7 @@ import {
   GridFooterCellProps,
   GridCellProps,
   GRID_COL_INDEX_ATTRIBUTE,
+  GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
 import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -42,6 +43,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   dateformat2,
+  getGridItemChangedData,
 } from "../components/CommonFunction";
 import MA_B2800W_Window from "../components/Windows/MA_B2800W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -50,6 +52,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -62,6 +65,7 @@ import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 
 const DATA_ITEM_KEY = "num";
 
@@ -724,14 +728,12 @@ const MA_B2800W: React.FC = () => {
   };
 
   const CommandCell = (props: GridCellProps) => {
-    const field = props.field || "";
-    const navigationAttributes = useTableKeyboardNavigation(props.id);
-
     const onEditClick = () => {
+      console.log("zz")
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.recnum]: true });
-
+      
       setDetailFilters((prev) => ({
         ...prev,
         purnum: rowData.purnum,
@@ -746,23 +748,81 @@ const MA_B2800W: React.FC = () => {
         style={props.style} // this applies styles that lock the column at a specific position
         className={props.className} // this adds classes needed for locked columns
         colSpan={props.colSpan}
-        role={"gridcell"}
-        aria-colindex={props.ariaColumnIndex}
-        aria-selected={props.isSelected}
-        {...{ [GRID_COL_INDEX_ATTRIBUTE]: props.columnIndex }}
-        {...navigationAttributes}
+        {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
       >
         <Button
-          className="k-grid-edit-command"
           themeColor={"primary"}
           fillMode="outline"
-          onClick={onEditClick}
+          onClick={() => onEditClick}
           icon="edit"
         ></Button>
       </td>
     );
   };
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
 
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const enterEdit2 = (dataItem: any, field: string) => {
+      if (field == "") {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+            ? {
+                ...item,
+                [EDIT_FIELD]: field,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+  
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
+  };
+
+  const exitEdit2 = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+  
   return (
     <>
       <TitleContainer>
@@ -1007,6 +1067,10 @@ const MA_B2800W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender2}
+            rowRender={customRowRender2}
+            editField={EDIT_FIELD}
           >
             <GridColumn cell={CommandCell} locked={true} width="60px" />
             <GridColumn locked={true} title="자료">

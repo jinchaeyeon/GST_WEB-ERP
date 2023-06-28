@@ -796,7 +796,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     <GridContainer margin={{ top: "30px" }}>
       {visited && validationMessage && <Error>{validationMessage}</Error>}
       <Grid
-        style={{ height: "300px" }}
+        style={{ height: "330px" }}
         data={process(
           dataWithIndexes.map((item: any) => ({
             ...item,

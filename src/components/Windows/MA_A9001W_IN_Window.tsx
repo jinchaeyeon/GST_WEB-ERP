@@ -62,6 +62,11 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
+const topHeight = 140.13;
+const bottomHeight = 100;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
+
+
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -896,7 +901,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer height="calc(50% - 120px)" minHeight="200px">
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <Grid
             style={{ height: "calc(100% - 5px)" }} //5px = margin bottom 값
             data={process(
@@ -986,9 +991,9 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             />
           </Grid>
         </GridContainer>
-        <GridContainer height="calc(50% - 120px)" minHeight="200px">
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <Grid
-            style={{ height: "calc(100% - 30px)" }}
+            style={{ height: "calc(100% - 5px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

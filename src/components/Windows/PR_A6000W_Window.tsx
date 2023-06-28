@@ -142,10 +142,10 @@ const CopyWindow = ({
         ...prev,
         prodmac: defaultOption.find((item: any) => item.id === "prodmac")
           .valueCode,
-          stopcd: defaultOption.find((item: any) => item.id === "stopcd")
+        stopcd: defaultOption.find((item: any) => item.id === "stopcd")
           .valueCode,
-          prodemp: defaultOption.find((item: any) => item.id === "prodemp")
-          .valueCode,  
+        prodemp: defaultOption.find((item: any) => item.id === "prodemp")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -156,10 +156,59 @@ const CopyWindow = ({
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "strtime") {
+      console.log(value);
+      var timeDiff = filters.endtime.getTime() - value.getTime();
+
+      timeDiff = Math.floor(timeDiff / 1000 / 60);
+
+      let minutes = timeDiff % 60;
+      // 한자리면 0으로 패딩
+      let minutesAsString = minutes < 10 ? "0" + minutes : minutes;
+
+      timeDiff = Math.floor(timeDiff / 60);
+      let hours = timeDiff % 24;
+
+      timeDiff = Math.floor(timeDiff / 24);
+
+      let days = timeDiff;
+      let totalHours = hours + days * 24; // 일 수 값과 시간 값을 더해 총 시간 계산
+      let totalHoursAsString = totalHours < 10 ? "0" + totalHours : totalHours;
+
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        losshh: totalHoursAsString + ":" + minutesAsString,
+      }));
+    } else if (name == "endtime") {
+      var timeDiff = value.getTime() - filters.strtime.getTime();
+
+      timeDiff = Math.floor(timeDiff / 1000 / 60);
+
+      let minutes = timeDiff % 60;
+      // 한자리면 0으로 패딩
+      let minutesAsString = minutes < 10 ? "0" + minutes : minutes;
+
+      timeDiff = Math.floor(timeDiff / 60);
+      let hours = timeDiff % 24;
+
+      timeDiff = Math.floor(timeDiff / 24);
+
+      let days = timeDiff;
+      let totalHours = hours + days * 24; // 일 수 값과 시간 값을 더해 총 시간 계산
+      let totalHoursAsString = totalHours < 10 ? "0" + totalHours : totalHours;
+
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        losshh: totalHoursAsString + ":" + minutesAsString,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -265,18 +314,18 @@ const CopyWindow = ({
     prodmac: "",
     prodemp: "",
     remark: "",
-    losshh: ""
+    losshh: "",
   });
 
   useEffect(() => {
-    if (workType === "U" && data != undefined ) {
+    if (workType === "U" && data != undefined) {
       const prodmacs = prodmac.find(
         (item: any) => item.fxfull === data.prodmac
       )?.fxcode;
       const stopcds = stopcd.find(
         (item: any) => item.code_name === data.stopcd
       )?.sub_code;
-      const prodemps =prodemp.find(
+      const prodemps = prodemp.find(
         (item: any) => item.user_name === data.prodemp
       )?.user_id;
       setFilters((prev) => ({
@@ -295,7 +344,7 @@ const CopyWindow = ({
       }));
     }
   }, []);
- 
+
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     setData(filters);
