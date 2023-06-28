@@ -142,6 +142,7 @@ const CM_A3000W: React.FC = () => {
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
+  const [localdptcd, setLocaldptcd] = useState("");
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -170,7 +171,7 @@ const CM_A3000W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001, L_BA198, L_dptcd_001",
+    "L_dptcd_001, L_sysUserMaster_001, L_BA198, L_dptcd_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -179,7 +180,9 @@ const CM_A3000W: React.FC = () => {
   const [userListData, setUserListData] = React.useState([
     { user_id: "", user_name: "" },
   ]);
-
+  const [dptcdListData, setdptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
@@ -187,6 +190,12 @@ const CM_A3000W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      fetchQuery(dptcdQueryStr, setdptcdListData);
       fetchQuery(userQueryStr, setUserListData);
     }
   }, [bizComponentData]);
@@ -404,12 +413,17 @@ const CM_A3000W: React.FC = () => {
             data: dataTree,
           };
         });
+        
         setMainDataResult((prev) => {
           return {
             data: rows,
             total: totalRowCnt,
           };
         });
+        setFilters((prev) => ({
+          ...prev,
+          dptcd : ""
+        }))
       }
     } else {
       console.log("[에러발생]");
@@ -690,10 +704,11 @@ const CM_A3000W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
+    
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
+    setLocaldptcd(selectedRowData.name);
     setSubPgNum(1);
     setSubDataResult(process([], subDataState));
     setsubFilters((prev) => ({
@@ -1270,7 +1285,14 @@ const CM_A3000W: React.FC = () => {
                   />
                 </td>
               <th>부서코드</th>
-              <td>
+              {localdptcd != "" ? (              <td>
+                <Input
+                  name="dptcd"
+                  type="text"
+                  value={localdptcd}
+                  className="readonly"
+                />
+              </td>) : (              <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
                     name="dptcd"
@@ -1281,7 +1303,7 @@ const CM_A3000W: React.FC = () => {
                     valueField="dptcd"
                   />
                 )}
-              </td>
+              </td>)}
               <th>작성자</th>
               <td>
                 {customOptionData !== null && (

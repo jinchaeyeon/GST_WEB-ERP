@@ -421,6 +421,7 @@ const CopyWindow = ({
     reqdt: null,
     slnctns: "",
     title: "",
+    isSearch: true,
   });
 
   //참조
@@ -484,7 +485,7 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (workType != "N" && isInitSearch === false) {
+    if (workType != "N" && isInitSearch === false && filters.isSearch == true) {
       fetchMainGrid();
     }
   }, [filters]);
