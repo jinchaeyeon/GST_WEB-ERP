@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Title, TitleContainer } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import {
   convertDateToStr,
+  getQueryFromBizComponent,
   setDefaultDate,
+  UseBizComponent,
   UseCustomOption,
 } from "../components/CommonFunction";
 import { useSetRecoilState } from "recoil";
@@ -24,29 +26,40 @@ import GridTitle from "../components/KPIcomponents/Title/Title";
 import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
+import GroupTable from "../components/KPIcomponents/Table/GroupTable";
+import LineChart from "../components/KPIcomponents/Chart/LineChart";
+import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
+import { bytesToBase64 } from "byte-base64";
 
 interface TList {
-  badcnt: number;
-  custcd: string;
-  custnm: string;
-  okcnt: number;
-  percent: number;
-  rate: number;
-  totcnt: number;
+  code_name: string;
+  gubun: string;
+  yrmm01: number;
+  yrmm02: number;
+  yrmm03: number;
+  yrmm04: number;
+  yrmm05: number;
+  yrmm06: number;
+  yrmm07: number;
+  yrmm08: number;
+  yrmm09: number;
+  yrmm10: number;
+  yrmm11: number;
+  yrmm12: number;
 }
 
 interface Tsize {
-  width: number,
-  height: number
+  width: number;
+  height: number;
 }
 
-const SA_B3600W: React.FC = () => {
+const QC_B0100W: React.FC = () => {
   const theme = createTheme();
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
 
-  const size : Tsize = useWindowSize();
+  const size: Tsize = useWindowSize();
 
   function useWindowSize() {
     // Initialize state with undefined width/height so server and client renders match
@@ -55,7 +68,7 @@ const SA_B3600W: React.FC = () => {
       width: 0,
       height: 0,
     });
-    
+
     useEffect(() => {
       // Handler to call on window resize
       function handleResize() {
@@ -86,29 +99,69 @@ const SA_B3600W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        dtdiv: defaultOption.find((item: any) => item.id === "dtdiv").valueCode,
+        frym: setDefaultDate(customOptionData, "frym"),
+        toym: setDefaultDate(customOptionData, "toym"),
+        gubun: defaultOption.find((item: any) => item.id === "gubun").valueCode,
       }));
     }
   }, [customOptionData]);
-  
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_PR010",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    setBizComponentData
+  );
+
+  const [proccdListData, setProccdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
+
+      fetchQuery(proccdQueryStr, setProccdListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: 20,
     orgdiv: "01",
-    location: "01",
-    frdt: new Date(),
-    todt: new Date(),
-    dtdiv: "W",
-    dtgb: "A",
+    frym: new Date(),
+    toym: new Date(),
+    proccd: "W",
+    gubun: "",
     isSearch: true,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState();
+  const [CardData, setCardData] = useState<any>([]);
   const [ChartList, setChartList] = useState();
   const [AllPanel, setAllPanel] = useState({
     badcnt: 0,
@@ -119,55 +172,51 @@ const SA_B3600W: React.FC = () => {
   });
 
   const [toppercentData, setTopPercentCust] = useState();
-  const [topdelayData, setTopDelayCust] = useState();
+  const [MonthData, setMonthData] = useState();
   const [selected, setSelected] = useState<TList | null>(null);
 
   //조회조건 파라미터
   const parameters = {
-    procedureName: "P_SA_B3600W_Q",
+    procedureName: "P_QC_B0100W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
+      "@p_frym": convertDateToStr(filters.frym),
+      "@p_toym": convertDateToStr(filters.toym),
+      "@p_proccd": "",
+      "@p_gubun": filters.gubun,
     },
   };
 
-  const Rankparameters = {
-    procedureName: "P_SA_B3600W_Q",
+  const Cardparameters = {
+    procedureName: "P_QC_B0100W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "RANK1",
+      "@p_work_type": "CARDDATA",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
+      "@p_frym": convertDateToStr(filters.frym),
+      "@p_toym": convertDateToStr(filters.toym),
+      "@p_proccd": "",
+      "@p_gubun": filters.gubun,
     },
   };
 
-  const Rankparameters2 = {
-    procedureName: "P_SA_B3600W_Q",
+  const Monthparameters = {
+    procedureName: "P_QC_B0100W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "RANK2",
+      "@p_work_type": "MONTHPRODCHART",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
+      "@p_frym": convertDateToStr(filters.frym),
+      "@p_toym": convertDateToStr(filters.toym),
+      "@p_proccd": selected == null? "" : proccdListData.find(
+        (item: any) => item.code_name === selected.code_name
+      )?.sub_code,
+      "@p_gubun": filters.gubun,
     },
   };
 
@@ -177,13 +226,12 @@ const SA_B3600W: React.FC = () => {
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "ALLCURRENT",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
+      // "@p_orgdiv": filters.orgdiv,
+      // "@p_frdt": convertDateToStr(filters.frdt),
+      // "@p_todt": convertDateToStr(filters.todt),
+      // "@p_dtdiv": filters.dtdiv,
+      // "@p_dtgb": filters.dtgb,
+      // "@p_custcd": "",
     },
   };
 
@@ -194,12 +242,11 @@ const SA_B3600W: React.FC = () => {
     parameters: {
       "@p_work_type": "MONTHCUSTCHART",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": selected == null? "" : selected.custcd,
+      // "@p_frdt": convertDateToStr(filters.frdt),
+      // "@p_todt": convertDateToStr(filters.todt),
+      // "@p_dtdiv": filters.dtdiv,
+      // "@p_dtgb": filters.dtgb,
+      // "@p_custcd": selected == null? "" : selected.custcd,
     },
   };
 
@@ -216,7 +263,6 @@ const SA_B3600W: React.FC = () => {
       const rows = data.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
           ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100) + "%",
         })
       );
 
@@ -228,43 +274,33 @@ const SA_B3600W: React.FC = () => {
 
     let data2: any;
     try {
-      data2 = await processApi<any>("procedure", Rankparameters);
+      data2 = await processApi<any>("procedure", Cardparameters);
     } catch (error) {
       data2 = null;
     }
 
     if (data2.isSuccess === true) {
-      const rows = data2.tables[0].Rows.map(
-        (item: { okcnt: number; totcnt: number }) => ({
-          ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100) + "%",
-        })
-      );
-
-      if (rows.length > 0) {
-        setTopPercentCust(rows);
-      }
+      setCardData(data2.tables);
     }
 
-    let data3: any;
-    try {
-      data3 = await processApi<any>("procedure", Rankparameters2);
-    } catch (error) {
-      data3 = null;
-    }
+    // let data3: any;
+    // try {
+    //   data3 = await processApi<any>("procedure", Monthparameters);
+    // } catch (error) {
+    //   data3 = null;
+    // }
+    // console.log(data3);
+    // if (data3.isSuccess === true) {
+    //   const rows = data3.tables[0].Rows.map(
+    //     (item: { okcnt: number; totcnt: number }) => ({
+    //       ...item,
+    //     })
+    //   );
 
-    if (data3.isSuccess === true) {
-      const rows = data3.tables[0].Rows.map(
-        (item: { okcnt: number; totcnt: number }) => ({
-          ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100),
-        })
-      );
-
-      if (rows.length > 0) {
-        setTopDelayCust(rows);
-      }
-    }
+    //   if (rows.length > 0) {
+    //     setMonthData(rows);
+    //   }
+    // }
 
     let data4: any;
     try {
@@ -286,7 +322,7 @@ const SA_B3600W: React.FC = () => {
   const fetchChartGrid = async () => {
     let data: any;
     try {
-      data = await processApi<any>("procedure", chartparameters);
+      data = await processApi<any>("procedure", Monthparameters);
     } catch (error) {
       data = null;
     }
@@ -297,7 +333,7 @@ const SA_B3600W: React.FC = () => {
       }));
 
       if (rows.length > 0) {
-        setChartList(rows);
+        setMonthData(rows);
       }
     }
   };
@@ -319,79 +355,43 @@ const SA_B3600W: React.FC = () => {
   const startContent = (
     <React.Fragment>
       <Grid container spacing={2}>
-        {customOptionData !== null && (
-          <ComboBox
-            value={filters.dtgb}
-            onChange={(e: { value: { code: any } }) =>
-              setFilters((prev) => ({
-                ...prev,
-                dtgb: e.value.code,
-              }))
-            }
-            option={customOptionData}
-            placeholder={"일자"}
-            id="dtgb"
-            textField="name"
-            valueField="code"
-            xs={12}
-            sm={4}
-            md={4}
-            xl={2}
-          />
-        )}
         <DatePicker
-          frdt={filters.frdt}
-          todt={filters.todt}
+          frdt={filters.frym}
+          todt={filters.toym}
           onFrdtChange={(e: { value: any }) =>
             setFilters((prev) => ({
               ...prev,
-              frdt: e.value,
+              frym: e.value,
             }))
           }
           onTodtChange={(e: { value: any }) =>
             setFilters((prev) => ({
               ...prev,
-              todt: e.value,
+              toym: e.value,
             }))
           }
           xs={12}
           sm={8}
-          md={6}
-          xl={4}
+          md={8}
+          xl={8}
         />
         {customOptionData !== null && (
           <ComboBox
-            value={filters.location}
+            value={filters.gubun}
             onChange={(e: { value: { code: any } }) =>
               setFilters((prev) => ({
                 ...prev,
-                location: e.value.code,
+                gubun: e.value.code,
               }))
             }
             option={customOptionData}
-            placeholder={"사업장"}
-            id="location"
+            placeholder={"단위"}
+            id="gubun"
+            textField="name"
+            valueField="code"
             xs={12}
-            sm={4}
+            sm={12}
             md={4}
-            xl={2}
-          />
-        )}
-        {customOptionData !== null && (
-          <Radio
-            option={customOptionData}
-            title="일자구분"
-            id="dtdiv"
-            value={filters.dtdiv}
-            onChange={(e: { value: any }) =>
-              setFilters((prev) => ({
-                ...prev,
-                dtdiv: e.value,
-              }))
-            }
-            xs={12}
-            sm={8}
-            md={6}
             xl={4}
           />
         )}
@@ -416,23 +416,32 @@ const SA_B3600W: React.FC = () => {
 
   const cardOption = [
     {
-      title: "납기준수율",
-      data: AllPanel.confirm_percent != null ? AllPanel.confirm_percent + "%" : 0 + "%",
+      title: "불량율 TOP 공정",
+      data:
+        CardData.length == 0
+          ? ""
+          : CardData[0].Rows[0].proccdnm + " : " + CardData[0].Rows[0].badrate,
       backgroundColor: "#1976d2",
     },
     {
-      title: "총 준수건수",
-      data: AllPanel.okcnt != null ? AllPanel.okcnt + "건" : 0  + "건",
+      title: "불량율 TOP 고객사",
+      data: CardData.length == 0 ? "" : "",
       backgroundColor: "#5393d3",
-    },
+    }, //CardData[1].Rows[0].custnm + " : " + CardData[1].Rows[0].badrate + "%"
     {
-      title: "총 지연건수",
-      data: AllPanel.badcnt != null ? AllPanel.badcnt + "건": 0 + "건",
+      title: "불량율 TOP 품목",
+      data:
+        CardData.length == 0
+          ? ""
+          : CardData[2].Rows[0].itemnm + " : " + CardData[2].Rows[0].badrate,
       backgroundColor: "#94b6d7",
     },
     {
-      title: "총 건수",
-      data: AllPanel.totcnt != null ? AllPanel.totcnt + "건" : 0  + "건",
+      title: "불량율 TOP 설비",
+      data:
+        CardData.length == 0
+          ? ""
+          : CardData[3].Rows[0].fxnm + " : " + CardData[3].Rows[0].badrate,
       backgroundColor: "#b4c4d3",
     },
   ];
@@ -440,10 +449,13 @@ const SA_B3600W: React.FC = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container maxWidth="xl" style={{ width: "100%", marginBottom : "25px" }}>
-        <TitleContainer style={{paddingTop: "25px", paddingBottom: "25px"}}>
-          <Title>납기준수율</Title>
-        </TitleContainer>
+        <Container
+          maxWidth="xl"
+          style={{ width: "100%", marginBottom: "25px" }}
+        >
+          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
+            <Title>공정불량율</Title>
+          </TitleContainer>
           <Toolbar start={startContent} end={endContent} />
           <Divider />
           <Box sx={{ flexGrow: 1 }}>
@@ -454,7 +466,7 @@ const SA_B3600W: React.FC = () => {
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                    fontsize={size.width < 600 ? "1.2rem" : "1.8rem"}
                   />
                 </Grid>
               ))}
@@ -462,64 +474,50 @@ const SA_B3600W: React.FC = () => {
           </Box>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={6} xl={6}>
-              <Table
-                value={toppercentData}
-                column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  okcnt: "준수건수",
-                  totcnt: "총건수",
-                  percent: "준수율",
-                }}
-                title={"준수율 TOP5"}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={6} xl={6}>
-              <Table
-                value={topdelayData}
-                column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  badcnt: "지연건수",
-                  totcnt: "총건수",
-                  rate: "준수율",
-                }}
-                title={"지연건수 TOP5"}
-              />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} xl={12}>
-              <GridTitle title="업체 준수율 월별 그래프" />
-              <StackedChart props={ChartList} />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={8}>
-              <PaginatorTable
+              <GroupTable
                 value={AllList}
                 column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  okcnt: "준수건수",
-                  badcnt: "지연건수",
-                  totcnt: "총건수",
-                  percent: "준수율",
+                  code_name: "공정명",
+                  gubun: "구분",
+                  yrmm01: "1월",
+                  yrmm02: "2월",
+                  yrmm03: "3월",
+                  yrmm04: "4월",
+                  yrmm05: "5월",
+                  yrmm06: "6월",
+                  yrmm07: "7월",
+                  yrmm08: "8월",
+                  yrmm09: "9월",
+                  yrmm10: "10월",
+                  yrmm11: "11월",
+                  yrmm12: "12월",
                 }}
-                title={"전체 목록"}
-                key="custcd"
+                title={"전체 목록 불량율"}
+                key="code_name"
                 selection={selected}
                 onSelectionChange={(e: any) => {
                   setSelected(e.value);
                 }}
               />
             </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} xl={4}>
-              <GridTitle title="업체 건수 그래프" />
-              <DoughnutChart data={selected} option={["okcnt", "badcnt"]} label={["준수건수", "지연건수"]}/>
+              <GridTitle title="전체 공정율" />
+              {/* <DoughnutChart data={selected} label={["양품", "불량품"]}/> */}
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} xl={8}>
+              <GridTitle title="공정별 불량율" />
+              {/* <StackedChart props={ChartList} /> */}
+            </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} xl={12}>
+              <GridTitle title="월별 불량율" />
+              <LineChart props={MonthData} />
             </Grid>
           </Grid>
         </Container>
@@ -528,4 +526,4 @@ const SA_B3600W: React.FC = () => {
   );
 };
 
-export default SA_B3600W;
+export default QC_B0100W;

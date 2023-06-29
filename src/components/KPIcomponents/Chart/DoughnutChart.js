@@ -8,12 +8,13 @@ export default function DoughnutChart(props) {
     useEffect(() => {
         if(props.data != null){
             const propsData = props.data;
-           
             const data = {
                 labels: props.label,
                 datasets: [
                     {
-                        data: [propsData.okcnt, propsData.badcnt],
+                        data: props.option.map((item) => {
+                            return propsData[item]
+                        }),
                         backgroundColor: [
                             "#d7ecfb",
                             "#fbded7", 

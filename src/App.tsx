@@ -72,6 +72,7 @@ import QC_A6000W from "./routes/QC_A6000W";
 import QC_B0200W from "./routes/QC_B0200W";
 import QC_B0300W from "./routes/QC_B0300W";
 import QC_B0040W from "./routes/QC_B0040W";
+import QC_B0100W from "./routes/QC_B0100W";
 import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0110W from "./routes/SY_A0110W";
 import SY_A0010W from "./routes/SY_A0010W";
@@ -432,6 +433,7 @@ const AppInner: React.FC = () => {
                 {/*KPI관리 */}
                 <GlobalStyles style={{fontFamily: "TheJamsil5Bold"}}>
                   <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
+                  <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
                 </GlobalStyles>
               </PanelBarNavContainer>
             </Switch>

@@ -6,7 +6,6 @@ export default function StackedChart(props) {
   const [chartOptions, setChartOptions] = useState({});
 
   useEffect(() => {
-
     if (props.props != null) {
       const propsData = props.props;
       const documentStyle = getComputedStyle(document.documentElement);

@@ -45,7 +45,7 @@ const PaginatorTable = (props) => {
           onSelectionChange={props.onSelectionChange}
           selectionMode="single"
           rowGroupMode="rowspan"
-          groupRowsBy="representative.name"
+          groupRowsBy="code_name"
           scrollable 
           scrollHeight="400px"
           virtualScrollerOptions={{ itemSize: 46 }}
