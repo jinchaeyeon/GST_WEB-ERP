@@ -62,6 +62,7 @@ import SA_B2410_290W from "./routes/SA_B2410_290W";
 import SA_B3000W from "./routes/SA_B3000W";
 import SA_B3100W from "./routes/SA_B3100W";
 import SA_B3101W from "./routes/SA_B3101W";
+import SA_B3600W from "./routes/SA_B3600W";
 import QC_A0060W from "./routes/QC_A0060W";
 import QC_A0120W from "./routes/QC_A0120W";
 import QC_A2000W from "./routes/QC_A2000W";
@@ -155,6 +156,7 @@ import dateFieldsZh from "cldr-dates-full/main/zh/dateFields.json";
 import timeZoneNamesZh from "cldr-dates-full/main/zh/timeZoneNames.json";
 
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
+import styled from 'styled-components';
 
 load(
   likelySubtags,
@@ -244,6 +246,15 @@ a {
 }
 
 `;
+
+const GlobalStyles = styled.div`
+@font-face {
+  font-family: 'TheJamsil5Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+`
 
 const App: React.FC = () => {
   return (
@@ -417,6 +428,11 @@ const AppInner: React.FC = () => {
                 {/* 연구개발 */}
                 <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
                 <AuthRoute path="/GANTT" component={GANTT} exact />
+
+                {/*KPI관리 */}
+                <GlobalStyles style={{fontFamily: "TheJamsil5Bold"}}>
+                  <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
+                </GlobalStyles>
               </PanelBarNavContainer>
             </Switch>
           </Router>
