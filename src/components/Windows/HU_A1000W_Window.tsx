@@ -408,10 +408,10 @@ const KendoWindow = ({
   };
  
   const handleSubmit = (dataItem: { [name: string]: any }) => {
-   const{prsnnum, prsnnm }  = dataItem;
+    const{prsnnum, prsnnm }  = dataItem;
     
    console.log("handlesubmit");
-   
+
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
@@ -435,8 +435,8 @@ const KendoWindow = ({
         onSubmit={handleSubmit}
         key={formKey}
         initialValues={{
-          prsnnum: isCopy === true ? "" : filters.prsnnum,
-          prsnnm : "", 
+            prsnnum: isCopy === true ? "" : filters.prsnnum,
+            prsnnm : "", 
         }}
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
