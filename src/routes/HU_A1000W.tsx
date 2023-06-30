@@ -244,21 +244,6 @@ const HU_A1000W: React.FC = () => {
     },
   };
 
-  const detailParameters: Iparameters = {
-    procedureName: "P_HU_A1000W_Q",
-    pageNumber: 0,
-    pageSize: detailFilters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_dptcd": "",
-      "@p_prsnnum": detailFilters.prsnnum,
-      "@p_prsnnm": "",
-      "@p_rtrchk": "",
-    },
-  };
-
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
@@ -528,7 +513,6 @@ const HU_A1000W: React.FC = () => {
           prsnnum={detailFilters.prsnnum}
           isCopy={isCopy}
           reloadData={reloadData}
-          para={detailParameters}
         />
       )}
 
