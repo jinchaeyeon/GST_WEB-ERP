@@ -509,7 +509,7 @@ const QC_B0100W: React.FC = () => {
           </Grid>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={4}>
+            <Grid item xs={12} sm={12} md={12} xl={3}>
               <GridTitle title="전체 공정율" />
               <DoughnutChart
                 data={All}
@@ -517,7 +517,7 @@ const QC_B0100W: React.FC = () => {
                 label={["양품율", "불량율"]}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} xl={8}>
+            <Grid item xs={12} sm={12} md={12} xl={9}>
               <GridTitle title="공정별 불량율" />
               <StackedChart
                 props={ProccdData}
