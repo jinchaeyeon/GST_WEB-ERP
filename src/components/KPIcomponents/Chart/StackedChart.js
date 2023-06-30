@@ -5,38 +5,35 @@ export default function StackedChart(props) {
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
+  function getRandomColor(){
+    return '#'+Math.floor(Math.random()*16777215).toString(16);
+  }
+
   useEffect(() => {
     if (props.props != null) {
       const propsData = props.props;
+
       const documentStyle = getComputedStyle(document.documentElement);
       const textColor = documentStyle.getPropertyValue("--text-color");
       const textColorSecondary = documentStyle.getPropertyValue(
         "--text-color-secondary"
       );
+    
       const surfaceBorder = documentStyle.getPropertyValue("--surface-border");
       const data = {
-        labels: propsData.filter(item => item.series == "준수율").map((items)=>{
-          return items.argument
+        labels: props.alllabel,
+        datasets: props.label.map((item, idx) => {
+          return {
+            type: "bar",
+            label: props.label[idx],
+            backgroundColor: props.random == true? getRandomColor() : props.color[idx],
+            data: propsData.filter(item => item[props.name] == props.label[idx]).map((items)=>{
+              return items[props.value]
+            }),
+          }
         }),
-        datasets: [
-          {
-            type: "bar",
-            label: "준수율",
-            backgroundColor: "#1976d2",
-            data: propsData.filter(item => item.series == "준수율").map((items)=>{
-              return items.value
-            }),
-          },
-          {
-            type: "bar",
-            label: "지연율",
-            backgroundColor: "#FF0000",
-            data: propsData.filter(item => item.series == "미준수율").map((items)=>{
-              return items.value
-            }),
-          },
-        ],
       };
+
       const options = {
         maintainAspectRatio: false,
         aspectRatio: 0.8,

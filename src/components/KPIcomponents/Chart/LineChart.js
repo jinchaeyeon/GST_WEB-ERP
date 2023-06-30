@@ -43,7 +43,6 @@ export default function LineChart(props) {
                 return items.value;
               }),
             fill: true,
-            borderDash: [5, 5],
             tension: 0.4,
             borderColor: "#fbded7",
             backgroundColor: "#FF0000",

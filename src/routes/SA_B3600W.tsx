@@ -117,7 +117,8 @@ const SA_B3600W: React.FC = () => {
     okcnt: 0,
     totcnt: 0,
   });
-
+  const [stackChartLabel, setStackChartLabel] = useState();
+  const [stackChartAllLabel, setStackChartAllLabel] = useState();
   const [toppercentData, setTopPercentCust] = useState();
   const [topdelayData, setTopDelayCust] = useState();
   const [selected, setSelected] = useState<TList | null>(null);
@@ -298,6 +299,16 @@ const SA_B3600W: React.FC = () => {
 
       if (rows.length > 0) {
         setChartList(rows);
+
+        let objects = rows.filter(
+          (arr: { series: any; }, index: any, callback: any[]) => index === callback.findIndex(t => t.series === arr.series)
+        );
+        setStackChartLabel(objects.map((item: { series: any; }) => {
+          return item.series
+        }))
+        setStackChartAllLabel(rows.filter((item: { series: any; }) => item.series== objects[0].series).map((items: { argument: any; })=>{
+          return items.argument
+        }))
       }
     }
   };
@@ -493,7 +504,7 @@ const SA_B3600W: React.FC = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} xl={12}>
               <GridTitle title="업체 준수율 월별 그래프" />
-              <StackedChart props={ChartList} />
+              <StackedChart props={ChartList} value="value" name="series" color={["#1976d2", "#FF0000"]} alllabel={stackChartAllLabel} label={stackChartLabel} random = {false}/>
             </Grid>
           </Grid>
           <Divider />

@@ -62,29 +62,25 @@ const QC_B0100W: React.FC = () => {
   const size: Tsize = useWindowSize();
 
   function useWindowSize() {
-    // Initialize state with undefined width/height so server and client renders match
-    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
     const [windowSize, setWindowSize] = useState({
       width: 0,
       height: 0,
     });
 
     useEffect(() => {
-      // Handler to call on window resize
       function handleResize() {
-        // Set window width/height to state
         setWindowSize({
           width: window.innerWidth,
           height: window.innerHeight,
         });
       }
-      // Add event listener
+
       window.addEventListener("resize", handleResize);
-      // Call handler right away so state gets updated with initial window size
+
       handleResize();
-      // Remove event listener on cleanup
+
       return () => window.removeEventListener("resize", handleResize);
-    }, []); // Empty array ensures that effect is only run on mount
+    }, []);
     return windowSize;
   }
 
@@ -107,11 +103,7 @@ const QC_B0100W: React.FC = () => {
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_PR010",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
-  );
+  UseBizComponent("L_PR010", setBizComponentData);
 
   const [proccdListData, setProccdListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -149,7 +141,6 @@ const QC_B0100W: React.FC = () => {
     }
   }, []);
 
-  //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: 20,
     orgdiv: "01",
@@ -162,20 +153,13 @@ const QC_B0100W: React.FC = () => {
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState();
   const [CardData, setCardData] = useState<any>([]);
-  const [ChartList, setChartList] = useState();
-  const [AllPanel, setAllPanel] = useState({
-    badcnt: 0,
-    cancel_percent: 0,
-    confirm_percent: 0,
-    okcnt: 0,
-    totcnt: 0,
-  });
-
-  const [toppercentData, setTopPercentCust] = useState();
+  const [ProccdData, setProccdData] = useState();
+  const [All, setAll] = useState<any>();
   const [MonthData, setMonthData] = useState();
   const [selected, setSelected] = useState<TList | null>(null);
+  const [stackChartLabel, setStackChartLabel] = useState();
+  const [stackChartAllLabel, setStackChartAllLabel] = useState();
 
-  //조회조건 파라미터
   const parameters = {
     procedureName: "P_QC_B0100W_Q",
     pageNumber: mainPgNum,
@@ -213,40 +197,41 @@ const QC_B0100W: React.FC = () => {
       "@p_orgdiv": filters.orgdiv,
       "@p_frym": convertDateToStr(filters.frym),
       "@p_toym": convertDateToStr(filters.toym),
-      "@p_proccd": selected == null? "" : proccdListData.find(
-        (item: any) => item.code_name === selected.code_name
-      )?.sub_code,
+      "@p_proccd":
+        selected == null
+          ? ""
+          : proccdListData.find(
+              (item: any) => item.code_name === selected.code_name
+            )?.sub_code,
       "@p_gubun": filters.gubun,
     },
   };
 
   const ALLparameters = {
-    procedureName: "P_SA_B3600W_Q",
+    procedureName: "P_QC_B0100W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "ALLCURRENT",
-      // "@p_orgdiv": filters.orgdiv,
-      // "@p_frdt": convertDateToStr(filters.frdt),
-      // "@p_todt": convertDateToStr(filters.todt),
-      // "@p_dtdiv": filters.dtdiv,
-      // "@p_dtgb": filters.dtgb,
-      // "@p_custcd": "",
+      "@p_work_type": "ALLRATE",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_frym": convertDateToStr(filters.frym),
+      "@p_toym": convertDateToStr(filters.toym),
+      "@p_proccd": "",
+      "@p_gubun": filters.gubun,
     },
   };
 
-  const chartparameters = {
-    procedureName: "P_SA_B3600W_Q",
+  const Proccdparameters = {
+    procedureName: "P_QC_B0100W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "MONTHCUSTCHART",
+      "@p_work_type": "PRODCHART",
       "@p_orgdiv": filters.orgdiv,
-      // "@p_frdt": convertDateToStr(filters.frdt),
-      // "@p_todt": convertDateToStr(filters.todt),
-      // "@p_dtdiv": filters.dtdiv,
-      // "@p_dtgb": filters.dtgb,
-      // "@p_custcd": selected == null? "" : selected.custcd,
+      "@p_frym": convertDateToStr(filters.frym),
+      "@p_toym": convertDateToStr(filters.toym),
+      "@p_proccd": "",
+      "@p_gubun": filters.gubun,
     },
   };
 
@@ -283,24 +268,39 @@ const QC_B0100W: React.FC = () => {
       setCardData(data2.tables);
     }
 
-    // let data3: any;
-    // try {
-    //   data3 = await processApi<any>("procedure", Monthparameters);
-    // } catch (error) {
-    //   data3 = null;
-    // }
-    // console.log(data3);
-    // if (data3.isSuccess === true) {
-    //   const rows = data3.tables[0].Rows.map(
-    //     (item: { okcnt: number; totcnt: number }) => ({
-    //       ...item,
-    //     })
-    //   );
+    let data3: any;
+    try {
+      data3 = await processApi<any>("procedure", Proccdparameters);
+    } catch (error) {
+      data3 = null;
+    }
 
-    //   if (rows.length > 0) {
-    //     setMonthData(rows);
-    //   }
-    // }
+    if (data3.isSuccess === true) {
+      const rows = data3.tables[0].Rows.map(
+        (item: { okcnt: number; totcnt: number }) => ({
+          ...item,
+        })
+      );
+
+      if (rows.length > 0) {
+        setProccdData(rows);
+
+        let objects = rows.filter(
+          (arr: { proccd: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.proccd === arr.proccd)
+        );
+        setStackChartLabel(
+          objects.map((item: { proccdnm: any }) => {
+            return item.proccdnm;
+          })
+        );
+        setStackChartAllLabel(
+          rows.map((items: { proccdnm: any }) => {
+            return items.proccdnm;
+          })
+        );
+      }
+    }
 
     let data4: any;
     try {
@@ -313,7 +313,10 @@ const QC_B0100W: React.FC = () => {
       const rows = data4.tables[0].Rows;
 
       if (rows.length > 0) {
-        setAllPanel(rows[0]);
+        setAll({
+          okrate: rows[0].badrate,
+          badrate: rows[1].badrate,
+        });
       }
     }
     setLoading(false);
@@ -413,7 +416,6 @@ const QC_B0100W: React.FC = () => {
       />
     </React.Fragment>
   );
-
   const cardOption = [
     {
       title: "불량율 TOP 공정",
@@ -425,9 +427,12 @@ const QC_B0100W: React.FC = () => {
     },
     {
       title: "불량율 TOP 고객사",
-      data: CardData.length == 0 ? "" : "",
+      data:
+        CardData.length == 0
+          ? ""
+          : CardData[1].Rows[0].custnm + " : " + CardData[1].Rows[0].badrate,
       backgroundColor: "#5393d3",
-    }, //CardData[1].Rows[0].custnm + " : " + CardData[1].Rows[0].badrate + "%"
+    },
     {
       title: "불량율 TOP 품목",
       data:
@@ -506,11 +511,22 @@ const QC_B0100W: React.FC = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} xl={4}>
               <GridTitle title="전체 공정율" />
-              {/* <DoughnutChart data={selected} label={["양품", "불량품"]}/> */}
+              <DoughnutChart
+                data={All}
+                option={["okrate", "badrate"]}
+                label={["양품율", "불량율"]}
+              />
             </Grid>
             <Grid item xs={12} sm={12} md={12} xl={8}>
               <GridTitle title="공정별 불량율" />
-              {/* <StackedChart props={ChartList} /> */}
+              <StackedChart
+                props={ProccdData}
+                value="badrate"
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                random={true}
+                name="proccdnm"
+              />
             </Grid>
           </Grid>
           <Divider />
