@@ -47,7 +47,7 @@ import {
   isValidDate,
 } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../../store/atoms";
@@ -59,6 +59,10 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
+
+const topHeight = 140.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
 
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
@@ -1036,13 +1040,13 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainerWrap>
-          <GridContainer>
+        <GridContainerWrap height={`calc(50% - ${leftOverHeight}px)`}>
+          <GridContainer  width={`65%`}>
             <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "320px", width: "1000px" }}
+             style={{ height: "calc(100% - 5px)" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1130,12 +1134,12 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               <GridColumn field="remark" title="비고" width="300px" />
             </Grid>
           </GridContainer>
-          <GridContainer>
+          <GridContainer width={`calc(35% - ${GAP}px)`}>
             <GridTitleContainer>
               <GridTitle>공정그리드</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "320px", width: "550px" }}
+             style={{ height: "calc(100% - 5px)" }}
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,
@@ -1204,7 +1208,10 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </Grid>
           </GridContainer>
         </GridContainerWrap>
-        <GridContainer>
+        <GridContainer
+              height={`calc(50% - ${leftOverHeight}px)`}
+              width={`99.9%`}
+            >
           <GridTitleContainer>
             <GridTitleContainer>
               <GridTitle>Keeping</GridTitle>
@@ -1220,7 +1227,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+                 style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

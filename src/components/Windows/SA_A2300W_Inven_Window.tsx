@@ -63,6 +63,10 @@ type IWindow = {
   custnm: string;
 };
 
+const topHeight = 140.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
+
 const CopyWindow = ({
   setVisible,
   setData,
@@ -1024,13 +1028,13 @@ const CopyWindow = ({
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainerWrap>
+        <GridContainerWrap height={`calc(60% - ${leftOverHeight}px)`}>
           <GridContainer width={`60%`}>
           <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "350px" }}
+          style={{ height: "calc(100% - 5px)" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1138,7 +1142,7 @@ const CopyWindow = ({
               <GridTitle>LOT별 재고</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "350px" }}
+                  style={{ height: "calc(100% - 5px)" }}
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,
@@ -1194,7 +1198,10 @@ const CopyWindow = ({
             </Grid>
           </GridContainer>
         </GridContainerWrap>
-        <GridContainer>
+        <GridContainer
+              height={`calc(40% - ${leftOverHeight}px)`}
+              width={`99.9%`}
+            >
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -1207,7 +1214,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+           style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

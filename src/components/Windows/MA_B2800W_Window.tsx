@@ -82,7 +82,7 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
     left: 300,
     top: 100,
     width: 1200,
-    height: 600,
+    height: 550,
   });
 
   const pathname: string = window.location.pathname.replace("/", "");
@@ -347,7 +347,7 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
       onResize={handleResize}
       onClose={onClose}
     >
-      <GridContainer height="calc(100% - 80px)">
+      <GridContainer height="calc(100% - 60px)">
         <Grid
           style={{ height: "100%" }}
           data={process(

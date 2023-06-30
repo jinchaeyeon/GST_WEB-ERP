@@ -1487,6 +1487,7 @@ const MA_A7000W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));

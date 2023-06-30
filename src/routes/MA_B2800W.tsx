@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -9,6 +9,7 @@ import {
   GridFooterCellProps,
   GridCellProps,
   GRID_COL_INDEX_ATTRIBUTE,
+  GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
 import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -42,6 +43,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   dateformat2,
+  getGridItemChangedData,
 } from "../components/CommonFunction";
 import MA_B2800W_Window from "../components/Windows/MA_B2800W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -50,6 +52,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -62,6 +65,7 @@ import { isLoading } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import CenterCell from "../components/Cells/CenterCell";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 
 const DATA_ITEM_KEY = "num";
 
@@ -86,6 +90,66 @@ const CustomLockedCell = (props: GridCellProps) => {
   );
 };
 
+export const FormContext = createContext<{
+  purInfo: TPurData;
+  setPutInfo: (d: React.SetStateAction<TPurData>) => void;
+}>({} as any);
+
+type TPurData = {
+  purnum: string;
+  purseq: number;
+  recnum: string;
+};
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setPutInfo } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const setPurData = () => {
+    if(dataItem != undefined) {
+      setPutInfo({
+        purnum: dataItem.purnum,
+        purseq: dataItem.purseq,
+        recnum: dataItem.recnum
+      });
+    }
+  };
+
+  const defaultRendering = (
+    <td
+    style={props.style} // this applies styles that lock the column at a specific position
+    className={props.className} // this adds classes needed for locked columns
+    colSpan={props.colSpan}
+    {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
+  >
+    <Button
+      themeColor={"primary"}
+      fillMode="outline"
+      onClick={setPurData}
+      icon="edit"
+    ></Button>
+  </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+    </>
+  );
+};
+
 const MA_B2800W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -95,6 +159,25 @@ const MA_B2800W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
+  const [purInfo, setPutInfo] = useState<TPurData>({
+    purnum: "",
+    purseq: 0,
+    recnum: "",
+  });
+
+  useEffect(() => {
+    if(purInfo.purnum != "" && purInfo.recnum != "") {
+      setSelectedState({ [purInfo.recnum]: true });
+      
+      setDetailFilters((prev) => ({
+        ...prev,
+        purnum: purInfo.purnum,
+        purseq: purInfo.purseq,
+      }));
+  
+      setWindowVisible(true);
+    }
+  }, [purInfo]);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -724,14 +807,11 @@ const MA_B2800W: React.FC = () => {
   };
 
   const CommandCell = (props: GridCellProps) => {
-    const field = props.field || "";
-    const navigationAttributes = useTableKeyboardNavigation(props.id);
-
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.recnum]: true });
-
+      
       setDetailFilters((prev) => ({
         ...prev,
         purnum: rowData.purnum,
@@ -746,23 +826,81 @@ const MA_B2800W: React.FC = () => {
         style={props.style} // this applies styles that lock the column at a specific position
         className={props.className} // this adds classes needed for locked columns
         colSpan={props.colSpan}
-        role={"gridcell"}
-        aria-colindex={props.ariaColumnIndex}
-        aria-selected={props.isSelected}
-        {...{ [GRID_COL_INDEX_ATTRIBUTE]: props.columnIndex }}
-        {...navigationAttributes}
+        {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
       >
         <Button
-          className="k-grid-edit-command"
           themeColor={"primary"}
           fillMode="outline"
-          onClick={onEditClick}
+          onClick={() => onEditClick}
           icon="edit"
         ></Button>
       </td>
     );
   };
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
 
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const enterEdit2 = (dataItem: any, field: string) => {
+      if (field == "") {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+            ? {
+                ...item,
+                [EDIT_FIELD]: field,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+  
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
+  };
+
+  const exitEdit2 = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+  
   return (
     <>
       <TitleContainer>
@@ -959,7 +1097,12 @@ const MA_B2800W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
+      <FormContext.Provider
+          value={{
+            purInfo,
+            setPutInfo,
+          }}
+        >
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -1007,8 +1150,12 @@ const MA_B2800W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender2}
+            rowRender={customRowRender2}
+            editField={EDIT_FIELD}
           >
-            <GridColumn cell={CommandCell} locked={true} width="60px" />
+            <GridColumn cell={ColumnCommandCell} locked={true} width="60px" />
             <GridColumn locked={true} title="자료">
               {createColumn()}
             </GridColumn>
@@ -1019,6 +1166,7 @@ const MA_B2800W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
+      </FormContext.Provider>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

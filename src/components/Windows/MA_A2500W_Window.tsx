@@ -137,7 +137,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: 1600,
-    height: 900,
+    height: 850,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -271,7 +271,7 @@ const CopyWindow = ({
 
   const processApi = useApi();
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     amt: 0,
     amtunit: "KRW",
@@ -288,7 +288,7 @@ const CopyWindow = ({
     num: 0,
     orgdiv: "01",
     person: "",
-    purdt: new Date(),
+    purdt: null,
     purnum: "",
     purqty: 0,
     pursts: "",
@@ -385,7 +385,9 @@ const CopyWindow = ({
         recdt: toDate(data.recdt),
         seq1: data.seq1,
         indt: toDate(data.indt),
-        purdt: toDate(data.purdt),
+        purdt: isValidDate(data.purdt)
+        ? new Date(dateformat(data.purdt))
+        : null,
         person: data.person,
         doexdiv: data.doexdiv,
         location: data.location,

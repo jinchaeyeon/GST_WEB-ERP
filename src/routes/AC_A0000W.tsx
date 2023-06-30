@@ -44,6 +44,7 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
   useSysMessage,
+  isValidDate,
 } from "../components/CommonFunction";
 import {
   PAGE_SIZE,
@@ -183,12 +184,12 @@ const AC_A0000W: React.FC = () => {
     }));
   };
 
-  const [infomation, setInfomation] = useState({
+  const [infomation, setInfomation] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "U",
-    acntfrdt: new Date(),
+    acntfrdt: null,
     acntses: "",
-    acnttodt: new Date(),
+    acnttodt: null,
     address: "",
     address_eng: "",
     bizregnum: "",
@@ -203,7 +204,7 @@ const AC_A0000W: React.FC = () => {
     dptcd: "",
     efaxnum: "",
     email: "",
-    estbdt: new Date(),
+    estbdt: null,
     etelnum: "",
     faxnum: "",
     nickname: "",
@@ -299,9 +300,13 @@ const AC_A0000W: React.FC = () => {
         setInfomation({
           pgSize: PAGE_SIZE,
           workType: "U",
-          acntfrdt: new Date(dateformat(firstRowData.acntfrdt)),
+          acntfrdt: isValidDate(firstRowData.acntfrdt)
+          ? new Date(dateformat(firstRowData.acntfrdt))
+          : null,
           acntses: firstRowData.acntses,
-          acnttodt: new Date(dateformat(firstRowData.acnttodt)),
+          acnttodt: isValidDate(firstRowData.acnttodt)
+          ? new Date(dateformat(firstRowData.acnttodt))
+          : null,
           address: firstRowData.address,
           address_eng: firstRowData.address_eng,
           bizregnum: firstRowData.bizregnum,
@@ -316,7 +321,9 @@ const AC_A0000W: React.FC = () => {
           dptcd: firstRowData.dptcd,
           efaxnum: firstRowData.efaxnum,
           email: firstRowData.email,
-          estbdt: new Date(dateformat(firstRowData.estbdt)),
+          estbdt: isValidDate(firstRowData.estbdt)
+          ? new Date(dateformat(firstRowData.estbdt))
+          : null,
           etelnum: firstRowData.etelnum,
           faxnum: firstRowData.faxnum,
           nickname: firstRowData.nickname,
@@ -363,9 +370,13 @@ const AC_A0000W: React.FC = () => {
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "U",
-      acntfrdt: new Date(dateformat(selectedRowData.acntfrdt)),
+      acntfrdt: isValidDate(selectedRowData.acntfrdt)
+      ? new Date(dateformat(selectedRowData.acntfrdt))
+      : null,
       acntses: selectedRowData.acntses,
-      acnttodt: new Date(dateformat(selectedRowData.acnttodt)),
+      acnttodt: isValidDate(selectedRowData.acnttodt)
+      ? new Date(dateformat(selectedRowData.acnttodt))
+      : null,
       address: selectedRowData.address,
       address_eng: selectedRowData.address_eng,
       bizregnum: selectedRowData.bizregnum,
@@ -380,7 +391,9 @@ const AC_A0000W: React.FC = () => {
       dptcd: selectedRowData.dptcd,
       efaxnum: selectedRowData.efaxnum,
       email: selectedRowData.email,
-      estbdt: new Date(dateformat(selectedRowData.estbdt)),
+      estbdt: isValidDate(selectedRowData.estbdt)
+      ? new Date(dateformat(selectedRowData.estbdt))
+      : null,
       etelnum: selectedRowData.etelnum,
       faxnum: selectedRowData.faxnum,
       nickname: selectedRowData.nickname,
@@ -431,9 +444,9 @@ const AC_A0000W: React.FC = () => {
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",
-      acntfrdt: new Date(),
+      acntfrdt: null,
       acntses: "",
-      acnttodt: new Date(),
+      acnttodt: null,
       address: "",
       address_eng: "",
       bizregnum: "",
@@ -448,7 +461,7 @@ const AC_A0000W: React.FC = () => {
       dptcd: "",
       efaxnum: "",
       email: "",
-      estbdt: new Date(),
+      estbdt: null,
       etelnum: "",
       faxnum: "",
       nickname: "",
@@ -611,9 +624,9 @@ const AC_A0000W: React.FC = () => {
       setInfomation({
         pgSize: PAGE_SIZE,
         workType: "U",
-        acntfrdt: new Date(),
+        acntfrdt: null,
         acntses: "",
-        acnttodt: new Date(),
+        acnttodt: null,
         address: "",
         address_eng: "",
         bizregnum: "",
@@ -628,7 +641,7 @@ const AC_A0000W: React.FC = () => {
         dptcd: "",
         efaxnum: "",
         email: "",
-        estbdt: new Date(),
+        estbdt: null,
         etelnum: "",
         faxnum: "",
         nickname: "",
@@ -672,6 +685,27 @@ const AC_A0000W: React.FC = () => {
         throw findMessage(messagesData, "AC_A0000W_001");
       } else if (infomation.compnm == "") {
         throw findMessage(messagesData, "AC_A0000W_001");
+      } else if (
+        convertDateToStr(infomation.estbdt).substring(0, 4) < "1997" ||
+        convertDateToStr(infomation.estbdt).substring(6, 8) > "31" ||
+        convertDateToStr(infomation.estbdt).substring(6, 8) < "01" ||
+        convertDateToStr(infomation.estbdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_A0000W_002");
+      } else if (
+        convertDateToStr(infomation.acntfrdt).substring(0, 4) < "1997" ||
+        convertDateToStr(infomation.acntfrdt).substring(6, 8) > "31" ||
+        convertDateToStr(infomation.acntfrdt).substring(6, 8) < "01" ||
+        convertDateToStr(infomation.acntfrdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_A0000W_002");
+      } else if (
+        convertDateToStr(infomation.acnttodt).substring(0, 4) < "1997" ||
+        convertDateToStr(infomation.acnttodt).substring(6, 8) > "31" ||
+        convertDateToStr(infomation.acnttodt).substring(6, 8) < "01" ||
+        convertDateToStr(infomation.acnttodt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_A0000W_002");
       } 
     } catch (e) {
       alert(e);

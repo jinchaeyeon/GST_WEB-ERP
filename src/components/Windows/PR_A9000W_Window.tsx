@@ -61,7 +61,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 1200,
-    height: 750,
+    height: 730,
   });
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
@@ -526,7 +526,8 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         item[DATA_ITEM_KEY] === props.dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              chk: !item.chk,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+        chk: !item.chk,
               [EDIT_FIELD]: props.field,
             }
           : {

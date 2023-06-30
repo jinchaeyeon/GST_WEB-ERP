@@ -196,7 +196,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: 1600,
-    height: 900,
+    height: 920,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -421,6 +421,7 @@ const CopyWindow = ({
     reqdt: null,
     slnctns: "",
     title: "",
+    isSearch: true,
   });
 
   //참조
@@ -484,7 +485,7 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (workType != "N" && isInitSearch === false) {
+    if (workType != "N" && isInitSearch === false && filters.isSearch == true) {
       fetchMainGrid();
     }
   }, [filters]);
@@ -1175,7 +1176,7 @@ const CopyWindow = ({
               <GridTitle>참조</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "40vh" }}
+              style={{ height: "37vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

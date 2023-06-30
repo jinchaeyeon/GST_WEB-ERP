@@ -1383,7 +1383,7 @@ const QC_A2000: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              chk: typeof item.chk == "boolean" ? item.chk : false,
+                           chk: typeof item.chk == "boolean" ? item.chk : item.chk =="Y" ? true : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -1767,6 +1767,7 @@ const QC_A2000: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));

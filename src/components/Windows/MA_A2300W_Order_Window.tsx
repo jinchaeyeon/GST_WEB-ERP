@@ -52,6 +52,10 @@ import NumberCell from "../Cells/NumberCell";
 import DateCell from "../Cells/DateCell";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 
+const topHeight = 140.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
+
 type IWindow = {
   custcd?: string | undefined;
   custnm?: string | undefined;
@@ -59,12 +63,7 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
-const CopyWindow = ({
-  custcd,
-  custnm,
-  setVisible,
-  setData,
-}: IWindow) => {
+const CopyWindow = ({ custcd, custnm, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -364,7 +363,7 @@ const CopyWindow = ({
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -561,49 +560,48 @@ const CopyWindow = ({
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     rowsOfDataResult(mainDataResult).forEach((item) =>
-        props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-      );
-      if(sum != undefined){
-        var parts = sum.toString().split(".");
-  
-        return parts[0] != "NaN" ? (
-          <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-            {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-              (parts[1] ? "." + parts[1] : "")}
-          </td>
-        ) : (
-          <td></td>
-        );
-      } else {
-        return <td></td>
-      }
-    };
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
 
-    const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-      let sum = 0;
-      subDataResult.data.forEach((item) =>
-        props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
       );
-      if(sum != undefined){
-        var parts = sum.toString().split(".");
-  
-        return parts[0] != "NaN" ? (
-          <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-            {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-              (parts[1] ? "." + parts[1] : "")}
-          </td>
-        ) : (
-          <td></td>
-        );
-      } else {
-        return <td></td>
-      }
-    };
+    } else {
+      return <td></td>;
+    }
+  };
+
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    subDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
   const onRowDoubleClick = (props: any) => {
     let arr: any = [];
     let valid = true;
     let seq = subDataResult.total + 1;
-
 
     for (const [key, value] of Object.entries(selectedState)) {
       if (value == true) {
@@ -620,7 +618,7 @@ const CopyWindow = ({
         if (item.custcd != items.custcd) {
           valid = false;
         }
-        if(filters.custcd != "" && filters.custcd != items.custcd) {
+        if (filters.custcd != "" && filters.custcd != items.custcd) {
           valid = false;
         }
       });
@@ -632,7 +630,6 @@ const CopyWindow = ({
       });
     });
 
- 
     if (valid == true) {
       selectRows.map((selectRow: any) => {
         const newDataItem = {
@@ -895,7 +892,7 @@ const CopyWindow = ({
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -908,7 +905,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "300px" }}
+            style={{ height: "calc(100% - 5px)" }}
             data={mainDataResult}
             onDataStateChange={onMainDataStateChange}
             {...mainDataState}
@@ -1025,7 +1022,7 @@ const CopyWindow = ({
             <GridColumn field="purkey" title="발주번호" width="160px" />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -1038,7 +1035,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "250px" }}
+            style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

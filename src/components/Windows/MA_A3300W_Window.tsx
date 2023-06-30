@@ -321,7 +321,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: 1600,
-    height: 900,
+    height: 800,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -1157,6 +1157,7 @@ const CopyWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1411,7 +1412,7 @@ const CopyWindow = ({
             setItemInfo,
           }}
         >
-          <GridContainer height="calc(100% - 310px) ">
+          <GridContainer>
             <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
               <ButtonContainer>
@@ -1440,7 +1441,7 @@ const CopyWindow = ({
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "calc(100% - 100px)" }}
+              style={{ height: "370px" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

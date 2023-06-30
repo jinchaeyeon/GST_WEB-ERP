@@ -1057,8 +1057,14 @@ const BA_A0080: React.FC = () => {
 
   const onSaveClick = async () => {
     let valid = true;
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
     try {
-      mainDataResult.data.map((item: any) => {
+      dataItem.map((item: any) => {
         if (
           item.recdt.substring(0, 4) < "1997" ||
           item.recdt.substring(6, 8) > "31" ||
@@ -1094,13 +1100,6 @@ const BA_A0080: React.FC = () => {
     }
 
     if (!valid) return false;
-
-    const dataItem = mainDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
 
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
     let dataArr: TdataArr = {

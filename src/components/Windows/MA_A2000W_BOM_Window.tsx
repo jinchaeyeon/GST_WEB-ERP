@@ -86,6 +86,9 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
+const topHeight = 140.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 3;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -1152,9 +1155,9 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer>
+        <GridContainer height={`calc(35% - ${leftOverHeight}px)`}>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "calc(100% - 5px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1194,7 +1197,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             <GridColumn field="insiz" title="규격" width="500px" />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(35% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -1207,7 +1210,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <TreeList
-            style={{ height: "200px", overflow: "auto" }}
+   style={{ height: "calc(100% - 40px)" }}
             data={processData()}
             expandField={EXPANDED_FIELD}
             subItemsField={SUB_ITEMS_FIELD}
@@ -1224,7 +1227,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             toolbar={<TreeListToolbar />}
           />
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(30% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -1237,7 +1240,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+       style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

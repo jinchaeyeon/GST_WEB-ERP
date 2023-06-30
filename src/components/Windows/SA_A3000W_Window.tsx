@@ -333,7 +333,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: 1600,
-    height: 900,
+    height: 905,
   });
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [loginResult] = useRecoilState(loginResultState);

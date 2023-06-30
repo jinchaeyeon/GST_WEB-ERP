@@ -27,10 +27,7 @@ import {
   ButtonInInput,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Checkbox,
-  Input,
-} from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
@@ -404,11 +401,13 @@ const PR_A4100W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
+
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
           groupId: row.planno + "planno",
           group_category_name: "생산계획번호" + " : " + row.planno,
+          chk : false
         };
       });
       if (totalRowCnt > 0) {
@@ -673,8 +672,6 @@ const PR_A4100W: React.FC = () => {
     } catch (e) {
       alert(e);
     }
-
-
   };
 
   const onExpandChange = (event: GridExpandChangeEvent) => {
@@ -699,7 +696,12 @@ const PR_A4100W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              chk: typeof item.chk == "boolean" ? !item.chk : false,
+              chk:
+                typeof item.chk == "boolean"
+                  ? !item.chk
+                  : item.chk == "Y"
+                  ? false
+                  : true,
               [EDIT_FIELD]: field,
             }
           : {
@@ -732,6 +734,7 @@ const PR_A4100W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -817,7 +820,12 @@ const PR_A4100W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              chk: typeof item.chk == "boolean" ? item.chk : false,
+              chk:
+                typeof item.chk == "boolean"
+                  ? !item.chk
+                  : item.chk == "Y"
+                  ? false
+                  : true,
               [EDIT_FIELD]: field,
             }
           : {
@@ -872,10 +880,7 @@ const PR_A4100W: React.FC = () => {
     }
 
     const dataItem = mainDataResult.data.filter((item: any, index: number) => {
-      return (
-        (item.chk === true) &&
-        item.rowstatus !== undefined
-      );
+      return item.chk === true && item.rowstatus !== undefined;
     });
     if (dataItem.length === 0) return false;
     let dataArr: TdataArr = {
@@ -885,12 +890,7 @@ const PR_A4100W: React.FC = () => {
       finyn_s: [],
     };
     dataItem.forEach((item: any, idx: number) => {
-      const {
-        planno = "",
-        planseq= "",
-        qty = "",
-        finyn2 = "",
-      } = item;
+      const { planno = "", planseq = "", qty = "", finyn2 = "" } = item;
 
       dataArr.planno_s.push(planno);
       dataArr.planseq_s.push(planseq);
@@ -914,7 +914,7 @@ const PR_A4100W: React.FC = () => {
         "@p_prodmac_s": "",
         "@p_qty_s": dataArr.qty_s.join("|"),
         "@p_remark_s": "",
-        "@p_finyn_s":dataArr.finyn_s.join("|"),
+        "@p_finyn_s": dataArr.finyn_s.join("|"),
         "@p_rowstatus_s": "",
         "@p_chlditemcd_s": "",
         "@p_unitqty_s": "",
@@ -937,7 +937,7 @@ const PR_A4100W: React.FC = () => {
     if (data.isSuccess !== true) {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     resetAllGrid();
   };
@@ -948,10 +948,7 @@ const PR_A4100W: React.FC = () => {
     }
 
     const dataItem = mainDataResult.data.filter((item: any, index: number) => {
-      return (
-        (item.chk === true) &&
-        item.rowstatus !== undefined
-      );
+      return item.chk === true && item.rowstatus !== undefined;
     });
     if (dataItem.length === 0) return false;
     let dataArr: TdataArr = {
@@ -961,12 +958,7 @@ const PR_A4100W: React.FC = () => {
       finyn_s: [],
     };
     dataItem.forEach((item: any, idx: number) => {
-      const {
-        planno = "",
-        planseq= "",
-        qty = "",
-        finyn2 = "",
-      } = item;
+      const { planno = "", planseq = "", qty = "", finyn2 = "" } = item;
 
       dataArr.planno_s.push(planno);
       dataArr.planseq_s.push(planseq);
@@ -990,7 +982,7 @@ const PR_A4100W: React.FC = () => {
         "@p_prodmac_s": "",
         "@p_qty_s": dataArr.qty_s.join("|"),
         "@p_remark_s": "",
-        "@p_finyn_s":dataArr.finyn_s.join("|"),
+        "@p_finyn_s": dataArr.finyn_s.join("|"),
         "@p_rowstatus_s": "",
         "@p_chlditemcd_s": "",
         "@p_unitqty_s": "",
@@ -1013,7 +1005,7 @@ const PR_A4100W: React.FC = () => {
     if (data.isSuccess !== true) {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     resetAllGrid();
   };
@@ -1042,16 +1034,16 @@ const PR_A4100W: React.FC = () => {
 
     dataItem.forEach((item: any, idx: number) => {
       const {
-        planno= "",
-        planseq= "",
-        plandt= "",
-        finexpdt= "",
-        proccd= "",
-        procseq= "",
-        outprocyn= "",
-        prodmac= "",
-        qty= "",
-        remark= "",
+        planno = "",
+        planseq = "",
+        plandt = "",
+        finexpdt = "",
+        proccd = "",
+        procseq = "",
+        outprocyn = "",
+        prodmac = "",
+        qty = "",
+        remark = "",
         finyn2 = "",
       } = item;
 
@@ -1077,14 +1069,14 @@ const PR_A4100W: React.FC = () => {
         "@p_planno_s": dataArr.planno_s.join("|"),
         "@p_planseq_s": dataArr.planseq_s.join("|"),
         "@p_plandt_s": dataArr.plandt_s.join("|"),
-        "@p_finexpdt_s":dataArr.finexpdt_s.join("|"),
+        "@p_finexpdt_s": dataArr.finexpdt_s.join("|"),
         "@p_proccd_s": dataArr.proccd_s.join("|"),
         "@p_procseq_s": dataArr.procseq_s.join("|"),
         "@p_outprocyn_s": dataArr.outprocyn_s.join("|"),
         "@p_prodmac_s": dataArr.prodmac_s.join("|"),
         "@p_qty_s": dataArr.qty_s.join("|"),
         "@p_remark_s": dataArr.remark_s.join("|"),
-        "@p_finyn_s":dataArr.finyn_s.join("|"),
+        "@p_finyn_s": dataArr.finyn_s.join("|"),
         "@p_rowstatus_s": "",
         "@p_chlditemcd_s": "",
         "@p_unitqty_s": "",
@@ -1107,7 +1099,7 @@ const PR_A4100W: React.FC = () => {
     if (data.isSuccess !== true) {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     resetAllGrid();
   };
@@ -1145,21 +1137,21 @@ const PR_A4100W: React.FC = () => {
                 )}
               </th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.frdt,
-                      end: filters.todt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        frdt: e.value.start,
-                        todt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>작업자</th>
               <td>
                 {customOptionData !== null && (
@@ -1318,7 +1310,7 @@ const PR_A4100W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
             <ButtonContainer>
-            <Button
+              <Button
                 onClick={onCheckClick}
                 fillMode="outline"
                 themeColor={"primary"}
@@ -1330,9 +1322,9 @@ const PR_A4100W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
-                title="행 삭제" 
+                title="행 삭제"
               ></Button>
-                        <Button
+              <Button
                 onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
@@ -1460,7 +1452,7 @@ const PR_A4100W: React.FC = () => {
           setData={setItemData}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

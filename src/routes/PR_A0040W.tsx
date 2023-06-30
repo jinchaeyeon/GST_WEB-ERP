@@ -1768,7 +1768,7 @@ const PR_A0040W: React.FC = () => {
                 <GridTitle>공정리스트</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "42.5vh" }}
+                style={{ height: "42vh" }}
                 data={filterBy(
                   subData2Result.data.map((row) => ({
                     ...row,

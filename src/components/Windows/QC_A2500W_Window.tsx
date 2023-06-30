@@ -303,7 +303,7 @@ const CopyWindow = ({
     }));
   };
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "N",
     orgdiv: "01",
@@ -326,7 +326,7 @@ const CopyWindow = ({
     person: "admin",
     proccd: "",
     protext: "",
-    qcdt:new Date(),
+    qcdt: null,
     qty: 0,
     recdt: new Date(),
     renum: "",
@@ -343,7 +343,9 @@ const CopyWindow = ({
         location: "01",
         datnum: data.datnum,
         attdatnum: data.attdatnum,
-        baddt: toDate(data.baddt),
+        baddt: isValidDate(data.baddt)
+        ? new Date(dateformat(data.baddt))
+        : data.baddt,
         badnum: data.badnum,
         badseq: data.badseq,
         causedcd: data.causedcd,
@@ -359,7 +361,9 @@ const CopyWindow = ({
         person: data.person,
         proccd: data.proccd,
         protext: data.protext,
-        qcdt: toDate(data.qcdt),
+        qcdt: isValidDate(data.qcdt)
+        ? new Date(dateformat(data.qcdt))
+        : null,
         qty: data.qty,
         recdt: toDate(data.recdt),
         renum: data.renum,
@@ -378,7 +382,9 @@ const CopyWindow = ({
         badseq: basicdata.badseq,
         renum: basicdata.renum,
         reseq: basicdata.reseq,
-        baddt: toDate(basicdata.baddt),
+        baddt: isValidDate(basicdata.baddt)
+        ? new Date(dateformat(basicdata.baddt))
+        : basicdata.baddt,
       }));
     }
   }, []);

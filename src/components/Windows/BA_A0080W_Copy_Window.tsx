@@ -54,6 +54,10 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
+const topHeight = 141.13;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 2;
+
 const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -723,9 +727,9 @@ const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <Grid
-            style={{ height: "290px" }}
+            style={{ height: "calc(100% - 5px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -822,7 +826,7 @@ const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
             <GridColumn field="custnm" title="업체명" width="160px" />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -835,7 +839,7 @@ const CopyWindow = ({ itemacnt, setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "290px" }}
+                style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

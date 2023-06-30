@@ -55,6 +55,10 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
+const topHeight = 174.59;
+const bottomHeight = 55;
+const leftOverHeight = (topHeight + bottomHeight) / 3;
+
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -954,9 +958,9 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer>
+        <GridContainer height={`calc(30% - ${leftOverHeight}px)`}>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "calc(100% - 5px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1040,12 +1044,12 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             <GridColumn field="remark" title="비고" width="300px" />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(35% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <GridTitle>BOM 제품하위자재조회</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "calc(100% - 40px)" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
@@ -1119,7 +1123,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             <GridColumn field="qtyunit" title="수량단위" width="150px" />
           </Grid>
         </GridContainer>
-        <GridContainer>
+        <GridContainer height={`calc(30% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button
@@ -1127,12 +1131,12 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="minus"
-                  title="행 삭제"
+                title="행 삭제"
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "200px" }}
+            style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

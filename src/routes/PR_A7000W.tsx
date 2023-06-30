@@ -1661,6 +1661,7 @@ const PR_A7000W: React.FC = () => {
     const changeCheck = () => {
       const newData = detailDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1685,6 +1686,7 @@ const PR_A7000W: React.FC = () => {
     const changeCheck = () => {
       const newData = detailDataResult2.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values3,
         [EDIT_FIELD]: props.field,
       }));
@@ -1709,6 +1711,7 @@ const PR_A7000W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values4,
         [EDIT_FIELD]: props.field,
       }));
@@ -1740,7 +1743,12 @@ const PR_A7000W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              chk: typeof item.chk == "boolean" ? !item.chk : false,
+              chk:
+                typeof item.chk == "boolean"
+                  ? !item.chk
+                  : item.chk == "Y"
+                  ? false
+                  : true,
               [EDIT_FIELD]: field,
             }
           : {
@@ -1777,7 +1785,12 @@ const PR_A7000W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              chk: typeof item.chk == "boolean" ? !item.chk : false,
+              chk:
+                typeof item.chk == "boolean"
+                  ? !item.chk
+                  : item.chk == "Y"
+                  ? false
+                  : true,
               [EDIT_FIELD]: field,
             }
           : {
@@ -1880,7 +1893,7 @@ const PR_A7000W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              chk: typeof item.chk == "boolean" ? item.chk : false,
+               chk: typeof item.chk == "boolean" ? !item.chk : item.chk =="Y" ? false : true,
               [EDIT_FIELD]: field,
             }
           : {
@@ -1954,7 +1967,7 @@ const PR_A7000W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              chk: typeof item.chk == "boolean" ? item.chk : false,
+               chk: typeof item.chk == "boolean" ? !item.chk : item.chk =="Y" ? false : true,
               [EDIT_FIELD]: field,
             }
           : {

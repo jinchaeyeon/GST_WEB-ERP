@@ -651,7 +651,7 @@ const QC_A3000: React.FC = () => {
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess === true && data.resultMessage != "조회된 자료가 없습니다.") {
       if (datas.qcyn == "등록" && information.workType == "N") {
         try {
           data = await processApi<any>("procedure", detailParameters3);

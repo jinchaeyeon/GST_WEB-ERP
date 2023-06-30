@@ -319,7 +319,7 @@ const CopyWindow = ({
 
   const processApi = useApi();
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     amt: 0,
     amtunit: "",
@@ -330,7 +330,7 @@ const CopyWindow = ({
     custprsncd: "",
     doexdiv: "",
     files: "",
-    inexpdt: new Date(),
+    inexpdt: null,
     location: "01",
     num: 0,
     orgdiv: "01",
@@ -427,7 +427,9 @@ const CopyWindow = ({
         ...prev,
         purnum: data.purnum,
         purdt: toDate(data.purdt),
-        inexpdt: toDate(data.inexpdt),
+        inexpdt: isValidDate(data.inexpdt)
+        ? new Date(dateformat(data.inexpdt))
+        : null,
         person: data.person,
         doexdiv: data.doexdiv,
         location: data.location,

@@ -56,6 +56,8 @@ import {
   getGridItemChangedData,
   findMessage,
   getItemQuery,
+  dateformat,
+  isValidDate,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -557,13 +559,13 @@ const CopyWindow = ({
 
   const processApi = useApi();
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
     location: "01",
     reckey: "",
     outdt: new Date(),
-    shipdt: new Date(),
+    shipdt: null,
     position: "",
     custcd: "",
     custnm: "",
@@ -709,7 +711,9 @@ const CopyWindow = ({
         reckey: data.reckey,
         remark: data.remark,
         seq1: data.seq1,
-        shipdt: toDate(data.shipdt),
+        shipdt: isValidDate(data.shipdt)
+        ? new Date(dateformat(data.shipdt))
+        : null,
         taxamt: data.taxamt,
         taxdiv: data.taxdiv,
         taxnum: data.taxnum,
@@ -1161,6 +1165,7 @@ const CopyWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
