@@ -784,6 +784,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
+        modal={true}
       >
         <FormBoxWrap style={{ width: "1530px", marginLeft: "-70px" }}>
           <FormBox>

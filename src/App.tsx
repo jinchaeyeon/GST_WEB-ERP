@@ -104,6 +104,7 @@ import PR_A9000W from "./routes/PR_A9000W";
 import PR_A9100W from "./routes/PR_A9100W";
 import PR_B3000W from "./routes/PR_B3000W";
 import PR_A3000W from "./routes/PR_A3000W";
+import PR_B1700_498W from "./routes/PR_B1700_498W";
 import CT_A0111W from "./routes/CT_A0111W";
 import CM_A0000W from "./routes/CM_A0000W";
 import CM_A4100W from "./routes/CM_A4100W";
@@ -433,6 +434,7 @@ const AppInner: React.FC = () => {
                 {/*KPI관리 */}
                 <GlobalStyles style={{fontFamily: "TheJamsil5Bold"}}>
                   <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
+                  <AuthRoute path="/PR_B1700_498W" component={PR_B1700_498W} exact />
                   <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
                 </GlobalStyles>
               </PanelBarNavContainer>

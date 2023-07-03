@@ -633,6 +633,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
+        modal={true}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

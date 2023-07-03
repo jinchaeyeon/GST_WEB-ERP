@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import {
@@ -24,6 +24,8 @@ import GridTitle from "../components/KPIcomponents/Title/Title";
 import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
+import { Toast } from "primereact/toast";
+import Input from "../components/KPIcomponents/Input/Input";
 import { DropdownChangeEvent } from "primereact/dropdown";
 
 interface TList {
@@ -41,11 +43,12 @@ interface Tsize {
   height: number;
 }
 
-const SA_B3600W: React.FC = () => {
+const PR_B1700_498W: React.FC = () => {
   const theme = createTheme();
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
+  const toast = useRef<Toast>(null);
 
   const size: Tsize = useWindowSize();
 
@@ -89,10 +92,14 @@ const SA_B3600W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        option: defaultOption.find((item: any) => item.id === "option")
           .valueCode,
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        dtdiv: defaultOption.find((item: any) => item.id === "dtdiv").valueCode,
+        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+          .valueCode,
+        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+          .valueCode,
+        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -104,6 +111,12 @@ const SA_B3600W: React.FC = () => {
     location: "01",
     frdt: new Date(),
     todt: new Date(),
+    option: "I",
+    itemcd: "",
+    itemnm: "",
+    itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
     dtdiv: "W",
     dtgb: "A",
     isSearch: true,
@@ -338,26 +351,6 @@ const SA_B3600W: React.FC = () => {
   const startContent = (
     <React.Fragment>
       <Grid container spacing={2}>
-        {customOptionData !== null && (
-          <ComboBox
-            value={filters.dtgb}
-            onChange={(e: DropdownChangeEvent) =>
-              setFilters((prev) => ({
-                ...prev,
-                dtgb: e.value.code,
-              }))
-            }
-            option={customOptionData}
-            placeholder={"일자"}
-            id="dtgb"
-            textField="name"
-            valueField="code"
-            xs={12}
-            sm={4}
-            md={4}
-            xl={2}
-          />
-        )}
         <DatePicker
           frdt={filters.frdt}
           todt={filters.todt}
@@ -374,49 +367,115 @@ const SA_B3600W: React.FC = () => {
             }))
           }
           xs={12}
-          sm={8}
-          md={6}
+          sm={12}
+          md={8}
           xl={4}
         />
         {customOptionData !== null && (
+          <Radio
+            option={customOptionData}
+            title="옵션"
+            id="option"
+            value={filters.option}
+            onChange={(e: { value: any }) =>
+              setFilters((prev) => ({
+                ...prev,
+                option: e.value,
+              }))
+            }
+            xs={12}
+            sm={12}
+            md={12}
+            xl={8}
+          />
+        )}
+        <Input
+          value={filters.itemcd}
+          onChange={(e: { target: { value: any } }) =>
+            setFilters((prev) => ({
+              ...prev,
+              itemcd: e.target.value,
+            }))
+          }
+          xs={12}
+          sm={6}
+          md={2}
+          xl={2}
+          label={"품목코드"}
+        />
+        <Input
+          value={filters.itemnm}
+          onChange={(e: { target: { value: any } }) =>
+            setFilters((prev) => ({
+              ...prev,
+              itemnm: e.target.value,
+            }))
+          }
+          xs={12}
+          sm={6}
+          md={2}
+          xl={2}
+          label={"품목명"}
+        />
+        {customOptionData !== null && (
           <ComboBox
-            value={filters.location}
+            value={filters.itemlvl1}
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                location: e.value.code,
+                itemlvl1: e.value.sub_code,
               }))
             }
             option={customOptionData}
-            placeholder={"사업장"}
-            id="location"
+            placeholder={"대분류"}
+            id="itemlvl1"
             xs={12}
             sm={4}
-            md={4}
+            md={2}
             xl={2}
           />
         )}
         {customOptionData !== null && (
-          <Radio
-            option={customOptionData}
-            title="일자구분"
-            id="dtdiv"
-            value={filters.dtdiv}
-            onChange={(e: { value: any }) =>
+          <ComboBox
+            value={filters.itemlvl2}
+            onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                dtdiv: e.value,
+                itemlvl2: e.value.sub_code,
               }))
             }
+            option={customOptionData}
+            placeholder={"중분류"}
+            id="itemlvl2"
             xs={12}
-            sm={8}
-            md={6}
-            xl={4}
+            sm={4}
+            md={2}
+            xl={2}
+          />
+        )}
+        {customOptionData !== null && (
+          <ComboBox
+            value={filters.itemlvl3}
+            onChange={(e: DropdownChangeEvent) =>
+              setFilters((prev) => ({
+                ...prev,
+                itemlvl3: e.value.sub_code,
+              }))
+            }
+            option={customOptionData}
+            placeholder={"소분류"}
+            id="itemlvl3"
+            xs={12}
+            sm={4}
+            md={2}
+            xl={2}
           />
         )}
       </Grid>
     </React.Fragment>
   );
+
+  const endContent = <></>;
 
   const cardOption = [
     {
@@ -452,26 +511,40 @@ const SA_B3600W: React.FC = () => {
           style={{ width: "100%", marginBottom: "25px" }}
         >
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>납기준수율</Title>
+            <Toast ref={toast} position="top-center" />
+            <Title>시간당 생산량</Title>
             <ButtonContainer>
               <Button
                 icon="pi pi-search"
-                onClick={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    isSearch: true,
-                  }))
-                }
+                onClick={() => {
+                  var diffTime =
+                    (filters.todt.getTime() - filters.frdt.getTime()) /
+                    (1000 * 60 * 60 * 24);
+
+                  if (diffTime > 31) {
+                    toast.current?.show({
+                      severity: "error",
+                      summary: "Error",
+                      detail: "기간을 31일 내로 설정해주세요.",
+                      life: 3000,
+                    });
+                  } else {
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }));
+                  }
+                }}
                 className="mr-2"
               />
             </ButtonContainer>
           </TitleContainer>
           <Toolbar start={startContent} />
           <Divider />
-          <Box sx={{ flexGrow: 1 }}>
+          {/* <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               {cardOption.map((item) => (
-                <Grid item xs={6} sm={6} md={6} xl={3}>
+                <Grid item xs={6} sm={6} xl={3}>
                   <Card
                     title={item.title}
                     data={item.data}
@@ -515,15 +588,7 @@ const SA_B3600W: React.FC = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} xl={12}>
               <GridTitle title="업체 준수율 월별 그래프" />
-              <StackedChart
-                props={ChartList}
-                value="value"
-                name="series"
-                color={["#1976d2", "#FF0000"]}
-                alllabel={stackChartAllLabel}
-                label={stackChartLabel}
-                random={false}
-              />
+              <StackedChart props={ChartList} value="value" name="series" color={["#1976d2", "#FF0000"]} alllabel={stackChartAllLabel} label={stackChartLabel} random = {false}/>
             </Grid>
           </Grid>
           <Divider />
@@ -549,17 +614,13 @@ const SA_B3600W: React.FC = () => {
             </Grid>
             <Grid item xs={12} sm={12} md={12} xl={3}>
               <GridTitle title="업체 건수 그래프" />
-              <DoughnutChart
-                data={selected}
-                option={["okcnt", "badcnt"]}
-                label={["준수건수", "지연건수"]}
-              />
+              <DoughnutChart data={selected} option={["okcnt", "badcnt"]} label={["준수건수", "지연건수"]}/>
             </Grid>
-          </Grid>
+          </Grid> */}
         </Container>
       </ThemeProvider>
     </>
   );
 };
 
-export default SA_B3600W;
+export default PR_B1700_498W;

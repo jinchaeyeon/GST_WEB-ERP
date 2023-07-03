@@ -553,11 +553,11 @@ const CopyWindow = ({
   };
 
   const onCopyWndClick = () => {
-    if(filters.custcd == ""){
-      alert("출하처코드를 선택하여 주세요.");
-    } else {
+    // if(filters.custcd == ""){
+    //   alert("출하처코드를 선택하여 주세요.");
+    // } else {
       setCopyWindowVisible(true);
-    }
+    // }
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
@@ -605,6 +605,13 @@ const CopyWindow = ({
     });
 
     try {
+      if(filters.custcd == "" && filters.custnm == "") {
+        setFilters((prev) => ({
+          ...prev,
+          custcd: dataItem[0].custcd != undefined ? dataItem[0].custcd : "",
+          custnm: dataItem[0].custnm != undefined ? dataItem[0].custnm : "",
+        }))
+      }
       rows.map((item: any) => {
         setMainDataResult((prev) => {
           return {
@@ -801,6 +808,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
+        modal={true}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
@@ -1165,8 +1173,6 @@ const CopyWindow = ({
         <CopyWindow2
           setVisible={setCopyWindowVisible}
           setData={setCopyData}
-          custcd={filters.custcd}
-          custnm={filters.custnm}
         />
       )}
       {attachmentsWindowVisible && (

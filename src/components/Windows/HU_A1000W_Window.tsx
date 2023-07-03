@@ -341,6 +341,7 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={true}
     >
       <Form
         // onSubmit={handleSubmit}

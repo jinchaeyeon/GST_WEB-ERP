@@ -1101,6 +1101,7 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={true}
     >
       <FormContext.Provider
         value={{

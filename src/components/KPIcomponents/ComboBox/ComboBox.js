@@ -18,11 +18,11 @@ const ComboBox = (props) => {
           options={listData}
           optionLabel={textField}
           placeholder={
-            props.value == ""
+            props.value == "" || props.value == undefined
               ? props.placeholder
               : listData.filter((item) => item[valueField] == props.value)[0][textField]
           }
-          className="w-full md:w-10rem"
+          className="w-full"
         />
       </Grid>
     </>

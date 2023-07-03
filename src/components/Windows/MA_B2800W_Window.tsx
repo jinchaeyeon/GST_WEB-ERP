@@ -346,6 +346,7 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={true}
     >
       <GridContainer height="calc(100% - 60px)">
         <Grid

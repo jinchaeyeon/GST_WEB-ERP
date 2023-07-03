@@ -918,6 +918,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
+        modal={true}
       >
         <GridContainerWrap>
           <GridContainer width={`70%`}>

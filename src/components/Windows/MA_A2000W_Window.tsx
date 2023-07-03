@@ -1195,6 +1195,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
+        modal={true}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>

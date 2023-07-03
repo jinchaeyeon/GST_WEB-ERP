@@ -417,16 +417,15 @@ export const FormInput = (fieldRenderProps: FieldRenderProps) => {
 };
 
 export const FormTextArea = (fieldRenderProps: FieldRenderProps) => {
-  const { validationMessage, label, id, valid, max, ...others } =
-    fieldRenderProps;
-
+  const { validationMessage, label, id, valid, max, rows = 8, labelClassName = "", textClassName = "k-form-field-wrap", ...others } =
+    fieldRenderProps
   return (
     <FieldWrapper>
-      <Label editorId={id} editorValid={valid}>
+      <Label editorId={id} editorValid={valid} className={labelClassName}>
         {label}
       </Label>
-      <div className={"k-form-field-wrap"}>
-        <TextArea valid={valid} id={id} rows={8} {...others} />
+      <div className={"k-form-field-wrap "+textClassName}>
+        <TextArea valid={valid} id={id} rows={rows} className={labelClassName} {...others} />
       </div>
     </FieldWrapper>
   );

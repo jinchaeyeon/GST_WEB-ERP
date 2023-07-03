@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Title, TitleContainer } from "../CommonStyled";
+import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import {
   convertDateToStr,
@@ -30,6 +30,7 @@ import GroupTable from "../components/KPIcomponents/Table/GroupTable";
 import LineChart from "../components/KPIcomponents/Chart/LineChart";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import { bytesToBase64 } from "byte-base64";
+import { DropdownChangeEvent } from "primereact/dropdown";
 
 interface TList {
   code_name: string;
@@ -329,7 +330,7 @@ const QC_B0100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(data);
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -374,14 +375,14 @@ const QC_B0100W: React.FC = () => {
             }))
           }
           xs={12}
-          sm={8}
-          md={8}
-          xl={8}
+          sm={12}
+          md={9}
+          xl={9}
         />
         {customOptionData !== null && (
           <ComboBox
             value={filters.gubun}
-            onChange={(e: { value: { code: any } }) =>
+            onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
                 gubun: e.value.code,
@@ -394,28 +395,14 @@ const QC_B0100W: React.FC = () => {
             valueField="code"
             xs={12}
             sm={12}
-            md={4}
-            xl={4}
+            md={3}
+            xl={3}
           />
         )}
       </Grid>
     </React.Fragment>
   );
 
-  const endContent = (
-    <React.Fragment>
-      <Button
-        icon="pi pi-search"
-        onClick={() =>
-          setFilters((prev) => ({
-            ...prev,
-            isSearch: true,
-          }))
-        }
-        className="mr-2"
-      />
-    </React.Fragment>
-  );
   const cardOption = [
     {
       title: "불량율 TOP 공정",
@@ -460,8 +447,20 @@ const QC_B0100W: React.FC = () => {
         >
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>공정불량율</Title>
+            <ButtonContainer>
+              <Button
+                icon="pi pi-search"
+                onClick={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    isSearch: true,
+                  }))
+                }
+                className="mr-2"
+              />
+            </ButtonContainer>
           </TitleContainer>
-          <Toolbar start={startContent} end={endContent} />
+          <Toolbar start={startContent} />
           <Divider />
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
@@ -471,12 +470,34 @@ const QC_B0100W: React.FC = () => {
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "1.2rem" : "1.8rem"}
+                    fontsize={size.width < 600 ? "1.2rem" : "1.5rem"}
                   />
                 </Grid>
               ))}
             </Grid>
           </Box>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} xl={3}>
+              <GridTitle title="전체 공정율" />
+              <DoughnutChart
+                data={All}
+                option={["okrate", "badrate"]}
+                label={["양품율", "불량율"]}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} xl={9}>
+              <GridTitle title="공정별 불량율" />
+              <StackedChart
+                props={ProccdData}
+                value="badrate"
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                random={true}
+                name="proccdnm"
+              />
+            </Grid>
+          </Grid>
           <Divider />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} xl={12}>
@@ -504,28 +525,6 @@ const QC_B0100W: React.FC = () => {
                 onSelectionChange={(e: any) => {
                   setSelected(e.value);
                 }}
-              />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={3}>
-              <GridTitle title="전체 공정율" />
-              <DoughnutChart
-                data={All}
-                option={["okrate", "badrate"]}
-                label={["양품율", "불량율"]}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} xl={9}>
-              <GridTitle title="공정별 불량율" />
-              <StackedChart
-                props={ProccdData}
-                value="badrate"
-                alllabel={stackChartAllLabel}
-                label={stackChartLabel}
-                random={true}
-                name="proccdnm"
               />
             </Grid>
           </Grid>
