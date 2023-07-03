@@ -6,7 +6,7 @@ const DatePicker = (props) => {
   
   return (
     <>
-      <Grid item xs={props.xs} sm={props.sm} md={props.md} xl={props.xl}>
+      <Grid item xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl}>
         <Grid container spacing={2}>
           <Grid item xs={5.7} sm={5.7} md={5.7} xl={5.7}>
             <Calendar

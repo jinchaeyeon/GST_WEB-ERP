@@ -25,6 +25,7 @@ import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
 import { DropdownChangeEvent } from "primereact/dropdown";
+import { ProgressBar } from "primereact/progressbar";
 
 interface TList {
   badcnt: number;
@@ -355,6 +356,7 @@ const SA_B3600W: React.FC = () => {
             xs={12}
             sm={4}
             md={4}
+            lg={2}
             xl={2}
           />
         )}
@@ -376,6 +378,7 @@ const SA_B3600W: React.FC = () => {
           xs={12}
           sm={8}
           md={6}
+          lg={4}
           xl={4}
         />
         {customOptionData !== null && (
@@ -393,6 +396,7 @@ const SA_B3600W: React.FC = () => {
             xs={12}
             sm={4}
             md={4}
+            lg={2}
             xl={2}
           />
         )}
@@ -411,6 +415,7 @@ const SA_B3600W: React.FC = () => {
             xs={12}
             sm={8}
             md={6}
+            lg={4}
             xl={4}
           />
         )}
@@ -471,7 +476,7 @@ const SA_B3600W: React.FC = () => {
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               {cardOption.map((item) => (
-                <Grid item xs={6} sm={6} md={6} xl={3}>
+                <Grid item xs={6} sm={6} md={6} lg={3} xl={3}>
                   <Card
                     title={item.title}
                     data={item.data}
@@ -484,7 +489,7 @@ const SA_B3600W: React.FC = () => {
           </Box>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
               <Table
                 value={toppercentData}
                 column={{
@@ -497,7 +502,7 @@ const SA_B3600W: React.FC = () => {
                 title={"준수율 TOP5"}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
               <Table
                 value={topdelayData}
                 column={{
@@ -513,7 +518,7 @@ const SA_B3600W: React.FC = () => {
           </Grid>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={12}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <GridTitle title="업체 준수율 월별 그래프" />
               <StackedChart
                 props={ChartList}
@@ -528,7 +533,7 @@ const SA_B3600W: React.FC = () => {
           </Grid>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={9}>
+            <Grid item xs={12} sm={12} md={12} lg={7} xl={9}>
               <PaginatorTable
                 value={AllList}
                 column={{
@@ -547,7 +552,7 @@ const SA_B3600W: React.FC = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} xl={3}>
+            <Grid item xs={12} sm={12} md={12} lg={5} xl={3}>
               <GridTitle title="업체 건수 그래프" />
               <DoughnutChart
                 data={selected}

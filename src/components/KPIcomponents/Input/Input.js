@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 
 export default function Input(props) {
   return (
-    <Grid item xs={props.xs} sm={props.sm} md={props.md} xl={props.xl}>
+    <Grid item xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl}>
       <span className="p-float-label">
         <InputText
           id={props.label}

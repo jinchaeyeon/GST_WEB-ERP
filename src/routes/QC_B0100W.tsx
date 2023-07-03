@@ -465,12 +465,12 @@ const QC_B0100W: React.FC = () => {
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               {cardOption.map((item) => (
-                <Grid item xs={6} sm={6} xl={3}>
+                <Grid item xs={12} sm={6} md={6} lg={6} xl={3}>
                   <Card
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "1.2rem" : "1.5rem"}
+                    fontsize={size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"}
                   />
                 </Grid>
               ))}
@@ -478,7 +478,7 @@ const QC_B0100W: React.FC = () => {
           </Box>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={3}>
+            <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
               <GridTitle title="전체 공정율" />
               <DoughnutChart
                 data={All}
@@ -486,7 +486,7 @@ const QC_B0100W: React.FC = () => {
                 label={["양품율", "불량율"]}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} xl={9}>
+            <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
               <GridTitle title="공정별 불량율" />
               <StackedChart
                 props={ProccdData}
@@ -500,7 +500,7 @@ const QC_B0100W: React.FC = () => {
           </Grid>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={12}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <GroupTable
                 value={AllList}
                 column={{
@@ -530,7 +530,7 @@ const QC_B0100W: React.FC = () => {
           </Grid>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={12}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <GridTitle title="월별 불량율" />
               <LineChart props={MonthData} />
             </Grid>

@@ -11,7 +11,7 @@ const ComboBox = (props) => {
 
   return (
     <>
-      <Grid item xs={props.xs} sm={props.sm} md={props.md} xl={props.xl}>
+      <Grid item xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl}>
         <Dropdown
           value={props.value}
           onChange={props.onChange}

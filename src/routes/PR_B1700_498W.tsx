@@ -27,6 +27,7 @@ import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
 import { Toast } from "primereact/toast";
 import Input from "../components/KPIcomponents/Input/Input";
 import { DropdownChangeEvent } from "primereact/dropdown";
+import LineChart from "../components/KPIcomponents/Chart/LineChart";
 
 interface TList {
   badcnt: number;
@@ -369,6 +370,7 @@ const PR_B1700_498W: React.FC = () => {
           xs={12}
           sm={12}
           md={8}
+          lg={6}
           xl={4}
         />
         {customOptionData !== null && (
@@ -386,6 +388,7 @@ const PR_B1700_498W: React.FC = () => {
             xs={12}
             sm={12}
             md={12}
+            lg={6}
             xl={8}
           />
         )}
@@ -399,7 +402,8 @@ const PR_B1700_498W: React.FC = () => {
           }
           xs={12}
           sm={6}
-          md={2}
+          md={5}
+          lg={3}
           xl={2}
           label={"품목코드"}
         />
@@ -413,7 +417,8 @@ const PR_B1700_498W: React.FC = () => {
           }
           xs={12}
           sm={6}
-          md={2}
+          md={5}
+          lg={3}
           xl={2}
           label={"품목명"}
         />
@@ -431,7 +436,8 @@ const PR_B1700_498W: React.FC = () => {
             id="itemlvl1"
             xs={12}
             sm={4}
-            md={2}
+            md={3}
+            lg={2}
             xl={2}
           />
         )}
@@ -449,7 +455,8 @@ const PR_B1700_498W: React.FC = () => {
             id="itemlvl2"
             xs={12}
             sm={4}
-            md={2}
+            md={3}
+            lg={2}
             xl={2}
           />
         )}
@@ -467,7 +474,8 @@ const PR_B1700_498W: React.FC = () => {
             id="itemlvl3"
             xs={12}
             sm={4}
-            md={2}
+            md={3}
+            lg={2}
             xl={2}
           />
         )}
@@ -475,11 +483,9 @@ const PR_B1700_498W: React.FC = () => {
     </React.Fragment>
   );
 
-  const endContent = <></>;
-
   const cardOption = [
     {
-      title: "납기준수율",
+      title: "평균 시간당 생산량",
       data:
         AllPanel.confirm_percent != null
           ? AllPanel.confirm_percent + "%"
@@ -487,19 +493,14 @@ const PR_B1700_498W: React.FC = () => {
       backgroundColor: "#1976d2",
     },
     {
-      title: "총 준수건수",
+      title: "총 생산량",
       data: AllPanel.okcnt != null ? AllPanel.okcnt + "건" : 0 + "건",
       backgroundColor: "#5393d3",
     },
     {
-      title: "총 지연건수",
+      title: "총 작업시간",
       data: AllPanel.badcnt != null ? AllPanel.badcnt + "건" : 0 + "건",
       backgroundColor: "#94b6d7",
-    },
-    {
-      title: "총 건수",
-      data: AllPanel.totcnt != null ? AllPanel.totcnt + "건" : 0 + "건",
-      backgroundColor: "#b4c4d3",
     },
   ];
 
@@ -541,10 +542,10 @@ const PR_B1700_498W: React.FC = () => {
           </TitleContainer>
           <Toolbar start={startContent} />
           <Divider />
-          {/* <Box sx={{ flexGrow: 1 }}>
+          <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               {cardOption.map((item) => (
-                <Grid item xs={6} sm={6} xl={3}>
+                <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
                   <Card
                     title={item.title}
                     data={item.data}
@@ -557,6 +558,13 @@ const PR_B1700_498W: React.FC = () => {
           </Box>
           <Divider />
           <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle title="일자별 시간당 생산량" />
+              {/* <LineChart props={MonthData} /> */}
+            </Grid>
+          </Grid>
+          {/* <Divider />
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={6} xl={6}>
               <Table
                 value={toppercentData}
@@ -567,7 +575,7 @@ const PR_B1700_498W: React.FC = () => {
                   totcnt: "총건수",
                   percent: "준수율",
                 }}
-                title={"준수율 TOP5"}
+                title={"전체목록"}
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6} xl={6}>
@@ -580,41 +588,8 @@ const PR_B1700_498W: React.FC = () => {
                   totcnt: "총건수",
                   rate: "준수율",
                 }}
-                title={"지연건수 TOP5"}
+                title={"상세목록"}
               />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={12}>
-              <GridTitle title="업체 준수율 월별 그래프" />
-              <StackedChart props={ChartList} value="value" name="series" color={["#1976d2", "#FF0000"]} alllabel={stackChartAllLabel} label={stackChartLabel} random = {false}/>
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={9}>
-              <PaginatorTable
-                value={AllList}
-                column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  okcnt: "준수건수",
-                  badcnt: "지연건수",
-                  totcnt: "총건수",
-                  percent: "준수율",
-                }}
-                title={"전체 목록"}
-                key="custcd"
-                selection={selected}
-                onSelectionChange={(e: any) => {
-                  setSelected(e.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} xl={3}>
-              <GridTitle title="업체 건수 그래프" />
-              <DoughnutChart data={selected} option={["okcnt", "badcnt"]} label={["준수건수", "지연건수"]}/>
             </Grid>
           </Grid> */}
         </Container>
