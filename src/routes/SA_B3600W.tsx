@@ -344,7 +344,7 @@ const SA_B3600W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                dtgb: e.value.code,
+                dtgb: e.value == undefined ? "" : e.value.code,
               }))
             }
             option={customOptionData}
@@ -386,7 +386,7 @@ const SA_B3600W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                location: e.value.sub_code,
+                location: e.value == undefined ? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}

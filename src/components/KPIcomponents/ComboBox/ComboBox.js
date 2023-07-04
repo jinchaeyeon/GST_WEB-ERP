@@ -22,6 +22,7 @@ const ComboBox = (props) => {
               ? props.placeholder
               : listData.filter((item) => item[valueField] == props.value)[0][textField]
           }
+          showClear
           className="w-full"
         />
       </Grid>

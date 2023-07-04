@@ -46,6 +46,7 @@ export default function StackedChart(props) {
             labels: {
               color: textColor,
             },
+            display: false
           },
         },
         scales: {

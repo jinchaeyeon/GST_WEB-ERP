@@ -284,6 +284,7 @@ const QC_B0100W: React.FC = () => {
           ...item,
         })
       );
+ 
       setProccdData(rows);
       let objects = rows.filter(
         (arr: { proccd: any }, index: any, callback: any[]) =>
@@ -394,10 +395,10 @@ const QC_B0100W: React.FC = () => {
           <ComboBox
             value={filters.gubun}
             onChange={(e: DropdownChangeEvent) => 
-              setFilters((prev) => ({
-                ...prev,
-                gubun: e.value.code,
-              }))
+                setFilters((prev) => ({
+                  ...prev,
+                  gubun: e.value == undefined ? "" : e.value.code,
+                }))
             }
             option={customOptionData}
             placeholder={"단위"}

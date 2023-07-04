@@ -439,7 +439,7 @@ const PR_B1103W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                itemlvl1: e.value.sub_code,
+                itemlvl1: e.value == undefined? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}
@@ -458,7 +458,7 @@ const PR_B1103W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                itemlvl2: e.value.sub_code,
+                itemlvl2: e.value == undefined? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}
@@ -477,7 +477,7 @@ const PR_B1103W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                itemlvl3: e.value.sub_code,
+                itemlvl3: e.value == undefined? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}
