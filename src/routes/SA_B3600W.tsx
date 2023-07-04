@@ -28,13 +28,13 @@ import { DropdownChangeEvent } from "primereact/dropdown";
 import { ProgressBar } from "primereact/progressbar";
 
 interface TList {
-  badcnt: number;
-  custcd: string;
-  custnm: string;
-  okcnt: number;
-  percent: number;
-  rate: number;
-  totcnt: number;
+  badcnt?: number;
+  custcd?: string;
+  custnm?: string;
+  okcnt?: number;
+  percent?: number;
+  rate?: number;
+  totcnt?: number;
 }
 
 interface Tsize {
@@ -223,9 +223,15 @@ const SA_B3600W: React.FC = () => {
         })
       );
 
+      setAllList(rows);
       if (rows.length > 0) {
-        setAllList(rows);
         setSelected(rows[0]);
+      } else {
+        setSelected((item) => ({
+          ...item,
+          okcnt: 0,
+          badcnt: 0,
+        }));
       }
     }
 
@@ -244,9 +250,7 @@ const SA_B3600W: React.FC = () => {
         })
       );
 
-      if (rows.length > 0) {
-        setTopPercentCust(rows);
-      }
+      setTopPercentCust(rows);
     }
 
     let data3: any;
@@ -264,9 +268,7 @@ const SA_B3600W: React.FC = () => {
         })
       );
 
-      if (rows.length > 0) {
-        setTopDelayCust(rows);
-      }
+      setTopDelayCust(rows);
     }
 
     let data4: any;
@@ -279,9 +281,7 @@ const SA_B3600W: React.FC = () => {
     if (data4.isSuccess === true) {
       const rows = data4.tables[0].Rows;
 
-      if (rows.length > 0) {
-        setAllPanel(rows[0]);
-      }
+      setAllPanel(rows[0]);
     }
     setLoading(false);
   };
@@ -299,7 +299,6 @@ const SA_B3600W: React.FC = () => {
         ...item,
       }));
 
-      if (rows.length > 0) {
         setChartList(rows);
 
         let objects = rows.filter(
@@ -318,7 +317,6 @@ const SA_B3600W: React.FC = () => {
               return items.argument;
             })
         );
-      }
     }
   };
 
@@ -329,6 +327,7 @@ const SA_B3600W: React.FC = () => {
         isSearch: false,
       }));
       fetchMainGrid();
+      fetchChartGrid();
     }
   }, [filters]);
 
@@ -387,7 +386,7 @@ const SA_B3600W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                location: e.value.code,
+                location: e.value.sub_code,
               }))
             }
             option={customOptionData}
@@ -545,7 +544,7 @@ const SA_B3600W: React.FC = () => {
                   percent: "준수율",
                 }}
                 title={"전체 목록"}
-                key="custcd"
+                key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
                   setSelected(e.value);

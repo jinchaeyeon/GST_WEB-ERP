@@ -4,7 +4,7 @@ import { Chart } from 'primereact/chart';
 export default function DoughnutChart(props) {
     const [chartData, setChartData] = useState({});
     const [chartOptions, setChartOptions] = useState({});
-
+    
     useEffect(() => {
         if(props.data != null){
             const propsData = props.data;

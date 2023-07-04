@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import {
   convertDateToStr,
+  getQueryFromBizComponent,
   setDefaultDate,
+  UseBizComponent,
   UseCustomOption,
 } from "../components/CommonFunction";
 import { useSetRecoilState } from "recoil";
@@ -28,23 +30,14 @@ import { Toast } from "primereact/toast";
 import Input from "../components/KPIcomponents/Input/Input";
 import { DropdownChangeEvent } from "primereact/dropdown";
 import LineChart from "../components/KPIcomponents/Chart/LineChart";
-
-interface TList {
-  badcnt: number;
-  custcd: string;
-  custnm: string;
-  okcnt: number;
-  percent: number;
-  rate: number;
-  totcnt: number;
-}
+import { bytesToBase64 } from "byte-base64";
 
 interface Tsize {
   width: number;
   height: number;
 }
 
-const PR_B1700_498W: React.FC = () => {
+const PR_B1103W: React.FC = () => {
   const theme = createTheme();
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -105,11 +98,54 @@ const PR_B1700_498W: React.FC = () => {
     }
   }, [customOptionData]);
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_sysUserMaster_001",
+    //수량단위, 과세구분, 내수구분, 화폐단위, 사용자, 계산서유형, 입고유형, 전표입력경로
+    setBizComponentData
+  );
+
+  const [userListData, setUserListData] = React.useState([
+    { user_id: "", user_name: "" },
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const userQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
+      );
+      fetchQuery(userQueryStr, setUserListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: 20,
     orgdiv: "01",
-    location: "01",
     frdt: new Date(),
     todt: new Date(),
     option: "I",
@@ -118,104 +154,97 @@ const PR_B1700_498W: React.FC = () => {
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
-    dtdiv: "W",
-    dtgb: "A",
+    recdt: "",
     isSearch: true,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState();
-  const [ChartList, setChartList] = useState();
+  const [DetailList, setDetailList] = useState<any[]>();
+  const [MonthData, setMonthData] = useState();
   const [AllPanel, setAllPanel] = useState({
-    badcnt: 0,
-    cancel_percent: 0,
-    confirm_percent: 0,
-    okcnt: 0,
-    totcnt: 0,
+    avg_worktime: 0,
+    qty: 0,
+    worktime: 0,
   });
   const [stackChartLabel, setStackChartLabel] = useState();
   const [stackChartAllLabel, setStackChartAllLabel] = useState();
-  const [toppercentData, setTopPercentCust] = useState();
-  const [topdelayData, setTopDelayCust] = useState();
-  const [selected, setSelected] = useState<TList | null>(null);
+  const [selected, setSelected] = useState<any>(null);
+  const [detailSelected, setDetailSelected] = useState(null);
 
   //조회조건 파라미터
   const parameters = {
-    procedureName: "P_SA_B3600W_Q",
+    procedureName: "P_PR_B1103W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "LIST",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
+      "@p_recdt": "",
+      "@p_option": filters.option,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_itemlvl1": filters.itemlvl1,
+      "@p_itemlvl2": filters.itemlvl2,
+      "@p_itemlvl3": filters.itemlvl3,
     },
   };
 
-  const Rankparameters = {
-    procedureName: "P_SA_B3600W_Q",
+  const Detailparameters = {
+    procedureName: "P_PR_B1103W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "RANK1",
+      "@p_work_type": "Detail",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
-    },
-  };
-
-  const Rankparameters2 = {
-    procedureName: "P_SA_B3600W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "RANK2",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
+      "@p_recdt": selected == null ? "" : selected.proddt,
+      "@p_option": filters.option,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_itemlvl1": filters.itemlvl1,
+      "@p_itemlvl2": filters.itemlvl2,
+      "@p_itemlvl3": filters.itemlvl3,
     },
   };
 
   const ALLparameters = {
-    procedureName: "P_SA_B3600W_Q",
+    procedureName: "P_PR_B1103W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "ALLCURRENT",
+      "@p_work_type": "CARD",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
+      "@p_recdt": "",
+      "@p_option": filters.option,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_itemlvl1": filters.itemlvl1,
+      "@p_itemlvl2": filters.itemlvl2,
+      "@p_itemlvl3": filters.itemlvl3,
     },
   };
 
   const chartparameters = {
-    procedureName: "P_SA_B3600W_Q",
+    procedureName: "P_PR_B1103W_Q",
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "MONTHCUSTCHART",
+      "@p_work_type": "CHART",
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": selected == null ? "" : selected.custcd,
+      "@p_recdt": "",
+      "@p_option": filters.option,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_itemlvl1": filters.itemlvl1,
+      "@p_itemlvl2": filters.itemlvl2,
+      "@p_itemlvl3": filters.itemlvl3,
     },
   };
 
@@ -232,65 +261,27 @@ const PR_B1700_498W: React.FC = () => {
       const rows = data.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
           ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100) + "%",
         })
       );
 
+      setAllList(rows);
       if (rows.length > 0) {
-        setAllList(rows);
         setSelected(rows[0]);
+      } else {
+        setSelected(null);
+        fetchDetailGrid();
       }
     }
 
     let data2: any;
     try {
-      data2 = await processApi<any>("procedure", Rankparameters);
+      data2 = await processApi<any>("procedure", ALLparameters);
     } catch (error) {
       data2 = null;
     }
 
     if (data2.isSuccess === true) {
-      const rows = data2.tables[0].Rows.map(
-        (item: { okcnt: number; totcnt: number }) => ({
-          ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100) + "%",
-        })
-      );
-
-      if (rows.length > 0) {
-        setTopPercentCust(rows);
-      }
-    }
-
-    let data3: any;
-    try {
-      data3 = await processApi<any>("procedure", Rankparameters2);
-    } catch (error) {
-      data3 = null;
-    }
-
-    if (data3.isSuccess === true) {
-      const rows = data3.tables[0].Rows.map(
-        (item: { okcnt: number; totcnt: number }) => ({
-          ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100),
-        })
-      );
-
-      if (rows.length > 0) {
-        setTopDelayCust(rows);
-      }
-    }
-
-    let data4: any;
-    try {
-      data4 = await processApi<any>("procedure", ALLparameters);
-    } catch (error) {
-      data4 = null;
-    }
-
-    if (data4.isSuccess === true) {
-      const rows = data4.tables[0].Rows;
+      const rows = data2.tables[0].Rows;
 
       if (rows.length > 0) {
         setAllPanel(rows[0]);
@@ -312,9 +303,7 @@ const PR_B1700_498W: React.FC = () => {
         ...item,
       }));
 
-      if (rows.length > 0) {
-        setChartList(rows);
-
+        setMonthData(rows);
         let objects = rows.filter(
           (arr: { series: any }, index: any, callback: any[]) =>
             index === callback.findIndex((t) => t.series === arr.series)
@@ -331,23 +320,45 @@ const PR_B1700_498W: React.FC = () => {
               return items.argument;
             })
         );
+    }
+  };
+
+  const fetchDetailGrid = async () => {
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", Detailparameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+ 
+      setDetailList(rows);
+      if(rows.length > 0) {
+        setDetailSelected(rows[0]);
+      } else {
+        setDetailSelected(null);
       }
     }
   };
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData != null) {
+    fetchDetailGrid();
+  }, [selected]);
+
+  useEffect(() => {
+    if (filters.isSearch && customOptionData != null && bizComponentData != null) {
       setFilters((prev) => ({
         ...prev,
         isSearch: false,
       }));
       fetchMainGrid();
+      fetchChartGrid();
     }
   }, [filters]);
-
-  useEffect(() => {
-    fetchChartGrid();
-  }, [selected]);
 
   const startContent = (
     <React.Fragment>
@@ -486,20 +497,17 @@ const PR_B1700_498W: React.FC = () => {
   const cardOption = [
     {
       title: "평균 시간당 생산량",
-      data:
-        AllPanel.confirm_percent != null
-          ? AllPanel.confirm_percent + "%"
-          : 0 + "%",
+      data: AllPanel.avg_worktime != null ? AllPanel.avg_worktime : 0,
       backgroundColor: "#1976d2",
     },
     {
       title: "총 생산량",
-      data: AllPanel.okcnt != null ? AllPanel.okcnt + "건" : 0 + "건",
+      data: AllPanel.qty != null ? AllPanel.qty : 0,
       backgroundColor: "#5393d3",
     },
     {
       title: "총 작업시간",
-      data: AllPanel.badcnt != null ? AllPanel.badcnt + "건" : 0 + "건",
+      data: AllPanel.worktime != null ? AllPanel.worktime + "h" : 0 + "h",
       backgroundColor: "#94b6d7",
     },
   ];
@@ -526,7 +534,7 @@ const PR_B1700_498W: React.FC = () => {
                     toast.current?.show({
                       severity: "error",
                       summary: "Error",
-                      detail: "기간을 31일 내로 설정해주세요.",
+                      detail: "기간을 31일 이내로 설정해주세요.",
                       life: 3000,
                     });
                   } else {
@@ -560,42 +568,81 @@ const PR_B1700_498W: React.FC = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <GridTitle title="일자별 시간당 생산량" />
-              {/* <LineChart props={MonthData} /> */}
+              <LineChart
+                props={MonthData}
+                value="uph_hr"
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                color={["#1976d2"]}
+                borderColor={["#d7ecfb"]}
+                name="series"
+              />
             </Grid>
           </Grid>
-          {/* <Divider />
+          <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={6} xl={6}>
-              <Table
-                value={toppercentData}
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
+              <PaginatorTable
+                value={AllList}
                 column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  okcnt: "준수건수",
-                  totcnt: "총건수",
-                  percent: "준수율",
+                  proddt: "일자",
+                  qty: "생산량",
+                  worktime: "작업시간",
+                  hr: "표준시간",
+                  prodempcnt: "작업자수",
+                  uph_worktime: "시간당 생산량",
                 }}
-                title={"전체목록"}
+                title={"전체 목록"}
+                key="num"
+                selection={selected}
+                onSelectionChange={(e: any) => {
+                  setSelected(e.value);
+                }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} xl={6}>
-              <Table
-                value={topdelayData}
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
+              <PaginatorTable
+                value={DetailList != undefined ? DetailList.map((item: any) => ({
+                  ...item,
+                  prodemp: userListData.find(
+                    (item: any) => item.user_id == item.prodemp
+                  )?.user_name,
+                })) : []}
                 column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  badcnt: "지연건수",
-                  totcnt: "총건수",
-                  rate: "준수율",
+                  itemcd:
+                    filters.option == "I"
+                      ? "품목코드"
+                      : filters.option == "L"
+                      ? "대분류코드"
+                      : filters.option == "M"
+                      ? "중분류코드"
+                      : "소분류코드",
+                  itemnm:
+                    filters.option == "I"
+                      ? "품목명"
+                      : filters.option == "L"
+                      ? "대분류명"
+                      : filters.option == "M"
+                      ? "중분류명"
+                      : "소분류명",
+                  qty: "생산량",
+                  worktime: "작업시간",
+                  hr: "표준시간",
+                  prodemp: "작업자",
                 }}
-                title={"상세목록"}
+                title={"상세 목록"}
+                key="num"
+                selection={detailSelected}
+                onSelectionChange={(e: any) => {
+                  setDetailSelected(e.value);
+                }}
               />
             </Grid>
-          </Grid> */}
+          </Grid>
         </Container>
       </ThemeProvider>
     </>
   );
 };
 
-export default PR_B1700_498W;
+export default PR_B1103W;

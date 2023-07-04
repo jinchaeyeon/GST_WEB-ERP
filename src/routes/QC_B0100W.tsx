@@ -252,9 +252,11 @@ const QC_B0100W: React.FC = () => {
         })
       );
 
+      setAllList(rows);
       if (rows.length > 0) {
-        setAllList(rows);
         setSelected(rows[0]);
+      } else {
+        setSelected(null);
       }
     }
 
@@ -282,25 +284,21 @@ const QC_B0100W: React.FC = () => {
           ...item,
         })
       );
-
-      if (rows.length > 0) {
-        setProccdData(rows);
-
-        let objects = rows.filter(
-          (arr: { proccd: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.proccd === arr.proccd)
-        );
-        setStackChartLabel(
-          objects.map((item: { proccdnm: any }) => {
-            return item.proccdnm;
-          })
-        );
-        setStackChartAllLabel(
-          rows.map((items: { proccdnm: any }) => {
-            return items.proccdnm;
-          })
-        );
-      }
+      setProccdData(rows);
+      let objects = rows.filter(
+        (arr: { proccd: any }, index: any, callback: any[]) =>
+          index === callback.findIndex((t) => t.proccd === arr.proccd)
+      );
+      setStackChartLabel(
+        objects.map((item: { proccdnm: any }) => {
+          return item.proccdnm;
+        })
+      );
+      setStackChartAllLabel(
+        rows.map((items: { proccdnm: any }) => {
+          return items.proccdnm;
+        })
+      );
     }
 
     let data4: any;
@@ -313,12 +311,10 @@ const QC_B0100W: React.FC = () => {
     if (data4.isSuccess === true) {
       const rows = data4.tables[0].Rows;
 
-      if (rows.length > 0) {
-        setAll({
-          okrate: rows[0].badrate,
-          badrate: rows[1].badrate,
-        });
-      }
+      setAll({
+        okrate: rows[0].badrate,
+        badrate: rows[1].badrate,
+      });
     }
     setLoading(false);
   };
@@ -330,15 +326,30 @@ const QC_B0100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));
 
-      if (rows.length > 0) {
         setMonthData(rows);
-      }
+
+        let objects = rows.filter(
+          (arr: { series: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.series === arr.series)
+        );
+        setStackChartLabel(
+          objects.map((item: { series: any }) => {
+            return item.series;
+          })
+        );
+        setStackChartAllLabel(
+          rows
+            .filter((item: { series: any }) => item.series == objects[0].series)
+            .map((items: { argument: any }) => {
+              return items.argument;
+            })
+        );
     }
   };
 
@@ -382,7 +393,7 @@ const QC_B0100W: React.FC = () => {
         {customOptionData !== null && (
           <ComboBox
             value={filters.gubun}
-            onChange={(e: DropdownChangeEvent) =>
+            onChange={(e: DropdownChangeEvent) => 
               setFilters((prev) => ({
                 ...prev,
                 gubun: e.value.code,
@@ -407,33 +418,41 @@ const QC_B0100W: React.FC = () => {
     {
       title: "불량율 TOP 공정",
       data:
-        CardData.length == 0
-          ? ""
-          : CardData[0].Rows[0].proccdnm + " : " + CardData[0].Rows[0].badrate,
+        CardData.length != 0
+          ? CardData[0].Rows.length == 0
+            ? "-"
+            : CardData[0].Rows[0].proccdnm + " : " + CardData[0].Rows[0].badrate
+          : "-",
       backgroundColor: "#1976d2",
     },
     {
       title: "불량율 TOP 고객사",
       data:
-        CardData.length == 0
-          ? ""
-          : CardData[1].Rows[0].custnm + " : " + CardData[1].Rows[0].badrate,
+        CardData.length != 0
+          ? CardData[1].Rows.length == 0
+            ? "-"
+            : CardData[1].Rows[0].custnm + " : " + CardData[1].Rows[0].badrate
+          : "-",
       backgroundColor: "#5393d3",
     },
     {
       title: "불량율 TOP 품목",
       data:
-        CardData.length == 0
-          ? ""
-          : CardData[2].Rows[0].itemnm + " : " + CardData[2].Rows[0].badrate,
+        CardData.length != 0
+          ? CardData[2].Rows.length == 0
+            ? "-"
+            : CardData[2].Rows[0].itemnm + " : " + CardData[2].Rows[0].badrate
+          : "-",
       backgroundColor: "#94b6d7",
     },
     {
       title: "불량율 TOP 설비",
       data:
-        CardData.length == 0
-          ? ""
-          : CardData[3].Rows[0].fxnm + " : " + CardData[3].Rows[0].badrate,
+        CardData.length != 0
+          ? CardData[3].Rows.length == 0
+            ? "-"
+            : CardData[3].Rows[0].fxnm + " : " + CardData[3].Rows[0].badrate
+          : "-",
       backgroundColor: "#b4c4d3",
     },
   ];
@@ -470,7 +489,9 @@ const QC_B0100W: React.FC = () => {
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"}
+                    fontsize={
+                      size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
+                    }
                   />
                 </Grid>
               ))}
@@ -519,8 +540,8 @@ const QC_B0100W: React.FC = () => {
                   yrmm11: "11월",
                   yrmm12: "12월",
                 }}
-                title={"전체 목록 불량율"}
-                key="code_name"
+                title={filters.gubun == "A" ? "전체 목록 PPM" : "전체 목록 불량율"}
+                key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
                   setSelected(e.value);
@@ -531,8 +552,16 @@ const QC_B0100W: React.FC = () => {
           <Divider />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <GridTitle title="월별 불량율" />
-              <LineChart props={MonthData} />
+              <GridTitle title="월별 건수" />
+              <LineChart
+                props={MonthData}
+                value="value"
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                color={["#1976d2", "#FF0000"]}
+                borderColor={["#d7ecfb", "#fbded7"]}
+                name="series"
+              />
             </Grid>
           </Grid>
         </Container>
