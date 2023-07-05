@@ -302,7 +302,7 @@ const PR_B1103W: React.FC = () => {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));
-
+  
         setMonthData(rows);
         let objects = rows.filter(
           (arr: { series: any }, index: any, callback: any[]) =>
@@ -335,7 +335,7 @@ const PR_B1103W: React.FC = () => {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));
- 
+
       setDetailList(rows);
       if(rows.length > 0) {
         setDetailSelected(rows[0]);
@@ -570,7 +570,7 @@ const PR_B1103W: React.FC = () => {
               <GridTitle title="일자별 시간당 생산량" />
               <LineChart
                 props={MonthData}
-                value="uph_hr"
+                value="uph_worktime"
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}
                 color={["#1976d2"]}
