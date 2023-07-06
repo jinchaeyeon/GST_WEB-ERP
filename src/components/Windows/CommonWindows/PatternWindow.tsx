@@ -301,6 +301,7 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={true}
     >
       <GridContainerWrap height="calc(100% - 70px)">
         <GridContainer width={`45%`}>
