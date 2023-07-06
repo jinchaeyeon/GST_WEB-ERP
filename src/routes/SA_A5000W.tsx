@@ -717,7 +717,8 @@ const SA_A5000: React.FC = () => {
     } else {
       return <td></td>;
     }
-  };
+  }; 
+  
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>

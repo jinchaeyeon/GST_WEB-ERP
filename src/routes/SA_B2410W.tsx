@@ -59,7 +59,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 
 const dateField = ["outdt"];
 const DATA_ITEM_KEY = "reckey";
-const numberField = ["itemno", "orglot", "qty"];
+const numberField = ["itemno", "qty"];
 
 const SA_B2410: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -85,6 +85,16 @@ const SA_B2410: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
+        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+          .valueCode,
+        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+          .valueCode,
+        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+          .valueCode,
+        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+          .valueCode,
+        outkind: defaultOption.find((item: any) => item.id === "outkind")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -205,7 +215,6 @@ const SA_B2410: React.FC = () => {
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
-
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -228,7 +237,10 @@ const SA_B2410: React.FC = () => {
     ordnum: "",
     lotnum: "",
     itemlvl1: "",
+    itemlvl2: "",
+    itemlvl3: "",
     outuse: "",
+    reckey: "",
     cboLocation: "01",
     find_row_value: "",
     scrollDirrection: "down",
@@ -258,7 +270,9 @@ const SA_B2410: React.FC = () => {
       "@p_ordnum": filters.ordnum,
       "@p_lotnum": filters.lotnum,
       "@p_itemlvl1": filters.itemlvl1,
-      "@p_outuse": filters.outuse,
+      "@p_itemlvl2": filters.itemlvl2,
+      "@p_itemlvl3": filters.itemlvl3,
+      "@p_reckey": filters.reckey,
     },
   };
 
@@ -399,16 +413,25 @@ const SA_B2410: React.FC = () => {
     );
   };
 
-  const mainSumFooterCell = (props: GridFooterCellProps) => {
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
-    mainDataResult.data.map((item) => {
-      sum = sum += item.qty;
-    });
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {sum.toLocaleString()}
-      </td>
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
   };
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -523,8 +546,6 @@ const SA_B2410: React.FC = () => {
     } catch (e) {
       alert(e);
     }
-
-
   };
 
   return (
@@ -548,21 +569,21 @@ const SA_B2410: React.FC = () => {
             <tr>
               <th>출고일자</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.ymdFrdt,
-                      end: filters.ymdTodt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        ymdFrdt: e.value.start,
-                        ymdTodt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.ymdFrdt,
+                    end: filters.ymdTodt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      ymdFrdt: e.value.start,
+                      ymdTodt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -588,6 +609,17 @@ const SA_B2410: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
+              <th>품목계정</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemacnt"
+                    value={filters.itemacnt}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
               <th>수주번호</th>
               <td>
                 <Input
@@ -597,6 +629,8 @@ const SA_B2410: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
+            </tr>
+            <tr>
               <th>대분류</th>
               <td colSpan={1}>
                 {customOptionData !== null && (
@@ -608,9 +642,59 @@ const SA_B2410: React.FC = () => {
                   />
                 )}
               </td>
+              <th>중분류</th>
+              <td colSpan={1}>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemlvl2"
+                    value={filters.itemlvl2}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>소분류</th>
+              <td colSpan={1}>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemlvl3"
+                    value={filters.itemlvl3}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>출고번호</th>
+              <td>
+                <Input
+                  name="reckey"
+                  type="text"
+                  value={filters.reckey}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>출고유형</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="outkind"
+                    value={filters.outkind}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
             </tr>
-
             <tr>
+              <th>LOT NO</th>
+              <td>
+                <Input
+                  name="lotnum"
+                  type="text"
+                  value={filters.lotnum}
+                  onChange={filterInputChange}
+                />
+              </td>
               <th>품목코드</th>
               <td>
                 <Input
@@ -645,39 +729,14 @@ const SA_B2410: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>출고유형</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="outkind"
-                    value={filters.outkind}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>LOT NO</th>
+              <th>수주번호</th>
               <td>
                 <Input
-                  name="lotnum"
+                  name="ordnum"
                   type="text"
-                  value={filters.lotnum}
+                  value={filters.ordnum}
                   onChange={filterInputChange}
                 />
-              </td>
-              <th>품목계정</th>
-              <td colSpan={1}>
-                {customOptionData !== null && (
-                  <MultiSelectDrop
-                    name="itemacnt"
-                    queryStr={getQueryFromBizComponent(
-                      bizComponentData.find(
-                        (item: any) => item.bizComponentId === "L_BA061"
-                      )
-                    )}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
               </td>
             </tr>
           </tbody>
@@ -695,7 +754,7 @@ const SA_B2410: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "78vh" }}
+            style={{ height: "72vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -767,8 +826,8 @@ const SA_B2410: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell
-                            : item.sortOrder === 8
-                            ? mainSumFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
                             : undefined
                         }
                         locked={item.fixed === "None" ? false : true}
@@ -792,7 +851,7 @@ const SA_B2410: React.FC = () => {
           setData={setItemData}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

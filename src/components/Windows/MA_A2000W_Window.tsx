@@ -885,6 +885,7 @@ const CopyWindow = ({
       return {
         ...row,
         totamt: 0,
+        unpcalmeth : "Q",
         num: seq++,
       };
     });
@@ -1101,8 +1102,8 @@ const CopyWindow = ({
             : item.qty * item.unp * filters.wonchgrat,
         taxamt:
           filters.amtunit == "KRW"
-            ? (item.qty * item.unp) / 10
-            : (item.qty * item.unp * filters.wonchgrat) / 10,
+            ? Math.round((item.qty * item.unp) / 10)
+            : Math.round((item.qty * item.unp * filters.wonchgrat) / 10),
         totamt:
           filters.amtunit == "KRW"
             ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
@@ -1169,7 +1170,7 @@ const CopyWindow = ({
       taxdiv: "",
       totamt: 0,
       unp: 0,
-      unpcalmeth: "",
+      unpcalmeth: "Q",
       uschgrat: 0,
       wgt: 0,
       wgtunit: "",
@@ -1399,7 +1400,7 @@ const CopyWindow = ({
                     name="files"
                     type="text"
                     value={filters.files}
-                    onChange={filterInputChange}
+                    className="readonly"
                   />
                   <ButtonInInput>
                     <Button

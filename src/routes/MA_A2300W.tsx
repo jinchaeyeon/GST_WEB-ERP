@@ -1340,57 +1340,7 @@ const MA_A2000W: React.FC = () => {
                     className="required"
                   />
                 </td>
-              <th>업체코드</th>
-              <td>
-                <div className="filter-item-wrap">
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </div>
-              </td>
-              <th>업체명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사업장</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="location"
-                    value={filters.location}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    className="required"
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>발주번호</th>
-              <td colSpan={3}>
-                <Input
-                  name="purnum"
-                  type="text"
-                  value={filters.purnum}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>내수구분</th>
+                <th>내수구분</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
@@ -1426,14 +1376,44 @@ const MA_A2000W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
+              <th>사업장</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="location"
+                    value={filters.location}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    className="required"
+                  />
+                )}
+              </td>
             </tr>
             <tr>
-              <th>LOT NO</th>
-              <td colSpan={3}>
+            <th>업체코드</th>
+              <td>
+                <div className="filter-item-wrap">
+                  <Input
+                    name="custcd"
+                    type="text"
+                    value={filters.custcd}
+                    onChange={filterInputChange}
+                  />
+                  <ButtonInInput>
+                    <Button
+                      onClick={onCustWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
+                </div>
+              </td>
+              <th>업체명</th>
+              <td>
                 <Input
-                  name="lotnum"
+                  name="custnm"
                   type="text"
-                  value={filters.lotnum}
+                  value={filters.custnm}
                   onChange={filterInputChange}
                 />
               </td>
@@ -1450,6 +1430,16 @@ const MA_A2000W: React.FC = () => {
                   />
                 )}
               </td>
+              <th>계산서유무</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="taxyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
               <th>사업부</th>
               <td>
                 {customOptionData !== null && (
@@ -1458,16 +1448,6 @@ const MA_A2000W: React.FC = () => {
                     value={filters.position}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>계산서유무</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="taxyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
                   />
                 )}
               </td>
