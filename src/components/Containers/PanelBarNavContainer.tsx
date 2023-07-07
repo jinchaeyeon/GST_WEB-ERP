@@ -50,6 +50,7 @@ const PanelBarNavContainer = (props: any) => {
   const [loginResult] = useRecoilState(loginResultState);
   // const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   // const [token] = useState(accessToken);
+  const accessToken = localStorage.getItem("accessToken");
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   // useEffect(() => {
   //   if (token === null) fetchMenus();
@@ -426,7 +427,7 @@ const PanelBarNavContainer = (props: any) => {
   const selected = setSelectedIndex(props.location.pathname);
 
   const logout = () => {
-    // fetchLogout();
+    fetchLogout();
 
     // setAccessToken(null);
     cookie.remove("refreshToken", { path: "/" }); // localStorage.removeItem("refreshToken");
@@ -434,23 +435,23 @@ const PanelBarNavContainer = (props: any) => {
     window.location.href = "/";
   };
 
-  // const fetchLogout = async () => {
-  //   let data: any;
+  const fetchLogout = async () => {
+    let data: any;
 
-  //   const para = {
-  //     accessToken: accessToken,
-  //   };
+    const para = {
+      accessToken: accessToken,
+    };
 
-  //   try {
-  //     data = await processApi<any>("logout", para);
-  //   } catch (error) {
-  //     data = null;
-  //   }
-  //   if (data === null) {
-  //     console.log("[An error occured to log for logout]");
-  //     console.log(data);
-  //   }
-  // };
+    try {
+      data = await processApi<any>("logout", para);
+    } catch (error) {
+      data = null;
+    }
+    if (data === null) {
+      console.log("[An error occured to log for logout]");
+      console.log(data);
+    }
+  };
 
   const onMenuBtnClick = () => {
     setIsMobileMenuOpend((prev) => !prev);
