@@ -3,6 +3,8 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
+import { ColumnGroup } from 'primereact/columngroup';
+import { Row } from 'primereact/row';
 
 const PaginatorTable = (props) => {
     const [filters, setFilters] = React.useState({
@@ -58,7 +60,7 @@ const PaginatorTable = (props) => {
         <DataTable
           value={props.value}
           header={header}
-          tableStyle={{ minWidth: "20rem" }}
+          tableStyle={{ minWidth: "20rem"}}
           stripedRows
           paginator
           rows={5}

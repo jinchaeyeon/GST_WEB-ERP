@@ -59,6 +59,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 
 const numberField = [
   "sort_seq",
@@ -104,6 +105,18 @@ const Page: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
+   //customOptionData 조회 후 디폴트 값 세팅
+   useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      setFilters((prev) => ({
+        ...prev,
+        group_category: defaultOption.find((item: any) => item.id === "group_category")
+          .valueCode,
+      }));
+    }
+  }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_menu_group,L_BA000", setBizComponentData);
@@ -696,14 +709,12 @@ const Page: React.FC = () => {
             <tr>
               <th>유형분류</th>
               <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
                     name="group_category"
                     value={filters.group_category}
-                    bizComponentId="L_menu_group"
-                    bizComponentData={bizComponentData}
+                    customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
-                    textField={"name"}
                   />
                 )}
               </td>

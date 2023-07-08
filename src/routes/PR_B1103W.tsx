@@ -289,7 +289,7 @@ const PR_B1103W: React.FC = () => {
     }
     setLoading(false);
   };
-
+ 
   const fetchChartGrid = async () => {
     let data: any;
     try {
@@ -337,6 +337,7 @@ const PR_B1103W: React.FC = () => {
       }));
 
       setDetailList(rows);
+
       if(rows.length > 0) {
         setDetailSelected(rows[0]);
       } else {
@@ -606,7 +607,9 @@ const PR_B1103W: React.FC = () => {
                   ...item,
                   prodemp: userListData.find(
                     (item: any) => item.user_id == item.prodemp
-                  )?.user_name,
+                  ) == undefined ? "" : userListData.find(
+                    (item: any) => item.user_id == item.prodemp
+                  )?.user_name
                 })) : []}
                 column={{
                   itemcd:
@@ -630,6 +633,7 @@ const PR_B1103W: React.FC = () => {
                   hr: "표준시간",
                   prodemp: "작업자",
                 }}
+                numberField={["qty"]}
                 title={"상세 목록"}
                 key="num"
                 selection={detailSelected}

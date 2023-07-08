@@ -14,7 +14,7 @@ import {
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import { gridList } from "../store/columns/SA_A5000W_C";
+import { gridList } from "../store/columns/SA_A5001W_C";
 import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
@@ -70,17 +70,13 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 
 const DATA_ITEM_KEY = "num";
 
-const dateField = ["outdt", "shipdt"];
+const dateField = ["outdt"];
 const numberField = [
   "qty",
   "amt",
   "wonamt",
   "taxamt",
   "totamt",
-  "sort_seq",
-  "dlramt",
-  "unitwgt",
-  "NumberCell",
 ];
 
 type TdataArr = {
@@ -160,7 +156,7 @@ const SA_A5001W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA019, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
+    "L_BA020, L_BA005, L_sysUserMaster_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -169,37 +165,28 @@ const SA_A5001W: React.FC = () => {
   const [usersListData, setUsersListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-  const [itemacntListData, setItemacntListData] = useState([
+  const [doexdivListData, setDoexdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [qtyunitListData, setQtyunitListData] = useState([
+  const [amtunitListData, setAmtunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [unpcalmethListData, setUnpcalmethListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
   useEffect(() => {
     if (bizComponentData !== null) {
-      const unpcalmethQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
-      );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+           const doexdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
       );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+      const amtunitQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
       );
-
-      fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
+      fetchQuery(amtunitQueryStr, setAmtunitListData);
+      fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
     }
   }, [bizComponentData]);
 
@@ -350,6 +337,11 @@ const SA_A5001W: React.FC = () => {
     pgSize: PAGE_SIZE,
     recdt: new Date(),
     seq1: 0,
+    find_row_value: "",
+    scrollDirrection: "down",
+    pgNum: 1,
+    isSearch: true,
+    pgGap: 0,
   });
 
   //조회조건 파라미터
@@ -383,31 +375,31 @@ const SA_A5001W: React.FC = () => {
   };
 
   const detailParameters: Iparameters = {
-    procedureName: "P_SA_A5000W_Q",
+    procedureName: "P_SA_A5001W_Q",
     pageNumber: detailPgNum,
     pageSize: detailFilters.pgSize,
     parameters: {
       "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
-      // "@p_location": filters.cboLocation,
-      // "@p_position": filters.position,
-      // "@p_dtgb": filters.dtgb,
-      // "@p_frdt": convertDateToStr(filters.frdt),
-      // "@p_todt": convertDateToStr(filters.todt),
-      // "@p_person": filters.cboPerson,
-      // "@p_custcd": filters.custcd,
-      // "@p_custnm": filters.custnm,
-      // "@p_rcvcustcd": filters.rcvcustcd,
-      // "@p_rcvcustnm": filters.rcvcustnm,
-      // "@p_doexdiv": filters.cboDoexdiv,
-      // "@p_taxdiv": filters.taxdiv,
-      // "@p_taxyn": filters.taxyn,
-      // "@p_itemcd": filters.itemcd,
-      // "@p_itemnm": filters.itemnm,
-      // "@p_ordkey": filters.ordkey,
-      // "@p_recdt": convertDateToStr(detailFilters.recdt),
-      // "@p_seq1": detailFilters.seq1,
-      // "@p_company_code": filters.company_code,
+      "@p_location": filters.location,
+      "@p_outdt": convertDateToStr(filters.outdt),
+      "@p_outdt2": convertDateToStr(filters.outdt2),
+      "@p_person": filters.person,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_recdt": convertDateToStr(detailFilters.recdt),
+      "@p_seq1": detailFilters.seq1,
+      "@p_gubun1": filters.gubun1,
+      "@p_gubun2": filters.gubun2,
+      "@p_doexdiv": filters.doexdiv,
+      "@p_taxdiv": filters.taxdiv,
+      "@p_itemcd": filters.itemcd,
+      "@p_itemnm": filters.itemnm,
+      "@p_rcvcustcd": filters.rcvcustcd,
+      "@p_rcvcustnm": filters.rcvcustnm,
+      "@p_finaldes": filters.finaldes,
+      "@p_cargocd": filters.cargocd,
+      "@p_taxyn": filters.taxyn,
     },
   };
 
@@ -531,13 +523,19 @@ const SA_A5001W: React.FC = () => {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0)
+      if (totalRowCnt > 0) {
         setDetailDataResult((prev) => {
           return {
             data: rows,
             total: totalRowCnt,
           };
         });
+        if (detailFilters.find_row_value === "" && detailFilters.pgNum === 1) {
+          // 첫번째 행 선택하기
+          const firstRowData = rows[0];
+          setDetailSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        }
+      }
     }
     setLoading(false);
   };
@@ -594,6 +592,32 @@ const SA_A5001W: React.FC = () => {
       }
     }
   }, [mainDataResult]);
+
+  useEffect(() => {
+    if (customOptionData !== null) {
+      // 저장 후, 선택 행 스크롤 유지 처리
+      if (detailFilters.find_row_value !== "" && detailDataResult.total > 0) {
+        const ROW_HEIGHT = 35.56;
+        const idx = detailDataResult.data.findIndex(
+          (item) => idGetter(item) === detailFilters.find_row_value
+        );
+
+        const scrollHeight = ROW_HEIGHT * idx;
+        gridRef.vs.container.scroll(0, scrollHeight);
+
+        //초기화
+        setDetailFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+        }));
+      }
+      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
+      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
+      else if (detailFilters.scrollDirrection === "up") {
+        gridRef.vs.container.scroll(0, 20);
+      }
+    }
+  }, [detailDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -1492,6 +1516,12 @@ const SA_A5001W: React.FC = () => {
                 person: usersListData.find(
                   (item: any) => item.user_id === row.person
                 )?.user_name,
+                amtunit: amtunitListData.find(
+                  (item: any) => item.sub_code === row.amtunit
+                )?.code_name,
+                doexdiv: doexdivListData.find(
+                  (item: any) => item.sub_code === row.doexdiv
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1519,7 +1549,7 @@ const SA_A5001W: React.FC = () => {
             resizable={true}
           >
             <GridColumn cell={CommandCell} width="60px" />
-            {/* {customOptionData !== null &&
+            {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
@@ -1544,7 +1574,7 @@ const SA_A5001W: React.FC = () => {
                       }
                     />
                   )
-              )} */}
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1558,14 +1588,11 @@ const SA_A5001W: React.FC = () => {
           data={process(
             detailDataResult.data.map((row) => ({
               ...row,
-              itemacnt: itemacntListData.find(
-                (item: any) => item.sub_code === row.itemacnt
+              amtunit: amtunitListData.find(
+                (item: any) => item.sub_code === row.amtunit
               )?.code_name,
-              qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
-              )?.code_name,
-              unpcalmeth: unpcalmethListData.find(
-                (item: any) => item.sub_code === row.unpcalmeth
+              doexdiv: doexdivListData.find(
+                (item: any) => item.sub_code === row.doexdiv
               )?.code_name,
               [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
             })),
