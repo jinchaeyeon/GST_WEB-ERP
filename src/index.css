@@ -116,9 +116,16 @@ input.readonly {
   width: inherit;
 }
 
-.k-daterange-picker .k-dateinput, .k-daterangepicker .k-dateinput{
+.k-daterange-picker .k-dateinput,
+.k-daterangepicker .k-dateinput {
   width: 50% !important;
 }
+
+/* 주석 해제 시 그리드 페이저의 우측 info 보임 */
+/* .k-pager-md .k-pager-info {
+  display: unset !important;
+} */
+
 /* 모바일 결재문서 숨김 처리 */
 @media (max-width: 768px) {
   .visible-mobile-only {
