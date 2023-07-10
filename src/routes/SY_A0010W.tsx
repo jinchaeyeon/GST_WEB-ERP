@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -10,6 +10,7 @@ import {
   GridCellProps,
   GridGroupChangeEvent,
   GridExpandChangeEvent,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -71,8 +72,11 @@ const numberField = [
   "numref5",
 ];
 const checkBoxField = ["system_yn", "use_yn"];
-const DATA_ITEM_KEY = "group_code";
-const DETAIL_DATA_ITEM_KEY = "sub_code";
+const DATA_ITEM_KEY = "num";
+const DETAIL_DATA_ITEM_KEY = "num";
+
+let targetRowIndex: null | number = null;
+let targetRowIndex2: null | number = null;
 
 const Page: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -84,6 +88,10 @@ const Page: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -106,14 +114,15 @@ const Page: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-   //customOptionData 조회 후 디폴트 값 세팅
-   useEffect(() => {
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
-        group_category: defaultOption.find((item: any) => item.id === "group_category")
-          .valueCode,
+        group_category: defaultOption.find(
+          (item: any) => item.id === "group_category"
+        ).valueCode,
       }));
     }
   }, [customOptionData]);
@@ -211,9 +220,8 @@ const Page: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    isSearch: true, // true면 조회조건(filters) 변경 되었을때 조회
+    // true면 조회조건(filters) 변경 되었을때 조회
     pgSize: PAGE_SIZE,
-    pgNum: 1,
     group_category: "",
     group_code: "",
     group_name: "",
@@ -223,6 +231,8 @@ const Page: React.FC = () => {
     subcode_name: "",
     field_caption: "",
     find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -230,46 +240,13 @@ const Page: React.FC = () => {
     pgSize: PAGE_SIZE,
     pgNum: 1,
     group_code: "",
+    find_row_value: "",
   });
-
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_SY_A0010W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_group_code": filters.group_code,
-      "@p_group_name": filters.group_name,
-      "@p_group_category": filters.group_category,
-      "@p_field_caption": filters.field_caption,
-      "@p_memo": filters.memo,
-      "@p_sub_code": filters.sub_code,
-      "@p_code_name": filters.subcode_name,
-      "@p_find_row_value": filters.find_row_value,
-    },
-  };
-  const detailParameters: Iparameters = {
-    procedureName: "P_SY_A0010W_Q",
-    pageNumber: detailFilters.pgNum,
-    pageSize: detailFilters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_group_code": detailFilters.group_code,
-      "@p_group_name": "",
-      "@p_group_category": "",
-      "@p_field_caption": "",
-      "@p_memo": "",
-      "@p_sub_code": "",
-      "@p_code_name": "",
-      "@p_find_row_value": "",
-    },
-  };
 
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
-    [DATA_ITEM_KEY]: "",
+    group_code: "",
     attdatnum: "",
   });
 
@@ -302,12 +279,60 @@ const Page: React.FC = () => {
       "@p_form_id": "",
     },
   };
+  const gridRef = useRef<any>(null);
+  const gridRef2 = useRef<any>(null);
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      ...event.page,
+    });
+  };
+
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setDetailFilters((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+
+    setPage2({
+      ...event.page,
+    });
+  };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SY_A0010W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "LIST",
+        "@p_group_code": filters.group_code,
+        "@p_group_name": filters.group_name,
+        "@p_group_category": filters.group_category,
+        "@p_field_caption": filters.field_caption,
+        "@p_memo": filters.memo,
+        "@p_sub_code": filters.sub_code,
+        "@p_code_name": filters.subcode_name,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
 
     try {
       data = await processApi<any>("procedure", parameters);
@@ -334,41 +359,80 @@ const Page: React.FC = () => {
             )?.code_name,
         }));
 
+        if (filters.find_row_value !== "") {
+          // find_row_value 행으로 스크롤 이동
+          if (gridRef.current) {
+            const findRowIndex = rows.findIndex(
+              (row: any) => row.group_code === filters.find_row_value
+            );
+            targetRowIndex = findRowIndex;
+          }
+
+          // find_row_value 데이터가 존재하는 페이지로 설정
+          setPage({
+            skip: PAGE_SIZE * (data.pageNumber - 1),
+            take: PAGE_SIZE,
+          });
+        } else {
+          // 첫번째 행으로 스크롤 이동
+          if (gridRef.current) {
+            targetRowIndex = 0;
+          }
+        }
+
         // 데이터 세팅
         setMainDataTotal(totalRowCnt);
-        setMainDataResult((prev) =>
-          process([...rowsOfDataResult(prev), ...rows], mainDataState)
-        );
+        setMainDataResult((prev) => process(rows, mainDataState));
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row.group_code == filters.find_row_value
+              );
 
-        // 그룹코드로 조회한 경우, 조회된 페이지넘버로 세팅
-        if (filters.pgNum !== data.pageNumber) {
-          setFilters((prev) => ({ ...prev, pgNum: data.pageNumber }));
-        }
+        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
 
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-
-          setDetailFilters((prev) => ({
-            ...prev,
-            group_code: firstRowData.group_code,
-            isSearch: true,
-          }));
-        }
+        setDetailFilters((prev) => ({
+          ...prev,
+          group_code: selectedRow.group_code,
+          isSearch: true,
+        }));
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
-
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
-  const fetchDetailGrid = async () => {
+  const fetchDetailGrid = async (detailFilters: any) => {
     let data: any;
     setLoading(true);
-
+    const detailParameters: Iparameters = {
+      procedureName: "P_SY_A0010W_Q",
+      pageNumber: detailFilters.pgNum,
+      pageSize: detailFilters.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_group_code": detailFilters.group_code,
+        "@p_group_name": "",
+        "@p_group_category": "",
+        "@p_field_caption": "",
+        "@p_memo": "",
+        "@p_sub_code": "",
+        "@p_code_name": "",
+        "@p_find_row_value": "",
+      },
+    };
     try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
@@ -380,25 +444,68 @@ const Page: React.FC = () => {
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
-        setDetailDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
+        if (detailFilters.find_row_value !== "") {
+          // find_row_value 행으로 스크롤 이동
+          if (gridRef2.current) {
+            const findRowIndex = rows.findIndex(
+              (row: any) =>
+                row[DETAIL_DATA_ITEM_KEY] === detailFilters.find_row_value
+            );
+            targetRowIndex2 = findRowIndex;
+          }
+
+          // find_row_value 데이터가 존재하는 페이지로 설정
+          setPage2({
+            skip: PAGE_SIZE * (data.pageNumber - 1),
+            take: PAGE_SIZE,
+          });
+        } else {
+          // 첫번째 행으로 스크롤 이동
+          if (gridRef2.current) {
+            targetRowIndex2 = 0;
+          }
+        }
+      setDetailDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt,
+        };
+      });
+      const selectedRow =
+        detailFilters.find_row_value === ""
+          ? rows[0]
+          : rows.find(
+              (row: any) =>
+                row[DETAIL_DATA_ITEM_KEY] === detailFilters.find_row_value
+            );
+      setDetailSelectedState({ [selectedRow[DETAIL_DATA_ITEM_KEY]]: true });
     }
+    setDetailFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   // 조회 버튼 => 리셋 후 조회
   const search = () => {
-    resetAllGrid();
+    setPage(initialPageState); // 페이지 초기화
+    setPage2(initialPageState); // 페이지 초기화
+    resetAllGrid(); // 데이터 초기화
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
   // selectedState가 바뀔때마다 data에 바뀐 selectedState 적용
   useEffect(() => {
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
     setMainDataResult((prev) =>
       process(
         rowsWithSelectedDataResult(prev, selectedState, DATA_ITEM_KEY),
@@ -413,31 +520,42 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     if (filters.isSearch && permissions !== null && bizComponentData !== null) {
-      setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
 
       if (filters.find_row_value !== "") {
         // 그룹코드로 조회 시 리셋 후 조회
         resetAllGrid();
-        fetchMainGrid();
+        fetchMainGrid(deepCopiedFilters);
       } else {
         // 일반 조회
-        fetchMainGrid();
+        fetchMainGrid(deepCopiedFilters);
       }
     }
   }, [filters, permissions, bizComponentData]);
 
   useEffect(() => {
     if (permissions !== null && detailFilters.isSearch) {
-      setDetailFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(detailFilters);
+      setDetailFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
 
-      if (detailFilters.pgNum === 1) {
-        setDetailDataResult(process([], detailDataState));
-        fetchDetailGrid();
-      } else {
-        fetchDetailGrid();
-      }
+      fetchDetailGrid(deepCopiedFilters);
     }
   }, [detailFilters, permissions]);
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef2.current) {
+      gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
+      targetRowIndex2 = null;
+    }
+  }, [detailDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -465,39 +583,21 @@ const Page: React.FC = () => {
     }));
   };
 
+  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: detailSelectedState,
+      dataItemKey: DETAIL_DATA_ITEM_KEY,
+    });
+    setDetailSelectedState(newSelectedState);
+  };
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();
     }
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (
-      chkScrollHandler(event, filters.pgNum, PAGE_SIZE) &&
-      !filters.isSearch
-    ) {
-      setFilters((prev) => ({
-        ...prev,
-        pgNum: prev.pgNum + 1,
-        isSearch: true,
-        find_row_value: "",
-      }));
-    }
-  };
-
-  const onDetailScrollHandler = (event: GridEvent) => {
-    if (
-      chkScrollHandler(event, detailFilters.pgNum, PAGE_SIZE) &&
-      !detailFilters.isSearch
-    )
-      setDetailFilters((prev) => ({
-        ...prev,
-        pgNum: prev.pgNum + 1,
-        isSearch: true,
-      }));
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -516,21 +616,6 @@ const Page: React.FC = () => {
         총 {mainDataTotal}건
       </td>
     );
-  };
-
-  const calculateWidth = (field: any) => {
-    let maxWidth = 0;
-    mainDataResult.data.forEach((item) => {
-      const size = calculateSize(item[field], {
-        font: "Source Sans Pro",
-        fontSize: "16px",
-      }); // pass the font properties based on the application
-      if (size.width > maxWidth) {
-        maxWidth = size.width;
-      }
-    });
-
-    return maxWidth;
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -576,9 +661,9 @@ const Page: React.FC = () => {
     if (mainDataResult.total < 1) return false;
 
     const key = Object.getOwnPropertyNames(selectedState)[0];
-    const selectedRowData = rowsOfDataResult(mainDataResult).find(
-      (item: any) => item[DATA_ITEM_KEY] === key
-    );
+    const selectedRowData = rowsOfDataResult(mainDataResult).filter(
+      (item: any) => item[DATA_ITEM_KEY] == key
+    )[0];
 
     setDetailFilters((prev) => ({
       ...prev,
@@ -596,18 +681,20 @@ const Page: React.FC = () => {
       return false;
     }
 
-    const group_code = Object.getOwnPropertyNames(selectedState)[0];
-
-    const data = mainDataResult.data.filter(
-      (item) => item.group_code == Object.getOwnPropertyNames(selectedState)[0]
+    const data = rowsOfDataResult(mainDataResult).filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
-    setParaDataDeleted((prev) => ({
-      ...prev,
-      work_type: "D",
-      group_code: group_code,
-      attdatnum: data.attdatnum,
-    }));
+    if (data != undefined) {
+      setParaDataDeleted((prev) => ({
+        ...prev,
+        work_type: "D",
+        group_code: data.group_code,
+        attdatnum: data.attdatnum,
+      }));
+    } else {
+      alert("선택된 행이 없습니다.");
+    }
   };
 
   const fetchToDelete = async () => {
@@ -621,8 +708,22 @@ const Page: React.FC = () => {
 
     if (data.isSuccess === true) {
       resetAllGrid();
-      fetchMainGrid();
-      // 첨부파일 삭제
+      const isLastDataDeleted =
+        mainDataResult.data.length === 1 && filters.pgNum > 1;
+
+      if (isLastDataDeleted) {
+        setPage({
+          skip: PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+      }
+
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+        isSearch: true,
+      }));
+
       if (paraDataDeleted.attdatnum)
         setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
@@ -639,35 +740,32 @@ const Page: React.FC = () => {
     }));
   };
 
-  const setGroupCode = (groupCode: string) => {
+  const setGroupCode = (groupCode: string|undefined) => {
     // 리셋
     resetAllGrid();
-
-    // 행 선택
-    setSelectedState({ [groupCode]: true });
 
     // 메인 조회
     setFilters((prev) => ({
       ...prev,
-      isSearch: true,
-      find_row_value: groupCode,
-    }));
-
-    // 디테일 조회
-    setDetailFilters((prev) => ({
-      ...prev,
-      group_code: groupCode,
+      find_row_value: groupCode == undefined ? "" : groupCode,
       isSearch: true,
     }));
   };
-
-  const reloadData = (workType: string, groupCode: string | undefined) => {
-    if (groupCode) {
-      //그룹코드로 조회
-      setGroupCode(groupCode);
-    } else if (workType === "U") {
+  
+  const reloadData = (
+    workType: string,
+    groupCode: string | undefined,
+  ) => {
+    if (workType === "U") {
       // 일반조회
-      search();
+      const rows = rowsOfDataResult(mainDataResult).filter((item) => Object.getOwnPropertyNames(selectedState)[0] == item.num);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: rows[0].group_code,
+        isSearch: true,
+      }));
+    } else {
+      setGroupCode(groupCode)
     }
   };
 
@@ -837,7 +935,13 @@ const Page: React.FC = () => {
               //스크롤 조회 기능
               fixedScroll={true}
               total={mainDataTotal}
-              onScroll={onMainScrollHandler}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
               //정렬기능
               sortable={true}
               onSortChange={onMainSortChange}
@@ -889,15 +993,28 @@ const Page: React.FC = () => {
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
+                [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
               })),
               detailDataState
             )}
             {...detailDataState}
             onDataStateChange={onDetailDataStateChange}
+            dataItemKey={DETAIL_DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onDetailSelectionChange}
             //스크롤 조회 기능
             fixedScroll={true}
             total={detailDataResult.total}
-            onScroll={onDetailScrollHandler}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            ref={gridRef2}
+            rowHeight={30}
             //정렬기능
             sortable={true}
             onSortChange={onDetailSortChange}

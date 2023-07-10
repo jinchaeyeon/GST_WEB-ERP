@@ -18,7 +18,9 @@ code {
 div.k-animation-container {
   z-index: 10100 !important;
 }
-
+.k-pager-wrap, .k-pager {
+  justify-content: center;
+}
 /* .k-grid tr {
   height: 36px;
 } */
