@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useRef,
-} from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
@@ -82,10 +77,7 @@ const idGetter = getter(DATA_ITEM_KEY);
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
-  reloadData(
-    workType: string,
-    groupCode?: string,
-  ): void;
+  reloadData(workType: string, groupCode?: string): void;
   workType: string;
   group_code?: string;
   isCopy: boolean;
@@ -111,11 +103,18 @@ const KendoWindow = ({
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setInitialVal((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  
+    if(name == "use_yn") {
+      setInitialVal((prev) => ({
+        ...prev,
+        [name]: value == true ? "Y" : "N",
+      }));
+    } else {
+      setInitialVal((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -302,13 +301,16 @@ const KendoWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (
       field != "rowstatus" &&
-        field != "insert_userid" &&
-        field != "insert_pc" &&
-        field != "insert_time" &&
-        field != "update_userid" &&
-        field != "update_pc1" &&
-        field != "update_time1" &&
-        !(field == "sub_code" && (dataItem.rowstatus == "U" || dataItem.rowstatus == ""))
+      field != "insert_userid" &&
+      field != "insert_pc" &&
+      field != "insert_time" &&
+      field != "update_userid" &&
+      field != "update_pc1" &&
+      field != "update_time1" &&
+      !(
+        field == "sub_code" &&
+        (dataItem.rowstatus == "U" || dataItem.rowstatus == "")
+      )
     ) {
       const newData = detailDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -473,7 +475,7 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -718,12 +720,17 @@ const KendoWindow = ({
     }
 
     if (!valid) return false;
+    if (detailDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+      return false;
+    }
     const dataItem = detailDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
+
     const {
       group_code,
       group_name,
@@ -945,18 +952,24 @@ const KendoWindow = ({
           ...item,
           rowstatus: "D",
         };
-        Object.push(newData2)
+        Object.push(newData2);
         deletedMainRows.push(newData2);
       }
     });
 
-    for(var i = 1; i < detailDataResult.data.length; i++) {
-      if(Object.filter((item) => detailDataResult.data[detailDataResult.data.length - i].num == item.num).length == 0) {
+    for (var i = 1; i < detailDataResult.data.length; i++) {
+      if (
+        Object.filter(
+          (item) =>
+            detailDataResult.data[detailDataResult.data.length - i].num ==
+            item.num
+        ).length == 0
+      ) {
         data = detailDataResult.data[detailDataResult.data.length - i];
         break;
       }
     }
-    
+
     const isLastDataDeleted =
       detailDataResult.data.length === 1 && filters.pgNum > 1;
 
@@ -966,13 +979,15 @@ const KendoWindow = ({
         take: PAGE_SIZE,
       });
     }
- 
+
     setDetailDataResult((prev) => ({
       data: newData,
       total: prev.total - deletedMainRows.length,
     }));
-    
-    setDetailSelectedState({ [data != undefined ? data[DATA_ITEM_KEY] : newData[0]] : true });
+
+    setDetailSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
 
     setDataState({});
   };
@@ -1006,12 +1021,12 @@ const KendoWindow = ({
     let seq = detailDataResult.total + deletedMainRows.length + 1;
 
     const newData = detailDataResult.data.filter((item) => item.chk == true);
-    
+
     newData.map((item) => {
       const data = {
         ...item,
-        rowstatus : "N",
-        num : seq
+        rowstatus: "N",
+        num: seq,
       };
       setDetailSelectedState({ [data[DATA_ITEM_KEY]]: true });
       setDetailDataResult((prev) => {
@@ -1021,7 +1036,7 @@ const KendoWindow = ({
         };
       });
       seq++;
-    })
+    });
   };
 
   return (
@@ -1214,7 +1229,7 @@ const KendoWindow = ({
               <th>사용여부</th>
               <td>
                 <Checkbox
-                  name="useyn"
+                  name="use_yn"
                   value={initialVal.use_yn == "Y" ? true : false}
                   onChange={filterInputChange}
                 />
@@ -1298,12 +1313,12 @@ const KendoWindow = ({
             </Button>
           </GridToolbar>
           <GridColumn
-                field="chk"
-                title=" "
-                width="45px"
-                headerCell={CustomCheckBoxCell2}
-                cell={CheckBoxCell}
-              />
+            field="chk"
+            title=" "
+            width="45px"
+            headerCell={CustomCheckBoxCell2}
+            cell={CheckBoxCell}
+          />
           <GridColumn field="rowstatus" title=" " width="40px" />
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdDetailList"].map(
@@ -1335,19 +1350,15 @@ const KendoWindow = ({
         </Grid>
       </GridContainer>
       <BottomContainer>
-          <ButtonContainer>
-            <Button themeColor={"primary"} onClick={handleSubmit}>
-              확인
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
-            >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
+        <ButtonContainer>
+          <Button themeColor={"primary"} onClick={handleSubmit}>
+            확인
+          </Button>
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            닫기
+          </Button>
+        </ButtonContainer>
+      </BottomContainer>
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}

@@ -383,20 +383,22 @@ const Page: React.FC = () => {
         // 데이터 세팅
         setMainDataTotal(totalRowCnt);
         setMainDataResult((prev) => process(rows, mainDataState));
-        const selectedRow =
-          filters.find_row_value == ""
-            ? rows[0]
-            : rows.find(
-                (row: any) => row.group_code == filters.find_row_value
-              );
+        if (totalRowCnt > 0) {
+          const selectedRow =
+            filters.find_row_value == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) => row.group_code == filters.find_row_value
+                );
 
-        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
 
-        setDetailFilters((prev) => ({
-          ...prev,
-          group_code: selectedRow.group_code,
-          isSearch: true,
-        }));
+          setDetailFilters((prev) => ({
+            ...prev,
+            group_code: selectedRow.group_code,
+            isSearch: true,
+          }));
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -471,14 +473,16 @@ const Page: React.FC = () => {
           total: totalRowCnt,
         };
       });
-      const selectedRow =
-        detailFilters.find_row_value === ""
-          ? rows[0]
-          : rows.find(
-              (row: any) =>
-                row[DETAIL_DATA_ITEM_KEY] === detailFilters.find_row_value
-            );
-      setDetailSelectedState({ [selectedRow[DETAIL_DATA_ITEM_KEY]]: true });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          detailFilters.find_row_value === ""
+            ? rows[0]
+            : rows.find(
+                (row: any) =>
+                  row[DETAIL_DATA_ITEM_KEY] == detailFilters.find_row_value
+              );
+        setDetailSelectedState({ [selectedRow[DETAIL_DATA_ITEM_KEY]]: true });
+      }
     }
     setDetailFilters((prev) => ({
       ...prev,
@@ -707,9 +711,11 @@ const Page: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 1;
+      const findRowIndex = rowsOfDataResult(mainDataResult).findIndex(
+        (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
+      );
 
       if (isLastDataDeleted) {
         setPage({
@@ -717,9 +723,13 @@ const Page: React.FC = () => {
           take: PAGE_SIZE,
         });
       }
-
+      resetAllGrid();
       setFilters((prev) => ({
         ...prev,
+        find_row_value:
+          rowsOfDataResult(mainDataResult)[
+            findRowIndex == 0 ? 0 : findRowIndex - 1
+          ].group_code,
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,
       }));
@@ -740,7 +750,7 @@ const Page: React.FC = () => {
     }));
   };
 
-  const setGroupCode = (groupCode: string|undefined) => {
+  const setGroupCode = (groupCode: string | undefined) => {
     // 리셋
     resetAllGrid();
 
@@ -751,21 +761,20 @@ const Page: React.FC = () => {
       isSearch: true,
     }));
   };
-  
-  const reloadData = (
-    workType: string,
-    groupCode: string | undefined,
-  ) => {
+
+  const reloadData = (workType: string, groupCode: string | undefined) => {
     if (workType === "U") {
       // 일반조회
-      const rows = rowsOfDataResult(mainDataResult).filter((item) => Object.getOwnPropertyNames(selectedState)[0] == item.num);
+      const rows = rowsOfDataResult(mainDataResult).filter(
+        (item) => Object.getOwnPropertyNames(selectedState)[0] == item.num
+      );
       setFilters((prev) => ({
         ...prev,
         find_row_value: rows[0].group_code,
         isSearch: true,
       }));
     } else {
-      setGroupCode(groupCode)
+      setGroupCode(groupCode);
     }
   };
 
