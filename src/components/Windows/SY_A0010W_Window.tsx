@@ -81,6 +81,7 @@ type TKendoWindow = {
   workType: string;
   group_code?: string;
   isCopy: boolean;
+  modal?: boolean;
 };
 let targetRowIndex: null | number = null;
 const KendoWindow = ({
@@ -89,6 +90,7 @@ const KendoWindow = ({
   workType,
   group_code = "",
   isCopy,
+  modal = false
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -100,7 +102,6 @@ const KendoWindow = ({
   const [dataState, setDataState] = useState<State>({
     sort: [],
   });
-
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
   
@@ -886,6 +887,7 @@ const KendoWindow = ({
   }, [paraData]);
 
   const onAttachmentsWndClick = () => {
+
     setAttachmentsWindowVisible(true);
   };
 
@@ -1047,6 +1049,7 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <FormBoxWrap>
         <FormBox>

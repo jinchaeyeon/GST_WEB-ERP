@@ -929,7 +929,7 @@ const Page: React.FC = () => {
               )}
             </GridTitleContainer>
             <Grid
-              style={{ height: "78vh" }}
+              style={{ height: "77vh" }}
               data={mainDataResult}
               {...mainDataState}
               onDataStateChange={onMainDataStateChange}
@@ -998,7 +998,7 @@ const Page: React.FC = () => {
             <GridTitle>상세정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "78vh" }}
+            style={{ height: "77vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
@@ -1071,6 +1071,7 @@ const Page: React.FC = () => {
           group_code={detailFilters.group_code}
           isCopy={isCopy}
           reloadData={reloadData}
+          modal={true}
         />
       )}
 

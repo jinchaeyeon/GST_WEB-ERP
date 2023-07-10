@@ -35,6 +35,7 @@ type TKendoWindow = {
   user_group_id?: string;
   isCopy?: boolean;
   para?: Iparameters; //{};
+  modal? : boolean;
 };
 
 const KendoWindow = ({
@@ -45,6 +46,7 @@ const KendoWindow = ({
   user_group_id = "",
   isCopy,
   para,
+  modal = false
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -219,7 +221,7 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
-      modal={true}
+      modal={modal}
     >
       <FormBoxWrap>
         <FormBox>

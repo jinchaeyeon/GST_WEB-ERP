@@ -337,7 +337,7 @@ const KendoWindow = ({
       }
     }
   };
-
+  
   return (
     <Window
       title={"파일첨부관리"}
@@ -346,6 +346,7 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <ButtonContainer>
