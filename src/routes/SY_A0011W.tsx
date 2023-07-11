@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   TreeList,
   createDataTree,
@@ -14,11 +14,11 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -39,7 +39,6 @@ import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TPermissions } from "../store/types";
 import {
-  chkScrollHandler,
   getQueryFromBizComponent,
   getYn,
   UseBizComponent,
@@ -58,7 +57,6 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import { Renderers } from "../components/Renderers/TreeListRenderers";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import { isLoading } from "../store/atoms";
@@ -66,13 +64,15 @@ import { useSetRecoilState } from "recoil";
 import DetailWindow from "../components/Windows/SY_A0011W_Window";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 
 //그리드 별 키 필드값
-const DATA_ITEM_KEY = "user_group_id";
+const DATA_ITEM_KEY = "num";
 const USER_MENU_DATA_ITEM_KEY = "KeyID";
 const ALL_MENU_DATA_ITEM_KEY = "KeyID";
 const SUB_ITEMS_FIELD: string = "menus";
 let deletedMainRows: object[] = [];
+let targetRowIndex: null | number = null;
 
 const RowRenderForDragging = (properties: any) => {
   const {
@@ -89,7 +89,7 @@ const RowRenderForDragging = (properties: any) => {
 
         if (activeElement === null) return false;
         if (activeElement.className.indexOf("k-calendar") < 0) {
-          props.exitEdit();
+          props.render();
         }
       });
     },
@@ -100,14 +100,13 @@ const RowRenderForDragging = (properties: any) => {
     onDrop: (e: any) => onDrop(e),
     draggable: true,
   };
+
   return React.cloneElement(
     row,
     { ...row.props, ...additionalProps },
     row.props.children
   );
 };
-
-let selectedRowIdx = 0;
 
 const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -118,7 +117,10 @@ const Page: React.FC = () => {
   UsePermissions(setPermissions);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(USER_MENU_DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -127,6 +129,18 @@ const Page: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      setFilters((prev) => ({
+        ...prev,
+        use_yn: defaultOption.find((item: any) => item.id === "use_yn")
+          .valueCode,
+      }));
+    }
+  }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -184,12 +198,6 @@ const Page: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [userMenuDataState, setUserMenuDataState] = useState<State>({
-    sort: [],
-  });
-  const [allMenuDataState, setAllMenuDataState] = useState<State>({
-    sort: [],
-  });
 
   //그리드 데이터 결과값
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
@@ -202,7 +210,12 @@ const Page: React.FC = () => {
     editItem: undefined,
     editItemField: undefined,
   });
-  const [allMenuDataResult, setAllMenuDataResult] = useState<any>([]);
+  const [allMenuDataResult, setAllMenuDataResult] = useState<any>({
+    data: [],
+    expanded: ["M2022062210224011070"],
+    editItem: undefined,
+    editItemField: undefined,
+  });
 
   //선택 상태
   const [selectedState, setSelectedState] = useState<{
@@ -217,24 +230,9 @@ const Page: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  //그리드 별 페이지 넘버
-  const [mainPgNum, setMainPgNum] = useState(1);
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -251,6 +249,7 @@ const Page: React.FC = () => {
       [name]: value,
     }));
   };
+  const gridRef = useRef<any>(null);
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -260,58 +259,53 @@ const Page: React.FC = () => {
     user_group_name: "",
     lang_id: "",
     use_yn: "",
+    find_row_value: "",
+    find_row_value2: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
   const [userMenuFilters, setUserMenuFilters] = useState({
     pgSize: PAGE_SIZE,
     user_group_id: "",
+    find_row_value: "",
+    isSearch: true,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_SY_A0011W_Q ",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.work_type,
-      "@p_user_group_id": filters.user_group_id,
-      "@p_user_group_name": filters.user_group_name,
-      "@p_lang_id": filters.lang_id,
-      "@p_use_yn": filters.use_yn,
-    },
-  };
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
-  const userMenuParameters: Iparameters = {
-    procedureName: "P_SY_A0011W_Q ",
-    pageNumber: 1,
-    pageSize: 500,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_user_group_id": userMenuFilters.user_group_id,
-      "@p_user_group_name": filters.user_group_name,
-      "@p_lang_id": filters.lang_id,
-      "@p_use_yn": filters.use_yn,
-    },
-  };
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
 
-  const allMenuParameters: Iparameters = {
-    procedureName: "P_SY_A0011W_Q ",
-    pageNumber: 1,
-    pageSize: 500,
-    parameters: {
-      "@p_work_type": "ALL",
-      "@p_user_group_id": filters.user_group_id,
-      "@p_user_group_name": filters.user_group_name,
-      "@p_lang_id": filters.lang_id,
-      "@p_use_yn": filters.use_yn,
-    },
+    setPage({
+      ...event.page,
+    });
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filter: any) => {
     if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SY_A0011W_Q ",
+      pageNumber: filter.pgNum,
+      pageSize: filter.pgSize,
+      parameters: {
+        "@p_work_type": filter.work_type,
+        "@p_user_group_id": filter.user_group_id,
+        "@p_user_group_name": filter.user_group_name,
+        "@p_lang_id": filter.lang_id,
+        "@p_use_yn": filter.use_yn,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -325,24 +319,81 @@ const Page: React.FC = () => {
         idx: idx,
       }));
 
-      if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
+      if (filter.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.user_group_id == filter.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filter.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row.user_group_id == filter.find_row_value
+              );
+
+        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+
+        setUserMenuFilters((prev) => ({
+          ...prev,
+          user_group_id: selectedRow.user_group_id,
+          isSearch: true,
+        }));
       }
     } else {
       console.log("[에러발생]");
       console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
-  const fetchUserMenuGrid = async () => {
+  const fetchUserMenuGrid = async (userMenuFilter: any) => {
     let data: any;
     setLoading(true);
+
+    const userMenuParameters: Iparameters = {
+      procedureName: "P_SY_A0011W_Q ",
+      pageNumber: 1,
+      pageSize: 500,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_user_group_id": userMenuFilter.user_group_id,
+        "@p_user_group_name": filters.user_group_name,
+        "@p_lang_id": filters.lang_id,
+        "@p_use_yn": filters.use_yn,
+      },
+    };
 
     try {
       data = await processApi<any>("procedure", userMenuParameters);
@@ -369,19 +420,38 @@ const Page: React.FC = () => {
           ...userMenuDataResult,
           data: dataTree,
         });
+
+        if (totalRowCnt > 0) {
+          const selectedRow =
+            userMenuFilter.find_row_value == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) => row.KeyID == userMenuFilter.find_row_value
+                );
+
+          setUserMenuSelectedState({
+            [selectedRow[USER_MENU_DATA_ITEM_KEY]]: true,
+          });
+        }
       } else {
         // 앱 메뉴 (최상위 메뉴) 없을 시 데이터 세팅
         // 드래그앤드롭 사용 시 그리드 내 데이터 최소 1개 필요함
         const appMenuRow = [
           {
-            KeyID: allMenuDataResult[0].KeyID,
-            ParentKeyID: allMenuDataResult[0].ParentKeyID,
+            KeyID:
+              allMenuDataResult.data.length == 0
+                ? "M2022062210224011070"
+                : allMenuDataResult.data[0].KeyID,
+            ParentKeyID: "",
             form_delete_yn: "Y",
             form_id: "",
             form_print_yn: "Y",
             form_save_yn: "Y",
             form_view_yn: "Y",
-            menu_name: allMenuDataResult[0].menu_name,
+            menu_name:
+              allMenuDataResult.data.length == 0
+                ? "PlusWin6"
+                : allMenuDataResult.data[0].menu_name,
             path: "",
             row_state: "Q",
             sort_order: 0,
@@ -400,19 +470,38 @@ const Page: React.FC = () => {
           ...prev,
           data: appMenuDataTree,
         }));
+        setUserMenuSelectedState({
+          [appMenuRow[0][USER_MENU_DATA_ITEM_KEY]]: true,
+        });
       }
     } else {
       console.log("[에러발생]");
       console.log(data);
     }
-
-    fetchAllMenuGrid();
+    // 필터 isSearch false처리, pgNum 세팅
+    setUserMenuFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
-  const fetchAllMenuGrid = async () => {
+  const fetchAllMenuGrid = async (filter: any) => {
     let data: any;
     setLoading(true);
+
+    const allMenuParameters: Iparameters = {
+      procedureName: "P_SY_A0011W_Q ",
+      pageNumber: 1,
+      pageSize: 500,
+      parameters: {
+        "@p_work_type": "ALL",
+        "@p_user_group_id": filter.user_group_id,
+        "@p_user_group_name": filter.user_group_name,
+        "@p_lang_id": filter.lang_id,
+        "@p_use_yn": filter.use_yn,
+      },
+    };
 
     try {
       data = await processApi<any>("procedure", allMenuParameters);
@@ -426,7 +515,6 @@ const Page: React.FC = () => {
         ...row,
         idx: idx,
       }));
-
       if (totalRowCnt > 0) {
         const dataTree: any = createDataTree(
           rows,
@@ -435,8 +523,24 @@ const Page: React.FC = () => {
           SUB_ITEMS_FIELD
         );
 
-        setAllMenuDataResult(dataTree);
+        setAllMenuDataResult({
+          ...allMenuDataResult,
+          data: dataTree,
+        });
+        if (totalRowCnt > 0) {
+          const selectedRow =
+            filter.find_row_value2 == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) =>
+                    row[ALL_MENU_DATA_ITEM_KEY] == filter.find_row_value2
+                );
 
+          setAllMenuSelectedState({
+            [selectedRow[ALL_MENU_DATA_ITEM_KEY]]: true,
+          });
+        }
+      } else {
         // 앱 메뉴 (최상위 메뉴) 없을 시 데이터 세팅
         // 드래그앤드롭 사용 시 그리드 내 데이터 최소 1개 필요함
 
@@ -466,12 +570,15 @@ const Page: React.FC = () => {
           SUB_ITEMS_FIELD
         );
 
-        setUserMenuDataResult((prev: any) => {
+        setAllMenuDataResult((prev: any) => {
           if (prev.length === 0) {
             return { ...prev, data: appMenuDataTree };
           } else {
             return prev;
           }
+        });
+        setAllMenuSelectedState({
+          [appMenuRow[0][ALL_MENU_DATA_ITEM_KEY]]: true,
         });
       }
     } else {
@@ -483,27 +590,41 @@ const Page: React.FC = () => {
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (mainDataResult.total > 0) {
-      const firstRowData = mainDataResult.data[selectedRowIdx];
-      setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-
-      selectedRowIdx = 0;
-      setUserMenuFilters((prev) => ({
-        ...prev,
-        user_group_id: firstRowData.user_group_id,
-      }));
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
     }
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (bizComponentData !== null && customOptionData !== null) {
-      fetchMainGrid();
+    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+      fetchAllMenuGrid(deepCopiedFilters);
     }
-  }, [mainPgNum]);
+  }, [filters, permissions, bizComponentData]);
+
+  useEffect(() => {
+    if (
+      userMenuFilters.isSearch &&
+      permissions !== null &&
+      bizComponentData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(userMenuFilters);
+      setUserMenuFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchUserMenuGrid(deepCopiedFilters);
+    }
+  }, [userMenuFilters, permissions, bizComponentData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
   };
 
@@ -523,34 +644,33 @@ const Page: React.FC = () => {
     setUserMenuFilters((prev) => ({
       ...prev,
       user_group_id: selectedRowData.user_group_id,
+      isSearch: true,
     }));
   };
-  const onUserMenuSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: USER_MENU_DATA_ITEM_KEY,
-    });
 
-    setUserMenuSelectedState(newSelectedState);
-  };
+  const onUserMenuSelectionChange = useCallback(
+    (event: any) => {
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: userMenuSelectedState,
+        dataItemKey: USER_MENU_DATA_ITEM_KEY,
+      });
+      setUserMenuSelectedState(newSelectedState);
+    },
+    [userMenuSelectedState]
+  );
 
-  const onAllMenuSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: ALL_MENU_DATA_ITEM_KEY,
-    });
-
-    setAllMenuSelectedState(newSelectedState);
-  };
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      setUserMenuDataResult((prev: any) => ({ ...prev, data: [] }));
-      fetchUserMenuGrid();
-    }
-  }, [userMenuFilters]);
+  const onAllMenuSelectionChange = useCallback(
+    (event: any) => {
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: allMenuSelectedState,
+        dataItemKey: ALL_MENU_DATA_ITEM_KEY,
+      });
+      setAllMenuSelectedState(newSelectedState);
+    },
+    [allMenuSelectedState]
+  );
 
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
@@ -560,22 +680,9 @@ const Page: React.FC = () => {
     }
   };
 
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
-  };
-
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
-  };
-  const onUserMenuDataStateChange = (event: GridDataStateChangeEvent) => {
-    setUserMenuDataState(event.dataState);
-  };
-
-  const onAllMenuDataStateChange = (event: GridDataStateChangeEvent) => {
-    setAllMenuDataState(event.dataState);
   };
 
   //그리드 푸터
@@ -586,30 +693,10 @@ const Page: React.FC = () => {
       </td>
     );
   };
-  const userMenuTotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {userMenuDataResult.total}건
-      </td>
-    );
-  };
-  const allMenuTotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {allMenuDataResult.total}건
-      </td>
-    );
-  };
 
   //그리드 정렬 이벤트
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-  const onUserMenuSortChange = (e: any) => {
-    setUserMenuDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-  const onAllMenuSortChange = (e: any) => {
-    setAllMenuDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   //공통코드 리스트 조회 (사용자구분, 직위)
@@ -618,8 +705,6 @@ const Page: React.FC = () => {
   ]);
 
   const [useYnListData, setUseYnListData] = React.useState<any>([]);
-
-  const [pathListData, setPathListData] = React.useState<any>([]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -631,15 +716,8 @@ const Page: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId === "L_COM013")
       );
 
-      const pathQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SYS1205_1"
-        )
-      );
-
       fetchQuery(postcdQueryStr, setPostcdListData);
       fetchQuery(useYnQueryStr, setUseYnListData);
-      fetchQuery(pathQueryStr, setPathListData);
     }
   }, [bizComponentData]);
 
@@ -664,15 +742,6 @@ const Page: React.FC = () => {
       setListData(rows);
     }
   }, []);
-
-  // 최초 한번만 실행
-  useEffect(() => {
-    if (isInitSearch === false && permissions !== null) {
-      fetchMainGrid();
-      fetchAllMenuGrid();
-      setIsInitSearch(true);
-    }
-  }, [filters, permissions]);
 
   const onAddClick = () => {
     setWorkType("N");
@@ -706,12 +775,14 @@ const Page: React.FC = () => {
       return false;
     }
 
-    const user_group_id = Object.getOwnPropertyNames(selectedState)[0];
+    const data = mainDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
 
     setParaDataDeleted((prev) => ({
       ...prev,
       work_type: "D",
-      user_group_id: user_group_id,
+      user_group_id: data.user_group_id,
     }));
   };
 
@@ -729,8 +800,26 @@ const Page: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      const isLastDataDeleted =
+        mainDataResult.data.length === 1 && filters.pgNum > 1;
+      const findRowIndex = mainDataResult.data.findIndex(
+        (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
+      );
+      if (isLastDataDeleted) {
+        setPage({
+          skip: PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+      }
       resetAllGrid();
-      fetchMainGrid();
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value:
+          mainDataResult.data[findRowIndex == 0 ? 0 : findRowIndex - 1]
+            .user_group_id,
+        pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+        isSearch: true,
+      }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -738,7 +827,7 @@ const Page: React.FC = () => {
     }
 
     paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted[DATA_ITEM_KEY] = "";
+    paraDataDeleted.user_group_id = "";
   };
 
   const onSaveClick = () => {
@@ -760,11 +849,7 @@ const Page: React.FC = () => {
     const key = Object.getOwnPropertyNames(selectedState)[0];
 
     const selectedRowData = mainDataResult.data.find(
-      (item) => item[DATA_ITEM_KEY] === key
-    );
-
-    selectedRowIdx = mainDataResult.data.findIndex(
-      (item) => item[DATA_ITEM_KEY] === key
+      (item) => item[DATA_ITEM_KEY] == key
     );
 
     try {
@@ -834,57 +919,16 @@ const Page: React.FC = () => {
       });
 
       resetAllGrid();
-      fetchMainGrid();
+
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: selectedRowData.user_group_id,
+        isSearch: true,
+      }));
       deletedMainRows = [];
     } catch (e) {
       alert(e);
     }
-  };
-
-  //계획 저장 파라미터 초기값
-  const [paraDataSaved, setParaDataSaved] = useState({
-    work_type: "",
-    orgdiv: "01",
-    chk_yn_s: "",
-    user_group_id_s: "",
-    user_id_s: "",
-    target_user_s: "",
-    row_state_s: "",
-    add_delete_type_s: "",
-    menu_id_s: "",
-    form_view_yn_s: "",
-    form_print_yn_s: "",
-    form_save_yn_s: "",
-    form_delete_yn_s: "",
-    layout_key: "",
-    category: "",
-    userid: userId,
-    pc: pc,
-  });
-
-  const paraSaved: Iparameters = {
-    procedureName: "P_SY_A0013W_S ",
-    pageNumber: 1,
-    pageSize: 10,
-    parameters: {
-      "@p_work_type": paraDataSaved.work_type,
-      "@p_orgdiv": paraDataSaved.orgdiv,
-      "@p_chk_yn_s": paraDataSaved.chk_yn_s,
-      "@p_user_group_id_s": paraDataSaved.user_group_id_s,
-      "@p_user_id_s": paraDataSaved.user_id_s,
-      "@p_target_user_s": paraDataSaved.target_user_s,
-      "@p_row_state_s": paraDataSaved.row_state_s,
-      "@p_add_delete_type_s": paraDataSaved.add_delete_type_s,
-      "@p_menu_id_s": paraDataSaved.menu_id_s,
-      "@p_form_view_yn_s": paraDataSaved.form_view_yn_s,
-      "@p_form_print_yn_s": paraDataSaved.form_print_yn_s,
-      "@p_form_save_yn_s": paraDataSaved.form_save_yn_s,
-      "@p_form_delete_yn_s": paraDataSaved.form_delete_yn_s,
-      "@p_layout_key": paraDataSaved.layout_key,
-      "@p_category": paraDataSaved.category,
-      "@p_userid": paraDataSaved.userid,
-      "@p_pc": paraDataSaved.pc,
-    },
   };
 
   const fetchGridSaved = async (para: any) => {
@@ -962,11 +1006,16 @@ const Page: React.FC = () => {
       );
 
       setUserMenuDataResult((prev: any) => ({ ...prev, data: dataTree }));
+      setUserMenuSelectedState({
+        [newRowData[0][USER_MENU_DATA_ITEM_KEY]]: true,
+      });
     }
-
     setDragDataItem(null);
   };
   const handleAllMenuDragStart = (e: any, dataItem: any) => {
+    setAllMenuSelectedState({
+      [dataItem[ALL_MENU_DATA_ITEM_KEY]]: true,
+    });
     setDragDataItem(dataItem);
   };
 
@@ -977,7 +1026,7 @@ const Page: React.FC = () => {
     }
 
     const flatAllMenuData: any = treeToFlat(
-      allMenuDataResult,
+      allMenuDataResult.data,
       "menu_name",
       SUB_ITEMS_FIELD
     );
@@ -1043,47 +1092,60 @@ const Page: React.FC = () => {
       });
     });
 
+    setUserMenuSelectedState({
+      [dragDataItem[USER_MENU_DATA_ITEM_KEY]]: true,
+    });
+
     setDragDataItem(null);
   };
 
   const handleUserMenuDragStart = (e: any, dataItem: any) => {
+    setUserMenuSelectedState({
+      [dataItem[ALL_MENU_DATA_ITEM_KEY]]: true,
+    });
     setDragDataItem(dataItem);
   };
-  const [allMenuExpanded, setAllMenuExpanded] = React.useState<string[]>([
-    "M2022062210224011070",
-  ]);
-  const [userMenuExpanded, setUserMenuExpanded] = React.useState<string[]>([
-    "M2022062210224011070",
-  ]);
 
-  const onAllMenuExpandChange = (e: TreeListExpandChangeEvent) => {
-    setAllMenuExpanded(
-      e.value
-        ? allMenuExpanded.filter(
-            (id) => id !== e.dataItem[ALL_MENU_DATA_ITEM_KEY]
+  const onAllMenuExpandChange = (event: TreeListExpandChangeEvent) => {
+    setAllMenuDataResult({
+      ...allMenuDataResult,
+      expanded: event.value
+        ? allMenuDataResult.expanded.filter(
+            (id: any) => id !== event.dataItem[ALL_MENU_DATA_ITEM_KEY]
           )
-        : [...allMenuExpanded, e.dataItem[ALL_MENU_DATA_ITEM_KEY]]
-    );
+        : [
+            ...allMenuDataResult.expanded,
+            event.dataItem[ALL_MENU_DATA_ITEM_KEY],
+          ],
+    });
   };
 
-  const allMenuCallback = (item: any) =>
-    allMenuExpanded.includes(item[ALL_MENU_DATA_ITEM_KEY])
-      ? extendDataItem(item, SUB_ITEMS_FIELD, { [EXPANDED_FIELD]: true })
-      : item;
-
-  const userMenuCallback = (item: any) =>
-    userMenuExpanded.includes(item[USER_MENU_DATA_ITEM_KEY])
-      ? extendDataItem(item, SUB_ITEMS_FIELD, { [EXPANDED_FIELD]: true })
-      : item;
-
-  const setGroupCode = (group_code: string) => {
-    setFilters((prev) => ({ ...prev, group_code }));
-  };
-
-  const reloadData = (workType: string) => {
+  const setGroupCode = (group_id: string | undefined) => {
+    // 리셋
     resetAllGrid();
-    fetchMainGrid();
-    //fetchDetailGrid();
+
+    // 메인 조회
+    setFilters((prev) => ({
+      ...prev,
+      find_row_value: group_id == undefined ? "" : group_id,
+      isSearch: true,
+    }));
+  };
+
+  const reloadData = (workType: string, group_id: string | undefined) => {
+    if (workType === "U") {
+      // 일반조회
+      const rows = mainDataResult.data.filter(
+        (item) => Object.getOwnPropertyNames(selectedState)[0] == item.num
+      );
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: rows[0].user_group_id,
+        isSearch: true,
+      }));
+    } else {
+      setGroupCode(group_id);
+    }
   };
 
   const CommandCell = (props: GridCellProps) => {
@@ -1120,9 +1182,15 @@ const Page: React.FC = () => {
 
   const search = () => {
     deletedMainRows = [];
+    setPage(initialPageState); // 페이지 초기화
     resetAllGrid();
-    fetchMainGrid();
-    fetchAllMenuGrid();
+    setUserMenuFilters((prev) => ({ ...prev, find_row_value: "" }));
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
   };
 
   let renderers;
@@ -1221,6 +1289,9 @@ const Page: React.FC = () => {
   };
   const { data, expanded, editItem, editItemField } = userMenuDataResult;
   const editItemId = editItem ? editItem[USER_MENU_DATA_ITEM_KEY] : null;
+  const editItemId2 = allMenuDataResult.editItem
+    ? allMenuDataResult.editItem[ALL_MENU_DATA_ITEM_KEY]
+    : null;
 
   return (
     <>
@@ -1261,12 +1332,11 @@ const Page: React.FC = () => {
               </td>
               <th>사용자구분</th>
               <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
                     name="use_yn"
                     value={filters.use_yn}
-                    bizComponentId="L_COM013"
-                    bizComponentData={bizComponentData}
+                    customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
                     textField="name"
                     valueField="code"
@@ -1292,7 +1362,6 @@ const Page: React.FC = () => {
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
-                    fillMode="outline"
                     themeColor={"primary"}
                     icon="file-add"
                     disabled={permissions.save ? false : true}
@@ -1312,7 +1381,7 @@ const Page: React.FC = () => {
               )}
             </GridTitleContainer>
             <Grid
-              style={{ height: "84vh" }}
+              style={{ height: "82vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -1339,7 +1408,13 @@ const Page: React.FC = () => {
               //스크롤 조회 기능
               fixedScroll={true}
               total={mainDataResult.total}
-              onScroll={onMainScrollHandler}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
               //정렬기능
               sortable={true}
               onSortChange={onMainSortChange}
@@ -1387,7 +1462,7 @@ const Page: React.FC = () => {
             </GridTitleContainer>
 
             <TreeList
-              style={{ height: "84vh", overflow: "auto" }}
+              style={{ height: "82vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1397,6 +1472,7 @@ const Page: React.FC = () => {
                     item[USER_MENU_DATA_ITEM_KEY] === editItemId
                       ? editItemField
                       : undefined,
+                  [SELECTED_FIELD]: userMenuSelectedState[idGetter2(item)], //선택된 데이터
                 })
               )}
               subItemsField={SUB_ITEMS_FIELD}
@@ -1410,31 +1486,16 @@ const Page: React.FC = () => {
               rowRender={userMenuRowRender}
               // 컬럼 리스트
               columns={userMenuColumns}
-            />
-
-            {/* <TreeList
-              style={{ height: "650px" }}
-              data={mapTree(
-                userMenuDataResult,
-                SUB_ITEMS_FIELD,
-                userMenuCallback
-              )}
-              expandField={EXPANDED_FIELD}
-              subItemsField={SUB_ITEMS_FIELD}
-              onExpandChange={onUserMenuExpandChange}
-              //선택 기능
-              dataItemKey={USER_MENU_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
+              // 선택
               selectable={{
                 enabled: true,
+                drag: false,
+                cell: false,
                 mode: "single",
               }}
-              //드래그용 행
-              cellRender={customCellRender}
-              //rowRender={customRowRender}
-              rowRender={userMenuRowRender}
-              columns={userMenuColumns}
-            ></TreeList> */}
+              selectedField={SELECTED_FIELD}
+              onSelectionChange={onUserMenuSelectionChange}
+            />
           </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(35% - ${GAP}px)`}>
@@ -1448,22 +1509,31 @@ const Page: React.FC = () => {
               <GridTitle>[참조] 전체 메뉴</GridTitle>
             </GridTitleContainer>
             <TreeList
-              style={{ height: "84vh" }}
-              data={mapTree(
-                allMenuDataResult,
-                SUB_ITEMS_FIELD,
-                allMenuCallback
+              style={{ height: "82vh" }}
+              data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
+                extendDataItem(item, SUB_ITEMS_FIELD, {
+                  [EXPANDED_FIELD]: allMenuDataResult.expanded.includes(
+                    item[ALL_MENU_DATA_ITEM_KEY]
+                  ),
+                  [EDIT_FIELD]:
+                    item[ALL_MENU_DATA_ITEM_KEY] == editItemId2
+                      ? allMenuDataResult.editItemField
+                      : undefined,
+                  [SELECTED_FIELD]: allMenuSelectedState[idGetter2(item)], //선택된 데이터
+                })
               )}
               expandField={EXPANDED_FIELD}
               subItemsField={SUB_ITEMS_FIELD}
               onExpandChange={onAllMenuExpandChange}
               //선택 기능
-              dataItemKey={ALL_MENU_DATA_ITEM_KEY}
               selectedField={SELECTED_FIELD}
               selectable={{
                 enabled: true,
+                drag: false,
+                cell: false,
                 mode: "single",
               }}
+              onSelectionChange={onAllMenuSelectionChange}
               //드래그용 행
               rowRender={allMenuRowRender}
               columns={allMenuColumns}
@@ -1478,7 +1548,19 @@ const Page: React.FC = () => {
           user_group_id={userMenuFilters.user_group_id}
           setGroupId={setGroupCode}
           reloadData={reloadData}
-          para={userMenuParameters}
+          para={{
+            procedureName: "P_SY_A0011W_Q ",
+            pageNumber: 1,
+            pageSize: 500,
+            parameters: {
+              "@p_work_type": "DETAIL",
+              "@p_user_group_id": userMenuFilters.user_group_id,
+              "@p_user_group_name": filters.user_group_name,
+              "@p_lang_id": filters.lang_id,
+              "@p_use_yn": filters.use_yn,
+            },
+          }}
+          modal={true}
         />
       )}
     </>

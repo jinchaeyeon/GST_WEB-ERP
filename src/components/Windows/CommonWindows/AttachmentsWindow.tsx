@@ -29,6 +29,7 @@ type IKendoWindow = {
   setData?(data: object): void;
   para: string;
   permission?: permission;
+  modal? : boolean;
 };
 
 const DATA_ITEM_KEY = "saved_name";
@@ -38,6 +39,7 @@ const KendoWindow = ({
   setData,
   para = "",
   permission,
+  modal = false
 }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -335,7 +337,7 @@ const KendoWindow = ({
       }
     }
   };
-
+  
   return (
     <Window
       title={"파일첨부관리"}
@@ -344,6 +346,7 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <ButtonContainer>

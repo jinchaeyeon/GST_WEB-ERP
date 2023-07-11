@@ -7,6 +7,8 @@ import {
   BottomContainer,
   ButtonContainer,
   FieldWrap,
+  FormBox,
+  FormBoxWrap,
 } from "../../CommonStyled";
 import {
   Form,
@@ -23,15 +25,17 @@ import {
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
-  reloadData(workType: string): void;
+  reloadData(workType: string, group_id?: string | undefined): void;
   setGroupId(groupCode: string): void;
   workType: string;
   user_group_id?: string;
   isCopy?: boolean;
   para?: Iparameters; //{};
+  modal? : boolean;
 };
 
 const KendoWindow = ({
@@ -42,6 +46,7 @@ const KendoWindow = ({
   user_group_id = "",
   isCopy,
   para,
+  modal = false
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -65,35 +70,31 @@ const KendoWindow = ({
     });
   };
 
+  const filterInputChange = (e: any) => {
+    const { value, name } = e.target;
+
+    if (name == "use_yn") {
+      setInitialVal((prev) => ({
+        ...prev,
+        [name]: value == true ? "Y" : "N",
+      }));
+    } else {
+      setInitialVal((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
   const onClose = () => {
     setVisible(false);
   };
-
-  const [formKey, setFormKey] = React.useState(1);
-  const resetForm = () => {
-    setFormKey(formKey + 1);
-  };
-  //수정 없이 submit 가능하도록 임의 value를 change 시켜줌
-  useEffect(() => {
-    const valueChanged = document.getElementById("valueChanged");
-    valueChanged!.click();
-  }, [formKey]);
+  
   const processApi = useApi();
-  const [dataState, setDataState] = useState<State>({
-    skip: 0,
-    take: 20,
-  });
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], dataState)
-  );
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], dataState)
-  );
 
   useEffect(() => {
     if (workType === "U" || isCopy === true) {
       fetchMain();
-      //fetchGrid();
     }
   }, []);
 
@@ -142,48 +143,6 @@ const KendoWindow = ({
     }
   };
 
-  //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
-  useEffect(() => {
-    resetForm();
-  }, [initialVal]);
-
-  //fetch된 그리드 데이터가 그리드 폼에 세팅되도록 하기 위해 적용
-  useEffect(() => {
-    resetForm();
-  }, [detailDataResult]);
-
-  //상세그리드 조회
-  const fetchGrid = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", para);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
-        return {
-          ...row,
-          rowstatus: workType === "N" ? "N" : "",
-        };
-      });
-
-      setDetailDataResult(() => {
-        return {
-          data: [...rows],
-          total: totalRowCnt,
-        };
-      });
-
-      //resetForm();
-    }
-  };
-
-  const pathname: string = window.location.pathname.replace("/", "");
-
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -211,12 +170,6 @@ const KendoWindow = ({
     },
   };
 
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setMainDataResult(process([], dataState));
-    setDetailDataResult(process([], dataState));
-  };
-
   const fetchMainSaved = async () => {
     let data: any;
 
@@ -228,15 +181,12 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       if (workType === "U") {
-        resetAllGrid();
-
         reloadData("U");
         fetchMain();
-        fetchGrid();
       } else {
         setVisible(false);
         setGroupId(paraData.user_group_id);
-        reloadData("N");
+        reloadData("N", paraData.user_group_id);
       }
     } else {
       console.log("[오류 발생]");
@@ -248,31 +198,20 @@ const KendoWindow = ({
     paraData.work_type = ""; //초기화
   };
 
-  const handleSubmit = (dataItem: { [name: string]: any }) => {
-    //alert(JSON.stringify(dataItem));
-
-    const { user_group_id, user_group_name, memo, use_yn } = dataItem;
-
+  const handleSubmit = () => {
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-      user_group_id,
-      user_group_name,
-      memo: memo,
-      use_yn: use_yn === true || use_yn === "Y" ? "Y" : "N",
+      user_group_id : initialVal.user_group_id,
+      user_group_name : initialVal.user_group_name,
+      memo: initialVal.memo,
+      use_yn: initialVal.use_yn === "Y" ? "Y" : "N",
     }));
   };
 
   useEffect(() => {
     if (paraData.work_type !== "") fetchMainSaved();
   }, [paraData]);
-
-  useEffect(() => {
-    if (workType === "U" || isCopy === true) {
-      resetAllGrid();
-      fetchGrid();
-    }
-  }, []);
 
   return (
     <Window
@@ -282,70 +221,78 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
-      <Form
-        onSubmit={handleSubmit}
-        key={formKey}
-        initialValues={{
-          rowstatus: "",
-          user_group_id: initialVal.user_group_id,
-          user_group_name: initialVal.user_group_name,
-          memo: initialVal.memo,
-          use_yn: initialVal.use_yn,
-          orderDetails: detailDataResult.data, //detailDataResult.data,
-        }}
-        render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true}>
-            <fieldset className={"k-form-fieldset"}>
-              <button
-                id="valueChanged"
-                style={{ display: "none" }}
-                onClick={(e) => {
-                  e.preventDefault(); // Changing desired field value
-                  formRenderProps.onChange("valueChanged", {
-                    value: "1",
-                  });
-                }}
-              ></button>
-              <FieldWrap fieldWidth="100%">
-                <Field
-                  name={"user_group_id"}
-                  label={"사용자그룹ID"}
-                  component={workType === "N" ? FormInput : FormReadOnly}
-                  validator={validator}
-                  className={workType === "N" ? "required" : "readonly"}
-                />
-              </FieldWrap>
-              <FieldWrap fieldWidth="100%">
-                <Field
-                  name={"user_group_name"}
-                  label={"사용자그룹명"}
-                  component={FormInput}
-                  validator={validator}
+      <FormBoxWrap>
+        <FormBox>
+          <tbody>
+            <tr>
+              <th>사용자그룹ID</th>
+              <td>
+                {workType == "N" ? (
+                  <Input
+                    name="user_group_id"
+                    type="text"
+                    value={initialVal.user_group_id}
+                    className="required"
+                    onChange={filterInputChange}
+                  />
+                ) : (
+                  <Input
+                    name="user_group_id"
+                    type="text"
+                    value={initialVal.user_group_id}
+                    className="readonly"
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>사용자그룹명</th>
+              <td>
+                <Input
+                  name="user_group_name"
+                  type="text"
+                  value={initialVal.user_group_name}
                   className="required"
+                  onChange={filterInputChange}
                 />
-              </FieldWrap>
-              <FieldWrap fieldWidth="100%">
-                <Field name={"memo"} component={FormInput} label={"메모"} />
-              </FieldWrap>
-              <FieldWrap fieldWidth="100%">
-                <Field
-                  name={"use_yn"}
-                  label={"사용여부"}
-                  component={FormCheckBox}
+              </td>
+            </tr>
+            <tr>
+              <th>메모</th>
+              <td>
+                <Input
+                  name="memo"
+                  type="number"
+                  value={initialVal.memo}
+                  onChange={filterInputChange}
                 />
-              </FieldWrap>
-            </fieldset>
-            <BottomContainer>
-              <ButtonContainer>
-                <Button type={"submit"} themeColor={"primary"} icon="save">
-                  저장
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </FormElement>
-        )}
-      />
+              </td>
+            </tr>
+            <tr>
+              <th>사용여부</th>
+              <td>
+                <Checkbox
+                  name="use_yn"
+                  value={initialVal.use_yn == "Y" ? true : false}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FormBox>
+      </FormBoxWrap>
+      <BottomContainer>
+        <ButtonContainer>
+        <Button themeColor={"primary"} onClick={handleSubmit}>
+            저장
+          </Button>
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            닫기
+          </Button>
+        </ButtonContainer>
+      </BottomContainer>
     </Window>
   );
 };

@@ -122,6 +122,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
+        modal={true}
       >
         <FormBoxWrap style={{paddingRight: "70px"}}>
           <FormBox>

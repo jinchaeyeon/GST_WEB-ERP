@@ -52,6 +52,8 @@ import {
   FormComboBoxCell,
   FormComboBox,
   FormCheckBoxReadOnlyCell,
+  FormTextArea,
+  FormNumericTextBox,
 } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
@@ -166,7 +168,7 @@ const FormCustInput = (fieldRenderProps: FieldRenderProps) => {
     fieldRenderProps;
 
   const processApi = useApi();
-  const { setCustcd, setChangedCustInfo, setChangedRcvcustInfo } =
+  const { setCustcd, setChangedCustInfo, setChangedRcvcustInfo} =
     useContext(formContext);
 
   const onHandleBlur = async (e: any) => {
@@ -567,7 +569,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     setItemMultiWindowVisible(true);
   };
   const enterEdit = (dataItem: any, field: string | undefined) => {
-    if (field != "outqty" && field != "sale_qty") {
+    if (field != "outqty" && field != "sale_qty" && field !="purcustnm") {
       fieldArrayRenderProps.onReplace({
         index: dataItem[FORM_DATA_INDEX],
         value: {
@@ -597,6 +599,11 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       const spcamtArr = ["qty", "specialunp"];
       if (spcamtArr.includes(editedField) && editIndex === index) {
         specialamt = qty * specialunp;
+      }
+
+      const amtArrs = ["wonamt", "taxamt"];
+      if (amtArrs.includes(editedField) && editIndex === index) {
+        totamt = wonamt + taxamt;
       }
 
       fieldArrayRenderProps.onReplace({
@@ -1161,6 +1168,7 @@ const KendoWindow = ({
     attdatnum: "",
     files: "",
     remark: "",
+    baseamt: 1,
   });
 
   useEffect(() => {
@@ -1270,6 +1278,7 @@ const KendoWindow = ({
           attdatnum: row.attdatnum,
           files: row.files,
           remark: row.remark,
+          baseamt: row.baseamt == 0 ? 1 : row.baseamt,
         };
       });
     }
@@ -1299,7 +1308,10 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item : any) => ({
+        ...item,
+        baseamt : item.baseamt == 0 ? 1 : item.baseamt,
+      }))
 
       setDetailDataResult(() => {
         return {
@@ -1933,6 +1945,7 @@ const KendoWindow = ({
             attdatnum: initialVal.attdatnum,
             files: initialVal.files,
             remark: initialVal.remark,
+            baseamt: initialVal.baseamt,
             orderDetails: detailDataResult.data, //detailDataResult.data,
           }}
           render={(formRenderProps: FormRenderProps) => (
@@ -2025,12 +2038,25 @@ const KendoWindow = ({
                           (item: any) => item.id === "taxdiv"
                         ).query
                       }
-                      columns={
+                      columns={ 
                         customOptionData.menuCustomDefaultOptions.new.find(
                           (item: any) => item.id === "taxdiv"
                         ).bizComponentItems
                       }
                       className="required"
+                      onChange={(e) => {
+                        const data = formRenderProps.valueGetter("orderDetails").map((item: any) => ({
+                          ...item,
+                          rowstatus: item.rowstatus == "N" ? "N" : "U",
+                          taxdiv: e.value.subcode,
+                          taxamt: e.value.sub_code == "A" ? Math.round(item.wonamt)/10 : 0,
+                          totamt: item.wonamt + (e.value.sub_code == "A" ? Math.round(item.wonamt)/10 : 0),
+                        }))
+
+                        formRenderProps.onChange("orderDetails", {
+                          value: data,
+                        });
+                      }}
                     />
                   )}
                   {customOptionData !== null && (
@@ -2219,6 +2245,20 @@ const KendoWindow = ({
                           (item: any) => item.id === "amtunit"
                         ).bizComponentItems
                       }
+                      onChange={(e) => {
+                        const data = formRenderProps.valueGetter("orderDetails").map((item: any) => ({
+                          ...item,
+                          rowstatus: item.rowstatus == "N" ? "N" : "U",
+                          dlramt: e.value.sub_code == "AUD" ? item.amt : (item.amt * formRenderProps.valueGetter("uschgrat") / formRenderProps.valueGetter("baseamt")),
+                          wonamt: e.value.sub_code == "KRW" ? item.amt : (item.amt * formRenderProps.valueGetter("wonchgrat") / formRenderProps.valueGetter("baseamt")),
+                          taxamt: formRenderProps.valueGetter("taxdiv") == "A" ? (e.value.sub_code == "KRW" ? item.amt : Math.round(item.amt * formRenderProps.valueGetter("wonchgrat") / formRenderProps.valueGetter("baseamt")))/10 : 0,
+                          totamt: (e.value.sub_code == "KRW" ? item.amt : (item.amt * formRenderProps.valueGetter("wonchgrat") / formRenderProps.valueGetter("baseamt"))) + (formRenderProps.valueGetter("taxdiv") == "A" ? (e.value.sub_code == "KRW" ? item.amt : Math.round(item.amt * formRenderProps.valueGetter("wonchgrat") / formRenderProps.valueGetter("baseamt"))) /10 : 0),
+                        }))
+ 
+                        formRenderProps.onChange("orderDetails", {
+                          value: data,
+                        });
+                      }}
                     />
                   )}
                   {/* <Field
@@ -2287,7 +2327,42 @@ const KendoWindow = ({
                   </ButtonInFieldWrap>
                 </FieldWrap>
                 <FieldWrap fieldWidth="25%">
-                  <Field name={"remark"} component={FormInput} label={"비고"} />
+                  <Field
+                    name={"uschgrat"}
+                    component={FormNumericTextBox}
+                    label={"대미환율"}
+                    onChange={(e) => {
+                      const data = formRenderProps.valueGetter("orderDetails").map((item: any) => ({
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        dlramt: formRenderProps.valueGetter("amtunit") == "AUD" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt")),
+                      }))
+                      formRenderProps.onChange("orderDetails", {
+                        value: data,
+                      });
+                    }}
+                  />
+                  <Field
+                    name={"wonchgrat"}
+                    component={FormNumericTextBox}
+                    label={"원화환율"}
+                    onChange={(e) => {
+                      const data = formRenderProps.valueGetter("orderDetails").map((item: any) => ({
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        wonamt: formRenderProps.valueGetter("amtunit") == "KRW" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt")),
+                        taxamt: formRenderProps.valueGetter("taxdiv") == "A" ? Math.round((formRenderProps.valueGetter("amtunit") == "KRW" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt"))))/10 : 0,
+                        totamt: (formRenderProps.valueGetter("amtunit") == "KRW" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt"))) + (formRenderProps.valueGetter("taxdiv") == "A" ? Math.round((formRenderProps.valueGetter("amtunit") == "KRW" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt"))))/10 : 0),
+                      }))
+
+                      formRenderProps.onChange("orderDetails", {
+                        value: data,
+                      });
+                    }}
+                  />
+                </FieldWrap>
+                <FieldWrap fieldWidth="100%">
+                  <Field name={"remark"} component={FormTextArea} rows={3} label={"비고"} labelClassName={"formLabel10"} textClassName={"forms"}/>
                 </FieldWrap>
               </fieldset>
               <FieldArray

@@ -719,19 +719,26 @@ const SA_B2000: React.FC = () => {
       </td>
     );
   };
-  const calculateWidth = (field: any) => {
-    let maxWidth = 0;
-    mainDataResult.data.forEach((item) => {
-      const size = calculateSize(item[field], {
-        font: "Source Sans Pro",
-        fontSize: "16px",
-      }); // pass the font properties based on the application
-      if (size.width > maxWidth) {
-        maxWidth = size.width;
-      }
-    });
 
-    return maxWidth;
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -740,6 +747,27 @@ const SA_B2000: React.FC = () => {
         총 {detailDataResult.total}건
       </td>
     );
+  };
+
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    detailDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
   };
 
   const onAddClick = () => {
@@ -1244,42 +1272,49 @@ const SA_B2000: React.FC = () => {
               title="출하수량"
               width="120px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="sale_qty"
               title="판매수량"
               width="120px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="qty"
               title="수주수량"
               width="120px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="specialamt"
               title="발주금액"
               width="120px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="amt"
               title="금액"
               width="120px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="120px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="totamt"
               title="합계금액"
               width="120px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="location" title="사업장" width="120px" />
             <GridColumn field="dptcd" title="부서" width="120px" />
@@ -1337,6 +1372,7 @@ const SA_B2000: React.FC = () => {
             title="수주량"
             width="120px"
             cell={NumberCell}
+            footerCell={gridSumQtyFooterCell2}
           />
           <GridColumn field="qtyunit" title="단위" width="120px" />
           <GridColumn
@@ -1350,18 +1386,21 @@ const SA_B2000: React.FC = () => {
             title="금액"
             width="120px"
             cell={NumberCell}
+            footerCell={gridSumQtyFooterCell2}
           />
           <GridColumn
             field="taxamt"
             title="세액"
             width="120px"
             cell={NumberCell}
+            footerCell={gridSumQtyFooterCell2}
           />
           <GridColumn
             field="totamt"
             title="합계금액"
             width="120px"
             cell={NumberCell}
+            footerCell={gridSumQtyFooterCell2}
           />
           <GridColumn field="remark" title="비고" width="120px" />
           <GridColumn field="purcustnm" title="발주처" width="120px" />
@@ -1370,12 +1409,14 @@ const SA_B2000: React.FC = () => {
             title="출하수량"
             width="120px"
             cell={NumberCell}
+            footerCell={gridSumQtyFooterCell2}
           />
           <GridColumn
             field="sale_qty"
             title="판매수량"
             width="120px"
             cell={NumberCell}
+            footerCell={gridSumQtyFooterCell2}
           />
           <GridColumn field="finyn" title="완료여부" width="120px" />
           <GridColumn field="bf_qty" title="LOT수량" width="120px" />

@@ -6,9 +6,9 @@ export const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px 0;
   min-height: 40px;
-  margin-top: 5px;
+  padding-top: 10px;
+  padding-bottom: 5px;
 
   .iot-title {
     font-size: 26px;
@@ -16,10 +16,10 @@ export const TitleContainer = styled.div`
 `;
 
 export const MainTopContainer = styled(TitleContainer)`
-  margin-top: 10px;
+  padding-top: 20px;
 
   @media (max-width: 768px) {
-    margin-top: 0;
+    padding-top: 0;
     flex-direction: column;
     align-items: flex-start;
   }
@@ -716,7 +716,9 @@ export const Gnv = styled.div<TGnv>`
   @media (max-width: 768px) {
     display: ${(props) => (props.isMobileMenuOpend ? "block" : "none")};
     z-index: 10;
-    position: absolute;
+    position: fixed;
+    height: 100vh;
+    overflow: scroll;
 
     h1 {
       display: none;
@@ -745,6 +747,13 @@ export const Content = styled.div<ContentType>`
 
 export const PageWrap = styled.div`
   padding: 0 15px;
+  height: 100%;
+
+  @media (max-width: 768px) {
+    min-height: auto;
+    height: auto;
+    padding-top: 50px;
+  }
 `;
 
 export const Footer = styled.div`
@@ -835,12 +844,16 @@ export const TopTitle = styled.div`
   =========================================================================*/
   @media (max-width: 768px) {
     display: flex;
+    position: fixed;
+    z-index: 9;
+    width: 100%;
+    background-color: #fff;
   }
 `;
 
 type TModal = TGnv;
 export const Modal = styled.div<TModal>`
-  position: absolute;
+  position: fixed;
   z-index: 10;
   top: 0;
   left: 0;

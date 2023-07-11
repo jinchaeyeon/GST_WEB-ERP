@@ -3,6 +3,8 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
+import { ColumnGroup } from 'primereact/columngroup';
+import { Row } from 'primereact/row';
 
 const PaginatorTable = (props) => {
     const [filters, setFilters] = React.useState({
@@ -39,9 +41,10 @@ const PaginatorTable = (props) => {
     var keys = Object.keys(props.column);
     var values = Object.values(props.column);
     let array = [];
+    
     for (var i = 0; i < keys.length; i++) {
       array.push(
-        <Column field={keys[i]} header={values[[i]]} sortable></Column>
+        <Column field={keys[i]} header={values[[i]]} style={{ minWidth: props.width[i]}} sortable></Column>
       );
     }
     return array;
@@ -57,7 +60,7 @@ const PaginatorTable = (props) => {
         <DataTable
           value={props.value}
           header={header}
-          tableStyle={{ minWidth: "20rem" }}
+          tableStyle={{ minWidth: "20rem"}}
           stripedRows
           paginator
           rows={5}

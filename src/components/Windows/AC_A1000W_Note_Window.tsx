@@ -275,6 +275,7 @@ const AC_A1000W_Note_Window = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={true}
     >
       <TitleContainer>
         <Title></Title>

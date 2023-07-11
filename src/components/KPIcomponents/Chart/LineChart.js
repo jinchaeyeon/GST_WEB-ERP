@@ -5,6 +5,10 @@ export default function LineChart(props) {
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
+  function getRandomColor(){
+    return '#'+Math.floor(Math.random()*16777215).toString(16);
+  }
+
   useEffect(() => {
     if (props.props != null) {
       const propsData = props.props;
@@ -17,38 +21,21 @@ export default function LineChart(props) {
       const surfaceBorder = documentStyle.getPropertyValue("--surface-border");
 
       const data = {
-        labels: propsData
-          .filter((item) => item.series == "양품수")
-          .map((items) => {
-            return items.argument;
-          }),
-        datasets: [
-          {
-            label: "양품수",
-            data: propsData
-              .filter((item) => item.series == "양품수")
-              .map((items) => {
-                return items.value;
-              }),
+        labels: props.alllabel,
+        datasets: props.label.map((item, idx) => {
+          return {
+            label: props.label[idx],
+            backgroundColor: props.random == true? getRandomColor() : props.color[idx],
+            borderColor: props.random == true? getRandomColor() : props.borderColor[idx],
             fill: true,
             tension: 0.4,
-            borderColor: "#d7ecfb",
-            backgroundColor: "#1976d2",
-          },
-          {
-            label: "불량수",
-            data: propsData
-              .filter((item) => item.series == "불량수")
-              .map((items) => {
-                return items.value;
-              }),
-            fill: true,
-            tension: 0.4,
-            borderColor: "#fbded7",
-            backgroundColor: "#FF0000",
-          },
-        ],
+            data: propsData.filter(item => item[props.name] == props.label[idx]).map((items)=>{
+              return items[props.value]
+            }),
+          }
+        }),
       };
+ 
       const options = {
         maintainAspectRatio: false,
         aspectRatio: 0.6,

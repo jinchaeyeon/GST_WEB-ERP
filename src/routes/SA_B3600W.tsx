@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Title, TitleContainer } from "../CommonStyled";
+import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import {
   convertDateToStr,
@@ -24,20 +24,22 @@ import GridTitle from "../components/KPIcomponents/Title/Title";
 import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
+import { DropdownChangeEvent } from "primereact/dropdown";
+import { ProgressBar } from "primereact/progressbar";
 
 interface TList {
-  badcnt: number;
-  custcd: string;
-  custnm: string;
-  okcnt: number;
-  percent: number;
-  rate: number;
-  totcnt: number;
+  badcnt?: number;
+  custcd?: string;
+  custnm?: string;
+  okcnt?: number;
+  percent?: number;
+  rate?: number;
+  totcnt?: number;
 }
 
 interface Tsize {
-  width: number,
-  height: number
+  width: number;
+  height: number;
 }
 
 const SA_B3600W: React.FC = () => {
@@ -46,7 +48,7 @@ const SA_B3600W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
 
-  const size : Tsize = useWindowSize();
+  const size: Tsize = useWindowSize();
 
   function useWindowSize() {
     // Initialize state with undefined width/height so server and client renders match
@@ -55,7 +57,7 @@ const SA_B3600W: React.FC = () => {
       width: 0,
       height: 0,
     });
-    
+
     useEffect(() => {
       // Handler to call on window resize
       function handleResize() {
@@ -95,7 +97,7 @@ const SA_B3600W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
-  
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: 20,
@@ -200,7 +202,7 @@ const SA_B3600W: React.FC = () => {
       "@p_todt": convertDateToStr(filters.todt),
       "@p_dtdiv": filters.dtdiv,
       "@p_dtgb": filters.dtgb,
-      "@p_custcd": selected == null? "" : selected.custcd,
+      "@p_custcd": selected == null ? "" : selected.custcd,
     },
   };
 
@@ -221,9 +223,15 @@ const SA_B3600W: React.FC = () => {
         })
       );
 
+      setAllList(rows);
       if (rows.length > 0) {
-        setAllList(rows);
         setSelected(rows[0]);
+      } else {
+        setSelected((item) => ({
+          ...item,
+          okcnt: 0,
+          badcnt: 0,
+        }));
       }
     }
 
@@ -242,9 +250,7 @@ const SA_B3600W: React.FC = () => {
         })
       );
 
-      if (rows.length > 0) {
-        setTopPercentCust(rows);
-      }
+      setTopPercentCust(rows);
     }
 
     let data3: any;
@@ -262,9 +268,7 @@ const SA_B3600W: React.FC = () => {
         })
       );
 
-      if (rows.length > 0) {
-        setTopDelayCust(rows);
-      }
+      setTopDelayCust(rows);
     }
 
     let data4: any;
@@ -277,9 +281,7 @@ const SA_B3600W: React.FC = () => {
     if (data4.isSuccess === true) {
       const rows = data4.tables[0].Rows;
 
-      if (rows.length > 0) {
-        setAllPanel(rows[0]);
-      }
+      setAllPanel(rows[0]);
     }
     setLoading(false);
   };
@@ -297,19 +299,24 @@ const SA_B3600W: React.FC = () => {
         ...item,
       }));
 
-      if (rows.length > 0) {
         setChartList(rows);
 
         let objects = rows.filter(
-          (arr: { series: any; }, index: any, callback: any[]) => index === callback.findIndex(t => t.series === arr.series)
+          (arr: { series: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.series === arr.series)
         );
-        setStackChartLabel(objects.map((item: { series: any; }) => {
-          return item.series
-        }))
-        setStackChartAllLabel(rows.filter((item: { series: any; }) => item.series== objects[0].series).map((items: { argument: any; })=>{
-          return items.argument
-        }))
-      }
+        setStackChartLabel(
+          objects.map((item: { series: any }) => {
+            return item.series;
+          })
+        );
+        setStackChartAllLabel(
+          rows
+            .filter((item: { series: any }) => item.series == objects[0].series)
+            .map((items: { argument: any }) => {
+              return items.argument;
+            })
+        );
     }
   };
 
@@ -320,6 +327,7 @@ const SA_B3600W: React.FC = () => {
         isSearch: false,
       }));
       fetchMainGrid();
+      fetchChartGrid();
     }
   }, [filters]);
 
@@ -333,10 +341,10 @@ const SA_B3600W: React.FC = () => {
         {customOptionData !== null && (
           <ComboBox
             value={filters.dtgb}
-            onChange={(e: { value: { code: any } }) =>
+            onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                dtgb: e.value.code,
+                dtgb: e.value == undefined ? "" : e.value.code,
               }))
             }
             option={customOptionData}
@@ -347,6 +355,7 @@ const SA_B3600W: React.FC = () => {
             xs={12}
             sm={4}
             md={4}
+            lg={2}
             xl={2}
           />
         )}
@@ -368,15 +377,16 @@ const SA_B3600W: React.FC = () => {
           xs={12}
           sm={8}
           md={6}
+          lg={4}
           xl={4}
         />
         {customOptionData !== null && (
           <ComboBox
             value={filters.location}
-            onChange={(e: { value: { code: any } }) =>
+            onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                location: e.value.code,
+                location: e.value == undefined ? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}
@@ -385,6 +395,7 @@ const SA_B3600W: React.FC = () => {
             xs={12}
             sm={4}
             md={4}
+            lg={2}
             xl={2}
           />
         )}
@@ -403,6 +414,7 @@ const SA_B3600W: React.FC = () => {
             xs={12}
             sm={8}
             md={6}
+            lg={4}
             xl={4}
           />
         )}
@@ -410,40 +422,28 @@ const SA_B3600W: React.FC = () => {
     </React.Fragment>
   );
 
-  const endContent = (
-    <React.Fragment>
-      <Button
-        icon="pi pi-search"
-        onClick={() =>
-          setFilters((prev) => ({
-            ...prev,
-            isSearch: true,
-          }))
-        }
-        className="mr-2"
-      />
-    </React.Fragment>
-  );
-
   const cardOption = [
     {
       title: "납기준수율",
-      data: AllPanel.confirm_percent != null ? AllPanel.confirm_percent + "%" : 0 + "%",
+      data:
+        AllPanel.confirm_percent != null
+          ? AllPanel.confirm_percent + "%"
+          : 0 + "%",
       backgroundColor: "#1976d2",
     },
     {
       title: "총 준수건수",
-      data: AllPanel.okcnt != null ? AllPanel.okcnt + "건" : 0  + "건",
+      data: AllPanel.okcnt != null ? AllPanel.okcnt + "건" : 0 + "건",
       backgroundColor: "#5393d3",
     },
     {
       title: "총 지연건수",
-      data: AllPanel.badcnt != null ? AllPanel.badcnt + "건": 0 + "건",
+      data: AllPanel.badcnt != null ? AllPanel.badcnt + "건" : 0 + "건",
       backgroundColor: "#94b6d7",
     },
     {
       title: "총 건수",
-      data: AllPanel.totcnt != null ? AllPanel.totcnt + "건" : 0  + "건",
+      data: AllPanel.totcnt != null ? AllPanel.totcnt + "건" : 0 + "건",
       backgroundColor: "#b4c4d3",
     },
   ];
@@ -451,16 +451,31 @@ const SA_B3600W: React.FC = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container maxWidth="xl" style={{ width: "100%", marginBottom : "25px" }}>
-        <TitleContainer style={{paddingTop: "25px", paddingBottom: "25px"}}>
-          <Title>납기준수율</Title>
-        </TitleContainer>
-          <Toolbar start={startContent} end={endContent} />
+        <Container
+          maxWidth="xl"
+          style={{ width: "100%"}}
+        >
+          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
+            <Title>납기준수율</Title>
+            <ButtonContainer>
+              <Button
+                icon="pi pi-search"
+                onClick={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    isSearch: true,
+                  }))
+                }
+                className="mr-2"
+              />
+            </ButtonContainer>
+          </TitleContainer>
+          <Toolbar start={startContent} />
           <Divider />
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               {cardOption.map((item) => (
-                <Grid item xs={6} sm={6} xl={3}>
+                <Grid item xs={6} sm={6} md={6} lg={3} xl={3}>
                   <Card
                     title={item.title}
                     data={item.data}
@@ -473,7 +488,7 @@ const SA_B3600W: React.FC = () => {
           </Box>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
               <Table
                 value={toppercentData}
                 column={{
@@ -483,10 +498,13 @@ const SA_B3600W: React.FC = () => {
                   totcnt: "총건수",
                   percent: "준수율",
                 }}
+                width={[
+                  150, 160, 150, 130, 130
+                ]}
                 title={"준수율 TOP5"}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
               <Table
                 value={topdelayData}
                 column={{
@@ -496,20 +514,31 @@ const SA_B3600W: React.FC = () => {
                   totcnt: "총건수",
                   rate: "준수율",
                 }}
+                width={[
+                  150, 160, 150, 130, 130
+                ]}
                 title={"지연건수 TOP5"}
               />
             </Grid>
           </Grid>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={12}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <GridTitle title="업체 준수율 월별 그래프" />
-              <StackedChart props={ChartList} value="value" name="series" color={["#1976d2", "#FF0000"]} alllabel={stackChartAllLabel} label={stackChartLabel} random = {false}/>
+              <StackedChart
+                props={ChartList}
+                value="value"
+                name="series"
+                color={["#1976d2", "#FF0000"]}
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                random={false}
+              />
             </Grid>
           </Grid>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={8}>
+            <Grid item xs={12} sm={12} md={12} lg={7} xl={9}>
               <PaginatorTable
                 value={AllList}
                 column={{
@@ -521,16 +550,23 @@ const SA_B3600W: React.FC = () => {
                   percent: "준수율",
                 }}
                 title={"전체 목록"}
-                key="custcd"
+                width={[
+                  190, 210, 180, 180, 170, 170
+                ]}
+                key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
                   setSelected(e.value);
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} xl={4}>
+            <Grid item xs={12} sm={12} md={12} lg={5} xl={3}>
               <GridTitle title="업체 건수 그래프" />
-              <DoughnutChart data={selected} option={["okcnt", "badcnt"]} label={["준수건수", "지연건수"]}/>
+              <DoughnutChart
+                data={selected}
+                option={["okcnt", "badcnt"]}
+                label={["준수건수", "지연건수"]}
+              />
             </Grid>
           </Grid>
         </Container>

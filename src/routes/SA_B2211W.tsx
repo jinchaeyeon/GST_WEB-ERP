@@ -282,6 +282,7 @@ const SA_B2211W: React.FC = () => {
       // 공통 그리드
       else if (workType === "GRID" || workType === "MONTH" || workType === "QUARTER") {
         const totalRowCnt2 = data.tables[0].TotalRowCount;
+
         setGridDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
@@ -304,7 +305,7 @@ const SA_B2211W: React.FC = () => {
         rows.forEach((row: any) => {
           if (!newRows.companies.includes(row.argument)) {
             newRows.companies.push(row.argument);
-            newRows.series.push(row.value);
+            newRows.series.push(Math.round(row.value));
           }
         });
 
@@ -525,7 +526,11 @@ const onGridScrollHandler = (event: GridEvent) => {
   };
 
   const search = () => {
-    resetGrid();
+    if(filters.custdiv != "" && filters.custdiv != undefined && filters.custdiv != null) {
+      resetGrid();
+    } else {
+      alert("필수항목을 입력해주세요.")
+    }
   };
 
   return (
@@ -839,7 +844,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                         content: (e) => numberWithCommas(e.value) + "",
                       }}
                       type="line"
-                      data={chartDataResult.map((item: any) => item.qty)}
+                      data={chartDataResult.map((item: any) => Math.round(item.qty))}
                     />
                     <ChartSeriesItem
                       labels={{
@@ -849,7 +854,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                       type="bar"
                       // gap={2}
                       // spacing={0.25}
-                      data={chartDataResult.map((item: any) => item.amt)}
+                      data={chartDataResult.map((item: any) => Math.round(item.amt))}
                     />
                   </ChartSeries>
                 </Chart>
@@ -1023,7 +1028,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                       type="line"
                       data={chartDataResult
                         .filter((item: any) => item.series === "당기")
-                        .map((item: any) => item.qty)}
+                        .map((item: any) => Math.round(item.qty))}
                     />
                     <ChartSeriesItem
                       name="전기수량"
@@ -1034,7 +1039,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                       type="line"
                       data={chartDataResult
                         .filter((item: any) => item.series === "전기")
-                        .map((item: any) => item.qty)}
+                        .map((item: any) => Math.round(item.qty))}
                     />
                     <ChartSeriesItem
                       name="당기"
@@ -1047,7 +1052,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                       // spacing={0.25}
                       data={chartDataResult
                         .filter((item: any) => item.series === "당기")
-                        .map((item: any) => item.amt)}
+                        .map((item: any) =>  Math.round(item.amt))}
                     />
                     <ChartSeriesItem
                       name="전기"
@@ -1060,7 +1065,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                       // spacing={0.25}"
                       data={chartDataResult
                         .filter((item: any) => item.series === "전기")
-                        .map((item: any) => item.amt)}
+                        .map((item: any) =>  Math.round(item.amt))}
                     />
                   </ChartSeries>
                 </Chart>

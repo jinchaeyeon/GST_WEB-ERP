@@ -10,9 +10,10 @@ const Table = (props) => {
     var keys = Object.keys(props.column);
     var values = Object.values(props.column);
     let array = [];
+
     for(var i =0; i<keys.length; i++) {
         array.push(
-          <Column field={keys[i]} header={values[[i]]} sortable></Column>
+          <Column field={keys[i]} header={values[[i]]} style={{ minWidth: props.width[i]}} sortable></Column>
         )
     }
     return array;

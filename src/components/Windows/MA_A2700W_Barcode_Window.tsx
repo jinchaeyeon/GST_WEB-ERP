@@ -68,6 +68,7 @@ const CopyWindow = ({ setVisible, data }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
+        modal={true}
       >
         <ButtonContainer>
           <ReactToPrint

@@ -59,8 +59,6 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
-  custcd: string;
-  custnm: string;
 };
 
 const topHeight = 140.13;
@@ -70,8 +68,6 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 const CopyWindow = ({
   setVisible,
   setData,
-  custcd,
-  custnm,
 }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -275,13 +271,6 @@ const CopyWindow = ({
     setItemWindowVisible(true);
   };
 
-  useEffect(() => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: custcd,
-      custnm: custnm,
-    }));
-  }, []);
   interface ICustData {
     custcd: string;
     custnm: string;
@@ -756,8 +745,8 @@ const CopyWindow = ({
       amt: selectRow.amt,
       amtunit: selectRow.amtunit,
       chk: selectRow.chk,
-      custcd: selectRow.custcd,
-      custnm: selectRow.custnm,
+      custcd: data.custcd,
+      custnm: data.custnm,
       insiz: selectRow.insiz,
       itemacnt: selectRow.itemacnt,
       itemcd: selectRow.itemcd,
@@ -937,8 +926,15 @@ const CopyWindow = ({
                     name="custcd"
                     type="text"
                     value={filters.custcd}
-                    className="readonly"
-                  />
+                    onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
                 </td>
                 <th>업체명</th>
                 <td>
@@ -946,7 +942,7 @@ const CopyWindow = ({
                     name="custnm"
                     type="text"
                     value={filters.custnm}
-                    className="readonly"
+                    onChange={filterInputChange}
                   />
                 </td>
                 <th>출하지시번호</th>

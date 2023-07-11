@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Title, TitleContainer } from "../CommonStyled";
+import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import {
   convertDateToStr,
@@ -19,17 +19,15 @@ import Box from "@mui/material/Box";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ComboBox from "../components/KPIcomponents/ComboBox/ComboBox";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
-import Radio from "../components/KPIcomponents/Radio/Radio";
 import Card from "../components/KPIcomponents/Card/CardBox";
-import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
-import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
 import GroupTable from "../components/KPIcomponents/Table/GroupTable";
 import LineChart from "../components/KPIcomponents/Chart/LineChart";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import { bytesToBase64 } from "byte-base64";
+import { DropdownChangeEvent } from "primereact/dropdown";
 
 interface TList {
   code_name: string;
@@ -251,9 +249,11 @@ const QC_B0100W: React.FC = () => {
         })
       );
 
+      setAllList(rows);
       if (rows.length > 0) {
-        setAllList(rows);
         setSelected(rows[0]);
+      } else {
+        setSelected(null);
       }
     }
 
@@ -281,25 +281,22 @@ const QC_B0100W: React.FC = () => {
           ...item,
         })
       );
-
-      if (rows.length > 0) {
-        setProccdData(rows);
-
-        let objects = rows.filter(
-          (arr: { proccd: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.proccd === arr.proccd)
-        );
-        setStackChartLabel(
-          objects.map((item: { proccdnm: any }) => {
-            return item.proccdnm;
-          })
-        );
-        setStackChartAllLabel(
-          rows.map((items: { proccdnm: any }) => {
-            return items.proccdnm;
-          })
-        );
-      }
+ 
+      setProccdData(rows);
+      let objects = rows.filter(
+        (arr: { proccd: any }, index: any, callback: any[]) =>
+          index === callback.findIndex((t) => t.proccd === arr.proccd)
+      );
+      setStackChartLabel(
+        objects.map((item: { proccdnm: any }) => {
+          return item.proccdnm;
+        })
+      );
+      setStackChartAllLabel(
+        rows.map((items: { proccdnm: any }) => {
+          return items.proccdnm;
+        })
+      );
     }
 
     let data4: any;
@@ -312,12 +309,10 @@ const QC_B0100W: React.FC = () => {
     if (data4.isSuccess === true) {
       const rows = data4.tables[0].Rows;
 
-      if (rows.length > 0) {
-        setAll({
-          okrate: rows[0].badrate,
-          badrate: rows[1].badrate,
-        });
-      }
+      setAll({
+        okrate: rows[0].badrate,
+        badrate: rows[1].badrate,
+      });
     }
     setLoading(false);
   };
@@ -335,9 +330,24 @@ const QC_B0100W: React.FC = () => {
         ...item,
       }));
 
-      if (rows.length > 0) {
         setMonthData(rows);
-      }
+
+        let objects = rows.filter(
+          (arr: { series: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.series === arr.series)
+        );
+        setStackChartLabel(
+          objects.map((item: { series: any }) => {
+            return item.series;
+          })
+        );
+        setStackChartAllLabel(
+          rows
+            .filter((item: { series: any }) => item.series == objects[0].series)
+            .map((items: { argument: any }) => {
+              return items.argument;
+            })
+        );
     }
   };
 
@@ -374,18 +384,18 @@ const QC_B0100W: React.FC = () => {
             }))
           }
           xs={12}
-          sm={8}
-          md={8}
-          xl={8}
+          sm={12}
+          md={9}
+          xl={9}
         />
         {customOptionData !== null && (
           <ComboBox
             value={filters.gubun}
-            onChange={(e: { value: { code: any } }) =>
-              setFilters((prev) => ({
-                ...prev,
-                gubun: e.value.code,
-              }))
+            onChange={(e: DropdownChangeEvent) => 
+                setFilters((prev) => ({
+                  ...prev,
+                  gubun: e.value == undefined ? "" : e.value.code,
+                }))
             }
             option={customOptionData}
             placeholder={"단위"}
@@ -394,59 +404,53 @@ const QC_B0100W: React.FC = () => {
             valueField="code"
             xs={12}
             sm={12}
-            md={4}
-            xl={4}
+            md={3}
+            xl={3}
           />
         )}
       </Grid>
     </React.Fragment>
   );
 
-  const endContent = (
-    <React.Fragment>
-      <Button
-        icon="pi pi-search"
-        onClick={() =>
-          setFilters((prev) => ({
-            ...prev,
-            isSearch: true,
-          }))
-        }
-        className="mr-2"
-      />
-    </React.Fragment>
-  );
   const cardOption = [
     {
       title: "불량율 TOP 공정",
       data:
-        CardData.length == 0
-          ? ""
-          : CardData[0].Rows[0].proccdnm + " : " + CardData[0].Rows[0].badrate,
+        CardData.length != 0
+          ? CardData[0].Rows.length == 0
+            ? "-"
+            : CardData[0].Rows[0].proccdnm + " : " + CardData[0].Rows[0].badrate
+          : "-",
       backgroundColor: "#1976d2",
     },
     {
       title: "불량율 TOP 고객사",
       data:
-        CardData.length == 0
-          ? ""
-          : CardData[1].Rows[0].custnm + " : " + CardData[1].Rows[0].badrate,
+        CardData.length != 0
+          ? CardData[1].Rows.length == 0
+            ? "-"
+            : CardData[1].Rows[0].custnm + " : " + CardData[1].Rows[0].badrate
+          : "-",
       backgroundColor: "#5393d3",
     },
     {
       title: "불량율 TOP 품목",
       data:
-        CardData.length == 0
-          ? ""
-          : CardData[2].Rows[0].itemnm + " : " + CardData[2].Rows[0].badrate,
+        CardData.length != 0
+          ? CardData[2].Rows.length == 0
+            ? "-"
+            : CardData[2].Rows[0].itemnm + " : " + CardData[2].Rows[0].badrate
+          : "-",
       backgroundColor: "#94b6d7",
     },
     {
       title: "불량율 TOP 설비",
       data:
-        CardData.length == 0
-          ? ""
-          : CardData[3].Rows[0].fxnm + " : " + CardData[3].Rows[0].badrate,
+        CardData.length != 0
+          ? CardData[3].Rows.length == 0
+            ? "-"
+            : CardData[3].Rows[0].fxnm + " : " + CardData[3].Rows[0].badrate
+          : "-",
       backgroundColor: "#b4c4d3",
     },
   ];
@@ -460,18 +464,32 @@ const QC_B0100W: React.FC = () => {
         >
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>공정불량율</Title>
+            <ButtonContainer>
+              <Button
+                icon="pi pi-search"
+                onClick={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    isSearch: true,
+                  }))
+                }
+                className="mr-2"
+              />
+            </ButtonContainer>
           </TitleContainer>
-          <Toolbar start={startContent} end={endContent} />
+          <Toolbar start={startContent} />
           <Divider />
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               {cardOption.map((item) => (
-                <Grid item xs={6} sm={6} xl={3}>
+                <Grid item xs={12} sm={6} md={6} lg={6} xl={3}>
                   <Card
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "1.2rem" : "1.8rem"}
+                    fontsize={
+                      size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
+                    }
                   />
                 </Grid>
               ))}
@@ -479,7 +497,29 @@ const QC_B0100W: React.FC = () => {
           </Box>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={12}>
+            <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+              <GridTitle title="전체 공정율" />
+              <DoughnutChart
+                data={All}
+                option={["okrate", "badrate"]}
+                label={["양품율", "불량율"]}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+              <GridTitle title="공정별 불량율" />
+              <StackedChart
+                props={ProccdData}
+                value="badrate"
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                random={true}
+                name="proccdnm"
+              />
+            </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <GroupTable
                 value={AllList}
                 column={{
@@ -498,8 +538,11 @@ const QC_B0100W: React.FC = () => {
                   yrmm11: "11월",
                   yrmm12: "12월",
                 }}
-                title={"전체 목록 불량율"}
-                key="code_name"
+                width={[
+                  120, 110, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+                ]}
+                title={filters.gubun == "A" ? "전체 목록 PPM" : "전체 목록 불량율"}
+                key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
                   setSelected(e.value);
@@ -509,31 +552,17 @@ const QC_B0100W: React.FC = () => {
           </Grid>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={3}>
-              <GridTitle title="전체 공정율" />
-              <DoughnutChart
-                data={All}
-                option={["okrate", "badrate"]}
-                label={["양품율", "불량율"]}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} xl={9}>
-              <GridTitle title="공정별 불량율" />
-              <StackedChart
-                props={ProccdData}
-                value="badrate"
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle title="월별 건수" />
+              <LineChart
+                props={MonthData}
+                value="value"
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}
-                random={true}
-                name="proccdnm"
+                color={["#1976d2", "#FF0000"]}
+                borderColor={["#d7ecfb", "#fbded7"]}
+                name="series"
               />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} xl={12}>
-              <GridTitle title="월별 불량율" />
-              <LineChart props={MonthData} />
             </Grid>
           </Grid>
         </Container>

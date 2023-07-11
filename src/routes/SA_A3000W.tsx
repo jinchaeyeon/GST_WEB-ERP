@@ -67,7 +67,7 @@ const DATA_ITEM_KEY = "num";
 
 const dateField = ["reqdt"];
 const numberField = ["jisiqty", "outqty", "qty", "len"];
-const numberField2 = ["jisiqty", "outqty"];
+const numberField2 = ["jisiqty", "outqty", "qty"];
 const checkField = ["finyn"];
 
 type TdataArr = {
@@ -1334,6 +1334,15 @@ const SA_A2300: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
+              <th>출하지시번호</th>
+              <td>
+                <Input
+                  name="reqnum"
+                  type="text"
+                  value={filters.reqnum}
+                  onChange={filterInputChange}
+                />
+              </td>
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (
@@ -1347,23 +1356,15 @@ const SA_A2300: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <th>수주번호</th>
+            <th>완료여부</th>
               <td>
-                <Input
-                  name="ordnum"
-                  type="text"
-                  value={filters.ordnum}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>출하지시번호</th>
-              <td>
-                <Input
-                  name="reqnum"
-                  type="text"
-                  value={filters.reqnum}
-                  onChange={filterInputChange}
-                />
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="finyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
               <th> 업체코드</th>
               <td>
@@ -1392,15 +1393,14 @@ const SA_A2300: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>완료여부</th>
+              <th>수주번호</th>
               <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="finyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
+                <Input
+                  name="ordnum"
+                  type="text"
+                  value={filters.ordnum}
+                  onChange={filterInputChange}
+                />
               </td>
             </tr>
           </tbody>

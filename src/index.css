@@ -18,20 +18,43 @@ code {
 div.k-animation-container {
   z-index: 10100 !important;
 }
+.k-pager-wrap, .k-pager {
+  justify-content: center;
+}
+
+@media screen and (max-width: 991px) {
+  .customized-timeline .p-timeline-event:nth-child(even) {
+      flex-direction: row !important;
+  }
+  .customized-timeline .p-timeline-event:nth-child(even) .p-timeline-event-content {
+      text-align: left !important;
+  }
+  .customized-timeline .p-timeline-event-opposite {
+      flex: 0;
+  }
+  .customized-timeline .p-card {
+      margin-top: 1rem;
+  }
+}
 
 /* .k-grid tr {
   height: 36px;
 } */
-
 .k-form-horizontal .k-form-field > .k-label,
 .k-form-horizontal .k-form-field > kendo-label,
 .k-form-horizontal .k-form-field > .k-form-label {
   width: 40% !important;
 }
+.k-form-horizontal .k-form-field > .formLabel10 {
+  width: 10% !important;
+}
+
 .k-form-horizontal .k-form-field-wrap {
   max-width: calc(60% - 10px) !important;
 }
-
+.k-form-horizontal .forms {
+  max-width: calc(100% - 10px) !important;
+}
 /* 스케줄러 이벤트 팝업창 반복 여부 숨기기 */
 .k-form.k-scheduler-edit-form > .k-form-field:nth-child(5) {
   display: none;
@@ -111,9 +134,16 @@ input.readonly {
   width: inherit;
 }
 
-.k-daterange-picker .k-dateinput, .k-daterangepicker .k-dateinput{
+.k-daterange-picker .k-dateinput,
+.k-daterangepicker .k-dateinput {
   width: 50% !important;
 }
+
+/* 주석 해제 시 그리드 페이저의 우측 info 보임 */
+/* .k-pager-md .k-pager-info {
+  display: unset !important;
+} */
+
 /* 모바일 결재문서 숨김 처리 */
 @media (max-width: 768px) {
   .visible-mobile-only {

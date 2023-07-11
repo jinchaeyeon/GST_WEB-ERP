@@ -12,8 +12,8 @@ const Radio = (props) => {
 
   return (
     <>
-      <Grid item xs={props.xs} sm={props.sm} md={props.md} xl={props.xl}>
-        <div className="flex flex-wrap gap-3">
+      <Grid item xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl}>
+        <div className="flex flex-wrap gap-2">
           <h4 style={{ paddingTop: "20px" }}>{props.title} :</h4>
           {listData.map((item) => (
             <div>
@@ -29,7 +29,7 @@ const Radio = (props) => {
                 <label
                   style={{ paddingTop: "20px" }}
                   htmlFor={item.code}
-                  className="ml-2"
+                  className="ml-1"
                 >
                   {item.caption}
                 </label>

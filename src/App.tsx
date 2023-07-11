@@ -53,6 +53,7 @@ import SA_A2010W from "./routes/SA_A2010W";
 import SA_A2300W from "./routes/SA_A2300W";
 import SA_A3000W from "./routes/SA_A3000W";
 import SA_A5000W from "./routes/SA_A5000W";
+import SA_A5001W from "./routes/SA_A5001W";
 import SA_A5010W from "./routes/SA_A5010W";
 import SA_B2205W from "./routes/SA_B2205W";
 import SA_B2211W from "./routes/SA_B2211W";
@@ -104,6 +105,8 @@ import PR_A9000W from "./routes/PR_A9000W";
 import PR_A9100W from "./routes/PR_A9100W";
 import PR_B3000W from "./routes/PR_B3000W";
 import PR_A3000W from "./routes/PR_A3000W";
+import PR_B1103W from "./routes/PR_B1103W";
+import PR_B1104W from "./routes/PR_B1104W";
 import CT_A0111W from "./routes/CT_A0111W";
 import CM_A0000W from "./routes/CM_A0000W";
 import CM_A4100W from "./routes/CM_A4100W";
@@ -333,6 +336,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/SA_A2300W" component={SA_A2300W} exact />
                 <AuthRoute path="/SA_A3000W" component={SA_A3000W} exact />
                 <AuthRoute path="/SA_A5000W" component={SA_A5000W} exact />
+                <AuthRoute path="/SA_A5001W" component={SA_A5001W} exact />
                 <AuthRoute path="/SA_A5010W" component={SA_A5010W} exact />
                 <AuthRoute path="/SA_B2205W" component={SA_B2205W} exact />
                 <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
@@ -433,7 +437,9 @@ const AppInner: React.FC = () => {
                 {/*KPI관리 */}
                 <GlobalStyles style={{fontFamily: "TheJamsil5Bold"}}>
                   <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
+                  <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
                   <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
+                  <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
                 </GlobalStyles>
               </PanelBarNavContainer>
             </Switch>
