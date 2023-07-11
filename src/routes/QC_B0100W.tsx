@@ -19,12 +19,9 @@ import Box from "@mui/material/Box";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ComboBox from "../components/KPIcomponents/ComboBox/ComboBox";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
-import Radio from "../components/KPIcomponents/Radio/Radio";
 import Card from "../components/KPIcomponents/Card/CardBox";
-import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
-import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
 import GroupTable from "../components/KPIcomponents/Table/GroupTable";
 import LineChart from "../components/KPIcomponents/Chart/LineChart";
@@ -541,6 +538,9 @@ const QC_B0100W: React.FC = () => {
                   yrmm11: "11월",
                   yrmm12: "12월",
                 }}
+                width={[
+                  120, 110, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+                ]}
                 title={filters.gubun == "A" ? "전체 목록 PPM" : "전체 목록 불량율"}
                 key="num"
                 selection={selected}

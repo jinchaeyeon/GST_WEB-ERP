@@ -747,7 +747,7 @@ export const Content = styled.div<ContentType>`
 
 export const PageWrap = styled.div`
   padding: 0 15px;
-  height: calc(100vh - 30px);
+  height: 100%;
 
   @media (max-width: 768px) {
     min-height: auto;

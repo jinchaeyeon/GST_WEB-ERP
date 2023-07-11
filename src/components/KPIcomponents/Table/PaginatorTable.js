@@ -44,7 +44,7 @@ const PaginatorTable = (props) => {
     
     for (var i = 0; i < keys.length; i++) {
       array.push(
-        <Column field={keys[i]} header={values[[i]]} sortable></Column>
+        <Column field={keys[i]} header={values[[i]]} style={{ minWidth: props.width[i]}} sortable></Column>
       );
     }
     return array;

@@ -3,8 +3,10 @@ import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { useApi } from "../hooks/api";
 import {
   convertDateToStr,
+  dateformat2,
   getQueryFromBizComponent,
   setDefaultDate,
+  toDate2,
   UseBizComponent,
   UseCustomOption,
 } from "../components/CommonFunction";
@@ -21,11 +23,8 @@ import ComboBox from "../components/KPIcomponents/ComboBox/ComboBox";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
 import Radio from "../components/KPIcomponents/Radio/Radio";
 import Card from "../components/KPIcomponents/Card/CardBox";
-import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
-import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
-import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
 import { Toast } from "primereact/toast";
 import Input from "../components/KPIcomponents/Input/Input";
 import { DropdownChangeEvent } from "primereact/dropdown";
@@ -196,11 +195,11 @@ const PR_B1103W: React.FC = () => {
     pageNumber: mainPgNum,
     pageSize: filters.pgSize,
     parameters: {
-      "@p_work_type": "Detail",
+      "@p_work_type": "DETAIL",
       "@p_orgdiv": filters.orgdiv,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
-      "@p_recdt": selected == null ? "" : selected.proddt,
+      "@p_recdt": selected == null ? "" : convertDateToStr(toDate2(selected.proddt)),
       "@p_option": filters.option,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
@@ -259,11 +258,12 @@ const PR_B1103W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows.map(
-        (item: { okcnt: number; totcnt: number }) => ({
+        (item: any) => ({
           ...item,
+          proddt : item.proddt == "" ? "" : dateformat2(item.proddt),
         })
       );
-
+      
       setAllList(rows);
       if (rows.length > 0) {
         setSelected(rows[0]);
@@ -360,7 +360,7 @@ const PR_B1103W: React.FC = () => {
       fetchChartGrid();
     }
   }, [filters]);
-
+  
   const startContent = (
     <React.Fragment>
       <Grid container spacing={2}>
@@ -594,6 +594,9 @@ const PR_B1103W: React.FC = () => {
                   uph_worktime: "시간당 생산량",
                 }}
                 title={"전체 목록"}
+                width={[
+                  110, 100, 120, 120 , 120, 150
+                ]}
                 key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
@@ -603,12 +606,12 @@ const PR_B1103W: React.FC = () => {
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
               <PaginatorTable
-                value={DetailList != undefined ? DetailList.map((item: any) => ({
-                  ...item,
-                  prodemp: userListData.find(
-                    (item: any) => item.user_id == item.prodemp
-                  ) == undefined ? "" : userListData.find(
-                    (item: any) => item.user_id == item.prodemp
+                value={DetailList != undefined ? DetailList.map((items: any) => ({
+                  ...items,
+                  prodemp: userListData == undefined ? items.prodemp : userListData.find(
+                    (item: any) => item.user_id == items.prodemp
+                  )?.user_name == undefined ? items.prodemp : userListData.find(
+                    (item: any) => item.user_id == items.prodemp
                   )?.user_name
                 })) : []}
                 column={{
@@ -633,6 +636,9 @@ const PR_B1103W: React.FC = () => {
                   hr: "표준시간",
                   prodemp: "작업자",
                 }}
+                width={[
+                  130, 140, 110, 120, 120, 110
+                ]}
                 numberField={["qty"]}
                 title={"상세 목록"}
                 key="num"

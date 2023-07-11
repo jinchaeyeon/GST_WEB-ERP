@@ -453,7 +453,7 @@ const SA_B3600W: React.FC = () => {
       <ThemeProvider theme={theme}>
         <Container
           maxWidth="xl"
-          style={{ width: "100%", marginBottom: "25px" }}
+          style={{ width: "100%"}}
         >
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>납기준수율</Title>
@@ -498,6 +498,9 @@ const SA_B3600W: React.FC = () => {
                   totcnt: "총건수",
                   percent: "준수율",
                 }}
+                width={[
+                  150, 160, 150, 130, 130
+                ]}
                 title={"준수율 TOP5"}
               />
             </Grid>
@@ -511,6 +514,9 @@ const SA_B3600W: React.FC = () => {
                   totcnt: "총건수",
                   rate: "준수율",
                 }}
+                width={[
+                  150, 160, 150, 130, 130
+                ]}
                 title={"지연건수 TOP5"}
               />
             </Grid>
@@ -544,6 +550,9 @@ const SA_B3600W: React.FC = () => {
                   percent: "준수율",
                 }}
                 title={"전체 목록"}
+                width={[
+                  190, 210, 180, 180, 170, 170
+                ]}
                 key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
