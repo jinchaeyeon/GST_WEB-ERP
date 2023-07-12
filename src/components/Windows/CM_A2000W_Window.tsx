@@ -1361,7 +1361,7 @@ const CopyWindow = ({
               ? filters.recno
               : data?.recno}
             form_id={pathname}
-            table_id={"EA100T"}
+            table_id={"CR100T"}
             style={{ height: "20vh" }}
           ></CommentsGrid>
         </GridContainer>

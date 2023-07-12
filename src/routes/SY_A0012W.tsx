@@ -67,14 +67,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import NameCell from "../components/Cells/NameCell";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  deletedAttadatnumsState,
-  isLoading,
-  unsavedAttadatnumsState,
-} from "../store/atoms";
-import { IAttachmentData } from "../hooks/interfaces";
-import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-
+import { isLoading, loginResultState } from "../store/atoms";
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: any[] = [];
@@ -94,7 +87,9 @@ const editableField = ["user_id"];
 
 const NameField = ["user_id"];
 
-const EncryptedField = ["password", "temp"];
+const EncryptedField = ["temp"];
+
+const EncryptedField2 = ["password"];
 
 const CustomField = [
   "location",
@@ -130,25 +125,30 @@ export const FormContext = createContext<{
   setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
 }>({} as any);
 
+export const FormContext2 = createContext<{
+  password: String;
+  setPassword: (p: React.SetStateAction<String>) => void;
+}>({} as any);
+
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
     ariaColumnIndex,
     columnIndex,
     dataItem,
-    field = "",
     render,
-    onChange,
     className = "",
   } = props;
-  const { itemInfo, setItemInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
-  const value = field && dataItem[field] ? dataItem[field] : "";
+  const { setItemInfo } = useContext(FormContext);
   const excelInput: any = React.useRef();
   const [imgBase64, setImgBase64] = useState<string>(); // 파일 base64
 
   useEffect(() => {
-    if(dataItem.profile_image != null) {
-      if (dataItem.profile_image.slice(0,1) == "0" && dataItem.profile_image.slice(1,2) == "x" && dataItem.url != undefined) { 
+    if (dataItem.profile_image != null) {
+      if (
+        dataItem.profile_image.slice(0, 1) == "0" &&
+        dataItem.profile_image.slice(1, 2) == "x" &&
+        dataItem.url != undefined
+      ) {
         setImgBase64(dataItem.url.toString());
       } else {
         setImgBase64("data:image/png;base64," + dataItem.profile_image);
@@ -169,9 +169,13 @@ const ColumnCommandCell = (props: GridCellProps) => {
       reader.readAsDataURL(files[0]);
       return new Promise((resolve) => {
         reader.onload = () => {
-          if(reader.result != null) {
+          if (reader.result != null) {
             setImgBase64(reader.result.toString());
-            setItemInfo({ files: "0x" + arrHexString, url: reader.result.toString(), user_id: dataItem.user_id})
+            setItemInfo({
+              files: "0x" + arrHexString,
+              url: reader.result.toString(),
+              user_id: dataItem.user_id,
+            });
           }
         };
       });
@@ -181,7 +185,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
 
   const onDeleteClick = () => {
-    setItemInfo({files: "0x", url: "", user_id: dataItem.user_id})
+    setItemInfo({ files: "0x", url: "", user_id: dataItem.user_id });
   };
 
   const defaultRendering = (
@@ -236,6 +240,100 @@ const ColumnCommandCell = (props: GridCellProps) => {
           />
         </>
       )}
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+    </>
+  );
+};
+
+const EncryptedCell2 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const processApi = useApi();
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const onDelete = async () => {
+    if (!window.confirm("비밀번호를 초기화 하시겠습니까??")) {
+      return false;
+    }
+
+    let data: any;
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "sys_upd_user_password",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "init",
+        "@p_user_id": dataItem.user_id == undefined ? "" : dataItem.user_id,
+        "@p_old_password": "",
+        "@p_new_password": dataItem.user_id == undefined ? "" : dataItem.user_id,
+        "@p_check_new_password": dataItem.user_id == undefined ? "" : dataItem.user_id,
+        "@p_id": userId,
+        "@p_pc": pc
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      alert("정상적으로 처리되었습니다.")
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type={"password"}></Input>
+      ) : (
+        "*********"
+      )}
+      <ButtonInGridInput>
+        <Button onClick={onDelete} icon="close" fillMode="flat" />
+      </ButtonInGridInput>
     </td>
   );
 
@@ -323,6 +421,7 @@ const SY_A0120: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
+  const [password, setPassword] = useState<String>("");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -350,7 +449,7 @@ const SY_A0120: React.FC = () => {
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
     const datas = mainDataResult.data.map((item: any) =>
-      (item.num == items.num)
+      item.num == items.num
         ? {
             ...item,
             profile_image: itemInfo.files,
@@ -366,6 +465,28 @@ const SY_A0120: React.FC = () => {
       };
     });
   }, [itemInfo]);
+
+  useEffect(() => {
+    const items = mainDataResult.data.filter(
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+    const datas = mainDataResult.data.map((item: any) =>
+      item.num == items.num
+        ? {
+            ...item,
+            password: password,
+            temp: password,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : { ...item }
+    );
+    setMainDataResult((prev) => {
+      return {
+        data: datas,
+        total: prev.total,
+      };
+    });
+  }, [password]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -544,6 +665,14 @@ const SY_A0120: React.FC = () => {
     }));
     setLoading(false);
   };
+  
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -1086,161 +1215,170 @@ const SY_A0120: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <FormContext.Provider
-          value={{
-            itemInfo,
-            setItemInfo,
-          }}
+        value={{
+          itemInfo,
+          setItemInfo,
+        }}
       >
-        <GridContainer>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-          >
-            <GridTitleContainer>
-              <GridTitle>사용자 리스트</GridTitle>
-
-              {permissions && (
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    onClick={onRemoveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                </ButtonContainer>
-              )}
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "75vh" }}
-              data={process(
-                mainDataResult.data.map((row, idx) => ({
-                  ...row,
-                  birdt: row.birdt
-                    ? new Date(dateformat(row.birdt))
-                    : new Date(dateformat("19991231")),
-                  apply_start_date: row.apply_start_date
-                    ? new Date(dateformat(row.apply_start_date))
-                    : new Date(dateformat("19991231")),
-                  apply_end_date: row.apply_end_date
-                    ? new Date(dateformat(row.apply_end_date))
-                    : new Date(dateformat("19991231")),
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+        <FormContext2.Provider
+          value={{
+            password,
+            setPassword,
+          }}
+        >
+          <GridContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
               }}
-              onSelectionChange={onMainSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //incell 수정 기능
-              onItemChange={onMainItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
             >
-              <GridColumn
-                field="rowstatus"
-                title=" "
-                width="40px"
-                editable={false}
-              />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
-                  (item: any, idx: number) => {
-                    const caption = getCaption(item.id, item.caption);
-                    return (
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={caption}
-                          width={item.width}
-                          cell={
-                            NameField.includes(item.fieldName)
-                              ? NameCell
-                              : CustomField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : EncryptedField.includes(item.fieldName)
-                              ? EncryptedCell
-                              : checkField.includes(item.fieldName)
-                              ? CheckBoxCell
-                              : DateField.includes(item.fieldName)
-                              ? DateCell
-                              : CustomRadioField.includes(item.fieldName)
-                              ? CustomRadioCell
-                              : CustonCommandField.includes(item.fieldName)
-                              ? ColumnCommandCell
-                              : undefined
-                          }
-                          headerCell={
-                            requiredHeaderField.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          className={
-                            editableField.includes(item.fieldName)
-                              ? "editable-new-only"
-                              : requiredField.includes(item.fieldName)
-                              ? "required"
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                    );
-                  }
+              <GridTitleContainer>
+                <GridTitle>사용자 리스트</GridTitle>
+
+                {permissions && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onRemoveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  </ButtonContainer>
                 )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "75vh" }}
+                data={process(
+                  mainDataResult.data.map((row, idx) => ({
+                    ...row,
+                    birdt: row.birdt
+                      ? new Date(dateformat(row.birdt))
+                      : new Date(dateformat("19991231")),
+                    apply_start_date: row.apply_start_date
+                      ? new Date(dateformat(row.apply_start_date))
+                      : new Date(dateformat("19991231")),
+                    apply_end_date: row.apply_end_date
+                      ? new Date(dateformat(row.apply_end_date))
+                      : new Date(dateformat("19991231")),
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onMainSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                //incell 수정 기능
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn
+                  field="rowstatus"
+                  title=" "
+                  width="40px"
+                  editable={false}
+                />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                    (item: any, idx: number) => {
+                      const caption = getCaption(item.id, item.caption);
+                      return (
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={caption}
+                            width={item.width}
+                            cell={
+                              NameField.includes(item.fieldName)
+                                ? NameCell
+                                : CustomField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : EncryptedField2.includes(item.fieldName)
+                                ? EncryptedCell2
+                                : EncryptedField.includes(item.fieldName)
+                                ? EncryptedCell
+                                : checkField.includes(item.fieldName)
+                                ? CheckBoxCell
+                                : DateField.includes(item.fieldName)
+                                ? DateCell
+                                : CustomRadioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : CustonCommandField.includes(item.fieldName)
+                                ? ColumnCommandCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredHeaderField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            className={
+                              editableField.includes(item.fieldName)
+                                ? "editable-new-only"
+                                : requiredField.includes(item.fieldName)
+                                ? "required"
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                      );
+                    }
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </FormContext2.Provider>
       </FormContext.Provider>
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
