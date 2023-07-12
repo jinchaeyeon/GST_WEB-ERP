@@ -1,122 +1,235 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { Grid, GridColumn } from "@progress/kendo-react-grid";
+import {
+  Grid,
+  GridColumn,
+  GridToolbar,
+  GridSelectionChangeEvent,
+  getSelectedState,
+  GridHeaderSelectionChangeEvent,
+  GridFooterCellProps,
+  GridDataStateChangeEvent,
+  GridSortChangeEvent,
+  GridPageChangeEvent,
+  GridItemChangeEvent,
+  GridHeaderCellProps,
+} from "@progress/kendo-react-grid";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
   ButtonContainer,
-  FieldWrap,
+  ButtonInInput,
+  FormBox,
+  FormBoxWrap,
   GridContainer,
 } from "../../CommonStyled";
-import {
-  Form,
-  Field,
-  FormElement,
-  FieldArray,
-  FieldArrayRenderProps,
-  FormRenderProps,
-} from "@progress/kendo-react-form";
-import { Error } from "@progress/kendo-react-labels";
-import { clone } from "@progress/kendo-react-common";
-import { FormReadOnly, FormCheckBoxCell } from "../Editors";
 import { Iparameters } from "../../store/types";
 import {
-  validator,
-  arrayLengthValidator,
+  getQueryFromBizComponent,
   UseBizComponent,
+  UseCustomOption,
   UseMessages,
-  getYn,
+  findMessage,
   UseParaPc,
   UseGetValueFromSessionItem,
+  getGridItemChangedData,
+  getYn,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, FORM_DATA_INDEX } from "../CommonString";
+import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import { bytesToBase64 } from "byte-base64";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import NumberCell from "../Cells/NumberCell";
+import CheckBoxCell from "../Cells/CheckBoxCell";
 
-// Create React.Context to pass props to the Form Field components from the main component
-export const FormGridEditContext = React.createContext<{
-  onEdit: (dataItem: any, isNew: boolean) => void;
-  onSave: () => void;
-  editIndex: number | undefined;
-  parentField: string;
-}>({} as any);
-
-type TPara = {
-  user_id: string;
-  user_name: string;
-};
-type TKendoWindow = {
-  getVisible(isVisible: boolean): void;
-  reloadData(): void;
-  para: TPara;
-};
+let deletedMainRows: any[] = [];
 
 type TDetailData = {
   chk_yn_s: string[];
   user_group_id_s: string[];
 };
 
-// Create the Grid that will be used inside the Form
-const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey } =
-    fieldArrayRenderProps;
-  const [editIndex, setEditIndex] = React.useState<number | undefined>();
-  const editItemCloneRef = React.useRef();
+const DATA_ITEM_KEY = "num";
+const idGetter = getter(DATA_ITEM_KEY);
 
-  // Update an item from the Grid and update the index of the edited item
-  const onEdit = React.useCallback((dataItem: any, isNewItem: any) => {
-    if (!isNewItem) {
-      editItemCloneRef.current = clone(dataItem);
-    }
+type TKendoWindow = {
+  setVisible(t: boolean): void;
+  reloadData(user_id: string): void;
+  userid? :string;
+  userName? :string;
+  modal?: boolean;
+};
+let targetRowIndex: null | number = null;
+const KendoWindow = ({
+  setVisible,
+  reloadData,
+  userid = "",
+  userName = "",
+  modal = false,
+}: TKendoWindow) => {
+  const userId = UseGetValueFromSessionItem("user_id");
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const gridRef = useRef<any>(null);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const setLoading = useSetRecoilState(isLoading);
+  const [dataState, setDataState] = useState<State>({
+    sort: [],
+  });
 
-    fieldArrayRenderProps.onReplace({
-      index: dataItem[FORM_DATA_INDEX],
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-      },
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      ...event.page,
     });
-
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
-  }, []);
-
-  // Save the changes
-  const onSave = React.useCallback(() => {
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  const dataWithIndexes = fieldArrayRenderProps.value.map(
-    (item: any, index: any) => {
-      return { ...item, [FORM_DATA_INDEX]: index };
-    }
-  );
-
-  const enterEdit = (dataItem: any, field: string | undefined) => {
-    fieldArrayRenderProps.onReplace({
-      index: dataItem[FORM_DATA_INDEX],
-      value: {
-        ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-        [EDIT_FIELD]: field,
-      },
-    });
-
-    setEditIndex(dataItem[FORM_DATA_INDEX]);
   };
 
-  const exitEdit = (item: any) => {
-    fieldArrayRenderProps.value.forEach((item: any, index: any) => {
-      fieldArrayRenderProps.onReplace({
-        index: index,
-        value: {
-          ...item,
-          [EDIT_FIELD]: undefined,
-        },
-      });
+  const pathname: string = window.location.pathname.replace("/", "");
+
+  // 비즈니스 컴포넌트 조회
+  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  UseBizComponent("L_BA000", setBizComponentData);
+
+  // 그룹 카테고리 리스트
+  const [groupCategoryListData, setGroupCategoryListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  // 그룹 카테고리 조회 쿼리
+  const groupCategoryQuery =
+    bizComponentData.length > 0
+      ? getQueryFromBizComponent(
+          bizComponentData.find(
+            (item: any) => item.bizComponentId === "L_BA000"
+          )
+        )
+      : "";
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+  // 그룹 카테고리 조회
+  useEffect(() => {
+    if (bizComponentData.length > 0) {
+      fetchQueryData(groupCategoryQuery, setGroupCategoryListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQueryData = useCallback(
+    async (queryStr: string, setListData: any) => {
+      let data: any;
+
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setListData(rows);
+      }
+    },
+    []
+  );
+
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: 300,
+    top: 100,
+    width: 600,
+    height: 600,
+  });
+
+  const handleMove = (event: WindowMoveEvent) => {
+    setPosition({ ...position, left: event.left, top: event.top });
+  };
+  const handleResize = (event: WindowMoveEvent) => {
+    setPosition({
+      left: event.left,
+      top: event.top,
+      width: event.width,
+      height: event.height,
     });
+  };
+
+  const onClose = () => {
+    if (unsavedAttadatnums.length > 0)
+      setDeletedAttadatnums(unsavedAttadatnums);
+
+    setVisible(false);
+  };
+
+  const processApi = useApi();
+
+  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
+    process([], dataState)
+  );
+
+  const [detailSelectedState, setDetailSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const onSelectionChange = useCallback(
+    (event: GridSelectionChangeEvent) => {
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: detailSelectedState,
+        dataItemKey: DATA_ITEM_KEY,
+      });
+
+      setDetailSelectedState(newSelectedState);
+    },
+    [detailSelectedState]
+  );
+  const onGridSortChange = (e: GridSortChangeEvent) => {
+    setDataState((prev: any) => ({ ...prev, sort: e.sort }));
+  };
+
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    setDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      detailDataResult,
+      setDetailDataResult,
+      DATA_ITEM_KEY
+    );
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -137,181 +250,185 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     />
   );
 
-  return (
-    <GridContainer margin={{ top: "30px" }}>
-      <FormGridEditContext.Provider
-        value={{
-          onEdit,
-          onSave,
-          editIndex,
-          parentField: name,
-        }}
-      >
-        {visited && validationMessage && <Error>{validationMessage}</Error>}
-        <Grid
-          data={dataWithIndexes.map((item: any) => ({
-            ...item,
-            parentField: name,
-          }))}
-          total={dataWithIndexes.total}
-          dataItemKey={dataItemKey}
-          style={{ height: "400px" }}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-        >
-          <GridColumn field="rowstatus" title=" " width="40px" />
-          <GridColumn
-            field="chk_yn"
-            title=" "
-            width="50px"
-            cell={FormCheckBoxCell}
-          />
-          <GridColumn field="user_group_id" title="그룹ID" width="240px" />
-          <GridColumn field="user_group_name" title="그룹명" width="240px" />
-        </Grid>
-      </FormGridEditContext.Provider>
-    </GridContainer>
-  );
-};
-const KendoWindow = ({
-  getVisible,
-  reloadData,
-  para = { user_id: "", user_name: "" },
-}: TKendoWindow) => {
-  const { user_id, user_name } = para;
-  const userId = UseGetValueFromSessionItem("user_id");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+  const enterEdit = (dataItem: any, field: string) => {
+    if (field != "rowstatus") {
+      const newData = detailDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
 
-  // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent("L_BA000", setBizComponentData);
-
-  const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
-    width: 800,
-    height: 600,
-  });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
+
+  const exitEdit = () => {
+    const newData = detailDataResult.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setDetailDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
     });
   };
-
-  const onClose = () => {
-    getVisible(false);
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
+    setDataState(event.dataState);
   };
 
-  const [formKey, setFormKey] = React.useState(1);
-  const resetForm = () => {
-    setFormKey(formKey + 1);
-  };
-  //수정 없이 submit 가능하도록 임의 value를 change 시켜줌
-  useEffect(() => {
-    const valueChanged = document.getElementById("valueChanged");
-    valueChanged!.click();
-  }, [formKey]);
-
-  const processApi = useApi();
-  const [dataState, setDataState] = useState<State>({
-    skip: 0,
-    take: 20,
+  const [initialVal, setInitialVal] = useState({
+    user_id: "",
+    userName: "",
   });
 
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], dataState)
-  );
+  //조회조건 초기값
+  const [filters, setFilters] = useState({
+    // true면 조회조건(filters) 변경 되었을때 조회
+    pgSize: PAGE_SIZE,
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
   useEffect(() => {
-    fetchGrid();
+    fetchGrid(filters);
+    setInitialVal({
+      user_id : userid,
+      userName: userName
+    })
   }, []);
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_SY_A0013W_Q ",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "GROUPID",
-      "@p_orgdiv": "",
-      "@p_location": "",
-      "@p_dptcd": "",
-      "@p_lang_id": "",
-      "@p_user_category": "",
-      "@p_user_id": "",
-      "@p_user_name": "",
-      "@p_menu_name": "",
-      "@p_layout_key": "",
-      "@p_category": "",
-      "@p_service_id": "",
-    },
-  };
-
-  //fetch된 그리드 데이터가 그리드 폼에 세팅되도록 하기 위해 적용
-  useEffect(() => {
-    resetForm();
-  }, [detailDataResult]);
-
   //상세그리드 조회
-  const fetchGrid = async () => {
+  const fetchGrid = async (filters: any) => {
     let data: any;
 
+    setLoading(true);
+
+    const detailParameters: Iparameters = {
+      procedureName: "P_SY_A0013W_Q ",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "GROUPID",
+        "@p_orgdiv": "",
+        "@p_location": "",
+        "@p_dptcd": "",
+        "@p_lang_id": "",
+        "@p_user_category": "",
+        "@p_user_id": "",
+        "@p_user_name": "",
+        "@p_menu_name": "",
+        "@p_layout_key": "",
+        "@p_category": "",
+        "@p_service_id": "",
+      },
+    };
+
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
       data = null;
     }
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
-        return {
-          ...row,
-        };
-      });
+      const rows = data.tables[0].Rows;
 
-      setDetailDataResult(() => {
-        return {
-          data: [...rows],
-          total: totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0) {
+        if (filters.find_row_value !== "") {
+          // find_row_value 행으로 스크롤 이동
+          if (gridRef.current) {
+            const findRowIndex = rows.findIndex(
+              (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+            );
+            targetRowIndex = findRowIndex;
+          }
+
+          // find_row_value 데이터가 존재하는 페이지로 설정
+          setPage({
+            skip: PAGE_SIZE * (data.pageNumber - 1),
+            take: PAGE_SIZE,
+          });
+        } else {
+          // 첫번째 행으로 스크롤 이동
+          if (gridRef.current) {
+            targetRowIndex = 0;
+          }
+        }
+        setDetailDataResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt,
+          };
+        });
+        const selectedRow =
+          filters.find_row_value === ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+              );
+        setDetailSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+      }
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
   };
 
-  const pathname: string = window.location.pathname.replace("/", "");
+ //프로시저 파라미터 초기값
+ const [paraData, setParaData] = useState({
+  work_type: "",
+  orgdiv: "01",
+  chk_yn_s: "",
+  user_group_id_s: "",
+  user_id_s: initialVal.user_id,
+  target_user_s: "",
+  row_state_s: "",
+  add_delete_type_s: "",
+  menu_id_s: "",
+  form_view_yn_s: "",
+  form_print_yn_s: "",
+  form_save_yn_s: "",
+  form_delete_yn_s: "",
+  layout_key: "",
+  category: "",
+  userid: userId,
+  pc: pc,
+});
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+        //SY_A0010W에만 if문사용
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          isSearch: false,
+        })); // 한번만 조회되도록
 
-  //프로시저 파라미터 초기값
-  const [paraData, setParaData] = useState({
-    work_type: "",
-    orgdiv: "01",
-    chk_yn_s: "",
-    user_group_id_s: "",
-    user_id_s: user_id,
-    target_user_s: "",
-    row_state_s: "",
-    add_delete_type_s: "",
-    menu_id_s: "",
-    form_view_yn_s: "",
-    form_print_yn_s: "",
-    form_save_yn_s: "",
-    form_delete_yn_s: "",
-    layout_key: "",
-    category: "",
-    userid: userId,
-    pc: pc,
-  });
+        fetchGrid(deepCopiedFilters);
+      }
+  }, [filters]);
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
@@ -341,11 +458,21 @@ const KendoWindow = ({
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setDetailDataResult(process([], dataState));
+    setPage(initialPageState); // 페이지 초기화
+    setFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
-  const fetchSaved = async () => {
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [detailDataResult]);
+
+  const fetchMainSaved = async () => {
     let data: any;
+    setLoading(true);
 
     try {
       data = await processApi<any>("procedure", paraSaved);
@@ -354,9 +481,11 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
+      deletedMainRows = [];
       resetAllGrid();
-      reloadData();
-      fetchGrid();
+
+      reloadData(paraData.user_id_s);
+      onClose();
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -365,17 +494,16 @@ const KendoWindow = ({
     }
 
     paraData.work_type = ""; //초기화
+    setLoading(false);
   };
 
-  const handleSubmit = (dataItem: { [name: string]: any }) => {
-    const { user_id, groupDetails } = dataItem;
-
+  const handleSubmit = () => {
     let detailArr: TDetailData = {
       chk_yn_s: [],
       user_group_id_s: [],
     };
-
-    groupDetails.forEach((item: any, i: number) => {
+   
+    detailDataResult.data.forEach((item: any, i: number) => {
       const { rowstatus, chk_yn, user_group_id } = item;
       if (rowstatus !== "U") return;
 
@@ -386,22 +514,23 @@ const KendoWindow = ({
     setParaData((prev) => ({
       ...prev,
       work_type: "U",
-      p_user_id_s: user_id,
+      p_user_id_s: initialVal.user_id,
       chk_yn_s: detailArr.chk_yn_s.join("|"),
       user_group_id_s: detailArr.user_group_id_s.join("|"),
     }));
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchSaved();
+    if (paraData.work_type !== "") fetchMainSaved();
   }, [paraData]);
 
-  useEffect(() => {
-    if (bizComponentData.length) {
-      resetAllGrid();
-      fetchGrid();
-    }
-  }, [bizComponentData]);
+  const detailTotalFooterCell = (props: GridFooterCellProps) => {
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총 {detailDataResult.total}건
+      </td>
+    );
+  };
 
   return (
     <Window
@@ -411,63 +540,99 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
-      modal={true}
+      modal={modal}
     >
-      <Form
-        onSubmit={handleSubmit}
-        key={formKey}
-        initialValues={{
-          user_id,
-          user_name,
-          groupDetails: detailDataResult.data, //detailDataResult.data,
-        }}
-        render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true}>
-            <fieldset className={"k-form-fieldset"}>
-              <button
-                id="valueChanged"
-                style={{ display: "none" }}
-                onClick={(e) => {
-                  e.preventDefault(); // Changing desired field value
-                  formRenderProps.onChange("valueChanged", {
-                    value: "1",
-                  });
-                }}
-              ></button>
-              <FieldWrap fieldWidth="50%">
-                <Field
-                  name={"user_id"}
-                  label={"사용자ID"}
-                  component={FormReadOnly}
-                  validator={validator}
-                  className={"readonly"}
+      <FormBoxWrap>
+        <FormBox>
+          <tbody>
+            <tr>
+              <th>사용자ID</th>
+              <td>
+                <Input
+                  name="user_id"
+                  type="text"
+                  value={initialVal.user_id}
+                  className="readonly"
                 />
-                <Field
-                  name={"user_name"}
-                  label={"사용자명"}
-                  component={FormReadOnly}
-                  validator={validator}
-                  className={"readonly"}
+              </td>
+              <th>사용자명</th>
+              <td>
+                <Input
+                  name="userName"
+                  type="text"
+                  value={initialVal.userName}
+                  className="readonly"
                 />
-              </FieldWrap>
-            </fieldset>
-            <FieldArray
-              name="groupDetails"
-              dataItemKey={FORM_DATA_INDEX}
-              component={FormGrid}
-              validator={arrayLengthValidator}
-            />
-
-            <BottomContainer>
-              <ButtonContainer>
-                <Button type={"submit"} themeColor={"primary"} icon="save">
-                  저장
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </FormElement>
-        )}
-      />
+              </td>
+            </tr>
+          </tbody>
+        </FormBox>
+      </FormBoxWrap>
+      <GridContainer margin={{ top: "30px" }}>
+        <Grid
+          style={{ height: "38vh" }}
+          data={process(
+            detailDataResult.data.map((item: any) => ({
+              ...item,
+              [SELECTED_FIELD]: detailSelectedState[idGetter(item)],
+            })),
+            dataState
+          )}
+          {...dataState}
+          onDataStateChange={onGridDataStateChange}
+          // 렌더
+          onItemChange={onMainItemChange}
+          cellRender={customCellRender}
+          rowRender={customRowRender}
+          //선택기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          editField={EDIT_FIELD}
+          selectable={{
+            enabled: true,
+            drag: false,
+            cell: false,
+            mode: "multiple",
+          }}
+          onSelectionChange={onSelectionChange}
+          //스크롤 조회 기능
+          fixedScroll={true}
+          total={detailDataResult.total}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
+          ref={gridRef}
+          rowHeight={30}
+          //정렬기능
+          sortable={true}
+          onSortChange={onGridSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+        >
+         <GridColumn field="rowstatus" title=" " width="40px" />
+          <GridColumn
+            field="chk_yn"
+            title=" "
+            width="50px"
+            cell={CheckBoxCell}
+          />
+          <GridColumn field="user_group_id" title="그룹ID" width="220px" footerCell={detailTotalFooterCell}/>
+          <GridColumn field="user_group_name" title="그룹명" width="220px" />
+        </Grid>
+      </GridContainer>
+      <BottomContainer>
+        <ButtonContainer>
+          <Button themeColor={"primary"} onClick={handleSubmit}>
+            저장
+          </Button>
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            닫기
+          </Button>
+        </ButtonContainer>
+      </BottomContainer>
     </Window>
   );
 };

@@ -43,7 +43,6 @@ import {
   getYn,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
@@ -121,10 +120,6 @@ const Page: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -314,10 +309,7 @@ const Page: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
-        ...row,
-        idx: idx,
-      }));
+      const rows = data.tables[0].Rows;
 
       if (filter.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -403,10 +395,7 @@ const Page: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
-        ...row,
-        idx: idx,
-      }));
+      const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0) {
         const dataTree: any = createDataTree(
@@ -511,10 +500,8 @@ const Page: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
-        ...row,
-        idx: idx,
-      }));
+      const rows = data.tables[0].Rows;
+      
       if (totalRowCnt > 0) {
         const dataTree: any = createDataTree(
           rows,

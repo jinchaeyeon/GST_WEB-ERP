@@ -1,21 +1,18 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
-  GridGroupChangeEvent,
   GridExpandChangeEvent,
   GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import calculateSize from "calculate-size";
 import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
@@ -28,12 +25,10 @@ import {
   GridTitleContainer,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input, RadioGroupChangeEvent } from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
-  chkScrollHandler,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
@@ -47,17 +42,14 @@ import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   CLIENT_WIDTH,
-  COM_CODE_DEFAULT_VALUE,
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
 import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -84,7 +76,6 @@ const Page: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -182,9 +173,7 @@ const Page: React.FC = () => {
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
-
-  const [detailPgNum, setDetailPgNum] = useState(1);
-
+    
   const [workType, setWorkType] = useState("");
   const [isCopy, setIsCopy] = useState(false);
 
@@ -196,16 +185,6 @@ const Page: React.FC = () => {
         ...prev,
         [name]: value,
       }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioGroupChangeEvent) => {
-    const name = e.syntheticEvent.currentTarget.name;
-    const value = e.value;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅

@@ -655,7 +655,6 @@ const KendoWindow = ({
 
         reloadData("U", paraData.group_code);
         fetchMain();
-        // fetchGrid(1);
       } else {
         setVisible(false);
         reloadData("N", paraData.group_code);
@@ -945,31 +944,26 @@ const KendoWindow = ({
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
     let Object: any[] = [];
+    let Object2: any[] = [];
     let data;
     detailDataResult.data.forEach((item: any, index: number) => {
       if (item.chk != true) {
-        newData.push(item);
+        newData.push(item);    
+        Object2.push(index);
       } else {
         const newData2 = {
           ...item,
           rowstatus: "D",
         };
-        Object.push(newData2);
+        Object.push(index);
         deletedMainRows.push(newData2);
       }
     });
 
-    for (var i = 1; i < detailDataResult.data.length; i++) {
-      if (
-        Object.filter(
-          (item) =>
-            detailDataResult.data[detailDataResult.data.length - i].num ==
-            item.num
-        ).length == 0
-      ) {
-        data = detailDataResult.data[detailDataResult.data.length - i];
-        break;
-      }
+    if(Math.min(...Object) < Math.min(...Object2)) {
+      data = detailDataResult.data[Math.min(...Object2)];
+    } else {
+      data = detailDataResult.data[Math.min(...Object)-1];
     }
 
     const isLastDataDeleted =
