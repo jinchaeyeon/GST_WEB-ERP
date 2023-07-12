@@ -29,6 +29,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   dateformat,
+  getCodeFromValue,
   isValidDate,
 } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -48,8 +49,73 @@ import
   FormRenderProps 
 } from "@progress/kendo-react-form";
 import CenterCell from "../Cells/CenterCell";
+import { ColumnMenuForm } from "@progress/kendo-react-data-tools";
+import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 
-const idGetter = getter(FORM_DATA_INDEX);
+export interface IFilters
+{
+  pgSize: number,
+  orgdiv: string,
+  location: string,
+  prsnnum: string,  //사번
+  email: string,    //이메일
+  prsnnm: string,   //성명
+  paycd: string,    //급여지급유형
+  koraddr: string,  //주민등록지주소
+  perregnum: string, //주민번호
+  sexcd: string,  // 성별 
+  zipcode: string, //우편번호 
+  bircd: string, // 양력, 음력여부 
+  hmaddr: string, //실제거주지주소 
+  extnum: string, //내선번호
+  phonenum: string, // 전화번호
+  remark: string, //비고 
+  bankcd : string ,// 은행
+  banknm : string, // 은행명
+  bankacnt : string, // 계좌번호
+  payyn : string,// 급여지급여부 
+                           // 계좌번호 
+  bnskind : string , // 상여금계산여부  
+  bankacntuser: string,// 예금주 
+  workchk : string,// 근태관리여부  
+  bankdatnum : string,// 통장사본 
+  hirinsuyn : string, // 고용보험여부 
+  houseyn : string, // 세대주구분 
+  caltaxyn : string, // 세액계산대상여부
+  yrdclyn : string, // 연말정산신고대상여부
+  below2kyn : string, // 직전년도총급여액2500만원이하
+  taxcd : string , // 세액구분
+  exmtaxgb : string, // 취업청년세감면
+  incgb : string ,// 소득세조정률
+  medgrad : string, //의료보험등급
+  medinsunum  : string,  // 의료보험번호 
+  pnsgrad : string ,   // 국민연금등급  
+  rtrtype : string,     //퇴직급계산구분 
+  yrchk :  string,    //연차관리여부 
+  dayoffdiv : string,  //연차발생기준
+  attdatnum : string, // 첨부파일번호
+  files : string , //첨부파일명 
+
+  agenum : number,   //경로자65
+  agenum70 : number,  //경로자70
+  sptnum: number,  // 부양자(본인미포함)
+  brngchlnum: number, // 자녀양육
+  dfmnum: number,  // 장애자
+  childnum: number,  // 다자녀
+  fam1: number,  //가족수당배우
+  fam2: number,   // 가족수당 자녀
+
+  firredt : Date|null, //정산입사일
+  birdt: Date|null, //생년월일
+  occudate: Date|null, //연차발생기준일
+  regorgdt: Date|null, //입사일
+  rtrdt: Date|null, //퇴사일
+  meddate : Date|null,// 건강보험취득일
+  anudate : Date|null,// 국민연금취득일
+  hirdate : Date|null,// 고용보험취득일
+  exstartdt : Date|null,  // 감면시작 
+  exenddt : Date|null, // 감면종료  
+}
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -66,13 +132,12 @@ const KendoWindow = ({
   workType,
   prsnnum,
   isCopy,
-  para,
 }: TKendoWindow) => {
   const pathname: string = window.location.pathname.replace("/", "");
   
   const processApi = useApi()
  
-  const [filters, setFilters] = useState<{ [name: string]: any }>({
+  const [filters, setFilters] = useState<IFilters>({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
     location: "",
@@ -82,30 +147,21 @@ const KendoWindow = ({
     paycd: "",    //급여지급유형
     koraddr: "",  //주민등록지주소
     perregnum: "", //주민번호
-    sexcd: "",  // 성별 
-    firredt : null, //정산입사일
-    zipcode: "", //우편번호
-    birdt: null, //생년월일
-    bircd: "", // 양력, 음력여부
-    occudate: null, //연차발생기준일
-    hmaddr: "", //실제거주지주소
-    regorgdt: null, //입사일
+    sexcd: "",  // 성별   
+    zipcode: "", //우편번호  
+    bircd: "", // 양력, 음력여부 
+    hmaddr: "", //실제거주지주소 
     extnum: "", //내선번호
-    phonenum: "", // 전화번호
-    rtrdt: null, //퇴사일
-    remark: "", //비고
-
+    phonenum: "", // 전화번호   
+    remark: "", //비고   
     bankcd : "" ,// 은행
     banknm : "", // 은행명
     bankacnt : "", // 계좌번호
     payyn : "",// 급여지급여부
-    meddate : null,// 건강보험취득일
                              // 계좌번호 
-    bnskind : "" , // 상여금계산여부 
-    anudate : null,// 국민연금취득일
+    bnskind : "" , // 상여금계산여부  
     bankacntuser: "",// 예금주 
-    workchk : "",// 근태관리여부 
-    hirdate :null,// 고용보험취득일
+    workchk : "",// 근태관리여부    
     bankdatnum : "",// 통장사본 
     hirinsuyn : "", // 고용보험여부 
     houseyn : "", // 세대주구분 
@@ -116,24 +172,41 @@ const KendoWindow = ({
     exmtaxgb : "", // 취업청년세감면
     incgb : "" ,// 소득세조정률
     medgrad : "", //의료보험등급
-    medinsunum  : "",  // 의료보험번호
-    exstartdt : null,  // 감면시작 
-    exenddt : null,  // 감면종료  
+    medinsunum  : "",  // 의료보험번호   
     pnsgrad : "" ,   // 국민연금등급  
     rtrtype : "",     //퇴직급계산구분 
     yrchk :  "",    //연차관리여부 
     dayoffdiv : "",  //연차발생기준
     attdatnum : "", // 첨부파일번호
     files : "" , //첨부파일명 
-    agenum : 0,   //경로자65
+
+    agenum : 0, //경로자65
     agenum70 : 0,  //경로자70
-    sptnum: 0,  // 부양자(본인미포함)
+    sptnum: 0,  //"" 부양자(본인미포함)
     brngchlnum: 0, // 자녀양육
     dfmnum: 0,  // 장애자
     childnum: 0,  // 다자녀
     fam1: 0,  //가족수당배우
-    fam2: 0,   // 가족수당 자녀 
+    fam2: 0,   // 가족수당 자녀     
+    
+    regorgdt: new Date(), //입사일
+    occudate: new Date(), //연차발생기준일
+    birdt: null, //생년월일
+    firredt : null, //정산입사일  
+    rtrdt: null, //퇴사일
+    meddate : null,// 건강보험취득일
+    anudate : null,// 국민연금취득일
+    hirdate : null,// 고용보험취득일
+    exstartdt :null,  // 감면시작 
+    exenddt : null,  // 감면종료  
   });
+
+  const [paraData, setParaData] = useState({
+    work_type: "",
+    prsnnum : "",
+    prsnnm : "",  
+  });
+
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -156,43 +229,16 @@ const KendoWindow = ({
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA002", setBizComponentData);
 
-  //ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   // Input Change 함수 => 사용자가 Input에 입력한 값을 파라미터로 세팅
   const filterInputChange = (e: any) => {
-    const { value, name } = e.target;
-
+    const { value, name } = e.target === undefined ? e : e.target;   
+    
     setFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-
-  // Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
-    width: 1800,
-    height: 880,
-  });
-
+ 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -205,6 +251,13 @@ const KendoWindow = ({
       height: event.height,
     });
   };
+
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: 300,
+    top: 100,
+    width: 1800,
+    height: 880,
+  });
 
   const parameters: Iparameters = {
     procedureName: "P_HU_A1000W_Q",
@@ -221,23 +274,37 @@ const KendoWindow = ({
     },
   };
 
+  const paraSaved: Iparameters = {
+    procedureName: "P_HU_A1000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": workType,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_prsnnum": filters.prsnnum,
+      "@p_prsnnm": filters.prsnnm,
+    },
+  };
+
   useEffect(() => {
-    if (workType === "U" || isCopy === true) {     
+    if (workType === "U" || isCopy === true) {
       fetchMain();
     }
   }, []);
 
   const fetchMain = async () => {
-    let data: any;    
+    let data: any;
 
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
-    }   
+    }
 
     if (data.isSuccess === true) {
       const row = data.tables[0].Rows[0];
+
       setFilters((prev) => {
         return {
           ...prev,
@@ -249,42 +316,28 @@ const KendoWindow = ({
           koraddr: row.koraddr, //주민등록지주소
           perregnum: row.perregnum, //주민번호
           sexcd: row.sexcd, // 성별
-          firredt: isValidDate(row.firredt)
-          ? new Date(dateformat(row.firredt))
-          : null, //정산입사일
           zipcode: row.zipcode, //우편번호
-          birdt: isValidDate(row.birdt)
-          ? new Date(dateformat(row.birdt))
-          : null,//생년월일
           bircd: row.bircd, // 양력, 음력여부
-          occudate: isValidDate(row.occudate)
-          ? new Date(dateformat(row.occudate))
-          : null, //연차발생기준일
           hmaddr: row.hmaddr, //실제거주지주소
-          regorgdt: isValidDate(row.regorgdt)
-          ? new Date(dateformat(row.regorgdt))
-          : null, //입사일
           extnum: row.extnum, //내선번호
           phonenum: row.phonenum, // 전화번호
-          rtrdt: isValidDate(row.rtrdt)
-          ? new Date(dateformat(row.rtrdt))
-          : null, //퇴사일
           remark: row.remark, //비고
-
           bankcd: row.bankcd, // 은행
           banknm: row.banknm, // 은행명
           bankacnt: row.bankacnt, // 계좌번호
           payyn: row.payyn, // 급여지급여부
+          // 계좌번호
+          bnskind: row.bnskind, // 상여금계산여부
+          bankacntuser: row.bankacntuser, // 예금주
+          workchk: row.workchk, // 근태관리여부
           meddate: isValidDate(row.meddate)
           ? new Date(dateformat(row.meddate))
           : null, // 건강보험취득일
           // 계좌번호
-          bnskind: row.bnskind, // 상여금계산여부
+         
           anudate: isValidDate(row.anudate)
           ? new Date(dateformat(row.anudate))
-          : null, // 국민연금취득일
-          bankacntuser: row.bankacntuser, // 예금주
-          workchk: row.workchk, // 근태관리여부
+          : null, // 국민연금취득일       
           hirdate: isValidDate(row.hirdate)
           ? new Date(dateformat(row.hirdate))
           : null, // 고용보험취득일
@@ -319,19 +372,68 @@ const KendoWindow = ({
           childnum: row.childnum, // 다자녀
           fam1: row.fam1, //가족수당배우
           fam2: row.fam2, // 가족수당 자녀
+          firredt: row.firredt === "" ? null : new Date(dateformat(row.firredt)), //정산입사일
+          birdt: row.birdt === "" ? null : new Date(dateformat(row.birdt)), //생년월일
+          occudate: row.occudate === "" ? null : new Date(dateformat(row.occudate)), //연차발생기준일
+          regorgdt:row.regorgdt === "" ? null : new Date(dateformat(row.regorgdt)), //입사일
+          rtrdt: row.rtrdt === "" ? null : new Date(dateformat(row.rtrdt)), //퇴사일
         };
       });
     }
   };
 
+  useEffect(() => {
+    if (paraData.work_type !== "") fetchGridSaved();
+  }, [paraData]);
+
+  const fetchGridSaved = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", paraSaved);
+    } catch (error) {
+      data = null;
+    }
+    console.log(data);
+
+    if (data.isSuccess === true) {
+
+      if (workType === "U" || isCopy === true) {
+        
+        reloadData("U");
+        fetchMain();
+
+      } else {
+        getVisible(false);
+        reloadData("N");
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
+  };
+
+
+  // 닫기 버튼 클릭 이벤트
   const onClose = () => {
     getVisible(false);
   };
-  
-  const [formKey, setFormKey] = React.useState(1);
-  const resetForm = () => {
-    setFormKey(formKey + 1);
-  };
+ 
+  const handleSubmit = (dataItem: { [name: string]: any }) => {
+    const{prsnnum, prsnnm }  = dataItem;
+    
+   console.log("handlesubmit");
+
+    setParaData((prev) => ({
+      ...prev,
+      work_type: workType,
+      prsnnum : getCodeFromValue(prsnnum),
+      prsnnm : getCodeFromValue(prsnnm),
+    }));
+  }
+
+  const [formKey, setFormKey] = React.useState(1);  
 
   return (
     <Window
@@ -344,11 +446,11 @@ const KendoWindow = ({
       modal={true}
     >
       <Form
-        // onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
         key={formKey}
         initialValues={{
-          rowstatus: "",
-          prsnnum: isCopy === true ? "" : filters.prsnnum,
+            prsnnum: isCopy === true ? "" : filters.prsnnum,
+            prsnnm : "", 
         }}
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
@@ -387,7 +489,7 @@ const KendoWindow = ({
                           type="new"
                           name="yrchk"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -400,7 +502,7 @@ const KendoWindow = ({
                           name="location"
                           value={filters.location}
                           customOptionData={customOptionData}
-                          changeData={filterComboBoxChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -434,7 +536,7 @@ const KendoWindow = ({
                           name="paycd"
                           value={filters.paycd}
                           customOptionData={customOptionData}
-                          changeData={filterComboBoxChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -462,14 +564,14 @@ const KendoWindow = ({
                       />
                     </td>
                     <th>정산입사일</th>
-                    <td> 
-                        <DatePicker
-                          name="firredt"
-                          value={filters.firredt}
-                          format="yyyy-MM-dd"
-                          onChange={filterInputChange}
-                          placeholder=""                          
-                        />
+                    <td>
+                      <DatePicker
+                        name="firredt"
+                        value={filters.firredt}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
+                      />
                     </td>
                     <th>우편번호</th>
                     <td colSpan={3}>
@@ -490,7 +592,7 @@ const KendoWindow = ({
                           type="new"
                           name="sexcd"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -501,7 +603,7 @@ const KendoWindow = ({
                           type="new"
                           name="bircd"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -559,8 +661,8 @@ const KendoWindow = ({
                     <th>퇴사일</th>
                     <td>
                       <DatePicker
-                        name="regorgdt"
-                        value={filters.regorgdt}
+                        name="rtrdt"
+                        value={filters.rtrdt}
                         format="yyyy-MM-dd"
                         onChange={filterInputChange}
                         placeholder=""
@@ -651,7 +753,7 @@ const KendoWindow = ({
 
                     <th>건강보험취득일</th>
                     <td>
-                      {/* <div className="center">
+                      <div className="center">
                         <DatePicker
                           name="firredt"
                           value={filters.firredt}
@@ -659,7 +761,7 @@ const KendoWindow = ({
                           onChange={filterInputChange}
                           placeholder=""
                         />
-                      </div> */}
+                      </div>
                     </td>
 
                     <th>의료보험등급</th>
@@ -696,13 +798,13 @@ const KendoWindow = ({
 
                     <th>고용보험취득일</th>
                     <td>
-                        <DatePicker
-                          name="hirdate"
-                          value={filters.hirdate}
-                          format="yyyy-MM-dd"
-                          onChange={filterInputChange}
-                          placeholder=""
-                        />
+                      <DatePicker
+                        name="hirdate"
+                        value={filters.hirdate}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
+                      />
                     </td>
 
                     <th>취업청년세액감면</th>
@@ -713,29 +815,29 @@ const KendoWindow = ({
                           name="exmtaxgb"
                           value={filters.exmtaxgb}
                           customOptionData={customOptionData}
-                          changeData={filterComboBoxChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
 
                     <th>감면기간</th>
                     <td>
-                        <DatePicker
-                          name="exstartdt"
-                          value={filters.exstartdt}
-                          format="yyyy-MM-dd"
-                          onChange={filterInputChange}
-                          placeholder=""
-                        />
+                      <DatePicker
+                        name="exstartdt"
+                        value={filters.exstartdt}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
+                      />
                     </td>
                     <td>
-                        <DatePicker
-                          name="exenddt"
-                          value={filters.exenddt}
-                          format="yyyy-MM-dd"
-                          onChange={filterInputChange}
-                          placeholder=""
-                        />
+                      <DatePicker
+                        name="exenddt"
+                        value={filters.exenddt}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
+                      />
                     </td>
                   </tr>
 
@@ -752,13 +854,13 @@ const KendoWindow = ({
 
                     <th>국민연금취득일</th>
                     <td>
-                        <DatePicker
-                          name="anudate"
-                          value={filters.anudate}
-                          format="yyyy-MM-dd"
-                          onChange={filterInputChange}
-                          placeholder=""
-                        />
+                      <DatePicker
+                        name="anudate"
+                        value={filters.anudate}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
+                      />
                     </td>
 
                     <th>국민연금등급</th>
@@ -778,7 +880,7 @@ const KendoWindow = ({
                           type="new"
                           name="rtrtype"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -810,7 +912,7 @@ const KendoWindow = ({
                           type="new"
                           name="yrchk"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -821,7 +923,7 @@ const KendoWindow = ({
                           type="new"
                           name="dayoffdiv"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -861,7 +963,7 @@ const KendoWindow = ({
                           type="new"
                           name="below2kyn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -872,7 +974,7 @@ const KendoWindow = ({
                           type="new"
                           name="yrdclyn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -904,7 +1006,7 @@ const KendoWindow = ({
                           type="new"
                           name="caltaxyn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -915,7 +1017,7 @@ const KendoWindow = ({
                           type="new"
                           name="sps"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -926,7 +1028,7 @@ const KendoWindow = ({
                           type="new"
                           name="milyn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -937,7 +1039,7 @@ const KendoWindow = ({
                           type="new"
                           name="workchk"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -970,7 +1072,7 @@ const KendoWindow = ({
                           name="taxcd"
                           value={filters.taxcd}
                           customOptionData={customOptionData}
-                          changeData={filterComboBoxChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -981,7 +1083,7 @@ const KendoWindow = ({
                           type="new"
                           name="laboryn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -992,7 +1094,7 @@ const KendoWindow = ({
                           type="new"
                           name="dfmyn2"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1003,7 +1105,7 @@ const KendoWindow = ({
                           type="new"
                           name="hirinsuyn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1035,7 +1137,7 @@ const KendoWindow = ({
                           name="incgb"
                           value={filters.incgb}
                           customOptionData={customOptionData}
-                          changeData={filterComboBoxChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1046,7 +1148,7 @@ const KendoWindow = ({
                           type="new"
                           name="wmn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1057,7 +1159,7 @@ const KendoWindow = ({
                           type="new"
                           name="notaxe"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1068,7 +1170,7 @@ const KendoWindow = ({
                           type="new"
                           name="bnskind"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1102,7 +1204,7 @@ const KendoWindow = ({
                           type="new"
                           name="houseyn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1113,7 +1215,7 @@ const KendoWindow = ({
                           type="new"
                           name="dfmyn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1124,7 +1226,7 @@ const KendoWindow = ({
                           type="new"
                           name="payyn"
                           customOptionData={customOptionData}
-                          changeData={filterRadioChange}
+                          changeData={filterInputChange}
                         />
                       )}
                     </td>
@@ -1135,7 +1237,12 @@ const KendoWindow = ({
 
             <BottomContainer>
               <ButtonContainer>
-                <Button themeColor={"primary"}>저장</Button>
+                <Button
+                  type={"submit"}
+                  themeColor={"primary"}
+                >
+                  저장
+                </Button>
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}
