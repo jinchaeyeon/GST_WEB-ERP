@@ -83,7 +83,7 @@ const App: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData)
+  UseMessages(pathname, setMessagesData);
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -111,7 +111,7 @@ const App: React.FC = () => {
         cboViewType: defaultOption.find(
           (item: any) => item.id === "cboViewType"
         ).valueCode,
-      }))
+      }));
       setFilters((prev) => ({
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
@@ -220,7 +220,7 @@ const App: React.FC = () => {
     yyyymm: new Date(),
     find_row_value: "",
     isSearch: true,
-    pgSize: PAGE_SIZE
+    pgSize: PAGE_SIZE,
   });
 
   const [dataFilters, setDataFilters] = useState({
@@ -298,11 +298,11 @@ const App: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(data);
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const usedUserCnt = data.returnString;
-      const useTotalRow = data.tables[1].Rows[0];
+      const useTotalRow = data.tables[1].Rows;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
         useTotalRow,
@@ -399,35 +399,17 @@ const App: React.FC = () => {
   };
 
   const DateFooterCell = (props: GridFooterCellProps) => {
-    const { field = "" } = props;
-    const data: any[] = resultState[0] == undefined ? [] : resultState[0].items;
-    let fieldDate = field.replace(
-      tabSelected === 0 ? "data_cnt_" : "use_cnt_",
-      ""
-    );
-    let dayTotal = 0;
-    let useTotal = 0;
-    let percentage = 0;
-
-    data.forEach((item: any) => {
-      dayTotal = dayTotal + (item[field] ?? 0);
-    });
-
-    if (resultState.length > 0) {
-      const useTotalDataResult: any = data[0].useTotalRow;
-      useTotal =
-        (fieldDate && useTotalDataResult ? useTotalDataResult[fieldDate] : 0) ??
-        0;
-      percentage = (useTotal / usedUserCnt) * 100;
+    if (props.field != undefined && newData[0] != undefined) {
+      return (
+        <td colSpan={props.colSpan} style={props.style}>
+          {newData[0].items[0].useTotalRow[0]["tt"]} <br />
+          {newData[0].items[0].useTotalRow[1]["tt"]} <br />
+          {newData[0].items[0].useTotalRow[2]["tt"]} <br />
+        </td>
+      );
+    } else {
+      return <td></td>;
     }
-
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        {dayTotal == null ? 0 : dayTotal} <br />
-        {useTotal == null ? 0 : useTotal} <br />
-        {percentage== null ? 0 : Math.round(percentage * 10) / 10}
-      </td>
-    );
   };
 
   const onExpandChange = React.useCallback(
@@ -494,9 +476,8 @@ const App: React.FC = () => {
             items: item.items.map((row: any) => ({
               ...row,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-            }))
-          })
-        )}
+            })),
+          }))}
           //스크롤 조회 기능
           fixedScroll={true}
           //그룹기능
@@ -573,15 +554,34 @@ const App: React.FC = () => {
       array.push(
         <GridColumn
           key={i}
-          field={(tabSelected === 0 ? "data_cnt_" : "use_cnt_") + num}
+          field={tabSelected === 0 ? "data_cnt_" + num : "use_cnt_" + num}
           title={num}
-          width="50px"
+          width="70px"
           cell={NumberCell}
-          footerCell={DateFooterCell}
+          footerCell={gridSumQtyFooterCell}
         />
       );
     }
     return array;
+  };
+
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    const title = props.field != undefined ?
+      (tabSelected == 0
+        ? props.field.replace("data_cnt_", "")
+        : props.field.replace("use_cnt_", "")) : ""
+
+    if (props.field != undefined && newData[0] != undefined) {
+      return (
+        <td colSpan={props.colSpan} style={props.style}>
+          {newData[0].items[0].useTotalRow[0][title]} <br />
+          {newData[0].items[0].useTotalRow[1][title]} <br />
+          {newData[0].items[0].useTotalRow[2][title]} <br />
+        </td>
+      );
+    } else {
+      return <td></td>;
+    }
   };
 
   const search = () => {
@@ -597,8 +597,8 @@ const App: React.FC = () => {
       } else if (
         tabSelected == 0 &&
         (dataFilters.cboViewType == "" ||
-        dataFilters.cboViewType == null ||
-        dataFilters.cboViewType == undefined)
+          dataFilters.cboViewType == null ||
+          dataFilters.cboViewType == undefined)
       ) {
         throw findMessage(messagesData, "SY_A0100W_003");
       } else {
