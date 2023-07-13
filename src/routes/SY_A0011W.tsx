@@ -802,7 +802,7 @@ const Page: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         find_row_value:
-          mainDataResult.data[findRowIndex == 0 ? 0 : findRowIndex - 1]
+          mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
             .user_group_id,
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,

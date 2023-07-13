@@ -194,7 +194,7 @@ const SY_A0110: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions !== null && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록

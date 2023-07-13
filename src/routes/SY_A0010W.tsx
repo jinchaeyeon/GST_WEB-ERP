@@ -907,7 +907,7 @@ const Page: React.FC = () => {
         ...prev,
         find_row_value:
           rowsOfDataResult(mainDataResult)[
-            findRowIndex == 0 ? 0 : findRowIndex - 1
+            findRowIndex == 0 ? 1 : findRowIndex - 1
           ].group_code,
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,

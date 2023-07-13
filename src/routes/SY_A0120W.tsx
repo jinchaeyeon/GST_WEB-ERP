@@ -253,7 +253,6 @@ const SY_A0120: React.FC = () => {
           targetRowIndex = 0;
         }
       }
-      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
             data: rows,
@@ -268,7 +267,6 @@ const SY_A0120: React.FC = () => {
 
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
         }
-      }
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -344,7 +342,7 @@ const SY_A0120: React.FC = () => {
       resetAllGrid();
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, customOptionData]);
+  }, [filters, permissions]);
 
   const search = () => {
     try {
