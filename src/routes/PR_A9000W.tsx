@@ -99,7 +99,10 @@ const customField = [
 const customHeaderField = ["proddt", "itemcd", "lotnum", "qty", "qtyunit"];
 const customHeaderField2 = ["proddt", "itemcd", "lotnum", "qty", "div"];
 const itemcdField = ["itemcd"];
-
+let temp = 0;
+let temp2 = 0;
+let temp3 = 0;
+let temp4 = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 공정,대분류,중분류,소분류,품목계정,단위,중량단위
@@ -1460,10 +1463,13 @@ const PR_A9000W: React.FC = () => {
   );
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       bnatur: "",
       custnm: "",
       insiz: "",
@@ -1504,10 +1510,13 @@ const PR_A9000W: React.FC = () => {
   };
 
   const onAddClick2 = () => {
-    let seq = detailDataResult.total + deletedMainRows.length + 1;
-
+    detailDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp2,
       div: "",
       insiz: "",
       itemcd: "",
@@ -1944,11 +1953,14 @@ const PR_A9000W: React.FC = () => {
     setDetailWindowVisible2(true);
   };
   const setCopyData = (data: any) => {
-    let seq = detailDataResult.total + deletedMainRows.length + 1;
-
     data.map((item: any) => {
+      detailDataResult.data.map((item) => {
+        if(item.num > temp3){
+          temp3 = item.num
+        }
+    })
       const newDataItem = {
-        [DATA_ITEM_KEY]: seq,
+        [DATA_ITEM_KEY]: ++temp3,
         div: item.div,
         insiz: item.insiz,
         itemcd: item.itemcd,
@@ -1983,16 +1995,18 @@ const PR_A9000W: React.FC = () => {
           total: prev.total + 1,
         };
       });
-      seq++;
     });
   };
 
   const addItemData = (data: IItemData[]) => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
- 
     data.map((item) => {
+      mainDataResult.data.map((item) => {
+        if(item.num > temp4){
+          temp4 = item.num
+        }
+    })
       const newDataItem = {
-        [DATA_ITEM_KEY]: seq,
+        [DATA_ITEM_KEY]: ++temp4,
         bnatur: item.bnatur,
         custnm: item.custitemnm,
         insiz: item.insiz,
@@ -2030,7 +2044,6 @@ const PR_A9000W: React.FC = () => {
           total: prev.total + data.length,
         };
       });
-      seq++;  
     })
   };
   return (

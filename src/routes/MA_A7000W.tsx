@@ -141,7 +141,8 @@ type TdataArr = {
   remark_s: string[];
   unp_s: string[];
 };
-
+let temp = 0;
+let temp2 = 0;
 const DATA_ITEM_KEY = "num";
 const numberField = ["qty", "wgt", "len", "wonamt", "taxamt", "totamt"];
 const numberField2 = ["qty", "wonamt", "taxamt", "totamt"];
@@ -826,10 +827,13 @@ const MA_A7000W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       anneal: "",
       bnatur: "",
       chk: "",
@@ -1413,22 +1417,16 @@ const MA_A7000W: React.FC = () => {
         return false;
       }
     }
-    let seq = 1;
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-    if (mainDataResult.total > seq) {
-      seq = mainDataResult.total + 1;
-    }
+
     try {
       data.map((item: any) => {
+        mainDataResult.data.map((item) => {
+          if (item.num > temp2) {
+            temp2 = item.num;
+          }
+        });
         const newDataItem = {
-          [DATA_ITEM_KEY]: seq,
+          [DATA_ITEM_KEY]: ++temp2,
           anneal: "",
           bnatur: item.bnatur,
           chk: item.chk,
@@ -1474,7 +1472,6 @@ const MA_A7000W: React.FC = () => {
             total: prev.total + 1,
           };
         });
-        seq++;
       });
     } catch (e) {
       alert(e);
@@ -1675,7 +1672,7 @@ const MA_A7000W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
-                  title="행 삭제" 
+                  title="행 삭제"
                 ></Button>
                 <Button
                   onClick={onSaveClick}

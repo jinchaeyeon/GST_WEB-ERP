@@ -93,7 +93,7 @@ interface IAccountData {
   acntcd: string;
   acntnm: string;
 }
-
+let temp = 0;
 const FormContext = createContext<{
   acntcd: string;
   setAcntcd: (d: any) => void;
@@ -809,9 +809,14 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
+
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       acnttcd: "",
       acntnm: "",
       acntnum: "",

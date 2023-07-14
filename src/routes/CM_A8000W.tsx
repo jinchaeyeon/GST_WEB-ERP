@@ -83,7 +83,9 @@ const CustomComboField = [
 ];
 const requiredField = ["valueboxnm"];
 const CheckField = ["useyn"];
-
+let temp = 0;
+let temp2 = 0;
+let temp3 = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
@@ -1135,10 +1137,13 @@ const CM_A8000W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       DesignPerson: "",
       DevPerson: "",
       absolutedays: 0,
@@ -1167,13 +1172,17 @@ const CM_A8000W: React.FC = () => {
   };
 
   const onCopyClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
     const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp2,
       DesignPerson: "",
       DevPerson: "",
       absolutedays: 0,
@@ -1569,11 +1578,14 @@ const CM_A8000W: React.FC = () => {
         });
 
         if (totalRowCnt >= 0) {
-          let seq = mainDataResult.total + deletedMainRows.length + 1;
-
           rows.map((row: any) => {
+            mainDataResult.data.map((item) => {
+              if(item.num > temp3){
+                temp3 = item.num
+              }
+          })
             const newDataItem = {
-              [DATA_ITEM_KEY]: seq,
+              [DATA_ITEM_KEY]: ++temp3,
               DesignPerson: row.DesignPerson,
               DevPerson: row.DevPerson,
               absolutedays: row.absolutedays,
@@ -1598,7 +1610,6 @@ const CM_A8000W: React.FC = () => {
                 total: prev.total + 1,
               };
             });
-            seq++;
           })
         }
       } else {

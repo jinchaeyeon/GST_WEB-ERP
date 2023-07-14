@@ -137,7 +137,7 @@ type TdataArr = {
   procunit_s: string[];
   workcnt_s: string[];
 };
-
+let temp = 0;
 const initialFilter: CompositeFilterDescriptor = {
   logic: "and",
   filters: [{ field: "code_name", operator: "contains", value: "" }],
@@ -736,12 +736,16 @@ const PR_A0040W: React.FC = () => {
       });
     }
 
-    let seq = subDataResult.total + deletedMainRows.length + 1;
+    subDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const datas = mainDataResult.data.filter((item) => item.num == Object.getOwnPropertyNames(selectedState)[0])[0];
 
     setIfSelectFirstRow2(false);
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY]: seq,
+      [SUB_DATA_ITEM_KEY]: ++temp,
       chlditemcd: "",
       chlditemnm: "",
       custcd: "",

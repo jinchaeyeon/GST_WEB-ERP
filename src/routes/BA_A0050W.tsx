@@ -70,7 +70,8 @@ const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "sub_code";
 
 let deletedMainRows: object[] = [];
-
+let temp = 0;
+let temp2 = 0;
 const CustomComboField = [
   "proccd",
   "outprocyn",
@@ -585,11 +586,14 @@ const BA_A0050: React.FC = () => {
       });
     }
 
-    let seq = subDataResult.total + deletedMainRows.length + 1;
-
+    subDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     setIfSelectFirstRow2(false);
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY]: seq,
+      [SUB_DATA_ITEM_KEY]: ++temp,
       chlditemcd: "",
       chlditemnm: "",
       custcd: "",
@@ -1213,10 +1217,13 @@ const BA_A0050: React.FC = () => {
 
   const reloadData2 = (data: any) => {
     for (var i = 0; i < data.length; i++) {
-      let seq = subDataResult.total + deletedMainRows.length + 1;
-
+      subDataResult.data.map((item) => {
+        if(item.num > temp2){
+          temp2 = item.num
+        }
+    })
       const newDataItem = {
-        [SUB_DATA_ITEM_KEY]: seq,
+        [SUB_DATA_ITEM_KEY]: ++temp2,
         chlditemcd: "",
         chlditemnm: "",
         custcd: "",

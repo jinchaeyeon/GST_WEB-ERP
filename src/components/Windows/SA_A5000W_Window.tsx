@@ -68,7 +68,8 @@ type IWindow = {
   setData(data: object, filter: object, deletedMainRows: object): void;
   reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
 };
-
+let temp = 0;
+let temp2 = 0;
 type Idata = {
   amt: number;
   amtunit: string;
@@ -583,23 +584,17 @@ const CopyWindow = ({
 
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
+      data[i].num = ++temp;
       if (!(data[i].unpcalmeth != undefined && data[i].unpcalmeth != "")) {
         data[i].unpcalmeth = "Q";
       }
-      seq++;
     }
 
     try {
@@ -634,23 +629,17 @@ const CopyWindow = ({
 
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
+      data[i].num = ++temp2;
       if (!(data[i].unpcalmeth != undefined && data[i].unpcalmeth != "")) {
         data[i].unpcalmeth = "Q";
       }
-      seq++;
     }
 
     try {

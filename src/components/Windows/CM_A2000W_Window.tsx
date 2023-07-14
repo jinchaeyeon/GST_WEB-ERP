@@ -95,6 +95,8 @@ type IWindow = {
   setData(data: object, filter: object): void;
   reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
 };
+let temp = 0;
+let temp2 = 0;
 
 type Idata = {
   attdatnum: string;
@@ -614,12 +616,16 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const rows = data.map((row: any) => {
       return {
         ...row,
         totamt: 0,
-        num: seq++,
+        [DATA_ITEM_KEY]: ++temp,
       };
     });
 
@@ -849,9 +855,13 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp2,
       amt: 0,
       chk: "",
       finyn: "",

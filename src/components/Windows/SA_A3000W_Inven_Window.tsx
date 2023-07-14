@@ -59,7 +59,7 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
-
+let temp = 0;
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -67,12 +67,7 @@ type IWindow = {
   custnm: string;
 };
 
-const CopyWindow = ({
-  setVisible,
-  setData,
-  custcd,
-  custnm,
-}: IWindow) => {
+const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -542,7 +537,7 @@ const CopyWindow = ({
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -554,7 +549,7 @@ const CopyWindow = ({
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -580,7 +575,7 @@ const CopyWindow = ({
   const onRowDoubleClick = (props: any) => {
     const datas = props.dataItem;
     let valid = true;
-    let seq = subDataResult.total + 1;
+
     const selectRows = mainDataResult.data.filter(
       (item: any) => item.chk == true
     );
@@ -595,8 +590,13 @@ const CopyWindow = ({
 
     if (valid == true) {
       selectRows.map((selectRow: any) => {
+        subDataResult.data.map((item) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
         const newDataItem = {
-          [DATA_ITEM_KEY]: seq + 1,
+          [DATA_ITEM_KEY]: ++temp,
           chk: selectRow.chk,
           custcd: selectRow.custcd,
           custnm: selectRow.custnm,
@@ -628,11 +628,10 @@ const CopyWindow = ({
         };
         setSubDataResult((prev) => {
           return {
-         data: [newDataItem, ...prev.data],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
-        seq++;
       });
     } else {
       alert("동일 업체만 추가 가능합니다.");
@@ -690,7 +689,12 @@ const CopyWindow = ({
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-                         chk: typeof item.chk == "boolean" ? item.chk : item.chk =="Y" ? true : false,
+              chk:
+                typeof item.chk == "boolean"
+                  ? item.chk
+                  : item.chk == "Y"
+                  ? true
+                  : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -782,7 +786,12 @@ const CopyWindow = ({
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-                         chk: typeof item.chk == "boolean" ? item.chk : item.chk =="Y" ? true : false,
+              chk:
+                typeof item.chk == "boolean"
+                  ? item.chk
+                  : item.chk == "Y"
+                  ? true
+                  : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -1026,7 +1035,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-           style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
+            style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1132,7 +1141,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-         style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
+            style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

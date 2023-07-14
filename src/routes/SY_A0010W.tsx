@@ -898,7 +898,7 @@ const Page: React.FC = () => {
 
       if (isLastDataDeleted) {
         setPage({
-          skip: PAGE_SIZE * (filters.pgNum - 2),
+          skip: ((filters.pgNum == 1) || (filters.pgNum == 0)) ? 0: PAGE_SIZE * (filters.pgNum - 2),
           take: PAGE_SIZE,
         });
       }

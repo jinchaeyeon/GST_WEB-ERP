@@ -88,6 +88,9 @@ export const FormContext = createContext<{
   setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
 }>({} as any);
 
+let temp = 0;
+let temp2 = 0;
+
 interface IItemData {
   itemcd: string;
   itemno: string;
@@ -712,8 +715,8 @@ const CopyWindow = ({
         remark: data.remark,
         seq1: data.seq1,
         shipdt: isValidDate(data.shipdt)
-        ? new Date(dateformat(data.shipdt))
-        : null,
+          ? new Date(dateformat(data.shipdt))
+          : null,
         taxamt: data.taxamt,
         taxdiv: data.taxdiv,
         taxnum: data.taxnum,
@@ -788,19 +791,22 @@ const CopyWindow = ({
       );
     });
     if (dataItem.length === 0) return false;
-    let seq = 1;
-
+    mainDataResult.data.map((item) => {
+      if (item.num > temp2) {
+        temp2 = item.num;
+      }
+    });
     if (mainDataResult.total > 0) {
       mainDataResult.data.map((item) => ({
         ...item,
-        num: seq++,
+        num: ++temp2,
       }));
     }
     const rows = data.map((row: any) => {
       return {
         ...row,
         totamt: 0,
-        num: seq++,
+        num: ++temp2,
       };
     });
     try {
@@ -1095,10 +1101,14 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       amt: 0,
       attdatnum: "",
       auto: "N",

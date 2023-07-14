@@ -63,7 +63,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
-
+let temp = 0;
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
@@ -515,9 +515,11 @@ const BA_A0070W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       if (
-        !((dataItem.rowstatus != "N" && field == "basedt") ||
-        (dataItem.rowstatus != "N" && field == "amtunit")
-      )) {
+        !(
+          (dataItem.rowstatus != "N" && field == "basedt") ||
+          (dataItem.rowstatus != "N" && field == "amtunit")
+        )
+      ) {
         const newData = mainDataResult.data.map((item) =>
           item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
             ? {
@@ -585,10 +587,13 @@ const BA_A0070W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       amtunit: filters.amtunit,
       amtyn: 0,
       baseamt: 0,
@@ -891,21 +896,21 @@ const BA_A0070W: React.FC = () => {
             <tr>
               <th>기준일</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.frdt,
-                      end: filters.todt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        frdt: e.value.start,
-                        todt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>화폐단위</th>
               <td>
                 {customOptionData !== null && (

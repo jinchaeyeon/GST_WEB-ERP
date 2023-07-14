@@ -211,7 +211,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </>
   );
 };
-
+let temp = 0;
 const CM_A4100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1054,11 +1054,14 @@ const CM_A4100W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = subDataResult.total + deletedMainRows.length + 1;
-
+    subDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       attdatnum: "",
       datnum: "",
       datnum1: "",

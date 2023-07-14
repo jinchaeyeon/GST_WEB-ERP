@@ -62,7 +62,7 @@ import { isLoading, loginResultState } from "../store/atoms";
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "sub_code";
-
+let temp = 0;
 let deletedMainRows: object[] = [];
 
 const CustomComboField = [
@@ -623,11 +623,14 @@ const PR_A0030W: React.FC = () => {
 
     if (valid != true) alert("동일한 공정이 존재합니다.");
     else {
-      let seq = subDataResult.total + deletedMainRows.length + 1;
-
+      subDataResult.data.map((item) => {
+        if(item.num > temp){
+          temp = item.num
+        }
+    })
       setIfSelectFirstRow2(false);
       const newDataItem = {
-        [SUB_DATA_ITEM_KEY]: seq,
+        [SUB_DATA_ITEM_KEY]: ++temp,
         chlditemcd: "",
         chlditemnm: "",
         custcd: "",

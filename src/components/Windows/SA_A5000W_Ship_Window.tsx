@@ -56,7 +56,7 @@ type IWindow = {
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
-
+let temp = 0;
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -546,10 +546,13 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     });
 
     if (valid == true) {
-      let seq = subDataResult.total + 1;
-
+      subDataResult.data.map((item) => {
+        if(item.num > temp){
+          temp = item.num
+        }
+    })
       const newDataItem = {
-        [DATA_ITEM_KEY]: seq + 1,
+        [DATA_ITEM_KEY]: ++temp,
         amt: selectRow.amt,
         amtunit: selectRow.amtunit,
         chk: selectRow.chk,

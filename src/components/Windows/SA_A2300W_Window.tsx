@@ -54,8 +54,11 @@ import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
-import { isLoading,   deletedAttadatnumsState,
-  unsavedAttadatnumsState, } from "../../store/atoms";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
@@ -67,7 +70,7 @@ type IWindow = {
   setData(data: object, filter: object, deletedMainRows: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   reload: boolean;
 };
-
+let temp = 0;
 type Idata = {
   amt: number;
   amtunit: string;
@@ -165,13 +168,13 @@ const CopyWindow = ({
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-    // 삭제할 첨부파일 리스트를 담는 함수
-    const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
-    // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-    const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-      unsavedAttadatnumsState
-    );
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -299,7 +302,7 @@ const CopyWindow = ({
 
   const onClose = () => {
     if (unsavedAttadatnums.length > 0)
-    setDeletedAttadatnums(unsavedAttadatnums);
+      setDeletedAttadatnums(unsavedAttadatnums);
 
     setVisible(false);
   };
@@ -505,8 +508,8 @@ const CopyWindow = ({
         dvnm: data.dvnm,
         dvnum: data.dvnum,
         shipdt: isValidDate(data.shipdt)
-        ? new Date(dateformat(data.shipdt))
-        : null,
+          ? new Date(dateformat(data.shipdt))
+          : null,
         cargocd: data.cargocd,
         trcost: data.trcost,
         files: data.files,
@@ -556,7 +559,7 @@ const CopyWindow = ({
     // if(filters.custcd == ""){
     //   alert("출하처코드를 선택하여 주세요.");
     // } else {
-      setCopyWindowVisible(true);
+    setCopyWindowVisible(true);
     // }
   };
 
@@ -585,32 +588,26 @@ const CopyWindow = ({
     });
 
     if (dataItem.length === 0) return false;
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
 
     const rows = dataItem.map((row: any) => {
-      seq += seq + 1;
+      mainDataResult.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
+        }
+      });
       return {
         ...row,
-        num: seq,
+        num: ++temp,
       };
     });
 
     try {
-      if(filters.custcd == "" && filters.custnm == "") {
+      if (filters.custcd == "" && filters.custnm == "") {
         setFilters((prev) => ({
           ...prev,
           custcd: dataItem[0].custcd != undefined ? dataItem[0].custcd : "",
           custnm: dataItem[0].custnm != undefined ? dataItem[0].custnm : "",
-        }))
+        }));
       }
       rows.map((item: any) => {
         setMainDataResult((prev) => {
@@ -1170,10 +1167,7 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow2
-          setVisible={setCopyWindowVisible}
-          setData={setCopyData}
-        />
+        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow

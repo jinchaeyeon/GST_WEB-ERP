@@ -118,7 +118,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td></td>
   );
 };
-
+let temp = 0;
 let targetRowIndex: null | number = null;
 
 const BA_A0040: React.FC = () => {
@@ -888,10 +888,13 @@ const BA_A0040: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = subData2Result.total + deletedMainRows.length + 1;
-
+    subData2Result.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY2]: seq,
+      [SUB_DATA_ITEM_KEY2]: ++temp,
       recdt: convertDateToStr(new Date()),
       unpitem: "SYS01",
       amtunit: "KRW",
@@ -901,7 +904,8 @@ const BA_A0040: React.FC = () => {
       inEdit: "recdt",
       rowstatus: "N",
     };
-    setSelectedsubData2State({ [newDataItem.num]: true });
+
+    setSelectedsubData2State({ [newDataItem[SUB_DATA_ITEM_KEY2]]: true });
     setSubData2Result((prev) => {
       return {
         data: [newDataItem, ...prev.data],

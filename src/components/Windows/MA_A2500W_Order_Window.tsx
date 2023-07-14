@@ -63,7 +63,7 @@ type IWindow = {
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 3;
-
+let temp = 0;
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -925,7 +925,12 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     } else if (datas.doqty > datas.nowqty) {
       alert("수량이 초과되었습니다.");
     } else {
-      let seq = subDataResult.total + 1;
+      subDataResult.data.map((item) => {
+        if(item.num > temp){
+          temp = item.num
+        }
+    })
+     
       const selectRow = detailDataResult2.data.filter(
         (item: any) =>
           item.num == Object.getOwnPropertyNames(detailselectedState2)[0]
@@ -937,7 +942,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
 
       if (data.length == 0) {
         const newDataItem = {
-          [DATA_ITEM_KEY]: seq + 1,
+          [DATA_ITEM_KEY]: ++temp,
           custcd: selectRow.custcd,
           custnm: selectRow.custnm,
           itemacnt: selectRow.itemacnt,

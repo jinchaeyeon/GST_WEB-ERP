@@ -104,7 +104,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
+let temp = 0;
 const HU_A2100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -712,10 +712,13 @@ const HU_A2100W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       apply_start_date: "",
       orgdiv: "",
       paycd: "",
@@ -905,7 +908,7 @@ const HU_A2100W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

@@ -76,6 +76,8 @@ type TKendoWindow = {
   modal?: boolean;
 };
 let targetRowIndex: null | number = null;
+let temp = 0;
+let temp2 = 0;
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -752,7 +754,7 @@ const KendoWindow = ({
       console.log("[오류 발생]");
       console.log(data);
 
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화
@@ -775,24 +777,24 @@ const KendoWindow = ({
       console.log("[오류 발생]");
       console.log(data);
 
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
   };
 
   const handleSubmit = () => {
-    //alert(JSON.stringify(dataItem));
-
     let valid = true;
 
     //검증
     try {
       detailDataResult.data.forEach((item: any, idx: number) => {
-        if (initialVal.code_length < item.sub_code.length) {
+        if (initialVal.code_length < item.sub_code.length && valid == true) {
           throw findMessage(messagesData, "SY_A0010W_007");
+          valid = false;
         }
         detailDataResult.data.forEach((chkItem: any, chkIdx: number) => {
-          if (item.sub_code === chkItem.sub_code && idx !== chkIdx) {
+          if (item.sub_code === chkItem.sub_code && idx !== chkIdx && valid == true) {
             throw findMessage(messagesData, "SY_A0010W_003");
+            valid = false;
           }
         });
 
@@ -1009,10 +1011,13 @@ const KendoWindow = ({
   };
 
   const onAddClick = () => {
-    let seq = detailDataResult.total + deletedMainRows.length + 1;
-
+    detailDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       sort_seq: 0,
       use_yn: "Y",
       numref1: 0,
@@ -1058,11 +1063,11 @@ const KendoWindow = ({
     }
 
     const isLastDataDeleted =
-      detailDataResult.data.length === 1 && filters.pgNum > 1;
+      detailDataResult.data.length == 1 && filters.pgNum > 1;
 
     if (isLastDataDeleted) {
       setPage({
-        skip: PAGE_SIZE * (filters.pgNum - 2),
+        skip: ((filters.pgNum == 1) || (filters.pgNum == 0)) ? 0: PAGE_SIZE * (filters.pgNum - 2),
         take: PAGE_SIZE,
       });
     }
@@ -1105,15 +1110,18 @@ const KendoWindow = ({
   };
 
   const onCopyClick = () => {
-    let seq = detailDataResult.total + deletedMainRows.length + 1;
-
+    detailDataResult.data.map((item) => {
+      if (item.num > temp2) {
+        temp2 = item.num;
+      }
+    });
     const newData = detailDataResult.data.filter((item) => item.chk == true);
 
     newData.map((item) => {
       const data = {
         ...item,
         rowstatus: "N",
-        num: seq,
+        num: ++temp2,
       };
       setDetailSelectedState({ [data[DATA_ITEM_KEY]]: true });
       setDetailDataResult((prev) => {
@@ -1122,7 +1130,6 @@ const KendoWindow = ({
           total: prev.total + 1,
         };
       });
-      seq++;
     });
   };
 

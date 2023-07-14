@@ -79,7 +79,8 @@ const DETAIL_DATA_ITEM_KEY = "num";
 const dateField = ["outdt1", "outdt2", "outdt3", "purdt"];
 const numberField = ["asfin"];
 const lockField = ["fxmngnum", "itemcd", "itemnm", "insiz", "serialno"];
-
+let temp = 0;
+let temp2 = 0;
 type TdataArr = {
   rowstatus_s: string[];
   fxmngnum_s: string[];
@@ -864,11 +865,15 @@ const MA_A3000W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = detailDataResult.total + deletedMainRows.length + 1;
+    detailDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const datas = detailDataResult.data[detailDataResult.data.length - 1];
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       address: "",
       amt: 0,
       custcd: "",
@@ -1934,23 +1939,15 @@ const MA_A3000W: React.FC = () => {
   
   
   const setCopyData = (data: any) => {
-    let seq = 1;
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-    if (mainDataResult.total > seq) {
-      seq = mainDataResult.total + 1;
-    }
-
     try {
       data.map((item: any) => {
+        mainDataResult.data.map((item) => {
+          if(item.num > temp2){
+            temp2 = item.num
+          }
+      })
         const newDataItem = {
-          [DATA_ITEM_KEY]: seq,
+          [DATA_ITEM_KEY]: ++temp2,
           asfin: "0",
           attdatnum: "",
           chk: "",
@@ -1984,7 +1981,6 @@ const MA_A3000W: React.FC = () => {
             total: prev.total + 1,
           };
         });
-        seq++;
       });
     } catch (e) {
       alert(e);

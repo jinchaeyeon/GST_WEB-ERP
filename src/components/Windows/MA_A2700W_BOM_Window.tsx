@@ -54,7 +54,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
-
+let temp = 0;
 const topHeight = 174.59;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 3;
@@ -695,13 +695,18 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
 
   const onRowDoubleClick = (props: any) => {
     const datas = props.dataItem;
-    let seq = subDataResult.total + 1;
+
+    subDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const selectRow = detailDataResult.data.filter(
       (item: any) =>
         item.num == Object.getOwnPropertyNames(detailselectedState)[0]
     )[0];
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq + 1,
+      [DATA_ITEM_KEY]: ++temp,
       amt: selectRow.amt,
       amtunit: selectRow.amtunit,
       chk: selectRow.chk,

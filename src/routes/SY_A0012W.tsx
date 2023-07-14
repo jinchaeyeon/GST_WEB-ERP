@@ -119,7 +119,7 @@ const defaultItemInfo = {
   url: "",
   user_id: "",
 };
-
+let temp = 0;
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
   setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
@@ -298,10 +298,12 @@ const EncryptedCell2 = (props: GridCellProps) => {
         "@p_work_type": "init",
         "@p_user_id": dataItem.user_id == undefined ? "" : dataItem.user_id,
         "@p_old_password": "",
-        "@p_new_password": dataItem.user_id == undefined ? "" : dataItem.user_id,
-        "@p_check_new_password": dataItem.user_id == undefined ? "" : dataItem.user_id,
+        "@p_new_password":
+          dataItem.user_id == undefined ? "" : dataItem.user_id,
+        "@p_check_new_password":
+          dataItem.user_id == undefined ? "" : dataItem.user_id,
         "@p_id": userId,
-        "@p_pc": pc
+        "@p_pc": pc,
       },
     };
 
@@ -312,7 +314,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
     }
 
     if (data.isSuccess === true) {
-      alert("정상적으로 처리되었습니다.")
+      alert("정상적으로 처리되었습니다.");
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -665,7 +667,7 @@ const SY_A0120: React.FC = () => {
     }));
     setLoading(false);
   };
-  
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (targetRowIndex !== null && gridRef.current) {
@@ -824,10 +826,13 @@ const SY_A0120: React.FC = () => {
   );
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       apply_start_date: convertDateToStr(new Date()),
       apply_end_date: "19991231",
       birdt: "19991231",
@@ -874,7 +879,7 @@ const SY_A0120: React.FC = () => {
 
     if (isLastDataDeleted) {
       setPage({
-        skip: PAGE_SIZE * (filters.pgNum - 2),
+        skip: ((filters.pgNum == 1) || (filters.pgNum == 0)) ? 0: PAGE_SIZE * (filters.pgNum - 2),
         take: PAGE_SIZE,
       });
     }

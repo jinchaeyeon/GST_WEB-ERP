@@ -74,7 +74,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
-
+let temp = 0;
 const NumberField = [
   "amt",
   "rate",
@@ -694,11 +694,14 @@ const CM_A8210W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     try {
       const newDataItem = {
-        [DATA_ITEM_KEY]: seq,
+        [DATA_ITEM_KEY]: ++temp,
         amt: 0,
         depre_price: 0,
         extra_field1: "",

@@ -77,7 +77,7 @@ import CopyWindow2 from "../components/Windows/BA_A0080W_UnitCopy_Window";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import NameCell from "../components/Cells/NameCell";
 import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
-
+let temp = 0;
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
   setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
@@ -968,12 +968,15 @@ const BA_A0080: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     try {
       if (filters.itemacnt != "") {
         const newDataItem = {
-          [DATA_ITEM_KEY]: seq,
+          [DATA_ITEM_KEY]: ++temp,
           amtunit: filters.amtunit,
           bnatur: "",
           insiz: "",

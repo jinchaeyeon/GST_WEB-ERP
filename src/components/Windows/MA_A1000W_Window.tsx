@@ -159,7 +159,8 @@ interface IItemData {
   custitemnm: string;
 }
 let deletedMainRows: object[] = [];
-
+let temp = 0;
+let temp2 = 0;
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
   setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
@@ -364,8 +365,8 @@ const CopyWindow = ({
     setBizComponentData
   );
 
-   //공통코드 리스트 조회 ()
-   const [qtyunitListData, setQtyunitListData] = useState([
+  //공통코드 리스트 조회 ()
+  const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
 
@@ -488,7 +489,7 @@ const CopyWindow = ({
       if (data.isSuccess === true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
-        
+
         if (rowCount > 0) {
           const invunitnm = rows[0].invunit;
           const {
@@ -822,12 +823,16 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
     const rows = data.map((row: any) => {
       return {
         ...row,
         totamt: 0,
-        num: seq++,
+        [DATA_ITEM_KEY]: ++temp2,
       };
     });
 
@@ -890,7 +895,7 @@ const CopyWindow = ({
           filters.person == undefined
         ) {
           throw findMessage(messagesData, "MA_A1000W_003");
-        }  else {
+        } else {
           if (valid == true) {
             setData(mainDataResult.data, filters, deletedMainRows);
             deletedMainRows = [];
@@ -927,7 +932,7 @@ const CopyWindow = ({
 
     setMainDataState({});
   };
-  
+
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -1040,11 +1045,16 @@ const CopyWindow = ({
       });
     }
   };
- 
+
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
+
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       amt: 0,
       chk: "",
       finyn: "",
@@ -1070,7 +1080,7 @@ const CopyWindow = ({
       wonamt: 0,
       rowstatus: "N",
     };
-  
+
     setMainDataResult((prev) => {
       return {
         data: [newDataItem, ...prev.data],

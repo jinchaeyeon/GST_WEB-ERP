@@ -128,7 +128,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
+let temp = 0;
+let temp2 = 0;
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
     ariaColumnIndex,
@@ -836,10 +837,13 @@ const HU_A4100W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       Semiannualgb: "1",
       amt: 0,
       orgdiv: "01",
@@ -869,11 +873,14 @@ const HU_A4100W: React.FC = () => {
   };
 
   const setAmtData = (data: number) => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
     mainDataResult2.data.map((item) => {
+      mainDataResult.data.map((item) => {
+        if(item.num > temp2){
+          temp2 = item.num
+        }
+    })
       const newDataItem = {
-        [DATA_ITEM_KEY]: seq,
+        [DATA_ITEM_KEY]: ++temp2,
         Semiannualgb: filters.Semiannualgb,
         amt: data,
         orgdiv: "01",
@@ -890,7 +897,6 @@ const HU_A4100W: React.FC = () => {
           total: prev.total + 1,
         };
       });
-      seq++;
     });
   };
 

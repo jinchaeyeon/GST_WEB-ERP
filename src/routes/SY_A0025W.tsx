@@ -77,7 +77,7 @@ const SUB_DATA_ITEM_KEY = "num";
 let deletedMainRows: any[] = [];
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
-
+let temp = 0;
 const SY_A0025W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -669,10 +669,13 @@ const SY_A0025W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = subDataResult.total + deletedMainRows.length + 1;
-
+    subDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       number_prefix: "",
       last_serno: 0,
       rowstatus: "N",
@@ -729,99 +732,119 @@ const SY_A0025W: React.FC = () => {
     ) {
       alert("필수항목을 채워주세요.");
     } else {
-      let data: any;
-      let data2: any;
-      let data3: any;
-      try {
-        data = await processApi<any>("procedure", para);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true && infomation.worktype != "D") {
-        const dataItem = subDataResult.data.filter((item: any) => {
-          return (
-            (item.rowstatus === "N" || item.rowstatus === "U") &&
-            item.rowstatus !== undefined
-          );
-        });
-
-        dataItem.map(async (item) => {
-          const para2: Iparameters = {
-            procedureName: "P_SY_A0025W_S1",
-            pageNumber: 0,
-            pageSize: 0,
-            parameters: {
-              "@p_work_type": item.rowstatus,
-              "@p_numbering_id": infomation.numbering_id,
-              "@p_number_prefix": item.number_prefix,
-              "@p_last_serno": item.last_serno,
-            },
-          };
-          try {
-            data2 = await processApi<any>("procedure", para2);
-          } catch (error) {
-            data2 = null;
+      let valid = false;
+      subDataResult.data.map((item: any) => {
+        subDataResult.data.map((item2: any) => {
+          if (
+            item.number_prefix == item2.number_prefix &&
+            item.num != item2.num &&
+            valid == false
+          ) {
+            alert("채번접두사가 중복됩니다.");
+            valid = true;
           }
         });
-        deletedMainRows.map(async (item) => {
-          const para2: Iparameters = {
-            procedureName: "P_SY_A0025W_S1",
-            pageNumber: 0,
-            pageSize: 0,
-            parameters: {
-              "@p_work_type": item.rowstatus,
-              "@p_numbering_id": infomation.numbering_id,
-              "@p_number_prefix": item.number_prefix,
-              "@p_last_serno": item.last_serno,
-            },
-          };
-          try {
-            data3= await processApi<any>("procedure", para2);
-          } catch (error) {
-            data3 = null;
-          }
-        });
+      });
+
+      if (valid == false) {
+        let data: any;
+        let data2: any;
+        let data3: any;
+        try {
+          data = await processApi<any>("procedure", para);
+        } catch (error) {
+          data = null;
+        }
+
+        if (data.isSuccess == true && infomation.worktype != "D") {
+          const dataItem = subDataResult.data.filter((item: any) => {
+            return (
+              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              item.rowstatus !== undefined
+            );
+          });
+
+          dataItem.map(async (item) => {
+            const para2: Iparameters = {
+              procedureName: "P_SY_A0025W_S1",
+              pageNumber: 0,
+              pageSize: 0,
+              parameters: {
+                "@p_work_type": item.rowstatus,
+                "@p_numbering_id": infomation.numbering_id,
+                "@p_number_prefix": item.number_prefix,
+                "@p_last_serno": item.last_serno,
+              },
+            };
+            try {
+              data2 = await processApi<any>("procedure", para2);
+            } catch (error) {
+              data2 = null;
+            }
+          });
+          deletedMainRows.map(async (item) => {
+            const para2: Iparameters = {
+              procedureName: "P_SY_A0025W_S1",
+              pageNumber: 0,
+              pageSize: 0,
+              parameters: {
+                "@p_work_type": item.rowstatus,
+                "@p_numbering_id": infomation.numbering_id,
+                "@p_number_prefix": item.number_prefix,
+                "@p_last_serno": item.last_serno,
+              },
+            };
+            try {
+              data3 = await processApi<any>("procedure", para2);
+            } catch (error) {
+              data3 = null;
+            }
+          });
 
           const findRow = subDataResult.data.filter(
-            (row: any) => row.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
+            (row: any) =>
+              row.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
           )[0];
           setFilters2((prev) => ({
             ...prev,
             find_row_value: findRow.number_prefix,
           }));
-    
 
-        if(data.isSuccess == true) {
+          if (data.isSuccess == true) {
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: data.returnString,
+              isSearch: true,
+            }));
+          }
+        } else if (data.isSuccess == true && infomation.worktype == "D") {
+          const isLastDataDeleted =
+            mainDataResult.data.length === 1 && filters.pgNum > 1;
+          const findRowIndex = mainDataResult.data.findIndex(
+            (row: any) =>
+              row.num == Object.getOwnPropertyNames(selectedState)[0]
+          );
+          if (isLastDataDeleted) {
+            setPage({
+              skip:
+                filters.pgNum == 1 || filters.pgNum == 0
+                  ? 0
+                  : PAGE_SIZE * (filters.pgNum - 2),
+              take: PAGE_SIZE,
+            });
+          }
+          resetAllGrid();
           setFilters((prev) => ({
             ...prev,
-            find_row_value: data.returnString,
+            find_row_value:
+              mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
+                .numbering_id,
+            pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
             isSearch: true,
           }));
+        } else {
+          alert(data.resultMessage);
         }
-      } else if (data.isSuccess == true && infomation.worktype == "D") {
-        const isLastDataDeleted =
-          mainDataResult.data.length === 1 && filters.pgNum > 1;
-        const findRowIndex = mainDataResult.data.findIndex(
-          (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
-        );
-        if (isLastDataDeleted) {
-          setPage({
-            skip: PAGE_SIZE * (filters.pgNum - 2),
-            take: PAGE_SIZE,
-          });
-        }
-        resetAllGrid();
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value:
-            mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
-              .numbering_id,
-          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
-          isSearch: true,
-        }));
-      } else {
-        alert(data.resultMessage);
       }
     }
   };
@@ -851,11 +874,14 @@ const SY_A0025W: React.FC = () => {
       data = subDataResult.data[Math.min(...Object) - 1];
     }
     const isLastDataDeleted =
-    subDataResult.data.length === 1 && filters2.pgNum > 1;
+      subDataResult.data.length === 1 && filters2.pgNum > 1;
 
     if (isLastDataDeleted) {
       setPage2({
-        skip: PAGE_SIZE * (filters2.pgNum - 2),
+        skip:
+          filters2.pgNum == 1 || filters2.pgNum == 0
+            ? 0
+            : PAGE_SIZE * (filters2.pgNum - 2),
         take: PAGE_SIZE,
       });
     }
@@ -1118,14 +1144,16 @@ const SY_A0025W: React.FC = () => {
                         />
                       </td>
                     )}
-                    <th>
-                    </th>
-                    <td>                    <Checkbox
+                    <th></th>
+                    <td>
+                      {" "}
+                      <Checkbox
                         name="use_yn"
                         label={"사용여부"}
                         value={infomation.use_yn}
                         onChange={InputChange}
-                      /></td>
+                      />
+                    </td>
                   </tr>
                   <tr>
                     <th>관리번호명</th>
@@ -1165,316 +1193,324 @@ const SY_A0025W: React.FC = () => {
             </FormBoxWrap>
           </GridContainer>
           <GridContainer width={`100%`}>
-          <GridContainerWrap>
-            <GridContainer width={`70%`}>
-              <GridTitleContainer>
-                <GridTitle>채번구성정보</GridTitle>
-              </GridTitleContainer>
-              <FormBoxWrap border={true} style={{ height: "56.5vh", paddingLeft: "5%", display: "flex", alignItems: "center"}}>
-                <div>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th>채번요소1</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="number_element1"
-                            value={infomation.number_element1}
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                            className="required"
-                          />
-                        )}
-                      </td>
-                      <th>채번요소값1</th>
-                      {infomation.number_element1 == "FIXED" ? (
-                        <td>
-                          <Input
-                            name="number_value1"
-                            type="text"
-                            value={infomation.number_value1}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      ) : (
-                        <td>
-                          <Input
-                            name="number_value1"
-                            type="text"
-                            value={infomation.number_value1}
-                            className="readonly"
-                          />
-                        </td>
-                      )}
-                    </tr>
-                    <tr>
-                      <th>채번요소2</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="number_element2"
-                            value={infomation.number_element2}
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>채번요소값2</th>
-                      {infomation.number_element2 == "FIXED" ? (
-                        <td>
-                          <Input
-                            name="number_value2"
-                            type="text"
-                            value={infomation.number_value2}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      ) : (
-                        <td>
-                          <Input
-                            name="number_value2"
-                            type="text"
-                            value={infomation.number_value2}
-                            className="readonly"
-                          />
-                        </td>
-                      )}
-                    </tr>
-                    <tr>
-                      <th>채번요소3</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="number_element3"
-                            value={infomation.number_element3}
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>채번요소값3</th>
-                        {infomation.number_element3 == "FIXED" ? (
-                          <td>
-                            <Input
-                              name="number_value3"
-                              type="text"
-                              value={infomation.number_value3}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        ) : (
-                          <td>
-                            <Input
-                              name="number_value3"
-                              type="text"
-                              value={infomation.number_value3}
-                              className="readonly"
-                            />
-                          </td>
-                        )}
-                    </tr>
-                    <tr>
-                      <th>채번요소4</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="number_element4"
-                            value={infomation.number_element4}
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>채번요소값4</th>
-                        {infomation.number_element4 == "FIXED" ? (
-                          <td>
-                            <Input
-                              name="number_value4"
-                              type="text"
-                              value={infomation.number_value4}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        ) : (
-                          <td>
-                            <Input
-                              name="number_value4"
-                              type="text"
-                              value={infomation.number_value4}
-                              className="readonly"
-                            />
-                          </td>
-                        )}
-                    </tr>
-                    <tr>
-                      <th>채번요소5</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="number_element5"
-                            value={infomation.number_element5}
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>채번요소값5</th>
-                        {infomation.number_element5 == "FIXED" ? (
-                          <td>
-                            <Input
-                              name="number_value5"
-                              type="text"
-                              value={infomation.number_value5}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        ) : (
-                          <td>
-                            <Input
-                              name="number_value5"
-                              type="text"
-                              value={infomation.number_value5}
-                              className="readonly"
-                            />
-                          </td>
-                        )}
-                    </tr>
-                    <tr>
-                      <th>시작채번연변</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="start_serno"
-                          type="text"
-                          value={infomation.start_serno}
-                          onChange={InputChange}
-                          className="required"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>
-                        <Button
-                          onClick={onSample}
-                          fillMode="outline"
-                          themeColor={"primary"}
-                        >
-                          샘플채번보기
-                        </Button>
-                      </th>
-                      <td colSpan={3}>
-                        <Input
-                          name="sampleno"
-                          type="text"
-                          value={infomation.sampleno}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-                </div>
-              </FormBoxWrap>
-            </GridContainer>
-            <GridContainer width={`calc(30% - ${GAP}px)`}>
-              <ExcelExport
-                data={mainDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-              >
+            <GridContainerWrap>
+              <GridContainer width={`70%`}>
                 <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                  </ButtonContainer>
+                  <GridTitle>채번구성정보</GridTitle>
                 </GridTitleContainer>
-                <Grid
-                  style={{ height: "56.5vh" }}
-                  data={process(
-                    subDataResult.data.map((row) => ({
-                      ...row,
-                      basedt: row.basedt
-                        ? new Date(dateformat(row.basedt))
-                        : new Date(),
-                      rowstatus:
-                        row.rowstatus == null ||
-                        row.rowstatus == "" ||
-                        row.rowstatus == undefined
-                          ? ""
-                          : row.rowstatus,
-                      [SELECTED_FIELD]: selectedsubDataState[idGetter(row)],
-                    })),
-                    subDataState
-                  )}
-                  {...subDataState}
-                  onDataStateChange={onSubDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "multiple",
+                <FormBoxWrap
+                  border={true}
+                  style={{
+                    height: "56.5vh",
+                    paddingLeft: "5%",
+                    display: "flex",
+                    alignItems: "center",
                   }}
-                  onSelectionChange={onSubDataSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={subDataResult.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef2}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onSubDataSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  //incell 수정 기능
-                  onItemChange={onMainItemChange}
-                  cellRender={customCellRender}
-                  rowRender={customRowRender}
-                  editField={EDIT_FIELD}
                 >
-                  <GridColumn
-                    field="rowstatus"
-                    title=" "
-                    width="50px"
-                    editable={false}
-                  />
-                  <GridColumn
-                    field="number_prefix"
-                    title="채번접두사"
-                    width="155px"
-                    footerCell={subTotalFooterCell}
-                  />
-                  <GridColumn
-                    field="last_serno"
-                    title="최종순번"
-                    cell={NumberCell}
-                    width="150px"
-                  />
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
+                  <div>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>채번요소1</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="number_element1"
+                                value={infomation.number_element1}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                              />
+                            )}
+                          </td>
+                          <th>채번요소값1</th>
+                          {infomation.number_element1 == "FIXED" ? (
+                            <td>
+                              <Input
+                                name="number_value1"
+                                type="text"
+                                value={infomation.number_value1}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          ) : (
+                            <td>
+                              <Input
+                                name="number_value1"
+                                type="text"
+                                value={infomation.number_value1}
+                                className="readonly"
+                              />
+                            </td>
+                          )}
+                        </tr>
+                        <tr>
+                          <th>채번요소2</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="number_element2"
+                                value={infomation.number_element2}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
+                          </td>
+                          <th>채번요소값2</th>
+                          {infomation.number_element2 == "FIXED" ? (
+                            <td>
+                              <Input
+                                name="number_value2"
+                                type="text"
+                                value={infomation.number_value2}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          ) : (
+                            <td>
+                              <Input
+                                name="number_value2"
+                                type="text"
+                                value={infomation.number_value2}
+                                className="readonly"
+                              />
+                            </td>
+                          )}
+                        </tr>
+                        <tr>
+                          <th>채번요소3</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="number_element3"
+                                value={infomation.number_element3}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
+                          </td>
+                          <th>채번요소값3</th>
+                          {infomation.number_element3 == "FIXED" ? (
+                            <td>
+                              <Input
+                                name="number_value3"
+                                type="text"
+                                value={infomation.number_value3}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          ) : (
+                            <td>
+                              <Input
+                                name="number_value3"
+                                type="text"
+                                value={infomation.number_value3}
+                                className="readonly"
+                              />
+                            </td>
+                          )}
+                        </tr>
+                        <tr>
+                          <th>채번요소4</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="number_element4"
+                                value={infomation.number_element4}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
+                          </td>
+                          <th>채번요소값4</th>
+                          {infomation.number_element4 == "FIXED" ? (
+                            <td>
+                              <Input
+                                name="number_value4"
+                                type="text"
+                                value={infomation.number_value4}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          ) : (
+                            <td>
+                              <Input
+                                name="number_value4"
+                                type="text"
+                                value={infomation.number_value4}
+                                className="readonly"
+                              />
+                            </td>
+                          )}
+                        </tr>
+                        <tr>
+                          <th>채번요소5</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="number_element5"
+                                value={infomation.number_element5}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
+                          </td>
+                          <th>채번요소값5</th>
+                          {infomation.number_element5 == "FIXED" ? (
+                            <td>
+                              <Input
+                                name="number_value5"
+                                type="text"
+                                value={infomation.number_value5}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          ) : (
+                            <td>
+                              <Input
+                                name="number_value5"
+                                type="text"
+                                value={infomation.number_value5}
+                                className="readonly"
+                              />
+                            </td>
+                          )}
+                        </tr>
+                        <tr>
+                          <th>시작채번연변</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="start_serno"
+                              type="text"
+                              value={infomation.start_serno}
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>
+                            <Button
+                              onClick={onSample}
+                              fillMode="outline"
+                              themeColor={"primary"}
+                            >
+                              샘플채번보기
+                            </Button>
+                          </th>
+                          <td colSpan={3}>
+                            <Input
+                              name="sampleno"
+                              type="text"
+                              value={infomation.sampleno}
+                              onChange={InputChange}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </div>
+                </FormBoxWrap>
+              </GridContainer>
+              <GridContainer width={`calc(30% - ${GAP}px)`}>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                >
+                  <GridTitleContainer>
+                    <GridTitle>상세정보</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: "56.5vh" }}
+                    data={process(
+                      subDataResult.data.map((row) => ({
+                        ...row,
+                        basedt: row.basedt
+                          ? new Date(dateformat(row.basedt))
+                          : new Date(),
+                        rowstatus:
+                          row.rowstatus == null ||
+                          row.rowstatus == "" ||
+                          row.rowstatus == undefined
+                            ? ""
+                            : row.rowstatus,
+                        [SELECTED_FIELD]: selectedsubDataState[idGetter(row)],
+                      })),
+                      subDataState
+                    )}
+                    {...subDataState}
+                    onDataStateChange={onSubDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "multiple",
+                    }}
+                    onSelectionChange={onSubDataSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={subDataResult.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onSubDataSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //incell 수정 기능
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="rowstatus"
+                      title=" "
+                      width="50px"
+                      editable={false}
+                    />
+                    <GridColumn
+                      field="number_prefix"
+                      title="채번접두사"
+                      width="155px"
+                      footerCell={subTotalFooterCell}
+                    />
+                    <GridColumn
+                      field="last_serno"
+                      title="최종순번"
+                      cell={NumberCell}
+                      width="150px"
+                    />
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </GridContainerWrap>
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>

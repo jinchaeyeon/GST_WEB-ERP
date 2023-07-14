@@ -132,7 +132,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td></td>
   );
 };
-
+let temp = 0;
 const PR_B3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -547,8 +547,11 @@ const PR_B3000W: React.FC = () => {
   );
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
@@ -559,7 +562,7 @@ const PR_B3000W: React.FC = () => {
     );
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       rowstatus: "N",
       qty: 0,
       totwgt: 0,

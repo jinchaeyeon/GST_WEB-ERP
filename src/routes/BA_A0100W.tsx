@@ -72,7 +72,8 @@ const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
-
+let temp = 0;
+let temp2 = 0;
 const CustomComboField = ["roomdiv", "animalkind", "testpart"];
 const checkField = ["inspect_yn", "use_yn", "calculate_yn"];
 const numberField = ["cageqty"];
@@ -640,10 +641,13 @@ const BA_A0100W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       animalkind: "",
       area: "",
       calculate_yn: "Y",
@@ -668,11 +672,14 @@ const BA_A0100W: React.FC = () => {
   };
 
   const onAddClick2 = () => {
-    let seq = subDataResult.total + deletedMainRows2.length + 1;
-
+    subDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
     const data = mainDataResult.data.filter((item) => item.num == Object.getOwnPropertyNames(selectedState)[0])[0];
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY]: seq,
+      [SUB_DATA_ITEM_KEY]: ++temp2,
       cageqty: 0,
       lacno: "",
       remark: "",

@@ -169,6 +169,7 @@ interface IItemData {
   custitemnm: string;
 }
 let deletedMainRows: object[] = [];
+let temp = 0;
 
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
@@ -1131,9 +1132,13 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-       let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       amt: 0,
       amtunit: "",
       chk: "",

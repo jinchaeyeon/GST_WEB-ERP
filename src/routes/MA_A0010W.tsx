@@ -63,7 +63,7 @@ const DATA_ITEM_KEY = "num";
 const numberField = ["numref1"];
 const checkboxField = ["use_yn"];
 const requiredfield = ["sub_code"];
-
+let temp = 0;
 let deletedMainRows: object[] = [];
 const MA_A0010W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -309,10 +309,13 @@ const MA_A0010W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       code_name: "",
       extra_field6: "",
       numref1: 0,

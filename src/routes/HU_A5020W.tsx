@@ -107,7 +107,8 @@ interface IPrsnnumMulti {
   abilcd: string;
   postcd: string;
 }
-
+let temp = 0;
+let temp2 = 0;
 export const FormContext = createContext<{
   prsnnum: string;
   prsnnm: string;
@@ -889,10 +890,13 @@ const HU_A5020W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       amt: 0,
       attdatnum: "",
       dptcd: "",
@@ -931,10 +935,14 @@ const HU_A5020W: React.FC = () => {
   };
 
   const setPrsnnumMultiData = (data: IPrsnnumMulti[]) => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
     data.map((item) => {
+      mainDataResult.data.map((item) => {
+        if(item.num > temp2){
+          temp2 = item.num
+        }
+    })
       const newDataItem = {
-        [DATA_ITEM_KEY]: seq,
+        [DATA_ITEM_KEY]: ++temp2,
         amt: 0,
         attdatnum: "",
         dptcd: item.dptcd,
@@ -954,7 +962,6 @@ const HU_A5020W: React.FC = () => {
           total: prev.total + 1,
         };
       });
-      seq++;
     });
   };
 

@@ -91,7 +91,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
-
+let temp = 0;
 export const FormContext = createContext<{
   attdatnum: string;
   files: string;
@@ -973,10 +973,14 @@ const QC_A2000: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = detailDataResult2.total + deletedMainRows2.length + 1;
+    detailDataResult2.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       badcd: "",
       baddt: convertDateToStr(new Date()),
       badnum: "",
@@ -1383,7 +1387,12 @@ const QC_A2000: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-                           chk: typeof item.chk == "boolean" ? item.chk : item.chk =="Y" ? true : false,
+              chk:
+                typeof item.chk == "boolean"
+                  ? item.chk
+                  : item.chk == "Y"
+                  ? true
+                  : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -1808,21 +1817,21 @@ const QC_A2000: React.FC = () => {
             <tr>
               <th>발주일자</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.frdt,
-                      end: filters.todt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        frdt: e.value.start,
-                        todt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>발주번호</th>
               <td>
                 <Input
@@ -2070,7 +2079,7 @@ const QC_A2000: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
-                    title="행 삭제" 
+                    title="행 삭제"
                   ></Button>
                   <Button
                     onClick={onSaveClick}
@@ -2175,7 +2184,7 @@ const QC_A2000: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
-                    title="행 삭제" 
+                    title="행 삭제"
                   ></Button>
                   <Button
                     onClick={onSaveClick2}
@@ -2272,7 +2281,7 @@ const QC_A2000: React.FC = () => {
           setData={setItemData}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

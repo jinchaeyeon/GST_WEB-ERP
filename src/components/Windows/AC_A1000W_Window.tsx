@@ -19,10 +19,7 @@ import {
   GridCellProps,
 } from "@progress/kendo-react-grid";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import {
-  InputChangeEvent,
-  NumericTextBox,
-} from "@progress/kendo-react-inputs";
+import { InputChangeEvent, NumericTextBox } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -56,10 +53,7 @@ import {
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import {
-  loginResultState,
-  unsavedAttadatnumsState,
-} from "../../store/atoms";
+import { loginResultState, unsavedAttadatnumsState } from "../../store/atoms";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { EDIT_FIELD } from "../CommonString";
@@ -220,7 +214,8 @@ export const FormContext4 = createContext<{
   setMainDataState: (d: any) => void;
   // fetchGrid: (n: number) => any;
 }>({} as any);
-
+let temp = 0;
+let temp2 = 0;
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
     ariaColumnIndex,
@@ -647,7 +642,7 @@ const CopyWindow = ({
   }, [customOptionData]);
 
   useEffect(() => {
-    if(acntcd != "" && acntcd != undefined) {
+    if (acntcd != "" && acntcd != undefined) {
       const data = acntListData.find((items: any) => items.acntcd == acntcd);
       async function fetchDatas() {
         let datas: any;
@@ -655,7 +650,7 @@ const CopyWindow = ({
           (item) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         )[0];
-  
+
         const parameters2: Iparameters = {
           procedureName: "P_AC_A1000W_Q",
           pageNumber: mainPgNum,
@@ -693,7 +688,7 @@ const CopyWindow = ({
             "@p_find_row_value": "",
           },
         };
-  
+
         try {
           datas = await processApi<any>("procedure", parameters2);
         } catch (error) {
@@ -756,7 +751,7 @@ const CopyWindow = ({
                   ...item,
                 }
           );
-  
+
           setMainDataResult((prev) => {
             return {
               data: newData,
@@ -791,7 +786,7 @@ const CopyWindow = ({
   }, [custcd, custnm]);
 
   useEffect(() => {
-    if(stdrmkcd != "" && stdrmknm != undefined) {
+    if (stdrmkcd != "" && stdrmknm != undefined) {
       const data = acntListData.find((items: any) => items.acntcd == acntcd);
       async function fetchDatas() {
         let datas: any;
@@ -799,7 +794,7 @@ const CopyWindow = ({
           (item) =>
             item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         )[0];
-  
+
         const parameters2: Iparameters = {
           procedureName: "P_AC_A1000W_Q",
           pageNumber: mainPgNum,
@@ -826,7 +821,7 @@ const CopyWindow = ({
             "@p_toamt": 0,
             "@p_position": "",
             "@p_inoutdiv": "",
-            "@p_drcrdiv": select== undefined ? "" : select.drcrdiv,
+            "@p_drcrdiv": select == undefined ? "" : select.drcrdiv,
             "@p_actdt_s": "",
             "@p_acseq1_s": "",
             "@p_printcnt_s": "",
@@ -837,7 +832,7 @@ const CopyWindow = ({
             "@p_find_row_value": "",
           },
         };
-  
+
         try {
           datas = await processApi<any>("procedure", parameters2);
         } catch (error) {
@@ -1452,12 +1447,16 @@ const CopyWindow = ({
         reason_intax_deduction: data.reason_intax_deduction,
       }));
     } else {
-      let seq = mainDataResult.total + deletedMainRows.length + 1;
       const datas = mainDataResult.data[mainDataResult.data.length - 1];
 
       for (var i = 1; i < 3; i++) {
+        mainDataResult.data.map((item) => {
+          if(item.num > temp2){
+            temp2 = item.num
+          }
+      })
         const newDataItem = {
-          [DATA_ITEM_KEY]: seq,
+          [DATA_ITEM_KEY]: ++temp2,
           ackey: filters.ackey,
           acntbaldiv: "",
           acntcd: "",
@@ -1560,7 +1559,6 @@ const CopyWindow = ({
             total: prev.total + 1,
           };
         });
-        seq++;
       }
     }
   }, []);
@@ -1570,7 +1568,7 @@ const CopyWindow = ({
     if (ifSelectFirstRow) {
       if (mainDataResult.total > 0) {
         const firstRowData = mainDataResult.data[0];
-        if(firstRowData != undefined){
+        if (firstRowData != undefined) {
           setSelectedState({ [firstRowData.num]: true });
         }
 
@@ -1660,127 +1658,133 @@ const CopyWindow = ({
         alert("계정코드를 채워주세요.");
         valid = false;
         return false;
-      }
-      else if(item.controltype1 != "" && valid == true) {
-        if(item.controltype1 == "B") {
-          if(item.mngdata1 == "") {
+      } else if (item.controltype1 != "" && valid == true) {
+        if (item.controltype1 == "B") {
+          if (item.mngdata1 == "") {
             alert("관리항목값코드1을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype1 == "D") {
-          if(parseInt(convertDateToStr(item.mngdata1).substring(0,4)) < 2000) {
+        } else if (item.controltype1 == "D") {
+          if (
+            parseInt(convertDateToStr(item.mngdata1).substring(0, 4)) < 2000
+          ) {
             alert("관리항목값코드1을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype1 == "T") {
-          if(item.mngdatanm1 == "") {
+        } else if (item.controltype1 == "T") {
+          if (item.mngdatanm1 == "") {
             alert("관리항목값이름1을 입력해주세요.");
             valid = false;
             return false;
           }
         }
-      }
-      else if(item.controltype2 != "" && valid == true) {
-        if(item.controltype2 == "B") {
-          if(item.mngdata2 == "") {
+      } else if (item.controltype2 != "" && valid == true) {
+        if (item.controltype2 == "B") {
+          if (item.mngdata2 == "") {
             alert("관리항목값코드2을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype2 == "D") {
-          if(parseInt(convertDateToStr(item.mngdata2).substring(0,4)) < 2000) {
+        } else if (item.controltype2 == "D") {
+          if (
+            parseInt(convertDateToStr(item.mngdata2).substring(0, 4)) < 2000
+          ) {
             alert("관리항목값코드2을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype2 == "T") {
-          if(item.mngdatanm2 == "") {
+        } else if (item.controltype2 == "T") {
+          if (item.mngdatanm2 == "") {
             alert("관리항목값이름2을 입력해주세요.");
             valid = false;
             return false;
           }
         }
-      }
-      else if(item.controltype3 != "" && valid == true) {
-        if(item.controltype3 == "B") {
-          if(item.mngdata3 == "") {
+      } else if (item.controltype3 != "" && valid == true) {
+        if (item.controltype3 == "B") {
+          if (item.mngdata3 == "") {
             alert("관리항목값코드3을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype3 == "D") {
-          if(parseInt(convertDateToStr(item.mngdata3).substring(0,4)) < 2000) {
+        } else if (item.controltype3 == "D") {
+          if (
+            parseInt(convertDateToStr(item.mngdata3).substring(0, 4)) < 2000
+          ) {
             alert("관리항목값코드3을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype3 == "T") {
-          if(item.mngdatanm3 == "") {
+        } else if (item.controltype3 == "T") {
+          if (item.mngdatanm3 == "") {
             alert("관리항목값이름3을 입력해주세요.");
             valid = false;
             return false;
           }
         }
-      }
-      else if(item.controltype4 != "" && valid == true) {
-        if(item.controltype4 == "B") {
-          if(item.mngdata4 == "") {
+      } else if (item.controltype4 != "" && valid == true) {
+        if (item.controltype4 == "B") {
+          if (item.mngdata4 == "") {
             alert("관리항목값코드4을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype4 == "D") {
-          if(parseInt(convertDateToStr(item.mngdata4).substring(0,4)) < 2000) {
+        } else if (item.controltype4 == "D") {
+          if (
+            parseInt(convertDateToStr(item.mngdata4).substring(0, 4)) < 2000
+          ) {
             alert("관리항목값코드4을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype4 == "T") {
-          if(item.mngdatanm4 == "") {
+        } else if (item.controltype4 == "T") {
+          if (item.mngdatanm4 == "") {
             alert("관리항목값이름4을 입력해주세요.");
             valid = false;
             return false;
           }
         }
-      }
-      else if(item.controltype5 != "" && valid == true) {
-        if(item.controltype5 == "B") {
-          if(item.mngdata5 == "") {
+      } else if (item.controltype5 != "" && valid == true) {
+        if (item.controltype5 == "B") {
+          if (item.mngdata5 == "") {
             alert("관리항목값코드5을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype5 == "D") {
-          if(parseInt(convertDateToStr(item.mngdata5).substring(0,4)) < 2000) {
+        } else if (item.controltype5 == "D") {
+          if (
+            parseInt(convertDateToStr(item.mngdata5).substring(0, 4)) < 2000
+          ) {
             alert("관리항목값코드5을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype5 == "T") {
-          if(item.mngdatanm5 == "") {
+        } else if (item.controltype5 == "T") {
+          if (item.mngdatanm5 == "") {
             alert("관리항목값이름5을 입력해주세요.");
             valid = false;
             return false;
           }
         }
-      }
-      else if(item.controltype6 != "" && valid == true) {
-        if(item.controltype6 == "B") {
-          if(item.mngdata6 == "") {
+      } else if (item.controltype6 != "" && valid == true) {
+        if (item.controltype6 == "B") {
+          if (item.mngdata6 == "") {
             alert("관리항목값코드6을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype6 == "D") {
-          if(parseInt(convertDateToStr(item.mngdata6).substring(0,4)) < 2000) {
+        } else if (item.controltype6 == "D") {
+          if (
+            parseInt(convertDateToStr(item.mngdata6).substring(0, 4)) < 2000
+          ) {
             alert("관리항목값코드6을 입력해주세요.");
             valid = false;
             return false;
           }
-        } else if(item.controltype6== "T") {
-          if(item.mngdatanm6 == "") {
+        } else if (item.controltype6 == "T") {
+          if (item.mngdatanm6 == "") {
             alert("관리항목값이름6을 입력해주세요.");
             valid = false;
             return false;
@@ -1911,7 +1915,7 @@ const CopyWindow = ({
         slipamt_2: item.drcrdiv == "1" ? 0 : item.slipamt_2,
         [EDIT_FIELD]: undefined,
       }));
-    
+
       setIfSelectFirstRow(false);
 
       setMainDataResult((prev) => {
@@ -1926,7 +1930,7 @@ const CopyWindow = ({
           const data = codeListData.find(
             (items: any) => items.stdrmkcd == item.stdrmkcd
           );
-  
+
           if (data == undefined) {
             const newData = mainDataResult.data.map((item: any) =>
               item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
@@ -1957,7 +1961,8 @@ const CopyWindow = ({
             let datas: any;
             const select = mainDataResult.data.filter(
               (item) =>
-                item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                item.num ==
+                parseInt(Object.getOwnPropertyNames(selectedState)[0])
             )[0];
             const parameters2: Iparameters = {
               procedureName: "P_AC_A1000W_Q",
@@ -2006,7 +2011,8 @@ const CopyWindow = ({
             const rows = datas.tables[0].Rows[0];
             if (data != undefined && data2 != undefined) {
               const newData = mainDataResult.data.map((item) =>
-                item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                item.num ==
+                parseInt(Object.getOwnPropertyNames(selectedState)[0])
                   ? {
                       ...item,
                       acntcd: data.acntcd,
@@ -2089,11 +2095,11 @@ const CopyWindow = ({
                     ...item,
                     acntcd: acntcds,
                     acntnm: item.acntnm,
-                    mngitemnm1:  item.mngitemnm1,
-                    mngitemnm2:  item.mngitemnm2,
-                    mngitemnm3:  item.mngitemnm3,
-                    mngitemnm4:  item.mngitemnm4,
-                    mngitemnm5:  item.mngitemnm5,
+                    mngitemnm1: item.mngitemnm1,
+                    mngitemnm2: item.mngitemnm2,
+                    mngitemnm3: item.mngitemnm3,
+                    mngitemnm4: item.mngitemnm4,
+                    mngitemnm5: item.mngitemnm5,
                     mngitemnm6: item.mngitemnm6,
                     [EDIT_FIELD]: undefined,
                   }
@@ -2112,7 +2118,8 @@ const CopyWindow = ({
             let datas: any;
             const select = mainDataResult.data.filter(
               (item) =>
-                item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                item.num ==
+                parseInt(Object.getOwnPropertyNames(selectedState)[0])
             )[0];
             const parameters2: Iparameters = {
               procedureName: "P_AC_A1000W_Q",
@@ -2161,7 +2168,8 @@ const CopyWindow = ({
             const rows = datas.tables[0].Rows[0];
             if (data != undefined) {
               const newData = mainDataResult.data.map((item) =>
-                item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                item.num ==
+                parseInt(Object.getOwnPropertyNames(selectedState)[0])
                   ? {
                       ...item,
                       acntcd: data.acntcd,
@@ -2231,11 +2239,15 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+        if(item.num > temp){
+          temp = item.num
+        }
+    })
     const datas = mainDataResult.data[mainDataResult.data.length - 1];
     for (var i = 1; i < 3; i++) {
       const newDataItem = {
-        [DATA_ITEM_KEY]: seq,
+        [DATA_ITEM_KEY]: ++temp,
         ackey: filters.ackey,
         acntbaldiv: "",
         acntcd: "",
@@ -2245,7 +2257,7 @@ const CopyWindow = ({
         acntnm: "",
         acntses: "",
         acseq1: 0,
-        acseq2: seq,
+        acseq2: temp,
         actdt: convertDateToStr(filters.actdt),
         alcchr: "",
         apperson: "",
@@ -2338,7 +2350,6 @@ const CopyWindow = ({
           total: prev.total + 1,
         };
       });
-      seq++;
     }
   };
 

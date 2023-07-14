@@ -114,7 +114,8 @@ const defaultItemInfo = {
   itemlvl2: "",
   itemlvl3: "",
 };
-
+let temp = 0;
+let temp2 = 0;
 type Idata = {
   orgdiv: string;
   recdt: string;
@@ -778,10 +779,14 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
+   
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       itemgrade: "",
       itemcd: "",
       itemnm: "",
@@ -955,16 +960,11 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+            if(item.num > temp2){
+              temp2 = item.num
+            }
+        })
 
     for (var i = 1; i < data.length; i++) {
       if (data[0].itemcd == data[i].itemcd) {
@@ -974,8 +974,7 @@ const CopyWindow = ({
     }
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
+      data[i].num = ++temp2;
     }
 
     try {

@@ -54,7 +54,8 @@ import { Button } from "@progress/kendo-react-buttons";
 import NameCell from "../components/Cells/NameCell";
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
-
+let temp = 0;
+let temp2 = 0;
 const NumberField = ["notaxlmt", "stdamt"];
 const requiredField = ["payitemcd", "payitemnm"];
 const customField = ["payitemkind", "taxcd"];
@@ -656,10 +657,13 @@ const HU_A3020W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       avgwageyn: "N",
       daycalyn: "N",
       empinsuranceyn: "N",
@@ -1189,10 +1193,13 @@ const HU_A3020W: React.FC = () => {
   }, [ParaData]);
 
   const onAddClick2 = () => {
-    let seq = mainDataResult2.total + deletedMainRows.length + 1;
-
+    mainDataResult2.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp2,
       fraction: "0",
       orgdiv: "01",
       payitemcd: "",
