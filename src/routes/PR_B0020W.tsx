@@ -610,7 +610,6 @@ const PR_B0020W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="image-export"
-                  title="추가"
                 >
                 바코드 추가
                 </Button>
@@ -694,8 +693,6 @@ const PR_B0020W: React.FC = () => {
                   onClick={onResetCard}
                   fillMode="outline"
                   themeColor={"primary"}
-                  icon="reset"
-                  title="초기화"
                 >
                     초기화
                 </Button>
@@ -704,7 +701,6 @@ const PR_B0020W: React.FC = () => {
                    fillMode="outline"
                    themeColor={"primary"}
                    icon="close-circle"
-                   title="초기화"
                 > {show == true ? "버튼 숨김" : "버튼 표시"}
                 </Button>
                 <ReactToPrint
@@ -713,7 +709,7 @@ const PR_B0020W: React.FC = () => {
                         fillMode="outline" 
                         themeColor={"primary"} 
                         icon="print"
-                        title="출력">
+                    >
                     출력
                     </Button>
                 )}
@@ -763,8 +759,6 @@ const PR_B0020W: React.FC = () => {
                                       }}
                                       fillMode="flat" 
                                       icon="close-circle"
-                                      title="삭제"
-                                      id = "test"
                                     >
                                     </Button> : null}
                                 </div>
