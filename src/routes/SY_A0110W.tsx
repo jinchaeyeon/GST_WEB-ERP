@@ -93,12 +93,13 @@ const SY_A0110: React.FC = () => {
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take,
     });
   };
 
@@ -108,26 +109,26 @@ const SY_A0110: React.FC = () => {
     let data: any;
     setLoading(true);
 
-      //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_SY_A0110W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.work_type,
-      "@p_orgdiv": filters.orgdiv,
-      "@p_type": filters.type,
-      "@p_ref_code": filters.ref_code,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-    },
-  };
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SY_A0110W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.work_type,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_type": filters.type,
+        "@p_ref_code": filters.ref_code,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows;
@@ -166,7 +167,11 @@ const SY_A0110: React.FC = () => {
               ? rows[0]
               : rows.find((row: any) => row.num == filters.find_row_value);
 
-          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          if (selectedRow != undefined) {
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          } else {
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          }
         }
       }
     } else {
@@ -204,6 +209,7 @@ const SY_A0110: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
   };
 

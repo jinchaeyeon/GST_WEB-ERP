@@ -18,8 +18,18 @@ code {
 div.k-animation-container {
   z-index: 10100 !important;
 }
-.k-pager-wrap, .k-pager {
-  justify-content: center;
+.k-pager-md .k-pager-numbers-wrap {
+  justify-content: center !important;
+  width: 100%;
+}
+/* 주석 해제 시 그리드 페이저의 우측 info 보임 */
+@media screen and (min-width: 600px) {
+  .k-pager-md .k-pager-info {
+    display: flex !important;
+    margin-right: 0;
+    margin-left: 0;
+    justify-content: flex-end !important;
+  }
 }
 
 @media screen and (max-width: 991px) {
@@ -138,11 +148,6 @@ input.readonly {
 .k-daterangepicker .k-dateinput {
   width: 50% !important;
 }
-
-/* 주석 해제 시 그리드 페이저의 우측 info 보임 */
-/* .k-pager-md .k-pager-info {
-  display: unset !important;
-} */
 
 /* 모바일 결재문서 숨김 처리 */
 @media (max-width: 768px) {

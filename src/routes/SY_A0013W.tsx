@@ -368,12 +368,13 @@ const Page: React.FC = () => {
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take
     });
   };
 
@@ -382,12 +383,13 @@ const Page: React.FC = () => {
 
     setDetailFilter((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage2({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take
     });
   };
 
@@ -546,18 +548,32 @@ const Page: React.FC = () => {
               ? rows[0]
               : rows.find((row: any) => row.user_id == filters.find_row_value);
 
-          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-
-          setUserMenuFilters((prev) => ({
-            ...prev,
-            user_id: selectedRow.user_id,
-            isSearch: true,
-          }));
-          setDetailFilter((prev) => ({
-            ...prev,
-            user_id: selectedRow.user_id,
-            isSearch: true,
-          }));
+              if(selectedRow != undefined) {
+                setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+                setUserMenuFilters((prev) => ({
+                  ...prev,
+                  user_id: selectedRow.user_id,
+                  isSearch: true,
+                }));
+                setDetailFilter((prev) => ({
+                  ...prev,
+                  user_id: selectedRow.user_id,
+                  isSearch: true,
+                }));
+              } else {
+                setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+                setUserMenuFilters((prev) => ({
+                  ...prev,
+                  user_id: rows[0].user_id,
+                  isSearch: true,
+                }));
+                setDetailFilter((prev) => ({
+                  ...prev,
+                  user_id: rows[0].user_id,
+                  isSearch: true,
+                }));
+              }
+          
         }
       }
     } else {
@@ -823,7 +839,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     if (detailfilter.isSearch) {
       const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(filters);
+      const deepCopiedFilters = _.cloneDeep(detailfilter);
       //SY_A0010W에만 if문사용
       setDetailFilter((prev) => ({
         ...prev,
@@ -854,6 +870,8 @@ const Page: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState); // 페이지 초기화
+    setPage2(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
   };
 
@@ -869,7 +887,10 @@ const Page: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    setPage2({
+      skip: 0,
+      take: initialPageState.take
+    })
     setUserMenuFilters((prev) => ({
       ...prev,
       user_id: selectedRowData.user_id,
@@ -878,6 +899,7 @@ const Page: React.FC = () => {
     setDetailFilter((prev) => ({
       ...prev,
       user_id: selectedRowData.user_id,
+      pgNum: 1,
       isSearch: true,
     }));
   };
