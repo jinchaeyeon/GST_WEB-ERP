@@ -1191,7 +1191,6 @@ const Page: React.FC = () => {
 
   const search = () => {
     deletedMainRows = [];
-    setPage(initialPageState); // 페이지 초기화
     resetAllGrid();
     setUserMenuFilters((prev) => ({ ...prev, find_row_value: "" }));
     setFilters((prev) => ({

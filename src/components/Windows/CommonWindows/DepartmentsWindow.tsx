@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -10,6 +10,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
@@ -29,13 +30,18 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import FilterContainer from "../../../components/Containers/FilterContainer";
+import { isLoading } from "../../../store/atoms";
+import { useSetRecoilState } from "recoil";
+import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal? : boolean
 };
+let targetRowIndex: null | number = null;
 
-const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
+const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -47,7 +53,9 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const setLoading = useSetRecoilState(isLoading);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "R_USEYN",
@@ -104,14 +112,55 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
   const [filters, setFilters] = useState({
     dptcd: "",
     dptnm: "",
-    useyn: "Y",
+    useyn: "%",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+    pgSize: PAGE_SIZE,
   });
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+  const gridRef = useRef<any>(null);
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
+
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
+
+  //그리드 조회
+  const fetchMainGrid = async (filters :any) => {
+    let data: any;
+    setLoading(true);
 
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_BA_P0125_Q",
-    pageNumber: mainPgNum,
-    pageSize: PAGE_SIZE,
+    pageNumber: filters.pgNum,
+    pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "Q",
       "@p_orgdiv": "01",
@@ -120,14 +169,6 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
       "@p_useyn": filters.useyn,
     },
   };
-  useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
-
-  //그리드 조회
-  const fetchMainGrid = async () => {
-    let data: any;
-
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -137,26 +178,41 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      
+      if (gridRef.current) {
+        targetRowIndex = 0;
+      }
 
       setMainDataResult((prev) => {
         return {
-          data: [...prev.data, ...rows],
+          data: rows,
           total: totalRowCnt,
         };
       });
+      if (totalRowCnt > 0) {
+        const selectedRow = rows[0]
+        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+      }
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setMainDataResult(process([], {}));
-  };
-
-  //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    setPage(initialPageState); // 페이지 초기화
+    setMainDataResult(process([], mainDataState));
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -168,43 +224,20 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const CommandCell = (props: GridCellProps) => {
-    const onSelectClick = () => {
-      // 부모로 데이터 전달, 창 닫기
-      const selectedData = props.dataItem;
-      setData(selectedData);
-      if (workType === "ROW_ADD") onClose();
-    };
-
-    return (
-      <td className="k-command-cell">
-        <Button
-          className="k-grid-edit-command"
-          themeColor={"primary"}
-          fillMode="outline"
-          onClick={onSelectClick}
-          icon="check"
-        ></Button>
-      </td>
-    );
-  };
-
   const onRowDoubleClick = (props: any) => {
     const selectedData = props.dataItem;
     selectData(selectedData);
   };
 
-  const onConfirmBtnClick = (props: any) => {
-    const selectedData = mainDataResult.data.find(
-      (row: any) => row.dptcd === Object.keys(selectedState)[0]
-    );
+  const onConfirmBtnClick = () => {
+    const selectedData = mainDataResult.data.filter((item) => item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0])[0];
     selectData(selectedData);
-  };
+  }
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     setData(selectedData);
-    if (workType === "ROW_ADD") onClose();
+    onClose();
   };
 
   //메인 그리드 선택 이벤트
@@ -227,6 +260,15 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
     );
   };
 
+  const search = () => {
+    resetAllGrid();
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+  };
   return (
     <Window
       title={"부서참조"}
@@ -235,15 +277,13 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <Title></Title>
         <ButtonContainer>
           <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
+            onClick={() => search()}
             icon="search"
             themeColor={"primary"}
           >
@@ -264,7 +304,6 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
                   onChange={filterInputChange}
                 />
               </td>
-
               <th>부서명</th>
               <td>
                 <Input
@@ -274,7 +313,6 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
                   onChange={filterInputChange}
                 />
               </td>
-
               <th>사용여부</th>
               <td>
                 {bizComponentData !== null && (
@@ -314,7 +352,13 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
           //스크롤 조회기능
           fixedScroll={true}
           total={mainDataResult.total}
-          onScroll={onScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
+          //원하는 행 위치로 스크롤 기능
+          ref={gridRef}
+          rowHeight={30}
           //정렬기능
           sortable={true}
           onSortChange={onMainSortChange}
@@ -333,14 +377,14 @@ const DepartmentsWindow = ({ workType, setVisible, setData }: IWindow) => {
           />
 
           <GridColumn field="dptnm" title="부서명" width="450px" />
-          <GridColumn field="useyn" title="사용여부" width="140px" />
+          <GridColumn field="useyn" title="사용여부" width="140px" cell={CheckBoxReadOnlyCell}/>
         </Grid>
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          {/* <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
+          <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인
-          </Button> */}
+          </Button>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>
