@@ -334,7 +334,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
         "*********"
       )}
       <ButtonInGridInput>
-        <Button onClick={onDelete} icon="close" fillMode="flat" />
+        <Button onClick={onDelete} icon="close" title="초기화" fillMode="flat" />
       </ButtonInGridInput>
     </td>
   );
