@@ -92,6 +92,8 @@ const SY_A0025W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
 
   UsePermissions(setPermissions);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -149,7 +151,9 @@ const SY_A0025W: React.FC = () => {
   const [subDataState, setSubDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -157,7 +161,9 @@ const SY_A0025W: React.FC = () => {
   const [subDataResult, setSubDataResult] = useState<DataResult>(
     process([], subDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -608,7 +614,6 @@ const SY_A0025W: React.FC = () => {
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : {
@@ -616,7 +621,12 @@ const SY_A0025W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
-
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setSubDataResult((prev) => {
         return {
           data: newData,
@@ -627,17 +637,49 @@ const SY_A0025W: React.FC = () => {
   };
 
   const exitEdit = () => {
-    const newData = subDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setSubDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != subDataResult.data) {
+      const newData = subDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedsubDataState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = subDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -1201,13 +1243,12 @@ const SY_A0025W: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    height: "56.5vh",
-                    paddingLeft: "5%",
-                    display: "flex",
-                    alignItems: "center",
+                    minHeight: "56.5vh",
+                    paddingRight: "5%",
+                    display: isMobile == true ? "block" : "flex",
+                    alignItems: "center"
                   }}
                 >
-                  <div>
                     <FormBox>
                       <tbody>
                         <tr>
@@ -1409,7 +1450,6 @@ const SY_A0025W: React.FC = () => {
                         </tr>
                       </tbody>
                     </FormBox>
-                  </div>
                 </FormBoxWrap>
               </GridContainer>
               <GridContainer width={`calc(30% - ${GAP}px)`}>

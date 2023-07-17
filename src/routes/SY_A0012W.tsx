@@ -520,12 +520,16 @@ const SY_A0120: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   //그리드 데이터 결과값
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   //선택 상태
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -776,7 +780,6 @@ const SY_A0120: React.FC = () => {
       item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
         : {
@@ -784,7 +787,12 @@ const SY_A0120: React.FC = () => {
             [EDIT_FIELD]: undefined,
           }
     );
-
+    setTempResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -794,19 +802,50 @@ const SY_A0120: React.FC = () => {
   };
 
   const exitEdit = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
-
   const customCellRender = (td: any, props: any) => (
     <CellRender
       originalProps={props}

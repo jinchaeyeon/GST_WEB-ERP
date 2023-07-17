@@ -277,9 +277,14 @@ const Page: React.FC = () => {
   const [dataState, setDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], dataState)
+  );
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
   );
   const [detailSelectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -1029,12 +1034,16 @@ const Page: React.FC = () => {
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : { ...item, [EDIT_FIELD]: undefined }
       );
-
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setDetailDataResult((prev) => {
         return {
           data: newData,
@@ -1045,17 +1054,49 @@ const Page: React.FC = () => {
   };
 
   const exitEdit2 = () => {
-    const newData = detailDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setDetailDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != detailDataResult.data) {
+      const newData = detailDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(detailSelectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = detailDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const onSaveClick = () => {

@@ -840,25 +840,6 @@ const Page: React.FC = () => {
     setDetailWindowVisible(true);
   };
 
-  const onCopyClick = () => {
-    if (mainDataResult.total < 1) return false;
-
-    const key = Object.getOwnPropertyNames(selectedState)[0];
-    const selectedRowData = rowsOfDataResult(mainDataResult).filter(
-      (item: any) => item[DATA_ITEM_KEY] == key
-    )[0];
-
-    setDetailFilters((prev) => ({
-      ...prev,
-      group_code: selectedRowData.group_code,
-      isSearch: true,
-    }));
-
-    setIsCopy(true);
-    setWorkType("N");
-    setDetailWindowVisible(true);
-  };
-
   const onDeleteClick = (e: any) => {
     if (!window.confirm("삭제하시겠습니까?")) {
       return false;
@@ -1085,15 +1066,6 @@ const Page: React.FC = () => {
                     disabled={permissions.save ? false : true}
                   >
                     생성
-                  </Button>
-                  <Button
-                    onClick={onCopyClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="copy"
-                    disabled={permissions.save ? false : true}
-                  >
-                    복사
                   </Button>
                   <Button
                     onClick={onDeleteClick}

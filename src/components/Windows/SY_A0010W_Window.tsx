@@ -41,7 +41,6 @@ import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   GAP,
   PAGE_SIZE,
@@ -139,12 +138,13 @@ const KendoWindow = ({
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: page.skip / initialPageState.take + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take
     });
   };
 
@@ -206,11 +206,13 @@ const KendoWindow = ({
     },
     []
   );
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true? deviceWidth : 1600,
     height: 900,
   });
 
@@ -234,11 +236,15 @@ const KendoWindow = ({
   };
 
   const processApi = useApi();
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], dataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [detailSelectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -321,12 +327,16 @@ const KendoWindow = ({
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : { ...item, [EDIT_FIELD]: undefined }
       );
-
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setDetailDataResult((prev) => {
         return {
           data: newData,
@@ -335,19 +345,51 @@ const KendoWindow = ({
       });
     }
   };
-
+ 
   const exitEdit = () => {
-    const newData = detailDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setDetailDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != detailDataResult.data) {
+      const newData = detailDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(detailSelectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = detailDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -542,8 +584,9 @@ const KendoWindow = ({
             total: totalRowCnt,
           };
         });
+
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
@@ -1035,6 +1078,11 @@ const KendoWindow = ({
         total: prev.total + 1,
       };
     });
+    setPage((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1
+    }))
   };
 
   const onDeleteClick = (e: any) => {

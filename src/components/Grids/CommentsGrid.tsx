@@ -67,11 +67,15 @@ const CommentsGrid = (props: {
   const [dataState, setDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [dataResult, setDataResult] = useState<DataResult>(
     process([], dataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -106,13 +110,11 @@ const CommentsGrid = (props: {
       editField={EDIT_FIELD}
     />
   );
-
   const enterEdit = (dataItem: any, field: string) => {
     const newData = dataResult.data.map((item) =>
       item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
         ? {
             ...item,
-            row_status: item.row_status === "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
         : {
@@ -120,7 +122,12 @@ const CommentsGrid = (props: {
             [EDIT_FIELD]: undefined,
           }
     );
-
+    setTempResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
     setDataResult((prev) => {
       return {
         data: newData,
@@ -130,17 +137,49 @@ const CommentsGrid = (props: {
   };
 
   const exitEdit = () => {
-    const newData = dataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != dataResult.data) {
+      const newData = dataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              row_status: item.row_status == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = dataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const onItemChange = (event: GridItemChangeEvent) => {
@@ -201,7 +240,7 @@ const CommentsGrid = (props: {
 
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
-      console.log(rows);
+
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
@@ -223,7 +262,7 @@ const CommentsGrid = (props: {
         }
       }
       setDataResult(process(rows, dataState));
-      console.log(filters)
+
       if (rows.length > 0) {
         const selectedRow =
           filters.find_row_value == ""
@@ -275,13 +314,13 @@ const CommentsGrid = (props: {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions !== null && ref_key != "") {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, ref_key]);
 
   //계획 저장 파라미터 초기값
   const [paraDataSaved, setParaDataSaved] = useState({
@@ -462,8 +501,9 @@ const CommentsGrid = (props: {
     if (data.isSuccess === true) {
       setFilters((prev) => ({
         ...prev,
-        find_row_value: dataResult.data.filter((item: any) => 
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        find_row_value: dataResult.data.filter(
+          (item: any) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         )[0].seq,
         isSearch: true,
       }));
