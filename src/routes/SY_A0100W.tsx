@@ -84,20 +84,25 @@ const App: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take
     });
   };
-
+  const resetAllGrid = () => {
+    setPage(initialPageState); // 페이지 초기화
+    setFilters((prev) => ({ ...prev, pgNum: 1 }));
+  };
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -133,6 +138,7 @@ const App: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
 
   const handleSelectTab = (e: any) => {
+    resetAllGrid();
     setTabSelected(e.selected);
 
     if (e.selected === 0) {
@@ -349,7 +355,11 @@ const App: React.FC = () => {
             ? rows.find((row: any) => row.form_id == filters.find_row_value)
             : rows.find((row: any) => row.user_id == filters.find_row_value);
 
-        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+            if(selectedRow != undefined) {
+              setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+            } else {
+              setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+            }
       }
     }
     // 필터 isSearch false처리, pgNum 세팅
@@ -602,6 +612,7 @@ const App: React.FC = () => {
       ) {
         throw findMessage(messagesData, "SY_A0100W_003");
       } else {
+        resetAllGrid();
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {

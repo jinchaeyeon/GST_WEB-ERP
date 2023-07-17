@@ -272,12 +272,13 @@ const Page: React.FC = () => {
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take,
     });
   };
 
@@ -346,13 +347,23 @@ const Page: React.FC = () => {
                 (row: any) => row.user_group_id == filter.find_row_value
               );
 
-        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
 
-        setUserMenuFilters((prev) => ({
-          ...prev,
-          user_group_id: selectedRow.user_group_id,
-          isSearch: true,
-        }));
+          setUserMenuFilters((prev) => ({
+            ...prev,
+            user_group_id: selectedRow.user_group_id,
+            isSearch: true,
+          }));
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+
+          setUserMenuFilters((prev) => ({
+            ...prev,
+            user_group_id: rows[0].user_group_id,
+            isSearch: true,
+          }));
+        }
       }
     } else {
       console.log("[에러발생]");
@@ -501,7 +512,7 @@ const Page: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      
+
       if (totalRowCnt > 0) {
         const dataTree: any = createDataTree(
           rows,
@@ -612,6 +623,7 @@ const Page: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
   };
 
@@ -794,19 +806,29 @@ const Page: React.FC = () => {
       );
       if (isLastDataDeleted) {
         setPage({
-          skip: ((filters.pgNum == 1) || (filters.pgNum == 0)) ? 0: PAGE_SIZE * (filters.pgNum - 2),
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
           take: PAGE_SIZE,
         });
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+      } else {
+        resetAllGrid();
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: 
+            mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
+              .user_group_id,
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
       }
-      resetAllGrid();
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value:
-          mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
-            .user_group_id,
-        pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
-        isSearch: true,
-      }));
     } else {
       console.log("[오류 발생]");
       console.log(data);

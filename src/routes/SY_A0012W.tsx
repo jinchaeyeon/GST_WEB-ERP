@@ -427,17 +427,19 @@ const SY_A0120: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take
     });
   };
 
@@ -653,7 +655,11 @@ const SY_A0120: React.FC = () => {
               ? rows[0]
               : rows.find((row: any) => row.user_id == filters.find_row_value);
 
-          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+              if(selectedRow != undefined) {
+                setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+              } else {
+                setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+              }
         }
       }
     } else {
@@ -682,6 +688,7 @@ const SY_A0120: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
   };
 
@@ -754,15 +761,7 @@ const SY_A0120: React.FC = () => {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-
-      if (filters.find_row_value !== "") {
-        // 그룹코드로 조회 시 리셋 후 조회
-        resetAllGrid();
-        fetchMainGrid(deepCopiedFilters);
-      } else {
-        // 일반 조회
-        fetchMainGrid(deepCopiedFilters);
-      }
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions, bizComponentData]);
 
@@ -884,6 +883,11 @@ const SY_A0120: React.FC = () => {
         total: prev.total + 1,
       };
     });
+    setPage((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1
+    }))
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
@@ -913,15 +917,6 @@ const SY_A0120: React.FC = () => {
       data = mainDataResult.data[Math.min(...Object) - 1];
     }
 
-    const isLastDataDeleted =
-      mainDataResult.data.length === 1 && filters.pgNum > 1;
-
-    if (isLastDataDeleted) {
-      setPage({
-        skip: ((filters.pgNum == 1) || (filters.pgNum == 0)) ? 0: PAGE_SIZE * (filters.pgNum - 2),
-        take: PAGE_SIZE,
-      });
-    }
     //newData 생성
     setMainDataResult((prev) => ({
       data: newData,
@@ -933,6 +928,7 @@ const SY_A0120: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -969,7 +965,7 @@ const SY_A0120: React.FC = () => {
     }
 
     if (!valid) return false;
-
+    setLoading(true);
     try {
       for (const item of deletedMainRows) {
         const { user_id } = item;
@@ -1025,6 +1021,31 @@ const SY_A0120: React.FC = () => {
           console.log("[오류 발생]");
           console.log(data);
           throw data.resultMessage;
+        } else {
+          const isLastDataDeleted =
+            mainDataResult.data.length == 0 && filters.pgNum > 1;
+            if (isLastDataDeleted) {
+              setPage({
+                skip:
+                  filters.pgNum == 1 || filters.pgNum == 0
+                    ? 0
+                    : PAGE_SIZE * (filters.pgNum - 2),
+                take: PAGE_SIZE,
+              });
+              setFilters((prev) => ({
+                ...prev,
+                find_row_value: "",
+                pgNum: prev.pgNum - 1 ,
+                isSearch: true,
+              }));
+            } else {
+              setFilters((prev) => ({
+                ...prev,
+                find_row_value: data.returnString,
+                pgNum: prev.pgNum,
+                isSearch: true,
+              }));
+            }
         }
       }
 
@@ -1134,12 +1155,13 @@ const SY_A0120: React.FC = () => {
     } catch (e) {
       alert(e);
     }
+    setLoading(false);
   };
 
   const search = () => {
     deletedMainRows = [];
     resetAllGrid();
-    fetchMainGrid(filters);
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
   return (
     <>

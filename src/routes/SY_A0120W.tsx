@@ -43,7 +43,11 @@ import {
   setDefaultDate,
   getQueryFromBizComponent,
 } from "../components/CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { useSetRecoilState } from "recoil";
@@ -129,7 +133,6 @@ const SY_A0120: React.FC = () => {
     }
   }, []);
 
-  
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
@@ -138,14 +141,16 @@ const SY_A0120: React.FC = () => {
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take,
     });
   };
+
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -253,24 +258,30 @@ const SY_A0120: React.FC = () => {
           targetRowIndex = 0;
         }
       }
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt,
-          };
-        });
-        if (totalRowCnt > 0) {
-          const selectedRow =
-            filters.find_row_value == ""
-              ? rows[0]
-              : rows.find((row: any) => row.num == filters.find_row_value);
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.num == filters.find_row_value);
 
-          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-        }
+            if(selectedRow != undefined) {
+              setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+            } else {
+              setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+            }
+
+      }
     } else {
       console.log("[에러발생]");
       console.log(data);
     }
+
     // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
@@ -293,6 +304,7 @@ const SY_A0120: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
   };
 
@@ -339,7 +351,6 @@ const SY_A0120: React.FC = () => {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      resetAllGrid();
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions]);

@@ -40,12 +40,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
-import {
-  EDIT_FIELD,
-  GAP,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../CommonString";
+import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -133,18 +128,19 @@ const KendoWindow = ({
       [name]: value,
     }));
   };
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / initialPageState.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
       skip: page.skip,
-      take: initialPageState.take
+      take: initialPageState.take,
     });
   };
 
@@ -212,7 +208,7 @@ const KendoWindow = ({
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: isMobile == true? deviceWidth : 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
 
@@ -345,11 +341,12 @@ const KendoWindow = ({
       });
     }
   };
- 
+
   const exitEdit = () => {
     if (tempResult.data != detailDataResult.data) {
       const newData = detailDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(detailSelectedState)[0]
+        item[DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(detailSelectedState)[0]
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
@@ -592,6 +589,11 @@ const KendoWindow = ({
                 (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
               );
 
+        if (selectedRow != undefined) {
+          setDetailSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setDetailSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
         setField1(
           initialVal.field_caption1 == "" || initialVal.field_caption1 == null
             ? "세부코드명1"
@@ -667,7 +669,6 @@ const KendoWindow = ({
             ? "숫자참조5"
             : initialVal.numref_caption5
         );
-        setDetailSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }
     }
     setFilters((prev) => ({
@@ -835,7 +836,11 @@ const KendoWindow = ({
           valid = false;
         }
         detailDataResult.data.forEach((chkItem: any, chkIdx: number) => {
-          if (item.sub_code === chkItem.sub_code && idx !== chkIdx && valid == true) {
+          if (
+            item.sub_code === chkItem.sub_code &&
+            idx !== chkIdx &&
+            valid == true
+          ) {
             throw findMessage(messagesData, "SY_A0010W_003");
             valid = false;
           }
@@ -857,7 +862,7 @@ const KendoWindow = ({
     }
 
     if (!valid) return false;
-    if (detailDataResult.data.length == 0) {
+    if (detailDataResult.total == 0) {
       alert("데이터가 없습니다.");
       return false;
     }
@@ -1081,8 +1086,8 @@ const KendoWindow = ({
     setPage((prev) => ({
       ...prev,
       skip: 0,
-      take: prev.take + 1
-    }))
+      take: prev.take + 1,
+    }));
   };
 
   const onDeleteClick = (e: any) => {
@@ -1111,18 +1116,21 @@ const KendoWindow = ({
     }
 
     const isLastDataDeleted =
-      detailDataResult.data.length == 1 && filters.pgNum > 1;
+      detailDataResult.data.length == 0 && filters.pgNum > 1;
 
     if (isLastDataDeleted) {
       setPage({
-        skip: ((filters.pgNum == 1) || (filters.pgNum == 0)) ? 0: PAGE_SIZE * (filters.pgNum - 2),
+        skip:
+          filters.pgNum == 1 || filters.pgNum == 0
+            ? 0
+            : PAGE_SIZE * (filters.pgNum - 2),
         take: PAGE_SIZE,
       });
     }
 
     setDetailDataResult((prev) => ({
       data: newData,
-      total: prev.total - deletedMainRows.length,
+      total: prev.total - Object.length,
     }));
 
     setDetailSelectedState({

@@ -206,12 +206,13 @@ const CommentsGrid = (props: {
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take,
     });
   };
 
@@ -239,37 +240,47 @@ const CommentsGrid = (props: {
     }
 
     if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (filters.find_row_value !== "") {
-        // find_row_value 행으로 스크롤 이동
-        if (gridRef.current) {
-          const findRowIndex = rows.findIndex(
-            (row: any) => row.seq == filters.find_row_value
-          );
-          targetRowIndex = findRowIndex;
-        }
+      if (totalRowCnt > 0) {
+        if (filters.find_row_value !== "") {
+          // find_row_value 행으로 스크롤 이동
+          if (gridRef.current) {
+            const findRowIndex = rows.findIndex(
+              (row: any) => row.seq == filters.find_row_value
+            );
+            targetRowIndex = findRowIndex;
+          }
 
-        // find_row_value 데이터가 존재하는 페이지로 설정
-        setPage({
-          skip: PAGE_SIZE * (data.pageNumber - 1),
-          take: PAGE_SIZE,
+          // find_row_value 데이터가 존재하는 페이지로 설정
+          setPage({
+            skip: PAGE_SIZE * (data.pageNumber - 1),
+            take: PAGE_SIZE,
+          });
+        } else {
+          // 첫번째 행으로 스크롤 이동
+          if (gridRef.current) {
+            targetRowIndex = 0;
+          }
+        }
+        setDataResult({
+          data: rows,
+          total: totalRowCnt,
         });
-      } else {
-        // 첫번째 행으로 스크롤 이동
-        if (gridRef.current) {
-          targetRowIndex = 0;
+
+        if (rows.length > 0) {
+          const selectedRow =
+            filters.find_row_value == ""
+              ? rows[0]
+              : rows.find((row: any) => row.seq == filters.find_row_value);
+
+          if (selectedRow != undefined) {
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          } else {
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          }
         }
-      }
-      setDataResult(process(rows, dataState));
-
-      if (rows.length > 0) {
-        const selectedRow =
-          filters.find_row_value == ""
-            ? rows[0]
-            : rows.find((row: any) => row.seq == filters.find_row_value);
-
-        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[에러발생]");
@@ -293,25 +304,6 @@ const CommentsGrid = (props: {
       targetRowIndex = null;
     }
   }, [dataResult]);
-
-  //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
-  const onMainSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: DATA_ITEM_KEY,
-    });
-
-    setSelectedState(newSelectedState);
-  };
-  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
-  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
-    setDataState(event.dataState);
-  };
-  //그리드 정렬 이벤트
-  const onMainSortChange = (e: any) => {
-    setDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
 
   useEffect(() => {
     if (filters.isSearch && permissions !== null && ref_key != "") {
@@ -379,8 +371,16 @@ const CommentsGrid = (props: {
       user_name: user_name,
     };
     setDataResult((prev) => {
-      return process([newDataItem, ...prev.data], dataState);
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
     });
+    setPage((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
@@ -405,16 +405,17 @@ const CommentsGrid = (props: {
     } else {
       data = dataResult.data[Math.min(...Object) - 1];
     }
-    const isLastDataDeleted = dataResult.data.length === 1 && filters.pgNum > 1;
+    const isLastDataDeleted = dataResult.data.length === 0 && filters.pgNum > 1;
     if (isLastDataDeleted) {
       setPage({
         skip: PAGE_SIZE * (filters.pgNum - 2),
         take: PAGE_SIZE,
       });
     }
-    //newData 생성
-    setDataResult(process(newData, dataState));
-
+    setDataResult((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
     setSelectedState({
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
     });
@@ -429,11 +430,7 @@ const CommentsGrid = (props: {
         );
       }
     );
-    if (
-      dataResult.data.length === 0 ||
-      (dataItem.length === 0 && deletedRows.length === 0)
-    )
-      return false;
+    if (dataItem.length === 0 && deletedRows.length === 0) return false;
 
     type TData = {
       row_status: string[];
@@ -499,14 +496,34 @@ const CommentsGrid = (props: {
     }
 
     if (data.isSuccess === true) {
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value: dataResult.data.filter(
-          (item: any) =>
-            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        )[0].seq,
-        isSearch: true,
-      }));
+      const isLastDataDeleted =
+        dataResult.data.length == 0 && filters.pgNum > 1;
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: prev.pgNum - 1,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: dataResult.data.filter(
+            (item: any) =>
+              item[DATA_ITEM_KEY] ==
+              Object.getOwnPropertyNames(selectedState)[0]
+          )[0].seq,
+          isSearch: true,
+        }));
+      }
+
       deletedRows = [];
     } else {
       alert("[" + data.statusCode + "] " + data.resultMessage);
