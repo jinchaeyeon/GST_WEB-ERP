@@ -550,7 +550,7 @@ const SY_A0125W: React.FC = () => {
     }));
     setLoading(false);
   };
-  console.log(allMenuDataResult)
+
   const fetchSubGrid = async (subfilters: any) => {
     //if (!permissions?.view) return;
     let data: any;

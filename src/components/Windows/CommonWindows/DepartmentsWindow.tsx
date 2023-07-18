@@ -5,8 +5,6 @@ import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridCellProps,
-  GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
@@ -25,7 +23,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
-import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
+import { UseBizComponent } from "../../CommonFunction";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
@@ -33,6 +31,7 @@ import FilterContainer from "../../../components/Containers/FilterContainer";
 import { isLoading } from "../../../store/atoms";
 import { useSetRecoilState } from "recoil";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
+
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
@@ -42,10 +41,13 @@ type IWindow = {
 let targetRowIndex: null | number = null;
 
 const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1000,
+    width: isMobile == true ? deviceWidth : 1000,
     height: 800,
   });
   const DATA_ITEM_KEY = "dptcd";
@@ -107,7 +109,6 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-  const [mainPgNum, setMainPgNum] = useState(1);
 
   const [filters, setFilters] = useState({
     dptcd: "",
@@ -190,7 +191,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
           total: totalRowCnt,
         };
       });
-      console.log(rows);
+
       if (totalRowCnt > 0) {
         const selectedRow = rows[0]
         setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });

@@ -716,7 +716,7 @@ const Page: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setPage2(initialPageState); // 페이지 초기화
     resetAllGrid(); // 데이터 초기화
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
@@ -743,15 +743,7 @@ const Page: React.FC = () => {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-
-      if (filters.find_row_value !== "") {
-        // 그룹코드로 조회 시 리셋 후 조회
-        resetAllGrid();
-        fetchMainGrid(deepCopiedFilters);
-      } else {
-        // 일반 조회
-        fetchMainGrid(deepCopiedFilters);
-      }
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions, bizComponentData]);
 
@@ -771,7 +763,7 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
-    if (targetRowIndex !== null && gridRef2.current) {
+    if (targetRowIndex2 !== null && gridRef2.current) {
       gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
       targetRowIndex2 = null;
     }
