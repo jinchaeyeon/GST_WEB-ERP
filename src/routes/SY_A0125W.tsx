@@ -146,7 +146,7 @@ const SY_A0125W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA002,R_USEYN,L_HU005",
+    "L_BA002,R_USEYN,L_HU005, L_dptcd_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -154,12 +154,18 @@ const SY_A0125W: React.FC = () => {
   const [postcdListData, setpostcdListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [dptcdListData, setDptcdListData] = useState([
+    {dptcd: "", dptnm: ""}
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const postcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
       );
+      const dtpcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_dptcd_001")
+      );
+      fetchQuery(dtpcdQueryStr, setDptcdListData);
       fetchQuery(postcdQueryStr, setpostcdListData);
     }
   }, [bizComponentData]);
@@ -258,6 +264,16 @@ const SY_A0125W: React.FC = () => {
           [name]: "Y",
         }));
       }
+    } else if(name == "prntdptcd") {
+      const values = dptcdListData.find(
+        (item: any) => item.dptcd === value
+      )?.dptnm;
+
+      setInfomation((prev) => ({
+        ...prev,
+        prntdptcd: value,
+        prntdptnm: values == undefined ? "" : values
+      }));
     } else {
       setInfomation((prev) => ({
         ...prev,
@@ -397,9 +413,24 @@ const SY_A0125W: React.FC = () => {
               : rows.find((row: any) => row.dptcd == filters.find_row_value);
 
           if (selectedRow != undefined) {
-            setSelectedState({
-              [selectedRow[ALL_MENU_DATA_ITEM_KEY]]: true,
-            });
+            let array = [];
+            let valid = selectedRow.prntdptcd;
+            while(valid != "" && valid != undefined && valid != null){
+              array.push(valid);
+              if(rows.find((row: any) => row.dptcd == valid) != undefined) {
+                valid = rows.find((row: any) => row.dptcd == valid).prntdptcd;
+              } else {
+                valid = "";
+              }
+            }
+
+            if(selectedRow.prntdptcd != "") {
+              setAllMenuDataResult({
+                ...allMenuDataResult,
+                data: dataTree,
+                expanded: array
+              });
+            }
             setInfomation({
               pgSize: PAGE_SIZE,
               workType: "U",
@@ -423,7 +454,9 @@ const SY_A0125W: React.FC = () => {
               update_userid: selectedRow.update_userid,
               useyn: selectedRow.useyn == "Y" ? "Y" : "N",
             });
-
+            setSelectedState({
+              [selectedRow[ALL_MENU_DATA_ITEM_KEY]]: true,
+            });
             setsubFilters((prev) => ({
               ...prev,
               workType: "USERINFO",
@@ -517,7 +550,7 @@ const SY_A0125W: React.FC = () => {
     }));
     setLoading(false);
   };
-
+  console.log(allMenuDataResult)
   const fetchSubGrid = async (subfilters: any) => {
     //if (!permissions?.view) return;
     let data: any;
@@ -631,7 +664,7 @@ const SY_A0125W: React.FC = () => {
   }, [subDataResult]);
 
   useEffect(() => {
-    if (subfilters.isSearch) {
+    if (subfilters.isSearch && subfilters.dptcd) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setsubFilters((prev) => ({
@@ -779,6 +812,12 @@ const SY_A0125W: React.FC = () => {
 
   const resetAllGrid = () => {
     setPage(initialPageState); // 페이지 초기화
+    setAllMenuDataResult({
+      data: [],
+      expanded: [],
+      editItem: undefined,
+      editItemField: undefined,
+    })
   };
 
   const search = () => {
@@ -802,29 +841,38 @@ const SY_A0125W: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = subDataResult.data.map((item) =>
-      item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-    setTempResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-    setSubDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (field != "postcd" && field != "user_id") {
+      const newData = subDataResult.data.map((item) =>
+        item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: subDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit = () => {
@@ -1132,8 +1180,10 @@ const SY_A0125W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      resetAllGrid();
       setFilters((prev) => ({
         ...prev,
+        pgNum: 1,
         find_row_value: data.returnString,
         isSearch: true,
       }));
@@ -1466,13 +1516,6 @@ const SY_A0125W: React.FC = () => {
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      className={
-                        item.sortOrder === 0
-                          ? "readonly"
-                          : item.sortOrder === 1
-                          ? "readonly"
-                          : undefined
-                      }
                       footerCell={
                         item.sortOrder === 0 ? subTotalFooterCell : undefined
                       }

@@ -339,6 +339,13 @@ const KendoWindow = ({
           total: prev.total,
         };
       });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: detailDataResult.data,
+          total: prev.total,
+        };
+      });
     }
   };
 

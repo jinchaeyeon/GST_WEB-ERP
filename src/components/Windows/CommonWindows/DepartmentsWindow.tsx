@@ -133,6 +133,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
       take: initialPageState.take,
     });
   };
+
   const gridRef = useRef<any>(null);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -189,6 +190,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
           total: totalRowCnt,
         };
       });
+      console.log(rows);
       if (totalRowCnt > 0) {
         const selectedRow = rows[0]
         setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -269,6 +271,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
       isSearch: true,
     }));
   };
+  
   return (
     <Window
       title={"부서참조"}

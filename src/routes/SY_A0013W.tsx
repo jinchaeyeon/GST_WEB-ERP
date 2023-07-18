@@ -1072,6 +1072,13 @@ const Page: React.FC = () => {
           total: prev.total,
         };
       });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: detailDataResult.data,
+          total: prev.total,
+        };
+      });
     }
   };
 
