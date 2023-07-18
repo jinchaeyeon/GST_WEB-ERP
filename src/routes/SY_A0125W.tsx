@@ -1155,6 +1155,10 @@ const SY_A0125W: React.FC = () => {
         throw findMessage(messagesData, "SY_A0125W_002");
       }
 
+      if(infomation.dptcd == infomation.prntdptcd) {
+        throw findMessage(messagesData, "SY_A0125W_004");
+      }
+
       let valid = true;
       allMenuDataResult.data.map((item: any) => {
         if (infomation.workType == "N") {
