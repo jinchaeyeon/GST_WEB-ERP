@@ -292,6 +292,7 @@ const BA_A0070W: React.FC = () => {
         "@p_wonchgrat": subfilters.wonchgrat,
         "@p_uschgrat": subfilters.uschgrat,
         "@p_baseamt": subfilters.baseamt,
+        "@p_find_row_value" : subfilters.find_row_value,
       },
     };
     try {
@@ -303,7 +304,7 @@ const BA_A0070W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      
+
       if (subfilters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
@@ -390,6 +391,7 @@ const BA_A0070W: React.FC = () => {
         "@p_wonchgrat": subfilters.wonchgrat,
         "@p_uschgrat": subfilters.uschgrat,
         "@p_baseamt": subfilters.baseamt,
+        "@p_find_row_value" : filters.find_row_value,
       },
     };
     try {
