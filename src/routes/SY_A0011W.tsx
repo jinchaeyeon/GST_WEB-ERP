@@ -244,7 +244,7 @@ const Page: React.FC = () => {
       [name]: value,
     }));
   };
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
 
   //조회조건 초기값
   const [filters, setFilters] = useState({

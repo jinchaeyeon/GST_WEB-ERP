@@ -585,7 +585,7 @@ const SY_A0120: React.FC = () => {
     isSearch: true,
   });
 
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {

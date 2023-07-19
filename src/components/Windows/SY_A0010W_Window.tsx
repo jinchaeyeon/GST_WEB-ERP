@@ -83,7 +83,7 @@ const KendoWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const setLoading = useSetRecoilState(isLoading);

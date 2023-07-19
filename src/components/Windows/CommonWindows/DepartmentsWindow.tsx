@@ -135,7 +135,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
     });
   };
 
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (targetRowIndex !== null && gridRef.current) {

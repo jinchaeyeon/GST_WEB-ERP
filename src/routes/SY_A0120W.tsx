@@ -203,7 +203,7 @@ const SY_A0120: React.FC = () => {
     isSearch: true,
   });
 
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -371,6 +371,12 @@ const SY_A0120: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SY_A0120W_001");
+      } else if (
+        filters.location != null ||
+        filters.location != "" ||
+        filters.location != undefined 
+      ) {
+        throw findMessage(messagesData, "SY_A0120W_002");
       } else {
         resetAllGrid();
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));

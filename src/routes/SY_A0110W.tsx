@@ -58,7 +58,7 @@ const SY_A0110: React.FC = () => {
   UseCustomOption(pathname, setCustomOptionData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

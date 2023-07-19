@@ -73,7 +73,7 @@ import { bytesToBase64 } from "byte-base64";
 const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY = "sub_code";
 const SUB_DATA_ITEM_KEY2 = "num";
-
+let maxprocseq = 0;
 let deletedMainRows: object[] = [];
 let temp = 0;
 let temp2 = 0;
@@ -426,7 +426,7 @@ const BA_A0050: React.FC = () => {
   UsePermissions(setPermissions);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
- 
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -543,64 +543,64 @@ const BA_A0050: React.FC = () => {
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
   useEffect(() => {
-      const newData = subData2Result.data.map((item) =>
-        item[SUB_DATA_ITEM_KEY2] ==
-        parseInt(Object.getOwnPropertyNames(selectedsubData2State)[0])
-          ? {
-              ...item,
-              chlditemcd: itemInfo.itemcd,
-              chlditemnm: itemInfo.itemnm,
-              itemcd: itemInfo.itemcd,
-              itemno: itemInfo.itemno,
-              itemnm: itemInfo.itemnm,
-              insiz: itemInfo.insiz,
-              model: itemInfo.model,
-              itemacnt: itemInfo.itemacnt,
-              itemacntnm: itemInfo.itemacntnm,
-              bnatur: itemInfo.bnatur,
-              spec: itemInfo.spec,
-              //invunit
-              qtyunit: itemInfo.invunit,
-              invunitnm: itemInfo.invunitnm,
-              unitwgt: itemInfo.unitwgt,
-              wgtunit: itemInfo.wgtunit,
-              wgtunitnm: itemInfo.wgtunitnm,
-              maker: itemInfo.maker,
-              dwgno: itemInfo.dwgno,
-              remark: itemInfo.remark,
-              itemlvl1: itemInfo.itemlvl1,
-              itemlvl2: itemInfo.itemlvl2,
-              itemlvl3: itemInfo.itemlvl3,
-              extra_field1: itemInfo.extra_field1,
-              extra_field2: itemInfo.extra_field2,
-              extra_field7: itemInfo.extra_field7,
-              extra_field6: itemInfo.extra_field6,
-              extra_field8: itemInfo.extra_field8,
-              packingsiz: itemInfo.packingsiz,
-              unitqty: itemInfo.unitqty,
-              color: itemInfo.color,
-              gubun: itemInfo.gubun,
-              qcyn: itemInfo.qcyn,
-              outside: itemInfo.outside,
-              itemthick: itemInfo.itemthick,
-              itemlvl4: itemInfo.itemlvl4,
-              itemlvl5: itemInfo.itemlvl5,
-              custitemnm: itemInfo.custitemnm,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+    const newData = subData2Result.data.map((item) =>
+      item[SUB_DATA_ITEM_KEY2] ==
+      parseInt(Object.getOwnPropertyNames(selectedsubData2State)[0])
+        ? {
+            ...item,
+            chlditemcd: itemInfo.itemcd,
+            chlditemnm: itemInfo.itemnm,
+            itemcd: itemInfo.itemcd,
+            itemno: itemInfo.itemno,
+            itemnm: itemInfo.itemnm,
+            insiz: itemInfo.insiz,
+            model: itemInfo.model,
+            itemacnt: itemInfo.itemacnt,
+            itemacntnm: itemInfo.itemacntnm,
+            bnatur: itemInfo.bnatur,
+            spec: itemInfo.spec,
+            //invunit
+            qtyunit: itemInfo.invunit,
+            invunitnm: itemInfo.invunitnm,
+            unitwgt: itemInfo.unitwgt,
+            wgtunit: itemInfo.wgtunit,
+            wgtunitnm: itemInfo.wgtunitnm,
+            maker: itemInfo.maker,
+            dwgno: itemInfo.dwgno,
+            remark: itemInfo.remark,
+            itemlvl1: itemInfo.itemlvl1,
+            itemlvl2: itemInfo.itemlvl2,
+            itemlvl3: itemInfo.itemlvl3,
+            extra_field1: itemInfo.extra_field1,
+            extra_field2: itemInfo.extra_field2,
+            extra_field7: itemInfo.extra_field7,
+            extra_field6: itemInfo.extra_field6,
+            extra_field8: itemInfo.extra_field8,
+            packingsiz: itemInfo.packingsiz,
+            unitqty: itemInfo.unitqty,
+            color: itemInfo.color,
+            gubun: itemInfo.gubun,
+            qcyn: itemInfo.qcyn,
+            outside: itemInfo.outside,
+            itemthick: itemInfo.itemthick,
+            itemlvl4: itemInfo.itemlvl4,
+            itemlvl5: itemInfo.itemlvl5,
+            custitemnm: itemInfo.custitemnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
 
-      setSubData2Result((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+    setSubData2Result((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   }, [itemInfo]);
 
   const fetchItemData = React.useCallback(
@@ -919,8 +919,8 @@ const BA_A0050: React.FC = () => {
           setsubFilters2((prev) => ({
             ...prev,
             itemcd: selectedRow.itemcd,
-            isSearch: true,
             pgNum: 1,
+            isSearch: true,
           }));
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
@@ -928,8 +928,8 @@ const BA_A0050: React.FC = () => {
           setsubFilters2((prev) => ({
             ...prev,
             itemcd: rows[0].itemcd,
-            isSearch: true,
             pgNum: 1,
+            isSearch: true,
           }));
         }
       }
@@ -1074,7 +1074,7 @@ const BA_A0050: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef3.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row[SUB_DATA_ITEM_KEY2] == subfilters2.find_row_value
+            (row: any) => row.seq == subfilters2.find_row_value
           );
           targetRowIndex3 = findRowIndex;
         }
@@ -1101,9 +1101,9 @@ const BA_A0050: React.FC = () => {
         const selectedRow =
           subfilters2.find_row_value == ""
             ? rows[0]
-            : rows.find(
-                (row: any) => row[SUB_DATA_ITEM_KEY2] == subfilters2.find_row_value
-              );
+            : rows.find((row: any) => row.seq == subfilters2.find_row_value);
+
+        maxprocseq = rows[0].maxprocseq;
         if (selectedRow != undefined) {
           setSelectedsubData2State({ [selectedRow[SUB_DATA_ITEM_KEY2]]: true });
         } else {
@@ -1222,9 +1222,15 @@ const BA_A0050: React.FC = () => {
     setSelectedState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+    setPage3((prev) => ({
+      ...prev,
+      skip: 0,
+      take: PAGE_SIZE,
+    }))
     setsubFilters2((prev) => ({
       ...prev,
       itemcd: selectedRowData.itemcd,
+      pgNum: 1,
       isSearch: true,
     }));
   };
@@ -1248,23 +1254,58 @@ const BA_A0050: React.FC = () => {
     setSelectedsubData2State(newSelectedState);
   };
 
-  const onRowDoubleCliCK = (props: any) => {
+  const onRowDoubleCliCK = async (props: any) => {
     let procseq = 1;
     let valid = true;
+    let data: any;
+
     if (subData2Result.total > 0) {
-      subData2Result.data.map((item) => {
-        if((item.proccd == Object.getOwnPropertyNames(selectedsubDataState)[0]) && valid == true) {
+      const subparameters2: Iparameters = {
+        procedureName: "P_BA_A0050W_Q",
+        pageNumber: 1,
+        pageSize: 100000,
+        parameters: {
+          "@p_work_type": subfilters2.workType,
+          "@p_orgdiv": subfilters2.orgdiv,
+          "@p_itemcd": subfilters2.itemcd,
+          "@p_itemnm": subfilters2.itemnm,
+          "@p_insiz": subfilters2.insiz,
+          "@p_itemacnt": subfilters2.itemacnt,
+          "@p_useyn": subfilters2.raduseyn,
+          "@p_proccd": subfilters2.proccd,
+          "@p_company_code": companyCode,
+          "@p_find_row_value": subfilters2.find_row_value,
+        },
+      };
+      try {
+        data = await processApi<any>("procedure", subparameters2);
+      } catch (error) {
+        data = null;
+      }
+      const rows = data.tables[0].Rows;
+
+      rows.map((item: { proccd: string; procseq: number }) => {
+        if (
+          item.proccd == Object.getOwnPropertyNames(selectedsubDataState)[0] &&
+          valid == true
+        ) {
           procseq = item.procseq;
           valid = false;
         }
-      })
+      });
 
-      if(valid == true) {
-        subData2Result.data.forEach((item) => {
-          if (item.procseq >= procseq) {
-            procseq = item.procseq + 1;
-          }
-        });
+      subData2Result.data.map((item: { proccd: string; procseq: number }) => {
+        if (
+          item.proccd == Object.getOwnPropertyNames(selectedsubDataState)[0] &&
+          valid == true
+        ) {
+          procseq = item.procseq;
+          valid = false;
+        }
+      });
+
+      if (valid == true) {
+        procseq = ++maxprocseq;
       }
     }
 
@@ -1426,6 +1467,7 @@ const BA_A0050: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setPage2(initialPageState); // 페이지 초기화
     setPage3(initialPageState); // 페이지 초기화
+    maxprocseq = 0;
     setsubFilters((prev) => ({
       ...prev,
       proccd: "",
@@ -1847,25 +1889,41 @@ const BA_A0050: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
-      const result = mainDataResult.data.filter((item) => item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0])[0]
-      setsubFilters2((prev) => ({
-        ...prev,
-        find_row_value: Object.getOwnPropertyNames(selectedsubData2State)[0]
-      }))
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value: result.itemcd,
-        isSearch: true,
-      }));
-      setsubFilters((prev) => ({
-        ...prev,
-        find_row_value: Object.getOwnPropertyNames(selectedsubDataState)[0],
-        isSearch: true
-      }))
+      const result = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      const result2 = subData2Result.data.filter(
+        (item) =>
+          item[SUB_DATA_ITEM_KEY2] ==
+          Object.getOwnPropertyNames(selectedsubData2State)[0]
+      )[0];
+      if (result2 == undefined) {
+        const isLastDataDeleted =
+          subData2Result.data.length === 0 && subfilters2.pgNum > 1;
+        setsubFilters2((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+      } else if (result2.rowstatus == "" || result2.rowstatus == "U") {
+        setsubFilters2((prev) => ({
+          ...prev,
+          find_row_value: result2.seq,
+          isSearch: true,
+        }));
+      } else {
+        setsubFilters2((prev) => ({
+          ...prev,
+          find_row_value: data.returnString.toString(),
+          isSearch: true,
+        }));
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.returnMessage);
     }
     setLoading(false);
   };
@@ -1965,6 +2023,9 @@ const BA_A0050: React.FC = () => {
         };
       });
       setSelectedsubData2State({ [newDataItem[SUB_DATA_ITEM_KEY2]]: true });
+      if (data[i].procseq > maxprocseq) {
+        maxprocseq = data[i].procseq;
+      }
     }
   };
 
@@ -2331,7 +2392,13 @@ const BA_A0050: React.FC = () => {
       {CopyWindowVisible && (
         <CopyWindow
           getVisible={setCopyWindowVisible}
-          para={mainDataResult.data.filter((item) => item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0])[0].itemcd}
+          para={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0].itemcd
+          }
           setData={reloadData}
           modal={true}
         />
@@ -2346,7 +2413,7 @@ const BA_A0050: React.FC = () => {
             SUB_DATA_ITEM_KEY
           )}
           setData={reloadData2}
-          modal= {true}
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>

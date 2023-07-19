@@ -174,16 +174,16 @@ const KendoWindow = ({
     workType: "DETAIL",
     orgdiv: "01",
     location: "01",
-    pattern_id: "A",
+    pattern_id: "",
     pattern_name: "",
     proccd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
-  let gridRef: any = useRef(null);
-  let gridRef2: any = useRef(null);
+  let gridRef : any = useRef(null); 
+  let gridRef2 : any = useRef(null); 
 
   //상세그리드 조회
   const fetchGrid = async (filters: any) => {
@@ -209,7 +209,7 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].Rows.length;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
@@ -286,6 +286,7 @@ const KendoWindow = ({
   //상세그리드 조회
   const fetchGrid2 = async (filters2: any) => {
     let data: any;
+
     //조회조건 파라미터
     const parameters2: Iparameters = {
       procedureName: "P_BA_A0050W_Sub2_Q ",
@@ -507,9 +508,33 @@ const KendoWindow = ({
     setSelectedDetailState2(newSelectedState);
   };
 
-  const onRowDoubleClick = (props: any) => {
-    setData(detailDataResult2.data);
-    onClose();
+  const onRowDoubleClick = async (props: any) => {
+    let data: any;
+    const parameters2: Iparameters = {
+      procedureName: "P_BA_A0050W_Sub2_Q ",
+      pageNumber: 1,
+      pageSize: detailDataResult2.total + 1,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters2.orgdiv,
+        "@p_location": filters2.location,
+        "@p_pattern_id": filters2.pattern_id,
+        "@p_pattern_name": filters2.pattern_name,
+        "@p_proccd": filters2.proccd,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+      setData(rows);
+      onClose();
+    }
   };
 
   return (

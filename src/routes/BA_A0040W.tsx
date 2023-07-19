@@ -1592,7 +1592,7 @@ const BA_A0040: React.FC = () => {
     });
   };
 
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
 
   return (
     <>

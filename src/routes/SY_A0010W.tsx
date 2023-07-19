@@ -314,8 +314,8 @@ const Page: React.FC = () => {
       "@p_form_id": "",
     },
   };
-  const gridRef = useRef<any>(null);
-  const gridRef2 = useRef<any>(null);
+  let gridRef : any = useRef(null); 
+  let gridRef2 : any = useRef(null); 
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;

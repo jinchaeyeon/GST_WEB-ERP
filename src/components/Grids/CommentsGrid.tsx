@@ -57,7 +57,7 @@ const CommentsGrid = (props: {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const idGetter = getter(DATA_ITEM_KEY);
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const onDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -221,7 +221,7 @@ const CommentsGrid = (props: {
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
-      procedureName: "sys_sel_comments",
+      procedureName: "sys_sel_comments_web",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -243,7 +243,7 @@ const CommentsGrid = (props: {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0) {
+
         if (filters.find_row_value !== "") {
           // find_row_value 행으로 스크롤 이동
           if (gridRef.current) {
@@ -268,8 +268,7 @@ const CommentsGrid = (props: {
           data: rows,
           total: totalRowCnt,
         });
-
-        if (rows.length > 0) {
+      if (totalRowCnt > 0) {
           const selectedRow =
             filters.find_row_value == ""
               ? rows[0]
@@ -281,7 +280,6 @@ const CommentsGrid = (props: {
             setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           }
         }
-      }
     } else {
       console.log("[에러발생]");
       console.log(data);

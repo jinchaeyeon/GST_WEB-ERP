@@ -237,7 +237,7 @@ const SY_A0125W: React.FC = () => {
     });
   };
 
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {

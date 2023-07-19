@@ -131,8 +131,8 @@ const SY_A0025W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-  let gridRef: any = useRef(null);
-  let gridRef2: any = useRef(null);
+  let gridRef : any = useRef(null); 
+  let gridRef2 : any = useRef(null); 
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(

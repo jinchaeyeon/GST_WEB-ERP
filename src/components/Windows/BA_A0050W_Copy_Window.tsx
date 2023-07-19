@@ -271,9 +271,9 @@ const KendoWindow = ({
     isSearch: true,
   });
 
-  let gridRef: any = useRef(null);
-  let gridRef2: any = useRef(null);
-  let gridRef3: any = useRef(null);
+  let gridRef : any = useRef(null); 
+  let gridRef2 : any = useRef(null); 
+  let gridRef3 : any = useRef(null); 
 
   useEffect(() => {
     setFilters3((item) => ({

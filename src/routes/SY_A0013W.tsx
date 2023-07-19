@@ -322,8 +322,8 @@ const Page: React.FC = () => {
     }));
   };
 
-  const gridRef = useRef<any>(null);
-  const gridRef2 = useRef<any>(null);
+  let gridRef : any = useRef(null); 
+  let gridRef2 : any = useRef(null); 
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
