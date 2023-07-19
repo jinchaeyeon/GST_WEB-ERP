@@ -318,6 +318,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
     } else {
       console.log("[에러발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
   };
 
@@ -608,6 +609,7 @@ const SY_A0120: React.FC = () => {
         "@p_user_name": filters.user_name,
         "@p_rtrchk": filters.radRtrchk === "T" ? "%" : filters.radRtrchk,
         "@p_usediv": filters.radUsediv,
+        "@p_find_row_value": filters.find_row_value
       },
     };
 
@@ -873,7 +875,33 @@ const SY_A0120: React.FC = () => {
       [DATA_ITEM_KEY]: ++temp,
       apply_start_date: convertDateToStr(new Date()),
       apply_end_date: "19991231",
+      bircd: "Y",
       birdt: "19991231",
+      custcd: "",
+      dptcd: "",
+      email: "",
+      hold_check_yn: "N",
+      home_menu_id: "",
+      ip_check_yn: "N",
+      location: "",
+      mbouseyn: "N",
+      memo: "",
+      mobile_no: "",
+      opengb: "",
+      orgdiv: "01",
+      password: "",
+      password_confirm: "",
+      position: "",
+      postcd: "",
+      profile_image: "",
+      rtrchk: "N",
+      tel_no: "",
+      temp: "",
+      usediv: "Y",
+      user_category: "",
+      user_id: "",
+      user_ip: "",
+      user_name: "",
       rowstatus: "N",
     };
 
@@ -1306,7 +1334,6 @@ const SY_A0120: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick}
-                      fillMode="outline"
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"

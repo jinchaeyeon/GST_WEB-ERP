@@ -1284,7 +1284,6 @@ const BA_A0070W: React.FC = () => {
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
-                  fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"

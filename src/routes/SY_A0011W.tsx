@@ -297,8 +297,9 @@ const Page: React.FC = () => {
         "@p_work_type": filter.work_type,
         "@p_user_group_id": filter.user_group_id,
         "@p_user_group_name": filter.user_group_name,
-        "@p_lang_id": filter.lang_id,
+        "@p_culture_name": filter.lang_id,
         "@p_use_yn": filter.use_yn,
+        "@p_find_row_value": filter.find_row_value,
       },
     };
 
@@ -393,8 +394,9 @@ const Page: React.FC = () => {
         "@p_work_type": "DETAIL",
         "@p_user_group_id": userMenuFilter.user_group_id,
         "@p_user_group_name": filters.user_group_name,
-        "@p_lang_id": filters.lang_id,
+        "@p_culture_name": filters.lang_id,
         "@p_use_yn": filters.use_yn,
+        "@p_find_row_value": userMenuFilter.find_row_value,
       },
     };
 
@@ -498,8 +500,9 @@ const Page: React.FC = () => {
         "@p_work_type": "ALL",
         "@p_user_group_id": filter.user_group_id,
         "@p_user_group_name": filter.user_group_name,
-        "@p_lang_id": filter.lang_id,
+        "@p_culture_name": filter.lang_id,
         "@p_use_yn": filter.use_yn,
+        "@p_find_row_value": "",
       },
     };
 
@@ -1564,8 +1567,9 @@ const Page: React.FC = () => {
               "@p_work_type": "DETAIL",
               "@p_user_group_id": userMenuFilters.user_group_id,
               "@p_user_group_name": filters.user_group_name,
-              "@p_lang_id": filters.lang_id,
+              "@p_culture_name": filters.lang_id,
               "@p_use_yn": filters.use_yn,
+              "@p_find_row_value": userMenuFilters.find_row_value,
             },
           }}
           modal={true}

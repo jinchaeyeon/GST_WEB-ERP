@@ -117,8 +117,9 @@ const KendoWindow = ({
       "@p_work_type": "LIST",
       "@p_user_group_id": user_group_id,
       "@p_user_group_name": "",
-      "@p_lang_id": "",
+      "@p_culture_name": "",
       "@p_use_yn": "",
+      "@p_find_row_value": "",
     },
   };
 

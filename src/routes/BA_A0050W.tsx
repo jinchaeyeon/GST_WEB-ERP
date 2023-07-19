@@ -2269,6 +2269,13 @@ const BA_A0050: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>BOM 상세</GridTitle>
                 <ButtonContainer>
+                <Button
+                    onClick={onCopyEditClick2}
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    패턴공정도 참조
+                  </Button>
                   <Button
                     onClick={onCopyEditClick}
                     fillMode="outline"
@@ -2276,14 +2283,6 @@ const BA_A0050: React.FC = () => {
                     icon="save"
                   >
                     BOM복사
-                  </Button>
-                  <Button
-                    onClick={onCopyEditClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    패턴공정도 참조
                   </Button>
                   <Button
                     onClick={onDeleteClick2}

@@ -260,7 +260,7 @@ const SY_A0025W: React.FC = () => {
         "@p_work_type": filters.workType,
         "@p_numbering_id": filters.numbering_id,
         "@p_numbering_name": filters.numbering_name,
-        "@p_find_row_value": "",
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -400,7 +400,7 @@ const SY_A0025W: React.FC = () => {
         "@p_work_type": filters2.workType,
         "@p_numbering_id": filters2.numbering_id,
         "@p_numbering_name": "",
-        "@p_find_row_value": "",
+        "@p_find_row_value": filters2.find_row_value,
       },
     };
     try {
@@ -1228,14 +1228,6 @@ const SY_A0025W: React.FC = () => {
                 >
                   삭제
                 </Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                >
-                  저장
-                </Button>
               </ButtonContainer>
             </GridTitleContainer>
             <FormBoxWrap border={true}>
@@ -1539,7 +1531,6 @@ const SY_A0025W: React.FC = () => {
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
-                  fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"
@@ -1551,6 +1542,13 @@ const SY_A0025W: React.FC = () => {
                   icon="minus"
                   title="행 삭제"
                 ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="전체 저장"
+                />
               </ButtonContainer>
             </GridTitleContainer>
             <Grid

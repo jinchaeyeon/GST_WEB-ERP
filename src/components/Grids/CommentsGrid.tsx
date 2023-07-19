@@ -548,7 +548,6 @@ const CommentsGrid = (props: {
           <ButtonContainer>
             <Button
               onClick={onAddClick}
-              fillMode="outline"
               themeColor={"primary"}
               icon="plus"
               disabled={isSaveDisabled}
