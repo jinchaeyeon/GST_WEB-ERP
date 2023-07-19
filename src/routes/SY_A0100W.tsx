@@ -286,7 +286,7 @@ const App: React.FC = () => {
         "@p_work_type": filters.work_type,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.cboLocation,
-        "@p_yyyymm": convertDateToStr(filters.yyyymm),
+        "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0,6),
         "@p_is_all_menu": programFilters.is_all_menu,
         "@p_user_groupping": programFilters.user_groupping,
       },
@@ -304,7 +304,7 @@ const App: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(userParameters)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const usedUserCnt = data.returnString;
