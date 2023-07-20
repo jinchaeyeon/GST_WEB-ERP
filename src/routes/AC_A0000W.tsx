@@ -1,18 +1,17 @@
-import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { gridList } from "../store/columns/AC_A0000W_C";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import FilterContainer from "../components/Containers/FilterContainer";
 import {
@@ -31,7 +30,6 @@ import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
-  chkScrollHandler,
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
@@ -54,11 +52,12 @@ import {
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 
 const DATA_ITEM_KEY = "num";
+let targetRowIndex: null | number = null;
 
 const AC_A0000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -70,7 +69,8 @@ const AC_A0000W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -143,8 +143,6 @@ const AC_A0000W: React.FC = () => {
     sort: [],
   });
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -152,10 +150,6 @@ const AC_A0000W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [workType, setWorkType] = useState<string>("U");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -186,7 +180,7 @@ const AC_A0000W: React.FC = () => {
 
   const [infomation, setInfomation] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
-    workType: "U",
+    workType: "N",
     acntfrdt: null,
     acntses: "",
     acnttodt: null,
@@ -228,25 +222,45 @@ const AC_A0000W: React.FC = () => {
     workType: "Q",
     orgdiv: "01",
     location: "01",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_AC_A0000W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.workType,
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-    },
+  let gridRef: any = useRef(null);
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A0000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -254,100 +268,209 @@ const AC_A0000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) =>
+              row.orgdiv + "-" + row.taxloca == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt,
+        };
+      });
 
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt,
-          };
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) =>
+                  row.orgdiv + "-" + row.taxloca == filters.find_row_value
+              );
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          setInfomation({
+            pgSize: PAGE_SIZE,
+            workType: "U",
+            acntfrdt: isValidDate(selectedRow.acntfrdt)
+              ? new Date(dateformat(selectedRow.acntfrdt))
+              : null,
+            acntses: selectedRow.acntses,
+            acnttodt: isValidDate(selectedRow.acnttodt)
+              ? new Date(dateformat(selectedRow.acnttodt))
+              : null,
+            address: selectedRow.address,
+            address_eng: selectedRow.address_eng,
+            bizregnum: selectedRow.bizregnum,
+            bnkinfo: selectedRow.bnkinfo,
+            certid: selectedRow.certid,
+            closechk: selectedRow.closechk,
+            compclass: selectedRow.compclass,
+            compnm: selectedRow.compnm,
+            compnm_eng: selectedRow.compnm_eng,
+            compregno: selectedRow.compregno,
+            comptype: selectedRow.comptype,
+            dptcd: selectedRow.dptcd,
+            efaxnum: selectedRow.efaxnum,
+            email: selectedRow.email,
+            estbdt: isValidDate(selectedRow.estbdt)
+              ? new Date(dateformat(selectedRow.estbdt))
+              : null,
+            etelnum: selectedRow.etelnum,
+            faxnum: selectedRow.faxnum,
+            nickname: selectedRow.nickname,
+            orgdiv: selectedRow.orgdiv,
+            phonenum: selectedRow.phonenum,
+            reprenm: selectedRow.reprenm,
+            reprenm_eng: selectedRow.reprenm_eng,
+            repreregno: selectedRow.repreregno,
+            sendid: selectedRow.sendid,
+            settlecd: selectedRow.settlecd,
+            taxloca: selectedRow.taxloca,
+            taxlocanm: selectedRow.taxlocanm,
+            taxorg: selectedRow.taxorg,
+            taxortnm: selectedRow.taxortnm,
+            zipcode: selectedRow.zipcode,
+          });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          setInfomation({
+            pgSize: PAGE_SIZE,
+            workType: "U",
+            acntfrdt: isValidDate(rows[0].acntfrdt)
+              ? new Date(dateformat(rows[0].acntfrdt))
+              : null,
+            acntses: rows[0].acntses,
+            acnttodt: isValidDate(rows[0].acnttodt)
+              ? new Date(dateformat(rows[0].acnttodt))
+              : null,
+            address: rows[0].address,
+            address_eng: rows[0].address_eng,
+            bizregnum: rows[0].bizregnum,
+            bnkinfo: rows[0].bnkinfo,
+            certid: rows[0].certid,
+            closechk: rows[0].closechk,
+            compclass: rows[0].compclass,
+            compnm: rows[0].compnm,
+            compnm_eng: rows[0].compnm_eng,
+            compregno: rows[0].compregno,
+            comptype: rows[0].comptype,
+            dptcd: rows[0].dptcd,
+            efaxnum: rows[0].efaxnum,
+            email: rows[0].email,
+            estbdt: isValidDate(rows[0].estbdt)
+              ? new Date(dateformat(rows[0].estbdt))
+              : null,
+            etelnum: rows[0].etelnum,
+            faxnum: rows[0].faxnum,
+            nickname: rows[0].nickname,
+            orgdiv: rows[0].orgdiv,
+            phonenum: rows[0].phonenum,
+            reprenm: rows[0].reprenm,
+            reprenm_eng: rows[0].reprenm_eng,
+            repreregno: rows[0].repreregno,
+            sendid: rows[0].sendid,
+            settlecd: rows[0].settlecd,
+            taxloca: rows[0].taxloca,
+            taxlocanm: rows[0].taxlocanm,
+            taxorg: rows[0].taxorg,
+            taxortnm: rows[0].taxortnm,
+            zipcode: rows[0].zipcode,
+          });
+        }
+      } else {
+        setInfomation({
+          pgSize: PAGE_SIZE,
+          workType: "N",
+          acntfrdt: null,
+          acntses: "",
+          acnttodt: null,
+          address: "",
+          address_eng: "",
+          bizregnum: "",
+          bnkinfo: "",
+          certid: "",
+          closechk: "",
+          compclass: "",
+          compnm: "",
+          compnm_eng: "",
+          compregno: "",
+          comptype: "",
+          dptcd: "",
+          efaxnum: "",
+          email: "",
+          estbdt: null,
+          etelnum: "",
+          faxnum: "",
+          nickname: "",
+          orgdiv: "",
+          phonenum: "",
+          reprenm: "",
+          reprenm_eng: "",
+          repreregno: "",
+          sendid: "",
+          settlecd: "",
+          taxloca: "",
+          taxlocanm: "",
+          taxorg: "",
+          taxortnm: "",
+          zipcode: "",
         });
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
-  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
-    ) {
-      fetchMainGrid();
-      setIsInitSearch(true);
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
-
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setInfomation({
-          pgSize: PAGE_SIZE,
-          workType: "U",
-          acntfrdt: isValidDate(firstRowData.acntfrdt)
-          ? new Date(dateformat(firstRowData.acntfrdt))
-          : null,
-          acntses: firstRowData.acntses,
-          acnttodt: isValidDate(firstRowData.acnttodt)
-          ? new Date(dateformat(firstRowData.acnttodt))
-          : null,
-          address: firstRowData.address,
-          address_eng: firstRowData.address_eng,
-          bizregnum: firstRowData.bizregnum,
-          bnkinfo: firstRowData.bnkinfo,
-          certid: firstRowData.certid,
-          closechk: firstRowData.closechk,
-          compclass: firstRowData.compclass,
-          compnm: firstRowData.compnm,
-          compnm_eng: firstRowData.compnm_eng,
-          compregno: firstRowData.compregno,
-          comptype: firstRowData.comptype,
-          dptcd: firstRowData.dptcd,
-          efaxnum: firstRowData.efaxnum,
-          email: firstRowData.email,
-          estbdt: isValidDate(firstRowData.estbdt)
-          ? new Date(dateformat(firstRowData.estbdt))
-          : null,
-          etelnum: firstRowData.etelnum,
-          faxnum: firstRowData.faxnum,
-          nickname: firstRowData.nickname,
-          orgdiv: firstRowData.orgdiv,
-          phonenum: firstRowData.phonenum,
-          reprenm: firstRowData.reprenm,
-          reprenm_eng: firstRowData.reprenm_eng,
-          repreregno: firstRowData.repreregno,
-          sendid: firstRowData.sendid,
-          settlecd: firstRowData.settlecd,
-          taxloca: firstRowData.taxloca,
-          taxlocanm: firstRowData.taxlocanm,
-          taxorg: firstRowData.taxorg,
-          taxortnm: firstRowData.taxortnm,
-          zipcode: firstRowData.zipcode,
-        });
-
-        setIfSelectFirstRow(true);
-      }
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
     }
   }, [mainDataResult]);
 
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
   };
 
@@ -371,12 +494,12 @@ const AC_A0000W: React.FC = () => {
       pgSize: PAGE_SIZE,
       workType: "U",
       acntfrdt: isValidDate(selectedRowData.acntfrdt)
-      ? new Date(dateformat(selectedRowData.acntfrdt))
-      : null,
+        ? new Date(dateformat(selectedRowData.acntfrdt))
+        : null,
       acntses: selectedRowData.acntses,
       acnttodt: isValidDate(selectedRowData.acnttodt)
-      ? new Date(dateformat(selectedRowData.acnttodt))
-      : null,
+        ? new Date(dateformat(selectedRowData.acnttodt))
+        : null,
       address: selectedRowData.address,
       address_eng: selectedRowData.address_eng,
       bizregnum: selectedRowData.bizregnum,
@@ -392,8 +515,8 @@ const AC_A0000W: React.FC = () => {
       efaxnum: selectedRowData.efaxnum,
       email: selectedRowData.email,
       estbdt: isValidDate(selectedRowData.estbdt)
-      ? new Date(dateformat(selectedRowData.estbdt))
-      : null,
+        ? new Date(dateformat(selectedRowData.estbdt))
+        : null,
       etelnum: selectedRowData.etelnum,
       faxnum: selectedRowData.faxnum,
       nickname: selectedRowData.nickname,
@@ -420,27 +543,26 @@ const AC_A0000W: React.FC = () => {
     }
   };
 
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
-  };
-
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const onAddClick2 = () => {
-    setWorkType("N");
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",
@@ -485,9 +607,14 @@ const AC_A0000W: React.FC = () => {
   };
 
   const search = () => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
+    setPage(initialPageState); // 페이지 초기화
+    resetAllGrid(); // 데이터 초기화
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
   };
 
   const [paraDataDeleted, setParaDataDeleted] = useState({
@@ -502,16 +629,21 @@ const AC_A0000W: React.FC = () => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
-    const selectRows = mainDataResult.data.filter(
-      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
 
-    setParaDataDeleted((prev) => ({
-      ...prev,
-      work_type: "D",
-      orgdiv: selectRows.orgdiv,
-      taxloca: selectRows.taxloca,
-    }));
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      const selectRows = mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      setParaDataDeleted((prev) => ({
+        ...prev,
+        work_type: "D",
+        orgdiv: selectRows.orgdiv,
+        taxloca: selectRows.taxloca,
+      }));
+    }
   };
 
   const paraDeleted: Iparameters = {
@@ -618,9 +750,36 @@ const AC_A0000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
-      fetchMainGrid();
+      const isLastDataDeleted =
+        mainDataResult.data.length === 1 && filters.pgNum > 1;
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
 
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: prev.pgNum - 1,
+          isSearch: true,
+        }));
+      } else {
+        const findRow = mainDataResult.data.filter(
+          (item) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        )[0];
+        resetAllGrid();
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: findRow.orgdiv + "-" + findRow.taxloca,
+          pgNum: prev.pgNum,
+          isSearch: true,
+        }));
+      }
       setInfomation({
         pgSize: PAGE_SIZE,
         workType: "U",
@@ -706,7 +865,7 @@ const AC_A0000W: React.FC = () => {
         convertDateToStr(infomation.acnttodt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "AC_A0000W_002");
-      } 
+      }
     } catch (e) {
       alert(e);
       valid = false;
@@ -723,14 +882,17 @@ const AC_A0000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      setMainPgNum(1);
-      setMainDataResult(process([], mainDataState));
-
-      fetchMainGrid();
+      resetAllGrid();
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        find_row_value: data.returnString,
+        isSearch: true,
+      }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      if(data.resultMessage != undefined) {
+      if (data.resultMessage != undefined) {
         alert(data.resultMessage);
       }
     }
@@ -767,7 +929,7 @@ const AC_A0000W: React.FC = () => {
                   />
                 )}
               </td>
-              <td></td>
+              <th></th>
               <td></td>
             </tr>
           </tbody>
@@ -785,19 +947,10 @@ const AC_A0000W: React.FC = () => {
             <ButtonContainer>
               <Button
                 onClick={onAddClick2}
-                fillMode="outline"
                 themeColor={"primary"}
                 icon="file-add"
               >
                 생성
-              </Button>
-              <Button
-                onClick={onSaveClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
               </Button>
               <Button
                 onClick={onDeleteClick2}
@@ -806,6 +959,14 @@ const AC_A0000W: React.FC = () => {
                 icon="delete"
               >
                 삭제
+              </Button>
+              <Button
+                onClick={onSaveClick2}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              >
+                저장
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -834,7 +995,13 @@ const AC_A0000W: React.FC = () => {
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -863,8 +1030,8 @@ const AC_A0000W: React.FC = () => {
         </ExcelExport>
       </GridContainer>
       <GridTitleContainer>
-            <GridTitle>세부정보</GridTitle>
-          </GridTitleContainer>
+        <GridTitle>세부정보</GridTitle>
+      </GridTitleContainer>
       <FormBoxWrap border={true}>
         <FormBox>
           <tbody>
@@ -1034,28 +1201,23 @@ const AC_A0000W: React.FC = () => {
                   onChange={InputChange}
                 />
               </td>
-              <th>개업년원일</th>
+              <th>전자전화번호</th>
               <td>
-                <DatePicker
-                  name="estbdt"
-                  value={infomation.estbdt}
-                  format="yyyy-MM-dd"
+                <Input
+                  name="etelnum"
+                  type="text"
+                  value={infomation.etelnum}
                   onChange={InputChange}
-                  placeholder=""
-                  className="required"
                 />
               </td>
-              <th>신고세무소</th>
+              <th>전자팩스번호</th>
               <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="taxorg"
-                    value={infomation.taxorg}
-                    bizComponentId="L_BA049"
-                    bizComponentData={bizComponentData}
-                    changeData={ComboBoxChange}
-                  />
-                )}
+                <Input
+                  name="efaxnum"
+                  type="text"
+                  value={infomation.efaxnum}
+                  onChange={InputChange}
+                />
               </td>
             </tr>
             <tr>
@@ -1075,6 +1237,17 @@ const AC_A0000W: React.FC = () => {
                 <DatePicker
                   name="acnttodt"
                   value={infomation.acnttodt}
+                  format="yyyy-MM-dd"
+                  onChange={InputChange}
+                  placeholder=""
+                  className="required"
+                />
+              </td>
+              <th>개업년원일</th>
+              <td>
+                <DatePicker
+                  name="estbdt"
+                  value={infomation.estbdt}
                   format="yyyy-MM-dd"
                   onChange={InputChange}
                   placeholder=""
@@ -1107,23 +1280,17 @@ const AC_A0000W: React.FC = () => {
                   />
                 )}
               </td>
-              <th>전자전화번호</th>
+              <th>신고세무소</th>
               <td>
-                <Input
-                  name="etelnum"
-                  type="text"
-                  value={infomation.etelnum}
-                  onChange={InputChange}
-                />
-              </td>
-              <th>전자팩스번호</th>
-              <td>
-                <Input
-                  name="efaxnum"
-                  type="text"
-                  value={infomation.efaxnum}
-                  onChange={InputChange}
-                />
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="taxorg"
+                    value={infomation.taxorg}
+                    bizComponentId="L_BA049"
+                    bizComponentData={bizComponentData}
+                    changeData={ComboBoxChange}
+                  />
+                )}
               </td>
             </tr>
             <tr>
@@ -1154,21 +1321,21 @@ const AC_A0000W: React.FC = () => {
                   onChange={InputChange}
                 />
               </td>
-              <th>샌드빌ID</th>
-              <td colSpan={3}>
-                <Input
-                  name="sendid"
-                  type="text"
-                  value={infomation.sendid}
-                  onChange={InputChange}
-                />
-              </td>
               <th>CERTID</th>
               <td>
                 <Input
                   name="certid"
                   type="text"
                   value={infomation.certid}
+                  onChange={InputChange}
+                />
+              </td>
+              <th>샌드빌ID</th>
+              <td colSpan={3}>
+                <Input
+                  name="sendid"
+                  type="text"
+                  value={infomation.sendid}
                   onChange={InputChange}
                 />
               </td>

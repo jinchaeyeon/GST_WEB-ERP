@@ -322,8 +322,8 @@ const Page: React.FC = () => {
     }));
   };
 
-  let gridRef : any = useRef(null); 
-  let gridRef2 : any = useRef(null); 
+  let gridRef: any = useRef(null);
+  let gridRef2: any = useRef(null);
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -374,7 +374,7 @@ const Page: React.FC = () => {
 
     setPage({
       skip: page.skip,
-      take: initialPageState.take
+      take: initialPageState.take,
     });
   };
 
@@ -389,7 +389,7 @@ const Page: React.FC = () => {
 
     setPage2({
       skip: page.skip,
-      take: initialPageState.take
+      take: initialPageState.take,
     });
   };
 
@@ -513,7 +513,7 @@ const Page: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
- 
+
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
@@ -548,32 +548,31 @@ const Page: React.FC = () => {
               ? rows[0]
               : rows.find((row: any) => row.user_id == filters.find_row_value);
 
-              if(selectedRow != undefined) {
-                setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-                setUserMenuFilters((prev) => ({
-                  ...prev,
-                  user_id: selectedRow.user_id,
-                  isSearch: true,
-                }));
-                setDetailFilter((prev) => ({
-                  ...prev,
-                  user_id: selectedRow.user_id,
-                  isSearch: true,
-                }));
-              } else {
-                setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-                setUserMenuFilters((prev) => ({
-                  ...prev,
-                  user_id: rows[0].user_id,
-                  isSearch: true,
-                }));
-                setDetailFilter((prev) => ({
-                  ...prev,
-                  user_id: rows[0].user_id,
-                  isSearch: true,
-                }));
-              }
-          
+          if (selectedRow != undefined) {
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+            setUserMenuFilters((prev) => ({
+              ...prev,
+              user_id: selectedRow.user_id,
+              isSearch: true,
+            }));
+            setDetailFilter((prev) => ({
+              ...prev,
+              user_id: selectedRow.user_id,
+              isSearch: true,
+            }));
+          } else {
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+            setUserMenuFilters((prev) => ({
+              ...prev,
+              user_id: rows[0].user_id,
+              isSearch: true,
+            }));
+            setDetailFilter((prev) => ({
+              ...prev,
+              user_id: rows[0].user_id,
+              isSearch: true,
+            }));
+          }
         }
       }
     } else {
@@ -818,13 +817,13 @@ const Page: React.FC = () => {
     }
   }, [mainDataResult]);
 
-    //메인 그리드 데이터 변경 되었을 때
-    useEffect(() => {
-      if (targetRowIndex2 !== null && gridRef2.current) {
-        gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
-        targetRowIndex2 = null;
-      }
-    }, [detailDataResult]);
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (targetRowIndex2 !== null && gridRef2.current) {
+      gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
+      targetRowIndex2 = null;
+    }
+  }, [detailDataResult]);
 
   useEffect(() => {
     if (filters.isSearch && permissions !== null && bizComponentData !== null) {
@@ -1094,7 +1093,8 @@ const Page: React.FC = () => {
   const exitEdit2 = () => {
     if (tempResult.data != detailDataResult.data) {
       const newData = detailDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(detailSelectedState)[0]
+        item[DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(detailSelectedState)[0]
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
@@ -1703,14 +1703,16 @@ const Page: React.FC = () => {
   };
 
   const onResetClick = async () => {
-    if(mainDataResult.data.length == 0) {
+    if (mainDataResult.data.length == 0) {
       alert("데이터가 없습니다.");
     } else {
       const datas = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
-      if (!window.confirm(`${datas.user_name}의 메뉴권한을 초기화 하겠습니까?`)) {
+      if (
+        !window.confirm(`${datas.user_name}의 메뉴권한을 초기화 하겠습니까?`)
+      ) {
         return false;
       }
       //프로시저 파라미터
@@ -1738,16 +1740,16 @@ const Page: React.FC = () => {
           "@p_pc": pc,
         },
       };
-  
+
       let data: any;
       setLoading(true);
-  
+
       try {
         data = await processApi<any>("procedure", paraSaved);
       } catch (error) {
         data = null;
       }
-  
+
       if (data.isSuccess === true) {
         deletedMainRows = [];
         setDetailFilter((prev) => ({
@@ -1763,7 +1765,7 @@ const Page: React.FC = () => {
       } else {
         console.log("[오류 발생]");
         console.log(data);
-  
+
         alert("[" + data.statusCode + "] " + data.resultMessage);
       }
       setLoading(false);
@@ -1771,52 +1773,48 @@ const Page: React.FC = () => {
   };
 
   const onCopyClick = async () => {
-    const org = mainDataResult.data.filter(
-      (item) =>
-        item.chk_org == true
-    );
-    const tar = mainDataResult.data.filter(
-      (item) =>
-        item.chk_tar == true
-    );
-  
-    if(org.length == 0 || tar.length == 0) {
+    const org = mainDataResult.data.filter((item) => item.chk_org == true);
+    const tar = mainDataResult.data.filter((item) => item.chk_tar == true);
+
+    if (org.length == 0 || tar.length == 0) {
       alert("데이터를 선택해주세요.");
       return false;
     }
 
-    if(org.length > 1) {
+    if (org.length > 1) {
       alert("원본은 하나만 선택해주세요.");
       return false;
     }
     let valid = true;
-    tar.map((item: { user_id: any; }) => {
-      if(org[0].user_id == item.user_id) {
+    tar.map((item: { user_id: any }) => {
+      if (org[0].user_id == item.user_id) {
         alert("같은 사용자 복사는 불가능합니다. 체크를 해제해주세요.");
         valid = false;
       }
-    })
+    });
 
-    if(valid == true) {
-      if (!window.confirm("권한 복사 처리 하시겠습니까? (주의, 대산 사용자의 기존 권한은 삭제됩니다.)")) {
+    if (valid == true) {
+      if (
+        !window.confirm(
+          "권한 복사 처리 하시겠습니까? (주의, 대산 사용자의 기존 권한은 삭제됩니다.)"
+        )
+      ) {
         return false;
       }
-  
+
       type TData2 = {
         target: string[];
       };
       let dataArr: TData2 = {
         target: [],
       };
-  
+
       tar.forEach((item: any, idx: number) => {
-        const {
-          user_id
-        } = item;
-  
+        const { user_id } = item;
+
         dataArr.target.push(user_id);
       });
-  
+
       //프로시저 파라미터
       const paraSaved: Iparameters = {
         procedureName: "P_SY_A0013W_S ",
@@ -1844,7 +1842,7 @@ const Page: React.FC = () => {
       };
       let data: any;
       setLoading(true);
-  
+
       try {
         data = await processApi<any>("procedure", paraSaved);
       } catch (error) {
@@ -1873,12 +1871,12 @@ const Page: React.FC = () => {
       } else {
         console.log("[오류 발생]");
         console.log(data);
-  
+
         alert("[" + data.statusCode + "] " + data.resultMessage);
       }
       setLoading(false);
     }
-  }
+  };
 
   const onMainItemChange2 = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
@@ -1915,8 +1913,18 @@ const Page: React.FC = () => {
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              chk_tar: typeof item.chk_tar == "boolean" ? item.chk_tar : item.chk_tar =="Y" ? true : false,
-              chk_org: typeof item.chk_org == "boolean" ? item.chk_org : item.chk_org =="Y" ? true : false,
+              chk_tar:
+                typeof item.chk_tar == "boolean"
+                  ? item.chk_tar
+                  : item.chk_tar == "Y"
+                  ? true
+                  : false,
+              chk_org:
+                typeof item.chk_org == "boolean"
+                  ? item.chk_org
+                  : item.chk_org == "Y"
+                  ? true
+                  : false,
               [EDIT_FIELD]: field,
             }
           : {

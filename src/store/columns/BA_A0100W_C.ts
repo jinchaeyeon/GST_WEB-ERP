@@ -90,7 +90,7 @@ export const gridList: Array<TGrid> = [
         id: "col_remark2",
         field: "remark",
         caption: "비고",
-        width: 150,
+        width: 158,
       },
     ],
   },
