@@ -48,10 +48,9 @@ const ExcelUploadButton = ({
     <Button
       onClick={upload}
       themeColor={"primary"}
-      fillMode={"outline"}
       icon={"upload"}
       style={style}
-      disabled={disabled ? true : permissions.save ? false : true}
+      disabled={permissions.save ? false : true}
     >
       엑셀업로드
       <input
