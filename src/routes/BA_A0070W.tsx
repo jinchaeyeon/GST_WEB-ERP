@@ -1120,25 +1120,28 @@ const BA_A0070W: React.FC = () => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
-
-    const selectRow = subDataResult.data.filter(
-      (item: any) =>
-        item.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
-    )[0];
-
-    setParaData({
-      workType: "D",
-      user_id: userId,
-      form_id: "BA_A0070W",
-      pc: pc,
-      basedt: selectRow.basedt,
-      rowstatus: "",
-      amtunit: "",
-      wonchgrat: "",
-      uschgrat: "",
-      remark: "",
-      baseamt: "",
-    });
+    if(subDataResult.data.length == 0) {
+      alert("데이터가 없습니다");
+    } else{
+      const selectRow = subDataResult.data.filter(
+        (item: any) =>
+          item.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
+      )[0];
+  
+      setParaData({
+        workType: "D",
+        user_id: userId,
+        form_id: "BA_A0070W",
+        pc: pc,
+        basedt: selectRow.basedt,
+        rowstatus: "",
+        amtunit: "",
+        wonchgrat: "",
+        uschgrat: "",
+        remark: "",
+        baseamt: "",
+      });
+    }
   };
 
   const onSite = () => {

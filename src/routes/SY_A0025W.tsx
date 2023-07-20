@@ -233,7 +233,7 @@ const SY_A0025W: React.FC = () => {
   });
 
   const [infomation, setInfomation] = useState({
-    worktype: "U",
+    worktype: "N",
     numbering_id: "",
     use_yn: false,
     numbering_name: "",
@@ -931,7 +931,6 @@ const SY_A0025W: React.FC = () => {
               pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
             }));
           }
-
           if (data.isSuccess == true) {
             setFilters((prev) => ({
               ...prev,
@@ -944,7 +943,7 @@ const SY_A0025W: React.FC = () => {
             mainDataResult.data.length === 1 && filters.pgNum > 1;
           const findRowIndex = mainDataResult.data.findIndex(
             (row: any) =>
-              row.num == Object.getOwnPropertyNames(selectedState)[0]
+              row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           );
           if (isLastDataDeleted) {
             setPage({
@@ -964,7 +963,7 @@ const SY_A0025W: React.FC = () => {
             resetAllGrid();
             setFilters((prev) => ({
               ...prev,
-              find_row_value:
+              find_row_value: mainDataResult.data.length == 1 ? "" :
                 mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
                   .numbering_id,
               pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
@@ -1029,10 +1028,15 @@ const SY_A0025W: React.FC = () => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
-    setInfomation((prev) => ({
-      ...prev,
-      worktype: "D",
-    }));
+
+    if(mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다");
+    } else {
+      setInfomation((prev) => ({
+        ...prev,
+        worktype: "D",
+      }));
+    }
   };
 
   useEffect(() => {
@@ -1499,7 +1503,7 @@ const SY_A0025W: React.FC = () => {
                     <td colSpan={3}>
                       <Input
                         name="start_serno"
-                        type="text"
+                        type="number"
                         value={infomation.start_serno}
                         onChange={InputChange}
                         className="required"
@@ -1519,7 +1523,7 @@ const SY_A0025W: React.FC = () => {
                     <td colSpan={3}>
                       <Input
                         name="sampleno"
-                        type="text"
+                        type="number"
                         value={infomation.sampleno}
                         onChange={InputChange}
                       />

@@ -1703,68 +1703,71 @@ const Page: React.FC = () => {
   };
 
   const onResetClick = async () => {
-    const datas = mainDataResult.data.filter(
-      (item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-    if (!window.confirm(`${datas.user_name}의 메뉴권한을 초기화 하겠습니까?`)) {
-      return false;
-    }
-
-    //프로시저 파라미터
-    const paraSaved: Iparameters = {
-      procedureName: "P_SY_A0013W_S ",
-      pageNumber: 1,
-      pageSize: 1,
-      parameters: {
-        "@p_work_type": "init",
-        "@p_orgdiv": filters.cboOrgdiv,
-        "@p_chk_yn_s": "",
-        "@p_user_group_id_s": "",
-        "@p_user_id_s": datas.user_id,
-        "@p_target_user_s": "",
-        "@p_row_state_s": "",
-        "@p_add_delete_type_s": "",
-        "@p_menu_id_s": "",
-        "@p_form_view_yn_s": "",
-        "@p_form_print_yn_s": "",
-        "@p_form_save_yn_s": "",
-        "@p_form_delete_yn_s": "",
-        "@p_layout_key": "",
-        "@p_category": "",
-        "@p_userid": userId,
-        "@p_pc": pc,
-      },
-    };
-
-    let data: any;
-    setLoading(true);
-
-    try {
-      data = await processApi<any>("procedure", paraSaved);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      deletedMainRows = [];
-      setDetailFilter((prev) => ({
-        ...prev,
-        find_row_value: Object.getOwnPropertyNames(detailSelectedState)[0],
-        isSearch: true,
-      }));
-      setUserMenuFilters((prev) => ({
-        ...prev,
-        find_row_value: "",
-        isSearch: true,
-      }));
+    if(mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
     } else {
-      console.log("[오류 발생]");
-      console.log(data);
-
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      const datas = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      if (!window.confirm(`${datas.user_name}의 메뉴권한을 초기화 하겠습니까?`)) {
+        return false;
+      }
+      //프로시저 파라미터
+      const paraSaved: Iparameters = {
+        procedureName: "P_SY_A0013W_S ",
+        pageNumber: 1,
+        pageSize: 1,
+        parameters: {
+          "@p_work_type": "init",
+          "@p_orgdiv": filters.cboOrgdiv,
+          "@p_chk_yn_s": "",
+          "@p_user_group_id_s": "",
+          "@p_user_id_s": datas.user_id,
+          "@p_target_user_s": "",
+          "@p_row_state_s": "",
+          "@p_add_delete_type_s": "",
+          "@p_menu_id_s": "",
+          "@p_form_view_yn_s": "",
+          "@p_form_print_yn_s": "",
+          "@p_form_save_yn_s": "",
+          "@p_form_delete_yn_s": "",
+          "@p_layout_key": "",
+          "@p_category": "",
+          "@p_userid": userId,
+          "@p_pc": pc,
+        },
+      };
+  
+      let data: any;
+      setLoading(true);
+  
+      try {
+        data = await processApi<any>("procedure", paraSaved);
+      } catch (error) {
+        data = null;
+      }
+  
+      if (data.isSuccess === true) {
+        deletedMainRows = [];
+        setDetailFilter((prev) => ({
+          ...prev,
+          find_row_value: Object.getOwnPropertyNames(detailSelectedState)[0],
+          isSearch: true,
+        }));
+        setUserMenuFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          isSearch: true,
+        }));
+      } else {
+        console.log("[오류 발생]");
+        console.log(data);
+  
+        alert("[" + data.statusCode + "] " + data.resultMessage);
+      }
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const onCopyClick = async () => {

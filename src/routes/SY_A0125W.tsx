@@ -266,7 +266,7 @@ const SY_A0125W: React.FC = () => {
       }
     } else if(name == "prntdptcd") {
       const values = dptcdListData.find(
-        (item: any) => item.dptcd === value
+        (item: any) => item.dptcd == value
       )?.dptnm;
 
       setInfomation((prev) => ({
@@ -500,45 +500,37 @@ const SY_A0125W: React.FC = () => {
           }
         }
       } else {
-        // 앱 메뉴 (최상위 메뉴) 없을 시 데이터 세팅
-        // 드래그앤드롭 사용 시 그리드 내 데이터 최소 1개 필요함
-
-        const appMenuData = rows.find((item: any) => item.prntdptcd === "");
-
-        const appMenuRow = [
-          {
-            dptcd: appMenuData.dptcd,
-            prntdptcd: appMenuData.prntdptcd,
-            form_delete_yn: "Y",
-            form_id: "",
-            form_print_yn: "Y",
-            form_save_yn: "Y",
-            form_view_yn: "Y",
-            menu_name: appMenuData.menu_name,
-            path: "",
-            row_state: "Q",
-            sort_order: 0,
-            rowstatus: "N",
-          },
-        ];
-
-        const appMenuDataTree = createDataTree(
-          appMenuRow,
-          (i: any) => i.dptcd,
-          (i: any) => i.prntdptcd,
-          SUB_ITEMS_FIELD
-        );
-
         setAllMenuDataResult((prev: any) => {
-          if (prev.length === 0) {
-            return { ...prev, data: appMenuDataTree };
-          } else {
-            return prev;
-          }
+            return { ...prev, data: [] };
         });
-        setSelectedState({
-          [appMenuRow[0][ALL_MENU_DATA_ITEM_KEY]]: true,
+        setInfomation({
+          pgSize: PAGE_SIZE,
+          workType: "N",
+          orgdiv: "01",
+          dptcd: "",
+          dptnm: "",
+          insert_form_id: "",
+          insert_pc: "",
+          insert_time:"",
+          insert_user_id:"",
+          last_update_time: "",
+          location: "",
+          mfcsaldv: "",
+          prntdptcd: "",
+          prntdptnm: "",
+          refdptcd: "",
+          remark: "",
+          update_form_id: "",
+          update_pc: "",
+          update_time: "",
+          update_userid: "",
+          useyn: "Y",
         });
+        setsubFilters((prev) => ({
+          ...prev,
+          pgNum: 1,
+        }));
+        setSubDataResult(process([], subDataState));
       }
     } else {
       console.log("[에러발생]");
@@ -958,12 +950,16 @@ const SY_A0125W: React.FC = () => {
       return false;
     }
 
-    const item = Object.getOwnPropertyNames(selectedState)[0];
-    setParaDataDeleted((prev) => ({
-      ...prev,
-      work_type: "D",
-      dptcd: item,
-    }));
+    if(allMenuDataResult.data.length == 0) {
+      alert("데이터가 없습니다");
+    } else {
+      const item = Object.getOwnPropertyNames(selectedState)[0];
+      setParaDataDeleted((prev) => ({
+        ...prev,
+        work_type: "D",
+        dptcd: item,
+      }));
+    }
   };
 
   const [paraData, setParaData] = useState({
@@ -1125,18 +1121,9 @@ const SY_A0125W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const findRowIndex = allMenuDataResult.data.findIndex(
-        (row: any) =>
-          row[ALL_MENU_DATA_ITEM_KEY] ==
-          Object.getOwnPropertyNames(selectedState)[0]
-      );
       setFilters((prev) => ({
         ...prev,
-        find_row_value:
-          findRowIndex == -1
-            ? ""
-            : allMenuDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
-                .dptcd,
+        find_row_value:"",
         isSearch: true,
       }));
     } else {
