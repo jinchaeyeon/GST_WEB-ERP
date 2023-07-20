@@ -720,9 +720,15 @@ const SY_A0120: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -948,7 +954,7 @@ const SY_A0120: React.FC = () => {
     //newData 생성
     setMainDataResult((prev) => ({
       data: newData,
-      total: prev.total - deletedMainRows.length,
+      total: prev.total - Object.length,
     }));
     setSelectedState({
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
@@ -1191,6 +1197,7 @@ const SY_A0120: React.FC = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
+  
   return (
     <>
       <TitleContainer>

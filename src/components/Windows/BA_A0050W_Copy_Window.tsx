@@ -161,6 +161,14 @@ const KendoWindow = ({
       skip: page.skip,
       take: initialPageState.take,
     });
+
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+
+    setPage3(initialPageState);
   };
 
   const pageChange2 = (event: GridPageChangeEvent) => {
@@ -271,9 +279,9 @@ const KendoWindow = ({
     isSearch: true,
   });
 
-  let gridRef : any = useRef(null); 
-  let gridRef2 : any = useRef(null); 
-  let gridRef3 : any = useRef(null); 
+  let gridRef: any = useRef(null);
+  let gridRef2: any = useRef(null);
+  let gridRef3: any = useRef(null);
 
   useEffect(() => {
     setFilters3((item) => ({
@@ -753,9 +761,11 @@ const KendoWindow = ({
     var parts = detailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {detailDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -765,9 +775,11 @@ const KendoWindow = ({
     var parts = detailDataResult2.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {detailDataResult2.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -777,9 +789,11 @@ const KendoWindow = ({
     var parts = detailDataResult3.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {detailDataResult3.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -795,6 +809,7 @@ const KendoWindow = ({
     setSelectedDetailState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+    setPage3(initialPageState);
     setFilters3((prev) => ({
       ...prev,
       itemcd: selectedRowData.itemcd,

@@ -710,11 +710,12 @@ const SY_A0125W: React.FC = () => {
         update_userid: selectedRowData.update_userid,
         useyn: selectedRowData.useyn == "Y" ? "Y" : "N",
       });
-
+      setPage(initialPageState);
       setsubFilters((prev) => ({
         ...prev,
         workType: "USERINFO",
         dptcd: selectedRowData.dptcd,
+        pgNum: 1,
         isSearch: true,
       }));
     },
@@ -744,9 +745,15 @@ const SY_A0125W: React.FC = () => {
   };
 
   const subTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = subDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {subDataResult.total}건
+        총
+        {subDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };

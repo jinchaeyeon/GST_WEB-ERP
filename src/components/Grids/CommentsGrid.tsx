@@ -187,12 +187,19 @@ const CommentsGrid = (props: {
   };
 
   const TotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = dataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {dataResult.total}건
+        총
+        {dataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
+  
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -230,6 +237,7 @@ const CommentsGrid = (props: {
         "@p_table_id": table_id,
         "@p_orgdiv": orgdiv,
         "@p_ref_key": ref_key,
+        "@p_find_row_value": filters.find_row_value
       },
     };
 

@@ -116,6 +116,13 @@ const KendoWindow = ({
       skip: page.skip,
       take: initialPageState.take,
     });
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+
+    setPage2(initialPageState);
   };
 
   const pageChange2 = (event: GridPageChangeEvent) => {
@@ -461,9 +468,11 @@ const KendoWindow = ({
     var parts = detailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {detailDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -473,9 +482,11 @@ const KendoWindow = ({
     var parts = detailDataResult2.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {detailDataResult2.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -496,7 +507,9 @@ const KendoWindow = ({
       ...prev,
       pattern_id: selectedRowData.pattern_id,
       isSearch: true,
+      pgNum: 1
     }));
+    setPage2(initialPageState);
   };
 
   const onDetailDataSelectionChange2 = (event: GridSelectionChangeEvent) => {

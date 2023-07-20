@@ -445,6 +445,14 @@ const BA_A0050: React.FC = () => {
       skip: page.skip,
       take: initialPageState.take,
     });
+
+    setsubFilters2((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+
+    setPage3(initialPageState);
   };
 
   const pageChange2 = (event: GridPageChangeEvent) => {
@@ -1222,11 +1230,7 @@ const BA_A0050: React.FC = () => {
     setSelectedState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-    setPage3((prev) => ({
-      ...prev,
-      skip: 0,
-      take: PAGE_SIZE,
-    }))
+    setPage3(initialPageState);
     setsubFilters2((prev) => ({
       ...prev,
       itemcd: selectedRowData.itemcd,
@@ -1374,9 +1378,11 @@ const BA_A0050: React.FC = () => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -1386,9 +1392,11 @@ const BA_A0050: React.FC = () => {
     var parts = subDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {subDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -1398,9 +1406,11 @@ const BA_A0050: React.FC = () => {
     var parts = subData2Result.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {subData2Result.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -2269,7 +2279,7 @@ const BA_A0050: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>BOM 상세</GridTitle>
                 <ButtonContainer>
-                <Button
+                  <Button
                     onClick={onCopyEditClick2}
                     themeColor={"primary"}
                     icon="save"

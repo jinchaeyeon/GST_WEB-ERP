@@ -314,8 +314,8 @@ const Page: React.FC = () => {
       "@p_form_id": "",
     },
   };
-  let gridRef : any = useRef(null); 
-  let gridRef2 : any = useRef(null); 
+  let gridRef: any = useRef(null);
+  let gridRef2: any = useRef(null);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -330,6 +330,13 @@ const Page: React.FC = () => {
       skip: page.skip,
       take: initialPageState.take,
     });
+    setDetailFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+
+    setPage2(initialPageState);
   };
 
   const pageChange2 = (event: GridPageChangeEvent) => {
@@ -716,7 +723,12 @@ const Page: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setPage2(initialPageState); // 페이지 초기화
     resetAllGrid(); // 데이터 초기화
-    setFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
@@ -880,8 +892,10 @@ const Page: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       group_code: selectedRowData.group_code,
+      pgNum: 1,
       isSearch: true,
     }));
+    setPage2(initialPageState);
   };
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -912,17 +926,29 @@ const Page: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataTotal.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataTotal}건
+        총
+        {mainDataTotal == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = detailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult.total}건
+        총
+        {detailDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -964,6 +990,92 @@ const Page: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      //코멘트 삭제
+      let data2: any;
+
+      const parameters: Iparameters = {
+        procedureName: "sys_sel_comments_web",
+        pageNumber: 1,
+        pageSize: 100000,
+        parameters: {
+          "@p_work_type": "Q",
+          "@p_form_id": pathname,
+          "@p_table_id": "comCodeMaster",
+          "@p_orgdiv": "01",
+          "@p_ref_key": rowsOfDataResult(mainDataResult).filter(
+            (row: any) =>
+              row.num == Object.getOwnPropertyNames(selectedState)[0]
+          )[0].group_code,
+          "@p_find_row_value": "",
+        },
+      };
+
+      try {
+        data2 = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data2 = null;
+      }
+      if (data2.isSuccess === true) {
+        const rows = data2.tables[0].Rows;
+        type TData = {
+          row_status: string[];
+          id: string[];
+          seq: string[];
+          recdt: string[];
+          comment: string[];
+          user_id: string[];
+        };
+
+        let dataArr: TData = {
+          row_status: [],
+          id: [],
+          comment: [],
+          seq: [],
+          recdt: [],
+          user_id: [],
+        };
+
+        rows.forEach((item: any, idx: number) => {
+          const { comment, id = "", seq, recdt, user_id } = item;
+
+          dataArr.row_status.push("D");
+          dataArr.comment.push(comment);
+          dataArr.id.push(id);
+          dataArr.seq.push(seq);
+          dataArr.recdt.push(recdt);
+          dataArr.user_id.push(user_id);
+        });
+
+        let data3: any;
+        const paraSaved: Iparameters = {
+          procedureName: "sys_sav_comments_web",
+          pageNumber: 0,
+          pageSize: 0,
+          parameters: {
+            "@p_work_type": "save",
+            "@p_row_status": dataArr.row_status.join("|"),
+            "@p_id": dataArr.id.join("|"),
+            "@p_seq": dataArr.seq.join("|"),
+            "@p_recdt": dataArr.recdt.join("|"),
+            "@p_comment": dataArr.comment.join("|"),
+            "@p_user_id": dataArr.user_id.join("|"),
+            "@p_form_id": pathname,
+            "@p_table_id": "comCodeMaster",
+            "@p_orgdiv": "01",
+            "@p_ref_key": rowsOfDataResult(mainDataResult).filter(
+              (row: any) =>
+                row.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0].group_code,
+            "@p_exec_pc": pc,
+          },
+        };
+        try {
+          data3 = await processApi<any>("procedure", paraSaved);
+        } catch (error) {
+          data3 = null;
+        }
+      }
+
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 1;
       const findRowIndex = rowsOfDataResult(mainDataResult).findIndex(

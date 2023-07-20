@@ -1064,9 +1064,15 @@ const KendoWindow = ({
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = detailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult.total}건
+        총
+        {detailDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -1464,9 +1470,9 @@ const KendoWindow = ({
           />
         </GridContainer>
       </GridContainerWrap>
-      <GridContainer margin={{ top: "30px" }}>
+      <GridContainer height="calc(100% - 420px)" margin={{ top: "30px" }}>
         <Grid
-          style={{ height: "42vh" }}
+          style={{ height: "100%" }}
           data={process(
             detailDataResult.data.map((item: any) => ({
               ...item,

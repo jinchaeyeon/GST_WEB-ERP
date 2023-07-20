@@ -133,6 +133,14 @@ const BA_A0070W: React.FC = () => {
       skip: page.skip,
       take: initialPageState.take,
     });
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+
+    setPage(initialPageState);
   };
 
   const userId = UseGetValueFromSessionItem("user_id");
@@ -537,11 +545,12 @@ const BA_A0070W: React.FC = () => {
     setSelectedsubDataState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    setPage(initialPageState);
     setFilters((prev) => ({
       ...prev,
       workType: "Q",
       frdt: toDate(selectedRowData.basedt),
+      pgNum: 1,
       isSearch: true,
     }));
   };
@@ -1099,7 +1108,7 @@ const BA_A0070W: React.FC = () => {
     //newData 생성
     setMainDataResult((prev) => ({
       data: newData,
-      total: prev.total - deletedMainRows.length,
+      total: prev.total - Object.length,
     }));
     setSelectedState({
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,

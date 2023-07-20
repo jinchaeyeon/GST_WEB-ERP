@@ -10,7 +10,11 @@ import {
 } from "@progress/kendo-react-grid";
 import { DataResult, process, getter } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
-import { ButtonContainer, TitleContainer } from "../../../CommonStyled";
+import {
+  ButtonContainer,
+  GridContainer,
+  TitleContainer,
+} from "../../../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
 import NumberCell from "../../Cells/NumberCell";
@@ -29,7 +33,7 @@ type IKendoWindow = {
   setData?(data: object): void;
   para: string;
   permission?: permission;
-  modal? : boolean;
+  modal?: boolean;
 };
 
 const DATA_ITEM_KEY = "saved_name";
@@ -39,13 +43,15 @@ const KendoWindow = ({
   setData,
   para = "",
   permission,
-  modal = false
+  modal = false,
 }: IKendoWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
-    height: 800,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: 810,
   });
 
   const [attachmentNumber, setAttachmentNumber] = useState(para);
@@ -68,7 +74,7 @@ const KendoWindow = ({
 
   const processApi = useApi();
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], {}),
+    process([], {})
   );
 
   useEffect(() => {
@@ -282,7 +288,7 @@ const KendoWindow = ({
 
       setSelectedState(newSelectedState);
     },
-    [selectedState],
+    [selectedState]
   );
 
   const onHeaderSelectionChange = React.useCallback(
@@ -299,7 +305,7 @@ const KendoWindow = ({
 
       setSelectedState(newSelectedState);
     },
-    [],
+    []
   );
 
   const handleFileUpload = async (files: FileList | null) => {
@@ -337,7 +343,7 @@ const KendoWindow = ({
       }
     }
   };
-  
+
   return (
     <Window
       title={"파일첨부관리"}
@@ -432,62 +438,64 @@ const KendoWindow = ({
         ></span>
         업로드할 파일을 마우스로 끌어오세요.
       </div>
-      <Grid
-        style={{ height: "550px" }}
-        data={process(
-          mainDataResult.data.map((row) => ({
-            ...row,
-            insert_time: convertDateToStrWithTime2(new Date(row.insert_time)),
-            [SELECTED_FIELD]: selectedState[idGetter(row)],
-          })),
-          {},
-        )}
-        sortable={true}
-        groupable={false}
-        reorderable={true}
-        //onDataStateChange={dataStateChange}
-        fixedScroll={true}
-        total={mainDataResult.total}
-        //onScroll={scrollHandler}
-        selectedField={SELECTED_FIELD}
-        selectable={{
-          enabled: true,
-          drag: false,
-          cell: false,
-          mode: "multiple",
-        }}
-        onSelectionChange={onSelectionChange}
-        onHeaderSelectionChange={onHeaderSelectionChange}
-      >
-        <GridColumn
-          field={SELECTED_FIELD}
-          width="45px"
-          headerSelectionValue={
-            mainDataResult.data.findIndex(
-              (item: any) => !selectedState[idGetter(item)],
-            ) === -1
-          }
-        />
-        <GridColumn field="original_name" title="파일명" width="600" />
-        <GridColumn
-          field="file_size"
-          title="파일SIZE (byte)"
-          width="150"
-          cell={NumberCell}
-        />
-        <GridColumn
-          field="user_name"
-          title="등록자"
-          cell={CenterCell}
-          width="150"
-        />
-        <GridColumn
-          field="insert_time"
-          title="등록일자"
-          width="200"
-          cell={CenterCell}
-        />
-      </Grid>
+      <GridContainer height="calc(100% - 170px)">
+        <Grid
+          style={{ height: "100%" }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              insert_time: convertDateToStrWithTime2(new Date(row.insert_time)),
+              [SELECTED_FIELD]: selectedState[idGetter(row)],
+            })),
+            {}
+          )}
+          sortable={true}
+          groupable={false}
+          reorderable={true}
+          //onDataStateChange={dataStateChange}
+          fixedScroll={true}
+          total={mainDataResult.total}
+          //onScroll={scrollHandler}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            drag: false,
+            cell: false,
+            mode: "multiple",
+          }}
+          onSelectionChange={onSelectionChange}
+          onHeaderSelectionChange={onHeaderSelectionChange}
+        >
+          <GridColumn
+            field={SELECTED_FIELD}
+            width="45px"
+            headerSelectionValue={
+              mainDataResult.data.findIndex(
+                (item: any) => !selectedState[idGetter(item)]
+              ) === -1
+            }
+          />
+          <GridColumn field="original_name" title="파일명" width="600" />
+          <GridColumn
+            field="file_size"
+            title="파일SIZE (byte)"
+            width="150"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="user_name"
+            title="등록자"
+            cell={CenterCell}
+            width="150"
+          />
+          <GridColumn
+            field="insert_time"
+            title="등록일자"
+            width="200"
+            cell={CenterCell}
+          />
+        </Grid>
+      </GridContainer>
       <p>※ 최대 파일 크기 (400MB)</p>
     </Window>
   );

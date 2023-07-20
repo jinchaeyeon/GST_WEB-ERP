@@ -256,9 +256,15 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -333,9 +339,9 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
+      <GridContainer height="calc(100% - 170px)">
         <Grid
-          style={{ height: "500px" }}
+             style={{ height: "100%" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
