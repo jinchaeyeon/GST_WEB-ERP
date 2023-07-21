@@ -77,5 +77,21 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
     ],
+  },{
+    gridName: "grdList2",
+    columns: [
+      {
+        id: "col_sub_code",
+        field: "sub_code",
+        caption: "코드",
+        width: 120,
+      },
+      {
+        id: "col_code_name",
+        field: "code_name",
+        caption: "계정명",
+        width: 120,
+      }
+    ],
   },
 ];

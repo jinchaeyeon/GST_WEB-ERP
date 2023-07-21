@@ -10,6 +10,7 @@ import {
   TreeListItemChangeEvent,
   modifySubItems,
 } from "@progress/kendo-react-treelist";
+import { gridList } from "../store/columns/SY_A0011W_C";
 import {
   Grid,
   GridColumn,
@@ -37,7 +38,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   getQueryFromBizComponent,
   getYn,
@@ -1313,6 +1314,53 @@ const Page: React.FC = () => {
     ? allMenuDataResult.editItem[ALL_MENU_DATA_ITEM_KEY]
     : null;
 
+
+  
+    const minGridWidth = React.useRef<number>(0);
+    const grid = React.useRef<any>(null);
+    const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+    const [gridCurrent, setGridCurrent] = React.useState(0);
+  
+    React.useEffect(() => {
+      if (customOptionData != null) {
+        grid.current = document.getElementById("grdHeaderList");
+        window.addEventListener("resize", handleResize);
+  
+        //가장작은 그리드 이름
+        customOptionData.menuCustomColumnOptions["grdHeaderList"].map((item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth.current += item.width)
+            : minGridWidth.current 
+        );
+  
+        setGridCurrent(grid.current.offsetWidth-55);
+        setApplyMinWidth(grid.current.offsetWidth-55 < minGridWidth.current);
+      }
+    }, [customOptionData]);
+  
+    const handleResize = () => {
+      if (grid.current.offsetWidth-55 < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.offsetWidth-55 > minGridWidth.current) {
+        setGridCurrent(grid.current.offsetWidth-55);
+        setApplyMinWidth(false);
+      }
+    };
+  
+    const setWidth = (Name: string, minWidth: number | undefined) => {
+      if (minWidth == undefined) {
+        minWidth = 0;
+      }
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+  
+      return width;
+    };
+
+    
   return (
     <>
       <TitleContainer>
@@ -1442,20 +1490,25 @@ const Page: React.FC = () => {
               reorderable={true}
               //컬럼너비조정
               resizable={true}
+              id="grdHeaderList"
             >
               <GridColumn cell={CommandCell} width="55px" />
-              <GridColumn
-                field={"user_group_id"}
-                title={"사용자그룹ID"}
-                width={"120px"}
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn
-                field={"user_group_name"}
-                title={"사용자그룹명"}
-                width={"150px"}
-              />
-              <GridColumn field={"use_yn"} title={"사용유무"} width={"110px"} />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={setWidth("grdHeaderList", item.width)}
+                        footerCell={
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1583,6 +1636,20 @@ const Page: React.FC = () => {
           }}
           modal={true}
         />
+      )}
+            {/* 컨트롤 네임 불러오기 용 */}
+            {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

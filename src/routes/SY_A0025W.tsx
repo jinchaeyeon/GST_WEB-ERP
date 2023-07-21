@@ -12,7 +12,7 @@ import {
   GridCellProps,
   GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
-import { gridList } from "../store/columns/BA_A0070W_C";
+import { gridList } from "../store/columns/SY_A0025W_C";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -33,7 +33,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   chkScrollHandler,
   convertDateToStr,
@@ -78,6 +78,9 @@ let deletedMainRows: any[] = [];
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let temp = 0;
+const checkField = ["use_yn"];
+const NumberField = ["last_serno"];
+
 const SY_A0025W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -963,9 +966,12 @@ const SY_A0025W: React.FC = () => {
             resetAllGrid();
             setFilters((prev) => ({
               ...prev,
-              find_row_value: mainDataResult.data.length == 1 ? "" :
-                mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
-                  .numbering_id,
+              find_row_value:
+                mainDataResult.data.length == 1
+                  ? ""
+                  : mainDataResult.data[
+                      findRowIndex == 0 ? 1 : findRowIndex - 1
+                    ].numbering_id,
               pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
               isSearch: true,
             }));
@@ -1029,7 +1035,7 @@ const SY_A0025W: React.FC = () => {
       return false;
     }
 
-    if(mainDataResult.data.length == 0) {
+    if (mainDataResult.data.length == 0) {
       alert("데이터가 없습니다");
     } else {
       setInfomation((prev) => ({
@@ -1119,6 +1125,84 @@ const SY_A0025W: React.FC = () => {
     }
   };
 
+  const minGridWidth = useRef<number>(0);
+  const minGridWidth2 = useRef<number>(0);
+  const grid = useRef<any>(null);
+  const grid2 = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+  const [gridCurrent2, setGridCurrent2] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+      grid2.current = document.getElementById("grdList2");
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList2"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth2.current += item.width)
+            : minGridWidth2.current
+      );
+
+      setGridCurrent(grid.current.offsetWidth-25);
+      setGridCurrent2(grid2.current.offsetWidth-25);
+      setApplyMinWidth(grid.current.offsetWidth-25 < minGridWidth.current);
+      setApplyMinWidth2(grid2.current.offsetWidth-25 < minGridWidth2.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current.offsetWidth -25< minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth-25 > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth-25);
+      setApplyMinWidth(false);
+    }
+    if (
+      grid2.current.offsetWidth-25 < minGridWidth2.current &&
+      !applyMinWidth2
+    ) {
+      setApplyMinWidth2(true);
+    } else if (grid2.current.offsetWidth-25 > minGridWidth2.current) {
+      setGridCurrent2(grid2.current.offsetWidth-25);
+      setApplyMinWidth2(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+
+    if (Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    } else {
+      let width = applyMinWidth2
+        ? minWidth
+        : minWidth +
+          (gridCurrent2 - (minGridWidth2.current+50)) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1161,7 +1245,7 @@ const SY_A0025W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainerWrap>
-        <GridContainer width={`23%`}>
+        <GridContainer width={"23%"}>
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
@@ -1202,24 +1286,29 @@ const SY_A0025W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            id="grdList"
           >
-            <GridColumn
-              field="numbering_id"
-              title="관리번호ID"
-              width="120px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn
-              field="numbering_name"
-              title="관리번호명"
-              width="150px"
-            />
-            <GridColumn
-              field="use_yn"
-              title="사용여부"
-              width="100px"
-              cell={CheckBoxReadOnlyCell}
-            />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={setWidth("grdList", item.width)}
+                      cell={
+                        checkField.includes(item.fieldName)
+                          ? CheckBoxReadOnlyCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </GridContainer>
 
@@ -1272,7 +1361,6 @@ const SY_A0025W: React.FC = () => {
                     )}
                     <th></th>
                     <td>
-                      {" "}
                       <Checkbox
                         name="use_yn"
                         label={"사용여부"}
@@ -1616,6 +1704,7 @@ const SY_A0025W: React.FC = () => {
               cellRender={customCellRender}
               rowRender={customRowRender}
               editField={EDIT_FIELD}
+              id="grdList2"
             >
               <GridColumn
                 field="rowstatus"
@@ -1623,22 +1712,44 @@ const SY_A0025W: React.FC = () => {
                 width="50px"
                 editable={false}
               />
-              <GridColumn
-                field="number_prefix"
-                title="채번접두사"
-                width="155px"
-                footerCell={subTotalFooterCell}
-              />
-              <GridColumn
-                field="last_serno"
-                title="최종순번"
-                cell={NumberCell}
-                width="150px"
-              />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={setWidth("grdList2", item.width)}
+                        cell={
+                          NumberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0 ? subTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>
       </GridContainerWrap>
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };

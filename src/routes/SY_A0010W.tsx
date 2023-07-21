@@ -43,6 +43,7 @@ import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   CLIENT_WIDTH,
+  GAP,
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
@@ -1171,6 +1172,50 @@ const Page: React.FC = () => {
     setMainDataResult({ ...mainDataResult });
   };
 
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdHeaderList");
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdHeaderList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current 
+      );
+
+      setGridCurrent(grid.current.offsetWidth-87);
+      setApplyMinWidth(grid.current.offsetWidth-87 < minGridWidth.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current.offsetWidth-87 < minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth-87 > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth-87);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    let width = applyMinWidth
+      ? minWidth
+      : minWidth +
+        (gridCurrent - minGridWidth.current) /
+          customOptionData.menuCustomColumnOptions[Name].length;
+
+    return width;
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1264,7 +1309,7 @@ const Page: React.FC = () => {
       </FilterContainer>
 
       <GridContainerWrap>
-        <GridContainer width={"500px"}>
+        <GridContainer width={"30%"}>
           <ExcelExport
             data={rowsOfDataResult(mainDataResult)}
             ref={(exporter) => {
@@ -1329,10 +1374,9 @@ const Page: React.FC = () => {
               groupable={true}
               onExpandChange={onExpandChange}
               expandField="expanded"
+              id="grdHeaderList"
             >
               <GridColumn cell={CommandCell} width="55px" />
-              <GridColumn field="group_category_name" title={"유형분류"} />
-
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
                   (item: any, idx: number) =>
@@ -1342,7 +1386,7 @@ const Page: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={item.width}
+                        width={setWidth("grdHeaderList", item.width)}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
@@ -1359,7 +1403,7 @@ const Page: React.FC = () => {
         </GridContainer>
 
         <GridContainer
-          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 500 + "px"}
+          width={`calc(70% -${GAP}px)`}
         >
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>

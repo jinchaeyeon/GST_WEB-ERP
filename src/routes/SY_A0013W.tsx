@@ -11,6 +11,7 @@ import {
   modifySubItems,
   TreeListCellProps,
 } from "@progress/kendo-react-treelist";
+import { gridList } from "../store/columns/SY_A0013W_C";
 import {
   Grid,
   GridColumn,
@@ -39,7 +40,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   getQueryFromBizComponent,
   getYn,
@@ -1955,7 +1956,86 @@ const Page: React.FC = () => {
       };
     });
   };
+  const minGridWidth = React.useRef<number>(0);
+  const minGridWidth2 = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const grid2 = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+  const [gridCurrent2, setGridCurrent2] = React.useState(0);
 
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+      grid2.current = document.getElementById("grdList2");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList2"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth2.current += item.width)
+            : minGridWidth2.current
+      );
+
+      setGridCurrent(grid.current.offsetWidth - 90);
+      setGridCurrent2(grid2.current.offsetWidth - 90);
+      setApplyMinWidth(grid.current.offsetWidth - 90 < minGridWidth.current);
+      setApplyMinWidth2(grid2.current.offsetWidth - 90 < minGridWidth2.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (
+      grid.current.offsetWidth - 90 < minGridWidth.current &&
+      !applyMinWidth
+    ) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth - 90 > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth - 90);
+      setApplyMinWidth(false);
+    }
+    if (
+      grid2.current.offsetWidth - 90 < minGridWidth2.current &&
+      !applyMinWidth2
+    ) {
+      setApplyMinWidth2(true);
+    } else if (grid2.current.offsetWidth - 90 > minGridWidth2.current) {
+      setGridCurrent2(grid2.current.offsetWidth - 90);
+      setApplyMinWidth2(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    if (Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    } else {
+      let width = applyMinWidth2
+        ? minWidth
+        : minWidth +
+          (gridCurrent2 - minGridWidth2.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+  };
   return (
     <>
       <TitleContainer>
@@ -2124,6 +2204,7 @@ const Page: React.FC = () => {
               onItemChange={onMainItemChange2}
               cellRender={customCellRender2}
               rowRender={customRowRender2}
+              id="grdList"
             >
               <GridColumn
                 field={"chk_org"}
@@ -2137,23 +2218,22 @@ const Page: React.FC = () => {
                 width={"45px"}
                 cell={CheckBoxCell}
               />
-              <GridColumn
-                field={"user_id"}
-                title={"사용자ID"}
-                width={"100px"}
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn
-                field={"user_name"}
-                title={"사용자명"}
-                width={"150px"}
-              />
-              <GridColumn
-                field={"user_category"}
-                title={"사용자구분"}
-                width={"110px"}
-              />
-              <GridColumn field={"postcd"} title={"직위"} width={"120px"} />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={setWidth("grdList", item.width)}
+                        footerCell={
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -2216,6 +2296,7 @@ const Page: React.FC = () => {
               reorderable={true}
               //컬럼너비조정
               resizable={true}
+              id="grdList2"
             >
               <GridColumn field="rowstatus" title=" " width="40px" />
               <GridColumn
@@ -2224,17 +2305,24 @@ const Page: React.FC = () => {
                 width="50px"
                 cell={CheckBoxCell}
               />
-              <GridColumn
-                field="user_group_id"
-                title="그룹ID"
-                width="245px"
-                footerCell={detailTotalFooterCell}
-              />
-              <GridColumn
-                field="user_group_name"
-                title="그룹명"
-                width="245px"
-              />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={setWidth("grdList2", item.width)}
+                        footerCell={
+                          item.sortOrder === 0
+                            ? detailTotalFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </GridContainer>
           <GridContainer>
@@ -2341,6 +2429,19 @@ const Page: React.FC = () => {
           </ExcelExport>
         </GridContainer>
       </GridContainerWrap>
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };

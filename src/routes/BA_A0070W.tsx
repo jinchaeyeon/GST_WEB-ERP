@@ -300,7 +300,7 @@ const BA_A0070W: React.FC = () => {
         "@p_wonchgrat": subfilters.wonchgrat,
         "@p_uschgrat": subfilters.uschgrat,
         "@p_baseamt": subfilters.baseamt,
-        "@p_find_row_value" : subfilters.find_row_value,
+        "@p_find_row_value": subfilters.find_row_value,
       },
     };
     try {
@@ -399,7 +399,7 @@ const BA_A0070W: React.FC = () => {
         "@p_wonchgrat": subfilters.wonchgrat,
         "@p_uschgrat": subfilters.uschgrat,
         "@p_baseamt": subfilters.baseamt,
-        "@p_find_row_value" : filters.find_row_value,
+        "@p_find_row_value": filters.find_row_value,
       },
     };
     try {
@@ -583,7 +583,17 @@ const BA_A0070W: React.FC = () => {
       </td>
     );
   };
-
+  const SubTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = subDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1120,14 +1130,14 @@ const BA_A0070W: React.FC = () => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
-    if(subDataResult.data.length == 0) {
+    if (subDataResult.data.length == 0) {
       alert("데이터가 없습니다");
-    } else{
+    } else {
       const selectRow = subDataResult.data.filter(
         (item: any) =>
           item.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
       )[0];
-  
+
       setParaData({
         workType: "D",
         user_id: userId,
@@ -1153,6 +1163,88 @@ const BA_A0070W: React.FC = () => {
     });
 
     window.open(link, "_blank", "noopener, noreferrer");
+  };
+
+  const minGridWidth = React.useRef<number>(0);
+  const minGridWidth2 = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const grid2 = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+  const [gridCurrent2, setGridCurrent2] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+      grid2.current = document.getElementById("grdList2");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList2"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth2.current += item.width)
+            : minGridWidth2.current
+      );
+      minGridWidth.current += 80;
+      minGridWidth2.current += 20;
+      setGridCurrent(grid.current.offsetWidth);
+      setGridCurrent2(grid2.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+      setApplyMinWidth2(grid2.current.offsetWidth  < minGridWidth2.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (
+      grid.current.offsetWidth < minGridWidth.current &&
+      !applyMinWidth
+    ) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(false);
+    }
+    if (
+      grid2.current.offsetWidth  < minGridWidth2.current &&
+      !applyMinWidth2
+    ) {
+      setApplyMinWidth2(true);
+    } else if (grid2.current.offsetWidth  > minGridWidth2.current) {
+      setGridCurrent2(grid2.current.offsetWidth );
+      setApplyMinWidth2(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    if (Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    } else {
+      let width = applyMinWidth2
+        ? minWidth
+        : minWidth +
+          (gridCurrent2 - minGridWidth2.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
   };
 
   return (
@@ -1227,7 +1319,7 @@ const BA_A0070W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainerWrap>
-        <GridContainer width={`15%`}>
+        <GridContainer width={"15%"}>
           <GridTitleContainer>
             <GridTitle>기준일자</GridTitle>
             <ButtonContainer>
@@ -1275,13 +1367,25 @@ const BA_A0070W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            id="grdList2"
           >
-            <GridColumn
-              field="basedt"
-              cell={DateCell}
-              title="기준일"
-              width="240px"
-            />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList2"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={setWidth("grdList2", item.width)}
+                      cell={DateCell}
+                      footerCell={
+                        item.sortOrder === 0 ? SubTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </GridContainer>
         <GridContainer width={`calc(85% - ${GAP}px)`}>
@@ -1366,6 +1470,7 @@ const BA_A0070W: React.FC = () => {
               cellRender={customCellRender}
               rowRender={customRowRender}
               editField={EDIT_FIELD}
+              id="grdList"
             >
               <GridColumn
                 field="rowstatus"
@@ -1382,7 +1487,7 @@ const BA_A0070W: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={item.width}
+                        width={setWidth("grdList", item.width)}
                         cell={
                           DateField.includes(item.fieldName)
                             ? DateCell
