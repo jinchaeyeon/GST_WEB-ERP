@@ -22,6 +22,39 @@ div.k-animation-container {
   justify-content: center !important;
   width: 100%;
 }
+
+.k-grouping-header {
+  border-width: 0 0 1px;
+  border-style: solid;
+  border-color: inherit;
+  white-space: normal;
+  display: none !important;
+  align-items: center;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.k-grouping-header::before {
+  content: "";
+  height: calc(1em + 10px);
+  display: none !important;
+  vertical-align: middle;
+}
+
+.k-grouping-header .k-chip-list {
+  flex-grow: 0;
+  display: none !important;
+}
+
+.k-grouping-header > .k-grouping-drop-container {
+  flex-grow: 1;
+  padding-block: 8px;
+  margin-block: -8px;
+  display: none !important;
+  align-self: stretch;
+  align-items: center;
+}
+
 /* 주석 해제 시 그리드 페이저의 우측 info 보임 */
 @media screen and (min-width: 600px) {
   .k-pager-md .k-pager-info {
