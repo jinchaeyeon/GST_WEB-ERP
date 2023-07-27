@@ -188,7 +188,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
       setMainDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 

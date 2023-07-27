@@ -339,7 +339,7 @@ const CM_A8210W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -373,7 +373,7 @@ const CM_A8210W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }

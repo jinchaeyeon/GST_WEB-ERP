@@ -638,7 +638,7 @@ const MA_A9001W: React.FC = () => {
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -744,7 +744,7 @@ const MA_A9001W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {
@@ -790,7 +790,7 @@ const MA_A9001W: React.FC = () => {
         setSubDataResult2((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {
@@ -836,7 +836,7 @@ const MA_A9001W: React.FC = () => {
         setSubDataResult3((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {

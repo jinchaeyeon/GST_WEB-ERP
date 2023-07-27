@@ -296,7 +296,7 @@ const CM_A8250W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -332,7 +332,7 @@ const CM_A8250W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (mainfilters.find_row_value === "" && mainfilters.pgNum === 1) {

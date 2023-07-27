@@ -1119,7 +1119,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -1158,7 +1158,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult2((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters2.find_row_value === "" && filters2.pgNum === 1) {
@@ -1202,7 +1202,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult3((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
 
@@ -1251,7 +1251,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult4((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -1291,7 +1291,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult5((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters3.find_row_value === "" && filters3.pgNum === 1) {
@@ -1331,7 +1331,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult6((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters4.find_row_value === "" && filters4.pgNum === 1) {

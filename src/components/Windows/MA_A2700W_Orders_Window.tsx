@@ -391,7 +391,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }

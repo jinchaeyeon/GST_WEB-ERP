@@ -269,7 +269,7 @@ const CM_B1101W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {
@@ -297,7 +297,7 @@ const CM_B1101W: React.FC = () => {
         setMainDataResult2((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {
@@ -328,7 +328,7 @@ const CM_B1101W: React.FC = () => {
       setDetailDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {
@@ -359,7 +359,7 @@ const CM_B1101W: React.FC = () => {
       setDetailDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {

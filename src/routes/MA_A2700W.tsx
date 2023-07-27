@@ -910,7 +910,7 @@ const MA_A2700W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -950,7 +950,7 @@ const MA_A2700W: React.FC = () => {
         setDetailDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }
@@ -974,7 +974,7 @@ const MA_A2700W: React.FC = () => {
         setBarcodeDateResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }

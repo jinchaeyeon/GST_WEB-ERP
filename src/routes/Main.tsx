@@ -349,7 +349,7 @@ const Main: React.FC = () => {
         setNoticeDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }
@@ -372,7 +372,7 @@ const Main: React.FC = () => {
         setWorkOrderDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }

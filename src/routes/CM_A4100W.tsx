@@ -512,7 +512,7 @@ const CM_A4100W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -584,7 +584,7 @@ const CM_A4100W: React.FC = () => {
         setMainDataResult2((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -662,7 +662,7 @@ const CM_A4100W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }

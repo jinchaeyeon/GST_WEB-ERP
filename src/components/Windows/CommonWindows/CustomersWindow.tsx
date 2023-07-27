@@ -200,7 +200,7 @@ const KendoWindow = ({
       setMainDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt) {

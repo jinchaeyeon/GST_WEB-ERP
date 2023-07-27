@@ -359,7 +359,7 @@ const PR_A0030W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -411,7 +411,7 @@ const PR_A0030W: React.FC = () => {
         setSubData2Result((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -441,7 +441,7 @@ const PR_A0030W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (subfilters.find_row_value === "" && subfilters.pgNum === 1) {

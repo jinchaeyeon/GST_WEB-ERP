@@ -558,7 +558,7 @@ const MA_B7200W: React.FC = () => {
       setDetailDataResult((prev) => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {
@@ -589,7 +589,7 @@ const MA_B7200W: React.FC = () => {
       setDetailDataResult2((prev) => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {
@@ -676,7 +676,7 @@ const MA_B7200W: React.FC = () => {
       setDetailDataResult3((prev) => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {
@@ -707,7 +707,7 @@ const MA_B7200W: React.FC = () => {
       setDetailDataResult4((prev) => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {

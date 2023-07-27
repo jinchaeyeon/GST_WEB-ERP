@@ -831,7 +831,7 @@ const MA_A3300W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
 
@@ -880,7 +880,7 @@ const MA_A3300W: React.FC = () => {
         setDetailDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }

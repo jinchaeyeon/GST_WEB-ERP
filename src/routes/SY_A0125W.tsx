@@ -599,7 +599,7 @@ const SY_A0125W: React.FC = () => {
       setSubDataResult(() => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 

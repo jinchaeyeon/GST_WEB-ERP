@@ -410,7 +410,7 @@ const BA_A0041W: React.FC = () => {
       setMainDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {

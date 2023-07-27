@@ -332,7 +332,7 @@ const BA_B0080W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: arr,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         let listnames = listname.sort(function (a: { unpitem: string; },b: { unpitem: string; }) {
@@ -350,7 +350,7 @@ const BA_B0080W: React.FC = () => {
         setListDataResult((prev) => {
           return {
             data: listnames,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {

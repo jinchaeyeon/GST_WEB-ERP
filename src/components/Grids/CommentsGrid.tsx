@@ -274,7 +274,7 @@ const CommentsGrid = (props: {
         }
         setDataResult({
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         });
       if (totalRowCnt > 0) {
           const selectedRow =

@@ -676,7 +676,7 @@ const MA_A2400W: React.FC = () => {
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -718,7 +718,7 @@ const MA_A2400W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
 
@@ -760,7 +760,7 @@ const MA_A2400W: React.FC = () => {
         setBOMDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       if (
@@ -796,7 +796,7 @@ const MA_A2400W: React.FC = () => {
       setBOMDataResult2((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 

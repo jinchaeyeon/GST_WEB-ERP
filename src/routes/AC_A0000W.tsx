@@ -295,7 +295,7 @@ const AC_A0000W: React.FC = () => {
       setMainDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 

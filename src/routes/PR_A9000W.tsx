@@ -886,7 +886,7 @@ const PR_A9000W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -922,7 +922,7 @@ const PR_A9000W: React.FC = () => {
         setDetailDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (detailFilters.find_row_value === "" && detailFilters.pgNum === 1) {

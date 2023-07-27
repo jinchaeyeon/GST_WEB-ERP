@@ -384,7 +384,7 @@ const EA_A2000: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {
@@ -434,7 +434,7 @@ const EA_A2000: React.FC = () => {
         setDetail1DataResult((prev) => {
           return {
             data: [...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {

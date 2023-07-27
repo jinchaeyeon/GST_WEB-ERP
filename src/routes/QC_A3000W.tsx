@@ -567,7 +567,7 @@ const QC_A3000: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -631,7 +631,7 @@ const QC_A3000: React.FC = () => {
       setDetailDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     }
@@ -665,7 +665,7 @@ const QC_A3000: React.FC = () => {
         setDetailDataResult2((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else if (datas.qcyn == "등록" && information.workType == "U") {
@@ -675,7 +675,7 @@ const QC_A3000: React.FC = () => {
         setDetailDataResult2((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else if (datas.qcyn == "미등록" && information.workType == "N") {
@@ -685,7 +685,7 @@ const QC_A3000: React.FC = () => {
         setDetailDataResult2((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {
@@ -695,7 +695,7 @@ const QC_A3000: React.FC = () => {
         setDetailDataResult2((prev) => {
           return {
             data: [],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }

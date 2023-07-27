@@ -342,7 +342,7 @@ const KendoWindow = ({
       setDetailDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {
@@ -443,7 +443,7 @@ const KendoWindow = ({
       setDetailDataResult2(() => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {
@@ -524,7 +524,7 @@ const KendoWindow = ({
       setDetailDataResult3((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {

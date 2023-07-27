@@ -370,7 +370,7 @@ const QC_B0040W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -409,7 +409,7 @@ const QC_B0040W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } 
@@ -433,7 +433,7 @@ const QC_B0040W: React.FC = () => {
         setDetailDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } 
@@ -457,7 +457,7 @@ const QC_B0040W: React.FC = () => {
         setDetailDataResult2((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {

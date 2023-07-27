@@ -463,7 +463,7 @@ const PR_A0060: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -497,7 +497,7 @@ const PR_A0060: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...row],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
