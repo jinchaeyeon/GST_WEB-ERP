@@ -62,9 +62,10 @@ import { Button } from "@progress/kendo-react-buttons";
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import ReactToPrint, { useReactToPrint } from "react-to-print";
 
-  const DATA_ITEM_KEY = "num";
-  const centerField = ["code"];
-  const cardField : any[] = [];
+const DATA_ITEM_KEY = "num";
+let targetRowIndex: null | number = null;
+const centerField = ["code"];
+const cardField : any[] = [];
 
 const PR_B0020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -157,10 +158,12 @@ const PR_B0020W: React.FC = () => {
       "@p_find_row_value": filters.find_row_value,
     },
   }
-  const [mainDataTotal, setMainDataTotal] = useState<number>(0);
+
+  let gridRef : any = useRef(null);
+
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    // if (!permissions?.view) return;
+    if (!permissions?.view) return;
     let data: any;
 
     setLoading(true);
@@ -180,22 +183,31 @@ const PR_B0020W: React.FC = () => {
           chk: false
         };
       });
+
+      setMainDataResult((prev) => {
+        return {
+          data: [...prev.data, ...rows],
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
       
       if (totalRowCnt > 0) {
-        setMainDataTotal(totalRowCnt);
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.num == filters.find_row_value);
 
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-        }
+            console.log(selectedRow);
+
+            if(selectedRow != undefined) {
+              setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+            } else {
+              setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+            }
       }
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
     }
     setFilters((prev) => ({
       ...prev,
@@ -293,7 +305,7 @@ const PR_B0020W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     return (
       <td colSpan={props.colSpan} style={props.style}>
-         총 {mainDataTotal}건
+         총 {mainDataResult.total}건
       </td>
     );
   };
@@ -636,7 +648,7 @@ const PR_B0020W: React.FC = () => {
                 onSelectionChange={onSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={mainDataTotal}
+                total={mainDataResult.total}
                 onScroll={onMainScrollHandler}
                 //정렬기능
                 sortable={true}
