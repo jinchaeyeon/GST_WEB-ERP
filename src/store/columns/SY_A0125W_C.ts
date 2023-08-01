@@ -32,7 +32,7 @@ export const gridList: Array<TGrid> = [
         id: "col_memo",
         field: "memo",
         caption: "메모",
-        width: 190,
+        width: 180,
       },
     ],
   },

@@ -431,7 +431,7 @@ const CopyWindow = ({
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         setIsInitSearch(true);
@@ -585,10 +585,10 @@ const CopyWindow = ({
     if (dataItem.length === 0) return false;
 
     mainDataResult.data.map((item) => {
-      if(item.num > temp){
-        temp = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
-  })
+    });
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
@@ -630,10 +630,10 @@ const CopyWindow = ({
     if (dataItem.length === 0) return false;
 
     mainDataResult.data.map((item) => {
-      if(item.num > temp2){
-        temp2 = item.num
+      if (item.num > temp2) {
+        temp2 = item.num;
       }
-  })
+    });
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp2;
@@ -873,25 +873,26 @@ const CopyWindow = ({
         filters.taxdiv == "A"
           ? item.unpcalmeth == "Q"
             ? filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat
+              ? item.qty * item.unp * 0.1
+              : item.qty * item.unp * filters.wonchgrat * 0.1
             : item.unpcalmeth == "F" || item.unpcalmeth == "L"
             ? filters.amtunit == "KRW"
-              ? (item.len == undefined ? 0 : item.len) * item.unp
+              ? (item.len == undefined ? 0 : item.len) * item.unp * 0.1
               : (item.len == undefined ? 0 : item.len) *
                 item.unp *
-                filters.wonchgrat
+                filters.wonchgrat *
+                0.1
             : item.unpcalmeth == "W"
             ? filters.amtunit == "KRW"
-              ? item.totwgt * item.unp
-              : item.totwgt * item.unp * filters.wonchgrat
+              ? item.totwgt * item.unp * 0.1
+              : item.totwgt * item.unp * filters.wonchgrat * 0.1
             : filters.amtunit == "KRW"
-            ? item.amt
-            : item.amt * filters.wonchgrat
+            ? item.amt * 0.1
+            : item.amt * filters.wonchgrat * 0.1
           : 0
       ),
-      totamt:
-      Math.round((item.unpcalmeth == "Q"
+      totamt: Math.round(
+        (item.unpcalmeth == "Q"
           ? filters.amtunit == "KRW"
             ? item.qty * item.unp
             : item.qty * item.unp * filters.wonchgrat
@@ -908,15 +909,16 @@ const CopyWindow = ({
           : filters.amtunit == "KRW"
           ? item.amt
           : item.amt * filters.wonchgrat) +
-        Math.round(
-          filters.taxdiv == "A"
-            ? filters.amtunit == "KRW"
-              ? (item.qty * item.unp) / 10
-              : (item.qty * item.unp * filters.wonchgrat) / 10
-            : 0
-        )),
-      dlramt:
-      Math.round(filters.uschgrat != 0
+          Math.round(
+            filters.taxdiv == "A"
+              ? filters.amtunit == "KRW"
+                ? (item.qty * item.unp) / 10
+                : (item.qty * item.unp * filters.wonchgrat) / 10
+              : 0
+          )
+      ),
+      dlramt: Math.round(
+        filters.uschgrat != 0
           ? (item.unpcalmeth == "Q"
               ? filters.amtunit == "KRW"
                 ? item.qty * item.unp
@@ -934,7 +936,8 @@ const CopyWindow = ({
               : filters.amtunit == "KRW"
               ? item.amt
               : item.amt * filters.wonchgrat) * filters.uschgrat
-          : 0),
+          : 0
+      ),
       [EDIT_FIELD]: undefined,
     }));
     console.log(newData);

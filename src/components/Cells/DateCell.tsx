@@ -46,6 +46,7 @@ const DateCell = (props: GridCellProps) => {
           onChange={onDateChange}
           calendar={Calendars}
           placeholder=""
+          show={true}
         />
       ) : typeof value === "object" ? (
         dateformat2(convertDateToStr(value))

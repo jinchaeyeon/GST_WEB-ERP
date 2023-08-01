@@ -44,7 +44,7 @@ export const gridList: Array<TGrid> = [
         id: "col_address",
         field: "address",
         caption: "주소",
-        width: 500,
+        width: 535,
       },
     ],
   },

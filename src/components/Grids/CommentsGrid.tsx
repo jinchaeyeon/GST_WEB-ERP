@@ -57,7 +57,7 @@ const CommentsGrid = (props: {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const idGetter = getter(DATA_ITEM_KEY);
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const onDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -187,12 +187,19 @@ const CommentsGrid = (props: {
   };
 
   const TotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = dataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {dataResult.total}건
+        총
+        {dataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
+  
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -221,7 +228,7 @@ const CommentsGrid = (props: {
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
-      procedureName: "sys_sel_comments",
+      procedureName: "sys_sel_comments_web",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -230,6 +237,7 @@ const CommentsGrid = (props: {
         "@p_table_id": table_id,
         "@p_orgdiv": orgdiv,
         "@p_ref_key": ref_key,
+        "@p_find_row_value": filters.find_row_value
       },
     };
 
@@ -243,7 +251,7 @@ const CommentsGrid = (props: {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0) {
+
         if (filters.find_row_value !== "") {
           // find_row_value 행으로 스크롤 이동
           if (gridRef.current) {
@@ -266,10 +274,9 @@ const CommentsGrid = (props: {
         }
         setDataResult({
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         });
-
-        if (rows.length > 0) {
+      if (totalRowCnt > 0) {
           const selectedRow =
             filters.find_row_value == ""
               ? rows[0]
@@ -281,7 +288,6 @@ const CommentsGrid = (props: {
             setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           }
         }
-      }
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -550,7 +556,6 @@ const CommentsGrid = (props: {
           <ButtonContainer>
             <Button
               onClick={onAddClick}
-              fillMode="outline"
               themeColor={"primary"}
               icon="plus"
               disabled={isSaveDisabled}

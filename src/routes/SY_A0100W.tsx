@@ -78,7 +78,7 @@ const App: React.FC = () => {
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(initialPageState);
-  const gridRef = useRef<any>(null);
+  let gridRef: any = useRef(null);
   const idGetter = getter(DATA_ITEM_KEY);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -96,7 +96,7 @@ const App: React.FC = () => {
 
     setPage({
       skip: page.skip,
-      take: initialPageState.take
+      take: initialPageState.take,
     });
   };
   const resetAllGrid = () => {
@@ -286,7 +286,7 @@ const App: React.FC = () => {
         "@p_work_type": filters.work_type,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.cboLocation,
-        "@p_yyyymm": convertDateToStr(filters.yyyymm),
+        "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0,6),
         "@p_is_all_menu": programFilters.is_all_menu,
         "@p_user_groupping": programFilters.user_groupping,
       },
@@ -304,7 +304,7 @@ const App: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    console.log(userParameters)
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const usedUserCnt = data.returnString;
@@ -355,11 +355,11 @@ const App: React.FC = () => {
             ? rows.find((row: any) => row.form_id == filters.find_row_value)
             : rows.find((row: any) => row.user_id == filters.find_row_value);
 
-            if(selectedRow != undefined) {
-              setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-            } else {
-              setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-            }
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
       }
     }
     // 필터 isSearch false처리, pgNum 세팅
@@ -383,9 +383,15 @@ const App: React.FC = () => {
   };
 
   const TotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {total}건
+        총
+        {total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -576,10 +582,12 @@ const App: React.FC = () => {
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    const title = props.field != undefined ?
-      (tabSelected == 0
-        ? props.field.replace("data_cnt_", "")
-        : props.field.replace("use_cnt_", "")) : ""
+    const title =
+      props.field != undefined
+        ? tabSelected == 0
+          ? props.field.replace("data_cnt_", "")
+          : props.field.replace("use_cnt_", "")
+        : "";
 
     if (props.field != undefined && newData[0] != undefined) {
       return (
@@ -701,6 +709,14 @@ const App: React.FC = () => {
                       onChange={programFilterChecBoxChange}
                     />
                   </td>
+                </>
+              )}
+              {tabSelected === 2 && (
+                <>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
                 </>
               )}
             </tr>

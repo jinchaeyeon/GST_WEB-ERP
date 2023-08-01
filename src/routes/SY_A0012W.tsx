@@ -120,6 +120,7 @@ const defaultItemInfo = {
   user_id: "",
 };
 let temp = 0;
+const COLUMN_MIN = 4;
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
   setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
@@ -318,6 +319,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
     } else {
       console.log("[에러발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
   };
 
@@ -334,7 +336,12 @@ const EncryptedCell2 = (props: GridCellProps) => {
         "*********"
       )}
       <ButtonInGridInput>
-        <Button onClick={onDelete} icon="close" title="초기화" fillMode="flat" />
+        <Button
+          onClick={onDelete}
+          icon="close"
+          title="초기화"
+          fillMode="flat"
+        />
       </ButtonInGridInput>
     </td>
   );
@@ -439,7 +446,7 @@ const SY_A0120: React.FC = () => {
 
     setPage({
       skip: page.skip,
-      take: initialPageState.take
+      take: initialPageState.take,
     });
   };
 
@@ -585,7 +592,7 @@ const SY_A0120: React.FC = () => {
     isSearch: true,
   });
 
-  const gridRef = useRef<any>(null);
+  let gridRef: any = useRef(null);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -608,6 +615,7 @@ const SY_A0120: React.FC = () => {
         "@p_user_name": filters.user_name,
         "@p_rtrchk": filters.radRtrchk === "T" ? "%" : filters.radRtrchk,
         "@p_usediv": filters.radUsediv,
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -646,7 +654,7 @@ const SY_A0120: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (totalRowCnt > 0) {
@@ -655,11 +663,11 @@ const SY_A0120: React.FC = () => {
               ? rows[0]
               : rows.find((row: any) => row.user_id == filters.find_row_value);
 
-              if(selectedRow != undefined) {
-                setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-              } else {
-                setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-              }
+          if (selectedRow != undefined) {
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          } else {
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          }
         }
       }
     } else {
@@ -718,9 +726,15 @@ const SY_A0120: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -873,7 +887,33 @@ const SY_A0120: React.FC = () => {
       [DATA_ITEM_KEY]: ++temp,
       apply_start_date: convertDateToStr(new Date()),
       apply_end_date: "19991231",
+      bircd: "Y",
       birdt: "19991231",
+      custcd: "",
+      dptcd: "",
+      email: "",
+      hold_check_yn: "N",
+      home_menu_id: "",
+      ip_check_yn: "N",
+      location: "",
+      mbouseyn: "N",
+      memo: "",
+      mobile_no: "",
+      opengb: "",
+      orgdiv: "01",
+      password: "",
+      password_confirm: "",
+      position: "",
+      postcd: "",
+      profile_image: "",
+      rtrchk: "N",
+      tel_no: "",
+      temp: "",
+      usediv: "Y",
+      user_category: "",
+      user_id: "",
+      user_ip: "",
+      user_name: "",
       rowstatus: "N",
     };
 
@@ -886,8 +926,8 @@ const SY_A0120: React.FC = () => {
     setPage((prev) => ({
       ...prev,
       skip: 0,
-      take: prev.take + 1
-    }))
+      take: prev.take + 1,
+    }));
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
@@ -920,7 +960,7 @@ const SY_A0120: React.FC = () => {
     //newData 생성
     setMainDataResult((prev) => ({
       data: newData,
-      total: prev.total - deletedMainRows.length,
+      total: prev.total - Object.length,
     }));
     setSelectedState({
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
@@ -928,7 +968,6 @@ const SY_A0120: React.FC = () => {
   };
 
   const onSaveClick = async () => {
-
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -1024,28 +1063,28 @@ const SY_A0120: React.FC = () => {
         } else {
           const isLastDataDeleted =
             mainDataResult.data.length == 0 && filters.pgNum > 1;
-            if (isLastDataDeleted) {
-              setPage({
-                skip:
-                  filters.pgNum == 1 || filters.pgNum == 0
-                    ? 0
-                    : PAGE_SIZE * (filters.pgNum - 2),
-                take: PAGE_SIZE,
-              });
-              setFilters((prev) => ({
-                ...prev,
-                find_row_value: "",
-                pgNum: prev.pgNum - 1 ,
-                isSearch: true,
-              }));
-            } else {
-              setFilters((prev) => ({
-                ...prev,
-                find_row_value: data.returnString,
-                pgNum: prev.pgNum,
-                isSearch: true,
-              }));
-            }
+          if (isLastDataDeleted) {
+            setPage({
+              skip:
+                filters.pgNum == 1 || filters.pgNum == 0
+                  ? 0
+                  : PAGE_SIZE * (filters.pgNum - 2),
+              take: PAGE_SIZE,
+            });
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: "",
+              pgNum: prev.pgNum - 1,
+              isSearch: true,
+            }));
+          } else {
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: data.returnString,
+              pgNum: prev.pgNum,
+              isSearch: true,
+            }));
+          }
         }
       }
 
@@ -1163,6 +1202,54 @@ const SY_A0120: React.FC = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
+
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+
+      setGridCurrent(grid.current.offsetWidth-40);
+      setApplyMinWidth(grid.current.offsetWidth - 40 < minGridWidth.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (
+      grid.current.offsetWidth - 40 < minGridWidth.current &&
+      !applyMinWidth
+    ) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth - 40 > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth -40);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    let width = applyMinWidth
+      ? minWidth
+      : minWidth +
+        (gridCurrent - minGridWidth.current) /
+          customOptionData.menuCustomColumnOptions[Name].length;
+
+    return width;
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1292,7 +1379,7 @@ const SY_A0120: React.FC = () => {
             setPassword,
           }}
         >
-          <GridContainer>
+          <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
@@ -1306,7 +1393,6 @@ const SY_A0120: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick}
-                      fillMode="outline"
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
@@ -1381,6 +1467,7 @@ const SY_A0120: React.FC = () => {
                 cellRender={customCellRender}
                 rowRender={customRowRender}
                 editField={EDIT_FIELD}
+                id="grdList"
               >
                 <GridColumn
                   field="rowstatus"
@@ -1399,7 +1486,7 @@ const SY_A0120: React.FC = () => {
                             id={item.id}
                             field={item.fieldName}
                             title={caption}
-                            width={item.width}
+                            width={setWidth("grdList", item.width)}
                             cell={
                               NameField.includes(item.fieldName)
                                 ? NameCell

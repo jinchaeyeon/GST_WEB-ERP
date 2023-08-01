@@ -254,7 +254,7 @@ const CM_A1600: React.FC = () => {
         setTodoDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }

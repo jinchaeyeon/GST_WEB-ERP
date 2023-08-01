@@ -389,7 +389,7 @@ const PR_A6000W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {

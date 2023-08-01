@@ -10,6 +10,7 @@ import {
   TreeListItemChangeEvent,
   modifySubItems,
 } from "@progress/kendo-react-treelist";
+import { gridList } from "../store/columns/SY_A0011W_C";
 import {
   Grid,
   GridColumn,
@@ -37,7 +38,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   getQueryFromBizComponent,
   getYn,
@@ -228,11 +229,11 @@ const Page: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (value !== null)
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -244,7 +245,7 @@ const Page: React.FC = () => {
       [name]: value,
     }));
   };
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -297,8 +298,9 @@ const Page: React.FC = () => {
         "@p_work_type": filter.work_type,
         "@p_user_group_id": filter.user_group_id,
         "@p_user_group_name": filter.user_group_name,
-        "@p_lang_id": filter.lang_id,
+        "@p_culture_name": filter.lang_id,
         "@p_use_yn": filter.use_yn,
+        "@p_find_row_value": filter.find_row_value,
       },
     };
 
@@ -336,7 +338,7 @@ const Page: React.FC = () => {
       setMainDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {
@@ -393,8 +395,9 @@ const Page: React.FC = () => {
         "@p_work_type": "DETAIL",
         "@p_user_group_id": userMenuFilter.user_group_id,
         "@p_user_group_name": filters.user_group_name,
-        "@p_lang_id": filters.lang_id,
+        "@p_culture_name": filters.lang_id,
         "@p_use_yn": filters.use_yn,
+        "@p_find_row_value": userMenuFilter.find_row_value,
       },
     };
 
@@ -498,8 +501,9 @@ const Page: React.FC = () => {
         "@p_work_type": "ALL",
         "@p_user_group_id": filter.user_group_id,
         "@p_user_group_name": filter.user_group_name,
-        "@p_lang_id": filter.lang_id,
+        "@p_culture_name": filter.lang_id,
         "@p_use_yn": filter.use_yn,
+        "@p_find_row_value": "",
       },
     };
 
@@ -686,9 +690,15 @@ const Page: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -773,16 +783,19 @@ const Page: React.FC = () => {
     if (!window.confirm("삭제하시겠습니까?")) {
       return false;
     }
-
-    const data = mainDataResult.data.filter(
-      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-
-    setParaDataDeleted((prev) => ({
-      ...prev,
-      work_type: "D",
-      user_group_id: data.user_group_id,
-    }));
+    if(mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다");
+    } else {
+      const data = mainDataResult.data.filter(
+        (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+  
+      setParaDataDeleted((prev) => ({
+        ...prev,
+        work_type: "D",
+        user_group_id: data.user_group_id,
+      }));
+    }
   };
 
   useEffect(() => {
@@ -1191,7 +1204,6 @@ const Page: React.FC = () => {
 
   const search = () => {
     deletedMainRows = [];
-    setPage(initialPageState); // 페이지 초기화
     resetAllGrid();
     setUserMenuFilters((prev) => ({ ...prev, find_row_value: "" }));
     setFilters((prev) => ({
@@ -1302,6 +1314,53 @@ const Page: React.FC = () => {
     ? allMenuDataResult.editItem[ALL_MENU_DATA_ITEM_KEY]
     : null;
 
+
+  
+    const minGridWidth = React.useRef<number>(0);
+    const grid = React.useRef<any>(null);
+    const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+    const [gridCurrent, setGridCurrent] = React.useState(0);
+  
+    React.useEffect(() => {
+      if (customOptionData != null) {
+        grid.current = document.getElementById("grdHeaderList");
+        window.addEventListener("resize", handleResize);
+  
+        //가장작은 그리드 이름
+        customOptionData.menuCustomColumnOptions["grdHeaderList"].map((item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth.current += item.width)
+            : minGridWidth.current 
+        );
+  
+        setGridCurrent(grid.current.offsetWidth-55);
+        setApplyMinWidth(grid.current.offsetWidth-55 < minGridWidth.current);
+      }
+    }, [customOptionData]);
+  
+    const handleResize = () => {
+      if (grid.current.offsetWidth-55 < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.offsetWidth-55 > minGridWidth.current) {
+        setGridCurrent(grid.current.offsetWidth-55);
+        setApplyMinWidth(false);
+      }
+    };
+  
+    const setWidth = (Name: string, minWidth: number | undefined) => {
+      if (minWidth == undefined) {
+        minWidth = 0;
+      }
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+  
+      return width;
+    };
+
+    
   return (
     <>
       <TitleContainer>
@@ -1324,7 +1383,7 @@ const Page: React.FC = () => {
               <th>사용자그룹ID</th>
               <td>
                 <Input
-                  name="user_id"
+                  name="user_group_id"
                   type="text"
                   value={filters.user_group_id}
                   onChange={filterInputChange}
@@ -1333,7 +1392,7 @@ const Page: React.FC = () => {
               <th>사용자그룹명</th>
               <td>
                 <Input
-                  name="user_name"
+                  name="user_group_name"
                   type="text"
                   value={filters.user_group_name}
                   onChange={filterInputChange}
@@ -1431,20 +1490,25 @@ const Page: React.FC = () => {
               reorderable={true}
               //컬럼너비조정
               resizable={true}
+              id="grdHeaderList"
             >
               <GridColumn cell={CommandCell} width="55px" />
-              <GridColumn
-                field={"user_group_id"}
-                title={"사용자그룹ID"}
-                width={"120px"}
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn
-                field={"user_group_name"}
-                title={"사용자그룹명"}
-                width={"150px"}
-              />
-              <GridColumn field={"use_yn"} title={"사용유무"} width={"110px"} />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={setWidth("grdHeaderList", item.width)}
+                        footerCell={
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1565,12 +1629,27 @@ const Page: React.FC = () => {
               "@p_work_type": "DETAIL",
               "@p_user_group_id": userMenuFilters.user_group_id,
               "@p_user_group_name": filters.user_group_name,
-              "@p_lang_id": filters.lang_id,
+              "@p_culture_name": filters.lang_id,
               "@p_use_yn": filters.use_yn,
+              "@p_find_row_value": userMenuFilters.find_row_value,
             },
           }}
           modal={true}
         />
+      )}
+            {/* 컨트롤 네임 불러오기 용 */}
+            {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

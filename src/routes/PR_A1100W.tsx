@@ -666,7 +666,7 @@ const PR_A1100W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {
@@ -697,7 +697,7 @@ const PR_A1100W: React.FC = () => {
         setPlanDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {
@@ -727,7 +727,7 @@ const PR_A1100W: React.FC = () => {
         setMaterialDataResult((prev) => {
           return {
             data: [...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }

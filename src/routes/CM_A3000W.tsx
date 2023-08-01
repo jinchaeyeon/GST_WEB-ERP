@@ -417,7 +417,7 @@ const CM_A3000W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         setFilters((prev) => ({
@@ -454,7 +454,7 @@ const CM_A3000W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...row],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -500,7 +500,7 @@ const CM_A3000W: React.FC = () => {
         setAttDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
 

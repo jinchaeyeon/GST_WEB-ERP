@@ -501,7 +501,7 @@ const BA_A0040: React.FC = () => {
 
         setMainDataResult({
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         });
 
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
@@ -635,7 +635,7 @@ const BA_A0040: React.FC = () => {
         setSubData2Result((prev) => {
           return {
             data: [...prev.data, ...row],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -1592,7 +1592,7 @@ const BA_A0040: React.FC = () => {
     });
   };
 
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
 
   return (
     <>

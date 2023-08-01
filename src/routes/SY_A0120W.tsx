@@ -203,7 +203,7 @@ const SY_A0120: React.FC = () => {
     isSearch: true,
   });
 
-  const gridRef = useRef<any>(null);
+  let gridRef : any = useRef(null); 
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -261,7 +261,7 @@ const SY_A0120: React.FC = () => {
       setMainDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {
@@ -334,9 +334,15 @@ const SY_A0120: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -371,6 +377,12 @@ const SY_A0120: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SY_A0120W_001");
+      } else if (
+        filters.location != null ||
+        filters.location != "" ||
+        filters.location != undefined 
+      ) {
+        throw findMessage(messagesData, "SY_A0120W_002");
       } else {
         resetAllGrid();
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
@@ -378,6 +390,50 @@ const SY_A0120: React.FC = () => {
     } catch (e) {
       alert(e);
     }
+  };
+
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdAllList");
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdAllList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current 
+      );
+
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    let width = applyMinWidth
+      ? minWidth
+      : minWidth +
+        (gridCurrent - minGridWidth.current) /
+          customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
   };
 
   return (
@@ -537,6 +593,7 @@ const SY_A0120: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            id="grdAllList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdAllList"].map(
@@ -547,7 +604,7 @@ const SY_A0120: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={item.width}
+                      width={setWidth("grdAllList", item.width)}
                       footerCell={
                         item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }

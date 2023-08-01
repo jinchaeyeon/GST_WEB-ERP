@@ -43,6 +43,7 @@ import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   CLIENT_WIDTH,
+  GAP,
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
@@ -314,8 +315,8 @@ const Page: React.FC = () => {
       "@p_form_id": "",
     },
   };
-  const gridRef = useRef<any>(null);
-  const gridRef2 = useRef<any>(null);
+  let gridRef: any = useRef(null);
+  let gridRef2: any = useRef(null);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -330,6 +331,13 @@ const Page: React.FC = () => {
       skip: page.skip,
       take: initialPageState.take,
     });
+    setDetailFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+
+    setPage2(initialPageState);
   };
 
   const pageChange2 = (event: GridPageChangeEvent) => {
@@ -682,7 +690,7 @@ const Page: React.FC = () => {
       setDetailDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {
@@ -716,7 +724,12 @@ const Page: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setPage2(initialPageState); // 페이지 초기화
     resetAllGrid(); // 데이터 초기화
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
@@ -743,15 +756,7 @@ const Page: React.FC = () => {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-
-      if (filters.find_row_value !== "") {
-        // 그룹코드로 조회 시 리셋 후 조회
-        resetAllGrid();
-        fetchMainGrid(deepCopiedFilters);
-      } else {
-        // 일반 조회
-        fetchMainGrid(deepCopiedFilters);
-      }
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions, bizComponentData]);
 
@@ -771,7 +776,7 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
-    if (targetRowIndex !== null && gridRef2.current) {
+    if (targetRowIndex2 !== null && gridRef2.current) {
       gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
       targetRowIndex2 = null;
     }
@@ -888,8 +893,10 @@ const Page: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       group_code: selectedRowData.group_code,
+      pgNum: 1,
       isSearch: true,
     }));
+    setPage2(initialPageState);
   };
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -920,17 +927,29 @@ const Page: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataTotal.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataTotal}건
+        총
+        {mainDataTotal == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = detailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult.total}건
+        총
+        {detailDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -972,6 +991,92 @@ const Page: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      //코멘트 삭제
+      let data2: any;
+
+      const parameters: Iparameters = {
+        procedureName: "sys_sel_comments_web",
+        pageNumber: 1,
+        pageSize: 100000,
+        parameters: {
+          "@p_work_type": "Q",
+          "@p_form_id": pathname,
+          "@p_table_id": "comCodeMaster",
+          "@p_orgdiv": "01",
+          "@p_ref_key": rowsOfDataResult(mainDataResult).filter(
+            (row: any) =>
+              row.num == Object.getOwnPropertyNames(selectedState)[0]
+          )[0].group_code,
+          "@p_find_row_value": "",
+        },
+      };
+
+      try {
+        data2 = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data2 = null;
+      }
+      if (data2.isSuccess === true) {
+        const rows = data2.tables[0].Rows;
+        type TData = {
+          row_status: string[];
+          id: string[];
+          seq: string[];
+          recdt: string[];
+          comment: string[];
+          user_id: string[];
+        };
+
+        let dataArr: TData = {
+          row_status: [],
+          id: [],
+          comment: [],
+          seq: [],
+          recdt: [],
+          user_id: [],
+        };
+
+        rows.forEach((item: any, idx: number) => {
+          const { comment, id = "", seq, recdt, user_id } = item;
+
+          dataArr.row_status.push("D");
+          dataArr.comment.push(comment);
+          dataArr.id.push(id);
+          dataArr.seq.push(seq);
+          dataArr.recdt.push(recdt);
+          dataArr.user_id.push(user_id);
+        });
+
+        let data3: any;
+        const paraSaved: Iparameters = {
+          procedureName: "sys_sav_comments_web",
+          pageNumber: 0,
+          pageSize: 0,
+          parameters: {
+            "@p_work_type": "save",
+            "@p_row_status": dataArr.row_status.join("|"),
+            "@p_id": dataArr.id.join("|"),
+            "@p_seq": dataArr.seq.join("|"),
+            "@p_recdt": dataArr.recdt.join("|"),
+            "@p_comment": dataArr.comment.join("|"),
+            "@p_user_id": dataArr.user_id.join("|"),
+            "@p_form_id": pathname,
+            "@p_table_id": "comCodeMaster",
+            "@p_orgdiv": "01",
+            "@p_ref_key": rowsOfDataResult(mainDataResult).filter(
+              (row: any) =>
+                row.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0].group_code,
+            "@p_exec_pc": pc,
+          },
+        };
+        try {
+          data3 = await processApi<any>("procedure", paraSaved);
+        } catch (error) {
+          data3 = null;
+        }
+      }
+
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 1;
       const findRowIndex = rowsOfDataResult(mainDataResult).findIndex(
@@ -1067,6 +1172,50 @@ const Page: React.FC = () => {
     setMainDataResult({ ...mainDataResult });
   };
 
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdHeaderList");
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdHeaderList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current 
+      );
+
+      setGridCurrent(grid.current.offsetWidth-87);
+      setApplyMinWidth(grid.current.offsetWidth-87 < minGridWidth.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current.offsetWidth-87 < minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth-87 > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth-87);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    let width = applyMinWidth
+      ? minWidth
+      : minWidth +
+        (gridCurrent - minGridWidth.current) /
+          customOptionData.menuCustomColumnOptions[Name].length;
+
+    return width;
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1160,7 +1309,7 @@ const Page: React.FC = () => {
       </FilterContainer>
 
       <GridContainerWrap>
-        <GridContainer width={"500px"}>
+        <GridContainer width={"30%"}>
           <ExcelExport
             data={rowsOfDataResult(mainDataResult)}
             ref={(exporter) => {
@@ -1225,10 +1374,9 @@ const Page: React.FC = () => {
               groupable={true}
               onExpandChange={onExpandChange}
               expandField="expanded"
+              id="grdHeaderList"
             >
               <GridColumn cell={CommandCell} width="55px" />
-              <GridColumn field="group_category_name" title={"유형분류"} />
-
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
                   (item: any, idx: number) =>
@@ -1238,7 +1386,7 @@ const Page: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={item.width}
+                        width={setWidth("grdHeaderList", item.width)}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
@@ -1255,7 +1403,7 @@ const Page: React.FC = () => {
         </GridContainer>
 
         <GridContainer
-          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 500 + "px"}
+          width={`calc(70% -${GAP}px)`}
         >
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>

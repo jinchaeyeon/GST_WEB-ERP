@@ -516,7 +516,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -576,7 +576,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         setDetailDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }

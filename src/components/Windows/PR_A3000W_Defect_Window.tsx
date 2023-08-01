@@ -505,7 +505,7 @@ const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
       setDetailDataResult(() => {
         return {
           data: [...rows],
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     }

@@ -83,7 +83,7 @@ const KendoWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const gridRef = useRef<any>(null);
+  let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const setLoading = useSetRecoilState(isLoading);
@@ -339,6 +339,13 @@ const KendoWindow = ({
           total: prev.total,
         };
       });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: detailDataResult.data,
+          total: prev.total,
+        };
+      });
     }
   };
 
@@ -425,7 +432,6 @@ const KendoWindow = ({
     files: "",
   });
 
-  //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_SY_A0010W_Q",
     pageNumber: 1,
@@ -447,6 +453,8 @@ const KendoWindow = ({
   const fetchMain = async () => {
     let data: any;
     setLoading(true);
+    //조회조건 파라미터
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -521,7 +529,7 @@ const KendoWindow = ({
         "@p_memo": "",
         "@p_sub_code": "",
         "@p_code_name": "",
-        "@p_find_row_value": "",
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -559,7 +567,7 @@ const KendoWindow = ({
           // find_row_value 행으로 스크롤 이동
           if (gridRef.current) {
             const findRowIndex = rows.findIndex(
-              (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+              (row: any) => row.sub_code == filters.find_row_value
             );
             targetRowIndex = findRowIndex;
           }
@@ -578,16 +586,14 @@ const KendoWindow = ({
         setDetailDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
 
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find(
-                (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
-              );
+            : rows.find((row: any) => row.sub_code == filters.find_row_value);
 
         if (selectedRow != undefined) {
           setDetailSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -720,7 +726,6 @@ const KendoWindow = ({
         //SY_A0010W에만 if문사용
         setFilters((prev) => ({
           ...prev,
-          find_row_value: "",
           isSearch: false,
         })); // 한번만 조회되도록
 
@@ -759,12 +764,6 @@ const KendoWindow = ({
     },
   };
 
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setPage(initialPageState); // 페이지 초기화
-    setFilters((prev) => ({ ...prev, pgNum: 1 }));
-  };
-
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex !== null && gridRef.current) {
@@ -782,12 +781,9 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-
     if (data.isSuccess === true) {
       deletedMainRows = [];
       if (workType === "U") {
-        resetAllGrid();
-
         reloadData("U", paraData.group_code);
         fetchMain();
       } else {
@@ -816,6 +812,23 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       // 초기화
+      const isLastDataDeleted =
+        detailDataResult.data.length == 0 && filters.pgNum > 1;
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+      }
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: paraData.work_type != "D" ? data.returnString : "",
+        pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+        isSearch: true,
+      }));
       setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
@@ -1051,9 +1064,15 @@ const KendoWindow = ({
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = detailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult.total}건
+        총
+        {detailDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -1451,9 +1470,9 @@ const KendoWindow = ({
           />
         </GridContainer>
       </GridContainerWrap>
-      <GridContainer margin={{ top: "30px" }}>
+      <GridContainer height="calc(100% - 420px)" margin={{ top: "30px" }}>
         <Grid
-          style={{ height: "42vh" }}
+          style={{ height: "100%" }}
           data={process(
             detailDataResult.data.map((item: any) => ({
               ...item,
@@ -1506,7 +1525,6 @@ const KendoWindow = ({
             <Button
               type={"button"}
               themeColor={"primary"}
-              fillMode="outline"
               onClick={onAddClick}
               icon="add"
             >
