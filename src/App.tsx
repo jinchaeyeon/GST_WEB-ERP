@@ -98,6 +98,7 @@ import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
 import PR_A1100W from "./routes/PR_A1100W";
+import PR_A4000W from "./routes/PR_A4000W";
 import PR_A4100W from "./routes/PR_A4100W";
 import PR_A5000W from "./routes/PR_A5000W";
 import PR_A6000W from "./routes/PR_A6000W";
@@ -356,6 +357,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />   
                 <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />   
                 <AuthRoute path="/PR_A0060W" component={PR_A0060W} exact />
+                <AuthRoute path="/PR_A4000W" component={PR_A4000W} exact />
                 <AuthRoute path="/PR_A4100W" component={PR_A4100W} exact />
                 <AuthRoute path="/PR_A5000W" component={PR_A5000W} exact />
                 <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
