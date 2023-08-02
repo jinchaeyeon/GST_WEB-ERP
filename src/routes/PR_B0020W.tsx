@@ -757,6 +757,7 @@ const PR_B0020W: React.FC = () => {
                                     display: "flex",
                                     justifyContent: "space-between",
                                     alignItems: "center",
+                                    height: "50px",
                                     }}
                             >
                                 <div>
