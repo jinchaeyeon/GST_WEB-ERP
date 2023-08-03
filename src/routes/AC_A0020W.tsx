@@ -77,7 +77,7 @@ const DATA_ITEM_KEY = "num";
 const customField = ["controltype", "acntgrpgb", "grpchr"];
 const checkField = ["system_yn", "p_line", "p_border", "p_color"];
 const numberField = ["p_seq"];
-const requiredField = ["acntgrpnm", "acntcd", "stdrmkcd","stdrmknm1"];
+const requiredField = ["acntgrpnm", "acntcd", "stdrmkcd", "stdrmknm1"];
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
 
@@ -136,7 +136,11 @@ type TdataArr4 = {
   sodracntcd_s: string[];
   socracntcd_s: string[];
 };
-
+let temp = 0;
+let temp2 = 0;
+let temp3 = 0;
+let temp4 = 0;
+let temp5 = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
@@ -1115,7 +1119,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -1154,7 +1158,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult2((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters2.find_row_value === "" && filters2.pgNum === 1) {
@@ -1198,7 +1202,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult3((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
 
@@ -1247,7 +1251,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult4((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -1287,7 +1291,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult5((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters3.find_row_value === "" && filters3.pgNum === 1) {
@@ -1327,7 +1331,7 @@ const AC_A0020W: React.FC = () => {
         setMainDataResult6((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters4.find_row_value === "" && filters4.pgNum === 1) {
@@ -1393,7 +1397,7 @@ const AC_A0020W: React.FC = () => {
     }
   }, [filters4]);
 
-  let gridRef: any = useRef(null);
+  let gridRef : any = useRef(null); 
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -1406,7 +1410,7 @@ const AC_A0020W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -1417,7 +1421,7 @@ const AC_A0020W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -1432,7 +1436,7 @@ const AC_A0020W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters2((prev) => ({
@@ -1443,7 +1447,7 @@ const AC_A0020W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters2.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult2]);
@@ -1458,7 +1462,7 @@ const AC_A0020W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setDetailFilter2((prev) => ({
@@ -1470,7 +1474,7 @@ const AC_A0020W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (detailfilters2.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult3]);
@@ -1485,7 +1489,7 @@ const AC_A0020W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -1497,7 +1501,7 @@ const AC_A0020W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult4]);
@@ -1512,7 +1516,7 @@ const AC_A0020W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters3((prev) => ({
@@ -1523,7 +1527,7 @@ const AC_A0020W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters3.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult5]);
@@ -1538,7 +1542,7 @@ const AC_A0020W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters4((prev) => ({
@@ -1549,7 +1553,7 @@ const AC_A0020W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters4.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult6]);
@@ -2361,11 +2365,13 @@ const AC_A0020W: React.FC = () => {
     });
   };
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
-
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       acntdt: undefined,
       controltype: "",
       extra_field1: "",
@@ -2389,10 +2395,14 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onAddClick2 = () => {
-    let seq = mainDataResult3.total + deletedMainRows.length + 1;
+    mainDataResult3.data.map((item) => {
+      if (item.num > temp2) {
+        temp2 = item.num;
+      }
+    });
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp2,
       acntgrpauto: "",
       acntgrpcd: "",
       acntgrpgb: "",
@@ -2420,10 +2430,14 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onAddClick3 = () => {
-    let seq = mainDataResult4.total + deletedMainRows.length + 1;
+    mainDataResult4.data.map((item) => {
+      if (item.num > temp3) {
+        temp3 = item.num;
+      }
+    });
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp3,
       acntcd: "",
       acntnm: "",
       caculationgb: "P",
@@ -2439,10 +2453,14 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onAddClick4 = () => {
-    let seq = mainDataResult5.total + deletedMainRows.length + 1;
+    mainDataResult5.data.map((item) => {
+      if (item.num > temp4) {
+        temp4 = item.num;
+      }
+    });
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp4,
       acntcd: "",
       acntnm: "",
       stdrmkcd: "",
@@ -2460,10 +2478,14 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onAddClick5 = () => {
-    let seq = mainDataResult6.total + deletedMainRows.length + 1;
+    mainDataResult6.data.map((item) => {
+      if (item.num > temp5) {
+        temp5 = item.num;
+      }
+    });
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp5,
       cracntcd: "",
       cracntnm: "",
       doexdiv: "",
@@ -2501,7 +2523,7 @@ const AC_A0020W: React.FC = () => {
     });
     setMainDataResult((prev) => ({
       data: newData,
-      total: prev.total - 1,
+      total: newData.length,
     }));
     setMainDataState({});
   };
@@ -2533,7 +2555,7 @@ const AC_A0020W: React.FC = () => {
     if (valid == true) {
       setMainDataResult3((prev) => ({
         data: newData,
-        total: prev.total - 1,
+        total: newData.length,
       }));
       setMainDataState3({});
     }
@@ -2554,7 +2576,7 @@ const AC_A0020W: React.FC = () => {
     });
     setMainDataResult4((prev) => ({
       data: newData,
-      total: prev.total - 1,
+      total: newData.length,
     }));
     setMainDataState4({});
   };
@@ -2582,7 +2604,7 @@ const AC_A0020W: React.FC = () => {
     if (valid == true) {
       setMainDataResult5((prev) => ({
         data: newData,
-        total: prev.total - 1,
+        total: newData.length,
       }));
       setMainDataState5({});
     }
@@ -2603,7 +2625,7 @@ const AC_A0020W: React.FC = () => {
     });
     setMainDataResult6((prev) => ({
       data: newData,
-      total: prev.total - 1,
+      total: newData.length,
     }));
     setMainDataState6({});
   };
@@ -3524,7 +3546,7 @@ const AC_A0020W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

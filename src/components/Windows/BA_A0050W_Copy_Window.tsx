@@ -6,10 +6,12 @@ import {
   GridColumn,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridEvent,
   GridHeaderSelectionChangeEvent,
+  GridPageChangeEvent,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
@@ -25,70 +27,58 @@ import {
 } from "../../CommonStyled";
 import { COM_CODE_DEFAULT_VALUE, GAP, SELECTED_FIELD } from "../CommonString";
 import { Input } from "@progress/kendo-react-inputs";
-import { Form, FormElement, FormRenderProps } from "@progress/kendo-react-form";
 import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
-  UseMessages,
   handleKeyPressSearch,
   UseParaPc,
   getQueryFromBizComponent,
   UseCustomOption,
-  chkScrollHandler,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { FORM_DATA_INDEX, PAGE_SIZE } from "../CommonString";
-import { FormCheckBoxCell } from "../Editors";
+import { PAGE_SIZE } from "../CommonString";
 import NumberCell from "../Cells/NumberCell";
 import FilterContainer from "../Containers/FilterContainer";
-import { loginResultState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
-const SUB_DATA_ITEM_KEY = "pattern_id";
+import { isLoading, loginResultState } from "../../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
+const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY = "itemcd";
+const DATA_ITEM_KEY2 = "itemcd";
 
 const topHeight = 55.56;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 
-// Create React.Context to pass props to the Form Field components from the main component
-export const FormGridEditContext = React.createContext<{
-  onEdit: (dataItem: any, isNew: boolean) => void;
-  onSave: () => void;
-  editIndex: number | undefined;
-  parentField: string;
-}>({} as any);
-
-type TPara = {
-  user_id: string;
-  user_name: string;
-};
 type TKendoWindow = {
   getVisible(isVisible: boolean): void;
   setData(data: object, itemcd: string): void;
-  para: TPara;
+  para: any;
+  modal?: boolean;
 };
+
+let targetRowIndex: null | number = null;
+let targetRowIndex2: null | number = null;
+let targetRowIndex3: null | number = null;
 
 const KendoWindow = ({
   getVisible,
-  para = { user_id: "", user_name: "" },
+  para = "",
   setData,
+  modal = false,
 }: TKendoWindow) => {
-  const { user_id, user_name } = para;
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
-
+  const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [subPgNum, setSub2PgNum] = useState(1);
-  const [sub2PgNum, setSubPgNum] = useState(1);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -107,7 +97,7 @@ const KendoWindow = ({
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA061,L_PR010,L_BA011,L_sysUserMaster_001,L_BA015",
-    setBizComponentData,
+    setBizComponentData
   );
 
   const [itemacntListData, setItemacntListData] = React.useState([
@@ -128,12 +118,13 @@ const KendoWindow = ({
   const [procunitListData, setProcunitListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
-    height: 800,
+    width: isMobile == true ? deviceWidth : 1600,
+    height: 900,
   });
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -152,32 +143,100 @@ const KendoWindow = ({
     getVisible(false);
   };
 
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+  const [page3, setPage3] = useState(initialPageState);
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+
+    setPage3(initialPageState);
+  };
+
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange3 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage3({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
   const processApi = useApi();
-  const [dataState, setDataState] = useState<State>({
-    skip: 0,
-    take: 20,
+
+  const [detailState, setDetailDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [detailState2, setDetailDataState2] = useState<State>({
+    sort: [],
+  });
+
+  const [detailState3, setDetailDataState3] = useState<State>({
+    sort: [],
   });
 
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], dataState),
+    process([], detailState)
   );
 
   const [detailDataResult2, setDetailDataResult2] = useState<DataResult>(
-    process([], dataState),
+    process([], detailState2)
   );
 
   const [detailDataResult3, setDetailDataResult3] = useState<DataResult>(
-    process([], dataState),
+    process([], detailState3)
   );
   const idGetter = getter(DATA_ITEM_KEY);
-  const idGetter2 = getter(FORM_DATA_INDEX);
-  const [selectedState, setSelectedState] = useState<{
+  const idGetter2 = getter(DATA_ITEM_KEY2);
+  const idGetter3 = getter(DATA_ITEM_KEY3);
+
+  const [selecteddetailState, setSelectedDetailState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [selectedsubDataState, setSelectedsubDataState] = useState<{
+  const [selecteddetailState2, setSelectedDetailState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [selectedsubDataState2, setSelectedsubDataState2] = useState<{
+  const [selecteddetailState3, setSelectedDetailState3] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -190,13 +249,11 @@ const KendoWindow = ({
     insiz: "",
     itemacnt: "",
     find_row_value: "",
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
   });
 
-  const [filters3, setFilters3] = useState({
+  const [filters2, setFilters2] = useState({
     pgSize: 20,
     workType: "PASTE",
     orgdiv: "01",
@@ -205,125 +262,54 @@ const KendoWindow = ({
     insiz: "",
     itemacnt: "",
     find_row_value: "",
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_BA_A0050W_Sub1_Q ",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.workType,
-      "@p_orgdiv": filters.orgdiv,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_itemacnt": filters.itemacnt,
-      "@p_company_code": companyCode,
-    },
-  };
-
-  const [filters2, setFilters2] = useState({
+  const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     workType: "BOM",
     orgdiv: "01",
-    itemcd: " 공백테스트",
+    itemcd: "",
     itemnm: "",
     insiz: "",
     itemacnt: "",
-    row_values: null,
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
+
   let gridRef: any = useRef(null);
-  useEffect(() => {
-    if (customOptionData !== null) {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (filters.find_row_value !== "" && detailDataResult.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = detailDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value,
-        );
-
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
-
-        //초기화
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-        }));
-      }
-      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
-      }
-    }
-  }, [detailDataResult]);
+  let gridRef2: any = useRef(null);
+  let gridRef3: any = useRef(null);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (filters3.find_row_value !== "" && detailDataResult3.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = detailDataResult3.data.findIndex(
-          (item) => idGetter(item) === filters3.find_row_value,
-        );
-
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
-
-        //초기화
-        setFilters3((prev) => ({
-          ...prev,
-          find_row_value: "",
-        }));
-      }
-      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (filters3.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
-      }
-    }
-  }, [detailDataResult3]);
-
-  //조회조건 파라미터
-  const parameters2: Iparameters = {
-    procedureName: "P_BA_A0050W_Sub1_Q",
-    pageNumber: subPgNum,
-    pageSize: filters2.pgSize,
-    parameters: {
-      "@p_work_type": filters2.workType,
-      "@p_orgdiv": filters2.orgdiv,
-      "@p_itemcd": filters2.itemcd,
-      "@p_itemnm": filters2.itemnm,
-      "@p_insiz": filters2.insiz,
-      "@p_itemacnt": filters2.itemacnt,
-      "@p_company_code": companyCode,
-    },
-  };
-
-  const parameters3: Iparameters = {
-    procedureName: "P_BA_A0050W_Sub1_Q",
-    pageNumber: filters3.pgNum,
-    pageSize: filters3.pgSize,
-    parameters: {
-      "@p_work_type": "PASTE",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_itemacnt": filters.itemacnt,
-      "@p_company_code": companyCode,
-    },
-  };
+    setFilters3((item) => ({
+      ...item,
+      itemcd: para,
+      isSearch: true,
+    }));
+  }, [para]);
 
   //상세그리드 조회
-  const fetchGrid = async () => {
+  const fetchGrid = async (filters: any) => {
     let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_BA_A0050W_Sub1_Q ",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_insiz": filters.insiz,
+        "@p_itemacnt": filters.itemacnt,
+        "@p_company_code": companyCode,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -333,33 +319,179 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
-      if (totalRowCnt > 0) {
-        setDetailDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedsubDataState({ [firstRowData[DATA_ITEM_KEY]]: true });
-          setFilters2((prev) => ({
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+      setDetailDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+              );
+
+        if (selectedRow != undefined) {
+          setSelectedDetailState({ [selectedRow[DATA_ITEM_KEY]]: true });
+
+          setFilters3((prev) => ({
             ...prev,
-            itemcd: firstRowData.itemcd,
+            itemcd: selectedRow.itemcd,
+            isSearch: true,
+            pgNum: 1,
+          }));
+        } else {
+          setSelectedDetailState({ [rows[0][DATA_ITEM_KEY]]: true });
+
+          setFilters3((prev) => ({
+            ...prev,
+            itemcd: rows[0].itemcd,
+            isSearch: true,
+            pgNum: 1,
           }));
         }
       }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
+    setLoading(false);
   };
 
-  const fetchGrid3 = async () => {
+  //상세그리드 조회
+  const fetchGrid2 = async (filters2: any) => {
     let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+
+    const parameters2: Iparameters = {
+      procedureName: "P_BA_A0050W_Sub1_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters2.orgdiv,
+        "@p_itemcd": filters2.itemcd,
+        "@p_itemnm": filters2.itemnm,
+        "@p_insiz": filters2.insiz,
+        "@p_itemacnt": filters2.itemacnt,
+        "@p_company_code": companyCode,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      if (filters2.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef2.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row[DATA_ITEM_KEY2] === filters2.find_row_value
+          );
+          targetRowIndex2 = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage2({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef2.current) {
+          targetRowIndex2 = 0;
+        }
+      }
+
+      setDetailDataResult2(() => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters2.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row[DATA_ITEM_KEY2] == filters2.find_row_value
+              );
+
+        if (selectedRow != undefined) {
+          setSelectedDetailState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
+        } else {
+          setSelectedDetailState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+        }
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchGrid3 = async (filters3: any) => {
+    let data: any;
+    const parameters3: Iparameters = {
+      procedureName: "P_BA_A0050W_Sub1_Q",
+      pageNumber: filters3.pgNum,
+      pageSize: filters3.pgSize,
+      parameters: {
+        "@p_work_type": filters3.workType,
+        "@p_orgdiv": filters3.orgdiv,
+        "@p_itemcd": filters3.itemcd,
+        "@p_itemnm": filters3.itemnm,
+        "@p_insiz": filters3.insiz,
+        "@p_itemacnt": filters3.itemacnt,
+        "@p_company_code": companyCode,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters3);
     } catch (error) {
@@ -369,85 +501,138 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      if (totalRowCnt > 0) {
-        setDetailDataResult3((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
+      if (filters3.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef3.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row[DATA_ITEM_KEY3] == filters3.find_row_value
+          );
+          targetRowIndex3 = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage3({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
-        if (filters3.find_row_value === "" && filters3.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedsubDataState2({ [firstRowData[DATA_ITEM_KEY]]: true });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef3.current) {
+          targetRowIndex3 = 0;
+        }
+      }
+      setDetailDataResult3((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters3.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row[DATA_ITEM_KEY3] == filters3.find_row_value
+              );
+        if (selectedRow != undefined) {
+          setSelectedDetailState3({ [selectedRow[DATA_ITEM_KEY3]]: true });
+        } else {
+          setSelectedDetailState3({ [rows[0][DATA_ITEM_KEY3]]: true });
         }
       }
     }
+    // 필터 isSearch false처리, pgNum 세팅
     setFilters3((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
+    setLoading(false);
   };
 
-  //상세그리드 조회
-  const fetchGrid2 = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", parameters2);
-    } catch (error) {
-      data = null;
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
     }
+  }, [detailDataResult]);
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
-        return {
-          ...row,
-        };
-      });
-
-      setDetailDataResult2(() => {
-        return {
-          data: [...rows],
-          total: totalRowCnt,
-        };
-      });
+  useEffect(() => {
+    if (targetRowIndex2 !== null && gridRef2.current) {
+      gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
+      targetRowIndex2 = null;
     }
-  };
+  }, [detailDataResult2]);
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  useEffect(() => {
+    if (targetRowIndex3 !== null && gridRef3.current) {
+      gridRef3.current.scrollIntoView({ rowIndex: targetRowIndex3 });
+      targetRowIndex3 = null;
+    }
+  }, [detailDataResult3]);
+
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchGrid(deepCopiedFilters);
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    if (filters2.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchGrid2(deepCopiedFilters);
+    }
+  }, [filters2]);
+
+  useEffect(() => {
+    if (filters3.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3);
+      setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchGrid3(deepCopiedFilters);
+    }
+  }, [filters3]);
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setDetailDataResult(process([], dataState));
-    setDetailDataResult2(process([], dataState));
-    setDetailDataResult3(process([], dataState));
+    setPage(initialPageState); // 페이지 초기화
+    setPage2(initialPageState); // 페이지 초기화
+    setPage3(initialPageState); // 페이지 초기화
+    setDetailDataResult(process([], detailState));
+    setDetailDataResult2(process([], detailState2));
+    setDetailDataResult3(process([], detailState3));
   };
 
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061"),
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010"),
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
       );
       const outprocynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA011"),
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA011")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001",
-        ),
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015"),
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
       const procunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015"),
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -480,32 +665,6 @@ const KendoWindow = ({
       setListData(rows);
     }
   }, []);
-
-  const onSubDataSelectionChange2 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedsubDataState2,
-      dataItemKey: DATA_ITEM_KEY,
-    });
-    setSelectedsubDataState2(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-  };
-
-  const onHeaderSelectionChange = React.useCallback(
-    (event: GridHeaderSelectionChangeEvent) => {
-      const checkboxElement: any = event.syntheticEvent.target;
-      const checked = checkboxElement.checked;
-      const newSelectedState: any = {};
-
-      event.dataItems.forEach((item: any) => {
-        newSelectedState[idGetter(item)] = checked;
-      });
-      setSelectedsubDataState2(newSelectedState);
-    },
-    [],
-  );
 
   interface IItemData {
     itemcd: string;
@@ -552,14 +711,7 @@ const KendoWindow = ({
       itemnm: data.itemnm,
     }));
   };
-  useEffect(() => {
-    fetchGrid2();
-  }, [subPgNum]);
 
-  const onSubScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, subPgNum, PAGE_SIZE))
-      setSubPgNum((prev) => prev + 1);
-  };
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -577,127 +729,143 @@ const KendoWindow = ({
     }));
   };
 
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onDetailDataStateChange = (event: GridDataStateChangeEvent) => {
+    setDetailDataState(event.dataState);
+  };
+  const onDetailDataStateChange2 = (event: GridDataStateChangeEvent) => {
+    setDetailDataState2(event.dataState);
+  };
+  const onDetailDataStateChange3 = (event: GridDataStateChangeEvent) => {
+    setDetailDataState3(event.dataState);
+  };
+
+  const onDetailSortChange = (e: any) => {
+    setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const onDetailSortChange2 = (e: any) => {
+    setDetailDataState2((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onDetailSortChange3 = (e: any) => {
+    setDetailDataState3((prev) => ({ ...prev, sort: e.sort }));
+  };
+
   const search = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    setFilters3((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setFilters2((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
-  useEffect(() => {
-    fetchGrid2();
-  }, [filters2]);
+  const detailTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = detailDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {detailDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
 
-  const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
+  const detailTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = detailDataResult2.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {detailDataResult2.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const detailTotalFooterCell3 = (props: GridFooterCellProps) => {
+    var parts = detailDataResult3.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {detailDataResult3.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const onDetailDataSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: selecteddetailState,
       dataItemKey: DATA_ITEM_KEY,
     });
 
-    setSelectedsubDataState(newSelectedState);
+    setSelectedDetailState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-    setFilters2((prev) => ({
+    setPage3(initialPageState);
+    setFilters3((prev) => ({
       ...prev,
       itemcd: selectedRowData.itemcd,
+      isSearch: true,
+      pgNum: 1,
     }));
   };
+
+  const onDetailDataSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selecteddetailState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+    setSelectedDetailState2(newSelectedState);
+  };
+
+  const onDetailDataSelectionChange3 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selecteddetailState3,
+      dataItemKey: DATA_ITEM_KEY3,
+    });
+    setSelectedDetailState3(newSelectedState);
+  };
+
+  const onHeaderSelectionChange = React.useCallback(
+    (event: GridHeaderSelectionChangeEvent) => {
+      const checkboxElement: any = event.syntheticEvent.target;
+      const checked = checkboxElement.checked;
+      const newSelectedState: any = {};
+
+      event.dataItems.forEach((item: any) => {
+        newSelectedState[idGetter2(item)] = checked;
+      });
+      setSelectedDetailState2(newSelectedState);
+    },
+    []
+  );
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
 
-  useEffect(() => {
-    if (filters.isSearch) {
-      setFilters((prev) => ({ ...prev, isSearch: false }));
-      fetchGrid();
-    }
-  }, [filters]);
-
-  useEffect(() => {
-    if (filters3.isSearch) {
-      setFilters3((prev) => ({ ...prev, isSearch: false }));
-      fetchGrid3();
-    }
-  }, [filters3]);
-
-  const onMainScrollHandler2 = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
-  };
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (filters3.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      filters3.pgNum +
-      (filters3.scrollDirrection === "up" ? filters3.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters3((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters3.pgNum -
-      (filters3.scrollDirrection === "down" ? filters3.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters3((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
-  };
-
   const selectData = (selectedData: any) => {
     let arr: any = [];
-    for (const [key, value] of Object.entries(selectedsubDataState2)) {
+    for (const [key, value] of Object.entries(selecteddetailState2)) {
       if (value == true) {
         arr.push(key);
       }
     }
-
-    const selectRows = detailDataResult3.data.filter(
-      (item: any) => arr.includes(item.itemcd) == true,
+    const selectRows = detailDataResult2.data.filter(
+      (item: any) => arr.includes(item.itemcd) == true
     );
-
-    setData(selectRows, Object.getOwnPropertyNames(selectedsubDataState)[0]);
+    setData(selectRows, Object.getOwnPropertyNames(selecteddetailState)[0]);
     onClose();
   };
 
@@ -711,237 +879,288 @@ const KendoWindow = ({
       onClose={onClose}
       modal={true}
     >
-      <Form
-        initialValues={{
-          user_id,
-          user_name,
-          groupDetails: detailDataResult.data, //detailDataResult.data,
-          groupDetails2: detailDataResult2.data,
-        }}
-        render={(formRenderProps: FormRenderProps) => (
-          <FormElement horizontal={true} style={{ height: "100%" }}>
-            <fieldset className={"k-form-fieldset"}>
-              <button
-                id="valueChanged"
-                style={{ display: "none" }}
-                onClick={(e) => {
-                  e.preventDefault(); // Changing desired field value
-                  formRenderProps.onChange("valueChanged", {
-                    value: "1",
-                  });
-                }}
-              ></button>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>품목코드</th>
-                      <td>
-                        <Input
-                          name="itemcd"
-                          type="text"
-                          value={filters.itemcd}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            onClick={onItemWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                      <th>품목명</th>
-                      <td>
-                        <Input
-                          name="itemnm"
-                          type="text"
-                          value={filters.itemnm}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>품목계정</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="itemacnt"
-                            value={filters.itemacnt}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>규격</th>
-                      <td>
-                        <Input
-                          name="insiz"
-                          type="text"
-                          value={filters.insiz}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
-            </fieldset>
-
-            <GridContainerWrap height={`calc(50% - ${leftOverHeight}px)`}>
-              <GridContainer width={`45%`}>
-                <GridTitleContainer>
-                  <GridTitle>품목리스트</GridTitle>
-                </GridTitleContainer>
-                <Grid
-                  data={detailDataResult.data.map((item: any) => ({
-                    ...item,
-                    itemacnt: itemacntListData.find(
-                      (items: any) => items.sub_code === item.itemacnt,
-                    )?.code_name,
-                    [SELECTED_FIELD]: selectedsubDataState[idGetter(item)],
-                  }))}
-                  total={detailDataResult.total}
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "multiple",
-                  }}
-                  onScroll={onMainScrollHandler2}
-                  onSelectionChange={onSubDataSelectionChange}
-                  style={{ height: "calc(100% - 5px)" }}
-                >
-                  <GridColumn field="itemcd" title="품목코드" width="200px" />
-                  <GridColumn field="itemnm" title="품목명" width="200PX" />
-                  <GridColumn field="insiz" title="규격" width="150px" />
-                  <GridColumn field="itemacnt" title="품목계정" width="150px" />
-                </Grid>
-              </GridContainer>
-              <GridContainer width={`calc(55% - ${GAP}px)`}>
-                <GridTitleContainer>
-                  <GridTitle>복사대상</GridTitle>
-                </GridTitleContainer>
-                <Grid
-                  data={detailDataResult3.data.map((item: any) => ({
-                    ...item,
-                    itemacnt: itemacntListData.find(
-                      (items: any) => items.sub_code === item.itemacnt,
-                    )?.code_name,
-                    [SELECTED_FIELD]: selectedsubDataState2[idGetter(item)],
-                  }))}
-                  total={detailDataResult3.total}
-                  dataItemKey={DATA_ITEM_KEY}
-                  onScroll={onMainScrollHandler}
-                  style={{ height: "calc(100% - 5px)" }}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "multiple",
-                  }}
-                  onSelectionChange={onSubDataSelectionChange2}
-                  onHeaderSelectionChange={onHeaderSelectionChange}
-                >
-                  <GridColumn
-                    field={SELECTED_FIELD}
-                    width="45px"
-                    headerSelectionValue={
-                      detailDataResult3.data.findIndex(
-                        (item: any) => !selectedsubDataState2[idGetter(item)],
-                      ) === -1
-                    }
+      <FilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>품목코드</th>
+              <td>
+                <Input
+                  name="itemcd"
+                  type="text"
+                  value={filters.itemcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onItemWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
                   />
-                  <GridColumn field="itemcd" title="품목코드" width="200px" />
-                  <GridColumn field="itemnm" title="품목명" width="200PX" />
-                  <GridColumn field="insiz" title="규격" width="200px" />
-                  <GridColumn field="itemacnt" title="품목계정" width="150px" />
-                </Grid>
-              </GridContainer>
-            </GridContainerWrap>
-            <GridContainer
-              height={`calc(50% - ${leftOverHeight}px)`}
-              width={`99.9%`}
-            >
-              <GridTitleContainer>
-                <GridTitle>BOM상세</GridTitle>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "calc(100% - 40px)" }}
-                data={detailDataResult2.data.map((item: any) => ({
-                  ...item,
-                  proccd: proccdListData.find(
-                    (items: any) => items.sub_code === item.proccd,
-                  )?.code_name,
-                  outprocyn: outprocynListData.find(
-                    (items: any) => items.sub_code === item.outprocyn,
-                  )?.code_name,
-                  prodemp: prodempListData.find(
-                    (items: any) => items.user_id === item.prodemp,
-                  )?.user_name,
-                  qtyunit: qtyunitListData.find(
-                    (items: any) => items.sub_code === item.qtyunit,
-                  )?.code_name,
-                  procunit: procunitListData.find(
-                    (items: any) => items.sub_code === item.procunit,
-                  )?.code_name,
-                }))}
-                total={detailDataResult2.total}
-                dataItemKey={FORM_DATA_INDEX}
-                onScroll={onSubScrollHandler}
-              >
-                <GridColumn field="proccd" title="공정" width="150px" />
-                <GridColumn
-                  field="procseq"
-                  title="공정순서"
-                  width="100px"
-                  cell={NumberCell}
+                </ButtonInInput>
+              </td>
+              <th>품목명</th>
+              <td>
+                <Input
+                  name="itemnm"
+                  type="text"
+                  value={filters.itemnm}
+                  onChange={filterInputChange}
                 />
-                <GridColumn field="outprocyn" title="외주구분" width="100px" />
-                <GridColumn field="prodemp" title="작업자" width="150px" />
-                <GridColumn field="prodmac" title="설비" width="150px" />
-                <GridColumn
-                  field="chlditemcd"
-                  title="소요자재코드"
-                  width="150px"
+              </td>
+              <th>품목계정</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemacnt"
+                    value={filters.itemacnt}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>규격</th>
+              <td>
+                <Input
+                  name="insiz"
+                  type="text"
+                  value={filters.insiz}
+                  onChange={filterInputChange}
                 />
-                <GridColumn
-                  field="chlditemnm"
-                  title="소요자재명"
-                  width="150px"
-                />
-                <GridColumn
-                  field="unitqty"
-                  title="단위수량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn field="qtyunit" title="수량단위" width="120px" />
-                <GridColumn field="outgb" title="불출구분" width="120px" />
-                <GridColumn
-                  field="procqty"
-                  title="재공생산량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn field="procunit" title="생산량단위" width="120px" />
-                <GridColumn field="remark" title="비고" width="200px" />
-              </Grid>
-            </GridContainer>
-            <BottomContainer>
-              <ButtonContainer>
-                <Button themeColor={"primary"} onClick={selectData}>
-                  저장
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  fillMode={"outline"}
-                  onClick={onClose}
-                >
-                  닫기
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </FormElement>
-        )}
-      />
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </FilterContainer>
+
+      <GridContainerWrap height={`calc(50% - ${leftOverHeight}px)`}>
+        <GridContainer width={`45%`}>
+          <GridTitleContainer>
+            <GridTitle>품목리스트</GridTitle>
+          </GridTitleContainer>
+          <Grid
+            data={process(
+              detailDataResult.data.map((row) => ({
+                ...row,
+                itemacnt: itemacntListData.find(
+                  (items: any) => items.sub_code == row.itemacnt
+                )?.code_name,
+                [SELECTED_FIELD]: selecteddetailState[idGetter(row)], //선택된 데이터
+              })),
+              detailState
+            )}
+            {...detailState}
+            onDataStateChange={onDetailDataStateChange}
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onDetailDataSelectionChange}
+            //스크롤 조회기능
+            fixedScroll={true}
+            total={detailDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onDetailSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            //더블클릭
+            style={{ height: "calc(100% - 5px)" }}
+          >
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              width="200px"
+              footerCell={detailTotalFooterCell}
+            />
+            <GridColumn field="itemnm" title="품목명" width="185PX" />
+            <GridColumn field="insiz" title="규격" width="150px" />
+            <GridColumn field="itemacnt" title="품목계정" width="150px" />
+          </Grid>
+        </GridContainer>
+        <GridContainer width={`calc(55% - ${GAP}px)`}>
+          <GridTitleContainer>
+            <GridTitle>복사대상</GridTitle>
+          </GridTitleContainer>
+          <Grid
+            data={process(
+              detailDataResult2.data.map((row) => ({
+                ...row,
+                itemacnt: itemacntListData.find(
+                  (items: any) => items.sub_code == row.itemacnt
+                )?.code_name,
+                [SELECTED_FIELD]: selecteddetailState2[idGetter2(row)], //선택된 데이터
+              })),
+              detailState2
+            )}
+            {...detailState2}
+            onDataStateChange={onDetailDataStateChange2}
+            dataItemKey={DATA_ITEM_KEY2}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "multiple",
+            }}
+            //스크롤 조회기능
+            fixedScroll={true}
+            total={detailDataResult2.total}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef2}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onDetailSortChange2}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            style={{ height: "calc(100% - 5px)" }}
+            onSelectionChange={onDetailDataSelectionChange2}
+            onHeaderSelectionChange={onHeaderSelectionChange}
+          >
+            <GridColumn
+              field={SELECTED_FIELD}
+              width="45px"
+              headerSelectionValue={
+                detailDataResult2.data.findIndex(
+                  (item: any) => !selecteddetailState2[idGetter2(item)]
+                ) === -1
+              }
+            />
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              width="230px"
+              footerCell={detailTotalFooterCell2}
+            />
+            <GridColumn field="itemnm" title="품목명" width="200PX" />
+            <GridColumn field="insiz" title="규격" width="200px" />
+            <GridColumn field="itemacnt" title="품목계정" width="150px" />
+          </Grid>
+        </GridContainer>
+      </GridContainerWrap>
+      <GridContainer height={`calc(50% - ${leftOverHeight}px)`} width={`99.9%`}>
+        <GridTitleContainer>
+          <GridTitle>BOM상세</GridTitle>
+        </GridTitleContainer>
+        <Grid
+          style={{ height: "calc(100% - 40px)" }}
+          data={process(
+            detailDataResult3.data.map((row) => ({
+              ...row,
+              proccd: proccdListData.find(
+                (items: any) => items.sub_code === row.proccd
+              )?.code_name,
+              outprocyn: outprocynListData.find(
+                (items: any) => items.sub_code === row.outprocyn
+              )?.code_name,
+              prodemp: prodempListData.find(
+                (items: any) => items.user_id === row.prodemp
+              )?.user_name,
+              qtyunit: qtyunitListData.find(
+                (items: any) => items.sub_code === row.qtyunit
+              )?.code_name,
+              procunit: procunitListData.find(
+                (items: any) => items.sub_code === row.procunit
+              )?.code_name,
+              [SELECTED_FIELD]: selecteddetailState3[idGetter3(row)], //선택된 데이터
+            })),
+            detailState3
+          )}
+          {...detailState3}
+          onDataStateChange={onDetailDataStateChange3}
+          dataItemKey={DATA_ITEM_KEY3}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          //스크롤 조회기능
+          fixedScroll={true}
+          total={detailDataResult3.total}
+          skip={page3.skip}
+          take={page3.take}
+          pageable={true}
+          onPageChange={pageChange3}
+          //원하는 행 위치로 스크롤 기능
+          ref={gridRef3}
+          rowHeight={30}
+          //정렬기능
+          sortable={true}
+          onSortChange={onDetailSortChange3}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+          onSelectionChange={onDetailDataSelectionChange3}
+        >
+          <GridColumn
+            field="proccd"
+            title="공정"
+            width="150px"
+            footerCell={detailTotalFooterCell3}
+          />
+          <GridColumn
+            field="procseq"
+            title="공정순서"
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn field="outprocyn" title="외주구분" width="100px" />
+          <GridColumn field="prodemp" title="작업자" width="150px" />
+          <GridColumn field="prodmac" title="설비" width="150px" />
+          <GridColumn field="chlditemcd" title="소요자재코드" width="150px" />
+          <GridColumn field="chlditemnm" title="소요자재명" width="150px" />
+          <GridColumn
+            field="unitqty"
+            title="단위수량"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn field="qtyunit" title="수량단위" width="120px" />
+          <GridColumn field="outgb" title="불출구분" width="120px" />
+          <GridColumn
+            field="procqty"
+            title="재공생산량"
+            width="120px"
+            cell={NumberCell}
+          />
+          <GridColumn field="procunit" title="생산량단위" width="120px" />
+          <GridColumn field="remark" title="비고" width="200px" />
+        </Grid>
+      </GridContainer>
+      <BottomContainer>
+        <ButtonContainer>
+          <Button themeColor={"primary"} onClick={selectData}>
+            저장
+          </Button>
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            닫기
+          </Button>
+        </ButtonContainer>
+      </BottomContainer>
+      {itemWindowVisible && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible}
+          workType={"FILTER"}
+          setData={setItemData}
+        />
+      )}
     </Window>
   );
 };

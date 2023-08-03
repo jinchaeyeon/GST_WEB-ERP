@@ -307,7 +307,7 @@ const QC_A0120: React.FC = () => {
         setDetail1DataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }

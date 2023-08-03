@@ -58,8 +58,11 @@ import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
 import { useSetRecoilState } from "recoil";
-import { isLoading,   deletedAttadatnumsState,
-  unsavedAttadatnumsState, } from "../../store/atoms";
+import {
+  isLoading,
+  deletedAttadatnumsState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import DateCell from "../Cells/DateCell";
@@ -122,7 +125,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
+let temp = 0;
+let temp2 = 0;
 const CopyWindow = ({
   workType,
   data,
@@ -383,7 +387,7 @@ const CopyWindow = ({
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         setIsInitSearch(true);
@@ -495,20 +499,14 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
+      data[i].num = ++temp2;
     }
 
     setFilters((prev) => ({
@@ -884,13 +882,17 @@ const CopyWindow = ({
   }, []);
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-    
     let stdnums = data == undefined ? "" : data.stdnum;
     let stdrevs = data == undefined ? "" : data.stdrev;
 
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
+
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       rowstatus: "N",
       chkmed: "",
       cycle: "",

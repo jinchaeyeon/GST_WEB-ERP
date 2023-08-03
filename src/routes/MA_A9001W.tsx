@@ -150,7 +150,7 @@ const MA_A9001W: React.FC = () => {
   UseMessages(pathname, setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  let gridRef: any = useRef(null);
+  let gridRef : any = useRef(null); 
   const [reload, setreload] = useState<boolean>(false);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -638,7 +638,7 @@ const MA_A9001W: React.FC = () => {
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -744,7 +744,7 @@ const MA_A9001W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {
@@ -790,7 +790,7 @@ const MA_A9001W: React.FC = () => {
         setSubDataResult2((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {
@@ -836,7 +836,7 @@ const MA_A9001W: React.FC = () => {
         setSubDataResult3((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {
@@ -902,7 +902,7 @@ const MA_A9001W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -913,7 +913,7 @@ const MA_A9001W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -929,7 +929,7 @@ const MA_A9001W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -940,7 +940,7 @@ const MA_A9001W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (subfilters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [subDataResult]);
@@ -956,7 +956,7 @@ const MA_A9001W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -967,7 +967,7 @@ const MA_A9001W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (subfilters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [subDataResult2]);
@@ -983,7 +983,7 @@ const MA_A9001W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -994,7 +994,7 @@ const MA_A9001W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (subfilters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [subDataResult3]);

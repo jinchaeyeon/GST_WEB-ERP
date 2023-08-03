@@ -83,7 +83,9 @@ const CustomComboField = [
 ];
 const requiredField = ["valueboxnm"];
 const CheckField = ["useyn"];
-
+let temp = 0;
+let temp2 = 0;
+let temp3 = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
@@ -450,7 +452,7 @@ const CM_A8000W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -495,7 +497,7 @@ const CM_A8000W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters1.find_row_value === "" && filters1.pgNum === 1) {
@@ -538,7 +540,7 @@ const CM_A8000W: React.FC = () => {
         setSubDataResult2((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters2.find_row_value === "" && filters2.pgNum === 1) {
@@ -581,7 +583,7 @@ const CM_A8000W: React.FC = () => {
         setSubDataResult3((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters3.find_row_value === "" && filters3.pgNum === 1) {
@@ -668,7 +670,7 @@ const CM_A8000W: React.FC = () => {
     }
   }, [filters3]);
 
-  let gridRef: any = useRef(null);
+  let gridRef : any = useRef(null); 
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -681,7 +683,7 @@ const CM_A8000W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -692,7 +694,7 @@ const CM_A8000W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -708,7 +710,7 @@ const CM_A8000W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters1((prev) => ({
@@ -719,7 +721,7 @@ const CM_A8000W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters1.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [subDataResult]);
@@ -735,7 +737,7 @@ const CM_A8000W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters2((prev) => ({
@@ -746,7 +748,7 @@ const CM_A8000W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters2.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [subDataResult2]);
@@ -762,7 +764,7 @@ const CM_A8000W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters3((prev) => ({
@@ -773,7 +775,7 @@ const CM_A8000W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters3.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [subDataResult3]);
@@ -1135,10 +1137,13 @@ const CM_A8000W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       DesignPerson: "",
       DevPerson: "",
       absolutedays: 0,
@@ -1167,13 +1172,17 @@ const CM_A8000W: React.FC = () => {
   };
 
   const onCopyClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
     const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp2,
       DesignPerson: "",
       DevPerson: "",
       absolutedays: 0,
@@ -1569,11 +1578,14 @@ const CM_A8000W: React.FC = () => {
         });
 
         if (totalRowCnt >= 0) {
-          let seq = mainDataResult.total + deletedMainRows.length + 1;
-
           rows.map((row: any) => {
+            mainDataResult.data.map((item) => {
+              if(item.num > temp3){
+                temp3 = item.num
+              }
+          })
             const newDataItem = {
-              [DATA_ITEM_KEY]: seq,
+              [DATA_ITEM_KEY]: ++temp3,
               DesignPerson: row.DesignPerson,
               DevPerson: row.DevPerson,
               absolutedays: row.absolutedays,
@@ -1598,7 +1610,6 @@ const CM_A8000W: React.FC = () => {
                 total: prev.total + 1,
               };
             });
-            seq++;
           })
         }
       } else {

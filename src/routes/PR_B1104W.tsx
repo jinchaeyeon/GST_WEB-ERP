@@ -29,6 +29,7 @@ import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import { bytesToBase64 } from "byte-base64";
 import { ProgressBar } from "primereact/progressbar";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
+import BarChart from "../components/KPIcomponents/Chart/BarChart";
 
 interface TList {
   planno: string;
@@ -186,7 +187,6 @@ const PR_B1104W: React.FC = () => {
     },
   ]);
   const [selected, setSelected] = useState<TList | null>(null);
-  const [stackChartLabel, setStackChartLabel] = useState();
   const [stackChartAllLabel, setStackChartAllLabel] = useState();
 
   const parameters = {
@@ -274,7 +274,7 @@ const PR_B1104W: React.FC = () => {
         orddt: item.orddt == "" ? "" : dateformat2(item.orddt),
         dlvdt: item.dlvdt == "" ? "" : dateformat2(item.dlvdt),
       }));
-
+  
       setAllList(rows);
       if (rows.length > 0) {
         setSelected(rows[0]);
@@ -300,7 +300,7 @@ const PR_B1104W: React.FC = () => {
     } catch (error) {
       data3 = null;
     }
-
+ 
     if (data3.isSuccess === true) {
       const rows = data3.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
@@ -309,18 +309,9 @@ const PR_B1104W: React.FC = () => {
       );
 
       setProccdData(rows);
-      let objects = rows.filter(
-        (arr: { series: any }, index: any, callback: any[]) =>
-          index === callback.findIndex((t) => t.series === arr.series)
-      );
-      setStackChartLabel(
-        objects.map((item: { series: any }) => {
-          return item.series;
-        })
-      );
       setStackChartAllLabel(
-        rows.map((items: { series: any }) => {
-          return items.series;
+        rows.map((items: { argument: any }) => {
+          return items.argument;
         })
       );
     }
@@ -516,13 +507,12 @@ const PR_B1104W: React.FC = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <GridTitle title="평균 소요일수" />
-              <StackedChart
+              <BarChart
                 props={ProccdData}
                 value="value"
                 alllabel={stackChartAllLabel}
-                label={stackChartLabel}
                 random={true}
-                name="series"
+                name="argument"
               />
             </Grid>
           </Grid>

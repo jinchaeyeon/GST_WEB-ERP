@@ -55,6 +55,7 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
+let temp = 0;
 
 type IWindow = {
   custcd?: string | undefined;
@@ -598,10 +599,10 @@ const CopyWindow = ({ custcd, custnm, setVisible, setData }: IWindow) => {
       return <td></td>;
     }
   };
+
   const onRowDoubleClick = (props: any) => {
     let arr: any = [];
     let valid = true;
-    let seq = subDataResult.total + 1;
 
     for (const [key, value] of Object.entries(selectedState)) {
       if (value == true) {
@@ -632,8 +633,14 @@ const CopyWindow = ({ custcd, custnm, setVisible, setData }: IWindow) => {
 
     if (valid == true) {
       selectRows.map((selectRow: any) => {
+        subDataResult.data.map((item) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
+
         const newDataItem = {
-          [DATA_ITEM_KEY]: seq + 1,
+          [DATA_ITEM_KEY]: ++temp,
           amt: selectRow.amt,
           amtunit: selectRow.amtunit,
           chk: selectRow.chk,
@@ -680,7 +687,6 @@ const CopyWindow = ({ custcd, custnm, setVisible, setData }: IWindow) => {
             total: prev.total + 1,
           };
         });
-        seq++;
       });
     } else {
       alert("동일 업체를 선택해주세요.");

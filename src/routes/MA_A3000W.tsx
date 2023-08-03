@@ -79,7 +79,8 @@ const DETAIL_DATA_ITEM_KEY = "num";
 const dateField = ["outdt1", "outdt2", "outdt3", "purdt"];
 const numberField = ["asfin"];
 const lockField = ["fxmngnum", "itemcd", "itemnm", "insiz", "serialno"];
-
+let temp = 0;
+let temp2 = 0;
 type TdataArr = {
   rowstatus_s: string[];
   fxmngnum_s: string[];
@@ -502,7 +503,7 @@ const MA_A3000W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -543,7 +544,7 @@ const MA_A3000W: React.FC = () => {
         setDetailDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (detailFilters.find_row_value === "" && detailFilters.pgNum === 1) {
@@ -579,7 +580,7 @@ const MA_A3000W: React.FC = () => {
         setBarCodeDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -615,7 +616,7 @@ const MA_A3000W: React.FC = () => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
-  let gridRef: any = useRef(null);
+  let gridRef : any = useRef(null); 
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -628,7 +629,7 @@ const MA_A3000W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -639,7 +640,7 @@ const MA_A3000W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -654,7 +655,7 @@ const MA_A3000W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setDetailFilters((prev) => ({
@@ -665,7 +666,7 @@ const MA_A3000W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (detailFilters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [detailDataResult]);
@@ -864,11 +865,15 @@ const MA_A3000W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = detailDataResult.total + deletedMainRows.length + 1;
+    detailDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const datas = detailDataResult.data[detailDataResult.data.length - 1];
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       address: "",
       amt: 0,
       custcd: "",
@@ -1934,23 +1939,15 @@ const MA_A3000W: React.FC = () => {
   
   
   const setCopyData = (data: any) => {
-    let seq = 1;
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-    if (mainDataResult.total > seq) {
-      seq = mainDataResult.total + 1;
-    }
-
     try {
       data.map((item: any) => {
+        mainDataResult.data.map((item) => {
+          if(item.num > temp2){
+            temp2 = item.num
+          }
+      })
         const newDataItem = {
-          [DATA_ITEM_KEY]: seq,
+          [DATA_ITEM_KEY]: ++temp2,
           asfin: "0",
           attdatnum: "",
           chk: "",
@@ -1984,7 +1981,6 @@ const MA_A3000W: React.FC = () => {
             total: prev.total + 1,
           };
         });
-        seq++;
       });
     } catch (e) {
       alert(e);

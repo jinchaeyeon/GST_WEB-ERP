@@ -69,7 +69,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 
 const DATA_ITEM_KEY = "idx";
 let deletedTodoRows: object[] = [];
-
+let temp = 0;
 const CM_A1600: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -254,7 +254,7 @@ const CM_A1600: React.FC = () => {
         setTodoDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }
@@ -642,8 +642,11 @@ const CM_A1600: React.FC = () => {
   );
 
   const onAddClick = () => {
-    let seq = todoDataResult.total + deletedTodoRows.length + 1;
-
+    todoDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
@@ -654,7 +657,7 @@ const CM_A1600: React.FC = () => {
     );
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       // planno: selectedRowData.planno,
       strtime: convertDateToStr(new Date()),
       rowstatus: "N",

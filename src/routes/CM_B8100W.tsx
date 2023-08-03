@@ -1,39 +1,33 @@
-import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { gridList } from "../store/columns/CM_B8100W_C";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
   FilterBox,
-  FormBox,
-  FormBoxWrap,
   GridContainer,
   GridTitle,
   TitleContainer,
   ButtonContainer,
   GridTitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
-  chkScrollHandler,
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
@@ -42,48 +36,52 @@ import {
   UseMessages,
   UsePermissions,
   handleKeyPressSearch,
-  dateformat,
   UseParaPc,
   UseGetValueFromSessionItem,
-  useSysMessage,
   setDefaultDate,
 } from "../components/CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
-  COM_CODE_DEFAULT_VALUE,
-} from "../components/CommonString";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 
 const DATA_ITEM_KEY = "num";
+let targetRowIndex: null | number = null;
 
 const cellWithBackGround = (props: GridCellProps) => {
   const field = props.field || "";
 
   const style = {
-    backgroundColor: props.dataItem[field] == ""
-      ? "#B5B5B5"
-      : "",
+    backgroundColor: props.dataItem[field] == "" ? "#B5B5B5" : "",
   };
 
   return (
-    <td 
-    style={style}
-    aria-colindex={props.ariaColumnIndex}
-    data-grid-col-index={props.columnIndex}
+    <td
+      style={style}
+      aria-colindex={props.ariaColumnIndex}
+      data-grid-col-index={props.columnIndex}
     >
       {props.dataItem[field]}
     </td>
   );
 };
 
-const monthField = ["1","2","3","4","5","6","7","8","9","10","11","12"];
+const monthField = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+];
 
 const CM_B8100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -96,9 +94,26 @@ const CM_B8100W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
-  //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -111,7 +126,7 @@ const CM_B8100W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           .valueCode,
       }));
     }
@@ -163,8 +178,6 @@ const CM_B8100W: React.FC = () => {
     sort: [],
   });
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -172,9 +185,6 @@ const CM_B8100W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -200,25 +210,29 @@ const CM_B8100W: React.FC = () => {
     workType: "Q",
     yyyy: new Date(),
     rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_CM_B8100W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.workType,
-      "@p_yyyy": convertDateToStr(filters.yyyy).substring(0, 4),
-      "@p_rtrchk": filters.rtrchk,
-    },
-  };
-
+  let gridRef : any = useRef(null); 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_CM_B8100W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_yyyy": convertDateToStr(filters.yyyy).substring(0, 4),
+        "@p_rtrchk": filters.rtrchk,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -226,51 +240,79 @@ const CM_B8100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.user_id === filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
-      if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt,
-          };
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.user_id == filters.find_row_value);
+
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
-    ) {
-      fetchMainGrid();
-      setIsInitSearch(true);
+    if (filters.isSearch && permissions !== null && customOptionData !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
-
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
     }
   }, [mainDataResult]);
 
@@ -292,12 +334,6 @@ const CM_B8100W: React.FC = () => {
     }
   };
 
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
-  };
-
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
@@ -307,9 +343,84 @@ const CM_B8100W: React.FC = () => {
   };
 
   const search = () => {
-    setMainPgNum(1);
+    try {
+      if (convertDateToStr(filters.yyyy).substring(0, 4) < "1997") {
+        throw findMessage(messagesData, "CM_B8100W_001");
+      } else {
+        resetAllGrid(); // 데이터 초기화
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  //그리드 리셋
+  const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current 
+      );
+      minGridWidth.current+=15
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth< minGridWidth.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    let width = applyMinWidth
+      ? minWidth
+      : minWidth +
+        (gridCurrent - minGridWidth.current) /
+          customOptionData.menuCustomColumnOptions[Name].length;
+
+    return width;
   };
 
   return (
@@ -374,7 +485,7 @@ const CM_B8100W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                user_id : userListData.find(
+                user_id: userListData.find(
                   (item: any) => item.user_id === row.user_id
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
@@ -394,7 +505,10 @@ const CM_B8100W: React.FC = () => {
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -402,6 +516,7 @@ const CM_B8100W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -412,11 +527,14 @@ const CM_B8100W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={item.width}
+                      width={setWidth("grdList", item.width)}
                       cell={
                         monthField.includes(item.fieldName)
-                        ? cellWithBackGround
-                        : undefined
+                          ? cellWithBackGround
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

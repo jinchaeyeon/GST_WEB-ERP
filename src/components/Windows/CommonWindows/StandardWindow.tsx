@@ -183,7 +183,7 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
       setMainDataResult((prev) => {
         return {
           data: [...prev.data, ...rows],
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       setIsInitSearch(true);

@@ -69,7 +69,8 @@ import { bytesToBase64 } from "byte-base64";
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
 let deletedRows: any[] = [];
-
+let temp = 0;
+let temp2 = 0;
 const requiredField = ["itemcd", "lotnum", "qty"];
 const numberField = ["qty", "totwgt"];
 const readOnlyField = [
@@ -85,6 +86,7 @@ const readOnlyField = [
   "wgtunit",
   "insert_time",
 ];
+
 const comboBoxField = [
   "proccd",
   "itemlvl1",
@@ -242,9 +244,14 @@ const PR_A9100W: React.FC = () => {
     }
   };
   const addItemData = (data: IItemData[]) => {
+    mainDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
     const newData = data.map((item, idx) => ({
       ...item,
-      idx: mainDataResult.data.length + idx + 1,
+      idx: ++temp2,
       rowstatus: "N",
       qty: 0,
       totwgt: 0,
@@ -336,7 +343,7 @@ const PR_A9100W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {
@@ -520,8 +527,11 @@ const PR_A9100W: React.FC = () => {
   );
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.idx > temp){
+        temp = item.idx
+      }
+  })
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
@@ -532,7 +542,7 @@ const PR_A9100W: React.FC = () => {
     );
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       rowstatus: "N",
       qty: 0,
       totwgt: 0,

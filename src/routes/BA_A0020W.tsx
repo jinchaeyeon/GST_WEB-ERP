@@ -90,6 +90,8 @@ const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
+let temp = 0;
+let temp2 = 0;
 
 const checkboxField = ["useyn", "rtrchk"];
 
@@ -528,7 +530,7 @@ const BA_A0020: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -659,7 +661,7 @@ const BA_A0020: React.FC = () => {
       setSubDataResult((prev) => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {
@@ -691,7 +693,7 @@ const BA_A0020: React.FC = () => {
       setSubDataResult2((prev) => {
         return {
           data: row,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {
@@ -723,7 +725,7 @@ const BA_A0020: React.FC = () => {
     fetchSubGrid2();
   }, [subPgNum2]);
 
-  let gridRef: any = useRef(null);
+  let gridRef : any = useRef(null); 
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -736,7 +738,7 @@ const BA_A0020: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -747,7 +749,7 @@ const BA_A0020: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -1062,11 +1064,14 @@ const BA_A0020: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = subDataResult.total + deletedMainRows.length + 1;
-    
+    subDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
 
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY]: seq,
+      [SUB_DATA_ITEM_KEY]: ++temp,
       recdt: convertDateToStr(new Date()),
       attdatnum: "",
       custcd: infomation.custcd,
@@ -1100,10 +1105,14 @@ const BA_A0020: React.FC = () => {
   };
 
   const onAddClick3 = () => {
-    let seq = subDataResult2.total + deletedMainRows2.length + 1;
-    
+    subDataResult2.data.map((item) => {
+      if (item.num > temp2) {
+        temp2 = item.num;
+      }
+    });
+
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY2]: seq,
+      [SUB_DATA_ITEM_KEY2]: ++temp2,
       custcd: infomation.custcd,
       current_income: 0,
       dedt_ratio: 0,
@@ -2275,19 +2284,19 @@ const BA_A0020: React.FC = () => {
         throw findMessage(messagesData, "BA_A0020W_001");
       }
 
-      if (infomation.custdiv== "") {
+      if (infomation.custdiv == "") {
         throw findMessage(messagesData, "BA_A0020W_002");
       }
 
-      if (infomation.bizdiv== "") {
+      if (infomation.bizdiv == "") {
         throw findMessage(messagesData, "BA_A0020W_003");
       }
 
-      if (infomation.inunpitem== "") {
+      if (infomation.inunpitem == "") {
         throw findMessage(messagesData, "BA_A0020W_004");
       }
 
-      if (infomation.unpitem== "") {
+      if (infomation.unpitem == "") {
         throw findMessage(messagesData, "BA_A0020W_005");
       }
 
@@ -3355,7 +3364,7 @@ const BA_A0020: React.FC = () => {
           para={subDataResult.data[rows - 1].attdatnum}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

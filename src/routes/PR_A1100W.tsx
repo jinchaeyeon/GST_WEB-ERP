@@ -137,7 +137,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
+let temp = 0;
+let temp2 = 0;
 const PR_A1100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -665,7 +666,7 @@ const PR_A1100W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {
@@ -696,7 +697,7 @@ const PR_A1100W: React.FC = () => {
         setPlanDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     } else {
@@ -726,7 +727,7 @@ const PR_A1100W: React.FC = () => {
         setMaterialDataResult((prev) => {
           return {
             data: [...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
     }
@@ -959,8 +960,11 @@ const PR_A1100W: React.FC = () => {
   // };
 
   const onPlanAddClick = () => {
-    let seq = planDataResult.total + 1;
-
+    planDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     let planseq = 1;
     if (planDataResult.total > 0) {
       planDataResult.data.forEach((item) => {
@@ -984,7 +988,7 @@ const PR_A1100W: React.FC = () => {
 
     const newDataItem = {
       ...selectedFirstRowData,
-      [PLAN_DATA_ITEM_KEY]: seq,
+      [PLAN_DATA_ITEM_KEY]: ++temp,
       planno: selectedFirstRowData.planno,
       planseq: planseq,
       procseq: 0,
@@ -1004,8 +1008,11 @@ const PR_A1100W: React.FC = () => {
   };
 
   const onMtrAddClick = () => {
-    let seq = materialDataResult.total + 1;
-
+    materialDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.idx
+      }
+  })
     const idx: number =
       Number(Object.getOwnPropertyNames(planSelectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
@@ -1016,7 +1023,7 @@ const PR_A1100W: React.FC = () => {
     );
 
     const newDataItem = {
-      [MATERIAL_DATA_ITEM_KEY]: seq,
+      [MATERIAL_DATA_ITEM_KEY]: ++temp2,
       planno: selectedRowData.planno,
       planseq: selectedRowData.planseq,
       proccd: selectedRowData.proccd,

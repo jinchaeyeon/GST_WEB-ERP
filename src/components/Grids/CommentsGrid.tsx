@@ -7,10 +7,11 @@ import {
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridItemChangeEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   GridSortChangeEvent,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -29,11 +30,13 @@ import {
   UseParaPc,
   UsePermissions,
 } from "../CommonFunction";
-import { EDIT_FIELD, SELECTED_FIELD } from "../CommonString";
+import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 
 const DATA_ITEM_KEY = "seq";
 let deletedRows: object[] = [];
+let temp = 0;
+let targetRowIndex: null | number = null;
 
 const CommentsGrid = (props: {
   ref_key: string;
@@ -54,7 +57,9 @@ const CommentsGrid = (props: {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const idGetter = getter(DATA_ITEM_KEY);
-
+  let gridRef : any = useRef(null); 
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
   const onDataStateChange = (event: GridDataStateChangeEvent) => {
     setDataState(event.dataState);
   };
@@ -62,11 +67,15 @@ const CommentsGrid = (props: {
   const [dataState, setDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [dataResult, setDataResult] = useState<DataResult>(
     process([], dataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -101,13 +110,11 @@ const CommentsGrid = (props: {
       editField={EDIT_FIELD}
     />
   );
-
   const enterEdit = (dataItem: any, field: string) => {
     const newData = dataResult.data.map((item) =>
       item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
         ? {
             ...item,
-            row_status: item.row_status === "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
         : {
@@ -115,7 +122,12 @@ const CommentsGrid = (props: {
             [EDIT_FIELD]: undefined,
           }
     );
-
+    setTempResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
     setDataResult((prev) => {
       return {
         data: newData,
@@ -125,17 +137,49 @@ const CommentsGrid = (props: {
   };
 
   const exitEdit = () => {
-    const newData = dataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != dataResult.data) {
+      const newData = dataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              row_status: item.row_status == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = dataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const onItemChange = (event: GridItemChangeEvent) => {
@@ -143,30 +187,60 @@ const CommentsGrid = (props: {
   };
 
   const TotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = dataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {dataResult.total}건
+        총
+        {dataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
+  
+  //조회조건 초기값
+  const [filters, setFilters] = useState({
+    pgSize: PAGE_SIZE,
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
 
-  const parameters: Iparameters = {
-    procedureName: "sys_sel_comments",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "Q",
-      "@p_form_id": form_id,
-      "@p_table_id": table_id,
-      "@p_orgdiv": orgdiv,
-      "@p_ref_key": ref_key,
-    },
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
-  const fetchGrid = async () => {
+  const fetchGrid = async (filters: any) => {
     // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    const parameters: Iparameters = {
+      procedureName: "sys_sel_comments_web",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "Q",
+        "@p_form_id": form_id,
+        "@p_table_id": table_id,
+        "@p_orgdiv": orgdiv,
+        "@p_ref_key": ref_key,
+        "@p_find_row_value": filters.find_row_value
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -174,23 +248,77 @@ const CommentsGrid = (props: {
     }
 
     if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      setDataResult(process(rows, dataState));
+
+        if (filters.find_row_value !== "") {
+          // find_row_value 행으로 스크롤 이동
+          if (gridRef.current) {
+            const findRowIndex = rows.findIndex(
+              (row: any) => row.seq == filters.find_row_value
+            );
+            targetRowIndex = findRowIndex;
+          }
+
+          // find_row_value 데이터가 존재하는 페이지로 설정
+          setPage({
+            skip: PAGE_SIZE * (data.pageNumber - 1),
+            take: PAGE_SIZE,
+          });
+        } else {
+          // 첫번째 행으로 스크롤 이동
+          if (gridRef.current) {
+            targetRowIndex = 0;
+          }
+        }
+        setDataResult({
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        });
+      if (totalRowCnt > 0) {
+          const selectedRow =
+            filters.find_row_value == ""
+              ? rows[0]
+              : rows.find((row: any) => row.seq == filters.find_row_value);
+
+          if (selectedRow != undefined) {
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          } else {
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          }
+        }
     } else {
       console.log("[에러발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
+  //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    fetchGrid();
-  }, []);
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [dataResult]);
 
   useEffect(() => {
-    fetchGrid();
-  }, [ref_key]);
+    if (filters.isSearch && permissions !== null && ref_key != "") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchGrid(deepCopiedFilters);
+    }
+  }, [filters, permissions, ref_key]);
 
   //계획 저장 파라미터 초기값
   const [paraDataSaved, setParaDataSaved] = useState({
@@ -225,19 +353,23 @@ const CommentsGrid = (props: {
   };
 
   const onAddClick = () => {
-    let seq = dataResult.total + deletedRows.length + 1;
-    
+    dataResult.data.map((item) => {
+      if (item.seq > temp) {
+        temp = item.seq;
+      }
+    });
+
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
       //Number(plandataResult.data[0].idx) ??
       null;
     if (idx === null) return false;
     const selectedRowData = dataResult.data.find(
-      (item) => item[DATA_ITEM_KEY] === idx
+      (item) => item[DATA_ITEM_KEY] == idx
     );
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       // planno: selectedRowData.planno,
       recdt: convertDateToStr(new Date()),
       row_status: "N",
@@ -245,27 +377,54 @@ const CommentsGrid = (props: {
       user_name: user_name,
     };
     setDataResult((prev) => {
-      return process([newDataItem, ...prev.data], dataState);
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
     });
+    setPage((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
   const onRemoveClick = () => {
     //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
     let newData: any[] = [];
-
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
     dataResult.data.forEach((item: any, index: number) => {
       if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
       } else {
+        Object.push(index);
         deletedRows.push(item);
       }
     });
 
-    //newData 생성
-    setDataResult(process(newData, dataState));
-
-    //선택 상태 초기화
-    setSelectedState({});
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = dataResult.data[Math.min(...Object2)];
+    } else {
+      data = dataResult.data[Math.min(...Object) - 1];
+    }
+    const isLastDataDeleted = dataResult.data.length === 0 && filters.pgNum > 1;
+    if (isLastDataDeleted) {
+      setPage({
+        skip: PAGE_SIZE * (filters.pgNum - 2),
+        take: PAGE_SIZE,
+      });
+    }
+    setDataResult((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
   };
 
   const onSaveClick = () => {
@@ -277,11 +436,7 @@ const CommentsGrid = (props: {
         );
       }
     );
-    if (
-      dataResult.data.length === 0 ||
-      (dataItem.length === 0 && deletedRows.length === 0)
-    )
-      return false;
+    if (dataItem.length === 0 && deletedRows.length === 0) return false;
 
     type TData = {
       row_status: string[];
@@ -347,8 +502,33 @@ const CommentsGrid = (props: {
     }
 
     if (data.isSuccess === true) {
-      setDataResult(process([], dataState));
-      fetchGrid();
+      const isLastDataDeleted =
+        dataResult.data.length == 0 && filters.pgNum > 1;
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: prev.pgNum - 1,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: dataResult.data.filter(
+            (item: any) =>
+              item[DATA_ITEM_KEY] ==
+              Object.getOwnPropertyNames(selectedState)[0]
+          )[0].seq,
+          isSearch: true,
+        }));
+      }
 
       deletedRows = [];
     } else {
@@ -376,7 +556,6 @@ const CommentsGrid = (props: {
           <ButtonContainer>
             <Button
               onClick={onAddClick}
-              fillMode="outline"
               themeColor={"primary"}
               icon="plus"
               disabled={isSaveDisabled}
@@ -424,6 +603,13 @@ const CommentsGrid = (props: {
         //스크롤 조회 기능
         fixedScroll={true}
         total={dataResult.total}
+        skip={page.skip}
+        take={page.take}
+        pageable={true}
+        onPageChange={pageChange}
+        //원하는 행 위치로 스크롤 기능
+        ref={gridRef}
+        rowHeight={30}
         //컬럼순서조정
         reorderable={true}
         //컬럼너비조정

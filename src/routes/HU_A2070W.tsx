@@ -68,7 +68,7 @@ const CheckField = ["lateyn"];
 const requiredField = ["orgdiv", "dutydt", "prsnnum"];
 const customField = ["orgdiv", "prsnnum"];
 let deletedMainRows: object[] = [];
-
+let temp = 0;
 type TdataArr = {
   rowstatus: string[];
   orgdiv: string[];
@@ -326,7 +326,7 @@ const HU_A2070W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -343,7 +343,7 @@ const HU_A2070W: React.FC = () => {
     setLoading(false);
   };
 
-  let gridRef: any = useRef(null);
+  let gridRef : any = useRef(null); 
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -356,7 +356,7 @@ const HU_A2070W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -367,7 +367,7 @@ const HU_A2070W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -925,10 +925,13 @@ const HU_A2070W: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       b_time: "",
       dayofweek: 0,
       dptcd: "",

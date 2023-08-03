@@ -82,7 +82,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 const DATA_ITEM_KEY = "fxcode";
 const SUB_DATA_ITEM_KEY = "fxseq";
 let deletedMainRows: any[] = [];
-
+let temp = 0;
 const DateField = ["recdt", "makedt", "indt", "fxdt"];
 const NumberField = ["uph", "cnt", "IOT_TER_ID", "fxcost"];
 const CheckField = ["useyn"];
@@ -463,7 +463,7 @@ const PR_A0060: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -497,7 +497,7 @@ const PR_A0060: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...row],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -863,10 +863,13 @@ const PR_A0060: React.FC = () => {
   };
 
   const onAddClick = () => {
-    let seq = subDataResult.total + deletedMainRows.length + 1;
-
+    subDataResult.data.map((item) => {
+      if(item.fxseq > temp){
+        temp = item.fxseq
+      }
+  })
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY]: seq,
+      [SUB_DATA_ITEM_KEY]: ++temp,
       rowstatus: "N",
       fxdt: convertDateToStr(new Date()),
       custcd: "",

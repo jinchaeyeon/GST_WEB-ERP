@@ -183,7 +183,12 @@ interface IItemData {
   custitemnm: string;
 }
 let deletedMainRows: object[] = [];
-
+let temp = 0;
+let temp2 = 0;
+let temp3 = 0;
+let temp4 = 0;
+let temp5 = 0;
+let temp6 = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_BA016, L_BA171, L_BA061,L_BA015", setBizComponentData);
@@ -766,7 +771,7 @@ const CopyWindow = ({
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         setIsInitSearch(true);
@@ -779,14 +784,17 @@ const CopyWindow = ({
   };
 
   const onCopyClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
-
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const selectRow = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp,
       amt: selectRow.amt,
       amtunit: selectRow.amtunit,
       chk: selectRow.chk,
@@ -840,9 +848,14 @@ const CopyWindow = ({
   };
 
   const onAddClick = () => {
-    let seq = mainDataResult.total + deletedMainRows.length + 1;
+    mainDataResult.data.map((item) => {
+      if (item.num > temp2) {
+        temp2 = item.num;
+      }
+    });
+
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq,
+      [DATA_ITEM_KEY]: ++temp2,
       itemgrade: "",
       itemcd: "",
       itemnm: "",
@@ -1026,16 +1039,11 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if (item.num > temp3) {
+        temp3 = item.num;
+      }
+    });
 
     for (var i = 1; i < data.length; i++) {
       if (data[0].num == data[i].num) {
@@ -1045,8 +1053,7 @@ const CopyWindow = ({
     }
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
+      data[i].num = ++temp3;
     }
 
     try {
@@ -1105,20 +1112,14 @@ const CopyWindow = ({
 
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if (item.num > temp4) {
+        temp4 = item.num;
+      }
+    });
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
+      data[i].num = ++temp4;
     }
 
     try {
@@ -1144,20 +1145,13 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
-
+    mainDataResult.data.map((item) => {
+      if (item.num > temp5) {
+        temp5 = item.num;
+      }
+    });
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
+      data[i].num = ++temp5;
     }
 
     try {
@@ -1218,16 +1212,11 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if (item.num > temp6) {
+        temp6 = item.num;
+      }
+    });
 
     for (var i = 1; i < data.length; i++) {
       if (data[0].itemcd == data[i].itemcd) {
@@ -1237,8 +1226,7 @@ const CopyWindow = ({
     }
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
+      data[i].num = ++temp6;
     }
 
     try {

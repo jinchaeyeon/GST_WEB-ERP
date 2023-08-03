@@ -63,7 +63,7 @@ type IWindow = {
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
-
+let temp = 0;
 const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -472,7 +472,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data,...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -504,7 +504,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       setDetailDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
     } else {
@@ -766,12 +766,17 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
 
   const onRowDoubleClick = (props: any) => {
     const datas = props.dataItem;
-    let seq = subDataResult.total + 1;
+    subDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
+
     const selectRow = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
     const newDataItem = {
-      [DATA_ITEM_KEY]: seq + 1,
+      [DATA_ITEM_KEY]: ++temp,
       chk: selectRow.chk,
       doqty: selectRow.doqty,
       dwgno: selectRow.dwgno,
@@ -812,7 +817,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       };
     });
   };
-
+  console.log(subDataResult)
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
 

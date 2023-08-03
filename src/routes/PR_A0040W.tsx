@@ -137,7 +137,7 @@ type TdataArr = {
   procunit_s: string[];
   workcnt_s: string[];
 };
-
+let temp = 0;
 const initialFilter: CompositeFilterDescriptor = {
   logic: "and",
   filters: [{ field: "code_name", operator: "contains", value: "" }],
@@ -474,7 +474,7 @@ const PR_A0040W: React.FC = () => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (filters.find_row_value === "" && filters.pgNum === 1) {
@@ -520,7 +520,7 @@ const PR_A0040W: React.FC = () => {
         setSubData2Result((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -550,7 +550,7 @@ const PR_A0040W: React.FC = () => {
         setSubDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         if (subfilters.find_row_value === "" && subfilters.pgNum === 1) {
@@ -582,7 +582,7 @@ const PR_A0040W: React.FC = () => {
     fetchSubGrid2();
   }, []);
 
-  let gridRef: any = useRef(null);
+  let gridRef : any = useRef(null); 
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -595,7 +595,7 @@ const PR_A0040W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setFilters((prev) => ({
@@ -607,7 +607,7 @@ const PR_A0040W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (filters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [mainDataResult]);
@@ -623,7 +623,7 @@ const PR_A0040W: React.FC = () => {
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.vs.container.scroll(0, scrollHeight);
+        gridRef.container.scroll(0, scrollHeight);
 
         //초기화
         setsubFilters((prev) => ({
@@ -635,7 +635,7 @@ const PR_A0040W: React.FC = () => {
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
       else if (subfilters.scrollDirrection === "up") {
-        gridRef.vs.container.scroll(0, 20);
+        gridRef.container.scroll(0, 20);
       }
     }
   }, [subDataResult]);
@@ -736,12 +736,16 @@ const PR_A0040W: React.FC = () => {
       });
     }
 
-    let seq = subDataResult.total + deletedMainRows.length + 1;
+    subDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
     const datas = mainDataResult.data.filter((item) => item.num == Object.getOwnPropertyNames(selectedState)[0])[0];
 
     setIfSelectFirstRow2(false);
     const newDataItem = {
-      [SUB_DATA_ITEM_KEY]: seq,
+      [SUB_DATA_ITEM_KEY]: ++temp,
       chlditemcd: "",
       chlditemnm: "",
       custcd: "",

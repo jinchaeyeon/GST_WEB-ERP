@@ -28,6 +28,7 @@ import LineChart from "../components/KPIcomponents/Chart/LineChart";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import { bytesToBase64 } from "byte-base64";
 import { DropdownChangeEvent } from "primereact/dropdown";
+import BarChart from "../components/KPIcomponents/Chart/BarChart";
 
 interface TList {
   code_name: string;
@@ -507,11 +508,10 @@ const QC_B0100W: React.FC = () => {
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
               <GridTitle title="공정별 불량율" />
-              <StackedChart
+              <BarChart
                 props={ProccdData}
                 value="badrate"
                 alllabel={stackChartAllLabel}
-                label={stackChartLabel}
                 random={true}
                 name="proccdnm"
               />

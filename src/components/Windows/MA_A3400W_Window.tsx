@@ -79,7 +79,8 @@ type Idata = {
   files: string;
 };
 let deletedMainRows: object[] = [];
-
+let temp = 0;
+let temp2 = 0;
 const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -417,7 +418,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -537,16 +538,12 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
 
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
 
     for (var i = 1; i < data.length; i++) {
       if (data[0].itemcd == data[i].itemcd) {
@@ -556,8 +553,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
     }
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
+      data[i].num = ++temp;
     }
 
     try {
@@ -583,16 +579,11 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
 
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if(item.num > temp2){
+        temp2 = item.num
+      }
+  })
 
     if (data[0].now_qty != undefined) {
       for (var i = 1; i < data.length; i++) {
@@ -601,9 +592,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
           data[0].lotnum == data[i].lotnum
         ) {
           alert("중복되는 품목이있습니다.");
-          data[i].num = seq;
+          data[i].num = ++temp2;
           data[i].type = "재고";
-          seq++;
           return false;
         }
       }
@@ -611,9 +601,8 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
       for (var i = 1; i < data.length; i++) {
         if (data[0].itemcd == data[i].itemcd) {
           alert("중복되는 품목이있습니다.");
-          data[i].num = seq;
+          data[i].num = ++temp2;
           data[i].type = "품목";
-          seq++;
           return false;
         }
       }

@@ -51,10 +51,13 @@ const KendoWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 500,
+    width: isMobile == true? deviceWidth : 500,
     height: 320,
   });
 
@@ -114,8 +117,9 @@ const KendoWindow = ({
       "@p_work_type": "LIST",
       "@p_user_group_id": user_group_id,
       "@p_user_group_name": "",
-      "@p_lang_id": "",
+      "@p_culture_name": "",
       "@p_use_yn": "",
+      "@p_find_row_value": "",
     },
   };
 
@@ -192,7 +196,7 @@ const KendoWindow = ({
       console.log("[오류 발생]");
       console.log(data);
 
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화

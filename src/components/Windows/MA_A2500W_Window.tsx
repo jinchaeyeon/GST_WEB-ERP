@@ -125,7 +125,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
+let temp = 0;
 const CopyWindow = ({
   workType,
   data,
@@ -353,7 +353,7 @@ const CopyWindow = ({
         setMainDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
         setIsInitSearch(true);
@@ -490,20 +490,14 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-    let seq = 1;
-
-    if (mainDataResult.total > 0) {
-      mainDataResult.data.forEach((item) => {
-        if (item[DATA_ITEM_KEY] > seq) {
-          seq = item[DATA_ITEM_KEY];
-        }
-      });
-      seq++;
-    }
+    mainDataResult.data.map((item) => {
+      if(item.num > temp){
+        temp = item.num
+      }
+  })
 
     for (var i = 0; i < data.length; i++) {
-      data[i].num = seq;
-      seq++;
+      data[i].num = ++temp;
     }
 
     setFilters((prev) => ({

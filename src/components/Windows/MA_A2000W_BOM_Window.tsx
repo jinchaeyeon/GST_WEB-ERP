@@ -89,7 +89,7 @@ type IWindow = {
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 3;
-
+let temp = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_BA171,L_BA172,L_BA173", setBizComponentData);
@@ -516,7 +516,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -576,7 +576,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         setDetailDataResult((prev) => {
           return {
             data: rows,
-            total: totalRowCnt,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       }
@@ -894,7 +894,6 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const onRowDoubleClick = (props: any) => {
     let arr: any = [];
     const datas = props.dataItem;
-    let seq = subDataResult.total + 1;
 
     for (const [key, value] of Object.entries(selectedState2)) {
       if (value == true) {
@@ -908,8 +907,13 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
 
     setSelectedState2({});
     selectRows.map((selectRow: any) => {
+      subDataResult.data.map((item) => {
+        if(item.num > temp){
+          temp = item.num
+        }
+    })
       const newDataItem = {
-        [DATA_ITEM_KEY]: seq + 1,
+        [DATA_ITEM_KEY]: ++temp,
         chk: selectRow.chk,
         insiz: selectRow.insiz,
         itemacnt: itemacntListData.find(
@@ -946,7 +950,6 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
           total: prev.total + 1,
         };
       });
-      seq++;
     });
   };
 
@@ -1210,7 +1213,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <TreeList
-   style={{ height: "calc(100% - 40px)" }}
+            style={{ height: "calc(100% - 40px)" }}
             data={processData()}
             expandField={EXPANDED_FIELD}
             subItemsField={SUB_ITEMS_FIELD}
@@ -1240,7 +1243,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-       style={{ height: "calc(100% - 40px)" }}
+            style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

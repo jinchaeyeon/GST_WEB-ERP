@@ -10,12 +10,14 @@ interface IExcelUploadButton {
   saveExcel: (para: any[]) => void;
   permissions: TPermissions;
   style: IStyle;
+  disabled? : boolean
 }
 
 const ExcelUploadButton = ({
   saveExcel,
   permissions,
   style,
+  disabled = false
 }: IExcelUploadButton) => {
   const excelInput: any = useRef();
 
@@ -46,7 +48,6 @@ const ExcelUploadButton = ({
     <Button
       onClick={upload}
       themeColor={"primary"}
-      fillMode={"outline"}
       icon={"upload"}
       style={style}
       disabled={permissions.save ? false : true}

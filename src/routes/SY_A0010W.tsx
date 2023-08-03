@@ -3,19 +3,16 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
   GridCellProps,
-  GridGroupChangeEvent,
   GridExpandChangeEvent,
   GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
-import calculateSize from "calculate-size";
 import FilterContainer from "../components/Containers/FilterContainer";
 import {
   Title,
@@ -28,12 +25,10 @@ import {
   GridTitleContainer,
 } from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input, RadioGroupChangeEvent } from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
-  chkScrollHandler,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
@@ -42,25 +37,25 @@ import {
   UseGetValueFromSessionItem,
   rowsWithSelectedDataResult,
   rowsOfDataResult,
+  getQueryFromBizComponent,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   CLIENT_WIDTH,
-  COM_CODE_DEFAULT_VALUE,
+  GAP,
   GNV_WIDTH,
   GRID_MARGIN,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
 import { isLoading, deletedAttadatnumsState } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import { bytesToBase64 } from "byte-base64";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 
 const numberField = [
   "sort_seq",
@@ -71,7 +66,6 @@ const numberField = [
   "numref4",
   "numref5",
 ];
-const checkBoxField = ["system_yn", "use_yn"];
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
 
@@ -84,7 +78,6 @@ const Page: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -92,6 +85,21 @@ const Page: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
+  const [field1, setField1] = useState("세부코드명1");
+  const [field2, setField2] = useState("세부코드명2");
+  const [field3, setField3] = useState("세부코드명3");
+  const [field4, setField4] = useState("세부코드명4");
+  const [field5, setField5] = useState("세부코드명5");
+  const [field6, setField6] = useState("세부코드명6");
+  const [field7, setField7] = useState("세부코드명7");
+  const [field8, setField8] = useState("세부코드명8");
+  const [field9, setField9] = useState("세부코드명9");
+  const [field10, setField10] = useState("세부코드명10");
+  const [num1, setNum1] = useState("숫자참조1");
+  const [num2, setNum2] = useState("숫자참조2");
+  const [num3, setNum3] = useState("숫자참조3");
+  const [num4, setNum4] = useState("숫자참조4");
+  const [num5, setNum5] = useState("숫자참조5");
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -128,7 +136,47 @@ const Page: React.FC = () => {
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_menu_group,L_BA000", setBizComponentData);
+  UseBizComponent("L_BA000, L_sysUserMaster_001", setBizComponentData);
+  const [userListData, setUserListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
+
+  // 그룹 카테고리 조회
+  useEffect(() => {
+    if (bizComponentData != null) {
+      const userQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
+      );
+      fetchQueryData(userQueryStr, setUserListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQueryData = useCallback(
+    async (queryStr: string, setListData: any) => {
+      let data: any;
+
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setListData(rows);
+      }
+    },
+    []
+  );
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
@@ -183,8 +231,6 @@ const Page: React.FC = () => {
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
 
-  const [detailPgNum, setDetailPgNum] = useState(1);
-
   const [workType, setWorkType] = useState("");
   const [isCopy, setIsCopy] = useState(false);
 
@@ -196,16 +242,6 @@ const Page: React.FC = () => {
         ...prev,
         [name]: value,
       }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: RadioGroupChangeEvent) => {
-    const name = e.syntheticEvent.currentTarget.name;
-    const value = e.value;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -279,21 +315,29 @@ const Page: React.FC = () => {
       "@p_form_id": "",
     },
   };
-  const gridRef = useRef<any>(null);
-  const gridRef2 = useRef<any>(null);
+  let gridRef: any = useRef(null);
+  let gridRef2: any = useRef(null);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take,
     });
+    setDetailFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+
+    setPage2(initialPageState);
   };
 
   const pageChange2 = (event: GridPageChangeEvent) => {
@@ -301,12 +345,13 @@ const Page: React.FC = () => {
 
     setDetailFilters((prev) => ({
       ...prev,
-      pgNum: page.skip / page.take + 1,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
     setPage2({
-      ...event.page,
+      skip: page.skip,
+      take: initialPageState.take,
     });
   };
 
@@ -391,13 +436,188 @@ const Page: React.FC = () => {
                   (row: any) => row.group_code == filters.find_row_value
                 );
 
-          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          if (selectedRow != undefined) {
+            setField1(
+              selectedRow.field_caption1 == "" ||
+                selectedRow.field_caption1 == null
+                ? "세부코드명1"
+                : selectedRow.field_caption1
+            );
+            setField2(
+              selectedRow.field_caption2 == "" ||
+                selectedRow.field_caption2 == null
+                ? "세부코드명2"
+                : selectedRow.field_caption2
+            );
+            setField3(
+              selectedRow.field_caption3 == "" ||
+                selectedRow.field_caption3 == null
+                ? "세부코드명3"
+                : selectedRow.field_caption3
+            );
+            setField4(
+              selectedRow.field_caption4 == "" ||
+                selectedRow.field_caption4 == null
+                ? "세부코드명4"
+                : selectedRow.field_caption4
+            );
+            setField5(
+              selectedRow.field_caption5 == "" ||
+                selectedRow.field_caption5 == null
+                ? "세부코드명5"
+                : selectedRow.field_caption5
+            );
+            setField6(
+              selectedRow.field_caption6 == "" ||
+                selectedRow.field_caption6 == null
+                ? "세부코드명6"
+                : selectedRow.field_caption6
+            );
+            setField7(
+              selectedRow.field_caption7 == "" ||
+                selectedRow.field_caption7 == null
+                ? "세부코드명7"
+                : selectedRow.field_caption7
+            );
+            setField8(
+              selectedRow.field_caption8 == "" ||
+                selectedRow.field_caption8 == null
+                ? "세부코드명8"
+                : selectedRow.field_caption8
+            );
+            setField9(
+              selectedRow.field_caption9 == "" ||
+                selectedRow.field_caption9 == null
+                ? "세부코드명9"
+                : selectedRow.field_caption9
+            );
+            setField10(
+              selectedRow.field_caption10 == "" ||
+                selectedRow.field_caption10 == null
+                ? "세부코드명10"
+                : selectedRow.field_caption10
+            );
+            setNum1(
+              selectedRow.numref_caption1 == null ||
+                selectedRow.numref_caption1 == ""
+                ? "숫자참조1"
+                : selectedRow.numref_caption1
+            );
+            setNum2(
+              selectedRow.numref_caption2 == null ||
+                selectedRow.numref_caption2 == ""
+                ? "숫자참조2"
+                : selectedRow.numref_caption2
+            );
+            setNum3(
+              selectedRow.numref_caption3 == null ||
+                selectedRow.numref_caption3 == ""
+                ? "숫자참조3"
+                : selectedRow.numref_caption3
+            );
+            setNum4(
+              selectedRow.numref_caption4 == null ||
+                selectedRow.numref_caption4 == ""
+                ? "숫자참조4"
+                : selectedRow.numref_caption4
+            );
+            setNum5(
+              selectedRow.numref_caption5 == null ||
+                selectedRow.numref_caption5 == ""
+                ? "숫자참조5"
+                : selectedRow.numref_caption5
+            );
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
 
-          setDetailFilters((prev) => ({
-            ...prev,
-            group_code: selectedRow.group_code,
-            isSearch: true,
-          }));
+            setDetailFilters((prev) => ({
+              ...prev,
+              group_code: selectedRow.group_code,
+              isSearch: true,
+            }));
+          } else {
+            setField1(
+              rows[0].field_caption1 == "" || rows[0].field_caption1 == null
+                ? "세부코드명1"
+                : rows[0].field_caption1
+            );
+            setField2(
+              rows[0].field_caption2 == "" || rows[0].field_caption2 == null
+                ? "세부코드명2"
+                : rows[0].field_caption2
+            );
+            setField3(
+              rows[0].field_caption3 == "" || rows[0].field_caption3 == null
+                ? "세부코드명3"
+                : rows[0].field_caption3
+            );
+            setField4(
+              rows[0].field_caption4 == "" || rows[0].field_caption4 == null
+                ? "세부코드명4"
+                : rows[0].field_caption4
+            );
+            setField5(
+              rows[0].field_caption5 == "" || rows[0].field_caption5 == null
+                ? "세부코드명5"
+                : rows[0].field_caption5
+            );
+            setField6(
+              rows[0].field_caption6 == "" || rows[0].field_caption6 == null
+                ? "세부코드명6"
+                : rows[0].field_caption6
+            );
+            setField7(
+              rows[0].field_caption7 == "" || rows[0].field_caption7 == null
+                ? "세부코드명7"
+                : rows[0].field_caption7
+            );
+            setField8(
+              rows[0].field_caption8 == "" || rows[0].field_caption8 == null
+                ? "세부코드명8"
+                : rows[0].field_caption8
+            );
+            setField9(
+              rows[0].field_caption9 == "" || rows[0].field_caption9 == null
+                ? "세부코드명9"
+                : rows[0].field_caption9
+            );
+            setField10(
+              rows[0].field_caption10 == "" || rows[0].field_caption10 == null
+                ? "세부코드명10"
+                : rows[0].field_caption10
+            );
+            setNum1(
+              rows[0].numref_caption1 == null || rows[0].numref_caption1 == ""
+                ? "숫자참조1"
+                : rows[0].numref_caption1
+            );
+            setNum2(
+              rows[0].numref_caption2 == null || rows[0].numref_caption2 == ""
+                ? "숫자참조2"
+                : rows[0].numref_caption2
+            );
+            setNum3(
+              rows[0].numref_caption3 == null || rows[0].numref_caption3 == ""
+                ? "숫자참조3"
+                : rows[0].numref_caption3
+            );
+            setNum4(
+              rows[0].numref_caption4 == null || rows[0].numref_caption4 == ""
+                ? "숫자참조4"
+                : rows[0].numref_caption4
+            );
+            setNum5(
+              rows[0].numref_caption5 == null || rows[0].numref_caption5 == ""
+                ? "숫자참조5"
+                : rows[0].numref_caption5
+            );
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+
+            setDetailFilters((prev) => ({
+              ...prev,
+              group_code: rows[0].group_code,
+              isSearch: true,
+            }));
+          }
         }
       }
     } else {
@@ -470,7 +690,7 @@ const Page: React.FC = () => {
       setDetailDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {
@@ -481,7 +701,11 @@ const Page: React.FC = () => {
                 (row: any) =>
                   row[DETAIL_DATA_ITEM_KEY] == detailFilters.find_row_value
               );
-        setDetailSelectedState({ [selectedRow[DETAIL_DATA_ITEM_KEY]]: true });
+        if (selectedRow != undefined) {
+          setDetailSelectedState({ [selectedRow[DETAIL_DATA_ITEM_KEY]]: true });
+        } else {
+          setDetailSelectedState({ [rows[0][DETAIL_DATA_ITEM_KEY]]: true });
+        }
       }
     }
     setDetailFilters((prev) => ({
@@ -500,7 +724,12 @@ const Page: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setPage2(initialPageState); // 페이지 초기화
     resetAllGrid(); // 데이터 초기화
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
@@ -527,15 +756,7 @@ const Page: React.FC = () => {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-
-      if (filters.find_row_value !== "") {
-        // 그룹코드로 조회 시 리셋 후 조회
-        resetAllGrid();
-        fetchMainGrid(deepCopiedFilters);
-      } else {
-        // 일반 조회
-        fetchMainGrid(deepCopiedFilters);
-      }
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions, bizComponentData]);
 
@@ -555,7 +776,7 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
-    if (targetRowIndex !== null && gridRef2.current) {
+    if (targetRowIndex2 !== null && gridRef2.current) {
       gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
       targetRowIndex2 = null;
     }
@@ -579,12 +800,103 @@ const Page: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    setField1(
+      selectedRowData.field_caption1 == "" ||
+        selectedRowData.field_caption1 == null
+        ? "세부코드명1"
+        : selectedRowData.field_caption1
+    );
+    setField2(
+      selectedRowData.field_caption2 == "" ||
+        selectedRowData.field_caption2 == null
+        ? "세부코드명2"
+        : selectedRowData.field_caption2
+    );
+    setField3(
+      selectedRowData.field_caption3 == "" ||
+        selectedRowData.field_caption3 == null
+        ? "세부코드명3"
+        : selectedRowData.field_caption3
+    );
+    setField4(
+      selectedRowData.field_caption4 == "" ||
+        selectedRowData.field_caption4 == null
+        ? "세부코드명4"
+        : selectedRowData.field_caption4
+    );
+    setField5(
+      selectedRowData.field_caption5 == "" ||
+        selectedRowData.field_caption5 == null
+        ? "세부코드명5"
+        : selectedRowData.field_caption5
+    );
+    setField6(
+      selectedRowData.field_caption6 == "" ||
+        selectedRowData.field_caption6 == null
+        ? "세부코드명6"
+        : selectedRowData.field_caption6
+    );
+    setField7(
+      selectedRowData.field_caption7 == "" ||
+        selectedRowData.field_caption7 == null
+        ? "세부코드명7"
+        : selectedRowData.field_caption7
+    );
+    setField8(
+      selectedRowData.field_caption8 == "" ||
+        selectedRowData.field_caption8 == null
+        ? "세부코드명8"
+        : selectedRowData.field_caption8
+    );
+    setField9(
+      selectedRowData.field_caption9 == "" ||
+        selectedRowData.field_caption9 == null
+        ? "세부코드명9"
+        : selectedRowData.field_caption9
+    );
+    setField10(
+      selectedRowData.field_caption10 == "" ||
+        selectedRowData.field_caption10 == null
+        ? "세부코드명10"
+        : selectedRowData.field_caption10
+    );
+    setNum1(
+      selectedRowData.numref_caption1 == null ||
+        selectedRowData.numref_caption1 == ""
+        ? "숫자참조1"
+        : selectedRowData.numref_caption1
+    );
+    setNum2(
+      selectedRowData.numref_caption2 == null ||
+        selectedRowData.numref_caption2 == ""
+        ? "숫자참조2"
+        : selectedRowData.numref_caption2
+    );
+    setNum3(
+      selectedRowData.numref_caption3 == null ||
+        selectedRowData.numref_caption3 == ""
+        ? "숫자참조3"
+        : selectedRowData.numref_caption3
+    );
+    setNum4(
+      selectedRowData.numref_caption4 == null ||
+        selectedRowData.numref_caption4 == ""
+        ? "숫자참조4"
+        : selectedRowData.numref_caption4
+    );
+    setNum5(
+      selectedRowData.numref_caption5 == null ||
+        selectedRowData.numref_caption5 == ""
+        ? "숫자참조5"
+        : selectedRowData.numref_caption5
+    );
     setDetailFilters((prev) => ({
       ...prev,
       group_code: selectedRowData.group_code,
+      pgNum: 1,
       isSearch: true,
     }));
+    setPage2(initialPageState);
   };
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -615,67 +927,35 @@ const Page: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataTotal.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataTotal}건
+        총
+        {mainDataTotal == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = detailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detailDataResult.total}건
+        총
+        {detailDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
-  const getCaption = (field: any, orgCaption: any) => {
-    const key = Object.getOwnPropertyNames(selectedState)[0];
-    let caption = orgCaption;
-
-    if (key) {
-      const selectedRowData = rowsOfDataResult(mainDataResult).find(
-        (item) => item[DATA_ITEM_KEY] === key
-      );
-
-      if (selectedRowData) {
-        if (field.includes("extra_field")) {
-          const extraFieldNum = field
-            .replace("extra_field", "")
-            .replace("col_", "");
-
-          const newCaption = selectedRowData["field_caption" + extraFieldNum];
-          if (newCaption !== "") {
-            caption = newCaption;
-          }
-        }
-      }
-    }
-
-    return caption;
-  };
   const onAddClick = () => {
     setIsCopy(false);
-    setWorkType("N");
-    setDetailWindowVisible(true);
-  };
-
-  const onCopyClick = () => {
-    if (mainDataResult.total < 1) return false;
-
-    const key = Object.getOwnPropertyNames(selectedState)[0];
-    const selectedRowData = rowsOfDataResult(mainDataResult).filter(
-      (item: any) => item[DATA_ITEM_KEY] == key
-    )[0];
-
-    setDetailFilters((prev) => ({
-      ...prev,
-      group_code: selectedRowData.group_code,
-      isSearch: true,
-    }));
-
-    setIsCopy(true);
     setWorkType("N");
     setDetailWindowVisible(true);
   };
@@ -711,6 +991,92 @@ const Page: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      //코멘트 삭제
+      let data2: any;
+
+      const parameters: Iparameters = {
+        procedureName: "sys_sel_comments_web",
+        pageNumber: 1,
+        pageSize: 100000,
+        parameters: {
+          "@p_work_type": "Q",
+          "@p_form_id": pathname,
+          "@p_table_id": "comCodeMaster",
+          "@p_orgdiv": "01",
+          "@p_ref_key": rowsOfDataResult(mainDataResult).filter(
+            (row: any) =>
+              row.num == Object.getOwnPropertyNames(selectedState)[0]
+          )[0].group_code,
+          "@p_find_row_value": "",
+        },
+      };
+
+      try {
+        data2 = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data2 = null;
+      }
+      if (data2.isSuccess === true) {
+        const rows = data2.tables[0].Rows;
+        type TData = {
+          row_status: string[];
+          id: string[];
+          seq: string[];
+          recdt: string[];
+          comment: string[];
+          user_id: string[];
+        };
+
+        let dataArr: TData = {
+          row_status: [],
+          id: [],
+          comment: [],
+          seq: [],
+          recdt: [],
+          user_id: [],
+        };
+
+        rows.forEach((item: any, idx: number) => {
+          const { comment, id = "", seq, recdt, user_id } = item;
+
+          dataArr.row_status.push("D");
+          dataArr.comment.push(comment);
+          dataArr.id.push(id);
+          dataArr.seq.push(seq);
+          dataArr.recdt.push(recdt);
+          dataArr.user_id.push(user_id);
+        });
+
+        let data3: any;
+        const paraSaved: Iparameters = {
+          procedureName: "sys_sav_comments_web",
+          pageNumber: 0,
+          pageSize: 0,
+          parameters: {
+            "@p_work_type": "save",
+            "@p_row_status": dataArr.row_status.join("|"),
+            "@p_id": dataArr.id.join("|"),
+            "@p_seq": dataArr.seq.join("|"),
+            "@p_recdt": dataArr.recdt.join("|"),
+            "@p_comment": dataArr.comment.join("|"),
+            "@p_user_id": dataArr.user_id.join("|"),
+            "@p_form_id": pathname,
+            "@p_table_id": "comCodeMaster",
+            "@p_orgdiv": "01",
+            "@p_ref_key": rowsOfDataResult(mainDataResult).filter(
+              (row: any) =>
+                row.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0].group_code,
+            "@p_exec_pc": pc,
+          },
+        };
+        try {
+          data3 = await processApi<any>("procedure", paraSaved);
+        } catch (error) {
+          data3 = null;
+        }
+      }
+
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 1;
       const findRowIndex = rowsOfDataResult(mainDataResult).findIndex(
@@ -719,20 +1085,31 @@ const Page: React.FC = () => {
 
       if (isLastDataDeleted) {
         setPage({
-          skip: PAGE_SIZE * (filters.pgNum - 2),
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
           take: PAGE_SIZE,
         });
+
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+      } else {
+        resetAllGrid();
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value:
+            rowsOfDataResult(mainDataResult)[
+              findRowIndex == 0 ? 1 : findRowIndex - 1
+            ].group_code,
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
       }
-      resetAllGrid();
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value:
-          rowsOfDataResult(mainDataResult)[
-            findRowIndex == 0 ? 0 : findRowIndex - 1
-          ].group_code,
-        pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
-        isSearch: true,
-      }));
 
       if (paraDataDeleted.attdatnum)
         setDeletedAttadatnums([paraDataDeleted.attdatnum]);
@@ -793,6 +1170,50 @@ const Page: React.FC = () => {
     event.dataItem.expanded = !isExpanded;
 
     setMainDataResult({ ...mainDataResult });
+  };
+
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdHeaderList");
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdHeaderList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current 
+      );
+
+      setGridCurrent(grid.current.offsetWidth-87);
+      setApplyMinWidth(grid.current.offsetWidth-87 < minGridWidth.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current.offsetWidth-87 < minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth-87 > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth-87);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    let width = applyMinWidth
+      ? minWidth
+      : minWidth +
+        (gridCurrent - minGridWidth.current) /
+          customOptionData.menuCustomColumnOptions[Name].length;
+
+    return width;
   };
 
   return (
@@ -888,7 +1309,7 @@ const Page: React.FC = () => {
       </FilterContainer>
 
       <GridContainerWrap>
-        <GridContainer width={"500px"}>
+        <GridContainer width={"30%"}>
           <ExcelExport
             data={rowsOfDataResult(mainDataResult)}
             ref={(exporter) => {
@@ -906,15 +1327,6 @@ const Page: React.FC = () => {
                     disabled={permissions.save ? false : true}
                   >
                     생성
-                  </Button>
-                  <Button
-                    onClick={onCopyClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="copy"
-                    disabled={permissions.save ? false : true}
-                  >
-                    복사
                   </Button>
                   <Button
                     onClick={onDeleteClick}
@@ -962,10 +1374,9 @@ const Page: React.FC = () => {
               groupable={true}
               onExpandChange={onExpandChange}
               expandField="expanded"
+              id="grdHeaderList"
             >
               <GridColumn cell={CommandCell} width="55px" />
-              <GridColumn field="group_category_name" title={"유형분류"} />
-
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
                   (item: any, idx: number) =>
@@ -975,7 +1386,7 @@ const Page: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={item.width}
+                        width={setWidth("grdHeaderList", item.width)}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
@@ -992,7 +1403,7 @@ const Page: React.FC = () => {
         </GridContainer>
 
         <GridContainer
-          width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 15 - 500 + "px"}
+          width={`calc(70% -${GAP}px)`}
         >
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
@@ -1002,6 +1413,12 @@ const Page: React.FC = () => {
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
+                insert_userid: userListData.find(
+                  (items: any) => items.user_id == row.insert_userid
+                )?.user_name,
+                update_userid: userListData.find(
+                  (items: any) => items.user_id == row.update_userid
+                )?.user_name,
                 [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
               })),
               detailDataState
@@ -1032,35 +1449,78 @@ const Page: React.FC = () => {
             //컬럼너비조정
             resizable={true}
           >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdDetailList"].map(
-                (item: any, idx: number) => {
-                  const caption = getCaption(item.id, item.caption);
-                  return (
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : checkBoxField.includes(item.fieldName)
-                            ? CheckBoxReadOnlyCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0
-                            ? detailTotalFooterCell
-                            : undefined
-                        }
-                      />
-                    )
-                  );
-                }
-              )}
+            <GridColumn
+              field="sub_code"
+              width="120px"
+              title="세부코드"
+              footerCell={detailTotalFooterCell}
+            />
+            <GridColumn field="code_name" width="200px" title="세부코드명" />
+            <GridColumn
+              field="system_yn"
+              width="120px"
+              title="시스템코드"
+              cell={CheckBoxCell}
+            />
+            <GridColumn
+              field="sort_seq"
+              width="120px"
+              title="정렬순서"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="use_yn"
+              width="95px"
+              title="사용"
+              cell={CheckBoxCell}
+            />
+            <GridColumn field="extra_field1" width="200px" title={field1} />
+            <GridColumn field="extra_field2" width="200px" title={field2} />
+            <GridColumn field="extra_field3" width="200px" title={field3} />
+            <GridColumn field="extra_field4" width="200px" title={field4} />
+            <GridColumn field="extra_field5" width="200px" title={field5} />
+            <GridColumn field="extra_field6" width="200px" title={field6} />
+            <GridColumn field="extra_field7" width="200px" title={field7} />
+            <GridColumn field="extra_field8" width="200px" title={field8} />
+            <GridColumn field="extra_field9" width="200px" title={field9} />
+            <GridColumn field="extra_field10" width="200px" title={field10} />
+            <GridColumn field="memo" width="120px" title="메모" />
+            <GridColumn
+              field="numref1"
+              width="200px"
+              title={num1}
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="numref2"
+              width="200px"
+              title={num2}
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="numref3"
+              width="200px"
+              title={num3}
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="numref4"
+              width="200px"
+              title={num4}
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="numref5"
+              width="200px"
+              title={num5}
+              cell={NumberCell}
+            />
+            <GridColumn field="insert_userid" width="120px" title="등록자" />
+            <GridColumn field="insert_pc" width="120px" title="등록PC" />
+            <GridColumn field="insert_time" width="120px" title="등록일자" />
+            <GridColumn field="update_userid" width="120px" title="수정자" />
+            <GridColumn field="update_pc" width="120px" title="수정PC" />
+            <GridColumn field="update_time" width="120px" title="수정일자" />
           </Grid>
         </GridContainer>
       </GridContainerWrap>

@@ -9,6 +9,7 @@ import Login from "./routes/Login";
 import Main from "./routes/Main";
 import AC_A0000W from "./routes/AC_A0000W";
 import AC_A0020W from "./routes/AC_A0020W";
+import AC_A0030W from "./routes/AC_A0030W";
 import AC_A1000W from "./routes/AC_A1000W";
 import AC_B1100W from "./routes/AC_B1100W";
 import AC_B1280W from "./routes/AC_B1280W";
@@ -415,6 +416,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
                 {/* 회계관리 */}
                 <AuthRoute path="/AC_A0020W" component={AC_A0020W} exact />
+                <AuthRoute path="/AC_A0030W" component={AC_A0030W} exact />
                 <AuthRoute path="/AC_A1000W" component={AC_A1000W} exact />
                 <AuthRoute path="/AC_B1100W" component={AC_B1100W} exact />
                 <AuthRoute path="/AC_B1280W" component={AC_B1280W} exact />
