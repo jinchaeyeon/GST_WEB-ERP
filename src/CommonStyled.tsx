@@ -3,12 +3,13 @@ import { CLOSED_GNV_WIDTH, GNV_WIDTH } from "./components/CommonString";
 import logoSrc from "./img/logo.png";
 
 export const TitleContainer = styled.div`
-  display: flex;
+  display: inline-block;
   align-items: center;
   justify-content: space-between;
   min-height: 40px;
   padding-top: 10px;
   padding-bottom: 5px;
+  width: 100%;
 
   .iot-title {
     font-size: 26px;
@@ -58,8 +59,10 @@ export const Title = styled.h3`
 type TButtonContainer = {
   flexDirection?: "column" | "row";
 };
+//  flex-wrap: wrap;
 export const ButtonContainer = styled.div<TButtonContainer>`
   display: flex;
+  justify-content: flex-end;
 
   flex-direction: ${(props) =>
     props.flexDirection ? props.flexDirection : "row"};

@@ -1530,7 +1530,7 @@ const BA_A0100W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "80vh" }}
+              style={{ height: "78vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1647,7 +1647,7 @@ const BA_A0100W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "78vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

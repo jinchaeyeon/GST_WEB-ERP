@@ -426,6 +426,8 @@ const BA_A0050: React.FC = () => {
   UsePermissions(setPermissions);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -2312,7 +2314,7 @@ const BA_A0050: React.FC = () => {
               </FormBox>
             </FormBoxWrap>
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "33vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -2383,23 +2385,43 @@ const BA_A0050: React.FC = () => {
               }}
             >
               <GridTitleContainer>
-                <GridTitle>BOM 상세</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onCopyEditClick2}
-                    themeColor={"primary"}
-                    icon="save"
+                <GridTitle>
+                  BOM 상세
+                  <div
+                    style={{
+                      margin: 0,
+                      float: isMobile ? "left" : "none",
+                      display: isMobile ? "block" : "inline-block",
+                    }}
                   >
-                    패턴공정도 참조
-                  </Button>
-                  <Button
-                    onClick={onCopyEditClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    BOM복사
-                  </Button>
+                    <Button
+                      onClick={onCopyEditClick2}
+                      themeColor={"primary"}
+                      icon="save"
+                      style={{
+                        marginLeft: isMobile ? "0px" : "15px",
+                        marginTop: isMobile ? "10px" : "0px",
+                      }}
+                    >
+                      패턴공정도 참조
+                    </Button>
+                    <Button
+                      onClick={onCopyEditClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      style={{
+                        marginLeft: "10px",
+                        marginTop: isMobile ? "10px" : "0px",
+                      }}
+                    >
+                      BOM복사
+                    </Button>
+                  </div>
+                </GridTitle>
+                <ButtonContainer
+                  style={{ paddingTop: isMobile ? "25px" : "0px" }}
+                >
                   <Button
                     onClick={onDeleteClick2}
                     fillMode="outline"
@@ -2417,7 +2439,7 @@ const BA_A0050: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "77vh" }}
+                style={{ height: "75vh" }}
                 data={process(
                   subData2Result.data.map((row) => ({
                     ...row,

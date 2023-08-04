@@ -152,7 +152,8 @@ const BA_A0041W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 768;
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -1897,7 +1898,7 @@ const BA_A0041W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer width="89.7vw">
+      <GridContainer width={`100%`}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -1907,11 +1908,12 @@ const BA_A0041W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>
               요약정보
+              <div style={{ margin: 0, float: isMobile? "left" : "none", display: isMobile? "block" : "inline-block"}}>
               {permissions && (
                 <ExcelUploadButtons
                   saveExcel={() => saveExcel}
                   permissions={permissions}
-                  style={{ marginLeft: "15px" }}
+                  style={{ marginLeft: isMobile? "0px": "15px", marginTop: isMobile ? "10px": "0px" }}
                 />
               )}
               <Button
@@ -1920,12 +1922,13 @@ const BA_A0041W: React.FC = () => {
                 icon="file"
                 fillMode="outline"
                 themeColor={"primary"}
-                style={{ marginLeft: "10px" }}
+                style={{ marginLeft: isMobile? "0px": "10px", marginTop: isMobile ? "10px": "0px" }}
               >
                 엑셀양식
               </Button>
+              </div>
             </GridTitle>
-            <ButtonContainer>
+            <ButtonContainer style={{ paddingTop: isMobile? "65px" : "0px"}}>
               <Button
                 onClick={onDeleteClick2}
                 fillMode="outline"
@@ -1957,7 +1960,7 @@ const BA_A0041W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "68vh" }}
+            style={{ height: "66vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
