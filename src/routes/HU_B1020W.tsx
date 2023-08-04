@@ -59,7 +59,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import { bytesToBase64 } from "byte-base64";
 
 const DATA_ITEM_KEY = "prsnnum";
-const dateField = ["birdt"];
+const dateField = ["birdt", "regorgdt","rtrdt"];
 
 const HU_B1020W: React.FC = () => {
 
@@ -315,6 +315,7 @@ const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     }
     setLoading(false);
   };
+  
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
@@ -331,28 +332,6 @@ const mainTotalFooterCell = (props: GridFooterCellProps) => {
     </td>
   );
 };
-
-  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
-  const onSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState,
-      dataItemKey: DATA_ITEM_KEY,
-    });
-    setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-
-    resetAllGrid();
-    setFilters((prev) => ({
-      ...prev,
-      prsnnum: selectedRowData.prsnnum,
-      pgNum: 1,
-      isSearch: true,
-    }));
-  };
-
   
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
@@ -495,7 +474,7 @@ const mainTotalFooterCell = (props: GridFooterCellProps) => {
             enabled: true,
             mode: "single",
           }}
-          onSelectionChange={onSelectionChange}
+          
           //스크롤 조회 기능
           fixedScroll={true}
           total={mainDataResult.total}
@@ -521,10 +500,9 @@ const mainTotalFooterCell = (props: GridFooterCellProps) => {
                     cell={
                       dateField.includes(item.fieldName) ? DateCell : undefined
                     }
-
-                    // footerCell={
-                    //   item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                    // }
+                    footerCell={
+                      item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                    }
                   ></GridColumn>
                 )
             )}
