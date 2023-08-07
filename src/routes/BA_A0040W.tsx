@@ -3,7 +3,6 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
@@ -17,7 +16,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { gridList } from "../store/columns/BA_A0040W_C";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter, setter } from "@progress/kendo-react-common";
+import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
   Title,
@@ -30,7 +29,6 @@ import {
   ButtonInInput,
   FormBoxWrap,
   FormBox,
-  GridContainerWrap,
 } from "../CommonStyled";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
@@ -39,7 +37,6 @@ import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
-  chkScrollHandler,
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
@@ -49,10 +46,10 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   getGridItemChangedData,
-  dateformat,
   UseParaPc,
   UseGetValueFromSessionItem,
   useSysMessage,
+  toDate,
 } from "../components/CommonFunction";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -79,6 +76,7 @@ import {
 } from "../store/atoms";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { TextArea } from "@progress/kendo-react-inputs";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 const DATA_ITEM_KEY = "itemcd";
 const SUB_DATA_ITEM_KEY2 = "num";
 let deletedMainRows: object[] = [];
@@ -87,6 +85,7 @@ const NumberField = ["safeqty", "purleadtime", "unp"];
 const CheckField = ["useyn"];
 const DateField = ["recdt"];
 const CustomComboField = ["unpitem", "amtunit", "itemacnt"];
+const requiredField = ["recdt","unpitem", "amtunit","itemacnt"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -454,8 +453,6 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-
-
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -788,7 +785,10 @@ const BA_A0040: React.FC = () => {
       const row = rows.map((item: any) => ({
         ...item,
       }));
-      const mainData = mainDataResult.data.filter((item) => item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0])[0];
+      const mainData = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
 
       if (totalRowCnt > 0) {
         if (subfilters.find_row_value !== "") {
@@ -796,13 +796,14 @@ const BA_A0040: React.FC = () => {
           if (gridRef2.current) {
             const findRowIndex = rows.findIndex(
               (row: any) =>
-              mainData.itemcd +
-              "-" +
-              row.itemacnt +
-              "-" +
-              row.recdt +
-              "-" +
-              row.amtunit == subfilters.find_row_value
+                mainData.itemcd +
+                  "-" +
+                  row.itemacnt +
+                  "-" +
+                  row.recdt +
+                  "-" +
+                  row.amtunit ==
+                subfilters.find_row_value
             );
             targetRowIndex2 = findRowIndex;
           }
@@ -832,22 +833,21 @@ const BA_A0040: React.FC = () => {
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                mainData.itemcd +
-                "-" +
-                row.itemacnt +
-                "-" +
-                row.recdt +
-                "-" +
-                row.amtunit ==
-                subfilters.find_row_value
+                  mainData.itemcd +
+                    "-" +
+                    row.itemacnt +
+                    "-" +
+                    row.recdt +
+                    "-" +
+                    row.amtunit ==
+                  subfilters.find_row_value
               );
 
-              if(selectedRow != undefined) {
-                setSelectedsubData2State({ [selectedRow[SUB_DATA_ITEM_KEY2]]: true });
-              } else {
-                setSelectedsubData2State({ [rows[0][SUB_DATA_ITEM_KEY2]]: true });
-              }
-        
+        if (selectedRow != undefined) {
+          setSelectedsubData2State({ [selectedRow[SUB_DATA_ITEM_KEY2]]: true });
+        } else {
+          setSelectedsubData2State({ [rows[0][SUB_DATA_ITEM_KEY2]]: true });
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -1122,7 +1122,7 @@ const BA_A0040: React.FC = () => {
     });
     const newDataItem = {
       [SUB_DATA_ITEM_KEY2]: ++temp,
-      recdt: new Date(),
+      recdt: convertDateToStr(new Date()),
       unpitem: "SYS01",
       amtunit: "USD",
       itemacnt: "2",
@@ -1298,10 +1298,11 @@ const BA_A0040: React.FC = () => {
     let valid = true;
     if (dataItem.rowstatus != "N" && field == "recdt") {
       valid = false;
-    }
+    } 
+
     if (field != "rowstatus" && valid == true) {
       const newData = subData2Result.data.map((item) =>
-        item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
+        item[SUB_DATA_ITEM_KEY2] == dataItem[SUB_DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1651,7 +1652,6 @@ const BA_A0040: React.FC = () => {
 
     try {
       dataItem.map((item: any) => {
-        if(item.recdt.length == 8) {
           if (
             item.recdt.substring(0, 4) < "1997" ||
             item.recdt.substring(6, 8) > "31" ||
@@ -1660,7 +1660,6 @@ const BA_A0040: React.FC = () => {
           ) {
             throw findMessage(messagesData, "BA_A0040W_003");
           }
-        }
       });
     } catch (e) {
       alert(e);
@@ -1854,7 +1853,7 @@ const BA_A0040: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       setsubFilters((prev) => ({
         ...prev,
@@ -1879,7 +1878,7 @@ const BA_A0040: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -2274,7 +2273,7 @@ const BA_A0040: React.FC = () => {
                       <th>품목코드</th>
                       {infomation.itemcd != "자동생성" && yn == true ? (
                         <>
-                          <td colSpan={2}>
+                          <td>
                             <Input
                               name="itemcd"
                               type="text"
@@ -2282,40 +2281,57 @@ const BA_A0040: React.FC = () => {
                               className="readonly"
                             />
                           </td>
-                          <td></td>
                         </>
                       ) : (
                         <>
-                          <td colSpan={2}>
-                            {yn == true ? (
-                              <Input
-                                name="itemcd"
-                                type="text"
-                                value={"자동생성"}
-                                className="readonly"
-                              />
-                            ) : (
-                              <Input
-                                name="itemcd"
-                                type="text"
-                                value={infomation.itemcd}
-                                onChange={InputChange}
-                              />
-                            )}
-                          </td>
                           <td>
-                            <Checkbox
-                              defaultChecked={true}
-                              value={yn}
-                              onChange={CheckChange}
-                              label={"자동생성"}
-                              style={{ marginLeft: "30px" }}
-                            />
+                            {yn == true ? (
+                              <div className="filter-item-wrap">
+                                <Input
+                                  name="itemcd"
+                                  type="text"
+                                  value={"자동생성"}
+                                  className="readonly"
+                                  style={{ width: "100%" }}
+                                />
+                                <ButtonInInput>
+                                  <Checkbox
+                                    defaultChecked={true}
+                                    value={yn}
+                                    onChange={CheckChange}
+                                    style={{
+                                      marginTop: "7px",
+                                      marginRight: "5px",
+                                    }}
+                                  />
+                                </ButtonInInput>
+                              </div>
+                            ) : (
+                              <div className="filter-item-wrap">
+                                <Input
+                                  name="itemcd"
+                                  type="text"
+                                  value={infomation.itemcd}
+                                  onChange={InputChange}
+                                />
+                                <ButtonInInput>
+                                  <Checkbox
+                                    defaultChecked={true}
+                                    value={yn}
+                                    onChange={CheckChange}
+                                    style={{
+                                      marginTop: "7px",
+                                      marginRight: "5px",
+                                    }}
+                                  />
+                                </ButtonInInput>
+                              </div>
+                            )}
                           </td>
                         </>
                       )}
                       <th>품목명</th>
-                      <td>
+                      <td colSpan={3}>
                         <Input
                           name="itemnm"
                           type="text"
@@ -2573,6 +2589,7 @@ const BA_A0040: React.FC = () => {
                       row.rowstatus == undefined
                         ? ""
                         : row.rowstatus,
+                    recdt : toDate(row.recdt),
                     [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
                   })),
                   subData2State
@@ -2629,6 +2646,11 @@ const BA_A0040: React.FC = () => {
                               : NumberField.includes(item.fieldName)
                               ? NumberCell
                               : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                            ? RequiredHeader
+                            : undefined
                           }
                           footerCell={
                             item.sortOrder === 0

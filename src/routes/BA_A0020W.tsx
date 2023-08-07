@@ -3326,7 +3326,7 @@ const BA_A0020: React.FC = () => {
                       <th>업체코드</th>
                       {infomation.custcd != "자동생성" && yn == true ? (
                         <>
-                          <td colSpan={2}>
+                          <td>
                             <Input
                               name="custcd"
                               type="text"
@@ -3334,40 +3334,57 @@ const BA_A0020: React.FC = () => {
                               className="readonly"
                             />
                           </td>
-                          <td></td>
                         </>
                       ) : (
                         <>
-                          <td colSpan={2}>
-                            {yn == true ? (
-                              <Input
-                                name="custcd"
-                                type="text"
-                                value={"자동생성"}
-                                className="readonly"
-                              />
-                            ) : (
-                              <Input
-                                name="custcd"
-                                type="text"
-                                value={infomation.custcd}
-                                onChange={InputChange}
-                              />
-                            )}
-                          </td>
                           <td>
-                            <Checkbox
-                              defaultChecked={true}
-                              value={yn}
-                              onChange={CheckChange}
-                              label={"자동생성"}
-                              style={{ marginLeft: "30px" }}
-                            />
+                            {yn == true ? (
+                              <div className="filter-item-wrap">
+                                <Input
+                                  name="custcd"
+                                  type="text"
+                                  value={"자동생성"}
+                                  className="readonly"
+                                  style={{ width: "100%" }}
+                                />
+                                <ButtonInInput>
+                                  <Checkbox
+                                    defaultChecked={true}
+                                    value={yn}
+                                    onChange={CheckChange}
+                                    style={{
+                                      marginTop: "7px",
+                                      marginRight: "5px",
+                                    }}
+                                  />
+                                </ButtonInInput>
+                              </div>
+                            ) : (
+                              <div className="filter-item-wrap">
+                                <Input
+                                  name="custcd"
+                                  type="text"
+                                  value={infomation.custcd}
+                                  onChange={InputChange}
+                                />
+                                <ButtonInInput>
+                                  <Checkbox
+                                    defaultChecked={true}
+                                    value={yn}
+                                    onChange={CheckChange}
+                                    style={{
+                                      marginTop: "7px",
+                                      marginRight: "5px",
+                                    }}
+                                  />
+                                </ButtonInInput>
+                              </div>
+                            )}
                           </td>
                         </>
                       )}
                       <th>업체명</th>
-                      <td>
+                      <td colSpan={3}>
                         <Input
                           name="custnm"
                           type="text"
