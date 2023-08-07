@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  createContext,
+} from "react";
 import * as ReactDOM from "react-dom";
 import {
   Grid,
@@ -18,6 +25,7 @@ import {
   TextArea,
   Checkbox,
   CheckboxChangeEvent,
+  InputChangeEvent,
 } from "@progress/kendo-react-inputs";
 import { IAttachmentData } from "../hooks/interfaces";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
@@ -37,6 +45,7 @@ import {
   FormBoxWrap,
   FormBox,
   GridContainerWrap,
+  ButtonInGridInput,
 } from "../CommonStyled";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
@@ -85,6 +94,7 @@ import {
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
+import ZipCodeWindow from "../components/Windows/CommonWindows/ZipCodeWindow";
 
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
@@ -108,8 +118,7 @@ const NumberField = [
 ];
 
 const requiredField = ["prsnnm", "yyyy"];
-const commandField = ["attdatnum"];
-const editField = ["custprsncd"];
+const commandField = ["files"];
 const YearDateField = ["yyyy"];
 
 type TdataArr = {
@@ -143,6 +152,99 @@ type TdataArr2 = {
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
+
+export const FormContext = createContext<{
+  attdatnum: string;
+  files: string;
+  setAttdatnum: (d: any) => void;
+  setFiles: (d: any) => void;
+  subDataState: State;
+  setSubDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum, setFiles } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum(data.attdatnum);
+    setFiles(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+          modal={true}
+        />
+      )}
+    </>
+  );
+};
+
 const BA_A0020: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -162,7 +264,7 @@ const BA_A0020: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 768;
+  let isMobile = deviceWidth <= 850;
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -298,6 +400,8 @@ const BA_A0020: React.FC = () => {
   const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
     useState<boolean>(false);
 
+  const [zipCodeWindowVisible, setZipCodeWindowVisibile] =
+    useState<boolean>(false);
   const [tabSelected, setTabSelected] = React.useState(0);
   const [workType, setWorkType] = useState<string>("U");
 
@@ -1416,11 +1520,14 @@ const BA_A0020: React.FC = () => {
     setAttachmentsWindowVisible(true);
   };
 
+  const onZipCodeWndClick = () => {
+    setZipCodeWindowVisibile(true);
+  };
   const handleSelectTab = (e: any) => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
-   
+
     setTabSelected(e.selected);
   };
 
@@ -1483,6 +1590,16 @@ const BA_A0020: React.FC = () => {
     });
   };
 
+  const getZipCodeData = (zipcode: string, address: string) => {
+    setInfomation((prev) => {
+      return {
+        ...prev,
+        zipcode: zipcode,
+        address: address,
+      };
+    });
+  };
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1502,6 +1619,7 @@ const BA_A0020: React.FC = () => {
     resetAllGrid(); // 데이터 초기화
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setTabSelected(0);
+    setyn(true);
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
@@ -1525,7 +1643,7 @@ const BA_A0020: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "files") {
+    if (field != "rowstatus" && field != "files" && field != "custprsncd") {
       const newData = subDataResult.data.map((item) =>
         item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
           ? {
@@ -2000,13 +2118,9 @@ const BA_A0020: React.FC = () => {
       "@p_auto": infomation.auto,
       "@p_custcd": paraDataDeleted.custcd,
       "@p_custnm": infomation.custnm,
-      "@p_custdiv": custdivListData.find(
-        (item: any) => item.code_name === infomation.custdiv
-      )?.sub_code,
+      "@p_custdiv": infomation.custdiv,
       "@p_custabbr": infomation.custabbr,
-      "@p_bizdiv": bizdivListData.find(
-        (item: any) => item.code_name === infomation.bizdiv
-      )?.sub_code,
+      "@p_bizdiv": infomation.bizdiv,
       "@p_bizregnum": infomation.bizregnum,
       "@p_ceonm": infomation.ceonm,
       "@p_repreregno": infomation.repreregno,
@@ -2588,10 +2702,11 @@ const BA_A0020: React.FC = () => {
       }
 
       if (
-        convertDateToStr(infomation.estbdt).length != 8 ||
-        convertDateToStr(infomation.estbdt).substring(0, 4) >
-          convertDateToStr(new Date()).substring(0, 4) ||
-        convertDateToStr(infomation.estbdt).substring(0, 4) < "1400"
+        infomation.estbdt != null &&
+        (convertDateToStr(infomation.estbdt).length != 8 ||
+          convertDateToStr(infomation.estbdt).substring(0, 4) >
+            convertDateToStr(new Date()).substring(0, 4) ||
+          convertDateToStr(infomation.estbdt).substring(0, 4) < "1400")
       ) {
         throw findMessage(messagesData, "BA_A0020W_007");
       }
@@ -2614,7 +2729,6 @@ const BA_A0020: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         find_row_value: returnString,
-        pgNum: 1,
         isSearch: true,
       }));
 
@@ -2809,7 +2923,7 @@ const BA_A0020: React.FC = () => {
     setPage({
       ...event.page,
     });
-
+    setyn(true);
     setPage2(initialPageState);
     setPage3(initialPageState);
     setsubFilters((prev) => ({
@@ -2975,6 +3089,32 @@ const BA_A0020: React.FC = () => {
       return width;
     }
   };
+
+  const [attdatnum, setAttdatnum] = useState<string>("");
+  const [files, setFiles] = useState<string>("");
+
+  useEffect(() => {
+    const newData = subDataResult.data.map((item) =>
+      item[SUB_DATA_ITEM_KEY] ==
+      parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum,
+            files: files,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+    setSubDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum, files]);
 
   return (
     <>
@@ -3179,7 +3319,7 @@ const BA_A0020: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap style={{ height: "65.5vh" }}>
+              <FormBoxWrap style={{ height: isMobile ? "100%" : "61vh" }}>
                 <FormBox>
                   <tbody>
                     <tr>
@@ -3301,6 +3441,14 @@ const BA_A0020: React.FC = () => {
                           value={infomation.zipcode}
                           onChange={InputChange}
                         />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onZipCodeWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
                       </td>
                       <th>지역</th>
                       <td>
@@ -3691,123 +3839,141 @@ const BA_A0020: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </TabStripTab>
-            <TabStripTab title="업체담당자"  disabled={infomation.work_type == "N" ? true : false}>
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>업체담당자</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <Grid
-                  style={{ height: "66vh" }}
-                  data={process(
-                    subDataResult.data.map((row) => ({
-                      ...row,
-                      rowstatus:
-                        row.rowstatus == null ||
-                        row.rowstatus == "" ||
-                        row.rowstatus == undefined
-                          ? ""
-                          : row.rowstatus,
-                      [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                    })),
-                    subDataState
-                  )}
-                  {...subDataState}
-                  onDataStateChange={onSubDataStateChange}
-                  //선택 기능
-                  dataItemKey={SUB_DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "multiple",
-                  }}
-                  onSelectionChange={onSubDataSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={subDataResult.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef2}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onSubDataSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onSubItemChange}
-                  cellRender={customCellRender}
-                  rowRender={customRowRender}
-                  editField={EDIT_FIELD}
-                  id="grdList2"
-                >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={setWidth("grdList2", item.width)}
-                            className={
-                              requiredField.includes(item.fieldName)
-                                ? "required"
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            editable={
-                              editField.includes(item.fieldName)
-                                ? false
-                                : undefined
-                            }
-                            cell={
-                              NumberField.includes(item.fieldName)
-                                ? NumberCell
-                                : checkboxField.includes(item.fieldName)
-                                ? CheckBoxCell
-                                : commandField.includes(item.fieldName)
-                                ? undefined //추후 작업
-                                : undefined
-                            }
-                          />
-                        )
+            <TabStripTab
+              title="업체담당자"
+              disabled={infomation.work_type == "N" ? true : false}
+            >
+              <FormContext.Provider
+                value={{
+                  attdatnum,
+                  files,
+                  setAttdatnum,
+                  setFiles,
+                  subDataState,
+                  setSubDataState,
+                  // fetchGrid,
+                }}
+              >
+                <GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>업체담당자</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: "62vh" }}
+                    data={process(
+                      subDataResult.data.map((row) => ({
+                        ...row,
+                        rowstatus:
+                          row.rowstatus == null ||
+                          row.rowstatus == "" ||
+                          row.rowstatus == undefined
+                            ? ""
+                            : row.rowstatus,
+                        [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                      })),
+                      subDataState
                     )}
-                </Grid>
-              </GridContainer>
+                    {...subDataState}
+                    onDataStateChange={onSubDataStateChange}
+                    //선택 기능
+                    dataItemKey={SUB_DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "multiple",
+                    }}
+                    onSelectionChange={onSubDataSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={subDataResult.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onSubDataSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onSubItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                    id="grdList2"
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={setWidth("grdList2", item.width)}
+                              className={
+                                requiredField.includes(item.fieldName)
+                                  ? "required"
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              cell={
+                                NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : checkboxField.includes(item.fieldName)
+                                  ? CheckBoxCell
+                                  : commandField.includes(item.fieldName)
+                                  ? ColumnCommandCell //추후 작업
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? subTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </GridContainer>
+              </FormContext.Provider>
             </TabStripTab>
-            <TabStripTab title="재무현황"  disabled={infomation.work_type == "N" ? true : false}>
+            <TabStripTab
+              title="재무현황"
+              disabled={infomation.work_type == "N" ? true : false}
+            >
               <GridContainer>
                 <GridTitleContainer>
                   <GridTitle>재무현황</GridTitle>
@@ -3835,7 +4001,7 @@ const BA_A0020: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "66vh" }}
+                  style={{ height: "62vh" }}
                   data={process(
                     subDataResult2.data.map((row) => ({
                       ...row,
@@ -3914,7 +4080,9 @@ const BA_A0020: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              NumberField.includes(item.fieldName)
+                              item.sortOrder === 0
+                                ? subTotalFooterCell2
+                                : NumberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
                                 : undefined
                             }
@@ -3940,6 +4108,14 @@ const BA_A0020: React.FC = () => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={infomation.attdatnum}
+          modal={true}
+        />
+      )}
+      {zipCodeWindowVisible && (
+        <ZipCodeWindow
+          setVisible={setZipCodeWindowVisibile}
+          setData={getZipCodeData}
+          para={infomation.zipcode}
           modal={true}
         />
       )}

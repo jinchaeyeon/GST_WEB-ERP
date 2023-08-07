@@ -1500,7 +1500,7 @@ const SY_A0125W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "56.3vh" }}
+            style={{ height: "50vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

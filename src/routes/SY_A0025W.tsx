@@ -96,7 +96,7 @@ const SY_A0025W: React.FC = () => {
 
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 768;
+  let isMobile = deviceWidth <= 850;
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -1413,7 +1413,7 @@ const SY_A0025W: React.FC = () => {
             <FormBoxWrap
               border={true}
               style={{
-                minHeight: "54.5vh",
+                minHeight: "51.8vh",
                 display: isMobile == true ? "block" : "flex",
                 alignItems: "center",
               }}
@@ -1655,7 +1655,7 @@ const SY_A0025W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "78vh" }}
+              style={{ height: "74.5vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

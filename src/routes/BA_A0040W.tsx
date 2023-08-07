@@ -155,7 +155,7 @@ const BA_A0040: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 768;
+  let isMobile = deviceWidth <= 850;
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -2189,7 +2189,7 @@ const BA_A0040: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "38vh" }}
+            style={{ height: "35vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -2259,18 +2259,14 @@ const BA_A0040: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      <GridContainer
-        style={{
-          height: isMobile ? (tabSelected == 0 ? "240vh" : "40vh") : "30vh",
-        }}
-      >
+      <GridContainer>
         <TabStrip
           selected={tabSelected}
           onSelect={handleSelectTab}
           style={{ width: "100%" }}
         >
           <TabStripTab title="상세정보">
-            <GridContainer style={{ height: isMobile ? "240vh" : "28vh" }}>
+            <GridContainer style={{ height: isMobile ? "100%" : "28vh" }}>
               <FormBoxWrap>
                 <FormBox>
                   <tbody>
@@ -2540,7 +2536,7 @@ const BA_A0040: React.FC = () => {
             </GridContainer>
           </TabStripTab>
           <TabStripTab title="단가">
-            <GridContainer style={{ height: isMobile ? "40vh" : "28vh" }}>
+            <GridContainer style={{ height: isMobile ? "45vh" : "28vh" }}>
               <GridTitleContainer>
                 <GridTitle>단가정보</GridTitle>
                 <ButtonContainer>
@@ -2567,7 +2563,7 @@ const BA_A0040: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: isMobile ? "35vh" : "24vh" }}
+                style={{ height: isMobile ? "32vh" : "24vh" }}
                 data={process(
                   subData2Result.data.map((row) => ({
                     ...row,

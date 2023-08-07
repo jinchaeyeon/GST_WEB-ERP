@@ -441,7 +441,7 @@ const BA_A0080: React.FC = () => {
   //FormContext에서 받아오기위해 state
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 768;
+  let isMobile = deviceWidth <= 850;
   UsePermissions(setPermissions);
 
   //메시지 조회
@@ -1958,7 +1958,7 @@ const BA_A0080: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "78vh" }}
+            style={{ height: "75vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
@@ -2030,12 +2030,14 @@ const BA_A0080: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>
                   상세정보
-                  <div style={{ margin: 0, float: isMobile? "left" : "none", display: isMobile? "block" : "inline-block"}}>
-                  {permissions && (
+                </GridTitle>
+                <ButtonContainer>
+                  
+                {permissions && (
                     <ExcelUploadButtons
                       saveExcel={saveExcel}
                       permissions={permissions}
-                      style={{ marginLeft: isMobile? "0px": "15px", marginTop: isMobile ? "10px": "0px" }}
+                      style={{ marginLeft: "15px" }}
                       disabled={filters.itemacnt == "" ? true : false}
                     />
                   )}
@@ -2045,13 +2047,10 @@ const BA_A0080: React.FC = () => {
                     icon="file"
                     fillMode="outline"
                     themeColor={"primary"}
-                    style={{ marginLeft: "10px", marginTop: isMobile ? "10px": "0px" }}
                   >
                     엑셀양식
                   </Button>
-                  </div>
-                </GridTitle>
-                <ButtonContainer style={{paddingTop: isMobile? "25px" : "0px"}}>
+
                   <Button
                     onClick={onAddClick}
                     themeColor={"primary"}
@@ -2084,7 +2083,7 @@ const BA_A0080: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "78vh" }}
+                style={{ height: "75vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

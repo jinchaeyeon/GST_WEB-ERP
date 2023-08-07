@@ -46,7 +46,7 @@ const KendoWindow = ({
   modal = false,
 }: IKendoWindow) => {
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 768;
+  let isMobile = deviceWidth <= 850;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,

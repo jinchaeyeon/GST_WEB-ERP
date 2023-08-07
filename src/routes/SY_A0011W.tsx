@@ -1426,7 +1426,8 @@ const Page: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>사용자그룹 정보</GridTitle>
-              {permissions && (
+            </GridTitleContainer>
+            {permissions && (
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
@@ -1447,9 +1448,8 @@ const Page: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               )}
-            </GridTitleContainer>
             <Grid
-              style={{ height: "78vh" }}
+              style={{ height: "74.5vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -1535,7 +1535,7 @@ const Page: React.FC = () => {
             </GridTitleContainer>
 
             <TreeList
-              style={{ height: "78vh", overflow: "auto" }}
+              style={{ height: "74.5vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(

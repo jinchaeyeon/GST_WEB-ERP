@@ -19,7 +19,7 @@ export const TitleContainer = styled.div`
 export const MainTopContainer = styled(TitleContainer)`
   padding-top: 20px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     padding-top: 0;
     flex-direction: column;
     align-items: flex-start;
@@ -28,15 +28,17 @@ export const MainTopContainer = styled(TitleContainer)`
 
 export const MainWorkStartEndContainer = styled.div`
   display: flex;
-  margin-left: auto;
+  float: right;
+  margin-top: 20px;
 
   input,
   button {
     margin-left: 5px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     margin-left: 0;
+    margin-bottom: 20px;
   }
 `;
 
@@ -55,6 +57,7 @@ export const Title = styled.h3`
   font-size: 22px;
   font-weight: 600;
   color: #424242;
+  margin-bottom: 10px;
 `;
 type TButtonContainer = {
   flexDirection?: "column" | "row";
@@ -97,6 +100,11 @@ export const ButtonContainer = styled.div<TButtonContainer>`
   }
   .iot-btn .k-icon {
     font-size: 32px;
+  }
+
+  @media (max-width: 850px) {
+    overflow: auto;
+    flex-wrap: wrap;
   }
 `;
 
@@ -166,7 +174,7 @@ export const FilterBox = styled.table`
     padding-left: 10px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     tr {
       display: flex;
       flex-direction: column;
@@ -230,7 +238,7 @@ export const FormBox = styled.table`
     border: solid 1px rgba(0, 0, 0, 0.08);
     border-radius: 4px;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     tr {
       display: flex;
       flex-direction: column;
@@ -265,7 +273,7 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
   height: ${(props) =>
     typeof props.height === "number" ? props.height + "px" : props.height};
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     flex-direction: column;
   }
 `;
@@ -292,7 +300,7 @@ export const FormFieldWrap = styled.div`
   justify-content: space-between;
   flex-direction: row;
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     flex-direction: column;
   }
 `;
@@ -344,7 +352,7 @@ export const GridContainer = styled.div<TGridContainer>`
     background-color: #fff0ef;
   } */
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     width: auto;
   }
 `;
@@ -353,6 +361,7 @@ export const GridTitle = styled.h3`
   font-size: 16px;
   font-weight: 600;
   color: #424242;
+  margin-bottom : 10px;
 `;
 
 export const PrimaryP = styled.p`
@@ -425,11 +434,10 @@ export const DeliyReportPrint = styled.div`
 `;
 
 export const GridTitleContainer = styled.div`
-  display: flex;
+display: block;
   justify-content: space-between;
   align-items: center;
   /* margin: 5 0px; */
-  min-height: 30px;
 `;
 
 export const ButtonInInput = styled.div`
@@ -517,7 +525,6 @@ export const ApprovalBox = styled.div`
   justify-content: space-evenly;
   width: 350px;
   height: 60px;
-  margin-left: 15px;
   border: solid 1px #dfdfdf;
   background-color: #fafafa;
 
@@ -531,7 +538,7 @@ export const ApprovalBox = styled.div`
     background-color: #ff8549;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     margin-top: 10px;
     margin-left: 0;
     width: 100%;
@@ -665,7 +672,7 @@ export const Wrapper = styled.div<TWrapper>`
   width: 100%;
   //overflow: ${(props) => (props.isMobileMenuOpend ? "hidden" : "auto")};
   margin-bottom: 30px;
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     margin-bottom: 0;
   }
 `;
@@ -714,9 +721,9 @@ export const Gnv = styled.div<TGnv>`
   /*=========================================================================
 	미디어 쿼리
 	##Device = 모바일
-	##Screen = 768px 이하 해상도 모바일
+	##Screen = 850px 이하 해상도 모바일
   =========================================================================*/
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     display: ${(props) => (props.isMobileMenuOpend ? "block" : "none")};
     z-index: 10;
     position: fixed;
@@ -740,9 +747,9 @@ export const Content = styled.div<ContentType>`
   /*=========================================================================
   미디어 쿼리
   ##Device = 모바일
-  ##Screen = 768px 이하 해상도 모바일
+  ##Screen = 850px 이하 해상도 모바일
   =========================================================================*/
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     width: 100%;
     padding-bottom: 5vh;
   }
@@ -752,7 +759,7 @@ export const PageWrap = styled.div`
   padding: 0 15px;
   height: 100%;
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     min-height: auto;
     height: auto;
     padding-top: 50px;
@@ -780,7 +787,7 @@ export const Footer = styled.div`
     font-size: 13px;
     font-weight: 100;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     display: none;
   }
 `;
@@ -799,7 +806,7 @@ export const AppName = styled.h1`
   border-right: 1px solid #ebebeb;
   cursor: pointer;
 
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     border-right: none;
   }
 `;
@@ -843,9 +850,9 @@ export const TopTitle = styled.div`
   /*=========================================================================
   미디어 쿼리
   ##Device = 모바일
-  ##Screen = 768px 이하 해상도 모바일
+  ##Screen = 850px 이하 해상도 모바일
   =========================================================================*/
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     display: flex;
     position: fixed;
     z-index: 9;
