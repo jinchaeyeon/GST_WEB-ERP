@@ -440,7 +440,8 @@ const BA_A0080: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   //FormContext에서 받아오기위해 state
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
   UsePermissions(setPermissions);
 
   //메시지 조회
@@ -1957,7 +1958,7 @@ const BA_A0080: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "75vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
@@ -2029,7 +2030,10 @@ const BA_A0080: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>
                   상세정보
-                  {permissions && (
+                </GridTitle>
+                <ButtonContainer>
+                  
+                {permissions && (
                     <ExcelUploadButtons
                       saveExcel={saveExcel}
                       permissions={permissions}
@@ -2043,12 +2047,10 @@ const BA_A0080: React.FC = () => {
                     icon="file"
                     fillMode="outline"
                     themeColor={"primary"}
-                    style={{ marginLeft: "10px" }}
                   >
                     엑셀양식
                   </Button>
-                </GridTitle>
-                <ButtonContainer>
+
                   <Button
                     onClick={onAddClick}
                     themeColor={"primary"}
@@ -2081,7 +2083,7 @@ const BA_A0080: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "80vh" }}
+                style={{ height: "75vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

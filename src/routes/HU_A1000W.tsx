@@ -61,6 +61,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { bytesToBase64 } from "byte-base64";
 import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 import DateCell from "../components/Cells/DateCell";
+import { Console } from "console";
 
 const DATA_ITEM_KEY = "prsnnum";
 
@@ -246,6 +247,7 @@ const HU_A1000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+   
     if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -276,14 +278,47 @@ const HU_A1000W: React.FC = () => {
       ...prev,
       isSearch: false,
     }));
+    
     setLoading(false);
   };
+
+  const [detailDataState, setDetailDataState] = useState<State>({
+    sort: [],
+  });
+  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
+    process([], detailDataState),
+  );
 
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
+
+  const fetchDetailGrid = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      if (totalRowCnt > 0)
+        setDetailDataResult((prev) => {
+          return {
+            data: [...prev.data, ...rows],
+            total: totalRowCnt,
+          };
+        });
+    }
+    setLoading(false);
+  };
+
 
   // 최초 한번만 실행
   useEffect(() => {
@@ -332,14 +367,16 @@ const HU_A1000W: React.FC = () => {
   };
 
   const reloadData = (workType: string) => {
-    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
+    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택 
     if (workType === "U") {
       setIfSelectFirstRow(false);
+
     } else {
       setIfSelectFirstRow(true);
     }
 
-    resetAllGrid();
+    resetAllGrid();   
+    
     setFilters((prev) => ({
       ...prev,
       find_row_value: "",
@@ -349,7 +386,7 @@ const HU_A1000W: React.FC = () => {
       pgGap: 0,
     }));
     
-    fetchMainGrid();
+    fetchDetailGrid();
   };
 
   // 신규등록 

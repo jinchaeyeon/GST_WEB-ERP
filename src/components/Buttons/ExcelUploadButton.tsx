@@ -5,38 +5,49 @@ import * as xlsx from "xlsx";
 
 interface IStyle {
   marginLeft?: string;
+  marginTop? :string;
 }
 interface IExcelUploadButton {
   saveExcel: (para: any[]) => void;
   permissions: TPermissions;
   style: IStyle;
-  disabled? : boolean
+  disabled?: boolean;
 }
 
 const ExcelUploadButton = ({
   saveExcel,
   permissions,
   style,
-  disabled = false
+  disabled = false,
 }: IExcelUploadButton) => {
-  const excelInput: any = useRef();
+  const excelInput: any = useRef(null);
 
   const excelUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    if (e.target.files) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target == null) return false;
-        const data = e.target.result;
-        const workbook = xlsx.read(data, { type: "array" });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const json = xlsx.utils.sheet_to_json(worksheet);
+    try {
+      e.preventDefault();
+      if (e.target.files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target == null) return false;
+          const data = e.target.result;
+          const workbook = xlsx.read(data, { type: "array" });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const json = xlsx.utils.sheet_to_json(worksheet);
 
-        saveExcel(json);
-      };
-      reader.readAsArrayBuffer(e.target.files[0]);
+          saveExcel(json);
+        };
+        reader.readAsArrayBuffer(e.target.files[0]);
+      }
+    } catch (e) {
+      alert("업로드에 실패했습니다.");
+    } finally {
+      onClearInput();
     }
+  };
+
+  const onClearInput = () => {
+    excelInput.current.value = "";
   };
 
   const upload = () => {

@@ -1309,7 +1309,7 @@ const Page: React.FC = () => {
       </FilterContainer>
 
       <GridContainerWrap>
-        <GridContainer width={"30%"}>
+        <GridContainer width={`30%`}>
           <ExcelExport
             data={rowsOfDataResult(mainDataResult)}
             ref={(exporter) => {
@@ -1341,7 +1341,7 @@ const Page: React.FC = () => {
               )}
             </GridTitleContainer>
             <Grid
-              style={{ height: "77vh" }}
+              style={{ height: "71.5vh" }}
               data={mainDataResult}
               {...mainDataState}
               onDataStateChange={onMainDataStateChange}
@@ -1401,15 +1401,12 @@ const Page: React.FC = () => {
             </Grid>
           </ExcelExport>
         </GridContainer>
-
-        <GridContainer
-          width={`calc(70% -${GAP}px)`}
-        >
+        <GridContainer width={`calc(70% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "77vh" }}
+            style={{ height: "75vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,

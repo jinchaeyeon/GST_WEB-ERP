@@ -1015,7 +1015,7 @@ const AC_A0000W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "45vh" }}
+            style={{ height: "38vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

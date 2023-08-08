@@ -426,6 +426,8 @@ const BA_A0050: React.FC = () => {
   UsePermissions(setPermissions);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -2312,7 +2314,7 @@ const BA_A0050: React.FC = () => {
               </FormBox>
             </FormBoxWrap>
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "33vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -2417,7 +2419,7 @@ const BA_A0050: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "77vh" }}
+                style={{ height: "70.3vh" }}
                 data={process(
                   subData2Result.data.map((row) => ({
                     ...row,
