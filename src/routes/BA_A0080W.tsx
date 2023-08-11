@@ -1065,6 +1065,7 @@ const BA_A0080: React.FC = () => {
       fetchSubGrid(deepCopiedFilters);
     }
   }, [subfilters, permissions]);
+  
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex !== null && gridRef.current) {
