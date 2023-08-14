@@ -1764,10 +1764,10 @@ const BA_A0040: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         find_row_value:
-          mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1] ==
+          mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1] ==
           undefined
             ? ""
-            : mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1][
+            : mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1][
                 DATA_ITEM_KEY
               ],
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,

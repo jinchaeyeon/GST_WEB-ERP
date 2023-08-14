@@ -10,14 +10,13 @@ import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridEvent,
   GridCellProps,
-  GridToolbar,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridHeaderSelectionChangeEvent,
   GridDataStateChangeEvent,
-  GridSortChangeEvent,
+  GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
 import { getter } from "@progress/kendo-react-common";
 import { DataResult, process, State } from "@progress/kendo-data-query";
@@ -25,41 +24,18 @@ import { useApi } from "../../hooks/api";
 import {
   BottomContainer,
   ButtonContainer,
-  ButtonInField,
-  ButtonInFieldWrap,
-  FieldWrap,
+  ButtonInGridInput,
+  ButtonInInput,
+  FormBox,
+  FormBoxWrap,
   GridContainer,
+  GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
-import {
-  Form,
-  Field,
-  FormElement,
-  FieldArray,
-  FieldArrayRenderProps,
-  FormRenderProps,
-  FieldWrapper,
-  FieldRenderProps,
-} from "@progress/kendo-react-form";
-import { Error, Label } from "@progress/kendo-react-labels";
-import { DatePickerChangeEvent } from "@progress/kendo-react-dateinputs";
-import {
-  FormNumberCell,
-  FormNameCell,
-  FormInput,
-  FormDatePicker,
-  FormReadOnly,
-  FormReadOnlyNumberCell,
-  FormComboBoxCell,
-  FormComboBox,
-  FormCheckBoxReadOnlyCell,
-  FormTextArea,
-  FormNumericTextBox,
-} from "../Editors";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Iparameters } from "../../store/types";
 import {
-  validator,
   checkIsDDLValid,
-  chkScrollHandler,
   convertDateToStr,
   dateformat,
   getItemQuery,
@@ -67,34 +43,30 @@ import {
   UseCustomOption,
   findMessage,
   UseMessages,
-  setDefaultDate,
-  getCodeFromValue,
-  arrayLengthValidator,
   getUnpQuery,
   UseParaPc,
-  getCustinfoQuery,
   UseGetValueFromSessionItem,
+  getQueryFromBizComponent,
+  isValidDate,
+  getGridItemChangedData,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
-import ItemsMultiWindow from "./CommonWindows/ItemsMultiWindow";
 import {
   IAttachmentData,
   ICustData,
-  IItemData,
   IWindowPosition,
 } from "../../hooks/interfaces";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  EDIT_FIELD,
-  FORM_DATA_INDEX,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../CommonString";
+import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import { Input } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  Input,
+  InputChangeEvent,
+  TextArea,
+} from "@progress/kendo-react-inputs";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -102,9 +74,35 @@ import {
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
 } from "../../store/atoms";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import NumberCell from "../Cells/NumberCell";
+import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import CheckBoxCell from "../Cells/CheckBoxCell";
+import ItemsMultiWindow from "./CommonWindows/ItemsMultiWindow";
 
 let deletedRows: object[] = [];
-const idGetter = getter(FORM_DATA_INDEX);
+const DATA_ITEM_KEY = "ordseq";
+let temp = 0;
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_BA061,L_BA015", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "itemacnt" ? "L_BA061" : field === "qtyunit" ? "L_BA015" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
+};
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -113,6 +111,7 @@ type TKendoWindow = {
   ordnum?: string;
   isCopy: boolean;
   para?: Iparameters; //{};
+  modal?: boolean;
 };
 
 type TDetailData = {
@@ -152,870 +151,275 @@ type TDetailData = {
   bf_qty_s: string[];
 };
 
-const formContext = createContext<{
-  orddt: string;
-  setOrddt: (o: string) => void;
-  custcd: string;
-  setCustcd: (c: string) => void;
-  setChangedCustInfo: (c: { custcd: string; custnm: string }) => void;
-  setChangedRcvcustInfo: (c: { rcvcustcd: string; rcvcustnm: string }) => void;
-  dataState: State;
-  setDataState: (d: any) => void;
+export const FormContext = createContext<{
+  itemInfo: TItemInfo;
+  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
 }>({} as any);
 
-const FormCustInput = (fieldRenderProps: FieldRenderProps) => {
-  const { validationMessage, visited, label, id, valid, onBlur, ...others } =
-    fieldRenderProps;
-
-  const processApi = useApi();
-  const { setCustcd, setChangedCustInfo, setChangedRcvcustInfo} =
-    useContext(formContext);
-
-  const onHandleBlur = async (e: any) => {
-    const { value, name } = e.target;
-
-    // 업체명 조회
-    const custInfo = await fetchCustInfo(value);
-
-    if (name === "custcd") {
-      setCustcd(value);
-
-      if (custInfo) {
-        setChangedCustInfo(custInfo);
-      }
-    } else {
-      if (custInfo)
-        setChangedRcvcustInfo({
-          rcvcustcd: custInfo.custcd,
-          rcvcustnm: custInfo.custnm,
-        });
-    }
-  };
-
-  const fetchCustInfo = async (custcd: string) => {
-    if (custcd === "") return;
-    let data: any;
-    let custInfo: null | { custcd: string; custnm: string } = null;
-
-    const queryStr = getCustinfoQuery(custcd);
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      if (rows.length > 0) {
-        custInfo = { custcd: rows[0].custcd, custnm: rows[0].custnm };
-      }
-    }
-
-    return custInfo;
-  };
-
-  return (
-    <FieldWrapper>
-      <Label editorId={id} editorValid={valid}>
-        {label}
-      </Label>
-      <div className={"k-form-field-wrap"}>
-        <Input valid={valid} id={id} onBlur={onHandleBlur} {...others} />
-      </div>
-    </FieldWrapper>
-  );
+type TItemInfo = {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
 };
 
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_BA061,L_BA015", setBizComponentData);
-
-  const field = props.field ?? "";
-  const bizComponentIdVal =
-    field === "itemacnt" ? "L_BA061" : field === "qtyunit" ? "L_BA015" : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
-  );
-
-  return bizComponent ? (
-    <FormComboBoxCell bizComponent={bizComponent} {...props} />
-  ) : (
-    <td />
-  );
+const defaultItemInfo = {
+  itemcd: "",
+  itemno: "",
+  itemnm: "",
+  insiz: "",
+  model: "",
+  itemacnt: "",
+  itemacntnm: "",
+  bnatur: "",
+  spec: "",
+  invunit: "",
+  invunitnm: "",
+  unitwgt: "",
+  wgtunit: "",
+  wgtunitnm: "",
+  maker: "",
+  dwgno: "",
+  remark: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
+  extra_field1: "",
+  extra_field2: "",
+  extra_field7: "",
+  extra_field6: "",
+  extra_field8: "",
+  packingsiz: "",
+  unitqty: "",
+  color: "",
+  gubun: "",
+  qcyn: "",
+  outside: "",
+  itemthick: "",
+  itemlvl4: "",
+  itemlvl5: "",
+  custitemnm: "",
 };
 
-// Create the Grid that will be used inside the Form
-const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey, value } =
-    fieldArrayRenderProps;
-  const [detailPgNum, setDetailPgNum] = useState(1);
-  const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [editedField, setEditedField] = useState("");
-  const [editedRowData, setEditedRowData] = useState<any>({});
-  const [unpList, setUnpList] = useState([]);
-  const { orddt, custcd, dataState, setDataState } = useContext(formContext);
+interface IItemData {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
+}
 
-  const ItemBtnCell = (props: GridCellProps) => {
-    const { dataIndex } = props;
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setItemInfo } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
 
-    const onRowItemWndClick = () => {
-      setEditIndex(dataIndex);
-      setEditedRowData(props.dataItem);
-      setItemWindowVisible(true);
-    };
-
-    return (
-      <td className="k-command-cell required">
-        <Button
-          type={"button"}
-          className="k-grid-save-command"
-          onClick={onRowItemWndClick}
-          icon="more-horizontal"
-          //disabled={isInEdit ? false : true}
-        />
-      </td>
-    );
-  };
-
-  // Add a new item to the Form FieldArray that will be shown in the Grid
-  const onAdd = React.useCallback(
-    (e: any) => {
-      e.preventDefault();
-      fieldArrayRenderProps.onPush({
-        value: {
-          rowstatus: "N",
-          // customOptionData.menuCustomDefaultOptions.new.find(
-          //   (item: any) => item.id === "cboOrdtype"
-          // ).value,
-          qty: 0,
-          specialunp: 0,
-          specialamt: 0,
-          unp: 0,
-          amt: 0,
-          wonamt: 0,
-          taxamt: 0,
-          totamt: 0,
-          outqty: 0,
-          sale_qty: 0,
-          finyn: "N",
-          bf_qty: 0,
-          ordseq: 0,
-          poregseq: 0,
-          totwgt: 0,
-          len: 0,
-          totlen: 0,
-          thickness: 0,
-          width: 0,
-          length: 0,
-          dlramt: 0,
-          chk: "N",
-          itemacnt: COM_CODE_DEFAULT_VALUE,
-          qtyunit: COM_CODE_DEFAULT_VALUE,
-        },
-      });
-
-      setEditIndex(0);
-    },
-    [fieldArrayRenderProps]
-  );
-
-  const onRemove = React.useCallback(() => {
-    let newData: any[] = [];
-
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
-    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      if (!selectedState[index]) {
-        newData.push(item);
-      } else {
-        deletedRows.push(item);
-      }
-    });
-
-    //전체 데이터 삭제
-    fieldArrayRenderProps.value.forEach(() => {
-      fieldArrayRenderProps.onRemove({
-        index: 0,
-      });
-    });
-
-    //newData 생성
-    newData.forEach((item: any) => {
-      fieldArrayRenderProps.onPush({
-        value: item,
-      });
-    });
-
-    //선택 상태 초기화
-    setSelectedState({});
-
-    //수정 상태 초기화
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  const onCopy = React.useCallback(() => {
-    let newData: any[] = [];
-    let ordseq = 0; //그리드의 키값으로 사용되기 때문에 고유값 지정 필요
-
-    //복사할 데이터 newData에 push
-    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      if (selectedState[index]) {
-        newData.push(item);
-      }
-      if (ordseq < item.ordseq) ordseq = item.ordseq;
-    });
-
-    //newData 생성
-    newData.forEach((item: any) => {
-      ordseq++;
-
-      fieldArrayRenderProps.onPush({
-        value: { ...item, rowstatus: "N", ordseq: ordseq },
-      });
-    });
-
-    //선택 상태 초기화
-    setSelectedState({});
-
-    //수정 상태 초기화
-    setEditIndex(undefined);
-  }, [fieldArrayRenderProps]);
-
-  const dataWithIndexes = fieldArrayRenderProps.value.map(
-    (item: any, index: any) => {
-      return { ...item, [FORM_DATA_INDEX]: index };
-    }
-  );
-
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [itemMultiWindowVisible, setItemMultiWindowVisible] =
-    useState<boolean>(false);
-  //스크롤 핸들러
-  const scrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detailPgNum, PAGE_SIZE))
-      setDetailPgNum((prev) => prev + 1);
-  };
-
-  const setItemData = (
-    itemData: IItemData,
-    orgIndex?: number,
-    orgDataItem?: any
-  ) => {
-    //단가정보
-    const index = orgIndex !== undefined ? orgIndex : editIndex;
-    const unpData: any = unpList.filter(
-      (item: any) => item.recdt <= orddt && item.itemcd === itemData.itemcd
-    );
-
-    if (index === undefined) {
-      //신규생성
-      fieldArrayRenderProps.onPush({
-        value: {
-          rowstatus: "N",
-          itemcd: itemData.itemcd,
-          itemnm: itemData.itemnm,
-          insiz: itemData.insiz,
-          itemacnt: itemData.itemacnt,
-          qtyunit: COM_CODE_DEFAULT_VALUE,
-          qty: 0,
-          specialunp: 0,
-          specialamt: 0,
-          unp: unpData.length > 0 ? unpData[0].unp : 0,
-          amt: 0,
-          wonamt: 0,
-          taxamt: 0,
-          totamt: 0,
-          outqty: 0,
-          sale_qty: 0,
-          finyn: "N",
-          bf_qty: 0,
-          ordseq: 0,
-          poregseq: 0,
-          totwgt: 0,
-          len: 0,
-          totlen: 0,
-          thickness: 0,
-          width: 0,
-          length: 0,
-          dlramt: 0,
-          chk: "N",
-        },
-      });
-    } else {
-      //기존 행 업데이트
-      const dataItem = orgDataItem ? orgDataItem : editedRowData;
-
-      let { unp, wonamt, taxamt, totamt, qty } = dataItem;
-
-      if (unpData.length > 0) {
-        unp = unpData[0].unp;
-        wonamt = unp * qty;
-        taxamt = wonamt / 10;
-        totamt = wonamt + taxamt;
-      }
-
-      fieldArrayRenderProps.onReplace({
-        index: index,
-        value: {
-          ...dataItem,
-          rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-          itemcd: itemData.itemcd,
-          itemnm: itemData.itemnm,
-          insiz: itemData.insiz,
-          itemacnt: itemData.itemacnt,
-          qtyunit: COM_CODE_DEFAULT_VALUE,
-          unp,
-          wonamt,
-          taxamt,
-          totamt,
-          [EDIT_FIELD]: undefined,
-        },
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
       });
     }
   };
 
-  const addItemData = (
-    itemDatas: IItemData[],
-    orgIndex?: number,
-    orgDataItem?: any
-  ) => {
-    //단가정보
-    itemDatas.map((itemData: any) => {
-      const index = orgIndex !== undefined ? orgIndex : editIndex;
-      const unpData: any = unpList.filter(
-        (item: any) => item.recdt <= orddt && item.itemcd === itemData.itemcd
-      );
+  const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
 
-      if (index === undefined) {
-        //신규생성
-        fieldArrayRenderProps.onPush({
-          value: {
-            rowstatus: "N",
-            itemcd: itemData.itemcd,
-            itemnm: itemData.itemnm,
-            insiz: itemData.insiz,
-            itemacnt: itemData.itemacnt,
-            qtyunit: COM_CODE_DEFAULT_VALUE,
-            qty: 0,
-            specialunp: 0,
-            specialamt: 0,
-            unp: unpData.length > 0 ? unpData[0].unp : 0,
-            amt: 0,
-            wonamt: 0,
-            taxamt: 0,
-            totamt: 0,
-            outqty: 0,
-            sale_qty: 0,
-            finyn: "N",
-            bf_qty: 0,
-            ordseq: 0,
-            poregseq: 0,
-            totwgt: 0,
-            len: 0,
-            totlen: 0,
-            thickness: 0,
-            width: 0,
-            length: 0,
-            dlramt: 0,
-            chk: "N",
-          },
-        });
-      } else {
-        //기존 행 업데이트
-        const dataItem = orgDataItem ? orgDataItem : editedRowData;
-
-        let { unp, wonamt, taxamt, totamt, qty } = dataItem;
-
-        if (unpData.length > 0) {
-          unp = unpData[0].unp;
-          wonamt = unp * qty;
-          taxamt = wonamt / 10;
-          totamt = wonamt + taxamt;
-        }
-
-        fieldArrayRenderProps.onReplace({
-          index: index,
-          value: {
-            ...dataItem,
-            rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-            itemcd: itemData.itemcd,
-            itemnm: itemData.itemnm,
-            insiz: itemData.insiz,
-            itemacnt: itemData.itemacnt,
-            qtyunit: COM_CODE_DEFAULT_VALUE,
-            unp,
-            wonamt,
-            taxamt,
-            totamt,
-            [EDIT_FIELD]: undefined,
-          },
-        });
-      }
-    });
-  };
-  const onItemWndClick = () => {
-    setEditIndex(undefined);
-    setItemWindowVisible(true);
-  };
-  const onItemMultiWndClick = () => {
-    setEditIndex(undefined);
-    setItemMultiWindowVisible(true);
-  };
-  const enterEdit = (dataItem: any, field: string | undefined) => {
-    if (field != "outqty" && field != "sale_qty" && field !="purcustnm") {
-      fieldArrayRenderProps.onReplace({
-        index: dataItem[FORM_DATA_INDEX],
-        value: {
-          ...dataItem,
-          rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
-          [EDIT_FIELD]: field,
-        },
-      });
-
-      setEditIndex(dataItem[FORM_DATA_INDEX]);
-      if (field) setEditedField(field);
-    }
+  const onItemWndClick2 = () => {
+    setItemWindowVisible2(true);
   };
 
-  const exitEdit = () => {
-    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      let { qty, unp, wonamt, taxamt, totamt, specialamt, specialunp, itemcd } =
-        item;
-
-      const amtArr = ["qty", "unp"];
-      if (amtArr.includes(editedField) && editIndex === index) {
-        wonamt = qty * unp;
-        taxamt = wonamt / 10;
-        totamt = wonamt + taxamt;
-      }
-
-      const spcamtArr = ["qty", "specialunp"];
-      if (spcamtArr.includes(editedField) && editIndex === index) {
-        specialamt = qty * specialunp;
-      }
-
-      const amtArrs = ["wonamt", "taxamt"];
-      if (amtArrs.includes(editedField) && editIndex === index) {
-        totamt = wonamt + taxamt;
-      }
-
-      fieldArrayRenderProps.onReplace({
-        index: index,
-        value: {
-          ...item,
-          wonamt,
-          taxamt,
-          totamt,
-          specialamt,
-          [EDIT_FIELD]: undefined,
-        },
-      });
-
-      if (editedField === "itemcd" && editIndex === index) {
-        getItemData(itemcd);
-      }
+  const setItemData2 = (data: IItemData) => {
+    const {
+      itemcd,
+      itemno,
+      itemnm,
+      insiz,
+      model,
+      itemacnt,
+      itemacntnm,
+      bnatur,
+      spec,
+      invunit,
+      invunitnm,
+      unitwgt,
+      wgtunit,
+      wgtunitnm,
+      maker,
+      dwgno,
+      remark,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+      extra_field1,
+      extra_field2,
+      extra_field7,
+      extra_field6,
+      extra_field8,
+      packingsiz,
+      unitqty,
+      color,
+      gubun,
+      qcyn,
+      outside,
+      itemthick,
+      itemlvl4,
+      itemlvl5,
+      custitemnm,
+    } = data;
+    setItemInfo({
+      itemcd,
+      itemno,
+      itemnm,
+      insiz,
+      model,
+      itemacnt,
+      itemacntnm,
+      bnatur,
+      spec,
+      invunit,
+      invunitnm,
+      unitwgt,
+      wgtunit,
+      wgtunitnm,
+      maker,
+      dwgno,
+      remark,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+      extra_field1,
+      extra_field2,
+      extra_field7,
+      extra_field6,
+      extra_field8,
+      packingsiz,
+      unitqty,
+      color,
+      gubun,
+      qcyn,
+      outside,
+      itemthick,
+      itemlvl4,
+      itemlvl5,
+      custitemnm,
     });
   };
 
-  const customCellRender = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const [selectedState, setSelectedState] = React.useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const onSelectionChange = React.useCallback(
-    (event: GridSelectionChangeEvent) => {
-      const newSelectedState = getSelectedState({
-        event,
-        selectedState: selectedState,
-        dataItemKey: FORM_DATA_INDEX,
-      });
-
-      setSelectedState(newSelectedState);
-    },
-    [selectedState]
-  );
-
-  const onHeaderSelectionChange = React.useCallback(
-    (event: GridHeaderSelectionChangeEvent) => {
-      const checkboxElement: any = event.syntheticEvent.target;
-      const checked = checkboxElement.checked;
-      const newSelectedState: {
-        [id: string]: boolean | number[];
-      } = {};
-
-      event.dataItems.forEach((item) => {
-        newSelectedState[idGetter(item)] = checked;
-      });
-
-      setSelectedState(newSelectedState);
-
-      //선택된 상태로 리랜더링
-      event.dataItems.forEach((item: any, index: number) => {
-        fieldArrayRenderProps.onReplace({
-          index: index,
-          value: {
-            ...item,
-          },
-        });
-      });
-    },
-    []
-  );
-
-  const getItemData = (itemcd: string) => {
-    const index = editIndex ?? 0;
-    const dataItem = value[index];
-    const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
-
-    fetchData(queryStr, index, dataItem);
-  };
-  const processApi = useApi();
-
-  const fetchData = React.useCallback(
-    async (queryStr: string, index: number, dataItem: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        const rowCount = data.tables[0].RowCount;
-        if (rowCount > 0) {
-          setItemData(rows[0], index, dataItem);
-        }
-      }
-    },
-    []
-  );
-
-  // 업체코드 변경 시 단가 조회
-  useEffect(() => {
-    fetchUnp(custcd);
-  }, [custcd]);
-
-  // 단가정보, 수주일자 변경 시 그리드의 단가 업데이트
-  useEffect(() => {
-    if (unpList.length > 0) {
-      changeGridUnpData();
-    }
-  }, [unpList, orddt]);
-
-  // 모든 행 단가 관련 필드 업데이트
-  const changeGridUnpData = () => {
-    fieldArrayRenderProps.value.forEach((item: any, index: number) => {
-      let { qty, unp, wonamt, taxamt, totamt, itemcd } = item;
-
-      //단가정보
-      const unpData: any = unpList.find(
-        (unpItem: any) => unpItem.recdt <= orddt && unpItem.itemcd === itemcd
-      );
-
-      if (unpData) {
-        unp = unpData.unp;
-        wonamt = unp * qty;
-        taxamt = wonamt / 10;
-        totamt = wonamt + taxamt;
-      }
-
-      fieldArrayRenderProps.onReplace({
-        index: index,
-        value: {
-          ...item,
-          unp,
-          wonamt,
-          taxamt,
-          totamt,
-          [EDIT_FIELD]: undefined,
-        },
-      });
-    });
-  };
-
-  const fetchUnp = useCallback(async (custcd: string) => {
-    if (custcd === "") return;
-    let data: any;
-
-    const queryStr = getUnpQuery(custcd);
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setUnpList(rows);
-    }
-  }, []);
-
-  const onGridSortChange = (e: GridSortChangeEvent) => {
-    setDataState((prev: any) => ({ ...prev, sort: e.sort }));
-  };
-
-  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
-  const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
-    setDataState(event.dataState);
-  };
-
-  return (
-    <GridContainer margin={{ top: "30px" }}>
-      {visited && validationMessage && <Error>{validationMessage}</Error>}
-      <Grid
-        style={{ height: "330px" }}
-        data={process(
-          dataWithIndexes.map((item: any) => ({
-            ...item,
-            parentField: name,
-            [SELECTED_FIELD]: selectedState[idGetter(item)],
-          })),
-          dataState
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      <>
+        {isInEdit ? (
+          <Input value={value} onChange={handleChange} type="text" />
+        ) : (
+          value
         )}
-        {...dataState}
-        onDataStateChange={onGridDataStateChange}
-        // 렌더
-        cellRender={customCellRender}
-        rowRender={customRowRender}
-        //선택기능
-        dataItemKey={dataItemKey}
-        selectedField={SELECTED_FIELD}
-        selectable={{
-          enabled: true,
-          drag: false,
-          cell: false,
-          mode: "multiple",
-        }}
-        onSelectionChange={onSelectionChange}
-        onHeaderSelectionChange={onHeaderSelectionChange}
-        //스크롤 조회 기능
-        fixedScroll={true}
-        total={dataWithIndexes.length}
-        onScroll={scrollHandler}
-        //정렬기능
-        sortable={true}
-        onSortChange={onGridSortChange}
-        //컬럼순서조정
-        reorderable={true}
-        //컬럼너비조정
-        resizable={true}
-      >
-        <GridToolbar>
+        <ButtonInGridInput>
           <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onAdd}
-            icon="add"
-          >
-            추가
-          </Button>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onRemove}
-            icon="minus"
-          >
-            삭제
-          </Button>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onCopy}
-            icon="copy"
-          >
-            복사
-          </Button>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onItemMultiWndClick}
-          >
-            품목멀티
-          </Button>
-        </GridToolbar>
+            name="itemcd"
+            onClick={onItemWndClick2}
+            icon="more-horizontal"
+            fillMode="flat"
+          />
+        </ButtonInGridInput>
+      </>
+    </td>
+  );
 
-        <GridColumn
-          field={SELECTED_FIELD}
-          width="45px"
-          headerSelectionValue={
-            dataWithIndexes.findIndex(
-              (item: any) => !selectedState[idGetter(item)]
-            ) === -1
-          }
-        />
-        <GridColumn field="rowstatus" title=" " width="40px" />
-        <GridColumn
-          field="itemcd"
-          title="품목코드"
-          width="160px"
-          cell={FormNameCell}
-          headerCell={RequiredHeader}
-          className="required"
-        />
-        <GridColumn cell={ItemBtnCell} width="55px" />
-        <GridColumn
-          field="itemnm"
-          title="품목명"
-          width="180px"
-          cell={FormNameCell}
-          headerCell={RequiredHeader}
-          className="required"
-        />
-        <GridColumn
-          field="insiz"
-          title="규격"
-          width="200px"
-          cell={FormNameCell}
-        />
-        <GridColumn
-          field="itemacnt"
-          title="품목계정"
-          width="120px"
-          cell={CustomComboBoxCell}
-          headerCell={RequiredHeader}
-          className="required"
-        />
-        <GridColumn
-          field="qty"
-          title="수주량"
-          width="120px"
-          cell={FormNumberCell}
-          headerCell={RequiredHeader}
-          className="required"
-        />
-        <GridColumn
-          field="qtyunit"
-          title="단위"
-          width="120px"
-          cell={CustomComboBoxCell}
-        />
-        <GridColumn
-          field="unp"
-          title="단가"
-          width="120px"
-          cell={FormNumberCell}
-        />
-        <GridColumn
-          field="wonamt"
-          title="금액"
-          width="120px"
-          cell={FormNumberCell}
-        />
-        <GridColumn
-          field="taxamt"
-          title="세액"
-          width="120px"
-          cell={FormNumberCell}
-        />
-        <GridColumn
-          field="totamt"
-          title="합계금액"
-          width="120px"
-          cell={FormReadOnlyNumberCell}
-        />
-        <GridColumn
-          field="remark"
-          title="비고"
-          width="120px"
-          cell={FormNameCell}
-        />
-        <GridColumn
-          field="purcustnm"
-          title="발주처"
-          width="120px"
-          cell={FormNameCell}
-        />
-        <GridColumn
-          field="outqty"
-          title="출하수량"
-          width="120px"
-          cell={FormNumberCell}
-        />
-        <GridColumn
-          field="sale_qty"
-          title="판매수량"
-          width="120px"
-          cell={FormNumberCell}
-        />
-        <GridColumn
-          field="finyn"
-          title="완료여부"
-          width="120px"
-          cell={FormCheckBoxReadOnlyCell}
-        />
-        <GridColumn
-          field="bf_qty"
-          title="LOT수량"
-          width="120px"
-          cell={FormNumberCell}
-        />
-        <GridColumn
-          field="lotnum"
-          title="LOT NO"
-          width="120px"
-          cell={FormNameCell}
-        />
-      </Grid>
-      {itemMultiWindowVisible && (
-        <ItemsMultiWindow
-          setVisible={setItemMultiWindowVisible}
-          setData={addItemData}
-        />
-      )}
-      {itemWindowVisible && (
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {itemWindowVisible2 && (
         <ItemsWindow
-          workType={editIndex === undefined ? "ROWS_ADD" : "ROW_ADD"}
-          setVisible={setItemWindowVisible}
-          setData={setItemData}
+          setVisible={setItemWindowVisible2}
+          workType={"ROW_ADD"}
+          setData={setItemData2}
         />
       )}
-    </GridContainer>
+    </>
   );
 };
+
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -1023,9 +427,11 @@ const KendoWindow = ({
   ordnum,
   isCopy,
   para,
+  modal = false,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
-
+  const processApi = useApi();
+  const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
 
   //커스텀 옵션 조회
@@ -1045,7 +451,29 @@ const KendoWindow = ({
     width: 1200,
     height: 800,
   });
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
+  const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
+
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [isInitSearch, setIsInitSearch] = useState(false);
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -1053,24 +481,6 @@ const KendoWindow = ({
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
-
-  // 업체별 단가 처리에 사용 (수주일자, 업체코드)
-  const [orddt, setOrddt] = useState("");
-  const [custcd, setCustcd] = useState("");
-
-  // 동적으로 Form Value를 변경하기 위해 사용하는 변수
-  const [changedCustInfo, setChangedCustInfo] = useState({
-    custcd: "",
-    custnm: "",
-  });
-  const [changedRcvcustInfo, setChangedRcvcustInfo] = useState({
-    rcvcustcd: "",
-    rcvcustnm: "",
-  });
-  const [changedAttachmentInfo, setChangedAttachmentInfo] = useState({
-    attdatnum: "",
-    files: "",
-  });
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -1090,118 +500,240 @@ const KendoWindow = ({
     getVisible(false);
   };
 
-  // 업체코드 변경 시 Form 업체정보 change
   useEffect(() => {
-    if (changedCustInfo.custcd !== "") {
-      const valueChanged = document.getElementById("custcdChanged");
-      valueChanged!.click();
-    }
-  }, [changedCustInfo]);
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] ==
+      parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            itemcd: itemInfo.itemcd,
+            itemno: itemInfo.itemno,
+            itemnm: itemInfo.itemnm,
+            insiz: itemInfo.insiz,
+            model: itemInfo.model,
+            bnatur: itemInfo.bnatur,
+            spec: itemInfo.spec,
+            //invunit
+            qtyunit: itemInfo.invunit,
+            invunitnm: itemInfo.invunitnm,
+            unitwgt: itemInfo.unitwgt,
+            wgtunit: itemInfo.wgtunit,
+            wgtunitnm: itemInfo.wgtunitnm,
+            maker: itemInfo.maker,
+            dwgno: itemInfo.dwgno,
+            remark: itemInfo.remark,
+            itemlvl1: itemInfo.itemlvl1,
+            itemlvl2: itemInfo.itemlvl2,
+            itemlvl3: itemInfo.itemlvl3,
+            extra_field1: itemInfo.extra_field1,
+            extra_field2: itemInfo.extra_field2,
+            extra_field7: itemInfo.extra_field7,
+            extra_field6: itemInfo.extra_field6,
+            extra_field8: itemInfo.extra_field8,
+            packingsiz: itemInfo.packingsiz,
+            unitqty: itemInfo.unitqty,
+            color: itemInfo.color,
+            gubun: itemInfo.gubun,
+            qcyn: itemInfo.qcyn,
+            outside: itemInfo.outside,
+            itemthick: itemInfo.itemthick,
+            itemlvl4: itemInfo.itemlvl4,
+            itemlvl5: itemInfo.itemlvl5,
+            custitemnm: itemInfo.custitemnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
 
-  // 인수처코드 변경 시  Form 업체정보 change
-  useEffect(() => {
-    if (changedRcvcustInfo.rcvcustcd !== "") {
-      const valueChanged = document.getElementById("rcvcustcdChanged");
-      valueChanged!.click();
-    }
-  }, [changedRcvcustInfo]);
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemInfo]);
 
-  // 파일정보 변경 시  Form 업체정보 change
-  useEffect(() => {
-    if (changedAttachmentInfo.attdatnum !== "") {
-      const valueChanged = document.getElementById("attachmentChanged");
-      valueChanged!.click();
-    }
-  }, [changedAttachmentInfo]);
+  const fetchItemData = React.useCallback(
+    async (itemcd: string) => {
+      let data: any;
+      const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
-  const [formKey, setFormKey] = React.useState(1);
-  const resetForm = () => {
-    setFormKey(formKey + 1);
-  };
-  //수정 없이 submit 가능하도록 임의 value를 change 시켜줌
-  useEffect(() => {
-    const valueChanged = document.getElementById("valueChanged");
-    valueChanged!.click();
-  }, [formKey]);
-  const processApi = useApi();
-  const [dataState, setDataState] = useState<State>({
-    sort: [],
-  });
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], dataState)
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const {
+            itemcd,
+            itemno,
+            itemnm,
+            insiz,
+            model,
+            itemacnt,
+            itemacntnm,
+            bnatur,
+            spec,
+            invunit,
+            invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
+          } = rows[0];
+          setItemInfo({
+            itemcd,
+            itemno,
+            itemnm,
+            insiz,
+            model,
+            itemacnt,
+            itemacntnm,
+            bnatur,
+            spec,
+            invunit,
+            invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
+          });
+        } else {
+          const newData = mainDataResult.data.map((item: any) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+              ? {
+                  ...item,
+                  itemcd: item.itemcd,
+                  itemno: "",
+                  itemnm: "",
+                  insiz: "",
+                  model: "",
+                  itemacnt: "",
+                  itemacntnm: "",
+                  bnatur: "",
+                  spec: "",
+                  invunit: "",
+                  invunitnm: "",
+                  unitwgt: "",
+                  wgtunit: "",
+                  wgtunitnm: "",
+                  maker: "",
+                  dwgno: "",
+                  remark: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
+                  extra_field1: "",
+                  extra_field2: "",
+                  extra_field7: "",
+                  extra_field6: "",
+                  extra_field8: "",
+                  packingsiz: "",
+                  unitqty: "",
+                  color: "",
+                  gubun: "",
+                  qcyn: "",
+                  outside: "",
+                  itemthick: "",
+                  itemlvl4: "",
+                  itemlvl5: "",
+                  custitemnm: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult]
   );
 
-  const [custType, setCustType] = useState("");
-
   useEffect(() => {
-    if (workType === "U" || isCopy === true) {
-      fetchMain();
-    }
-  }, []);
-
-  const [initialVal, setInitialVal] = useState({
-    ordnum: "",
-    doexdiv: "A",
-    taxdiv: "A",
-    location: "01",
-    orddt: new Date(),
-    dlvdt: new Date(),
-    custnm: "",
-    custcd: "",
-    dptcd: "",
-    person: "",
-    ordsts: "2",
-    ordtype: "A",
-    rcvcustnm: "",
-    rcvcustcd: "",
-    project: "",
-    amtunit: "", //"KRW",
-    wonchgrat: 0,
-    uschgrat: 0,
-    quokey: "",
-    prcterms: "",
-    paymeth: "",
-    dlv_method: "",
-    portnm: "",
-    ship_method: "",
-    poregnum: "",
-    attdatnum: "",
-    files: "",
-    remark: "",
-    baseamt: 1,
-  });
-
-  useEffect(() => {
-    if (customOptionData !== null && workType === "N") {
-      setInitialVal((prev) => {
+    if (customOptionData !== null && workType != "U") {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.new;
+      setFilters((prev) => {
         return {
           ...prev,
-          orddt: setDefaultDate(customOptionData, "orddt"),
-          dlvdt: setDefaultDate(customOptionData, "dlvdt"),
-          doexdiv: customOptionData.menuCustomDefaultOptions.new.find(
-            (item: any) => item.id === "doexdiv"
-          ).valueCode,
-          taxdiv: customOptionData.menuCustomDefaultOptions.new.find(
-            (item: any) => item.id === "taxdiv"
-          ).valueCode,
-          location: customOptionData.menuCustomDefaultOptions.new.find(
-            (item: any) => item.id === "location"
-          ).valueCode,
-          ordtype: customOptionData.menuCustomDefaultOptions.new.find(
-            (item: any) => item.id === "ordtype"
-          ).valueCode,
-          ordsts: customOptionData.menuCustomDefaultOptions.new.find(
-            (item: any) => item.id === "ordsts"
-          ).valueCode,
-          dptcd: customOptionData.menuCustomDefaultOptions.new.find(
-            (item: any) => item.id === "dptcd"
-          ).valueCode,
-          amtunit: customOptionData.menuCustomDefaultOptions.new.find(
-            (item: any) => item.id === "amtunit"
-          ).valueCode,
-          person: customOptionData.menuCustomDefaultOptions.new.find(
-            (item: any) => item.id === "person"
-          ).valueCode,
+          doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+            .valueCode,
+          taxdiv: defaultOption.find((item: any) => item.id === "taxdiv")
+            .valueCode,
+          location: defaultOption.find((item: any) => item.id === "location")
+            .valueCode,
+          ordtype: defaultOption.find((item: any) => item.id === "ordtype")
+            .valueCode,
+          ordsts: defaultOption.find((item: any) => item.id === "ordsts")
+            .valueCode,
+          dptcd: defaultOption.find((item: any) => item.id === "dptcd")
+            .valueCode,
+          amtunit: defaultOption.find((item: any) => item.id === "amtunit")
+            .valueCode,
+          person: defaultOption.find((item: any) => item.id === "person")
+            .valueCode,
         };
       });
     }
@@ -1231,11 +763,12 @@ const KendoWindow = ({
       "@p_doexdiv": "",
       "@p_ordtype": "",
       "@p_poregnum": "",
+      "@p_find_row_value": "",
     },
   };
 
   //요약정보 조회
-  const fetchMain = async () => {
+  const fetchMainGrid = async () => {
     let data: any;
 
     try {
@@ -1247,10 +780,10 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       const row = data.tables[0].Rows[0];
 
-      setInitialVal((prev) => {
+      setFilters((prev) => {
         return {
           ...prev,
-          ordnum: row.ordnum,
+          ordnum: isCopy != true ? row.ordnum : "",
           doexdiv: row.doexdiv,
           taxdiv: row.taxdiv,
           location: row.location,
@@ -1281,20 +814,9 @@ const KendoWindow = ({
           baseamt: row.baseamt == 0 ? 1 : row.baseamt,
         };
       });
+      setIsInitSearch(true);
     }
   };
-
-  useEffect(() => {
-    //fetch된 데이터가 폼에 세팅되도록 하기 위해 적용
-    resetForm();
-    //fetch된 orddt 데이터 세팅 (단가세팅용도)
-    setOrddt(convertDateToStr(initialVal.orddt));
-  }, [initialVal]);
-
-  //fetch된 그리드 데이터가 그리드 폼에 세팅되도록 하기 위해 적용
-  useEffect(() => {
-    resetForm();
-  }, [detailDataResult]);
 
   //상세그리드 조회
   const fetchGrid = async () => {
@@ -1308,19 +830,22 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((item : any) => ({
+      const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        baseamt : item.baseamt == 0 ? 1 : item.baseamt,
-      }))
+        baseamt: item.baseamt == 0 ? 1 : item.baseamt,
+        rowstatus: isCopy != true ? "" : "N",
+      }));
 
-      setDetailDataResult(() => {
+      setMainDataResult(() => {
         return {
           data: rows,
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
-      //resetForm();
+      if (totalRowCnt > 0) {
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+      }
     }
   };
 
@@ -1473,11 +998,6 @@ const KendoWindow = ({
     },
   };
 
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setDetailDataResult(process([], dataState));
-  };
-
   const fetchGridSaved = async () => {
     let data: any;
 
@@ -1489,19 +1009,16 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       deletedRows = []; //초기화
-      if (workType === "U" || isCopy === true) {
-        resetAllGrid();
-
-        reloadData("U");
-        fetchMain();
+      if (workType == "U") {
+        reloadData(data.returnString);
+        fetchMainGrid();
         fetchGrid();
-
-        // 초기화
-        setUnsavedAttadatnums([]);
       } else {
+        reloadData(data.returnString);
         getVisible(false);
-        reloadData("N");
       }
+      // 초기화
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1511,14 +1028,12 @@ const KendoWindow = ({
     paraData.work_type = ""; //초기화
   };
 
-  const handleSubmit = (dataItem: { [name: string]: any }) => {
-    //alert(JSON.stringify(dataItem));
-
+  const handleSubmit = () => {
     let valid = true;
 
     //검증
     try {
-      dataItem.orderDetails.forEach((item: any) => {
+      mainDataResult.data.map((item: any) => {
         if (!item.itemcd) {
           throw findMessage(messagesData, "SA_A2000W_004");
         }
@@ -1539,37 +1054,12 @@ const KendoWindow = ({
 
     if (!valid) return false;
 
-    const {
-      location,
-      ordnum,
-      poregnum,
-      project,
-      ordtype,
-      ordsts,
-      taxdiv,
-      orddt,
-      dlvdt,
-      dptcd,
-      person,
-      amtunit,
-      portnm,
-      finaldes,
-      paymeth,
-      prcterms,
-      custcd,
-      custnm,
-      rcvcustcd,
-      rcvcustnm,
-      wonchgrat,
-      uschgrat,
-      doexdiv,
-      remark,
-      attdatnum,
-      ship_method,
-      dlv_method,
-      hullno,
-      orderDetails,
-    } = dataItem;
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
     let detailArr: TDetailData = {
       rowstatus_s: [],
@@ -1607,7 +1097,7 @@ const KendoWindow = ({
       heatno_s: [],
       bf_qty_s: [],
     };
-    orderDetails.forEach((item: any) => {
+    dataItem.forEach((item: any) => {
       const {
         rowstatus,
         chk,
@@ -1646,16 +1136,16 @@ const KendoWindow = ({
       } = item;
 
       detailArr.rowstatus_s.push(isCopy === true ? "N" : rowstatus);
-      detailArr.chk_s.push(chk);
+      detailArr.chk_s.push(chk == true ? "Y" : chk == false ? "N" : chk);
       detailArr.ordseq_s.push(ordseq);
       detailArr.poregseq_s.push(poregseq);
       detailArr.itemcd_s.push(itemcd);
       detailArr.itemnm_s.push(itemnm);
-      detailArr.itemacnt_s.push(getCodeFromValue(itemacnt));
+      detailArr.itemacnt_s.push(itemacnt);
       detailArr.insiz_s.push(insiz);
       detailArr.bnatur_s.push(bnatur);
       detailArr.qty_s.push(qty);
-      detailArr.qtyunit_s.push(getCodeFromValue(qtyunit));
+      detailArr.qtyunit_s.push(qtyunit);
       detailArr.totwgt_s.push(totwgt);
       detailArr.wgtunit_s.push(wgtunit);
       detailArr.len_s.push(len);
@@ -1675,7 +1165,9 @@ const KendoWindow = ({
       detailArr.finyn_s.push(finyn === true ? "Y" : "N");
       detailArr.specialunp_s.push(specialunp);
       detailArr.lotnum_s.push(lotnum);
-      detailArr.dlvdt_s.push(dlvdt);
+      detailArr.dlvdt_s.push(
+        dlvdt.length == 8 ? dlvdt : convertDateToStr(dlvdt)
+      );
       detailArr.specialamt_s.push(specialamt);
       detailArr.heatno_s.push(heatno);
       detailArr.bf_qty_s.push(bf_qty);
@@ -1720,16 +1212,16 @@ const KendoWindow = ({
       } = item;
 
       detailArr.rowstatus_s.push("D");
-      detailArr.chk_s.push(chk);
+      detailArr.chk_s.push(chk == true ? "Y" : chk == false ? "N" : chk);
       detailArr.ordseq_s.push(ordseq);
       detailArr.poregseq_s.push(poregseq);
       detailArr.itemcd_s.push(itemcd);
       detailArr.itemnm_s.push(itemnm);
-      detailArr.itemacnt_s.push(getCodeFromValue(itemacnt));
+      detailArr.itemacnt_s.push(itemacnt);
       detailArr.insiz_s.push(insiz);
       detailArr.bnatur_s.push(bnatur);
       detailArr.qty_s.push(qty);
-      detailArr.qtyunit_s.push(getCodeFromValue(qtyunit));
+      detailArr.qtyunit_s.push(qtyunit);
       detailArr.totwgt_s.push(totwgt);
       detailArr.wgtunit_s.push(wgtunit);
       detailArr.len_s.push(len);
@@ -1749,7 +1241,9 @@ const KendoWindow = ({
       detailArr.finyn_s.push(finyn);
       detailArr.specialunp_s.push(specialunp);
       detailArr.lotnum_s.push(lotnum);
-      detailArr.dlvdt_s.push(dlvdt);
+      detailArr.dlvdt_s.push(
+        dlvdt.length == 8 ? dlvdt : convertDateToStr(dlvdt)
+      );
       detailArr.specialamt_s.push(specialamt);
       detailArr.heatno_s.push(heatno);
       detailArr.bf_qty_s.push(bf_qty);
@@ -1758,34 +1252,33 @@ const KendoWindow = ({
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-      location: getCodeFromValue(location),
-      //location: typeof location === "string" ? location : location.sub_code,
-      ordnum,
-      poregnum,
-      project,
-      ordtype: getCodeFromValue(ordtype),
-      ordsts: getCodeFromValue(ordsts),
-      taxdiv: getCodeFromValue(taxdiv),
-      orddt: convertDateToStr(orddt),
-      dlvdt: convertDateToStr(dlvdt),
-      dptcd: getCodeFromValue(dptcd, "dptcd"),
-      person: getCodeFromValue(person, "user_id"),
-      amtunit: getCodeFromValue(amtunit),
-      portnm,
+      location: filters.location,
+      ordnum: filters.ordnum,
+      poregnum: filters.poregnum,
+      project: filters.project,
+      ordtype: filters.ordtype,
+      ordsts: filters.ordsts,
+      taxdiv: filters.taxdiv,
+      orddt: convertDateToStr(filters.orddt),
+      dlvdt: convertDateToStr(filters.dlvdt),
+      dptcd: filters.dptcd,
+      person: filters.person,
+      amtunit: filters.amtunit,
+      portnm: filters.portnm,
       finaldes: "",
-      paymeth,
-      prcterms,
-      custcd,
-      custnm,
-      rcvcustcd,
-      rcvcustnm,
-      wonchgrat,
-      uschgrat,
-      doexdiv: getCodeFromValue(doexdiv),
-      remark,
-      attdatnum,
-      ship_method,
-      dlv_method,
+      paymeth: filters.paymeth,
+      prcterms: filters.prcterms,
+      custcd: filters.custcd,
+      custnm: filters.custnm,
+      rcvcustcd: filters.rcvcustcd,
+      rcvcustnm: filters.rcvcustnm,
+      wonchgrat: filters.wonchgrat,
+      uschgrat: filters.uschgrat,
+      doexdiv: filters.doexdiv,
+      remark: filters.remark,
+      attdatnum: filters.attdatnum,
+      ship_method: filters.ship_method,
+      dlv_method: filters.dlv_method,
       hullno: "",
       rowstatus_s: detailArr.rowstatus_s.join("|"), //"N|N",
       chk_s: detailArr.chk_s.join("|"),
@@ -1829,66 +1322,1482 @@ const KendoWindow = ({
   }, [paraData]);
 
   const onCustWndClick = () => {
-    setCustType("CUST");
     setCustWindowVisible(true);
   };
   const onRcvcustWndClick = () => {
-    setCustType("RCVCUST");
-    setCustWindowVisible(true);
+    setCustWindowVisible2(true);
   };
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
-
+  const [itemMultiWindowVisible, setItemMultiWindowVisible] =
+    useState<boolean>(false);
   const setCustData = (data: ICustData) => {
     const { custcd, custnm } = data;
-    if (custType === "CUST") {
-      // 업체
-      setCustcd(custcd);
-      setChangedCustInfo({ custcd, custnm });
-    } else {
-      // 인수처
-      setChangedRcvcustInfo({ rcvcustcd: custcd, rcvcustnm: custnm });
-    }
+    setFilters((prev) => ({
+      ...prev,
+      custcd: custcd,
+      custnm: custnm,
+    }));
+  };
+
+  const setCustData2 = (data: ICustData) => {
+    const { custcd, custnm } = data;
+    setFilters((prev) => ({
+      ...prev,
+      rcvcustcd: custcd,
+      rcvcustnm: custnm,
+    }));
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!initialVal.attdatnum && !changedAttachmentInfo.attdatnum) {
+    if (!filters.attdatnum) {
       setUnsavedAttadatnums([data.attdatnum]);
     }
-    setChangedAttachmentInfo({
-      files:
-        data.original_name +
-        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-      attdatnum: data.attdatnum,
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
     });
   };
 
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_BA061,L_BA015", setBizComponentData);
+  UseBizComponent("L_CUST", setBizComponentData);
+
+  const [custcdListData, setCustcdListData] = useState([
+    {
+      custcd: "",
+      custnm: "",
+    },
+  ]);
 
   useEffect(() => {
-    if (workType === "U" || isCopy === true) {
-      if (bizComponentData.length) {
-        resetAllGrid();
-        fetchGrid();
-      }
+    if (bizComponentData !== null) {
+      const custcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_CUST")
+      );
+      fetchQuery(custcdQueryStr, setCustcdListData);
     }
   }, [bizComponentData]);
 
-  const onChangeOrddt = (e: DatePickerChangeEvent) => {
-    const { value } = e;
-    if (value) {
-      setOrddt(convertDateToStr(value));
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
 
-      if (custcd === "") {
-        setCustcd(initialVal.custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
+
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
+    pgSize: PAGE_SIZE,
+    ordnum: "",
+    doexdiv: "",
+    location: "",
+    orddt: new Date(),
+    dlvdt: new Date(),
+    ordsts: "",
+    ordtype: "",
+    custcd: "",
+    custnm: "",
+    rcvcustcd: "",
+    rcvcustnm: "",
+    project: "",
+    dptcd: "",
+    amtunit: "",
+    quokey: "",
+    prcterms: "",
+    paymeth: "",
+    dlv_method: "",
+    portnm: "",
+    ship_method: "",
+    poregnum: "",
+    files: "",
+    attdatnum: "",
+    uschgrat: 0,
+    wonchgrat: 0,
+    remark: "",
+  });
+
+  const filterInputChange = (e: any) => {
+    const { value, name } = e.target;
+    if (name == "orddt") {
+      fetchUnp(filters.custcd);
+    }
+
+    if (name == "uschgrat" && value != filters.uschgrat) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt:
+            item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat,
+          wonamt:
+            item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat,
+          taxamt: Math.round(
+            filters.taxdiv == "A"
+              ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                ? filters.amtunit == "KRW"
+                  ? item.qty * item.unp * 0.1
+                  : item.qty * item.unp * filters.wonchgrat * 0.1
+                : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                ? filters.amtunit == "KRW"
+                  ? (item.len == undefined ? 0 : item.len) * item.unp * 0.1
+                  : (item.len == undefined ? 0 : item.len) *
+                    item.unp *
+                    filters.wonchgrat *
+                    0.1
+                : item.unpcalmeth == "W"
+                ? filters.amtunit == "KRW"
+                  ? item.totwgt * item.unp * 0.1
+                  : item.totwgt * item.unp * filters.wonchgrat * 0.1
+                : filters.amtunit == "KRW"
+                ? item.amt * 0.1
+                : item.amt * filters.wonchgrat * 0.1
+              : 0
+          ),
+          totamt: Math.round(
+            (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat) +
+              Math.round(
+                filters.taxdiv == "A"
+                  ? filters.amtunit == "KRW"
+                    ? (item.qty * item.unp) / 10
+                    : (item.qty * item.unp * filters.wonchgrat) / 10
+                  : 0
+              )
+          ),
+          dlramt: Math.round(
+            value != 0
+              ? (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                  ? filters.amtunit == "KRW"
+                    ? item.qty * item.unp
+                    : item.qty * item.unp * filters.wonchgrat
+                  : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                  ? filters.amtunit == "KRW"
+                    ? (item.len == undefined ? 0 : item.len) * item.unp
+                    : (item.len == undefined ? 0 : item.len) *
+                      item.unp *
+                      filters.wonchgrat
+                  : item.unpcalmeth == "W"
+                  ? filters.amtunit == "KRW"
+                    ? item.totwgt * item.unp
+                    : item.totwgt * item.unp * filters.wonchgrat
+                  : filters.amtunit == "KRW"
+                  ? item.amt
+                  : item.amt * filters.wonchgrat) * value
+              : 0
+          ),
+        };
+      });
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+
+    if (name == "wonchgrat" && value != filters.wonchgrat) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt:
+            item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * value
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) * item.unp * value
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * value
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * value,
+          wonamt:
+            item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * value
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) * item.unp * value
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * value
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * value,
+          taxamt: Math.round(
+            filters.taxdiv == "A"
+              ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                ? filters.amtunit == "KRW"
+                  ? item.qty * item.unp * 0.1
+                  : item.qty * item.unp * value * 0.1
+                : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                ? filters.amtunit == "KRW"
+                  ? (item.len == undefined ? 0 : item.len) * item.unp * 0.1
+                  : (item.len == undefined ? 0 : item.len) *
+                    item.unp *
+                    value *
+                    0.1
+                : item.unpcalmeth == "W"
+                ? filters.amtunit == "KRW"
+                  ? item.totwgt * item.unp * 0.1
+                  : item.totwgt * item.unp * value * 0.1
+                : filters.amtunit == "KRW"
+                ? item.amt * 0.1
+                : item.amt * value * 0.1
+              : 0
+          ),
+          totamt: Math.round(
+            (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * value
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) * item.unp * value
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * value
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * value) +
+              Math.round(
+                filters.taxdiv == "A"
+                  ? filters.amtunit == "KRW"
+                    ? (item.qty * item.unp) / 10
+                    : (item.qty * item.unp * value) / 10
+                  : 0
+              )
+          ),
+          dlramt: Math.round(
+            filters.uschgrat != 0
+              ? (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                  ? filters.amtunit == "KRW"
+                    ? item.qty * item.unp
+                    : item.qty * item.unp * value
+                  : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                  ? filters.amtunit == "KRW"
+                    ? (item.len == undefined ? 0 : item.len) * item.unp
+                    : (item.len == undefined ? 0 : item.len) * item.unp * value
+                  : item.unpcalmeth == "W"
+                  ? filters.amtunit == "KRW"
+                    ? item.totwgt * item.unp
+                    : item.totwgt * item.unp * value
+                  : filters.amtunit == "KRW"
+                  ? item.amt
+                  : item.amt * value) * filters.uschgrat
+              : 0
+          ),
+        };
+      });
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+
+    if (name == "custcd") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        custnm:
+          custcdListData.find((item: any) => item.custcd == value)?.custnm ==
+          undefined
+            ? ""
+            : custcdListData.find((item: any) => item.custcd == value)?.custnm,
+      }));
+      fetchUnp(value);
+    } else if (name == "custnm") {
+      const custcds =
+        custcdListData.find((item: any) => item.custnm == value)?.custcd ==
+        undefined
+          ? ""
+          : custcdListData.find((item: any) => item.custnm == value)?.custcd;
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        custcd: custcds == undefined ? "" : custcds,
+      }));
+      fetchUnp(custcds == undefined ? "" : custcds);
+    } else if (name == "rcvcustcd") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        rcvcustnm:
+          custcdListData.find((item: any) => item.custcd == value)?.custnm ==
+          undefined
+            ? ""
+            : custcdListData.find((item: any) => item.custcd == value)?.custnm,
+      }));
+    } else if (name == "rcvcustnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        rcvcustcd:
+          custcdListData.find((item: any) => item.custnm == value)?.custcd ==
+          undefined
+            ? ""
+            : custcdListData.find((item: any) => item.custnm == value)?.custcd,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    if (name == "taxdiv" && value != filters.taxdiv) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt:
+            item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat,
+          wonamt:
+            item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat,
+          taxamt: Math.round(
+            value == "A"
+              ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                ? filters.amtunit == "KRW"
+                  ? item.qty * item.unp * 0.1
+                  : item.qty * item.unp * filters.wonchgrat * 0.1
+                : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                ? filters.amtunit == "KRW"
+                  ? (item.len == undefined ? 0 : item.len) * item.unp * 0.1
+                  : (item.len == undefined ? 0 : item.len) *
+                    item.unp *
+                    filters.wonchgrat *
+                    0.1
+                : item.unpcalmeth == "W"
+                ? filters.amtunit == "KRW"
+                  ? item.totwgt * item.unp * 0.1
+                  : item.totwgt * item.unp * filters.wonchgrat * 0.1
+                : filters.amtunit == "KRW"
+                ? item.amt * 0.1
+                : item.amt * filters.wonchgrat * 0.1
+              : 0
+          ),
+          totamt: Math.round(
+            (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat) +
+              Math.round(
+                value == "A"
+                  ? filters.amtunit == "KRW"
+                    ? (item.qty * item.unp) / 10
+                    : (item.qty * item.unp * filters.wonchgrat) / 10
+                  : 0
+              )
+          ),
+          dlramt: Math.round(
+            filters.uschgrat != 0
+              ? (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                  ? filters.amtunit == "KRW"
+                    ? item.qty * item.unp
+                    : item.qty * item.unp * filters.wonchgrat
+                  : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                  ? filters.amtunit == "KRW"
+                    ? (item.len == undefined ? 0 : item.len) * item.unp
+                    : (item.len == undefined ? 0 : item.len) *
+                      item.unp *
+                      filters.wonchgrat
+                  : item.unpcalmeth == "W"
+                  ? filters.amtunit == "KRW"
+                    ? item.totwgt * item.unp
+                    : item.totwgt * item.unp * filters.wonchgrat
+                  : filters.amtunit == "KRW"
+                  ? item.amt
+                  : item.amt * filters.wonchgrat) * filters.uschgrat
+              : 0
+          ),
+        };
+      });
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+
+    if (name == "amtunit" && value != filters.amtunit) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt:
+            item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? value == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? value == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? value == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : value == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat,
+          wonamt:
+            item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? value == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? value == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? value == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : value == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat,
+          taxamt: Math.round(
+            filters.taxdiv == "A"
+              ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                ? value == "KRW"
+                  ? item.qty * item.unp * 0.1
+                  : item.qty * item.unp * filters.wonchgrat * 0.1
+                : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                ? value == "KRW"
+                  ? (item.len == undefined ? 0 : item.len) * item.unp * 0.1
+                  : (item.len == undefined ? 0 : item.len) *
+                    item.unp *
+                    filters.wonchgrat *
+                    0.1
+                : item.unpcalmeth == "W"
+                ? value == "KRW"
+                  ? item.totwgt * item.unp * 0.1
+                  : item.totwgt * item.unp * filters.wonchgrat * 0.1
+                : value == "KRW"
+                ? item.amt * 0.1
+                : item.amt * filters.wonchgrat * 0.1
+              : 0
+          ),
+          totamt: Math.round(
+            (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? value == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? value == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat
+              : item.unpcalmeth == "W"
+              ? value == "KRW"
+                ? item.totwgt * item.unp
+                : item.totwgt * item.unp * filters.wonchgrat
+              : value == "KRW"
+              ? item.amt
+              : item.amt * filters.wonchgrat) +
+              Math.round(
+                filters.taxdiv == "A"
+                  ? value == "KRW"
+                    ? (item.qty * item.unp) / 10
+                    : (item.qty * item.unp * filters.wonchgrat) / 10
+                  : 0
+              )
+          ),
+          dlramt: Math.round(
+            filters.uschgrat != 0
+              ? (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                  ? value == "KRW"
+                    ? item.qty * item.unp
+                    : item.qty * item.unp * filters.wonchgrat
+                  : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                  ? filters.amtunit == "KRW"
+                    ? (item.len == undefined ? 0 : item.len) * item.unp
+                    : (item.len == undefined ? 0 : item.len) *
+                      item.unp *
+                      filters.wonchgrat
+                  : item.unpcalmeth == "W"
+                  ? value == "KRW"
+                    ? item.totwgt * item.unp
+                    : item.totwgt * item.unp * filters.wonchgrat
+                  : value == "KRW"
+                  ? item.amt
+                  : item.amt * filters.wonchgrat) * filters.uschgrat
+              : 0
+          ),
+        };
+      });
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const fetchUnp = async (custcd: string) => {
+    if (custcd == "") return;
+    let data: any;
+
+    const queryStr = getUnpQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+
+      if (rows.length > 0) {
+        const newData = mainDataResult.data.map((item) => {
+          let unpData: any = rows.filter(
+            (items: any) =>
+              items.recdt <= convertDateToStr(filters.orddt) &&
+              items.itemcd == item.itemcd
+          );
+          return {
+            ...item,
+            unp: unpData.length > 0 ? unpData[0].unp : 0,
+            amt:
+              item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                ? filters.amtunit == "KRW"
+                  ? item.qty * (unpData.length > 0 ? unpData[0].unp : 0)
+                  : item.qty *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                ? filters.amtunit == "KRW"
+                  ? (item.len == undefined ? 0 : item.len) *
+                    (unpData.length > 0 ? unpData[0].unp : 0)
+                  : (item.len == undefined ? 0 : item.len) *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : item.unpcalmeth == "W"
+                ? filters.amtunit == "KRW"
+                  ? item.totwgt * (unpData.length > 0 ? unpData[0].unp : 0)
+                  : item.totwgt *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : filters.amtunit == "KRW"
+                ? item.amt
+                : item.amt * filters.wonchgrat,
+            wonamt:
+              item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                ? filters.amtunit == "KRW"
+                  ? item.qty * (unpData.length > 0 ? unpData[0].unp : 0)
+                  : item.qty *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                ? filters.amtunit == "KRW"
+                  ? (item.len == undefined ? 0 : item.len) *
+                    (unpData.length > 0 ? unpData[0].unp : 0)
+                  : (item.len == undefined ? 0 : item.len) *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : item.unpcalmeth == "W"
+                ? filters.amtunit == "KRW"
+                  ? item.totwgt * (unpData.length > 0 ? unpData[0].unp : 0)
+                  : item.totwgt *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : filters.amtunit == "KRW"
+                ? item.amt
+                : item.amt * filters.wonchgrat,
+            taxamt: Math.round(
+              filters.taxdiv == "A"
+                ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                  ? filters.amtunit == "KRW"
+                    ? item.qty * (unpData.length > 0 ? unpData[0].unp : 0) * 0.1
+                    : item.qty *
+                      (unpData.length > 0 ? unpData[0].unp : 0) *
+                      filters.wonchgrat *
+                      0.1
+                  : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                  ? filters.amtunit == "KRW"
+                    ? (item.len == undefined ? 0 : item.len) *
+                      (unpData.length > 0 ? unpData[0].unp : 0) *
+                      0.1
+                    : (item.len == undefined ? 0 : item.len) *
+                      (unpData.length > 0 ? unpData[0].unp : 0) *
+                      filters.wonchgrat *
+                      0.1
+                  : item.unpcalmeth == "W"
+                  ? filters.amtunit == "KRW"
+                    ? item.totwgt *
+                      (unpData.length > 0 ? unpData[0].unp : 0) *
+                      0.1
+                    : item.totwgt *
+                      (unpData.length > 0 ? unpData[0].unp : 0) *
+                      filters.wonchgrat *
+                      0.1
+                  : filters.amtunit == "KRW"
+                  ? item.amt * 0.1
+                  : item.amt * filters.wonchgrat * 0.1
+                : 0
+            ),
+            totamt: Math.round(
+              (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                ? filters.amtunit == "KRW"
+                  ? item.qty * (unpData.length > 0 ? unpData[0].unp : 0)
+                  : item.qty *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                ? filters.amtunit == "KRW"
+                  ? (item.len == undefined ? 0 : item.len) *
+                    (unpData.length > 0 ? unpData[0].unp : 0)
+                  : (item.len == undefined ? 0 : item.len) *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : item.unpcalmeth == "W"
+                ? filters.amtunit == "KRW"
+                  ? item.totwgt * (unpData.length > 0 ? unpData[0].unp : 0)
+                  : item.totwgt *
+                    (unpData.length > 0 ? unpData[0].unp : 0) *
+                    filters.wonchgrat
+                : filters.amtunit == "KRW"
+                ? item.amt
+                : item.amt * filters.wonchgrat) +
+                Math.round(
+                  filters.taxdiv == "A"
+                    ? filters.amtunit == "KRW"
+                      ? (item.qty * (unpData.length > 0 ? unpData[0].unp : 0)) /
+                        10
+                      : (item.qty *
+                          (unpData.length > 0 ? unpData[0].unp : 0) *
+                          filters.wonchgrat) /
+                        10
+                    : 0
+                )
+            ),
+            dlramt: Math.round(
+              filters.uschgrat != 0
+                ? (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                    ? filters.amtunit == "KRW"
+                      ? item.qty * (unpData.length > 0 ? unpData[0].unp : 0)
+                      : item.qty *
+                        (unpData.length > 0 ? unpData[0].unp : 0) *
+                        filters.wonchgrat
+                    : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                    ? filters.amtunit == "KRW"
+                      ? (item.len == undefined ? 0 : item.len) *
+                        (unpData.length > 0 ? unpData[0].unp : 0)
+                      : (item.len == undefined ? 0 : item.len) *
+                        (unpData.length > 0 ? unpData[0].unp : 0) *
+                        filters.wonchgrat
+                    : item.unpcalmeth == "W"
+                    ? filters.amtunit == "KRW"
+                      ? item.totwgt * (unpData.length > 0 ? unpData[0].unp : 0)
+                      : item.totwgt *
+                        (unpData.length > 0 ? unpData[0].unp : 0) *
+                        filters.wonchgrat
+                    : filters.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * filters.wonchgrat) * filters.uschgrat
+                : 0
+            ),
+          };
+        });
+
+        if (newData != mainDataResult.data) {
+          const datas = mainDataResult.data.map((item) => ({
+            ...item,
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
+          }));
+          setTempResult((prev) => {
+            return {
+              data: datas,
+              total: prev.total,
+            };
+          });
+          setMainDataResult((prev) => {
+            return {
+              data: datas,
+              total: prev.total,
+            };
+          });
+        }
       }
     }
+  };
+
+  useEffect(() => {
+    if ((workType != "N" || isCopy == true) && isInitSearch === false) {
+      fetchMainGrid();
+      fetchGrid();
+    }
+  }, [filters]);
+
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
+
+  const onMainSortChange = (e: any) => {
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setSelectedState(newSelectedState);
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const [values2, setValues2] = React.useState<boolean>(false);
+  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        chk: !values2,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues2(!values2);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const enterEdit = (dataItem: any, field: string) => {
+    if (
+      field != "totamt" &&
+      field != "files" &&
+      field != "rowstatus" &&
+      field != "finyn" &&
+      field != "out_qty" &&
+      field != "sale_qty" &&
+      field != "purcustnm" &&
+      field != "itemnm"
+    ) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = () => {
+    if (tempResult.data != mainDataResult.data) {
+      if (editedField !== "itemcd") {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                amt:
+                  item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                    ? filters.amtunit == "KRW"
+                      ? item.qty * item.unp
+                      : item.qty * item.unp * filters.wonchgrat
+                    : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                    ? filters.amtunit == "KRW"
+                      ? (item.len == undefined ? 0 : item.len) * item.unp
+                      : (item.len == undefined ? 0 : item.len) *
+                        item.unp *
+                        filters.wonchgrat
+                    : item.unpcalmeth == "W"
+                    ? filters.amtunit == "KRW"
+                      ? item.totwgt * item.unp
+                      : item.totwgt * item.unp * filters.wonchgrat
+                    : filters.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * filters.wonchgrat,
+                wonamt:
+                  item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                    ? filters.amtunit == "KRW"
+                      ? item.qty * item.unp
+                      : item.qty * item.unp * filters.wonchgrat
+                    : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                    ? filters.amtunit == "KRW"
+                      ? (item.len == undefined ? 0 : item.len) * item.unp
+                      : (item.len == undefined ? 0 : item.len) *
+                        item.unp *
+                        filters.wonchgrat
+                    : item.unpcalmeth == "W"
+                    ? filters.amtunit == "KRW"
+                      ? item.totwgt * item.unp
+                      : item.totwgt * item.unp * filters.wonchgrat
+                    : filters.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * filters.wonchgrat,
+                taxamt: Math.round(
+                  filters.taxdiv == "A"
+                    ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                      ? filters.amtunit == "KRW"
+                        ? item.qty * item.unp * 0.1
+                        : item.qty * item.unp * filters.wonchgrat * 0.1
+                      : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                      ? filters.amtunit == "KRW"
+                        ? (item.len == undefined ? 0 : item.len) *
+                          item.unp *
+                          0.1
+                        : (item.len == undefined ? 0 : item.len) *
+                          item.unp *
+                          filters.wonchgrat *
+                          0.1
+                      : item.unpcalmeth == "W"
+                      ? filters.amtunit == "KRW"
+                        ? item.totwgt * item.unp * 0.1
+                        : item.totwgt * item.unp * filters.wonchgrat * 0.1
+                      : filters.amtunit == "KRW"
+                      ? item.amt * 0.1
+                      : item.amt * filters.wonchgrat * 0.1
+                    : 0
+                ),
+                totamt: Math.round(
+                  (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                    ? filters.amtunit == "KRW"
+                      ? item.qty * item.unp
+                      : item.qty * item.unp * filters.wonchgrat
+                    : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                    ? filters.amtunit == "KRW"
+                      ? (item.len == undefined ? 0 : item.len) * item.unp
+                      : (item.len == undefined ? 0 : item.len) *
+                        item.unp *
+                        filters.wonchgrat
+                    : item.unpcalmeth == "W"
+                    ? filters.amtunit == "KRW"
+                      ? item.totwgt * item.unp
+                      : item.totwgt * item.unp * filters.wonchgrat
+                    : filters.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * filters.wonchgrat) +
+                    Math.round(
+                      filters.taxdiv == "A"
+                        ? filters.amtunit == "KRW"
+                          ? (item.qty * item.unp) / 10
+                          : (item.qty * item.unp * filters.wonchgrat) / 10
+                        : 0
+                    )
+                ),
+                dlramt: Math.round(
+                  filters.uschgrat != 0
+                    ? (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                        ? filters.amtunit == "KRW"
+                          ? item.qty * item.unp
+                          : item.qty * item.unp * filters.wonchgrat
+                        : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                        ? filters.amtunit == "KRW"
+                          ? (item.len == undefined ? 0 : item.len) * item.unp
+                          : (item.len == undefined ? 0 : item.len) *
+                            item.unp *
+                            filters.wonchgrat
+                        : item.unpcalmeth == "W"
+                        ? filters.amtunit == "KRW"
+                          ? item.totwgt * item.unp
+                          : item.totwgt * item.unp * filters.wonchgrat
+                        : filters.amtunit == "KRW"
+                        ? item.amt
+                        : item.amt * filters.wonchgrat) * filters.uschgrat
+                    : 0
+                ),
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
+          if (editIndex == item[DATA_ITEM_KEY]) {
+            fetchItemData(item.itemcd);
+          }
+        });
+      }
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const addItemData = (itemDatas: IItemData[]) => {
+    mainDataResult.data.map((item) => {
+      if (item[DATA_ITEM_KEY] > temp) {
+        temp = item[DATA_ITEM_KEY];
+      }
+    });
+
+    console.log(itemDatas);
+    itemDatas.map((item) => {
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        amt: 0,
+        amtunit: filters.amtunit,
+        baseamt: 0,
+        bf_qty: 0,
+        bnatur: item.bnatur,
+        chk: true,
+        custcd: filters.custcd,
+        custnm: filters.custnm,
+        dlramt: 0,
+        dlvdt: filters.dlvdt,
+        dwgno: item.dwgno,
+        finyn: "N",
+        heatno: "",
+        insiz: item.insiz,
+        itemacnt: item.itemacnt,
+        itemcd: item.itemcd,
+        itemlvl1: item.itemlvl1,
+        itemlvl2: item.itemlvl2,
+        itemlvl3: item.itemlvl3,
+        itemnm: item.itemnm,
+        itemno: item.itemno,
+        len: 0,
+        length: 0,
+        lenunit: "",
+        location: "01",
+        model: item.model,
+        orddt: filters.orddt,
+        ordkey: "",
+        ordnum: ordnum,
+        orgdiv: "01",
+        out_qty: 0,
+        pac: "",
+        poregseq: 0,
+        purcustcd: "",
+        purcustnm: "",
+        purkey: "",
+        qty: 1,
+        qtyunit: item.invunit,
+        rcvcustcd: filters.rcvcustcd,
+        remark: item.remark,
+        sale_qty: 0,
+        specialunp: 0,
+        specialamt: 0,
+        taxamt: 0,
+        thickness: 0,
+        totamt: 0,
+        totlen: 0,
+        totwgt: 0,
+        unitwgt: item.unitwgt,
+        unp: 0,
+        unpcalmeth: "Q",
+        uschgrat: filters.uschgrat,
+        wgtunit: "",
+        width: 0,
+        wonamt: 0,
+        wonchgrat: filters.wonchgrat,
+        rowstatus: "N",
+      };
+      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    })
+  };
+
+  const onAddClick = () => {
+    mainDataResult.data.map((item) => {
+      if (item[DATA_ITEM_KEY] > temp) {
+        temp = item[DATA_ITEM_KEY];
+      }
+    });
+    const newDataItem = {
+      [DATA_ITEM_KEY]: ++temp,
+      amt: 0,
+      amtunit: filters.amtunit,
+      baseamt: 0,
+      bf_qty: 0,
+      bnatur: "",
+      chk: true,
+      custcd: filters.custcd,
+      custnm: filters.custnm,
+      dlramt: 0,
+      dlvdt: filters.dlvdt,
+      dwgno: "",
+      finyn: "N",
+      heatno: "",
+      insiz: "",
+      itemacnt: "",
+      itemcd: "",
+      itemlvl1: "",
+      itemlvl2: "",
+      itemlvl3: "",
+      itemnm: "",
+      itemno: "",
+      len: 0,
+      length: 0,
+      lenunit: "",
+      location: "01",
+      model: "",
+      orddt: filters.orddt,
+      ordkey: "",
+      ordnum: ordnum,
+      orgdiv: "01",
+      out_qty: 0,
+      pac: "",
+      poregseq: 0,
+      purcustcd: "",
+      purcustnm: "",
+      purkey: "",
+      qty: 1,
+      qtyunit: "",
+      rcvcustcd: filters.rcvcustcd,
+      remark: "",
+      sale_qty: 0,
+      specialunp: 0,
+      specialamt: 0,
+      taxamt: 0,
+      thickness: 0,
+      totamt: 0,
+      totlen: 0,
+      totwgt: 0,
+      unitwgt: 0,
+      unp: 0,
+      unpcalmeth: "Q",
+      uschgrat: filters.uschgrat,
+      wgtunit: "",
+      width: 0,
+      wonamt: 0,
+      wonchgrat: filters.wonchgrat,
+      rowstatus: "N",
+    };
+    setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
+    setMainDataResult((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onDeleteClick = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult.data.forEach((item: any, index: number) => {
+      if (item.chk != true) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        const newData2 = {
+          ...item,
+          rowstatus: "D",
+        };
+        Object.push(index);
+        deletedRows.push(newData2);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState({
+        [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+      });
+    }
+  };
+
+  const onCopyClick = () => {
+    if (Object.getOwnPropertyNames(selectedState)[0] == undefined) {
+      alert("데이터가 없습니다.");
+    } else {
+      const datas = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      mainDataResult.data.map((item) => {
+        if (item[DATA_ITEM_KEY] > temp) {
+          temp = item[DATA_ITEM_KEY];
+        }
+      });
+
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        amt: datas.amt,
+        amtunit: datas.amtunit,
+        baseamt: datas.baseamt,
+        bf_qty: datas.bf_qty,
+        bnatur: datas.bnatur,
+        chk: datas.chk,
+        custcd: datas.custcd,
+        custnm: datas.custnm,
+        dlramt: datas.dlramt,
+        dlvdt: datas.dlvdt,
+        dwgno: datas.dwgno,
+        finyn: datas.finyn,
+        heatno: datas.heatno,
+        insiz: datas.insiz,
+        itemacnt: datas.itemacnt,
+        itemcd: datas.itemcd,
+        itemlvl1: datas.itemlvl1,
+        itemlvl2: datas.itemlvl2,
+        itemlvl3: datas.itemlvl3,
+        itemnm: datas.itemnm,
+        itemno: datas.itemno,
+        len: datas.len,
+        length: datas.length,
+        lenunit: datas.lenunit,
+        location: datas.location,
+        model: datas.model,
+        orddt: datas.orddt,
+        ordkey: datas.ordkey,
+        ordnum: datas.ordnum,
+        orgdiv: datas.orgdiv,
+        out_qty: datas.out_qty,
+        pac: datas.pac,
+        poregseq: datas.poregseq,
+        purcustcd: datas.purcustcd,
+        purcustnm: datas.purcustnm,
+        purkey: datas.purkey,
+        qty: datas.qty,
+        qtyunit: datas.qtyunit,
+        rcvcustcd: datas.rcvcustcd,
+        remark: datas.remark,
+        sale_qty: datas.sale_qty,
+        specialunp: datas.specialunp,
+        specialamt: datas.specialamt,
+        taxamt: datas.taxamt,
+        thickness: datas.thickness,
+        totamt: datas.totamt,
+        totlen: datas.totlen,
+        totwgt: datas.totwgt,
+        unitwgt: datas.unitwgt,
+        unp: datas.unp,
+        unpcalmeth: datas.unpcalmeth,
+        uschgrat: datas.uschgrat,
+        wgtunit: datas.wgtunit,
+        width: datas.width,
+        wonamt: datas.wonamt,
+        wonchgrat: datas.wonchgrat,
+        rowstatus: "N",
+      };
+      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    }
+  };
+
+  const onItemMultiWndClick = () => {
+    setEditIndex(undefined);
+    setItemMultiWindowVisible(true);
   };
 
   return (
@@ -1899,506 +2808,553 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
-      <formContext.Provider
+      <FormBoxWrap>
+        <FormBox>
+          <tbody>
+            <tr>
+              <th>수주번호</th>
+              <td>
+                <Input
+                  name="ordnum"
+                  type="text"
+                  value={filters.ordnum}
+                  className="readonly"
+                />
+              </td>
+              <th>내수구분</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="doexdiv"
+                    value={filters.doexdiv}
+                    type="new"
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    className="required"
+                  />
+                )}
+              </td>
+              <th>과세구분</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="taxdiv"
+                    value={filters.taxdiv}
+                    type="new"
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    className="required"
+                  />
+                )}
+              </td>
+              <th>사업장</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="location"
+                    value={filters.location}
+                    type="new"
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>수주일자</th>
+              <td>
+                <DatePicker
+                  name="orddt"
+                  value={filters.orddt}
+                  format="yyyy-MM-dd"
+                  onChange={filterInputChange}
+                  placeholder=""
+                  className="required"
+                />
+              </td>
+              <th>납기일자</th>
+              <td>
+                <DatePicker
+                  name="dlvdt"
+                  value={filters.dlvdt}
+                  format="yyyy-MM-dd"
+                  onChange={filterInputChange}
+                  placeholder=""
+                  className="required"
+                />
+              </td>
+              <th>수주상태</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="ordsts"
+                    value={filters.ordsts}
+                    type="new"
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>수주형태</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="ordtype"
+                    value={filters.ordtype}
+                    type="new"
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>업체코드</th>
+              <td>
+                <Input
+                  name="custcd"
+                  type="text"
+                  value={filters.custcd}
+                  onChange={filterInputChange}
+                  className="required"
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onCustWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>업체명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
+                  onChange={filterInputChange}
+                  className="required"
+                />
+              </td>
+              <th>인수처코드</th>
+              <td>
+                <Input
+                  name="rcvcustcd"
+                  type="text"
+                  value={filters.rcvcustcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onRcvcustWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>인수처명</th>
+              <td>
+                <Input
+                  name="rcvcustnm"
+                  type="text"
+                  value={filters.rcvcustnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>프로젝트</th>
+              <td>
+                <Input
+                  name="project"
+                  type="text"
+                  value={filters.project}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>부서</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="dptcd"
+                    value={filters.dptcd}
+                    type="new"
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="dptnm"
+                    valueField="dptcd"
+                  />
+                )}
+              </td>
+              <th>담당자</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="person"
+                    value={filters.person}
+                    type="new"
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="user_name"
+                    valueField="user_id"
+                  />
+                )}
+              </td>
+              <th>화폐단위</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="amtunit"
+                    value={filters.amtunit}
+                    type="new"
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>견적번호</th>
+              <td>
+                <Input
+                  name="quokey"
+                  type="text"
+                  value={filters.quokey}
+                  className="readonly"
+                />
+              </td>
+              <th>인도조건</th>
+              <td>
+                <Input
+                  name="prcterms"
+                  type="text"
+                  value={filters.prcterms}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>지불조건</th>
+              <td>
+                <Input
+                  name="paymeth"
+                  type="text"
+                  value={filters.paymeth}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>납기조건</th>
+              <td>
+                <Input
+                  name="dlv_method"
+                  type="text"
+                  value={filters.dlv_method}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>선적지</th>
+              <td>
+                <Input
+                  name="portnm"
+                  type="text"
+                  value={filters.portnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>선적방법</th>
+              <td>
+                <Input
+                  name="ship_method"
+                  type="text"
+                  value={filters.ship_method}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>PO번호</th>
+              <td>
+                <Input
+                  name="poregnum"
+                  type="text"
+                  value={filters.poregnum}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>첨부파일</th>
+              <td>
+                <Input
+                  name="files"
+                  type="text"
+                  value={filters.files}
+                  className="readonly"
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onAttachmentsWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+            </tr>
+            <tr>
+              <th>대미환율</th>
+              <td>
+                <Input
+                  name="uschgrat"
+                  type="number"
+                  value={filters.uschgrat}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>원화환율</th>
+              <td>
+                <Input
+                  name="wonchgrat"
+                  type="number"
+                  value={filters.wonchgrat}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>비고</th>
+              <td colSpan={7}>
+                <TextArea
+                  value={filters.remark}
+                  name="remark"
+                  rows={2}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FormBox>
+      </FormBoxWrap>
+      <FormContext.Provider
         value={{
-          orddt,
-          setOrddt,
-          custcd,
-          setCustcd,
-          setChangedRcvcustInfo,
-          setChangedCustInfo,
-          dataState,
-          setDataState,
+          itemInfo,
+          setItemInfo,
         }}
       >
-        <Form
-          onSubmit={handleSubmit}
-          key={formKey}
-          initialValues={{
-            rowstatus: "",
-            ordnum: isCopy === true ? "" : initialVal.ordnum,
-            doexdiv: initialVal.doexdiv,
-            taxdiv: initialVal.taxdiv,
-            location: initialVal.location,
-            orddt: initialVal.orddt, //new Date(),
-            dlvdt: initialVal.dlvdt,
-            custnm: initialVal.custnm,
-            custcd: initialVal.custcd,
-            dptcd: initialVal.dptcd,
-            person: initialVal.person,
-            ordsts: initialVal.ordsts,
-            ordtype: initialVal.ordtype,
-            rcvcustnm: initialVal.rcvcustnm,
-            rcvcustcd: initialVal.rcvcustcd,
-            project: initialVal.project,
-            amtunit: initialVal.amtunit, //"KRW",
-            wonchgrat: initialVal.wonchgrat, //0,
-            uschgrat: initialVal.uschgrat, //0,
-            quokey: initialVal.quokey,
-            prcterms: initialVal.prcterms,
-            paymeth: initialVal.paymeth,
-            dlv_method: initialVal.dlv_method,
-            portnm: initialVal.portnm,
-            ship_method: initialVal.ship_method,
-            poregnum: initialVal.poregnum,
-            attdatnum: initialVal.attdatnum,
-            files: initialVal.files,
-            remark: initialVal.remark,
-            baseamt: initialVal.baseamt,
-            orderDetails: detailDataResult.data, //detailDataResult.data,
-          }}
-          render={(formRenderProps: FormRenderProps) => (
-            <FormElement horizontal={true}>
-              <fieldset className={"k-form-fieldset"}>
-                <button
-                  id="valueChanged"
-                  style={{ display: "none" }}
-                  onClick={(e) => {
-                    e.preventDefault(); // Changing desired field value
-                    formRenderProps.onChange("valueChanged", {
-                      value: "1",
-                    });
-                  }}
-                ></button>
-                <button
-                  id="custcdChanged"
-                  style={{ display: "none" }}
-                  onClick={(e) => {
-                    e.preventDefault();
-
-                    formRenderProps.onChange("custcd", {
-                      value: changedCustInfo.custcd,
-                    });
-                    formRenderProps.onChange("custnm", {
-                      value: changedCustInfo.custnm,
-                    });
-                  }}
-                ></button>
-                <button
-                  id="rcvcustcdChanged"
-                  style={{ display: "none" }}
-                  onClick={(e) => {
-                    e.preventDefault();
-
-                    formRenderProps.onChange("rcvcustcd", {
-                      value: changedRcvcustInfo.rcvcustcd,
-                    });
-                    formRenderProps.onChange("rcvcustnm", {
-                      value: changedRcvcustInfo.rcvcustnm,
-                    });
-                  }}
-                ></button>
-                <button
-                  id="attachmentChanged"
-                  style={{ display: "none" }}
-                  onClick={(e) => {
-                    e.preventDefault();
-
-                    formRenderProps.onChange("files", {
-                      value: changedAttachmentInfo.files,
-                    });
-                    formRenderProps.onChange("attdatnum", {
-                      value: changedAttachmentInfo.attdatnum,
-                    });
-                  }}
-                ></button>
-                <FieldWrap fieldWidth="25%">
-                  <Field
-                    name={"ordnum"}
-                    label={"수주번호"}
-                    component={FormReadOnly}
-                    className="readonly"
-                  />
-                  {customOptionData !== null && (
-                    <Field
-                      name={"doexdiv"}
-                      label={"내수구분"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "doexdiv"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "doexdiv"
-                        ).bizComponentItems
-                      }
-                      className="required"
-                    />
-                  )}
-                  {customOptionData !== null && (
-                    <Field
-                      name={"taxdiv"}
-                      label={"과세구분"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "taxdiv"
-                        ).query
-                      }
-                      columns={ 
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "taxdiv"
-                        ).bizComponentItems
-                      }
-                      className="required"
-                      onChange={(e) => {
-                        const data = formRenderProps.valueGetter("orderDetails").map((item: any) => ({
-                          ...item,
-                          rowstatus: item.rowstatus == "N" ? "N" : "U",
-                          taxdiv: e.value.subcode,
-                          taxamt: e.value.sub_code == "A" ? Math.round(item.wonamt)/10 : 0,
-                          totamt: item.wonamt + (e.value.sub_code == "A" ? Math.round(item.wonamt)/10 : 0),
-                        }))
-
-                        formRenderProps.onChange("orderDetails", {
-                          value: data,
-                        });
-                      }}
-                    />
-                  )}
-                  {customOptionData !== null && (
-                    <Field
-                      name={"location"}
-                      label={"사업장"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "location"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "location"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-                </FieldWrap>
-
-                <FieldWrap fieldWidth="25%">
-                  <Field
-                    label={"수주일자"}
-                    name={"orddt"}
-                    component={FormDatePicker}
-                    className="required"
-                    onChange={onChangeOrddt}
-                  />
-                  <Field
-                    label={"납기일자"}
-                    name={"dlvdt"}
-                    component={FormDatePicker}
-                    className="required"
-                  />
-                  {/* <Field
-                  label={"수주상태"}
-                  name={"ordsts"}
-                  component={FormDropDownList}
-                  queryStr={ordstsQuery}
-                  className="required"
-                /> */}
-
-                  {customOptionData !== null && (
-                    <Field
-                      name={"ordsts"}
-                      label={"수주상태"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "ordsts"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "ordsts"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-
-                  {customOptionData !== null && (
-                    <Field
-                      name={"ordtype"}
-                      label={"수주형태"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "ordtype"
-                        ).query
-                      }
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "ordtype"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-                </FieldWrap>
-
-                <FieldWrap fieldWidth="25%">
-                  <Field
-                    label={"업체코드"}
-                    name={"custcd"}
-                    component={FormCustInput}
-                    validator={validator}
-                    className="required"
-                  />
-                  <ButtonInFieldWrap>
-                    <ButtonInField>
-                      <Button
-                        type={"button"}
-                        onClick={onCustWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInField>
-                  </ButtonInFieldWrap>
-                  <Field
-                    label={"업체명"}
-                    name={"custnm"}
-                    component={FormInput}
-                    validator={validator}
-                    className="required"
-                  />
-                  <Field
-                    name={"rcvcustcd"}
-                    component={FormCustInput}
-                    label={"인수처코드"}
-                  />
-                  <ButtonInFieldWrap>
-                    <ButtonInField>
-                      <Button
-                        type={"button"}
-                        onClick={onRcvcustWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInField>
-                  </ButtonInFieldWrap>
-                  <Field
-                    name={"rcvcustnm"}
-                    component={FormInput}
-                    label={"인수처"}
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="25%">
-                  <Field
-                    name={"project"}
-                    component={FormInput}
-                    label={"프로젝트"}
-                  />
-
-                  {customOptionData !== null && (
-                    <Field
-                      name={"dptcd"}
-                      label={"부서"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "dptcd"
-                        ).query
-                      }
-                      textField={"dptnm"}
-                      valueField={"dptcd"}
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "dptcd"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-
-                  {customOptionData !== null && (
-                    <Field
-                      name={"person"}
-                      label={"담당자"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "person"
-                        ).query
-                      }
-                      valueField={"user_id"}
-                      textField={"user_name"}
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "person"
-                        ).bizComponentItems
-                      }
-                    />
-                  )}
-                  {customOptionData !== null && (
-                    <Field
-                      name={"amtunit"}
-                      label={"화폐단위"}
-                      component={FormComboBox}
-                      queryStr={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "amtunit"
-                        ).query
-                      }
-                      textField={"code_name"}
-                      columns={
-                        customOptionData.menuCustomDefaultOptions.new.find(
-                          (item: any) => item.id === "amtunit"
-                        ).bizComponentItems
-                      }
-                      onChange={(e) => {
-                        const data = formRenderProps.valueGetter("orderDetails").map((item: any) => ({
-                          ...item,
-                          rowstatus: item.rowstatus == "N" ? "N" : "U",
-                          dlramt: e.value.sub_code == "AUD" ? item.amt : (item.amt * formRenderProps.valueGetter("uschgrat") / formRenderProps.valueGetter("baseamt")),
-                          wonamt: e.value.sub_code == "KRW" ? item.amt : (item.amt * formRenderProps.valueGetter("wonchgrat") / formRenderProps.valueGetter("baseamt")),
-                          taxamt: formRenderProps.valueGetter("taxdiv") == "A" ? (e.value.sub_code == "KRW" ? item.amt : Math.round(item.amt * formRenderProps.valueGetter("wonchgrat") / formRenderProps.valueGetter("baseamt")))/10 : 0,
-                          totamt: (e.value.sub_code == "KRW" ? item.amt : (item.amt * formRenderProps.valueGetter("wonchgrat") / formRenderProps.valueGetter("baseamt"))) + (formRenderProps.valueGetter("taxdiv") == "A" ? (e.value.sub_code == "KRW" ? item.amt : Math.round(item.amt * formRenderProps.valueGetter("wonchgrat") / formRenderProps.valueGetter("baseamt"))) /10 : 0),
-                        }))
- 
-                        formRenderProps.onChange("orderDetails", {
-                          value: data,
-                        });
-                      }}
-                    />
-                  )}
-                  {/* <Field
-                  name={"wonchgrat"}
-                  component={FormInput}
-                  label={"원화환율"}
-                />
-                <Field
-                  name={"uschgrat"}
-                  component={FormInput}
-                  label={"대미환율"}
-                /> */}
-                </FieldWrap>
-                <FieldWrap fieldWidth="25%">
-                  <Field
-                    name={"quokey"}
-                    component={FormReadOnly}
-                    label={"견적번호"}
-                  />
-                  <Field
-                    name={"prcterms"}
-                    component={FormInput}
-                    label={"인도조건"}
-                  />
-                  <Field
-                    name={"paymeth"}
-                    component={FormInput}
-                    label={"지불조건"}
-                  />
-                  <Field
-                    name={"dlv_method"}
-                    component={FormInput}
-                    label={"납기조건"}
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="25%">
-                  <Field
-                    name={"portnm"}
-                    component={FormInput}
-                    label={"선적지"}
-                  />
-                  <Field
-                    name={"ship_method"}
-                    component={FormInput}
-                    label={"선적방법"}
-                  />
-                  <Field
-                    name={"poregnum"}
-                    component={FormInput}
-                    label={"PO번호"}
-                  />
-                  <Field
-                    name={"files"}
-                    component={FormReadOnly}
-                    label={"첨부파일"}
-                  />
-                  <ButtonInFieldWrap>
-                    <ButtonInField>
-                      <Button
-                        type={"button"}
-                        onClick={onAttachmentsWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInField>
-                  </ButtonInFieldWrap>
-                </FieldWrap>
-                <FieldWrap fieldWidth="25%">
-                  <Field
-                    name={"uschgrat"}
-                    component={FormNumericTextBox}
-                    label={"대미환율"}
-                    onChange={(e) => {
-                      const data = formRenderProps.valueGetter("orderDetails").map((item: any) => ({
-                        ...item,
-                        rowstatus: item.rowstatus == "N" ? "N" : "U",
-                        dlramt: formRenderProps.valueGetter("amtunit") == "AUD" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt")),
-                      }))
-                      formRenderProps.onChange("orderDetails", {
-                        value: data,
-                      });
-                    }}
-                  />
-                  <Field
-                    name={"wonchgrat"}
-                    component={FormNumericTextBox}
-                    label={"원화환율"}
-                    onChange={(e) => {
-                      const data = formRenderProps.valueGetter("orderDetails").map((item: any) => ({
-                        ...item,
-                        rowstatus: item.rowstatus == "N" ? "N" : "U",
-                        wonamt: formRenderProps.valueGetter("amtunit") == "KRW" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt")),
-                        taxamt: formRenderProps.valueGetter("taxdiv") == "A" ? Math.round((formRenderProps.valueGetter("amtunit") == "KRW" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt"))))/10 : 0,
-                        totamt: (formRenderProps.valueGetter("amtunit") == "KRW" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt"))) + (formRenderProps.valueGetter("taxdiv") == "A" ? Math.round((formRenderProps.valueGetter("amtunit") == "KRW" ? item.amt : (item.amt * e.value / formRenderProps.valueGetter("baseamt"))))/10 : 0),
-                      }))
-
-                      formRenderProps.onChange("orderDetails", {
-                        value: data,
-                      });
-                    }}
-                  />
-                </FieldWrap>
-                <FieldWrap fieldWidth="100%">
-                  <Field name={"remark"} component={FormTextArea} rows={3} label={"비고"} labelClassName={"formLabel10"} textClassName={"forms"}/>
-                </FieldWrap>
-              </fieldset>
-              <FieldArray
-                name="orderDetails"
-                dataItemKey={FORM_DATA_INDEX}
-                component={FormGrid}
-                validator={arrayLengthValidator}
+        <GridContainer height={`calc(100% - 480px)`}>
+          <GridTitleContainer>
+            <GridTitle>상세정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                themeColor={"primary"}
+                onClick={onItemMultiWndClick}
+                icon="folder-open"
+              >
+                품목 멀티
+              </Button>
+              <Button
+                themeColor={"primary"}
+                onClick={onAddClick}
+                icon="plus"
+                title="행 추가"
               />
-
-              <BottomContainer>
-                <ButtonContainer>
-                  <Button type={"submit"} themeColor={"primary"} icon="save">
-                    저장
-                  </Button>
-                </ButtonContainer>
-              </BottomContainer>
-            </FormElement>
-          )}
-        />
-      </formContext.Provider>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onDeleteClick}
+                icon="minus"
+                title="행 삭제"
+              />
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyClick}
+                icon="copy"
+                title="행 복사"
+              />
+            </ButtonContainer>
+          </GridTitleContainer>
+          <Grid
+            style={{ height: "100%" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                enddt:
+                  workType == "U" && isValidDate(row.enddt)
+                    ? new Date(dateformat(row.enddt))
+                    : new Date(),
+                rowstatus:
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
+            )}
+            onDataStateChange={onMainDataStateChange}
+            {...mainDataState}
+            //선택 subDataState
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange}
+            //스크롤 조회기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender}
+            rowRender={customRowRender}
+            editField={EDIT_FIELD}
+          >
+            <GridColumn
+              field="chk"
+              title=" "
+              width="45px"
+              headerCell={CustomCheckBoxCell2}
+              cell={CheckBoxCell}
+            />
+            <GridColumn field="rowstatus" title=" " width="40px" />
+            <GridColumn
+              field="itemcd"
+              title="품목코드"
+              width="160px"
+              headerCell={RequiredHeader}
+              footerCell={mainTotalFooterCell}
+              cell={ColumnCommandCell}
+              className="required"
+            />
+            <GridColumn
+              field="itemnm"
+              title="품목명"
+              width="180px"
+              headerCell={RequiredHeader}
+              className="required"
+            />
+            <GridColumn field="insiz" title="규격" width="200px" />
+            <GridColumn
+              field="itemacnt"
+              title="품목계정"
+              width="120px"
+              cell={CustomComboBoxCell}
+              headerCell={RequiredHeader}
+              className="required"
+            />
+            <GridColumn
+              field="qty"
+              title="수주량"
+              width="120px"
+              cell={NumberCell}
+              headerCell={RequiredHeader}
+              className="required"
+            />
+            <GridColumn
+              field="qtyunit"
+              title="단위"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn
+              field="unp"
+              title="단가"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="wonamt"
+              title="금액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="taxamt"
+              title="세액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="totamt"
+              title="합계금액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn field="remark" title="비고" width="120px" />
+            <GridColumn field="purcustnm" title="발주처" width="120px" />
+            <GridColumn
+              field="out_qty"
+              title="출하수량"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="sale_qty"
+              title="판매수량"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="finyn"
+              title="완료여부"
+              width="120px"
+              cell={CheckBoxReadOnlyCell}
+            />
+            <GridColumn
+              field="bf_qty"
+              title="LOT수량"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn field="lotnum" title="LOT NO" width="120px" />
+          </Grid>
+          <BottomContainer>
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={handleSubmit}>
+                저장
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
+        </GridContainer>
+      </FormContext.Provider>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
-          workType={custType} //신규 : N, 수정 : U
+          workType={""} //신규 : N, 수정 : U
           setData={setCustData}
+        />
+      )}
+      {custWindowVisible2 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible2}
+          workType={""} //신규 : N, 수정 : U
+          setData={setCustData2}
         />
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
-          para={
-            initialVal.attdatnum
-              ? initialVal.attdatnum
-              : changedAttachmentInfo.attdatnum
-          }
+          para={filters.attdatnum}
+        />
+      )}
+      {itemMultiWindowVisible && (
+        <ItemsMultiWindow
+          setVisible={setItemMultiWindowVisible}
+          setData={addItemData}
         />
       )}
     </Window>

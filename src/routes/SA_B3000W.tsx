@@ -231,10 +231,6 @@ const SA_B3000W: React.FC = () => {
   };
 
   useEffect(() => {
-    // if (tabSelected === 3) {
-    //   const firstRowData = gridDataResult.data[0];
-    //   fetchGrid("CHART", firstRowData.itemcd);
-    // }
     if (targetRowIndex !== null && gridRef.current) {
       gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
       targetRowIndex = null;
@@ -474,6 +470,7 @@ const SA_B3000W: React.FC = () => {
 
     setSelectedState(newSelectedState);
   };
+
   const onMonthGridSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -1252,7 +1249,7 @@ const SA_B3000W: React.FC = () => {
                                 footerCell={gridSumQtyFooterCell}
                                 width={setWidth(
                                   "grdQuarterList",
-                                  item.width / 2
+                                  item.width / 8
                                 )}
                               />
 
@@ -1263,7 +1260,7 @@ const SA_B3000W: React.FC = () => {
                                 footerCell={gridSumQtyFooterCell}
                                 width={setWidth(
                                   "grdQuarterList",
-                                  item.width / 2
+                                  item.width / 8
                                 )}
                               />
                             </GridColumn>
@@ -1275,7 +1272,7 @@ const SA_B3000W: React.FC = () => {
                                 footerCell={gridSumQtyFooterCell}
                                 width={setWidth(
                                   "grdQuarterList",
-                                  item.width / 2
+                                  item.width / 8
                                 )}
                               />
 
@@ -1286,7 +1283,7 @@ const SA_B3000W: React.FC = () => {
                                 footerCell={gridSumQtyFooterCell}
                                 width={setWidth(
                                   "grdQuarterList",
-                                  item.width / 2
+                                  item.width / 8
                                 )}
                               />
                             </GridColumn>
@@ -1298,7 +1295,7 @@ const SA_B3000W: React.FC = () => {
                                 footerCell={gridSumQtyFooterCell}
                                 width={setWidth(
                                   "grdQuarterList",
-                                  item.width / 2
+                                  item.width / 8
                                 )}
                               />
 
@@ -1309,7 +1306,7 @@ const SA_B3000W: React.FC = () => {
                                 footerCell={gridSumQtyFooterCell}
                                 width={setWidth(
                                   "grdQuarterList",
-                                  item.width / 2
+                                  item.width / 8
                                 )}
                               />
                             </GridColumn>
@@ -1321,7 +1318,7 @@ const SA_B3000W: React.FC = () => {
                                 footerCell={gridSumQtyFooterCell}
                                 width={setWidth(
                                   "grdQuarterList",
-                                  item.width / 2
+                                  item.width / 8
                                 )}
                               />
 
@@ -1332,7 +1329,7 @@ const SA_B3000W: React.FC = () => {
                                 footerCell={gridSumQtyFooterCell}
                                 width={setWidth(
                                   "grdQuarterList",
-                                  item.width / 2
+                                  item.width / 8
                                 )}
                               />
                             </GridColumn>
@@ -1344,7 +1341,7 @@ const SA_B3000W: React.FC = () => {
                                 item.caption === "전기" ? "jtotal" : "dtotal"
                               }
                               footerCell={gridSumQtyFooterCell}
-                              width={setWidth("grdQuarterList", item.width / 2)}
+                              width={setWidth("grdQuarterList", item.width / 4)}
                             />
                           </GridColumn>
                         ) : (

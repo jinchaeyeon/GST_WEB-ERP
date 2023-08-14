@@ -925,13 +925,13 @@ const SY_A0025W: React.FC = () => {
             setFilters2((prev) => ({
               ...prev,
               find_row_value: findRow.number_prefix,
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             }));
           } else {
             setFilters2((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             }));
           }
           if (data.isSuccess == true) {
@@ -943,7 +943,7 @@ const SY_A0025W: React.FC = () => {
           }
         } else if (data.isSuccess == true && infomation.worktype == "D") {
           const isLastDataDeleted =
-            mainDataResult.data.length === 1 && filters.pgNum > 1;
+            mainDataResult.data.length === 1 && filters.pgNum > 0;
           const findRowIndex = mainDataResult.data.findIndex(
             (row: any) =>
               row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -959,7 +959,7 @@ const SY_A0025W: React.FC = () => {
             setFilters((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
               isSearch: true,
             }));
           } else {
@@ -970,9 +970,9 @@ const SY_A0025W: React.FC = () => {
                 mainDataResult.data.length == 1
                   ? ""
                   : mainDataResult.data[
-                      findRowIndex == 0 ? 1 : findRowIndex - 1
+                      findRowIndex < 1 ? 1 : findRowIndex - 1
                     ].numbering_id,
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+                    pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
               isSearch: true,
             }));
           }

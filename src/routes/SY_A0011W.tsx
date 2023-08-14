@@ -813,7 +813,7 @@ const Page: React.FC = () => {
 
     if (data.isSuccess === true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -828,7 +828,7 @@ const Page: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
-          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
           isSearch: true,
         }));
       } else {
@@ -836,7 +836,7 @@ const Page: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: 
-            mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
+            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
               .user_group_id,
           pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,

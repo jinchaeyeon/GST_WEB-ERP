@@ -52,7 +52,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../store/atoms";
-import { gridList } from "../store/columns/SA_B2205W_C";
+import { gridList } from "../store/columns/SA_B2200W_C";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const dateField = ["orddt", "dlvdt"];
@@ -366,7 +366,7 @@ const SA_B2200: React.FC = () => {
       targetRowIndex = null;
     }
   }, [mainDataResult]);
-  
+
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
