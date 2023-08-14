@@ -80,6 +80,18 @@ const numberField: string[] = [
   "qty10",
   "qty11",
   "qty12",
+  "amt01",
+  "amt02",
+  "amt03",
+  "amt04",
+  "amt05",
+  "amt06",
+  "amt07",
+  "amt08",
+  "amt09",
+  "amt10",
+  "amt11",
+  "amt12",
 ];
 const dateField = ["recdt", "time"];
 const DATA_ITEM_KEY = "num";
