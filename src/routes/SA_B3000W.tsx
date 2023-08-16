@@ -105,7 +105,7 @@ const SA_B3000W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-  
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -588,28 +588,28 @@ const SA_B3000W: React.FC = () => {
 
   const search = () => {
     try {
-    if (
-      convertDateToStr(filters.yyyy).substr(0, 4) == "" ||
-      convertDateToStr(filters.yyyy).substr(0, 4) == null ||
-      convertDateToStr(filters.yyyy).substr(0, 4) == undefined
-    ) {
-      throw findMessage(messagesData, "SA_B3000W_001");
-    } else {
-      resetGrid();
-      setPage(initialPageState); // 페이지 초기화
-      setPage2(initialPageState); // 페이지 초기화
-      setPage3(initialPageState); // 페이지 초기화
-      setPage4(initialPageState); // 페이지 초기화
-      setFilters((prev: any) => ({
-        ...prev,
-        pgNum: 1,
-        find_row_value: "",
-        isSearch: true,
-      }));
+      if (
+        convertDateToStr(filters.yyyy).substr(0, 4) == "" ||
+        convertDateToStr(filters.yyyy).substr(0, 4) == null ||
+        convertDateToStr(filters.yyyy).substr(0, 4) == undefined
+      ) {
+        throw findMessage(messagesData, "SA_B3000W_001");
+      } else {
+        resetGrid();
+        setPage(initialPageState); // 페이지 초기화
+        setPage2(initialPageState); // 페이지 초기화
+        setPage3(initialPageState); // 페이지 초기화
+        setPage4(initialPageState); // 페이지 초기화
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
     }
-  } catch (e) {
-    alert(e);
-  }
   };
 
   const minGridWidth = React.useRef<number>(0);
@@ -747,7 +747,7 @@ const SA_B3000W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
     if (grid2.current && Name == "grdMonthList") {
       let width = applyMinWidth2
         ? minWidth
