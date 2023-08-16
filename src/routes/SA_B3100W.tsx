@@ -750,7 +750,7 @@ const SA_B3100W: React.FC = () => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
-    if (grid.current) {
+    if (grid.current && Name == "grdAllList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -758,7 +758,8 @@ const SA_B3100W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else if (grid2.current) {
+    } 
+    if (grid2.current && Name == "grdMonthList") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +
@@ -766,7 +767,8 @@ const SA_B3100W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else if (grid3.current) {
+    }
+    if (grid3.current && Name == "grdQuarterList") {
       let width = applyMinWidth3
         ? minWidth
         : minWidth +
@@ -774,7 +776,8 @@ const SA_B3100W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else if (grid4.current) {
+    }
+    if (grid4.current && Name == "grd5YearList") {
       let width = applyMinWidth4
         ? minWidth
         : minWidth +

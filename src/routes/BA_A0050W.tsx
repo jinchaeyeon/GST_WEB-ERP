@@ -2119,7 +2119,7 @@ const BA_A0050: React.FC = () => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
-    if (Name == "grdList") {
+    if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -2127,7 +2127,8 @@ const BA_A0050: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else if (Name == "grdList2") {
+    } 
+    if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +
@@ -2135,7 +2136,8 @@ const BA_A0050: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else {
+    } 
+    if (grid3.current && Name == "grdList3") {
       let width = applyMinWidth3
         ? minWidth
         : minWidth +
