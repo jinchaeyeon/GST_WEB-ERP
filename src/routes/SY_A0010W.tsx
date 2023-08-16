@@ -1078,7 +1078,7 @@ const Page: React.FC = () => {
       }
 
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
       const findRowIndex = rowsOfDataResult(mainDataResult).findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -1095,7 +1095,7 @@ const Page: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
-          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
           isSearch: true,
         }));
       } else {
@@ -1104,9 +1104,9 @@ const Page: React.FC = () => {
           ...prev,
           find_row_value:
             rowsOfDataResult(mainDataResult)[
-              findRowIndex == 0 ? 1 : findRowIndex - 1
+              findRowIndex < 1 ? 1 : findRowIndex - 1
             ].group_code,
-          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
           isSearch: true,
         }));
       }
@@ -1309,7 +1309,7 @@ const Page: React.FC = () => {
       </FilterContainer>
 
       <GridContainerWrap>
-        <GridContainer width={"30%"}>
+        <GridContainer width={`30%`}>
           <ExcelExport
             data={rowsOfDataResult(mainDataResult)}
             ref={(exporter) => {
@@ -1341,7 +1341,7 @@ const Page: React.FC = () => {
               )}
             </GridTitleContainer>
             <Grid
-              style={{ height: "77vh" }}
+              style={{ height: "71.5vh" }}
               data={mainDataResult}
               {...mainDataState}
               onDataStateChange={onMainDataStateChange}
@@ -1401,15 +1401,12 @@ const Page: React.FC = () => {
             </Grid>
           </ExcelExport>
         </GridContainer>
-
-        <GridContainer
-          width={`calc(70% -${GAP}px)`}
-        >
+        <GridContainer width={`calc(70% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "77vh" }}
+            style={{ height: "75vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,

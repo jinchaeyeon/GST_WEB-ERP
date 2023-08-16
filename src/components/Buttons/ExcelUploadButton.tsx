@@ -5,6 +5,7 @@ import * as xlsx from "xlsx";
 
 interface IStyle {
   marginLeft?: string;
+  marginTop? :string;
 }
 interface IExcelUploadButton {
   saveExcel: (para: any[]) => void;

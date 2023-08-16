@@ -96,7 +96,7 @@ const SY_A0025W: React.FC = () => {
 
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 768;
+  let isMobile = deviceWidth <= 850;
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -925,13 +925,13 @@ const SY_A0025W: React.FC = () => {
             setFilters2((prev) => ({
               ...prev,
               find_row_value: findRow.number_prefix,
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             }));
           } else {
             setFilters2((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             }));
           }
           if (data.isSuccess == true) {
@@ -943,7 +943,7 @@ const SY_A0025W: React.FC = () => {
           }
         } else if (data.isSuccess == true && infomation.worktype == "D") {
           const isLastDataDeleted =
-            mainDataResult.data.length === 1 && filters.pgNum > 1;
+            mainDataResult.data.length === 1 && filters.pgNum > 0;
           const findRowIndex = mainDataResult.data.findIndex(
             (row: any) =>
               row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -959,7 +959,7 @@ const SY_A0025W: React.FC = () => {
             setFilters((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
               isSearch: true,
             }));
           } else {
@@ -970,9 +970,9 @@ const SY_A0025W: React.FC = () => {
                 mainDataResult.data.length == 1
                   ? ""
                   : mainDataResult.data[
-                      findRowIndex == 0 ? 1 : findRowIndex - 1
+                      findRowIndex < 1 ? 1 : findRowIndex - 1
                     ].numbering_id,
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+                    pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
               isSearch: true,
             }));
           }
@@ -1184,7 +1184,7 @@ const SY_A0025W: React.FC = () => {
       minWidth = 0;
     }
 
-    if (Name == "grdList") {
+    if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -1192,7 +1192,8 @@ const SY_A0025W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else {
+    } 
+    if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +
@@ -1250,7 +1251,7 @@ const SY_A0025W: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "78vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1413,7 +1414,7 @@ const SY_A0025W: React.FC = () => {
             <FormBoxWrap
               border={true}
               style={{
-                minHeight: "56.5vh",
+                minHeight: "51.8vh",
                 display: isMobile == true ? "block" : "flex",
                 alignItems: "center",
               }}
@@ -1655,7 +1656,7 @@ const SY_A0025W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "80vh" }}
+              style={{ height: "74.5vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

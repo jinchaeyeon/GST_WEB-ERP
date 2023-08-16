@@ -203,7 +203,7 @@ const KendoWindow = ({
     []
   );
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 768;
+  let isMobile = deviceWidth <= 850;
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -813,7 +813,7 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       // 초기화
       const isLastDataDeleted =
-        detailDataResult.data.length == 0 && filters.pgNum > 1;
+        detailDataResult.data.length == 0 && filters.pgNum > 0;
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -1135,7 +1135,7 @@ const KendoWindow = ({
     }
 
     const isLastDataDeleted =
-      detailDataResult.data.length == 0 && filters.pgNum > 1;
+      detailDataResult.data.length == 0 && filters.pgNum > 0;
 
     if (isLastDataDeleted) {
       setPage({
@@ -1466,7 +1466,7 @@ const KendoWindow = ({
             ref_key={initialVal.group_code}
             form_id={pathname}
             table_id={"comCodeMaster"}
-            style={{ height: "28vh" }}
+            style={{ height: "25vh" }}
           />
         </GridContainer>
       </GridContainerWrap>
@@ -1523,31 +1523,25 @@ const KendoWindow = ({
         >
           <GridToolbar>
             <Button
-              type={"button"}
               themeColor={"primary"}
               onClick={onAddClick}
               icon="add"
-            >
-              추가
-            </Button>
+              title="행 추가"
+            />
             <Button
-              type={"button"}
               themeColor={"primary"}
               fillMode="outline"
               onClick={onDeleteClick}
               icon="minus"
-            >
-              삭제
-            </Button>
+              title="행 삭제"
+            />
             <Button
-              type={"button"}
               themeColor={"primary"}
               fillMode="outline"
               onClick={onCopyClick}
               icon="copy"
-            >
-              복사
-            </Button>
+              title="행 복사"
+            />
           </GridToolbar>
           <GridColumn
             field="chk"

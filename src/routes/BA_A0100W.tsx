@@ -168,7 +168,7 @@ const BA_A0100W: React.FC = () => {
   }>({});
 
   const [detailWindowVisible, setDetailWindowVisible] =
-  useState<boolean>(false);
+    useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -409,10 +409,7 @@ const BA_A0100W: React.FC = () => {
         const selectedRow =
           filters2.find_row_value == ""
             ? rows[0]
-            : rows.find(
-                (row: any) =>
-                  row.seq == filters2.find_row_value
-              );
+            : rows.find((row: any) => row.seq == filters2.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedsubDataState({ [selectedRow[SUB_DATA_ITEM_KEY]]: true });
@@ -877,7 +874,7 @@ const BA_A0100W: React.FC = () => {
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
-    for(var i =0; i< number; i++) {
+    for (var i = 0; i < number; i++) {
       const newDataItem = {
         [SUB_DATA_ITEM_KEY]: ++temp2,
         cageqty: 0,
@@ -887,7 +884,7 @@ const BA_A0100W: React.FC = () => {
         use_yn: "Y",
         rowstatus: "N",
       };
-  
+
       setSubDataResult((prev) => {
         return {
           data: [newDataItem, ...prev.data],
@@ -901,7 +898,7 @@ const BA_A0100W: React.FC = () => {
       }));
       setSelectedsubDataState({ [newDataItem[SUB_DATA_ITEM_KEY]]: true });
     }
-  }
+  };
   const [paraData, setParaData] = useState({
     workType: "LIST_N",
     user_id: userId,
@@ -1191,7 +1188,7 @@ const BA_A0100W: React.FC = () => {
     if (data.isSuccess === true) {
       if (paraData.workType == "LIST_N") {
         const isLastDataDeleted =
-          mainDataResult.data.length == 0 && filters.pgNum > 1;
+          mainDataResult.data.length == 0 && filters.pgNum > 0;
 
         if (isLastDataDeleted) {
           setPage({
@@ -1204,13 +1201,17 @@ const BA_A0100W: React.FC = () => {
           setFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
             isSearch: true,
           }));
         } else {
           setFilters((prev: any) => ({
             ...prev,
-            find_row_value: (data.returnString).split("|")[0],
+            find_row_value: data.returnString.split("|")[0],
             pgNum: prev.pgNum,
             isSearch: true,
           }));
@@ -1230,13 +1231,17 @@ const BA_A0100W: React.FC = () => {
           setFilters2((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
             isSearch: true,
           }));
         } else {
           setFilters2((prev: any) => ({
             ...prev,
-            find_row_value: (data.returnString).split("|")[1],
+            find_row_value: data.returnString.split("|")[1],
             pgNum: prev.pgNum,
             isSearch: true,
           }));
@@ -1380,8 +1385,8 @@ const BA_A0100W: React.FC = () => {
             ? (minGridWidth2.current += item.width)
             : minGridWidth2.current
       );
-      minGridWidth.current+=70
-      minGridWidth2.current+=20
+      minGridWidth.current += 70;
+      minGridWidth2.current += 20;
       setGridCurrent(grid.current.offsetWidth);
       setGridCurrent2(grid2.current.offsetWidth);
       setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
@@ -1396,10 +1401,7 @@ const BA_A0100W: React.FC = () => {
       setGridCurrent(grid.current.offsetWidth);
       setApplyMinWidth(false);
     }
-    if (
-      grid2.current.offsetWidth < minGridWidth2.current &&
-      !applyMinWidth2
-    ) {
+    if (grid2.current.offsetWidth < minGridWidth2.current && !applyMinWidth2) {
       setApplyMinWidth2(true);
     } else if (grid2.current.offsetWidth > minGridWidth2.current) {
       setGridCurrent2(grid2.current.offsetWidth);
@@ -1412,7 +1414,7 @@ const BA_A0100W: React.FC = () => {
       minWidth = 0;
     }
 
-    if (Name == "grdList") {
+    if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -1420,11 +1422,12 @@ const BA_A0100W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else {
+    }
+    if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +
-          (gridCurrent2 - (minGridWidth2.current+50)) /
+          (gridCurrent2 - (minGridWidth2.current + 50)) /
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
@@ -1530,7 +1533,7 @@ const BA_A0100W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "80vh" }}
+              style={{ height: "75vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1647,7 +1650,7 @@ const BA_A0100W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "75vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

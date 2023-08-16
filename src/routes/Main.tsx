@@ -56,6 +56,8 @@ const Main: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
 
   useEffect(() => {
     if (sessionUserId === "") fetchSessionItem();
@@ -627,7 +629,7 @@ const Main: React.FC = () => {
             <WeekView />
           </Scheduler>
         </GridContainer>
-        <GridContainerWrap style={{width: `calc(35% - ${GAP}px)`}}flexDirection="column">
+        <GridContainerWrap style={{width: isMobile ? "100%" : `calc(35% - ${GAP}px)`}} flexDirection="column">
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>공지사항</GridTitle>

@@ -152,7 +152,8 @@ const BA_A0041W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -1355,7 +1356,7 @@ const BA_A0041W: React.FC = () => {
     if (data.isSuccess === true) {
       if (paraData.workType == "N") {
         const isLastDataDeleted =
-          mainDataResult.data.length == 0 && filters.pgNum > 1;
+          mainDataResult.data.length == 0 && filters.pgNum > 0;
 
         if (isLastDataDeleted) {
           setPage({
@@ -1368,7 +1369,7 @@ const BA_A0041W: React.FC = () => {
           setFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             isSearch: true,
           }));
         } else {
@@ -1383,7 +1384,7 @@ const BA_A0041W: React.FC = () => {
         const chkdata = mainDataResult.data.filter((item: any) => {
           return item.chk == false;
         });
-        const isLastDataDeleted = chkdata.length == 0 && filters.pgNum > 1;
+        const isLastDataDeleted = chkdata.length == 0 && filters.pgNum > 0;
 
         if (isLastDataDeleted) {
           setPage({
@@ -1396,7 +1397,7 @@ const BA_A0041W: React.FC = () => {
           setFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             isSearch: true,
           }));
         } else {
@@ -1711,10 +1712,10 @@ const BA_A0041W: React.FC = () => {
       customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
         item.width !== undefined
           ? (minGridWidth.current += item.width)
-          : minGridWidth.current 
+          : minGridWidth.current
       );
-      minGridWidth.current += 120
-      
+      minGridWidth.current += 120;
+
       setGridCurrent(grid.current.offsetWidth);
       setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
     }
@@ -1897,7 +1898,7 @@ const BA_A0041W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer width="89.7vw">
+      <GridContainer width={`100%`}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -1905,8 +1906,8 @@ const BA_A0041W: React.FC = () => {
           }}
         >
           <GridTitleContainer>
-            <GridTitle>
-              요약정보
+            <GridTitle>요약정보</GridTitle>
+            <ButtonContainer>
               {permissions && (
                 <ExcelUploadButtons
                   saveExcel={() => saveExcel}
@@ -1920,12 +1921,9 @@ const BA_A0041W: React.FC = () => {
                 icon="file"
                 fillMode="outline"
                 themeColor={"primary"}
-                style={{ marginLeft: "10px" }}
               >
                 엑셀양식
               </Button>
-            </GridTitle>
-            <ButtonContainer>
               <Button
                 onClick={onDeleteClick2}
                 fillMode="outline"
@@ -1957,7 +1955,7 @@ const BA_A0041W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "68vh" }}
+            style={{ height: "62vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

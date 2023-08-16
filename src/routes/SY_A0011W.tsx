@@ -813,7 +813,7 @@ const Page: React.FC = () => {
 
     if (data.isSuccess === true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -828,7 +828,7 @@ const Page: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
-          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
           isSearch: true,
         }));
       } else {
@@ -836,7 +836,7 @@ const Page: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: 
-            mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
+            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
               .user_group_id,
           pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,
@@ -1426,7 +1426,8 @@ const Page: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>사용자그룹 정보</GridTitle>
-              {permissions && (
+            </GridTitleContainer>
+            {permissions && (
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
@@ -1447,9 +1448,8 @@ const Page: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               )}
-            </GridTitleContainer>
             <Grid
-              style={{ height: "82vh" }}
+              style={{ height: "74.5vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -1535,7 +1535,7 @@ const Page: React.FC = () => {
             </GridTitleContainer>
 
             <TreeList
-              style={{ height: "82vh", overflow: "auto" }}
+              style={{ height: "74.5vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1582,7 +1582,7 @@ const Page: React.FC = () => {
               <GridTitle>[참조] 전체 메뉴</GridTitle>
             </GridTitleContainer>
             <TreeList
-              style={{ height: "82vh" }}
+              style={{ height: "78vh" }}
               data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: allMenuDataResult.expanded.includes(
