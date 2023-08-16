@@ -6,9 +6,9 @@ export const gridList: Array<TGrid> = [
       columns: [
         {
           id: "col_yerdt",
-          field: "yerdt",
+          field: "startdate",
           caption: "연차사용일",
-          width: 150,
+          width: 150,        
         },
         {
           id: "col_cnt",
@@ -26,19 +26,7 @@ export const gridList: Array<TGrid> = [
           field: "yyyymm",
           caption: "기준년도",
           width: 150,
-        },
-        {
-          id: "col_prsnnum",
-          field: "prsnnum",
-          caption: "사번",
-          width: 150,
-        },  
-        {
-          id: "col_prsnnm",
-          field: "prsnnm",
-          caption: "사원명",
-          width: 150,
-        },  
+        },      
         {
           id: "col_adjdiv",
           field: "adjdiv",
@@ -69,6 +57,12 @@ export const gridList: Array<TGrid> = [
           caption: "등록일",
           width: 200,
         },  
+        {
+          id: "col_reckey",
+          field: "reckey",
+          caption: "기본키",
+          width: 0,
+        },          
       ]
     },
 ];
