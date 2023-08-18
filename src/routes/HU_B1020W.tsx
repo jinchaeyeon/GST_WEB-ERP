@@ -303,7 +303,6 @@ const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log(totalRowCnt);
 
       if (totalRowCnt > 0)
       setMainDataResult((prev) => {

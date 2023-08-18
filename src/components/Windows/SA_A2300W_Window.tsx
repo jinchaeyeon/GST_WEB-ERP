@@ -1,11 +1,10 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
   GridFooterCellProps,
-  GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
@@ -34,7 +33,6 @@ import { Input } from "@progress/kendo-react-inputs";
 import { Iparameters } from "../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import {
-  chkScrollHandler,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -62,15 +60,44 @@ import {
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import NumberCell from "../Cells/NumberCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
-
+let targetRowIndex: null | number = null;
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void; //data : 선택한 품목 데이터를 전달하는 함수
-  reload: boolean;
+  reload(str: string): void;
+  modal?: boolean;
 };
 let temp = 0;
+
+type TdataArr = {
+  rowstatus: string[];
+  seq2: string[];
+  ordnum: string[];
+  ordseq: string[];
+  portcd: string[];
+  portnm: string[];
+  prcterms: string[];
+  poregnum: string[];
+  itemcd: string[];
+  itemnm: string[];
+  itemacnt: string[];
+  qty: string[];
+  qtyunit: string[];
+  unp: string[];
+  amt: string[];
+  dlramt: string[];
+  wonamt: string[];
+  taxamt: string[];
+  lotnum: string[];
+  remark_s: string[];
+  inrecdt: string[];
+  reqnum: string[];
+  reqseq: string[];
+  serialno: string[];
+  outlot: string[];
+  unitqty: string[];
+};
 type Idata = {
   amt: number;
   amtunit: string;
@@ -121,11 +148,11 @@ let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_BA005,L_BA061", setBizComponentData);
+  UseBizComponent("L_BA015,L_BA061", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "doexdiv" ? "L_BA005" : field === "itemacnt" ? "L_BA061" : "";
+    field === "qtyunit" ? "L_BA015" : field === "itemacnt" ? "L_BA061" : "";
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
@@ -141,13 +168,15 @@ const CopyWindow = ({
   workType,
   data,
   setVisible,
-  setData,
   reload,
+  modal = false,
 }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
@@ -200,27 +229,16 @@ const CopyWindow = ({
   );
 
   //공통코드 리스트 조회 ()
-  const [qtyunitListData, setQtyunitListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  useEffect(() => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
-  }, [reload]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
-      );
       const locationQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
       );
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+
       fetchQuery(locationQueryStr, setLocationListData);
     }
   }, [bizComponentData]);
@@ -250,11 +268,16 @@ const CopyWindow = ({
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -265,9 +288,7 @@ const CopyWindow = ({
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -410,42 +431,44 @@ const CopyWindow = ({
     form_id: "SA_A2300W",
     serviceid: companyCode,
     files: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  const parameters: Iparameters = {
-    procedureName: "P_SA_A2300W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_person": "",
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_recdt": convertDateToStr(filters.recdt),
-      "@p_seq1": filters.seq1,
-      "@p_gubun1": "",
-      "@p_gubun2": "",
-      "@p_doexdiv": "",
-      "@p_itemcd": "",
-      "@p_itemnm": "",
-      "@p_lotnum": "",
-      "@p_remark": "",
-      "@p_ordnum": "",
-      "@p_orglot": "",
-      "@p_reqnum": "",
-      "@p_reckey": filters.recdtfind,
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    const parameters: Iparameters = {
+      procedureName: "P_SA_A2300W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_person": "",
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_recdt": convertDateToStr(filters.recdt),
+        "@p_seq1": filters.seq1,
+        "@p_gubun1": "",
+        "@p_gubun2": "",
+        "@p_doexdiv": "",
+        "@p_itemcd": "",
+        "@p_itemnm": "",
+        "@p_lotnum": "",
+        "@p_remark": "",
+        "@p_ordnum": "",
+        "@p_orglot": "",
+        "@p_reqnum": "",
+        "@p_reckey": filters.recdtfind,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -453,39 +476,45 @@ const CopyWindow = ({
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+      setMainDataResult((prev) => {
         return {
-          ...row,
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-        setIsInitSearch(true);
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   useEffect(() => {
-    if (workType != "N" && isInitSearch === false) {
-      fetchMainGrid();
+    if (filters.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
-  useEffect(() => {
-    if (customOptionData !== null && workType === "U") {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     if (workType === "U" && data != undefined) {
@@ -515,19 +544,17 @@ const CopyWindow = ({
         files: data.files,
         attdatnum: data.attdatnum,
         remark: data.remark,
+        isSearch: true,
+        pgNum: 1,
       }));
     }
   }, []);
-
-  //메인 그리드 데이터 변경 되었을 때
+  let gridRef: any = useRef(null);
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
     }
   }, [mainDataResult]);
 
@@ -539,16 +566,6 @@ const CopyWindow = ({
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -556,11 +573,7 @@ const CopyWindow = ({
   };
 
   const onCopyWndClick = () => {
-    // if(filters.custcd == ""){
-    //   alert("출하처코드를 선택하여 주세요.");
-    // } else {
     setCopyWindowVisible(true);
-    // }
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
@@ -580,46 +593,124 @@ const CopyWindow = ({
   };
 
   const setCopyData = (data: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
-    if (dataItem.length === 0) return false;
-
-    const rows = dataItem.map((row: any) => {
-      mainDataResult.data.map((item) => {
-        if (item.num > temp) {
-          temp = item.num;
-        }
-      });
-      return {
-        ...row,
-        num: ++temp,
-      };
-    });
-
-    try {
-      if (filters.custcd == "" && filters.custnm == "") {
-        setFilters((prev) => ({
-          ...prev,
-          custcd: dataItem[0].custcd != undefined ? dataItem[0].custcd : "",
-          custnm: dataItem[0].custnm != undefined ? dataItem[0].custnm : "",
-        }));
+    mainDataResult.data.map((item) => {
+      if (item[DATA_ITEM_KEY] > temp) {
+        temp = item[DATA_ITEM_KEY];
       }
-      rows.map((item: any) => {
+    });
+
+    data.map(
+      (item: {
+        amt: number;
+        amtunit: string;
+        chk: any;
+        custcd: any;
+        custnm: any;
+        uschgrat: number;
+        unpcalmeth: string;
+        qty: number;
+        unp: number;
+        wonchgrat: number;
+        len: undefined;
+        totwgt: number;
+        insiz: any;
+        itemacnt: any;
+        itemcd: any;
+        itemnm: any;
+        itemno: any;
+        lotnum: any;
+        ordkey: any;
+        ordnum: any;
+        ordseq: any;
+        qtyunit: any;
+        taxamt: any;
+        unitwgt: any;
+        wonamt: any;
+      }) => {
+        const newDataItem = {
+          [DATA_ITEM_KEY]: ++temp,
+          amt: item.amt,
+          amtunit: item.amtunit,
+          chk: item.chk,
+          custcd: item.custcd,
+          custnm: item.custnm,
+          dlramt: Math.round(
+            filters.uschgrat != 0
+              ? (filters.unpcalmeth == "Q" || filters.unpcalmeth == ""
+                  ? item.amtunit == "KRW" || item.amtunit == ""
+                    ? item.qty * item.unp
+                    : item.qty * item.unp * filters.wonchgrat
+                  : filters.unpcalmeth == "F" || filters.unpcalmeth == "L"
+                  ? item.amtunit == "KRW" || item.amtunit == ""
+                    ? (item.len == undefined ? 0 : item.len) * item.unp
+                    : (item.len == undefined ? 0 : item.len) *
+                      item.unp *
+                      filters.wonchgrat
+                  : filters.unpcalmeth == "W"
+                  ? item.amtunit == "KRW" || item.amtunit == ""
+                    ? item.totwgt * item.unp
+                    : item.totwgt * item.unp * filters.wonchgrat
+                  : item.amtunit == "KRW" || item.amtunit == ""
+                  ? item.amt
+                  : item.amt * filters.wonchgrat) * filters.uschgrat
+              : 0
+          ),
+          doexdiv: filters.doexdiv,
+          outtype: filters.outtype,
+          insiz: item.insiz,
+          itemacnt: item.itemacnt,
+          itemcd: item.itemcd,
+          itemnm: item.itemnm,
+          itemno: item.itemno,
+          location: "01",
+          lotnum: item.lotnum,
+          ordkey: item.ordkey,
+          ordnum: item.ordnum,
+          ordseq: item.ordseq,
+          orgdiv: "01",
+          outdt: convertDateToStr(filters.outdt),
+          outkind: filters.outkind,
+          outlot: filters.outlot,
+          pacmeth: filters.pacmeth,
+          person: userId,
+          pgmdiv: "",
+          portnm: filters.portnm,
+          qty: item.qty,
+          qtyunit: item.qtyunit,
+          rcvcustcd: filters.rcvcustcd,
+          rcvcustnm: filters.rcvcustnm,
+          recdt: convertDateToStr(filters.recdt),
+          remark: "",
+          reqnum: filters.reqnum,
+          reqseq: filters.reqseq,
+          seq1: filters.seq1,
+          seq2: filters.seq2,
+          serialno: filters.serialno,
+          shipdt:
+            filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
+          taxamt: item.taxamt,
+          totwgt: item.totwgt,
+          unitqty: 0,
+          unitwgt: item.unitwgt,
+          unp: item.unp,
+          unpcalmeth: item.unpcalmeth == "" ? "Q" : item.unpcalmeth,
+          uschgrat: filters.uschgrat,
+          wgtunit: "",
+          width: 0,
+          wonamt: item.wonamt,
+          wonchgrat: filters.wonchgrat,
+          rowstatus: "N",
+        };
+        setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, item],
+            data: [newDataItem, ...prev.data],
             total: prev.total + 1,
           };
         });
-      });
-    } catch (e) {
-      alert(e);
-    }
+      }
+    );
   };
 
   //그리드 푸터
@@ -627,9 +718,11 @@ const CopyWindow = ({
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -678,21 +771,236 @@ const CopyWindow = ({
         convertDateToStr(filters.outdt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SA_A2300W_004");
-      } else if (
-        convertDateToStr(filters.shipdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.shipdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.shipdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.shipdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A2300W_004");
       } else {
         if (valid == true) {
-          setData(mainDataResult.data, filters, deletedMainRows);
-          deletedMainRows = [];
-          setUnsavedAttadatnums([]);
-          if (workType == "N") {
-            onClose();
-          }
+          const dataItem = mainDataResult.data.filter((item: any) => {
+            return (
+              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              item.rowstatus !== undefined
+            );
+          });
+
+          setParaData((prev) => ({
+            ...prev,
+            workType: workType,
+            amtunit: filters.amtunit,
+            attdatnum: filters.attdatnum,
+            custcd: filters.custcd,
+            custnm: filters.custnm,
+            carno: filters.carno,
+            cargocd: filters.cargocd,
+            trcost: parseInt(filters.trcost),
+            doexdiv: filters.doexdiv,
+            dvnm: filters.dvnm,
+            dvnum: filters.dvnum,
+            finaldes: filters.finaldes,
+            location: "01",
+            orgdiv: "01",
+            outdt:
+              filters.outdt == null
+                ? ""
+                : filters.outdt.length == 8
+                ? filters.outdt
+                : convertDateToStr(filters.outdt),
+            outtype: filters.outtype,
+            person: filters.person,
+            rcvcustcd: filters.rcvcustcd,
+            rcvcustnm: filters.rcvcustnm,
+            recdt:
+              filters.recdt == null
+                ? ""
+                : filters.recdt.length == 8
+                ? filters.recdt
+                : convertDateToStr(filters.recdt),
+            remark: filters.remark,
+            seq1: filters.seq1,
+            shipdt:
+              filters.shipdt == null
+                ? ""
+                : filters.shipdt.length == 8
+                ? filters.shipdt
+                : convertDateToStr(filters.shipdt),
+            wonchgrat: filters.wonchgrat,
+            userid: userId,
+            pc: pc,
+            form_id: "SA_A2300W",
+            serviceid: companyCode,
+            files: filters.files,
+          }));
+          if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+          let dataArr: TdataArr = {
+            rowstatus: [],
+            seq2: [],
+            ordnum: [],
+            ordseq: [],
+            portcd: [],
+            portnm: [],
+            prcterms: [],
+            poregnum: [],
+            itemcd: [],
+            itemnm: [],
+            itemacnt: [],
+            qty: [],
+            qtyunit: [],
+            unp: [],
+            amt: [],
+            dlramt: [],
+            wonamt: [],
+            taxamt: [],
+            lotnum: [],
+            remark_s: [],
+            inrecdt: [],
+            reqnum: [],
+            reqseq: [],
+            serialno: [],
+            outlot: [],
+            unitqty: [],
+          };
+
+          dataItem.forEach((item: any, idx: number) => {
+            const {
+              amt = "",
+              itemacnt = "",
+              itemcd = "",
+              itemnm = "",
+              lotnum = "",
+              ordnum = "",
+              ordseq = "",
+              poregnum = "",
+              rowstatus = "",
+              seq2 = "",
+              taxamt = "",
+              unp = "",
+              qty = "",
+              qtyunit = "",
+              wonamt = "",
+              dlramt = "",
+              unitqty = "",
+              reqseq = "",
+              remark = "",
+              inrecdt = "",
+              reqnum = "",
+              serialno = "",
+              outlot = "",
+              portcd = "",
+              portnm = "",
+              prcterms = "",
+            } = item;
+
+            dataArr.rowstatus.push(rowstatus);
+            dataArr.seq2.push(seq2 == "" ? 0 : seq2);
+            dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
+            dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+            dataArr.portcd.push(portcd == undefined ? "" : portcd);
+            dataArr.portnm.push(portnm == undefined ? "" : portnm);
+            dataArr.prcterms.push(prcterms == undefined ? "" : prcterms);
+            dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
+            dataArr.itemcd.push(itemcd);
+            dataArr.itemnm.push(itemnm);
+            dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
+            dataArr.qty.push(qty == "" ? 0 : qty);
+            dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
+            dataArr.unp.push(unp == "" ? 0 : unp);
+            dataArr.amt.push(amt == "" ? 0 : amt);
+            dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
+            dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
+            dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
+            dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
+            dataArr.remark_s.push(remark == undefined ? "" : remark);
+            dataArr.inrecdt.push(inrecdt == undefined ? "" : inrecdt);
+            dataArr.reqnum.push(reqnum == undefined ? "" : reqnum);
+            dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+            dataArr.outlot.push(outlot == undefined ? "" : outlot);
+            dataArr.serialno.push(serialno == undefined ? "" : serialno);
+            dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
+          });
+          deletedMainRows.forEach((item: any, idx: number) => {
+            const {
+              amt = "",
+              itemacnt = "",
+              itemcd = "",
+              itemnm = "",
+              lotnum = "",
+              ordnum = "",
+              ordseq = "",
+              poregnum = "",
+              rowstatus = "",
+              seq2 = "",
+              taxamt = "",
+              unp = "",
+              qty = "",
+              qtyunit = "",
+              wonamt = "",
+              dlramt = "",
+              unitqty = "",
+              reqseq = "",
+              remark = "",
+              inrecdt = "",
+              reqnum = "",
+              serialno = "",
+              outlot = "",
+              portcd = "",
+              portnm = "",
+              prcterms = "",
+            } = item;
+
+            dataArr.rowstatus.push(rowstatus);
+            dataArr.seq2.push(seq2 == "" ? 0 : seq2);
+            dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
+            dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+            dataArr.portcd.push(portcd == undefined ? "" : portcd);
+            dataArr.portnm.push(portnm == undefined ? "" : portnm);
+            dataArr.prcterms.push(prcterms == undefined ? "" : prcterms);
+            dataArr.poregnum.push(poregnum == undefined ? "" : poregnum);
+            dataArr.itemcd.push(itemcd);
+            dataArr.itemnm.push(itemnm);
+            dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
+            dataArr.qty.push(qty == "" ? 0 : qty);
+            dataArr.qtyunit.push(qtyunit == undefined ? "" : qtyunit);
+            dataArr.unp.push(unp == "" ? 0 : unp);
+            dataArr.amt.push(amt == "" ? 0 : amt);
+            dataArr.dlramt.push(dlramt == "" ? 0 : dlramt);
+            dataArr.wonamt.push(wonamt == "" ? 0 : wonamt);
+            dataArr.taxamt.push(taxamt == "" ? 0 : taxamt);
+            dataArr.lotnum.push(lotnum == undefined ? "" : lotnum);
+            dataArr.remark_s.push(remark == undefined ? "" : remark);
+            dataArr.inrecdt.push(inrecdt == undefined ? "" : inrecdt);
+            dataArr.reqnum.push(reqnum == undefined ? "" : reqnum);
+            dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+            dataArr.outlot.push(outlot == undefined ? "" : outlot);
+            dataArr.serialno.push(serialno == undefined ? "" : serialno);
+            dataArr.unitqty.push(unitqty == "" ? 0 : unitqty);
+          });
+          setParaData((prev) => ({
+            ...prev,
+            workType: workType,
+            rowstatus: dataArr.rowstatus.join("|"),
+            seq2: dataArr.seq2.join("|"),
+            ordnum: dataArr.ordnum.join("|"),
+            ordseq: dataArr.ordseq.join("|"),
+            portcd: dataArr.portcd.join("|"),
+            portnm: dataArr.portnm.join("|"),
+            prcterms: dataArr.prcterms.join("|"),
+            poregnum: dataArr.poregnum.join("|"),
+            itemcd: dataArr.itemcd.join("|"),
+            itemnm: dataArr.itemnm.join("|"),
+            itemacnt: dataArr.itemacnt.join("|"),
+            qty: dataArr.qty.join("|"),
+            qtyunit: dataArr.qtyunit.join("|"),
+            unp: dataArr.unp.join("|"),
+            amt: dataArr.amt.join("|"),
+            dlramt: dataArr.dlramt.join("|"),
+            wonamt: dataArr.wonamt.join("|"),
+            taxamt: dataArr.taxamt.join("|"),
+            lotnum: dataArr.lotnum.join("|"),
+            remark_s: dataArr.remark_s.join("|"),
+            inrecdt: dataArr.inrecdt.join("|"),
+            reqnum: dataArr.reqnum.join("|"),
+            reqseq: dataArr.reqseq.join("|"),
+            serialno: dataArr.serialno.join("|"),
+            outlot: dataArr.outlot.join("|"),
+            unitqty: dataArr.unitqty.join("|"),
+          }));
         }
       }
     } catch (e) {
@@ -700,27 +1008,203 @@ const CopyWindow = ({
     }
   };
 
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "N",
+    orgdiv: "01",
+    recdt: new Date(),
+    seq1: 0,
+    location: "01",
+    doexdiv: "A",
+    outtype: "",
+    outdt: new Date(),
+    shipdt: new Date(),
+    person: "admin",
+    custcd: "",
+    rcvcustcd: "",
+    taxdiv: "",
+    userid: userId,
+    pc: pc,
+    amtunit: "",
+    baseamt: 0,
+    wonchgrat: 0,
+    uschgrat: 0,
+    remark: "",
+    carno: "",
+    cargocd: "",
+    cargb: "",
+    dvnm: "",
+    dvnum: "",
+    trcost: 0,
+    portnm: "",
+    finaldes: "",
+    attdatnum: "",
+    outuse: "",
+    rowstatus: "",
+    seq2: "",
+    ordnum: "",
+    ordseq: "",
+    portcd: "",
+    prcterms: "",
+    poregnum: "",
+    itemcd: "",
+    itemnm: "",
+    itemacnt: "",
+    qty: "",
+    qtyunit: "",
+    unp: "",
+    amt: "",
+    dlramt: "",
+    wonamt: "",
+    taxamt: "",
+    lotnum: "",
+    remark_s: "",
+    inrecdt: "",
+    reqnum: "",
+    reqseq: "",
+    serialno: "",
+    outlot: "",
+    custnm: "",
+    rcvcustnm: "",
+    unitqty: "",
+    form_id: "SA_A2300W",
+    serviceid: companyCode,
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_SA_A2300W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_recdt": ParaData.recdt,
+      "@p_seq1": ParaData.seq1,
+      "@p_location": ParaData.location,
+      "@p_doexdiv": ParaData.doexdiv,
+      "@p_outtype": ParaData.outtype,
+      "@p_outdt": ParaData.outdt,
+      "@p_shipdt": ParaData.shipdt,
+      "@p_person": ParaData.person,
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_rcvcustcd": ParaData.rcvcustcd,
+      "@p_rcvcustnm": ParaData.rcvcustnm,
+      "@p_taxdiv": ParaData.taxdiv,
+      "@p_amtunit": ParaData.amtunit,
+      "@p_baseamt": ParaData.baseamt,
+      "@p_wonchgrat": ParaData.wonchgrat,
+      "@p_uschgrat": ParaData.uschgrat,
+      "@p_remark": ParaData.remark,
+      "@p_carno": ParaData.carno,
+      "@p_cargocd": ParaData.cargocd,
+      "@p_dvnm": ParaData.dvnm,
+      "@p_dvnum": ParaData.dvnum,
+      "@p_trcost": ParaData.trcost,
+      "@p_finaldes": ParaData.finaldes,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_outuse": ParaData.outuse,
+      "@p_rowstatus": ParaData.rowstatus,
+      "@p_seq2": ParaData.seq2,
+      "@p_ordnum": ParaData.ordnum,
+      "@p_ordseq": ParaData.ordseq,
+      "@p_portcd": ParaData.portcd,
+      "@p_prcterms": ParaData.prcterms,
+      "@p_poregnum": ParaData.poregnum,
+      "@p_itemcd": ParaData.itemcd,
+      "@p_itemnm": ParaData.itemnm,
+      "@p_itemacnt": ParaData.itemacnt,
+      "@p_qty": ParaData.qty,
+      "@p_qtyunit": ParaData.qtyunit,
+      "@p_unp": ParaData.unp,
+      "@p_amt": ParaData.amt,
+      "@p_dlramt": ParaData.dlramt,
+      "@p_wonamt": ParaData.wonamt,
+      "@p_taxamt": ParaData.taxamt,
+      "@p_lotnum": ParaData.lotnum,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_inrecdt": ParaData.inrecdt,
+      "@p_reqnum": ParaData.reqnum,
+      "@p_reqseq": ParaData.reqseq,
+      "@p_serialno": ParaData.serialno,
+      "@p_outlot": ParaData.outlot,
+      "@p_unitqty": ParaData.unitqty,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "P_SA_A2300W",
+      "@p_portnm": ParaData.portnm,
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      deletedMainRows = [];
+      setUnsavedAttadatnums([]);
+      reload(data.returnString)
+      if (workType == "N") {
+        onClose();
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString
+        }))
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.itemcd != "" || ParaData.workType == "U") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-
+    let Object3: any[] = [];
+    let Object2: any[] = [];
+    let data;
     mainDataResult.data.forEach((item: any, index: number) => {
       if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
       } else {
         const newData2 = {
           ...item,
           rowstatus: "D",
         };
+        Object3.push(index);
         deletedMainRows.push(newData2);
       }
     });
 
+    if (Math.min(...Object3) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object3) - 1];
+    }
+
     setMainDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object3.length,
     }));
-
-    setMainDataState({});
+    setSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -755,15 +1239,13 @@ const CopyWindow = ({
     if (
       field != "rowstatus" &&
       field != "insiz" &&
-      field != "qtyunit" &&
       field != "itemcd" &&
       field != "itemnm"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : {
@@ -772,10 +1254,22 @@ const CopyWindow = ({
             }
       );
 
-      setIfSelectFirstRow(false);
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setMainDataResult((prev) => {
         return {
           data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult.data,
           total: prev.total,
         };
       });
@@ -783,17 +1277,50 @@ const CopyWindow = ({
   };
 
   const exitEdit = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   return (
@@ -805,7 +1332,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
@@ -1012,7 +1539,7 @@ const CopyWindow = ({
                     name="files"
                     type="text"
                     value={filters.files}
-                    onChange={filterInputChange}
+                    className="readonly"
                   />
                   <ButtonInInput>
                     <Button
@@ -1038,10 +1565,17 @@ const CopyWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <GridContainer>
+        <GridContainer height={`calc(100% - 370px)`}>
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
+              <Button
+                themeColor={"primary"}
+                onClick={onCopyWndClick}
+                icon="folder-open"
+              >
+                재고참조
+              </Button>
               <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
@@ -1049,18 +1583,10 @@ const CopyWindow = ({
                 icon="minus"
                 title="행 삭제"
               ></Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick}
-                icon="folder-open"
-              >
-                수주참조
-              </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "450px" }}
+            style={{ height: "100%" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1068,9 +1594,6 @@ const CopyWindow = ({
                   workType == "U" && isValidDate(row.enddt)
                     ? new Date(dateformat(row.enddt))
                     : new Date(),
-                qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
-                )?.code_name,
                 rowstatus:
                   row.rowstatus == null ||
                   row.rowstatus == "" ||
@@ -1094,7 +1617,6 @@ const CopyWindow = ({
             //스크롤 조회기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -1134,23 +1656,23 @@ const CopyWindow = ({
               cell={CustomComboBoxCell}
             />
             <GridColumn field="remark" title="비고" width="300px" />
-            <GridColumn field="lotnum" title="LOT NO" width="200px" />
+            <GridColumn field="lotnum" title="LOT NO" width="210px" />
           </Grid>
+          <BottomContainer>
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={selectData}>
+                저장
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
         </GridContainer>
-        <BottomContainer>
-          <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              저장
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
-            >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
       </Window>
       {custWindowVisible && (
         <CustomersWindow

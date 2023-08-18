@@ -10,6 +10,7 @@ import {
   getSelectedState,
   GridDataStateChangeEvent,
   GridItemChangeEvent,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
@@ -45,6 +46,7 @@ import {
   getGridItemChangedData,
   dateformat,
   isValidDate,
+  findMessage,
 } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -61,18 +63,18 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
 };
 
-const topHeight = 140.13;
+const topHeight = 180.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let temp = 0;
-const CopyWindow = ({
-  setVisible,
-  setData,
-}: IWindow) => {
+let temp2 = 0;
+const CopyWindow = ({ setVisible, setData }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
   const DATA_ITEM_KEY = "num";
@@ -87,6 +89,22 @@ const CopyWindow = ({
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -102,6 +120,7 @@ const CopyWindow = ({
         location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
         finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -213,8 +232,6 @@ const CopyWindow = ({
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [detailPgNum, setDetailPgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -354,34 +371,14 @@ const CopyWindow = ({
     ordnum: "",
     reqnum: "",
     ordseq: 0,
+    isSearch: true,
+    pgNum: 1,
   });
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     itemcd: "",
   });
-
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_SA_A2300W_Sub2_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.workType,
-      "@p_orgdiv": "01",
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_ordnum": filters.ordnum,
-      "@p_ordseq": filters.ordseq,
-      "@p_poregnum": filters.poregnum,
-      "@p_finyn": filters.finyn,
-    },
-  };
 
   //조회조건 파라미터
   const detailParameters: Iparameters = {
@@ -405,10 +402,33 @@ const CopyWindow = ({
     },
   };
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SA_A2300W_Sub2_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": "01",
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_ordnum": filters.ordnum,
+        "@p_ordseq": filters.ordseq,
+        "@p_poregnum": filters.poregnum,
+        "@p_finyn": filters.finyn,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -423,18 +443,24 @@ const CopyWindow = ({
         };
       });
 
-      if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-      }
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -483,9 +509,15 @@ const CopyWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
-      fetchMainGrid();
-      setIsInitSearch(true);
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
 
@@ -499,29 +531,21 @@ const CopyWindow = ({
 
   useEffect(() => {
     if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
       fetchDetailGrid();
     }
   }, [detailPgNum]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
+    if (mainDataResult.total > 0) {
+      const firstRowData = mainDataResult.data[0];
+      setSelectedState({ [firstRowData.num]: true });
 
-        setDetailFilters((prev) => ({
-          ...prev,
-          itemcd: firstRowData.itemcd,
-        }));
-        setIfSelectFirstRow(true);
-      }
+      setDetailFilters((prev) => ({
+        ...prev,
+        itemcd: firstRowData.itemcd,
+      }));
+      setIfSelectFirstRow(true);
     }
   }, [mainDataResult]);
 
@@ -575,8 +599,6 @@ const CopyWindow = ({
     setDetailSelectedState(newSelectedState);
 
     setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -587,22 +609,13 @@ const CopyWindow = ({
     });
     setSubSelectedState(newSelectedState);
     setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setDetailPgNum(1);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onDetailScrollHandler = (event: GridEvent) => {
@@ -669,7 +682,7 @@ const CopyWindow = ({
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -681,7 +694,7 @@ const CopyWindow = ({
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -690,7 +703,7 @@ const CopyWindow = ({
     detailDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -702,7 +715,7 @@ const CopyWindow = ({
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -719,8 +732,33 @@ const CopyWindow = ({
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A2300W_004");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A2300W_004");
+      } else {
+        resetAllGrid();
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
@@ -731,11 +769,12 @@ const CopyWindow = ({
 
   const onRowDoubleClick = (props: any) => {
     const datas = props.dataItem;
+
     subDataResult.data.map((item) => {
-      if(item.num > temp){
-        temp = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
-  })
+    });
     const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
@@ -745,7 +784,7 @@ const CopyWindow = ({
     )[0];
 
     const newDataItem = {
-      [DATA_ITEM_KEY]: ++temp,
+      [DATA_ITEM_KEY3]: ++temp,
       amt: selectRow.amt,
       amtunit: selectRow.amtunit,
       chk: selectRow.chk,
@@ -790,26 +829,46 @@ const CopyWindow = ({
     };
     setSubDataResult((prev) => {
       return {
-              data: [newDataItem, ...prev.data],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
+    });
+    setSubSelectedState({
+      [newDataItem[DATA_ITEM_KEY3]]: true,
     });
   };
 
   const onDeleteClick = (e: any) => {
-    let newData: any[] = [];
+    if (subDataResult.total > 0) {
+      //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+      let newData: any[] = [];
+      let Object3: any[] = [];
+      let Object2: any[] = [];
+      let data2;
+      subDataResult.data.forEach((item: any, index: number) => {
+        if (!subselectedState[item[DATA_ITEM_KEY3]]) {
+          newData.push(item);
+          Object2.push(index);
+        } else {
+          Object3.push(index);
+        }
+      });
 
-    subDataResult.data.forEach((item: any, index: number) => {
-      if (!subselectedState[item[DATA_ITEM_KEY2]]) {
-        newData.push(item);
+      if (Math.min(...Object3) < Math.min(...Object2)) {
+        data2 = subDataResult.data[Math.min(...Object2)];
+      } else {
+        data2 = subDataResult.data[Math.min(...Object3) - 1];
       }
-    });
-    setSubDataResult((prev) => ({
-      data: newData,
-      total: newData.length,
-    }));
 
-    setSubDataState({});
+      //newData 생성
+      setSubDataResult((prev) => ({
+        data: newData,
+        total: prev.total - Object3.length,
+      }));
+      setSubSelectedState({
+        [data2 != undefined ? data2[DATA_ITEM_KEY3] : newData[0]]: true,
+      });
+    }
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -882,7 +941,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={"수주참조"}
+        title={"재고참조"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -892,10 +951,7 @@ const CopyWindow = ({
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
-              onClick={() => {
-                resetAllGrid();
-                fetchMainGrid();
-              }}
+              onClick={() => search()}
               icon="search"
               themeColor={"primary"}
             >
@@ -931,14 +987,14 @@ const CopyWindow = ({
                     type="text"
                     value={filters.custcd}
                     onChange={filterInputChange}
+                  />
+                  <ButtonInInput>
+                    <Button
+                      onClick={onCustWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
                     />
-                    <ButtonInInput>
-                      <Button
-                        onClick={onCustWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
+                  </ButtonInInput>
                 </td>
                 <th>업체명</th>
                 <td>
@@ -1028,181 +1084,164 @@ const CopyWindow = ({
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainerWrap height={`calc(60% - ${leftOverHeight}px)`}>
-          <GridContainer width={`60%`}>
-          <GridTitleContainer>
-              <GridTitle>상세정보</GridTitle>
-            </GridTitleContainer>
-            <Grid
-          style={{ height: "calc(100% - 5px)" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  person: personListData.find(
-                    (item: any) => item.user_id === row.person
-                  )?.user_name,
-                  qtyunit: qtyunitListData.find(
-                    (item: any) => item.sub_code === row.qtyunit
-                  )?.code_name,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              onDataStateChange={onMainDataStateChange}
-              {...mainDataState}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              onScroll={onMainScrollHandler}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn
-                field="ordnum"
-                title="수주번호"
-                width="150px"
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn field="custnm" title="업체명" width="200px" />
-              <GridColumn
-                field="dlvdt"
-                title="납기일자"
-                cell={DateCell}
-                width="100px"
-              />
-              <GridColumn field="itemcd" title="품목코드" width="200px" />
-              <GridColumn field="itemnm" title="품목명" width="200px" />
-              <GridColumn field="insiz" title="규격" width="200px" />
-              <GridColumn
-                field="janqty"
-                title="잔량"
-                width="120px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn field="qtyunit" title=" " width="60px" />
-              <GridColumn
-                field="qty"
-                title="수주량"
-                width="120px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn
-                field="inqty"
-                title="출하량"
-                width="120px"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
-              />
-              <GridColumn field="lotnum" title="LOT NO" width="200px" />
-              {/* <GridColumn
-              field="unp"
-              title="단가"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="amt"
-              title="금액"
-              width="120px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="wonamt"
-              title="원화금액"
-              width="120px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="taxamt"
-              title="세액"
-              width="120px"
-              cell={NumberCell}
-            /> */}
-              <GridColumn field="remark" title="비고" width="300px" />
-            </Grid>
-          </GridContainer>
-          <GridContainer width={`calc(40% - ${GAP}px)`}>
-            <GridTitleContainer>
-              <GridTitle>LOT별 재고</GridTitle>
-            </GridTitleContainer>
-            <Grid
-                  style={{ height: "calc(100% - 5px)" }}
-              data={process(
-                detailDataResult.data.map((row) => ({
-                  ...row,
-                  qtyunit: qtyunitListData.find(
-                    (item: any) => item.sub_code === row.qtyunit
-                  )?.code_name,
-                  itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
-                  )?.code_name,
-                  [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
-                })),
-                detailDataState
-              )}
-              onDataStateChange={onDetailDataStateChange}
-              {...detailDataState}
-              //선택 subDataState
-              dataItemKey={DATA_ITEM_KEY3}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onDetailSelectionChange}
-              //스크롤 조회기능
-              fixedScroll={true}
-              total={detailDataResult.total}
-              onScroll={onDetailScrollHandler}
-              //정렬기능
-              sortable={true}
-              onSortChange={onDetailSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //더블클릭
-              onRowDoubleClick={onRowDoubleClick}
-            >
-              <GridColumn
-                field="lotnum"
-                title="LOT NO"
-                width="150px"
-                footerCell={detailTotalFooterCell}
-              />
-              <GridColumn field="itemacnt" title="품목계정" width="120px" />
-              <GridColumn
-                field="qty"
-                title="재고량"
-                cell={NumberCell}
-                footerCell={gridSumQtyFooterCell2}
-                width="100px"
-              />
-              <GridColumn field="remark" title="비고" width="210px" />
-            </Grid>
-          </GridContainer>
-        </GridContainerWrap>
         <GridContainer
-              height={`calc(40% - ${leftOverHeight}px)`}
-              width={`99.9%`}
-            >
+          height={isMobile ? "50%" : `calc(50% - ${leftOverHeight}px)`}
+        >
+          <GridContainerWrap height={"100%"}>
+            <GridContainer width={`60%`}>
+              <GridTitleContainer>
+                <GridTitle>상세정보</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "calc(100% - 5px)" }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    person: personListData.find(
+                      (item: any) => item.user_id === row.person
+                    )?.user_name,
+                    qtyunit: qtyunitListData.find(
+                      (item: any) => item.sub_code === row.qtyunit
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                onDataStateChange={onMainDataStateChange}
+                {...mainDataState}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="ordnum"
+                  title="수주번호"
+                  width="150px"
+                  footerCell={mainTotalFooterCell}
+                />
+                <GridColumn field="custnm" title="업체명" width="200px" />
+                <GridColumn
+                  field="dlvdt"
+                  title="납기일자"
+                  cell={DateCell}
+                  width="100px"
+                />
+                <GridColumn field="itemcd" title="품목코드" width="200px" />
+                <GridColumn field="itemnm" title="품목명" width="200px" />
+                <GridColumn field="insiz" title="규격" width="200px" />
+                <GridColumn
+                  field="janqty"
+                  title="잔량"
+                  width="120px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn field="qtyunit" title=" " width="60px" />
+                <GridColumn
+                  field="qty"
+                  title="수주량"
+                  width="120px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field="inqty"
+                  title="출하량"
+                  width="120px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn field="lotnum" title="LOT NO" width="200px" />
+                <GridColumn field="remark" title="비고" width="300px" />
+              </Grid>
+            </GridContainer>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>LOT별 재고</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "calc(100% - 5px)" }}
+                data={process(
+                  detailDataResult.data.map((row) => ({
+                    ...row,
+                    qtyunit: qtyunitListData.find(
+                      (item: any) => item.sub_code === row.qtyunit
+                    )?.code_name,
+                    itemacnt: itemacntListData.find(
+                      (item: any) => item.sub_code === row.itemacnt
+                    )?.code_name,
+                    [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
+                  })),
+                  detailDataState
+                )}
+                onDataStateChange={onDetailDataStateChange}
+                {...detailDataState}
+                //선택 subDataState
+                dataItemKey={DATA_ITEM_KEY3}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onDetailSelectionChange}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={detailDataResult.total}
+                onScroll={onDetailScrollHandler}
+                //정렬기능
+                sortable={true}
+                onSortChange={onDetailSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                //더블클릭
+                onRowDoubleClick={onRowDoubleClick}
+              >
+                <GridColumn
+                  field="lotnum"
+                  title="LOT NO"
+                  width="150px"
+                  footerCell={detailTotalFooterCell}
+                />
+                <GridColumn field="itemacnt" title="품목계정" width="120px" />
+                <GridColumn
+                  field="qty"
+                  title="재고량"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell2}
+                  width="100px"
+                />
+                <GridColumn field="remark" title="비고" width="215px" />
+              </Grid>
+            </GridContainer>
+          </GridContainerWrap>
+        </GridContainer>
+        <GridContainer
+          height={isMobile ? "50%" : `calc(50% - ${leftOverHeight}px)`}
+          width={`100%`}
+        >
           <GridTitleContainer>
+            <GridTitle>출하처리상세</GridTitle>
             <ButtonContainer>
               <Button
                 onClick={onDeleteClick}
@@ -1214,7 +1253,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-           style={{ height: "calc(100% - 40px)" }}
+            style={{ height: "calc(100% - 40px)" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
@@ -1305,21 +1344,21 @@ const CopyWindow = ({
             <GridColumn field="taxdiv" title="과세구분" width="200px" />
             <GridColumn field="remark" title="비고" width="300px" />
           </Grid>
+          <BottomContainer>
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={selectData}>
+                확인
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
         </GridContainer>
-        <BottomContainer>
-          <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              확인
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
-            >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
       </Window>
       {custWindowVisible && (
         <CustomersWindow

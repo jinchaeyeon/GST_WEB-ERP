@@ -444,11 +444,12 @@ const KendoWindow = ({
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
+    width: isMobile == true ? deviceWidth : 1200,
     height: 800,
   });
   const [editIndex, setEditIndex] = useState<number | undefined>();
@@ -2524,7 +2525,6 @@ const KendoWindow = ({
       }
     });
 
-    console.log(itemDatas);
     itemDatas.map((item) => {
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,

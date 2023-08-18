@@ -9,6 +9,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridDataStateChangeEvent,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
@@ -38,6 +39,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   convertDateToStr,
+  findMessage,
 } from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -51,17 +53,21 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  custcd: string;
+  custnm: string;
 };
 
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let temp = 0;
-const CopyWindow = ({ setVisible, setData }: IWindow) => {
+const CopyWindow = ({ setVisible, setData, custcd,custnm }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
   const DATA_ITEM_KEY = "num";
@@ -69,6 +75,23 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
   //메시지 조회s
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -88,6 +111,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -96,7 +120,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   UseBizComponent(
     "L_BA061,L_BA015, R_USEYN,L_BA171,L_BA172,L_BA173,R_YESNOALL,L_sysUserMaster_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData,
+    setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
@@ -113,15 +137,15 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061"),
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015"),
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001",
-        ),
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
       );
 
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -160,10 +184,10 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   });
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState),
+    process([], mainDataState)
   );
   const [subDataResult, setSubDataResult] = useState<DataResult>(
-    process([], subDataState),
+    process([], subDataState)
   );
 
   const [selectedState, setSelectedState] = useState<{
@@ -176,8 +200,6 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -305,34 +327,47 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     poregnum: "",
     finyn: "",
     ordnum: "",
+    isSearch: true,
+    pgNum: 1,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_SA_A5000W_Sub2_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.workType,
-      "@p_orgdiv": "01",
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_ordkey": filters.ordnum,
-      "@p_poregnum": filters.poregnum,
-      "@p_finyn": filters.finyn,
-      "@p_company_code": companyCode,
-    },
-  };
+  useEffect(() => {
+    if (custcd != "") {
+      setFilters((prev) => ({
+        ...prev,
+        custcd: custcd,
+        custnm: custnm
+      }));
+    }
+  }, []);
+
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SA_A5000W_Sub2_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": "01",
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_ordkey": filters.ordnum,
+        "@p_poregnum": filters.poregnum,
+        "@p_finyn": filters.finyn,
+        "@p_company_code": companyCode,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -362,34 +397,40 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         };
       });
 
-      if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-      }
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
-      fetchMainGrid();
-      setIsInitSearch(true);
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -422,10 +463,6 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -435,22 +472,11 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       dataItemKey: DATA_ITEM_KEY2,
     });
     setSubSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onSubScrollHandler = (event: GridEvent) => {
@@ -494,7 +520,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : "",
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -521,8 +547,33 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A5000W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A5000W_001");
+      } else {
+        resetAllGrid();
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
@@ -534,7 +585,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const onRowDoubleClick = (props: any) => {
     let valid = true;
     const selectRow = mainDataResult.data.filter(
-      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0],
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     subDataResult.data.map((item) => {
@@ -547,10 +598,10 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
 
     if (valid == true) {
       subDataResult.data.map((item) => {
-        if(item.num > temp){
-          temp = item.num
+        if (item[DATA_ITEM_KEY2] > temp) {
+          temp = item[DATA_ITEM_KEY2];
         }
-    })
+      });
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
         amt: selectRow.amt,
@@ -563,8 +614,9 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         discount_div: selectRow.discount_div,
         discountamt: selectRow.discountamt,
         dlramt: selectRow.dlramt,
+        dlvdt: selectRow.dlvdt,
         doexdiv: selectRow.doexdiv,
-        doqty: selectRow.doqty,
+        doqty: selectRow.janqty,
         enddt: selectRow.enddt,
         finaldes: selectRow.finaldes,
         finyn: selectRow.finyn,
@@ -637,23 +689,42 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
           total: prev.total + 1,
         };
       });
+      setSubSelectedState({
+        [newDataItem[DATA_ITEM_KEY2]]: true,
+      });
     }
   };
 
   const onDeleteClick = (e: any) => {
-    let newData: any[] = [];
+    if (subDataResult.total > 0) {
+      //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+      let newData: any[] = [];
+      let Object3: any[] = [];
+      let Object2: any[] = [];
+      let data2;
+      subDataResult.data.forEach((item: any, index: number) => {
+        if (!subselectedState[item[DATA_ITEM_KEY2]]) {
+          newData.push(item);
+          Object2.push(index);
+        } else {
+          Object3.push(index);
+        }
+      });
 
-    subDataResult.data.forEach((item: any, index: number) => {
-      if (!subselectedState[item[DATA_ITEM_KEY2]]) {
-        newData.push(item);
+      if (Math.min(...Object3) < Math.min(...Object2)) {
+        data2 = subDataResult.data[Math.min(...Object2)];
+      } else {
+        data2 = subDataResult.data[Math.min(...Object3) - 1];
       }
-    });
-    setSubDataResult((prev) => ({
-      data: newData,
-      total: newData.length,
-    }));
 
-    setSubDataState({});
+      setSubDataResult((prev) => ({
+        data: newData,
+        total: newData.length,
+      }));
+      setSubSelectedState({
+        [data2 != undefined ? data2[DATA_ITEM_KEY2] : newData[0]]: true,
+      });
+    }
   };
 
   return (
@@ -669,10 +740,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
-              onClick={() => {
-                resetAllGrid();
-                fetchMainGrid();
-              }}
+              onClick={() => search()}
               icon="search"
               themeColor={"primary"}
             >
@@ -703,28 +771,48 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
                 </td>
                 <th>업체코드</th>
                 <td>
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
+                  {custcd != "" ? (
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={filters.custcd}
+                      className="readonly"
                     />
-                  </ButtonInInput>
+                  ) : (
+                    <>
+                      <Input
+                        name="custcd"
+                        type="text"
+                        value={filters.custcd}
+                        onChange={filterInputChange}
+                      />
+                      <ButtonInInput>
+                        <Button
+                          onClick={onCustWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </>
+                  )}
                 </td>
                 <th>업체명</th>
                 <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
-                    onChange={filterInputChange}
-                  />
+                  {custcd != "" ? (
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      className="readonly"
+                    />
+                  ) : (
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      onChange={filterInputChange}
+                    />
+                  )}
                 </td>
                 <th>수주번호</th>
                 <td colSpan={3}>
@@ -792,17 +880,17 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person,
+                  (item: any) => item.user_id === row.person
                 )?.user_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit,
+                  (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt,
+                  (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
-              mainDataState,
+              mainDataState
             )}
             onDataStateChange={onMainDataStateChange}
             {...mainDataState}
@@ -817,7 +905,10 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             //스크롤 조회기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -833,80 +924,75 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               title="출하일자"
               cell={DateCell}
               footerCell={mainTotalFooterCell}
-              width="100px"
+              width="120px"
             />
-            <GridColumn field="custcd" title="업체코드" width="200px" />
-            <GridColumn field="custnm" title="업체명" width="200px" />
-            <GridColumn field="itemcd" title="품목코드" width="200px" />
-            <GridColumn field="itemnm" title="품목명" width="200px" />
-            <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn field="itemacnt" title="품목계정" width="200px" />
+            <GridColumn field="custcd" title="업체코드" width="150px" />
+            <GridColumn field="custnm" title="업체명" width="150px" />
+            <GridColumn field="itemcd" title="품목코드" width="150px" />
+            <GridColumn field="itemnm" title="품목명" width="150px" />
+            <GridColumn field="insiz" title="규격" width="150px" />
+            <GridColumn field="itemacnt" title="품목계정" width="120px" />
             <GridColumn
               field="qty"
               title="출하수량"
-              width="120px"
+              width="100px"
               cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="outqty"
               title="판매수량"
-              width="120px"
+              width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="janqty"
               title="잔량"
-              width="120px"
+              width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="doqty"
-              title="처리량"
-              width="120px"
-              cell={NumberCell}
             />
             <GridColumn field="qtyunit" title="수량단위" width="120px" />
             <GridColumn
               field="unp"
               title="단가"
-              width="120px"
+              width="100px"
               cell={NumberCell}
             />
             <GridColumn
               field="amt"
               title="금액"
-              width="120px"
+              width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="wonamt"
               title="원화금액"
-              width="120px"
+              width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
-              width="120px"
+              width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
               field="totamt"
               title="합계금액"
-              width="120px"
+              width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
-            <GridColumn field="remark" title="비고" width="300px" />
+            <GridColumn field="remark" title="비고" width="200px" />
             <GridColumn
               field="finyn"
               title="완료여부"
-              width="120px"
+              width="100px"
               cell={CheckBoxCell}
             />
           </Grid>
@@ -929,17 +1015,17 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               subDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit,
+                  (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person,
+                  (item: any) => item.user_id === row.person
                 )?.user_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt,
+                  (item: any) => item.sub_code === row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: subselectedState[idGetter2(row)], //선택된 데이터
               })),
-              subDataState,
+              subDataState
             )}
             onDataStateChange={onSubDataStateChange}
             {...subDataState}
@@ -969,21 +1055,21 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               title="출하일자"
               cell={DateCell}
               footerCell={subTotalFooterCell}
-              width="100px"
+              width="120px"
             />
             <GridColumn field="custcd" title="업체코드" width="200px" />
             <GridColumn field="custnm" title="업체명" width="200px" />
             <GridColumn field="itemcd" title="품목코드" width="200px" />
             <GridColumn field="itemnm" title="품목명" width="200px" />
             <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn field="itemacnt" title="품목계정" width="200px" />
+            <GridColumn field="itemacnt" title="품목계정" width="170px" />
             <GridColumn
               field="doqty"
               title="처리량"
-              width="120px"
+              width="100px"
               cell={NumberCell}
             />
-            <GridColumn field="qtyunit" title="수량단위" width="120px" />
+            <GridColumn field="qtyunit" title="수량단위" width="150px" />
           </Grid>
         </GridContainer>
         <BottomContainer>

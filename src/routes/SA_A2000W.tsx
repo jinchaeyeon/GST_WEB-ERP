@@ -997,7 +997,7 @@ const SA_B2000: React.FC = () => {
       attdatnum: "",
     }));
   };
-
+ 
   interface ICustData {
     custcd: string;
     custnm: string;

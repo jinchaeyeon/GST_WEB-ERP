@@ -1644,7 +1644,7 @@ const SA_A5001W: React.FC = () => {
             )} */}
         </Grid>
       </GridContainer>
-      {detailWindowVisible && (
+      {/* {detailWindowVisible && (
         <DetailWindow
           setVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
@@ -1662,7 +1662,7 @@ const SA_A5001W: React.FC = () => {
           }
           reload={reload}
         />
-      )}
+      )} */}
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

@@ -304,7 +304,7 @@ const App: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    console.log(userParameters)
+   
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const usedUserCnt = data.returnString;
