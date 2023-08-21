@@ -1,77 +1,74 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { DataResult, FilterDescriptor, SortDescriptor, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
   GridItemChangeEvent,
   GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { TextArea } from "@progress/kendo-react-inputs";
-import { gridList } from "../store/columns/SY_A0125W_C";
-import { Checkbox } from "@progress/kendo-react-inputs";
+import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import {
   TreeList,
-  createDataTree,
-  mapTree,
-  extendDataItem,
-  TreeListExpandChangeEvent,
   TreeListColumnProps,
+  TreeListExpandChangeEvent,
+  createDataTree,
+  extendDataItem,
+  mapTree,
 } from "@progress/kendo-react-treelist";
-import { FilterDescriptor, SortDescriptor } from "@progress/kendo-data-query";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  Title,
-  FilterBox,
-  GridContainer,
-  GridTitle,
-  TitleContainer,
   ButtonContainer,
-  GridTitleContainer,
   ButtonInInput,
-  FormBoxWrap,
+  FilterBox,
   FormBox,
+  FormBoxWrap,
+  GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  findMessage,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
-  UsePermissions,
-  handleKeyPressSearch,
-  getGridItemChangedData,
-  UseParaPc,
   UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
-  PAGE_SIZE,
-  SELECTED_FIELD,
   EDIT_FIELD,
   EXPANDED_FIELD,
   GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../store/atoms";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
+import FilterContainer from "../components/Containers/FilterContainer";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import DepartmentsWindow from "../components/Windows/CommonWindows/DepartmentsWindow";
+import { useApi } from "../hooks/api";
+import { isLoading, loginResultState } from "../store/atoms";
+import { gridList } from "../store/columns/SY_A0125W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const allMenuColumns: TreeListColumnProps[] = [
   { field: "dptcd", title: "부서코드", expandable: true },

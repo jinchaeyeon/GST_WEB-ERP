@@ -1,55 +1,53 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs/dist/npm/datepicker/DatePicker";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
-  GridFooterCellProps,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridDataStateChangeEvent,
+  GridFooterCellProps,
   GridHeaderCellProps,
   GridItemChangeEvent,
-  GridCellProps,
   GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
+import { Checkbox } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
   GridContainer,
-  TitleContainer,
-  GridTitleContainer,
+  TitleContainer
 } from "../../CommonStyled";
-import { Checkbox } from "@progress/kendo-react-inputs";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import CheckBoxCell from "../Cells/CheckBoxCell";
+import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
+  UseParaPc,
+  convertDateToStr,
+  findMessage,
+  getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  convertDateToStr,
-  getGridItemChangedData,
-  UseGetValueFromSessionItem,
-  UseParaPc,
-  findMessage,
 } from "../CommonFunction";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import CheckBoxCell from "../Cells/CheckBoxCell";
+import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
-import DateCell from "../Cells/DateCell";
-import { DatePicker } from "@progress/kendo-react-dateinputs/dist/npm/datepicker/DatePicker";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 
 type IWindow = {

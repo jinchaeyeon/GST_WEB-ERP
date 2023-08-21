@@ -1,60 +1,61 @@
-import { useEffect, useState, useCallback } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
+  GridDataStateChangeEvent,
   GridEvent,
+  GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
-  GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
-import { CellRender, RowRender } from "../Renderers/Renderers";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import { useApi } from "../../hooks/api";
-import DateCell from "../Cells/DateCell";
+import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
-  TitleContainer,
-  ButtonInInput,
   GridTitleContainer,
+  TitleContainer,
 } from "../../CommonStyled";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading, loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import FilterContainer from "../Containers/FilterContainer";
+import CheckBoxCell from "../Cells/CheckBoxCell";
+import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
-  chkScrollHandler,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
+  chkScrollHandler,
+  convertDateToStr,
+  dateformat,
+  findMessage,
+  getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  setDefaultDate,
-  convertDateToStr,
-  getGridItemChangedData,
-  dateformat,
   isValidDate,
+  setDefaultDate,
 } from "../CommonFunction";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../../store/atoms";
-import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import CheckBoxCell from "../Cells/CheckBoxCell";
+import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../Renderers/Renderers";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 
 const topHeight = 140.13;
 const bottomHeight = 55;
@@ -68,12 +69,31 @@ type IWindow = {
 };
 
 const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
   const [loginResult] = useRecoilState(loginResultState);
@@ -104,6 +124,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
         dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
         ordsts: defaultOption.find((item: any) => item.id === "ordsts")
           .valueCode,
+        isSearch: true
       }));
     }
   }, [customOptionData]);
@@ -207,7 +228,6 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
   const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -254,10 +274,6 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
 
   const onClose = () => {
     setVisible(false);
-  };
-
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
   };
 
   const onItemWndClick = () => {
@@ -357,39 +373,40 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
     ordsts: "",
     lotnum: "",
     yyyymm: "",
+    isSearch: true,
+    pgNum: 1,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_SA_P3000W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.workType,
-      "@p_orgdiv": "01",
-      "@p_dtgb": filters.dtgb,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_itemno": filters.itemno,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_person": filters.person,
-      "@p_finyn": filters.finyn,
-      "@p_ordnum": filters.ordnum,
-      "@p_ordsts": filters.ordsts,
-      "@p_company_code": companyCode,
-      "@p_lotnum": filters.lotnum,
-      "@p_yyyymm": filters.yyyymm,
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SA_P3000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": "01",
+        "@p_dtgb": filters.dtgb,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_itemno": filters.itemno,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_person": filters.person,
+        "@p_finyn": filters.finyn,
+        "@p_ordnum": filters.ordnum,
+        "@p_ordsts": filters.ordsts,
+        "@p_company_code": companyCode,
+        "@p_lotnum": filters.lotnum,
+        "@p_yyyymm": filters.yyyymm,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -403,35 +420,40 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
           ...row,
         };
       });
-
-      if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-      }
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null && isInitSearch === false) {
-      fetchMainGrid();
-      setIsInitSearch(true);
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -464,10 +486,6 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -478,20 +496,11 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
     });
     setSubSelectedState(newSelectedState);
     setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onSubScrollHandler = (event: GridEvent) => {
@@ -512,21 +521,24 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
   };
-
   const subTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = subDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {subDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -562,8 +574,39 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
   };
 
   const search = () => {
-    resetAllGrid();
-    fetchMainGrid();
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A3000W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A3000W_001");
+      } else if(
+        filters.dtgb == "" ||
+        filters.dtgb == undefined ||
+        filters.dtgb == null
+      ) {
+        throw findMessage(messagesData, "SA_A3000W_003");
+      } else {
+        resetAllGrid();
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
@@ -571,9 +614,8 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
     setData(subDataResult.data);
     onClose();
   };
-
+  console.log(mainDataResult.data)
   const onRowDoubleClick = (props: any) => {
-    const datas = props.dataItem;
     let valid = true;
 
     const selectRows = mainDataResult.data.filter(
@@ -603,6 +645,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
           dlvdt: selectRow.dlvdt,
           doqty: selectRow.doqty,
           dptcd: selectRow.dptcd,
+          extra_field6 : selectRow.extra_field6,
           insiz: selectRow.insiz,
           itemacnt: selectRow.itemacnt,
           itemcd: selectRow.itemcd,
@@ -632,6 +675,9 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
             total: prev.total + 1,
           };
         });
+        setSubSelectedState({
+          [newDataItem[DATA_ITEM_KEY2]]: true,
+        });
       });
     } else {
       alert("동일 업체만 추가 가능합니다.");
@@ -639,19 +685,38 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
   };
 
   const onDeleteClick = (e: any) => {
-    let newData: any[] = [];
+    if (subDataResult.total > 0) {
+      //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+      let newData: any[] = [];
+      let Object3: any[] = [];
+      let Object2: any[] = [];
+      let data2;
+      subDataResult.data.forEach((item: any, index: number) => {
+        if (item.chk != true) {
+          newData.push(item);
+          Object2.push(index);
+        } else {
+          Object3.push(index);
+        }
+      });
 
-    subDataResult.data.forEach((item: any, index: number) => {
-      if (!subselectedState[item[DATA_ITEM_KEY2]]) {
-        newData.push(item);
+      if (Math.min(...Object3) < Math.min(...Object2)) {
+        data2 = subDataResult.data[Math.min(...Object2)];
+      } else {
+        data2 = subDataResult.data[Math.min(...Object3) - 1];
       }
-    });
-    setSubDataResult((prev) => ({
-      data: newData,
-      total: newData.length,
-    }));
 
-    setSubDataState({});
+      //newData 생성
+      setSubDataResult((prev) => ({
+        data: newData,
+        total: prev.total - Object3.length,
+      }));
+      if (Object3.length > 0) {
+        setSubSelectedState({
+          [data2 != undefined ? data2[DATA_ITEM_KEY2] : newData[0]]: true,
+        });
+      }
+    }
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -859,14 +924,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
-              onClick={() => {
-                if (filters.dtgb != "") {
-                  resetAllGrid();
-                  fetchMainGrid();
-                } else {
-                  alert("일자구분을 입력해주세요.");
-                }
-              }}
+              onClick={() => search()}
               icon="search"
               themeColor={"primary"}
             >
@@ -1027,7 +1085,6 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
             <ButtonContainer>
               <Button
                 onClick={onRowDoubleClick}
-                fillMode="outline"
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
@@ -1062,7 +1119,10 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
             //스크롤 조회기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}

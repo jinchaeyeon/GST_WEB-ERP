@@ -1,52 +1,51 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridDataStateChangeEvent,
-  GridPageChangeEvent,
+  GridFooterCellProps,
   GridHeaderCellProps,
   GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
-  TitleContainer,
-  ButtonInInput,
   GridTitleContainer,
+  TitleContainer
 } from "../../CommonStyled";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading, loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import CheckBoxCell from "../Cells/CheckBoxCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
   UseCustomOption,
+  getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  getGridItemChangedData,
 } from "../CommonFunction";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../../store/atoms";
-import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import CheckBoxCell from "../Cells/CheckBoxCell";
+import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
+import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 
 type IWindow = {
   itemacnt: string;
@@ -55,7 +54,7 @@ type IWindow = {
   modal?: boolean;
 };
 
-const topHeight = 141.13;
+const topHeight = 181.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
@@ -350,13 +349,13 @@ const CopyWindow = ({
     pgNum: 1,
     isSearch: true,
   });
-  
+
   useEffect(() => {
-    setFilters((prev)=> ({
+    setFilters((prev) => ({
       ...prev,
-      itemacnt: itemacnt
+      itemacnt: itemacnt,
     }));
-  },[itemacnt])
+  }, [itemacnt]);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -437,7 +436,7 @@ const CopyWindow = ({
     } catch (error) {
       data = null;
     }
-   
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -522,14 +521,19 @@ const CopyWindow = ({
       DATA_ITEM_KEY
     );
   };
-  
+
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              chk: typeof item.chk == "boolean" ? item.chk : item.chk =="Y" ? true : false,
+              chk:
+                typeof item.chk == "boolean"
+                  ? item.chk
+                  : item.chk == "Y"
+                  ? true
+                  : false,
               [EDIT_FIELD]: field,
             }
           : {
@@ -672,8 +676,8 @@ const CopyWindow = ({
           valid = false;
           return false;
         }
-      })
-    })
+      });
+    });
 
     if (valid == true) {
       newData.map((item) => {
@@ -689,7 +693,7 @@ const CopyWindow = ({
           take: prev.take + 1,
         }));
         setSubSelectedState({ [item[DATA_ITEM_KEY2]]: true });
-      })
+      });
 
       const newData2 = mainDataResult.data.map((item) => ({
         ...item,
@@ -728,7 +732,7 @@ const CopyWindow = ({
       total: prev.total - Object.length,
     }));
 
-    setSelectedState({
+    setSubSelectedState({
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
     });
   };
@@ -897,7 +901,7 @@ const CopyWindow = ({
           </FilterBox>
         </FilterContainer>
         <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
-        <GridTitleContainer>
+          <GridTitleContainer>
             <ButtonContainer>
               <Button
                 onClick={onAddClick}
@@ -963,13 +967,13 @@ const CopyWindow = ({
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-                          <GridColumn
-                field="chk"
-                title=" "
-                width="45px"
-                headerCell={CustomCheckBoxCell2}
-                cell={CheckBoxCell}
-              />
+            <GridColumn
+              field="chk"
+              title=" "
+              width="45px"
+              headerCell={CustomCheckBoxCell2}
+              cell={CheckBoxCell}
+            />
             <GridColumn
               field="itemcd"
               title="품목코드"
@@ -1020,7 +1024,7 @@ const CopyWindow = ({
             <GridColumn field="custnm" title="업체명" width="160px" />
           </Grid>
         </GridContainer>
-        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
+        <GridContainer height={`calc(50% - ${leftOverHeight}px)`} style={{marginTop: "35px"}}>
           <GridTitleContainer>
             <ButtonContainer>
               <Button

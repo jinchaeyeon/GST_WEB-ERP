@@ -1,66 +1,64 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
-  GridCellProps,
 } from "@progress/kendo-react-grid";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { TextArea } from "@progress/kendo-react-inputs";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import CopyWindow2 from "./SA_A5000W_Orders_Window";
-import CopyWindow3 from "./SA_A5000W_Ship_Window";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
   ButtonInInput,
-  GridTitleContainer,
-  FormBoxWrap,
   FormBox,
+  FormBoxWrap,
+  GridContainer,
   GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
+import { useApi } from "../../hooks/api";
+import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
+import {
+  deletedAttadatnumsState,
+  isLoading,
+  loginResultState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
-  getQueryFromBizComponent,
-  toDate,
-  convertDateToStr,
-  getGridItemChangedData,
-  findMessage,
-  isValidDate,
-  dateformat,
   UseGetValueFromSessionItem,
+  UseMessages,
   UseParaPc,
+  convertDateToStr,
+  dateformat,
+  findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  isValidDate,
+  toDate,
 } from "../CommonFunction";
+import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  isLoading,
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
-  loginResultState,
-} from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import ComboBoxCell from "../Cells/ComboBoxCell";
+import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import CopyWindow2 from "./SA_A5000W_Orders_Window";
+import CopyWindow3 from "./SA_A5000W_Ship_Window";
 
 type IWindow = {
   workType: "N" | "U";
@@ -97,7 +95,6 @@ type TdataArr = {
   outseq2_s: string[];
   sort_seq_s: string[];
 };
-
 
 type Idata = {
   amt: number;
@@ -235,12 +232,18 @@ const CopyWindow = ({
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA020,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA005,L_BA029,L_BA173,R_YESNOALL",
+    "L_CUST, L_BA020,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA005,L_BA029,L_BA173,R_YESNOALL",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
+  const [custcdListData, setCustcdListData] = useState([
+    {
+      custcd: "",
+      custnm: "",
+    },
+  ]);
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -268,6 +271,10 @@ const CopyWindow = ({
       const amtunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
       );
+      const custcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_CUST")
+      );
+      fetchQuery(custcdQueryStr, setCustcdListData);
       fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(taxdivQueryStr, setTaxdivListData);
@@ -324,10 +331,32 @@ const CopyWindow = ({
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "rcvcustcd") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        rcvcustnm:
+          custcdListData.find((item: any) => item.custcd == value)?.custnm ==
+          undefined
+            ? ""
+            : custcdListData.find((item: any) => item.custcd == value)?.custnm,
+      }));
+    } else if (name == "rcvcustnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        rcvcustcd:
+          custcdListData.find((item: any) => item.custnm == value)?.custcd ==
+          undefined
+            ? ""
+            : custcdListData.find((item: any) => item.custnm == value)?.custcd,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -659,7 +688,8 @@ const CopyWindow = ({
           total: prev.total + 1,
         };
       });
-      if(filters.custcd == "") {
+
+      if (filters.custcd == "") {
         setFilters((prev) => ({
           ...prev,
           custcd: data[0].custcd,
@@ -726,7 +756,7 @@ const CopyWindow = ({
         };
       });
 
-      if(filters.custcd == "") {
+      if (filters.custcd == "") {
         setFilters((prev) => ({
           ...prev,
           custcd: data[0].custcd,
@@ -810,7 +840,7 @@ const CopyWindow = ({
               item.rowstatus !== undefined
             );
           });
-      
+
           setParaData((prev) => ({
             ...prev,
             workType: workType,
@@ -838,7 +868,8 @@ const CopyWindow = ({
             serviceid: companyCode,
             files: filters.files,
           }));
-          if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+          if (dataItem.length === 0 && deletedMainRows.length == 0)
+            return false;
           let dataArr: TdataArr = {
             rowstatus_s: [],
             seq2_s: [],
@@ -864,7 +895,7 @@ const CopyWindow = ({
             outseq2_s: [],
             sort_seq_s: [],
           };
-      
+
           dataItem.forEach((item: any, idx: number) => {
             const {
               rowstatus = "",
@@ -898,7 +929,9 @@ const CopyWindow = ({
             dataArr.itemacnt_s.push(itemacnt == "" ? "" : itemacnt);
             dataArr.qty_s.push(qty == "" ? 0 : qty);
             dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-            dataArr.unpcalmeth_s.push(unpcalmeth == undefined ? "Q" : unpcalmeth);
+            dataArr.unpcalmeth_s.push(
+              unpcalmeth == undefined ? "Q" : unpcalmeth
+            );
             dataArr.unp_s.push(unp == "" ? 0 : unp);
             dataArr.amt_s.push(amt == "" ? 0 : amt);
             dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
@@ -951,7 +984,9 @@ const CopyWindow = ({
             dataArr.itemacnt_s.push(itemacnt == "" ? "" : itemacnt);
             dataArr.qty_s.push(qty == "" ? 0 : qty);
             dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-            dataArr.unpcalmeth_s.push(unpcalmeth == undefined ? "Q" : unpcalmeth);
+            dataArr.unpcalmeth_s.push(
+              unpcalmeth == undefined ? "Q" : unpcalmeth
+            );
             dataArr.unp_s.push(unp == "" ? 0 : unp);
             dataArr.amt_s.push(amt == "" ? 0 : amt);
             dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
@@ -1124,7 +1159,7 @@ const CopyWindow = ({
     if (data.isSuccess === true) {
       deletedMainRows = [];
       setUnsavedAttadatnums([]);
-      reload(data.returnString)
+      reload(data.returnString);
       if (workType == "N") {
         onClose();
       } else {
@@ -1132,8 +1167,8 @@ const CopyWindow = ({
           ...prev,
           isSearch: true,
           pgNum: 1,
-          find_row_value: data.returnString
-        }))
+          find_row_value: data.returnString,
+        }));
       }
     } else {
       console.log("[오류 발생]");
@@ -1148,7 +1183,7 @@ const CopyWindow = ({
       fetchTodoGridSaved();
     }
   }, [ParaData]);
-  
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
     let Object3: any[] = [];

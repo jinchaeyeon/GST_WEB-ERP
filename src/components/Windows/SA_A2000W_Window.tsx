@@ -500,62 +500,93 @@ const KendoWindow = ({
       setDeletedAttadatnums(unsavedAttadatnums);
     getVisible(false);
   };
+  const fetchUnpItem = async (custcd: string, itemcd: string) => {
+    if (custcd == "") return;
+    let data: any;
+
+    const queryStr = getUnpQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      let unpData: any = rows.filter(
+        (items: any) =>
+          items.recdt <= convertDateToStr(filters.orddt) &&
+          items.itemcd == itemcd
+      );
+      return unpData.length > 0 ? unpData[0].unp : 0;
+    }
+  };
 
   useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] ==
-      parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            itemcd: itemInfo.itemcd,
-            itemno: itemInfo.itemno,
-            itemnm: itemInfo.itemnm,
-            insiz: itemInfo.insiz,
-            model: itemInfo.model,
-            bnatur: itemInfo.bnatur,
-            spec: itemInfo.spec,
-            //invunit
-            qtyunit: itemInfo.invunit,
-            invunitnm: itemInfo.invunitnm,
-            unitwgt: itemInfo.unitwgt,
-            wgtunit: itemInfo.wgtunit,
-            wgtunitnm: itemInfo.wgtunitnm,
-            maker: itemInfo.maker,
-            dwgno: itemInfo.dwgno,
-            remark: itemInfo.remark,
-            itemlvl1: itemInfo.itemlvl1,
-            itemlvl2: itemInfo.itemlvl2,
-            itemlvl3: itemInfo.itemlvl3,
-            extra_field1: itemInfo.extra_field1,
-            extra_field2: itemInfo.extra_field2,
-            extra_field7: itemInfo.extra_field7,
-            extra_field6: itemInfo.extra_field6,
-            extra_field8: itemInfo.extra_field8,
-            packingsiz: itemInfo.packingsiz,
-            unitqty: itemInfo.unitqty,
-            color: itemInfo.color,
-            gubun: itemInfo.gubun,
-            qcyn: itemInfo.qcyn,
-            outside: itemInfo.outside,
-            itemthick: itemInfo.itemthick,
-            itemlvl4: itemInfo.itemlvl4,
-            itemlvl5: itemInfo.itemlvl5,
-            custitemnm: itemInfo.custitemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+    (async () => {
+      var unp = await fetchUnpItem(filters.custcd, itemInfo.itemcd);
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] ==
+        parseInt(Object.getOwnPropertyNames(selectedState)[0])
+          ? {
+              ...item,
+              itemcd: itemInfo.itemcd,
+              itemno: itemInfo.itemno,
+              itemnm: itemInfo.itemnm,
+              insiz: itemInfo.insiz,
+              model: itemInfo.model,
+              bnatur: itemInfo.bnatur,
+              spec: itemInfo.spec,
+              //invunit
+              qtyunit: itemInfo.invunit,
+              invunitnm: itemInfo.invunitnm,
+              unitwgt: itemInfo.unitwgt,
+              wgtunit: itemInfo.wgtunit,
+              wgtunitnm: itemInfo.wgtunitnm,
+              maker: itemInfo.maker,
+              dwgno: itemInfo.dwgno,
+              remark: itemInfo.remark,
+              itemlvl1: itemInfo.itemlvl1,
+              itemlvl2: itemInfo.itemlvl2,
+              itemlvl3: itemInfo.itemlvl3,
+              extra_field1: itemInfo.extra_field1,
+              extra_field2: itemInfo.extra_field2,
+              extra_field7: itemInfo.extra_field7,
+              extra_field6: itemInfo.extra_field6,
+              extra_field8: itemInfo.extra_field8,
+              packingsiz: itemInfo.packingsiz,
+              unitqty: itemInfo.unitqty,
+              color: itemInfo.color,
+              gubun: itemInfo.gubun,
+              qcyn: itemInfo.qcyn,
+              outside: itemInfo.outside,
+              itemthick: itemInfo.itemthick,
+              itemlvl4: itemInfo.itemlvl4,
+              itemlvl5: itemInfo.itemlvl5,
+              custitemnm: itemInfo.custitemnm,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              unp: unp,
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    })();
   }, [itemInfo]);
 
   const fetchItemData = React.useCallback(
@@ -1445,7 +1476,7 @@ const KendoWindow = ({
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
     if (name == "orddt") {
-      fetchUnp(filters.custcd);
+      fetchUnp(filters.custcd, mainDataResult.data);
     }
 
     if (name == "uschgrat" && value != filters.uschgrat) {
@@ -1712,7 +1743,7 @@ const KendoWindow = ({
             ? ""
             : custcdListData.find((item: any) => item.custcd == value)?.custnm,
       }));
-      fetchUnp(value);
+      fetchUnp(value, mainDataResult.data);
     } else if (name == "custnm") {
       const custcds =
         custcdListData.find((item: any) => item.custnm == value)?.custcd ==
@@ -1724,7 +1755,7 @@ const KendoWindow = ({
         [name]: value,
         custcd: custcds == undefined ? "" : custcds,
       }));
-      fetchUnp(custcds == undefined ? "" : custcds);
+      fetchUnp(custcds == undefined ? "" : custcds, mainDataResult.data);
     } else if (name == "rcvcustcd") {
       setFilters((prev) => ({
         ...prev,
@@ -2025,7 +2056,7 @@ const KendoWindow = ({
     }
   };
 
-  const fetchUnp = async (custcd: string) => {
+  const fetchUnp = async (custcd: string, nowData: any) => {
     if (custcd == "") return;
     let data: any;
 
@@ -2047,7 +2078,7 @@ const KendoWindow = ({
       const rows = data.tables[0].Rows;
 
       if (rows.length > 0) {
-        const newData = mainDataResult.data.map((item) => {
+        const newData = nowData.map((item: any) => {
           let unpData: any = rows.filter(
             (items: any) =>
               items.recdt <= convertDateToStr(filters.orddt) &&
@@ -2198,8 +2229,8 @@ const KendoWindow = ({
           };
         });
 
-        if (newData != mainDataResult.data) {
-          const datas = mainDataResult.data.map((item) => ({
+        if (newData != nowData) {
+          const datas = newData.map((item: any) => ({
             ...item,
             rowstatus: item.rowstatus == "N" ? "N" : "U",
           }));
@@ -2594,7 +2625,7 @@ const KendoWindow = ({
           total: prev.total + 1,
         };
       });
-    })
+    });
   };
 
   const onAddClick = () => {
@@ -3147,7 +3178,7 @@ const KendoWindow = ({
                 onClick={onItemMultiWndClick}
                 icon="folder-open"
               >
-                품목 멀티
+                품목참조
               </Button>
               <Button
                 themeColor={"primary"}

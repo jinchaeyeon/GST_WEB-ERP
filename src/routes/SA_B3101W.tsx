@@ -1,51 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { gridList } from "../store/columns/SA_B3101W_C";
-import {
-  ButtonContainer,
-  FilterBox,
-  GridContainer,
-  GridTitle,
-  GridTitleContainer,
-  Title,
-  TitleContainer,
-} from "../CommonStyled";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import TopButtons from "../components/Buttons/TopButtons";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import {
-  CLIENT_WIDTH,
-  GNV_WIDTH,
-  GRID_MARGIN,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../components/CommonString";
-import {
-  UseBizComponent,
-  UseCustomOption,
-  UseDesignInfo,
-  UseMessages,
-  UsePermissions,
-  chkScrollHandler,
-  convertDateToStr,
-  handleKeyPressSearch,
-  numberWithCommas,
-  setDefaultDate,
-} from "../components/CommonFunction";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import YearCalendar from "../components/Calendars/YearCalendar";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import {
-  Chart,
-  ChartCategoryAxis,
-  ChartCategoryAxisItem,
-  ChartSeries,
-  ChartSeriesItem,
-  ChartValueAxis,
-  ChartValueAxisItem,
+  Chart
 } from "@progress/kendo-react-charts";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
@@ -55,18 +14,41 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Icon, getter } from "@progress/kendo-react-common";
-import { Item } from "devextreme-react/gantt";
-import NumberCell from "../components/Cells/NumberCell";
-import DateCell from "../components/Cells/DateCell";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { IItemData } from "../hooks/interfaces";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import {
+  ButtonContainer,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
+import YearCalendar from "../components/Calendars/YearCalendar";
+import NumberCell from "../components/Cells/NumberCell";
+import {
+  UseCustomOption,
+  UseMessages,
+  UsePermissions,
+  chkScrollHandler,
+  convertDateToStr,
+  handleKeyPressSearch,
+  setDefaultDate
+} from "../components/CommonFunction";
+import {
+  PAGE_SIZE,
+  SELECTED_FIELD
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
-import { AnyTxtRecord } from "dns";
-import { ScrollDirection } from "@progress/kendo-react-dateinputs/dist/npm/virtualization/Virtualization";
+import { IItemData } from "../hooks/interfaces";
+import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/SA_B3101W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const numberField: string[] = [

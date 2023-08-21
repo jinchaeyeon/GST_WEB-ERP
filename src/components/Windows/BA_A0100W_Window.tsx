@@ -1,15 +1,14 @@
-import { useState } from "react";
-import * as React from "react";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import { Input } from "@progress/kendo-react-inputs";
+import { useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
   FormBox,
   FormBoxWrap,
 } from "../../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { Input } from "@progress/kendo-react-inputs";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
