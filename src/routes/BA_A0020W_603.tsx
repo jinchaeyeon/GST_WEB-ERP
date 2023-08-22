@@ -2,17 +2,16 @@ import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import { AppBar, AppBarSection } from "@progress/kendo-react-layout";
 import React, { useEffect, useState } from "react";
 import {
-    ButtonInInput,
-    FormBox,
-    FormBoxWrap,
-    GridContainer,
-    GridTitle,
-    GridTitleContainer,
-    Title,
-    TitleContainer,
+  ButtonInInput,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import { UseCustomOption } from "../components/CommonFunction";
@@ -91,14 +90,10 @@ const BA_A0020W_603: React.FC = () => {
   return (
     <>
       <React.Fragment>
-        <AppBar style={{ backgroundColor: "#002060" }}>
-          <AppBarSection>
-            <TitleContainer>
-              <Title style={{ color: "white" }}>고객社 관리</Title>
-            </TitleContainer>
-          </AppBarSection>
-        </AppBar>
         <GridContainer>
+          <TitleContainer>
+            <Title>고객社 관리</Title>
+          </TitleContainer>
           <GridContainer style={{ marginTop: "30px" }}>
             <GridTitleContainer>
               <GridTitle>▣ 기준정보</GridTitle>
