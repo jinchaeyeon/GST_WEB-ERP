@@ -19,6 +19,7 @@ import AC_B5080W from "./routes/AC_B5080W";
 import AC_B6060W from "./routes/AC_B6060W";
 import AC_B8030W from "./routes/AC_B8030W";
 import BA_A0020W from "./routes/BA_A0020W";
+import BA_A0020W_603 from "./routes/BA_A0020W_603";
 import BA_A0040W from "./routes/BA_A0040W";
 import BA_A0041W from "./routes/BA_A0041W";
 import BA_A0050W from "./routes/BA_A0050W";
@@ -453,6 +454,10 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
                   <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
                 </GlobalStyles>
+
+                {/*CRM */}
+                <AuthRoute path="/BA_A0020W_603" component={BA_A0020W_603} exact />
+                   
               </PanelBarNavContainer>
             </Switch>
           </Router>

@@ -102,6 +102,11 @@ div.k-animation-container {
 .k-form.k-scheduler-edit-form > .k-form-field:nth-child(5) {
   display: none;
 }
+
+.CRM th {
+  width: 10% !important;
+}
+
 .k-form.k-scheduler-edit-form
   > .k-form-field:nth-child(4)
   > .k-form-field-wrap {
