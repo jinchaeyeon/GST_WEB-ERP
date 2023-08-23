@@ -1042,7 +1042,7 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       deletedRows = []; //초기화
       if (workType == "U") {
-        reloadData(data.returnString);
+        reloadData(paraData.ordnum);
         fetchMainGrid();
         fetchGrid();
       } else {
