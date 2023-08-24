@@ -49,7 +49,12 @@ import {
   isValidDate,
   setDefaultDate,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
@@ -124,7 +129,12 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
         dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
         ordsts: defaultOption.find((item: any) => item.id === "ordsts")
           .valueCode,
-        isSearch: true
+        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+          .valueCode,
+        person: defaultOption.find((item: any) => item.id === "person")
+          .valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -228,7 +238,6 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -359,20 +368,23 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
     pgSize: PAGE_SIZE,
     workType: "Q",
     orgdiv: "01",
+    location: "01",
+    position: "",
+    dptcd: "",
     dtgb: "",
     frdt: new Date(),
     todt: new Date(),
     itemcd: "",
     itemnm: "",
-    itemno: "",
     custcd: "",
     custnm: "",
+    poregnum: "",
     person: "",
     finyn: "",
-    ordnum: "",
+    remark: "",
     ordsts: "",
-    lotnum: "",
-    yyyymm: "",
+    doexdiv: "",
+    ordnum: "",
     isSearch: true,
     pgNum: 1,
   });
@@ -384,27 +396,29 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_P3000W_Q",
+      procedureName: "P_SA_P5000W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
         "@p_orgdiv": "01",
+        "@p_location": filters.location,
+        "@p_position": filters.position,
         "@p_dtgb": filters.dtgb,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_itemcd": filters.itemcd,
         "@p_itemnm": filters.itemnm,
-        "@p_itemno": filters.itemno,
+        "@p_ordnum": filters.ordnum,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
+        "@p_poregnum": filters.poregnum,
+        "@p_ordsts": filters.ordsts,
+        "@p_doexdiv": filters.doexdiv,
         "@p_person": filters.person,
         "@p_finyn": filters.finyn,
-        "@p_ordnum": filters.ordnum,
-        "@p_ordsts": filters.ordsts,
+        "@p_remark": filters.remark,
         "@p_company_code": companyCode,
-        "@p_lotnum": filters.lotnum,
-        "@p_yyyymm": filters.yyyymm,
       },
     };
     try {
@@ -462,7 +476,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
         const firstRowData = mainDataResult.data[0];
         setSelectedState({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow(false);
       }
     }
   }, [mainDataResult]);
@@ -473,7 +487,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
         const firstRowData = subDataResult.data[0];
         setSubSelectedState({ [firstRowData.num]: true });
 
-        setIfSelectFirstRow(true);
+        setIfSelectFirstRow(false);
       }
     }
   }, [subDataResult]);
@@ -589,7 +603,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SA_A3000W_001");
-      } else if(
+      } else if (
         filters.dtgb == "" ||
         filters.dtgb == undefined ||
         filters.dtgb == null
@@ -639,35 +653,79 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
         });
         const newDataItem = {
           [DATA_ITEM_KEY]: ++temp,
+          amt: selectRow.amt,
+          amtunit: selectRow.amtunit,
+          bnatur: selectRow.bnatur,
           chk: selectRow.chk,
+          cqty: selectRow.cqty,
           custcd: selectRow.custcd,
           custnm: selectRow.custnm,
+          discount: selectRow.discount,
+          discount_div: selectRow.discount_div,
+          discountamt: selectRow.discountamt,
+          dlramt: selectRow.dlramt,
           dlvdt: selectRow.dlvdt,
+          doexdiv: selectRow.doexdiv,
           doqty: selectRow.doqty,
-          dptcd: selectRow.dptcd,
-          extra_field6 : selectRow.extra_field6,
+          finaldes: selectRow.finaldes,
+          finyn: selectRow.finyn,
           insiz: selectRow.insiz,
           itemacnt: selectRow.itemacnt,
           itemcd: selectRow.itemcd,
+          itemlvl1: selectRow.itemlvl1,
+          itemlvl2: selectRow.itemlvl2,
+          itemlvl3: selectRow.itemlvl3,
           itemnm: selectRow.itemnm,
           itemno: selectRow.itemno,
+          janqty: selectRow.janqty,
           len: selectRow.len == undefined ? 0 : selectRow.len,
-          ordbnatur: selectRow.ordbnatur,
+          length: selectRow.length,
+          location: selectRow.location,
+          lotnum: selectRow.lotnum,
+          margin: selectRow.margin,
+          margin_div: selectRow.margin_div,
+          marginamt: selectRow.marginamt,
+          marginunp: selectRow.marginunp,
           orddt: selectRow.orddt,
-          ordinsiz: selectRow.ordinsiz,
           ordkey: selectRow.ordkey,
           ordnum: selectRow.ordnum,
           ordseq: selectRow.ordseq,
           ordsts: selectRow.ordsts,
+          ordsts1: selectRow.ordsts1,
+          ordtype: selectRow.ordtype,
+          orgdiv: selectRow.orgdiv,
+          orgdiv1: selectRow.orgdiv1,
+          orgunp: selectRow.orgunp,
           person: selectRow.person,
+          poregnum: selectRow.poregnum,
+          portnm: selectRow.portnm,
+          project: selectRow.project,
           qty: selectRow.qty,
           qtyunit: selectRow.qtyunit,
+          qtyunp: selectRow.qtyunp,
           rowstatus: "N",
           rcvcustcd: selectRow.rcvcustcd,
           rcvcustnm: selectRow.rcvcustnm,
           remark: selectRow.remark,
-          reqqty: selectRow.reqqty,
+          saleqty: selectRow.saleqty,
+          sort_seq: selectRow.sort_seq,
+          specialamt: selectRow.specialamt,
+          specialunp: selectRow.specialunp,
+          taxamt: selectRow.taxamt,
+          taxdiv: selectRow.taxdiv,
+          thickness: selectRow.thickness,
+          totwgt: selectRow.totwgt,
+          unitwgt: selectRow.unitwgt,
           unp: selectRow.unp,
+          unpcalmeth: selectRow.unpcalmeth,
+          unprate: selectRow.unprate,
+          uschgrat: selectRow.uschgrat,
+          user_name: selectRow.user_name,
+          wgtunit: selectRow.wgtunit,
+          wgtunp: selectRow.wgtunp,
+          width: selectRow.width,
+          wonamt: selectRow.wonamt,
+          wonchgrat: selectRow.wonchgrat,
         };
         setSubDataResult((prev) => {
           return {
@@ -936,7 +994,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th colSpan={3}>
+                <th>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
                       name="dtgb"
@@ -963,6 +1021,41 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
                     className="required"
                   />
                 </td>
+                <th>사업장</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="location"
+                      value={filters.location}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>부서</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="dptcd"
+                      value={filters.dptcd}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                      textField="dptcd"
+                      valueField="dptnm"
+                    />
+                  )}
+                </td>
+                <th>PO번호</th>
+                <td>
+                  <Input
+                    name="poregnum"
+                    type="text"
+                    value={filters.poregnum}
+                    onChange={filterInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
                 {filters.custcd == "" ? (
                   <>
                     <th>업체코드</th>
@@ -1006,31 +1099,39 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
                     </td>
                   </>
                 )}
-                <th>수주담당자</th>
+                <th>수주상태</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
-                      name="person"
-                      value={filters.person}
+                      name="ordsts"
+                      value={filters.ordsts}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
-                      textField="user_name"
-                      valueField="user_id"
                     />
                   )}
+                </td>
+                <th>내수구분</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="doexdiv"
+                      value={filters.doexdiv}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>수주번호</th>
+                <td>
+                  <Input
+                    name="ordnum"
+                    type="text"
+                    value={filters.ordnum}
+                    onChange={filterInputChange}
+                  />
                 </td>
               </tr>
               <tr>
-                <th>완료여부</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionRadioGroup
-                      name="finyn"
-                      customOptionData={customOptionData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
-                </td>
                 <th>품목코드</th>
                 <td>
                   <Input
@@ -1056,23 +1157,27 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
                     onChange={filterInputChange}
                   />
                 </td>
-                <th>수주번호</th>
-                <td>
-                  <Input
-                    name="ordnum"
-                    type="text"
-                    value={filters.ordnum}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>수주상태</th>
+
+                <th>담당자</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
-                      name="ordsts"
-                      value={filters.ordsts}
+                      name="person"
+                      value={filters.person}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
+                      textField="user_name"
+                      valueField="user_id"
+                    />
+                  )}
+                </td>
+                <th>완료여부</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="finyn"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
                     />
                   )}
                 </td>
@@ -1143,16 +1248,11 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
               cell={CheckBoxCell}
             />
             <GridColumn
-              field="ordnum"
-              title="수주번호"
-              width="150px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn
               field="orddt"
               title="수주일자"
               cell={DateCell}
               width="100px"
+              footerCell={mainTotalFooterCell}
             />
             <GridColumn
               field="dlvdt"
@@ -1160,19 +1260,27 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
               cell={DateCell}
               width="100px"
             />
+            <GridColumn field="ordnum" title="수주번호" width="150px" />
             <GridColumn field="custnm" title="업체명" width="200px" />
             <GridColumn field="itemcd" title="품목코드" width="150px" />
             <GridColumn field="itemnm" title="품목명" width="150px" />
+            <GridColumn field="insiz" title="규격" width="150px" />
             <GridColumn
               field="qty"
-              title="수주량"
+              title="수주수량"
               width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
             <GridColumn
-              field="reqqty"
-              title="지시량"
+              field="cqty"
+              title="출고수량"
+              width="100px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="saleqty"
+              title="판매수량"
               width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
@@ -1184,8 +1292,44 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
-            <GridColumn field="qtyunit" title="단위" width="100px" />
+            <GridColumn field="qtyunit" title="단위" width="120px" />
+            <GridColumn
+              field="wgtunp"
+              title="중량단가"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="qtyunp"
+              title="수량단가"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="unp"
+              title="단가"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="amt"
+              title="공급가액"
+              width="120px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn
+              field="taxamt"
+              title="세액"
+              width="120px"
+              cell={NumberCell}
+              footerCell={gridSumQtyFooterCell}
+            />
+            <GridColumn field="lotnum" title="LOT NO" width="120px" />
+            <GridColumn field="rcvcustnm" title="인수처명" width="120px" />
+            <GridColumn field="poregnum" title="PO번호" width="120px" />
             <GridColumn field="remark" title="비고" width="250px" />
+            <GridColumn field="person" title="수주담당자" width="120px" />
           </Grid>
         </GridContainer>
         <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
@@ -1201,7 +1345,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
+            style={{ height: "calc(100% - 80px)" }} //5px = margin bottom 값
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
@@ -1258,11 +1402,19 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
               cell={CheckBoxCell}
             />
             <GridColumn
-              field="ordkey"
-              title="수주번호"
-              width="150px"
+              field="orddt"
+              title="수주일자"
+              cell={DateCell}
+              width="100px"
               footerCell={subTotalFooterCell}
             />
+            <GridColumn
+              field="dlvdt"
+              title="납기일자"
+              cell={DateCell}
+              width="100px"
+            />
+            <GridColumn field="ordnum" title="수주번호" width="150px" />
             <GridColumn field="custnm" title="업체명" width="200px" />
             <GridColumn field="itemcd" title="품목코드" width="250px" />
             <GridColumn field="itemnm" title="품목명" width="350px" />
@@ -1273,10 +1425,52 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
               cell={NumberCell}
             />
             <GridColumn field="qtyunit" title="수량단위" width="100px" />
+            <GridColumn
+              field="wgtunp"
+              title="중량단가"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="qtyunp"
+              title="수량단가"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="specialunp"
+              title="발주단가"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="specialamt"
+              title="발주금액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="unp"
+              title="단가"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="amt"
+              title="공급가액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="taxamt"
+              title="세액"
+              width="120px"
+              cell={NumberCell}
+            />
+            <GridColumn field="lotnum" title="LOT NO" width="120px" />
             <GridColumn field="remark" title="비고" width="350px" />
           </Grid>
-        </GridContainer>
-        <BottomContainer>
+          <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
               확인
@@ -1290,6 +1484,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
             </Button>
           </ButtonContainer>
         </BottomContainer>
+        </GridContainer>
       </Window>
       {custWindowVisible && (
         <CustomersWindow
