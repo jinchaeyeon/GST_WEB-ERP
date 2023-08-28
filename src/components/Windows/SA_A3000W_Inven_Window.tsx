@@ -228,9 +228,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [subPgNum, setSubPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -373,7 +371,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
     ordsts: "",
     lotnum: "",
     yyyymm: "",
-    isSearch: true,
+    isSearch: false,
     pgNum: 1,
   });
 
@@ -426,6 +424,9 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+      if(totalRowCnt > 0) {
+        setSelectedState({ [rows[0].num]: true });
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -455,29 +456,6 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
     }
   }, [filters]);
 
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
-    }
-  }, [mainDataResult]);
-
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (subDataResult.total > 0) {
-        const firstRowData = subDataResult.data[0];
-        setSubSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
-    }
-  }, [subDataResult]);
-
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -495,7 +473,6 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
       dataItemKey: DATA_ITEM_KEY2,
     });
     setSubSelectedState(newSelectedState);
-    setIfSelectFirstRow(false);
   };
 
   //그리드 리셋
@@ -768,7 +745,6 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
             }
       );
 
-      setIfSelectFirstRow(false);
       setSubDataResult((prev) => {
         return {
           data: newData,
@@ -783,7 +759,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
       ...item,
       [EDIT_FIELD]: undefined,
     }));
-    setIfSelectFirstRow(false);
+
     setSubDataResult((prev) => {
       return {
         data: newData,

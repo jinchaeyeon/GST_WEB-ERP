@@ -4,6 +4,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -35,6 +36,7 @@ import {
   unsavedAttadatnumsState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -48,8 +50,7 @@ import {
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  isValidDate,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -82,6 +83,7 @@ type TdataArr = {
   portcd_s: string[];
   portnm_s: string[];
   shipnm_s: string[];
+  pacmeth_s: string[];
   paymeth1_s: string[];
   prcterms_s: string[];
   poregnum_s: string[];
@@ -119,9 +121,6 @@ type TdataArr = {
   endyn_s: string[];
   reqnum_s: string[];
   reqseq_s: string[];
-  outrecdt: string[];
-  outseq1: string[];
-  outseq2: string[];
   boxcd_s: string[];
   specialunp_s: string[];
 };
@@ -183,6 +182,22 @@ type Idata = {
 
 let deletedMainRows: object[] = [];
 
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_BA019", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal = field === "unpcalmeth" ? "L_BA019" : "";
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
+};
+
 const CopyWindow = ({
   workType,
   data,
@@ -235,7 +250,7 @@ const CopyWindow = ({
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA002,L_CUST, L_BA020,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA005,L_BA029,L_BA171,L_BA172,L_BA173,R_YESNOALL,L_BA019",
+    "L_BA002,L_CUST, L_BA020,L_BA016,L_BA061,L_BA015, R_USEYN,L_BA005,L_BA029,L_BA171,L_BA172,L_BA173,R_YESNOALL",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -268,9 +283,7 @@ const CopyWindow = ({
   const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [unpcalmethListData, setUnpcalmethListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+
   const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -279,9 +292,7 @@ const CopyWindow = ({
       const locationQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
       );
-      const unpcalmethQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
-      );
+
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
       );
@@ -306,7 +317,6 @@ const CopyWindow = ({
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
-      fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
@@ -856,7 +866,7 @@ const CopyWindow = ({
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
-    location: "",
+    location: "01",
     reckey: "",
     outdt: new Date(),
     shipdt: null,
@@ -1088,8 +1098,25 @@ const CopyWindow = ({
     data.map((item: any) => {
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
-        amt: item.amt,
-        amtunit: item.amtunit,
+        amt:
+          item.unpcalmeth == "Q" || item.unpcalmeth == ""
+            ? filters.amtunit == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * filters.wonchgrat
+            : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+            ? filters.amtunit == "KRW"
+              ? (item.len == undefined ? 0 : item.len) * item.unp
+              : (item.len == undefined ? 0 : item.len) *
+                item.unp *
+                filters.wonchgrat
+            : item.unpcalmeth == "W"
+            ? filters.amtunit == "KRW"
+              ? item.totwgt * item.unp
+              : item.totwgt * item.unp * filters.wonchgrat
+            : filters.amtunit == "KRW"
+            ? item.amt
+            : item.amt * filters.wonchgrat,
+        amtunit: filters.amtunit,
         boxcd: "",
         boxno: "",
         chk: item.chk,
@@ -1174,7 +1201,28 @@ const CopyWindow = ({
         shipnm: "",
         specialunp: 0,
         spno: 0,
-        taxamt: item.taxamt,
+        taxamt: Math.round(
+          filters.taxdiv == "A"
+            ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp * 0.1
+                : item.qty * item.unp * filters.wonchgrat * 0.1
+              : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+              ? filters.amtunit == "KRW"
+                ? (item.len == undefined ? 0 : item.len) * item.unp * 0.1
+                : (item.len == undefined ? 0 : item.len) *
+                  item.unp *
+                  filters.wonchgrat *
+                  0.1
+              : item.unpcalmeth == "W"
+              ? filters.amtunit == "KRW"
+                ? item.totwgt * item.unp * 0.1
+                : item.totwgt * item.unp * filters.wonchgrat * 0.1
+              : filters.amtunit == "KRW"
+              ? item.amt * 0.1
+              : item.amt * filters.wonchgrat * 0.1
+            : 0
+        ),
         totlen: 0,
         totwgt: item.totwgt,
         unitwgt: item.unitwgt,
@@ -1182,7 +1230,24 @@ const CopyWindow = ({
         unpcalmeth: item.unpcalmeth,
         uschgrat: item.uschgrat,
         wgtunit: item.wgtunit,
-        wonamt: item.wonamt,
+        wonamt:
+          item.unpcalmeth == "Q" || item.unpcalmeth == ""
+            ? filters.amtunit == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * filters.wonchgrat
+            : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+            ? filters.amtunit == "KRW"
+              ? (item.len == undefined ? 0 : item.len) * item.unp
+              : (item.len == undefined ? 0 : item.len) *
+                item.unp *
+                filters.wonchgrat
+            : item.unpcalmeth == "W"
+            ? filters.amtunit == "KRW"
+              ? item.totwgt * item.unp
+              : item.totwgt * item.unp * filters.wonchgrat
+            : filters.amtunit == "KRW"
+            ? item.amt
+            : item.amt * filters.wonchgrat,
         rowstatus: "N",
         wonchgrat: item.wonchgrat,
       };
@@ -1201,76 +1266,24 @@ const CopyWindow = ({
           ...prev,
           custcd: data[0].custcd,
           custnm: data[0].custnm,
-          amtunit: data[0].amtunit,
-          doexdiv: data[0].doexdiv,
-          taxdiv: data[0].taxdiv,
         }));
       }
-    });
-  };
-
-  const setCopyData2 = (data: any) => {
-    mainDataResult.data.map((item) => {
-      if (item[DATA_ITEM_KEY] > temp) {
-        temp = item[DATA_ITEM_KEY];
-      }
-    });
-
-    data.map((item: any) => {
-      const newDataItem = {
-        [DATA_ITEM_KEY]: ++temp,
-        amt: item.amt,
-        chk: item.chk,
-        dlramt: item.dlramt,
-        insiz: item.insiz,
-        itemacnt: item.itemacnt,
-        itemcd: item.itemcd,
-        itemnm: item.itemnm,
-        ordkey: item.ordnum + item.ordseq,
-        ordnum: item.ordnum,
-        ordseq: item.ordseq,
-        orgdiv: "01",
-        outrecdt: item.outdt,
-        outreckey: item.outreckey,
-        outseq1: 0,
-        outseq2: 0,
-        poregnum: "",
-        qty: item.qty,
-        qtyunit: item.qtyunit,
-        recdt: convertDateToStr(filters.recdt),
-        reckey: filters.reckey,
-        remark: "",
-        seq1: filters.seq1,
-        seq2: 0,
-        sort_seq: 0,
-        taxamt: item.taxamt,
-        totamt: item.totamt,
-        totwgt: item.totwgt,
-        unitwgt: item.unitwgt,
-        unp: item.unp,
-        unpcalmeth: item.unpcalmeth,
-        wgtunit: item.wgtunit,
-        wonamt: item.wonamt,
-        rowstatus: "N",
-      };
-
-      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
-
-      setMainDataResult((prev) => {
-        return {
-          data: [newDataItem, ...prev.data],
-          total: prev.total + 1,
-        };
-      });
-
-      if (filters.custcd == "") {
+      if (filters.amtunit == "") {
         setFilters((prev) => ({
           ...prev,
-          custcd: data[0].custcd,
-          custnm: data[0].custnm,
-          amtunit: data[0].amtunit == undefined ? "KRW" : data[0].amtunit,
-          doexdiv: data[0].doexdiv == "" ? "A" : data[0].doexdiv,
-          taxdiv: data[0].taxdiv == undefined ? "A" : data[0].taxdiv,
+          amtunit: data[0].amtunit,
+        }));
+      }
+      if (filters.doexdiv == "") {
+        setFilters((prev) => ({
+          ...prev,
+          doexdiv: data[0].doexdiv,
+        }));
+      }
+      if (filters.taxdiv == "") {
+        setFilters((prev) => ({
+          ...prev,
+          taxdiv: data[0].taxdiv,
         }));
       }
     });
@@ -1357,7 +1370,7 @@ const CopyWindow = ({
               outkind: "",
               outtype: filters.outtype,
               outdt: filters.outdt,
-              shipdt: filters.shipdt == null ? "" : convertDateToStr(filters.shiptdt),
+              shipdt: filters.shipdt,
               person: filters.person,
               custcd: filters.custcd,
               rcvcustcd: filters.rcvcustcd,
@@ -1385,8 +1398,6 @@ const CopyWindow = ({
               custnm: filters.custnm,
               rcvcustnm: filters.rcvcustnm,
               attdatnum: filters.attdatnum,
-              outordnum: "",
-              outordseq: "",
               boxnm: "",
               wgt: "",
               userid: userId,
@@ -1405,6 +1416,7 @@ const CopyWindow = ({
               portcd_s: [],
               portnm_s: [],
               shipnm_s: [],
+              pacmeth_s: [],
               paymeth1_s: [],
               prcterms_s: [],
               poregnum_s: [],
@@ -1442,9 +1454,6 @@ const CopyWindow = ({
               endyn_s: [],
               reqnum_s: [],
               reqseq_s: [],
-              outrecdt: [],
-              outseq1: [],
-              outseq2: [],
               boxcd_s: [],
               specialunp_s: [],
             };
@@ -1460,6 +1469,7 @@ const CopyWindow = ({
                 portcd = "",
                 portnm = "",
                 shipnm = "",
+                pacmeth = "",
                 paymeth1 = "",
                 prcterms = "",
                 poregnum = "",
@@ -1509,6 +1519,7 @@ const CopyWindow = ({
               dataArr.portcd_s.push(portcd);
               dataArr.portnm_s.push(portnm);
               dataArr.shipnm_s.push(shipnm);
+              dataArr.pacmeth_s.push(pacmeth);
               dataArr.paymeth1_s.push(paymeth1);
               dataArr.prcterms_s.push(prcterms);
               dataArr.poregnum_s.push(poregnum);
@@ -1562,6 +1573,7 @@ const CopyWindow = ({
                 portcd = "",
                 portnm = "",
                 shipnm = "",
+                pacmeth = "",
                 paymeth1 = "",
                 prcterms = "",
                 poregnum = "",
@@ -1611,6 +1623,7 @@ const CopyWindow = ({
               dataArr.portcd_s.push(portcd);
               dataArr.portnm_s.push(portnm);
               dataArr.shipnm_s.push(shipnm);
+              dataArr.pacmeth_s.push(pacmeth);
               dataArr.paymeth1_s.push(paymeth1);
               dataArr.prcterms_s.push(prcterms);
               dataArr.poregnum_s.push(poregnum);
@@ -1653,6 +1666,7 @@ const CopyWindow = ({
               dataArr.boxcd_s.push(boxcd);
               dataArr.specialunp_s.push(specialunp);
             });
+
             setParaData((prev) => ({
               ...prev,
               workType: workType,
@@ -1665,7 +1679,7 @@ const CopyWindow = ({
               outkind: "",
               outtype: filters.outtype,
               outdt: filters.outdt,
-              shipdt: filters.shipdt == null ? "" : convertDateToStr(filters.shiptdt),
+              shipdt: filters.shipdt,
               person: filters.person,
               custcd: filters.custcd,
               rcvcustcd: filters.rcvcustcd,
@@ -1693,8 +1707,6 @@ const CopyWindow = ({
               custnm: filters.custnm,
               rcvcustnm: filters.rcvcustnm,
               attdatnum: filters.attdatnum,
-              outordnum: "",
-              outordseq: "",
               boxnm: "",
               wgt: "",
               userid: userId,
@@ -1710,6 +1722,7 @@ const CopyWindow = ({
               portcd_s: dataArr.portcd_s.join("|"),
               portnm_s: dataArr.portnm_s.join("|"),
               shipnm_s: dataArr.shipnm_s.join("|"),
+              pacmeth_s: dataArr.pacmeth_s.join("|"),
               paymeth1_s: dataArr.paymeth1_s.join("|"),
               prcterms_s: dataArr.prcterms_s.join("|"),
               poregnum_s: dataArr.poregnum_s.join("|"),
@@ -1747,9 +1760,6 @@ const CopyWindow = ({
               endyn_s: dataArr.endyn_s.join("|"),
               reqnum_s: dataArr.reqnum_s.join("|"),
               reqseq_s: dataArr.reqseq_s.join("|"),
-              outrecdt: dataArr.outrecdt.join("|"),
-              outseq1: dataArr.outseq1.join("|"),
-              outseq2: dataArr.outseq2.join("|"),
               boxcd_s: dataArr.boxcd_s.join("|"),
               specialunp_s: dataArr.specialunp_s.join("|"),
             }));
@@ -1761,7 +1771,7 @@ const CopyWindow = ({
     }
   };
 
-  const [ParaData, setParaData] = useState({
+  const [ParaData, setParaData] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "N",
     orgdiv: "01",
@@ -1811,6 +1821,7 @@ const CopyWindow = ({
     portcd_s: "",
     portnm_s: "",
     shipnm_s: "",
+    pacmeth_s: "",
     paymeth1_s: "",
     prcterms_s: "",
     poregnum_s: "",
@@ -1848,11 +1859,6 @@ const CopyWindow = ({
     endyn_s: "",
     reqnum_s: "",
     reqseq_s: "",
-    outrecdt: "",
-    outseq1: "",
-    outseq2: "",
-    outordnum: "",
-    outordseq: "",
     boxcd_s: "",
     boxnm: "",
     wgt: "",
@@ -1866,7 +1872,7 @@ const CopyWindow = ({
     pc: pc,
     files: "",
   });
-  console.log(ParaData)
+
   const para: Iparameters = {
     procedureName: "P_SA_A5001W_S",
     pageNumber: 0,
@@ -1882,7 +1888,8 @@ const CopyWindow = ({
       "@p_outkind": ParaData.outkind,
       "@p_outtype": ParaData.outtype,
       "@p_outdt": convertDateToStr(ParaData.outdt),
-      "@p_shipdt": ParaData.shipdt,
+      "@p_shipdt":
+        ParaData.shipdt == "" ? "" : convertDateToStr(ParaData.shipdt),
       "@p_person": ParaData.person,
       "@p_custcd": ParaData.custcd,
       "@p_rcvcustcd": ParaData.rcvcustcd,
@@ -1907,20 +1914,19 @@ const CopyWindow = ({
       "@p_custprsncd": ParaData.custprsncd,
       "@p_unprate": ParaData.unprate,
       "@p_attdatnum": ParaData.attdatnum,
-
-      "@p_countrycd": ParaData.countrycd,
-      "@p_custnm": ParaData.custnm,
-      "@p_rcvcustnm": ParaData.rcvcustnm,
-
       "@p_rowstatus": ParaData.rowstatus_s,
       "@p_seq2": ParaData.seq2_s,
       "@p_rtnyn": ParaData.rtnyn_s,
       "@p_rtntype": ParaData.rtntype_s,
       "@p_ordnum": ParaData.ordnum_s,
       "@p_ordseq": ParaData.ordseq_s,
+      "@p_custnm": ParaData.custnm,
+      "@p_rcvcustnm": ParaData.rcvcustnm,
+      "@p_countrycd": ParaData.countrycd,
       "@p_portcd": ParaData.portcd_s,
       "@p_portnm": ParaData.portnm_s,
       "@p_shipnm": ParaData.shipnm_s,
+      "@p_pacmeth": ParaData.pacmeth_s,
       "@p_paymeth1": ParaData.paymeth1_s,
       "@p_prcterms": ParaData.prcterms_s,
       "@p_poregnum": ParaData.poregnum_s,
@@ -1933,14 +1939,14 @@ const CopyWindow = ({
       "@p_lenunit": ParaData.lenunit_s,
       "@p_totlen": ParaData.totlen_s,
       "@p_unitwgt": ParaData.unitwgt_s,
-      "@p_totwgt": ParaData.totwgt_s,
       "@p_wgtunit": ParaData.wgtunit_s,
+      "@p_totwgt": ParaData.totwgt_s,
       "@p_unpcalmeth": ParaData.unpcalmeth_s,
       "@p_unp": ParaData.unp_s,
       "@p_amt": ParaData.amt_s,
+      "@p_dlramt": ParaData.dlramt_s,
       "@p_wonamt": ParaData.wonamt_s,
       "@p_taxamt": ParaData.taxamt_s,
-      "@p_dlramt": ParaData.dlramt_s,
       "@p_lotnum": ParaData.lotnum_s,
       "@p_orglot": ParaData.orglot_s,
       "@p_heatno": ParaData.heatno_s,
@@ -1958,11 +1964,6 @@ const CopyWindow = ({
       "@p_endyn": ParaData.endyn_s,
       "@p_reqnum": ParaData.reqnum_s,
       "@p_reqseq": ParaData.reqseq_s,
-      "@p_outrecdt": ParaData.outrecdt,
-      "@p_outseq1": ParaData.outseq1,
-      "@p_outseq2": ParaData.outseq2,
-      "@p_outordnum": ParaData.outordnum,
-      "@p_outordseq": ParaData.outordseq,
       "@p_boxcd": ParaData.boxcd_s,
       "@p_boxnm": ParaData.boxnm,
       "@p_wgt": ParaData.wgt,
@@ -1986,8 +1987,7 @@ const CopyWindow = ({
     } catch (error) {
       data = null;
     }
-    console.log(para);
-    console.log(data);
+
     if (data.isSuccess === true) {
       deletedMainRows = [];
       setUnsavedAttadatnums([]);
@@ -2085,18 +2085,13 @@ const CopyWindow = ({
       field != "itemnm" &&
       field != "itemacnt" &&
       field != "qtyunit" &&
-      field != "unpcalmeth" &&
-      field != "qty" &&
       field != "rowstatus" &&
       field != "itemlvl1" &&
       field != "itemlvl2" &&
-      field != "itemlvl3" &&
-      field != "taxamt" &&
-      field != "dlramt" &&
-      field != "wonamt"
+      field != "itemlvl3"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2670,9 +2665,6 @@ const CopyWindow = ({
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
-                unpcalmeth: unpcalmethListData.find(
-                  (item: any) => item.sub_code == row.unpcalmeth
-                )?.code_name,
                 itemlvl1: itemlvl1ListData.find(
                   (item: any) => item.sub_code == row.itemlvl1
                 )?.code_name,
@@ -2728,7 +2720,12 @@ const CopyWindow = ({
             <GridColumn field="itemacnt" title="품목계정" width="120px" />
             <GridColumn field="insiz" title="규격" width="150px" />
             <GridColumn field="qtyunit" title="수량단위" width="120px" />
-            <GridColumn field="unpcalmeth" title="단가산정방법" width="120px" />
+            <GridColumn
+              field="unpcalmeth"
+              title="단가산정방법"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
             <GridColumn
               field="unitwgt"
               title="단량"

@@ -694,8 +694,23 @@ const CopyWindow = ({
           ...prev,
           custcd: data[0].custcd,
           custnm: data[0].custnm,
+        }));
+      } 
+      if(filters.amtunit == "") {
+        setFilters((prev) => ({
+          ...prev,
           amtunit: data[0].amtunit,
+        }));
+      }
+      if(filters.doexdiv == "") {
+        setFilters((prev) => ({
+          ...prev,
           doexdiv: data[0].doexdiv,
+        }));
+      }
+      if(filters.taxdiv == "") {
+        setFilters((prev) => ({
+          ...prev,
           taxdiv: data[0].taxdiv,
         }));
       }
@@ -761,8 +776,23 @@ const CopyWindow = ({
           ...prev,
           custcd: data[0].custcd,
           custnm: data[0].custnm,
+        }));
+      }
+      if(filters.amtunit == "") {
+        setFilters((prev) => ({
+          ...prev,
           amtunit: data[0].amtunit == undefined ? "KRW" : data[0].amtunit,
+        }));
+      }
+      if(filters.doexdiv == "") {
+        setFilters((prev) => ({
+          ...prev,
           doexdiv: data[0].doexdiv == "" ? "A" : data[0].doexdiv,
+        }));
+      }
+      if(filters.taxdiv == "") {
+        setFilters((prev) => ({
+          ...prev,
           taxdiv: data[0].taxdiv == undefined ? "A" : data[0].taxdiv,
         }));
       }
