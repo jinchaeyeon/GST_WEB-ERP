@@ -25,6 +25,7 @@ import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
+import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 
 interface TList {
   badcnt?: number;
@@ -569,6 +570,7 @@ const SA_B3600W: React.FC = () => {
             </Grid>
           </Grid>
         </Container>
+        <SpecialDial />
       </ThemeProvider>
     </>
   );

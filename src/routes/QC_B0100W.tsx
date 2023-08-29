@@ -29,6 +29,7 @@ import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import { bytesToBase64 } from "byte-base64";
 import { DropdownChangeEvent } from "primereact/dropdown";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
+import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 
 interface TList {
   code_name: string;
@@ -566,6 +567,7 @@ const QC_B0100W: React.FC = () => {
             </Grid>
           </Grid>
         </Container>
+        <SpecialDial />
       </ThemeProvider>
     </>
   );

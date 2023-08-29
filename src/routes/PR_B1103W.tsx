@@ -30,6 +30,7 @@ import Input from "../components/KPIcomponents/Input/Input";
 import { DropdownChangeEvent } from "primereact/dropdown";
 import LineChart from "../components/KPIcomponents/Chart/LineChart";
 import { bytesToBase64 } from "byte-base64";
+import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 
 interface Tsize {
   width: number;
@@ -650,6 +651,7 @@ const PR_B1103W: React.FC = () => {
             </Grid>
           </Grid>
         </Container>
+        <SpecialDial />
       </ThemeProvider>
     </>
   );

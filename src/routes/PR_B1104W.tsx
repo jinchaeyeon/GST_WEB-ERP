@@ -30,6 +30,7 @@ import { bytesToBase64 } from "byte-base64";
 import { ProgressBar } from "primereact/progressbar";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
+import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 
 interface TList {
   planno: string;
@@ -601,6 +602,7 @@ const PR_B1104W: React.FC = () => {
             />
           </Grid>
         </Container>
+        <SpecialDial />
       </ThemeProvider>
     </>
   );
