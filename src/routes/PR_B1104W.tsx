@@ -9,8 +9,8 @@ import {
   UseBizComponent,
   UseCustomOption,
 } from "../components/CommonFunction";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { colors, colorsName, isLoading } from "../store/atoms";
 import { Toolbar } from "primereact/toolbar";
 import { Divider } from "primereact/divider";
 import { Button } from "primereact/button";
@@ -22,7 +22,6 @@ import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
 import Radio from "../components/KPIcomponents/Radio/Radio";
 import Card from "../components/KPIcomponents/Card/CardBox";
 import GridTitle from "../components/KPIcomponents/Title/Title";
-import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
 import Timelines from "../components/KPIcomponents/Timeline/Timelines";
 import Input from "../components/KPIcomponents/Input/Input";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
@@ -54,11 +53,28 @@ interface TimelineEvent {
 }
 
 const PR_B1104W: React.FC = () => {
-  const theme = createTheme();
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
+  const [color, setColor] = useRecoilState(colors);
+  const [colorName, setColorName] = useRecoilState(
+    colorsName
+  );
 
+  useEffect(() => {}, [color]);
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: `${color[0]}`,
+        dark: `${color[1]}`,
+        light: `${color[2]}`,
+      },
+      secondary: {
+        main: `${color[3]}`,
+      },
+    },
+  });
   const size: Tsize = useWindowSize();
 
   function useWindowSize() {
@@ -275,10 +291,46 @@ const PR_B1104W: React.FC = () => {
         orddt: item.orddt == "" ? "" : dateformat2(item.orddt),
         dlvdt: item.dlvdt == "" ? "" : dateformat2(item.dlvdt),
       }));
-  
+
       setAllList(rows);
       if (rows.length > 0) {
-        setSelected(rows[0]);
+        const rows2: any = data.tables[0].Rows.map((items: any) => ({
+          ...items,
+          orddt: items.orddt == "" ? "" : dateformat2(items.orddt),
+          dlvdt: items.dlvdt == "" ? "" : dateformat2(items.dlvdt),
+          itemlvl1:
+            itemlvl1ListData == undefined
+              ? items.itemlvl1
+              : itemlvl1ListData.find(
+                  (item: any) => item.sub_code == items.itemlvl1
+                )?.code_name == undefined
+              ? items.itemlvl1
+              : itemlvl1ListData.find(
+                  (item: any) => item.sub_code == items.itemlvl1
+                )?.code_name,
+          itemlvl2:
+            itemlvl2ListData == undefined
+              ? items.itemlvl2
+              : itemlvl2ListData.find(
+                  (item: any) => item.sub_code == items.itemlvl2
+                )?.code_name == undefined
+              ? items.itemlvl2
+              : itemlvl2ListData.find(
+                  (item: any) => item.sub_code == items.itemlvl2
+                )?.code_name,
+          itemlvl3:
+            itemlvl3ListData == undefined
+              ? items.itemlvl3
+              : itemlvl3ListData.find(
+                  (item: any) => item.sub_code == items.itemlvl3
+                )?.code_name == undefined
+              ? items.itemlvl3
+              : itemlvl3ListData.find(
+                  (item: any) => item.sub_code == items.itemlvl3
+                )?.code_name,
+        }));
+
+        setSelected(rows2[0]);
       } else {
         setSelected(null);
       }
@@ -301,7 +353,7 @@ const PR_B1104W: React.FC = () => {
     } catch (error) {
       data3 = null;
     }
- 
+
     if (data3.isSuccess === true) {
       const rows = data3.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
@@ -447,7 +499,7 @@ const PR_B1104W: React.FC = () => {
             ? "-"
             : CardData[0].Rows[0].proccdnm + " : " + CardData[0].Rows[0].soyoday
           : "-",
-      backgroundColor: "#1976d2",
+      backgroundColor: theme.palette.primary.dark,
     },
     {
       title: "TOP 소요일수 품목",
@@ -459,10 +511,9 @@ const PR_B1104W: React.FC = () => {
               " : " +
               CardData[1].Rows[0].totsoyoday
           : "-",
-      backgroundColor: "#5393d3",
+      backgroundColor: theme.palette.primary.main,
     },
   ];
-
 
   return (
     <>
@@ -514,6 +565,7 @@ const PR_B1104W: React.FC = () => {
                 alllabel={stackChartAllLabel}
                 random={true}
                 name="argument"
+                colorName={colorName}
               />
             </Grid>
           </Grid>
@@ -570,9 +622,7 @@ const PR_B1104W: React.FC = () => {
                   orddt: "수주일자",
                   dlvdt: "납기일자",
                 }}
-                width={[
-                  180, 150, 180, 150 , 150, 120, 120, 120, 150, 150, 150
-                ]}
+                width={[180, 150, 180, 150, 150, 120, 120, 120, 150, 150, 150]}
                 title={"전체 목록"}
                 key="num"
                 selection={selected}
@@ -597,9 +647,7 @@ const PR_B1104W: React.FC = () => {
           <Divider />
           <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
             <GridTitle title="공정정보" />
-            <Timelines
-              value={DetailList}
-            />
+            <Timelines value={DetailList} theme={theme} />
           </Grid>
         </Container>
         <SpecialDial />

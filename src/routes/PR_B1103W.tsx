@@ -10,8 +10,8 @@ import {
   UseBizComponent,
   UseCustomOption,
 } from "../components/CommonFunction";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { colors, isLoading } from "../store/atoms";
 import { Toolbar } from "primereact/toolbar";
 import { Divider } from "primereact/divider";
 import { Button } from "primereact/button";
@@ -38,12 +38,28 @@ interface Tsize {
 }
 
 const PR_B1103W: React.FC = () => {
-  const theme = createTheme();
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
   const toast = useRef<Toast>(null);
+  const [color, setColor] = useRecoilState(colors);
 
+  useEffect(() => {
+
+  },[color])
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: `${color[0]}`,
+        dark: `${color[1]}`,
+        light: `${color[2]}`,
+      },
+      secondary: {
+        main: `${color[3]}`,
+      },
+    },
+  });
   const size: Tsize = useWindowSize();
 
   function useWindowSize() {
@@ -200,7 +216,8 @@ const PR_B1103W: React.FC = () => {
       "@p_orgdiv": filters.orgdiv,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
-      "@p_recdt": selected == null ? "" : convertDateToStr(toDate2(selected.proddt)),
+      "@p_recdt":
+        selected == null ? "" : convertDateToStr(toDate2(selected.proddt)),
       "@p_option": filters.option,
       "@p_itemcd": filters.itemcd,
       "@p_itemnm": filters.itemnm,
@@ -258,13 +275,11 @@ const PR_B1103W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows.map(
-        (item: any) => ({
-          ...item,
-          proddt : item.proddt == "" ? "" : dateformat2(item.proddt),
-        })
-      );
-      
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        proddt: item.proddt == "" ? "" : dateformat2(item.proddt),
+      }));
+
       setAllList(rows);
       if (rows.length > 0) {
         setSelected(rows[0]);
@@ -290,7 +305,7 @@ const PR_B1103W: React.FC = () => {
     }
     setLoading(false);
   };
- 
+
   const fetchChartGrid = async () => {
     let data: any;
     try {
@@ -303,24 +318,24 @@ const PR_B1103W: React.FC = () => {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));
-  
-        setMonthData(rows);
-        let objects = rows.filter(
-          (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
-        );
-        setStackChartLabel(
-          objects.map((item: { series: any }) => {
-            return item.series;
+
+      setMonthData(rows);
+      let objects = rows.filter(
+        (arr: { series: any }, index: any, callback: any[]) =>
+          index === callback.findIndex((t) => t.series === arr.series)
+      );
+      setStackChartLabel(
+        objects.map((item: { series: any }) => {
+          return item.series;
+        })
+      );
+      setStackChartAllLabel(
+        rows
+          .filter((item: { series: any }) => item.series == objects[0].series)
+          .map((items: { argument: any }) => {
+            return items.argument;
           })
-        );
-        setStackChartAllLabel(
-          rows
-            .filter((item: { series: any }) => item.series == objects[0].series)
-            .map((items: { argument: any }) => {
-              return items.argument;
-            })
-        );
+      );
     }
   };
 
@@ -338,9 +353,21 @@ const PR_B1103W: React.FC = () => {
       }));
 
       setDetailList(rows);
+      if (rows.length > 0) {
+        const rows2 : any = data.tables[0].Rows.map((items: any) => ({
+          ...items,
+          prodemp : userListData == undefined
+          ? items.prodemp
+          : userListData.find(
+              (item: any) => item.user_id == items.prodemp
+            )?.user_name == undefined
+          ? items.prodemp
+          : userListData.find(
+              (item: any) => item.user_id == items.prodemp
+            )?.user_name
+        }));
 
-      if(rows.length > 0) {
-        setDetailSelected(rows[0]);
+        setDetailSelected(rows2[0]);
       } else {
         setDetailSelected(null);
       }
@@ -352,7 +379,11 @@ const PR_B1103W: React.FC = () => {
   }, [selected]);
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData != null && bizComponentData != null) {
+    if (
+      filters.isSearch &&
+      customOptionData != null &&
+      bizComponentData != null
+    ) {
       setFilters((prev) => ({
         ...prev,
         isSearch: false,
@@ -361,7 +392,7 @@ const PR_B1103W: React.FC = () => {
       fetchChartGrid();
     }
   }, [filters]);
-  
+
   const startContent = (
     <React.Fragment>
       <Grid container spacing={2}>
@@ -441,7 +472,7 @@ const PR_B1103W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                itemlvl1: e.value == undefined? "" : e.value.sub_code,
+                itemlvl1: e.value == undefined ? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}
@@ -460,7 +491,7 @@ const PR_B1103W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                itemlvl2: e.value == undefined? "" : e.value.sub_code,
+                itemlvl2: e.value == undefined ? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}
@@ -479,7 +510,7 @@ const PR_B1103W: React.FC = () => {
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                itemlvl3: e.value == undefined? "" : e.value.sub_code,
+                itemlvl3: e.value == undefined ? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}
@@ -500,17 +531,17 @@ const PR_B1103W: React.FC = () => {
     {
       title: "평균 시간당 생산량",
       data: AllPanel.avg_worktime != null ? AllPanel.avg_worktime : 0,
-      backgroundColor: "#1976d2",
+      backgroundColor: theme.palette.primary.dark,
     },
     {
       title: "총 생산량",
       data: AllPanel.qty != null ? AllPanel.qty : 0,
-      backgroundColor: "#5393d3",
+      backgroundColor: theme.palette.primary.main,
     },
     {
       title: "총 작업시간",
       data: AllPanel.worktime != null ? AllPanel.worktime + "h" : 0 + "h",
-      backgroundColor: "#94b6d7",
+      backgroundColor: theme.palette.primary.light,
     },
   ];
 
@@ -575,8 +606,8 @@ const PR_B1103W: React.FC = () => {
                 value="uph_worktime"
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}
-                color={["#1976d2"]}
-                borderColor={["#d7ecfb"]}
+                color={[theme.palette.primary.dark]}
+                borderColor={[theme.palette.primary.main]}
                 name="series"
               />
             </Grid>
@@ -595,9 +626,7 @@ const PR_B1103W: React.FC = () => {
                   uph_worktime: "시간당 생산량",
                 }}
                 title={"전체 목록"}
-                width={[
-                  110, 100, 120, 120 , 120, 150
-                ]}
+                width={[110, 100, 120, 120, 120, 150]}
                 key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
@@ -607,14 +636,23 @@ const PR_B1103W: React.FC = () => {
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
               <PaginatorTable
-                value={DetailList != undefined ? DetailList.map((items: any) => ({
-                  ...items,
-                  prodemp: userListData == undefined ? items.prodemp : userListData.find(
-                    (item: any) => item.user_id == items.prodemp
-                  )?.user_name == undefined ? items.prodemp : userListData.find(
-                    (item: any) => item.user_id == items.prodemp
-                  )?.user_name
-                })) : []}
+                value={
+                  DetailList != undefined
+                    ? DetailList.map((items: any) => ({
+                        ...items,
+                        prodemp:
+                          userListData == undefined
+                            ? items.prodemp
+                            : userListData.find(
+                                (item: any) => item.user_id == items.prodemp
+                              )?.user_name == undefined
+                            ? items.prodemp
+                            : userListData.find(
+                                (item: any) => item.user_id == items.prodemp
+                              )?.user_name,
+                      }))
+                    : []
+                }
                 column={{
                   itemcd:
                     filters.option == "I"
@@ -637,9 +675,7 @@ const PR_B1103W: React.FC = () => {
                   hr: "표준시간",
                   prodemp: "작업자",
                 }}
-                width={[
-                  130, 140, 110, 120, 120, 110
-                ]}
+                width={[130, 140, 110, 120, 120, 110]}
                 numberField={["qty"]}
                 title={"상세 목록"}
                 key="num"

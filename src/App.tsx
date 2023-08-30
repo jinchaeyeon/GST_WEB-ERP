@@ -1,6 +1,6 @@
-import { RecoilRoot, useRecoilValue } from "recoil";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./index.scss";
 import { createGlobalStyle } from "styled-components";
 import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
@@ -127,8 +127,6 @@ import HU_B3160W from "./routes/HU_B3160W";
 import HU_B4001W from "./routes/HU_B4001W";
 import HU_B4000W from "./routes/HU_B4000W";
 
-
-
 import TO_B0011W from "./routes/TO_B0011W";
 import CHAT_A0001W from "./routes/CHAT_A0001W";
 import CHAT_A0002W from "./routes/CHAT_A0002W";
@@ -136,7 +134,11 @@ import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
 import WORD_EDITOR from "./routes/WORD_EDITOR";
 import GANTT from "./routes/GANTT";
 import SY_A0100W from "./routes/SY_A0100W";
-import { isMobileMenuOpendState, loginResultState } from "./store/atoms";
+import {
+  colors,
+  isMobileMenuOpendState,
+  loginResultState,
+} from "./store/atoms";
 import {
   IntlProvider,
   LocalizationProvider,
@@ -168,7 +170,8 @@ import dateFieldsZh from "cldr-dates-full/main/zh/dateFields.json";
 import timeZoneNamesZh from "cldr-dates-full/main/zh/timeZoneNames.json";
 
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
-import styled from 'styled-components';
+import styled from "styled-components";
+import { createTheme } from "@mui/material";
 
 load(
   likelySubtags,
@@ -259,15 +262,6 @@ a {
 
 `;
 
-const GlobalStyles = styled.div`
-@font-face {
-  font-family: 'TheJamsil5Bold';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-}
-`
-
 const App: React.FC = () => {
   return (
     <RecoilRoot>
@@ -276,6 +270,130 @@ const App: React.FC = () => {
   );
 };
 const AppInner: React.FC = () => {
+  const [color, setColor] = useRecoilState(colors);
+  const [themecolor, setThemeColor] = useState<string[]>([
+    "#2196f3",
+    "#1976d2",
+    "#64b5f6",
+    "#bbdefb",
+  ]);
+
+  useEffect(() => {
+    setThemeColor(color);
+  }, [color]);
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: `${color[0]}`,
+        dark: `${color[1]}`,
+        light: `${color[2]}`,
+      },
+      secondary: {
+        main: `${color[3]}`,
+      },
+    },
+  });
+
+  const GlobalStyles = styled.div`
+    @font-face {
+      font-family: "TheJamsil5Bold";
+      src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2")
+        format("woff2");
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    .p-button {
+      background: ${theme.palette.primary.main};
+      border: 1px solid ${theme.palette.primary.main};
+      box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
+    }
+
+    .p-button:hover {
+      background: ${theme.palette.primary.dark};
+      border: 1px solid ${theme.palette.primary.dark};
+    }
+
+    .p-inputtext:enabled:focus {
+      border: 1px solid ${theme.palette.primary.main};
+      box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
+    }
+
+    .p-inputtext:enabled:hover {
+      border: 1px solid ${theme.palette.primary.main};
+      box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
+    }
+
+    .p-dropdown:not(.p-disabled):hover,
+    .p-dropdown:not(.p-disabled).p-focus {
+      border: 1px solid ${theme.palette.primary.main};
+      outline: 0.15rem solid ${theme.palette.primary.main};
+      box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
+    }
+
+    .p-datatable .p-datatable-tbody > tr.p-highlight {
+      color: black;
+      background-color: ${theme.palette.secondary.main};
+    }
+
+    .p-datatable.p-datatable-selectable
+      .p-datatable-tbody
+      > tr.p-selectable-row:focus {
+      outline: 0.15rem solid ${theme.palette.primary.light};
+    }
+
+    .p-datatable .p-sortable-column.p-highlight {
+      color: black;
+      background-color: ${theme.palette.secondary.main};
+    }
+
+    .p-datatable
+      .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover {
+      color: black;
+      background-color: ${theme.palette.primary.light};
+    }
+
+    .p-datatable .p-sortable-column:focus {
+      box-shadow: inset 0 0 0 0.15rem ${theme.palette.primary.light};
+    }
+
+    .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon,
+    .p-datatable .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover .p-sortable-column-icon {
+      color: black;
+    }
+
+    .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd.p-highlight {
+      color: black;
+      background-color: ${theme.palette.secondary.main};
+    }
+
+    .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+      color: black;
+      background-color: ${theme.palette.secondary.main};
+      border-color: ${theme.palette.secondary.main};
+    }
+
+    .p-radiobutton .p-radiobutton-box.p-highlight {
+      background-color: ${theme.palette.primary.main};
+      border-color: ${theme.palette.primary.main};
+    }
+    .p-radiobutton .p-radiobutton-box.p-highlight:not(.p-disabled):hover {
+      background-color: ${theme.palette.primary.dark};
+      border-color: ${theme.palette.primary.dark};
+    }
+    .p-radiobutton .p-radiobutton-box:not(.p-disabled).p-focus {
+      box-shadow: inset 0 0 0 0.15rem ${theme.palette.primary.light};
+    }
+    .p-radiobutton .p-radiobutton-box:not(.p-disabled):not(.p-highlight):hover {
+      border-color: ${theme.palette.primary.main};
+    }
+
+    .p-progressbar .p-progressbar-value {
+      background: ${theme.palette.primary.main};
+    }
+  `;
+
   const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
   const loginResult = useRecoilValue(loginResultState);
 
@@ -359,8 +477,8 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/SA_B3100W" component={SA_B3100W} exact />
                 <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
                 {/* 생산관리 */}
-                <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />   
-                <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />   
+                <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />
+                <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />
                 <AuthRoute path="/PR_A0060W" component={PR_A0060W} exact />
                 <AuthRoute path="/PR_A4100W" component={PR_A4100W} exact />
                 <AuthRoute path="/PR_A5000W" component={PR_A5000W} exact />
@@ -409,13 +527,13 @@ const AppInner: React.FC = () => {
                 {/* 원가관리 */}
                 <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
                 {/* 인사관리 */}
-                <AuthRoute path="/HU_A1000W" component={HU_A1000W} exact /> 
+                <AuthRoute path="/HU_A1000W" component={HU_A1000W} exact />
                 <AuthRoute path="/HU_A2070W" component={HU_A2070W} exact />
                 <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
                 <AuthRoute path="/HU_A3020W" component={HU_A3020W} exact />
                 <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
                 <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
-                <AuthRoute path="/HU_B1020W" component={HU_B1020W} exact />                
+                <AuthRoute path="/HU_B1020W" component={HU_B1020W} exact />
                 <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />
                 <AuthRoute path="/HU_B3140W" component={HU_B3140W} exact />
                 <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
@@ -448,7 +566,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/GANTT" component={GANTT} exact />
 
                 {/*KPI관리 */}
-                <GlobalStyles style={{fontFamily: "TheJamsil5Bold"}}>
+                <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
                   <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
                   <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
                   <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
@@ -456,8 +574,11 @@ const AppInner: React.FC = () => {
                 </GlobalStyles>
 
                 {/*CRM */}
-                <AuthRoute path="/BA_A0020W_603" component={BA_A0020W_603} exact />
-                   
+                <AuthRoute
+                  path="/BA_A0020W_603"
+                  component={BA_A0020W_603}
+                  exact
+                />
               </PanelBarNavContainer>
             </Switch>
           </Router>

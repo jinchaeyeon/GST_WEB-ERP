@@ -69,7 +69,7 @@ export default function LineChart(props) {
       setChartData(data);
       setChartOptions(options);
     }
-  }, [props.props]);
+  }, [props]);
 
   return (
     <div className="card">

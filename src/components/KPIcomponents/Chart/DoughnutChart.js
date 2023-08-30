@@ -1,43 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { Chart } from 'primereact/chart';
+import React, { useState, useEffect } from "react";
+import { Chart } from "primereact/chart";
 
 export default function DoughnutChart(props) {
-    const [chartData, setChartData] = useState({});
-    const [chartOptions, setChartOptions] = useState({});
+  const [chartData, setChartData] = useState({});
+  const [chartOptions, setChartOptions] = useState({});
 
-    useEffect(() => {
-        if(props.data != null){
-            const propsData = props.data;
-            const data = {
-                labels: props.label,
-                datasets: [
-                    {
-                        data: props.option.map((item) => {
-                            return propsData[item]
-                        }),
-                        backgroundColor: [
-                            "#d7ecfb",
-                            "#fbded7", 
-                        ],
-                        hoverBackgroundColor: [
-                            "#1976d2",
-                            "#FF0000", 
-                        ]
-                    }
-                ]
-            };
-            const options = {
-                cutout: '60%'
-            };
-    
-            setChartData(data);
-            setChartOptions(options);
-        }
-    }, [props.data]);
+  const theme = props.theme;
+  useEffect(() => {
+    if (props.data != null) {
+      const propsData = props.data;
+      const data = {
+        labels: props.label,
+        datasets: [
+          {
+            data: props.option.map((item) => {
+              return propsData[item];
+            }),
+            backgroundColor: [
+              theme.palette.primary.main,
+              theme.palette.primary.light,
+            ],
+            hoverBackgroundColor: [
+              theme.palette.primary.dark,
+              theme.palette.secondary.main,
+            ],
+          },
+        ],
+      };
+      const options = {
+        cutout: "60%",
+      };
 
-    return (
-        <div className="card flex justify-content-center">
-            <Chart type="doughnut" data={chartData} options={chartOptions} className="w-full md:w-30rem" />
-        </div>
-    )
+      setChartData(data);
+      setChartOptions(options);
+    }
+  }, [props]);
+
+  return (
+    <div className="card flex justify-content-center">
+      <Chart
+        type="doughnut"
+        data={chartData}
+        options={chartOptions}
+        className="w-full md:w-30rem"
+      />
+    </div>
+  );
 }

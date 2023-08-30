@@ -94,3 +94,13 @@ export const unsavedAttadatnumsState = atom<string[]>({
   key: "unsavedAttadatnums",
   default: [],
 });
+
+export const colors = atom<string[]>({
+  key: "colors",
+  default: ["#2196f3", "#1976d2", "#64b5f6", "#bbdefb"],
+});
+
+export const colorsName = atom<string>({
+  key: "colorsName",
+  default: "Blue",
+});

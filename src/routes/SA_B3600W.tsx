@@ -7,7 +7,7 @@ import { Divider } from "primereact/divider";
 import { DropdownChangeEvent } from "primereact/dropdown";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
   UseCustomOption,
@@ -24,7 +24,7 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { colors, isLoading } from "../store/atoms";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 
 interface TList {
@@ -43,11 +43,25 @@ interface Tsize {
 }
 
 const SA_B3600W: React.FC = () => {
-  const theme = createTheme();
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
+  const [color, setColor] = useRecoilState(colors);
 
+  useEffect(() => {}, [color]);
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: `${color[0]}`,
+        dark: `${color[1]}`,
+        light: `${color[2]}`,
+      },
+      secondary: {
+        main: `${color[3]}`,
+      },
+    },
+  });
   const size: Tsize = useWindowSize();
 
   function useWindowSize() {
@@ -429,22 +443,22 @@ const SA_B3600W: React.FC = () => {
         AllPanel.confirm_percent != null
           ? AllPanel.confirm_percent + "%"
           : 0 + "%",
-      backgroundColor: "#1976d2",
+          backgroundColor: theme.palette.primary.dark,
     },
     {
       title: "총 준수건수",
       data: AllPanel.okcnt != null ? AllPanel.okcnt + "건" : 0 + "건",
-      backgroundColor: "#5393d3",
+      backgroundColor: theme.palette.primary.main,
     },
     {
       title: "총 지연건수",
       data: AllPanel.badcnt != null ? AllPanel.badcnt + "건" : 0 + "건",
-      backgroundColor: "#94b6d7",
+      backgroundColor: theme.palette.primary.light,
     },
     {
       title: "총 건수",
       data: AllPanel.totcnt != null ? AllPanel.totcnt + "건" : 0 + "건",
-      backgroundColor: "#b4c4d3",
+      backgroundColor: theme.palette.secondary.main,
     },
   ];
 
@@ -528,8 +542,8 @@ const SA_B3600W: React.FC = () => {
               <StackedChart
                 props={ChartList}
                 value="value"
-                name="series"
-                color={["#1976d2", "#FF0000"]}
+                name="series"                
+                color={[theme.palette.primary.dark, theme.palette.primary.light]}
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}
                 random={false}
@@ -566,6 +580,7 @@ const SA_B3600W: React.FC = () => {
                 data={selected}
                 option={["okcnt", "badcnt"]}
                 label={["준수건수", "지연건수"]}
+                theme={theme}
               />
             </Grid>
           </Grid>

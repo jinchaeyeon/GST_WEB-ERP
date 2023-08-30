@@ -3,7 +3,6 @@ import Grid from "@mui/material/Grid";
 import { Calendar } from "primereact/calendar";
 
 const DatePicker = (props) => {
-  
   return (
     <>
       <Grid item xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl}>
@@ -26,7 +25,7 @@ const DatePicker = (props) => {
               dateFormat="yy-mm-dd"
               showIcon
             />
-          </Grid>
+          </Grid> 
         </Grid>
       </Grid>
     </>

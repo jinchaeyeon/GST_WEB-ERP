@@ -1,11 +1,13 @@
 import { Box, DialogContent, DialogTitle, Grid } from "@mui/material";
+import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import Paper, { PaperProps } from "@mui/material/Paper";
-import Button from "@mui/material/Button";
 import { useState } from "react";
 import Draggable from "react-draggable";
+import { useRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../../CommonStyled";
 import { IWindowPosition } from "../../../hooks/interfaces";
+import { colors, colorsName } from "../../../store/atoms";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
@@ -34,10 +36,46 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
 
   const onClose = () => {
     setVisible(false);
+  }
+
+  const onSave = () => {
+    const colors = colorNames.slice(2);
+
+    setColorName(colors);
+    if(colors == "Red") {
+      setColor(["#f44336", "#d50000", "#ff5252", "#ffcdd2"]);
+    } else if(colors == "Orange") {
+      setColor(["#ff9800", "#ff6d00", "#ffab40", "#ffd180"]);
+    } else if(colors == "Yellow") {
+      setColor(["#ffeb3b", "#fbc02d", "#ffff00", "#ffff8d"]);
+    } else if(colors == "Lime") {
+      setColor(["#c6ff00", "#aeea00", "#eeff41", "#f4ff81"]);
+    } else if(colors == "LightGreen") {
+      setColor(["#8bc34a", "#689f38", "#aed581", "#dcedc8"]);
+    } else if(colors == "Green") {
+      setColor(["#4caf50", "#388e3c", "#81c784", "#c8e6c9"]);
+    } else if(colors == "Cyan") {
+      setColor(["#00e5ff", "#00b8d4", "#80deea", "#b2ebf2"]);
+    } else if(colors == "Blue") {
+      setColor(["#2196f3", "#1976d2", "#64b5f6", "#bbdefb"]);
+    } else if(colors == "Navy") {
+      setColor(["#3f51b5", "#303f9f", "#7986cb", "#c5cae9"]);
+    } else if(colors == "Purple") {
+      setColor(["#9c27b0", "#7b1fa2", "#ba68c8", "#e1bee7"]);
+    } else if(colors == "Pink") {
+      setColor(["#f06292", "#e91e63", "#f48fb1", "#f8bbd0"]);
+    } else if(colors == "Grey") {
+      setColor(["#757575", "#424242", "#bdbdbd", "#e0e0e0"]);
+    } else {
+      setColor(["#2196f3", "#1976d2", "#64b5f6", "#bbdefb"]);
+    }
+
+    setVisible(false);
   };
 
-  const [colorName, setColorName] = useState<string>("");
-  const [colorCode, setColorCode] = useState<string>("");
+  const [color, setColor] = useRecoilState(colors);
+  const [colorName, setColorName] = useRecoilState(colorsName);
+  const [colorNames, setColorNames] = useState("");
 
   return (
     <Dialog
@@ -53,15 +91,15 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
         left: position.left,
       }}
     >
-      <DialogTitle>컬러 설정 색상 {colorName}</DialogTitle>
+      <DialogTitle>컬러 설정 색상 {colorNames}</DialogTitle>
       <DialogContent>
         <Box>
           <Grid container spacing={2}>
-            {/* A700 500(현재) A200 A100 */}
+            {/* A700 500(현재) A200 100 */}
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Red")}
+                onClick={() => setColorNames("- Red")}
                 style={{ backgroundColor: "#f44336", width: "100%" }}
               >
                 Red
@@ -71,7 +109,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Orange")}
+                onClick={() => setColorNames("- Orange")}
                 style={{ backgroundColor: "#ff9800", width: "100%" }}
               >
                 Orange
@@ -81,7 +119,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Yellow")}
+                onClick={() => setColorNames("- Yellow")}
                 style={{ backgroundColor: "#ffeb3b", width: "100%" }}
               >
                 Yellow
@@ -91,7 +129,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Lime")}
+                onClick={() => setColorNames("- Lime")}
                 style={{ backgroundColor: "#c6ff00", width: "100%" }}
               >
                 Lime
@@ -101,7 +139,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- LightGreen")}
+                onClick={() => setColorNames("- LightGreen")}
                 style={{ backgroundColor: "#8bc34a", width: "100%" }}
               >
                 LightGreen
@@ -111,7 +149,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Green")}
+                onClick={() => setColorNames("- Green")}
                 style={{ backgroundColor: "#4caf50", width: "100%" }}
               >
                 Green
@@ -121,7 +159,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Cyan")}
+                onClick={() => setColorNames("- Cyan")}
                 style={{ backgroundColor: "#00e5ff", width: "100%" }}
               >
                 Cyan
@@ -131,7 +169,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Blue")}
+                onClick={() => setColorNames("- Blue")}
                 style={{ backgroundColor: "#2196f3", width: "100%" }}
               >
                 Blue
@@ -141,17 +179,17 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Navy")}
+                onClick={() => setColorNames("- Navy")}
                 style={{ backgroundColor: "#3f51b5", width: "100%" }}
               >
                 Navy
               </Button>
             </Grid>
-            {/* 800 500(현재) 300 100 */}
+            {/* 700 500(현재) 300 100 */}
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Purple")}
+                onClick={() => setColorNames("- Purple")}
                 style={{ backgroundColor: "#9c27b0", width: "100%" }}
               >
                 Purple
@@ -161,7 +199,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Pink")}
+                onClick={() => setColorNames("- Pink")}
                 style={{ backgroundColor: "#f06292", width: "100%" }}
               >
                 Pink
@@ -171,7 +209,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
               <Button
                 variant="contained"
-                onClick={() => setColorName("- Grey")}
+                onClick={() => setColorNames("- Grey")}
                 style={{ backgroundColor: "#757575", width: "100%" }}
               >
                 Grey
@@ -181,7 +219,8 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
         </Box>
         <BottomContainer>
           <ButtonContainer>
-            <Button onClick={onClose}>확인</Button>
+            <Button onClick={onClose}>취소</Button>
+            <Button onClick={onSave}>확인</Button>
           </ButtonContainer>
         </BottomContainer>
       </DialogContent>
