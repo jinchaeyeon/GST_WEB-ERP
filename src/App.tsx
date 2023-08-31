@@ -172,6 +172,7 @@ import timeZoneNamesZh from "cldr-dates-full/main/zh/timeZoneNames.json";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import styled from "styled-components";
 import { createTheme } from "@mui/material";
+import TEST1 from "./routes/TEST1";
 
 load(
   likelySubtags,
@@ -420,6 +421,7 @@ const AppInner: React.FC = () => {
               <PanelBarNavContainer>
                 {/* 메인 홈 */}
                 <AuthRoute path="/Home" component={Main} exact />
+                <AuthRoute path="/TEST1" component={TEST1} exact />
                 {/* 기준정보 */}
                 <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
                 <AuthRoute path="/BA_A0020W" component={BA_A0020W} exact />

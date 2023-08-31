@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { CLOSED_GNV_WIDTH, GNV_WIDTH } from "./components/CommonString";
 import logoSrc from "./img/logo.png";
+import loginBgSrc from "./img/login_bg.png";
 
 export const TitleContainer = styled.div`
   display: inline-block;
@@ -13,6 +14,26 @@ export const TitleContainer = styled.div`
 
   .iot-title {
     font-size: 26px;
+  }
+`;
+
+export const LoginImg = styled.div`
+  background: url(${loginBgSrc});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center right;
+  opacity: 0.9;
+  height: 100%;
+  width: 50%;
+  top: 0;
+  right: 0;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 1200px) {
+    display: none;
   }
 `;
 
@@ -361,7 +382,7 @@ export const GridTitle = styled.h3`
   font-size: 16px;
   font-weight: 600;
   color: #424242;
-  margin-bottom : 10px;
+  margin-bottom: 10px;
 `;
 
 export const PrimaryP = styled.p`
@@ -434,7 +455,7 @@ export const DeliyReportPrint = styled.div`
 `;
 
 export const GridTitleContainer = styled.div`
-display: block;
+  display: block;
   justify-content: space-between;
   align-items: center;
   /* margin: 5 0px; */
@@ -492,11 +513,13 @@ export const LoginBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #2289c3;
   height: 100vh;
-  padding-bottom: 50px;
+  width: 50%;
+  border-top-left-radius: 300px;
+  background-color: #fff;
 
   > form {
-    background-color: #f7f7f7;
     width: 400px;
     padding: 50px;
     border-radius: 5px;
@@ -504,6 +527,17 @@ export const LoginBox = styled.div`
   .k-button.login-btn {
     width: 100%;
     margin-top: 40px;
+    height: 48px;
+    font-size: 18px;
+    font-weight: 600;
+    background-color: #2289c3;
+    border-color: #2289c3;
+  }
+  .k-input {
+    height: 44px;
+    padding-left: 20px;
+    font-size: 14px;
+    border-color: rgba(0, 0, 0, 0.2);
   }
   .k-form-horizontal .k-form-field > .k-label,
   .k-form-horizontal .k-form-field > kendo-label,
@@ -513,6 +547,9 @@ export const LoginBox = styled.div`
   }
   .k-form-horizontal .k-form-field-wrap {
     max-width: calc(75% - 10px) !important;
+  }
+  @media (max-width: 1200px) {
+    width: 100%;
   }
 `;
 
@@ -803,7 +840,6 @@ export const AppName = styled.h1`
   align-items: center;
   gap: 3px;
   background-color: #fff;
-  border-right: 1px solid #ebebeb;
   cursor: pointer;
 
   @media (max-width: 850px) {
@@ -829,7 +865,12 @@ export const MenuSearchBox = styled.div`
 `;
 
 export const LoginAppName = styled(AppName)`
-  border-right: none;
+  background: url(${(props) => logoSrc});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center right;
+  width: 502px;
+  height: 400px;
   background-color: transparent;
   font-size: 22px;
   gap: 5px;
