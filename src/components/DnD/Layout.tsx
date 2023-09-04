@@ -1,8 +1,8 @@
-export type Position = [number, number]
+export type Position = [number, number, number]
 export type PositionObserver = ((position: Position) => void) | null
 
 export class Layout {
-  public position: Position = [1, 7]
+  public position: Position = [0, 0, -1]
   private observers: PositionObserver[] = []
 
   public observe(o: PositionObserver): () => void {
@@ -14,8 +14,8 @@ export class Layout {
     }
   }
 
-  public moveKnight(toX: number, toY: number): void {
-    this.position = [toX, toY]
+  public moveKnight(toX: number, toY: number, index: number): void {
+    this.position = [toX, toY, index]
     this.emitChange()
   }
 

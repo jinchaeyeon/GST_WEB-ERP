@@ -56,6 +56,7 @@
     "cachios": "^4.0.0",
     "calculate-size": "^1.1.1",
     "chart.js": "^4.3.0",
+    "chess.js": "^1.0.0-beta.6",
     "cldr-core": "^42.0.0",
     "cldr-dates-full": "^42.0.0",
     "cldr-numbers-full": "^42.0.0",
