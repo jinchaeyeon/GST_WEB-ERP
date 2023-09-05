@@ -2204,7 +2204,7 @@ const PR_A9000W: React.FC = () => {
                   }}
                 >
                   <Grid
-                    style={{ height: "68vh" }}
+                    style={{ height: "66vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2326,7 +2326,7 @@ const PR_A9000W: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "68vh" }}
+                style={{ height: "66vh" }}
                 data={process(
                   detailDataResult.data.map((row) => ({
                     ...row,

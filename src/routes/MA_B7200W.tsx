@@ -1603,7 +1603,7 @@ const MA_B7200W: React.FC = () => {
                   <GridTitle>품목별기간재고</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "74vh" }}
+                  style={{ height: "69vh" }}
                   data={mainDataResult}
                   {...mainDataState}
                   onDataStateChange={onMainDataStateChange}
@@ -1664,7 +1664,7 @@ const MA_B7200W: React.FC = () => {
                   <GridTitle>입고상세내역</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "35vh" }}
+                  style={{ height: "32.1vh" }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
@@ -1734,7 +1734,7 @@ const MA_B7200W: React.FC = () => {
                   <GridTitle>출고상세내역</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "35vh" }}
+                  style={{ height: "33.1vh" }}
                   data={process(
                     detailDataResult2.data.map((row) => ({
                       ...row,
@@ -1815,7 +1815,7 @@ const MA_B7200W: React.FC = () => {
                   <GridTitle>제공품재고</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "74vh" }}
+                  style={{ height: "69vh" }}
                   data={mainDataResult2}
                   {...mainDataState2}
                   onDataStateChange={onMainDataStateChange2}
@@ -1876,7 +1876,7 @@ const MA_B7200W: React.FC = () => {
                   <GridTitle>입고상세내역</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "35vh" }}
+                  style={{ height: "32.5vh" }}
                   data={process(
                     detailDataResult3.data.map((row) => ({
                       ...row,
@@ -1942,7 +1942,7 @@ const MA_B7200W: React.FC = () => {
                   <GridTitle>출고상세내역</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "35vh" }}
+                  style={{ height: "32.5vh" }}
                   data={process(
                     detailDataResult4.data.map((row) => ({
                       ...row,

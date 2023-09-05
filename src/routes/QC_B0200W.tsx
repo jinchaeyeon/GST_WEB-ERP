@@ -1076,7 +1076,7 @@ const QC_B0200W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "68vh" }}
+                  style={{ height: "69vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,

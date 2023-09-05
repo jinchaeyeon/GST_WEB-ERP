@@ -1370,7 +1370,7 @@ const PR_A0030W: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "77vh" }}
+            style={{ height: "82vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1537,7 +1537,7 @@ const PR_A0030W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
               <Grid
-                style={{ height: "54.5vh" }}
+                style={{ height: "55vh" }}
                 data={process(
                   subData2Result.data.map((row) => ({
                     ...row,
@@ -1632,7 +1632,7 @@ const PR_A0030W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "61vh" }}
+                  style={{ height: "58vh" }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,

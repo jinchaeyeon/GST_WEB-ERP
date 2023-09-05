@@ -1925,7 +1925,7 @@ const HU_B3140W: React.FC = () => {
               }}
             >
               <Grid
-                style={{ height: "69vh" }}
+                style={{ height: "72vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1996,7 +1996,7 @@ const HU_B3140W: React.FC = () => {
         <TabStripTab title="개인별월내역(분리)">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "69vh" }}
+              style={{ height: "72vh" }}
               data={mainDataResult2}
               {...mainDataState2}
               onDataStateChange={onMainDataStateChange2}
@@ -2057,7 +2057,7 @@ const HU_B3140W: React.FC = () => {
               <GridTitle>급여내역</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "31vh" }}
+              style={{ height: "32.5vh" }}
               data={process(
                 mainDataResult3.data.map((row) => ({
                   ...row,
@@ -2116,7 +2116,7 @@ const HU_B3140W: React.FC = () => {
               <GridTitle>상여내역</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "31vh" }}
+              style={{ height: "32.5vh" }}
               data={process(
                 mainDataResult4.data.map((row) => ({
                   ...row,
@@ -2173,7 +2173,7 @@ const HU_B3140W: React.FC = () => {
         <TabStripTab title="급여상세내역">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "69vh" }}
+              style={{ height: "72vh" }}
               data={process(
                 mainDataResult5.data.map((row) => ({
                   ...row,
@@ -2228,7 +2228,7 @@ const HU_B3140W: React.FC = () => {
         <TabStripTab title="상여상세내역">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "69vh" }}
+              style={{ height: "72vh" }}
               data={process(
                 mainDataResult6.data.map((row) => ({
                   ...row,

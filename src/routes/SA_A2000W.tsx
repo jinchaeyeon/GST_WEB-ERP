@@ -1417,7 +1417,7 @@ const SA_B2000: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "35vh" }}
+            style={{ height: "37vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1511,7 +1511,7 @@ const SA_B2000: React.FC = () => {
           <GridTitle>상세정보</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "28vh" }}
+          style={{ height: "30vh" }}
           data={process(
             detailDataResult.data.map((row) => ({
               ...row,

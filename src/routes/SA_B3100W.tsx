@@ -877,11 +877,11 @@ const SA_B3100W: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: "75vh", width: "100%" }}
+        style={{ height: "80.5vh", width: "100%" }}
       >
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
-            <GridContainer height="33vh">
+            <GridContainer height="36.5vh">
               <Chart style={{ height: "100%" }}>
                 <ChartValueAxis>
                   <ChartValueAxisItem
@@ -922,7 +922,7 @@ const SA_B3100W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "33vh" }}
+                  style={{ height: "36.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1003,7 +1003,7 @@ const SA_B3100W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "33vh" }}
+                  style={{ height: "36.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1096,7 +1096,7 @@ const SA_B3100W: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </GridContainer>
-            <GridContainerWrap style={{ height: isMobile ? "" : "33vh" }}>
+            <GridContainerWrap style={{ height: isMobile ? "" : "36.5vh" }}>
               <GridContainer width={"70%"}>
                 <Chart style={{ height: !isMobile ? "100%" : "" }}>
                   <ChartValueAxis>
@@ -1169,7 +1169,7 @@ const SA_B3100W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "33vh" }}
+                  style={{ height: "36.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1350,7 +1350,7 @@ const SA_B3100W: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </GridContainer>
-            <GridContainerWrap style={{ height: isMobile ? "" : "33vh" }}>
+            <GridContainerWrap style={{ height: isMobile ? "" : "36.5vh" }}>
               <GridContainer width={"60%"}>
                 <Chart style={{ height: !isMobile ? "100%" : "" }}>
                   <ChartValueAxis>
@@ -1469,7 +1469,7 @@ const SA_B3100W: React.FC = () => {
           <GridContainerWrap flexDirection="column">
             <GridContainer width={"100%"}>
               <Grid
-                style={{ height: "33vh" }}
+                style={{ height: "36.5vh" }}
                 data={process(
                   gridDataResult.data.map((row) => ({
                     ...row,
@@ -1722,7 +1722,7 @@ const SA_B3100W: React.FC = () => {
                   )}
               </Grid>
             </GridContainer>
-            <GridContainerWrap style={{ height: isMobile ? "" : "33vh" }}>
+            <GridContainerWrap style={{ height: isMobile ? "" : "36.5vh" }}>
               <GridContainer width={"60%"}>
                 <Chart style={{ height: !isMobile ? "100%" : "" }}>
                   <ChartValueAxis>

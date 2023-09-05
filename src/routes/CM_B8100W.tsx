@@ -481,7 +481,7 @@ const CM_B8100W: React.FC = () => {
             <GridTitle>기본정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "79vh" }}
+            style={{ height: "82.2vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

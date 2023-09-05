@@ -1122,7 +1122,7 @@ const PR_A6000W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "34vh" }}
+            style={{ height: "35vh" }}
             data={detailDataResult}
             {...detailDataState}
             onDataStateChange={onDetailDataStateChange}

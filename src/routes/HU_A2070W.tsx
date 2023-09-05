@@ -1107,7 +1107,7 @@ const HU_A2070W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "75vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

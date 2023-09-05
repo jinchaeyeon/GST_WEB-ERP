@@ -1545,7 +1545,7 @@ const MA_A2000W: React.FC = () => {
           <GridTitle>상세정보</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "34vh" }}
+          style={{ height: "35.2vh" }}
           data={process(
             detailDataResult.data.map((row) => ({
               ...row,

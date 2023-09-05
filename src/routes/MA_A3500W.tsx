@@ -2299,7 +2299,7 @@ const MA_A2400W: React.FC = () => {
             </Button>
           </GridTitleContainer>
           <Grid
-            style={{ height: "25vh" }}
+            style={{ height: "24.2vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -2455,7 +2455,7 @@ const MA_A2400W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "34vh" }}
+                  style={{ height: "30.3vh" }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -2573,7 +2573,7 @@ const MA_A2400W: React.FC = () => {
                   </FormBoxWrap>
                   <GridContainer>
                     <Grid
-                      style={{ height: "34vh" }}
+                      style={{ height: "34.1vh" }}
                       data={process(
                         BOMDataResult.data.map((row) => ({
                           ...row,
@@ -2696,7 +2696,7 @@ const MA_A2400W: React.FC = () => {
                       </ButtonContainer>
                     </GridTitleContainer>
                     <Grid
-                      style={{ height: "26vh" }}
+                      style={{ height: "26.4vh" }}
                       data={process(
                         BOMDataResult2.data.map((row) => ({
                           ...row,
@@ -2807,7 +2807,7 @@ const MA_A2400W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "47vh" }}
+            style={{ height: "43.3vh" }}
             data={process(
               subDataResult2.data.map((row) => ({
                 ...row,

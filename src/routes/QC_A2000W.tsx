@@ -2004,7 +2004,7 @@ const QC_A2000: React.FC = () => {
                   }}
                 >
                   <Grid
-                    style={{ height: "68vh" }}
+                    style={{ height: "61.5vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2091,7 +2091,7 @@ const QC_A2000: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "65vh" }}
+                style={{ height: "61.5vh" }}
                 data={process(
                   detailDataResult.data.map((row) => ({
                     ...row,
@@ -2196,7 +2196,7 @@ const QC_A2000: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "65vh" }}
+                style={{ height: "61.5vh" }}
                 data={process(
                   detailDataResult2.data.map((row) => ({
                     ...row,

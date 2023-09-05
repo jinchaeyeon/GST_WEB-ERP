@@ -1684,7 +1684,7 @@ const PR_A4000W: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "60vh"}}
+                style={{ height: "62vh"}}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1798,7 +1798,7 @@ const PR_A4000W: React.FC = () => {
                   <GridTitle>작업정보</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "67vh"}}
+                  style={{ height: "73.3vh"}}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1889,7 +1889,7 @@ const PR_A4000W: React.FC = () => {
                     <GridTitle>작업내용</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "60vh"}}
+                    style={{ height: "67vh"}}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
@@ -1983,7 +1983,7 @@ const PR_A4000W: React.FC = () => {
                 <GridTitle>작업정보</GridTitle>
               </GridTitleContainer>
               <Grid
-                  style={{ height: "68vh" }}
+                  style={{ height: "73vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,

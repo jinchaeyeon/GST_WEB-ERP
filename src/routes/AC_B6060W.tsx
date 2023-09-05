@@ -2174,7 +2174,7 @@ const AC_B6060W: React.FC = () => {
               }}
             >
               <Grid
-                style={{ height: "73vh" }}
+                style={{ height: "76vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2227,7 +2227,7 @@ const AC_B6060W: React.FC = () => {
         <TabStripTab title="분기별">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult2.data.map((row) => ({
                   ...row,
@@ -2273,7 +2273,7 @@ const AC_B6060W: React.FC = () => {
         <TabStripTab title="반기별">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult3.data.map((row) => ({
                   ...row,
@@ -2322,7 +2322,7 @@ const AC_B6060W: React.FC = () => {
         <TabStripTab title="연간">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult4.data.map((row) => ({
                   ...row,

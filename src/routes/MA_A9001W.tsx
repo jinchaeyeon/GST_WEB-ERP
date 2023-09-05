@@ -2879,7 +2879,7 @@ const MA_A9001W: React.FC = () => {
               <GridContainerWrap>
                 <GridContainer width="100%">
                   <Grid
-                    style={{ height: "42vh" }}
+                    style={{ height: "40.5vh" }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -2944,7 +2944,7 @@ const MA_A9001W: React.FC = () => {
               <GridContainerWrap>
                 <GridContainer width="100%">
                   <Grid
-                    style={{ height: "42vh" }}
+                    style={{ height: "40.5vh" }}
                     data={process(
                       subDataResult2.data.map((row) => ({
                         ...row,
@@ -3012,7 +3012,7 @@ const MA_A9001W: React.FC = () => {
               <GridContainerWrap>
                 <GridContainer width="100%">
                   <Grid
-                    style={{ height: "42vh" }}
+                    style={{ height: "40.5vh" }}
                     data={process(
                       subDataResult3.data.map((row) => ({
                         ...row,

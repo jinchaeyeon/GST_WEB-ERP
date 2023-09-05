@@ -2142,7 +2142,7 @@ const MA_A2700W: React.FC = () => {
           </ButtonContainer>
         </GridTitleContainer>
         <Grid
-          style={{ height: "34vh" }}
+          style={{ height: "27.5vh" }}
           data={process(
             detailDataResult.data.map((row) => ({
               ...row,

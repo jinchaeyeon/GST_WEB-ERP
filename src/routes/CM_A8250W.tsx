@@ -866,7 +866,7 @@ const CM_A8250W: React.FC = () => {
             <GridTitle>기준일자</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "82vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
@@ -939,7 +939,7 @@ const CM_A8250W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "80vh" }}
+              style={{ height: "78.2vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
