@@ -547,19 +547,6 @@ const PanelBarNavContainer = (props: any) => {
     }
   };
   const path = window.location.href;
-  let names = "";
-  useEffect(() => {
-    //개발 전용
-    if (path.includes("localhost")) {
-      names = "CRM CRM_DDGD";
-    } else {
-      if (path.split("/")[2].split(".")[1] == "gsti") {
-        names = "GST WEP";
-      } else if (path.split("/")[2].split(".")[1] == "ddgd") {
-        names = "CRM CRM_DDGD";
-      }
-    }
-  }, []);
 
   return (
     <>
@@ -568,12 +555,16 @@ const PanelBarNavContainer = (props: any) => {
         {isMenuOpend ? (
           <Gnv isMobileMenuOpend={isMobileMenuOpend}>
             <AppName theme={currentTheme} onClick={() => setIsMenuOpend(false)}>
-              {names == "GST WER" ? (
-                <Logo size="32px" name={names}/>
-              ) : names == "CRM CRM_DDGD" ? (
-                <Logo size="32px" name={names}/>
+            {/* WEB ERP개발할떄 바꿀부분입니다. */}
+              {path.includes("localhost") ? (
+                <Logo size="32px" name={"CRM_DDGD"} />
+                // <Logo size="32px" name={"GST WEB"} />
+              ) : path.split("/")[2].split(".")[1] == "gsti" ? (
+                <Logo size="32px" name={"GST WEB"} />
+              ) : path.split("/")[2].split(".")[1] == "ddgd" ? (
+                <Logo size="32px" name={"CRM_DDGD"} />
               ) : (
-                <Logo size="32px" name={names}/>
+                <Logo size="32px" name={"GST WEB"} />
               )}
               {props.roles}
             </AppName>
@@ -717,7 +708,17 @@ const PanelBarNavContainer = (props: any) => {
           <TopTitle>
             <div style={{ width: "30px" }}></div>
             <AppName theme={currentTheme}>
-              <Logo size="32px" name={names}/>
+              {/* WEB ERP개발할떄 바꿀부분입니다. */}
+              {path.includes("localhost") ? (
+                <Logo size="32px" name={"CRM_DDGD"} />
+                // <Logo size="32px" name={"GST WEB"} />
+              ) : path.split("/")[2].split(".")[1] == "gsti" ? (
+                <Logo size="32px" name={"GST WEB"} />
+              ) : path.split("/")[2].split(".")[1] == "ddgd" ? (
+                <Logo size="32px" name={"CRM_DDGD"} />
+              ) : (
+                <Logo size="32px" name={"GST WEB"} />
+              )}
             </AppName>
             <Button
               icon="menu"

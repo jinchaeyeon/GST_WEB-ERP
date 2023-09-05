@@ -932,7 +932,7 @@ export const Modal = styled.div<TModal>`
 type TLogo = { size: string, name: string};
 
 export const Logo = styled.div<TLogo>`
-  background: url(${(props) => props.name == "GST WEP" ? (logoWEBERP): (logoDDGD)});
+  background: url(${(props) => props.name == "GST WEB" ? (logoWEBERP): props.name == "CRM_DDGD" ? logoDDGD : logoWEBERP});
   background-size: contain;
   background-repeat: no-repeat;
   width: ${(props) => props.size};

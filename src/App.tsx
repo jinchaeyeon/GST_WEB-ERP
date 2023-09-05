@@ -82,12 +82,14 @@ import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
 import PR_A1100W from "./routes/PR_A1100W";
 import PR_A3000W from "./routes/PR_A3000W";
+import PR_A4000W from "./routes/PR_A4000W";
 import PR_A4100W from "./routes/PR_A4100W";
 import PR_A5000W from "./routes/PR_A5000W";
 import PR_A6000W from "./routes/PR_A6000W";
 import PR_A7000W from "./routes/PR_A7000W";
 import PR_A9000W from "./routes/PR_A9000W";
 import PR_A9100W from "./routes/PR_A9100W";
+import PR_B0020W from "./routes/PR_B0020W";
 import PR_B1103W from "./routes/PR_B1103W";
 import PR_B1104W from "./routes/PR_B1104W";
 import PR_B3000W from "./routes/PR_B3000W";
@@ -122,56 +124,9 @@ import SY_A0011W from "./routes/SY_A0011W";
 import SY_A0012W from "./routes/SY_A0012W";
 import SY_A0013W from "./routes/SY_A0013W";
 import SY_A0025W from "./routes/SY_A0025W";
-<<<<<<< HEAD
-import CM_A1000W from "./routes/CM_A1000W";
-import CM_A1600W from "./routes/CM_A1600W";
-import CM_A1710W from "./routes/CM_A1710W";
-import CM_A2000W from "./routes/CM_A2000W";
-import CM_A3000W from "./routes/CM_A3000W";
-import CM_A8210W from "./routes/CM_A8210W";
-import CM_A8250W from "./routes/CM_A8250W";
-import CM_B1000W from "./routes/CM_B1000W";
-import CM_B8100W from "./routes/CM_B8100W";
-import EA_A1000W from "./routes/EA_A1000W";
-import EA_A2000W from "./routes/EA_A2000W";
-import PR_A0030W from "./routes/PR_A0030W";
-import PR_A0040W from "./routes/PR_A0040W";
-import PR_A0060W from "./routes/PR_A0060W";
-import PR_A1100W from "./routes/PR_A1100W";
-import PR_A4000W from "./routes/PR_A4000W";
-import PR_A4100W from "./routes/PR_A4100W";
-import PR_A5000W from "./routes/PR_A5000W";
-import PR_A6000W from "./routes/PR_A6000W";
-import PR_A7000W from "./routes/PR_A7000W";
-import PR_A9000W from "./routes/PR_A9000W";
-import PR_A9100W from "./routes/PR_A9100W";
-import PR_B0020W from "./routes/PR_B0020W";
-import PR_B3000W from "./routes/PR_B3000W";
-import PR_A3000W from "./routes/PR_A3000W";
-import PR_B1103W from "./routes/PR_B1103W";
-import PR_B1104W from "./routes/PR_B1104W";
-import CT_A0111W from "./routes/CT_A0111W";
-import CM_A0000W from "./routes/CM_A0000W";
-import CM_A4100W from "./routes/CM_A4100W";
-import CM_A8000W from "./routes/CM_A8000W";
-import CM_B1101W from "./routes/CM_B1101W";
-import HU_A1000W from "./routes/HU_A1000W";
-import HU_A2070W from "./routes/HU_A2070W";
-import HU_A2100W from "./routes/HU_A2100W";
-import HU_A3020W from "./routes/HU_A3020W";
-import HU_A4100W from "./routes/HU_A4100W";
-import HU_A5020W from "./routes/HU_A5020W";
-import HU_B1020W from "./routes/HU_B1020W";
-import HU_B2100W from "./routes/HU_B2100W";
-import HU_B3140W from "./routes/HU_B3140W";
-import HU_B3160W from "./routes/HU_B3160W";
-import HU_B4001W from "./routes/HU_B4001W";
-import HU_B4000W from "./routes/HU_B4000W";
-=======
 import SY_A0110W from "./routes/SY_A0110W";
 import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
->>>>>>> ac3a024b79a61b1acab386eac1f8f2b2ae87031e
 
 import {
   IntlProvider,
@@ -323,7 +278,7 @@ const App: React.FC = () => {
 };
 const AppInner: React.FC = () => {
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
- 
+
   const [color, setColor] = useRecoilState(colors);
   const [themecolor, setThemeColor] = useState<string[]>([
     "#2196f3",
@@ -459,11 +414,16 @@ const AppInner: React.FC = () => {
   useEffect(() => {
     //개발 전용
     if (path.includes("localhost")) {
+      //WEB ERP개발할떄 바꿀부분입니다.
+
       roles = "CRM_DDGD";
       switcher({ theme: "yellow" });
+
+      // roles = "GST WEB";
+      // switcher({ theme: "blue" });
     } else {
       if (path.split("/")[2].split(".")[1] == "gsti") {
-        roles = "WEB ERP";
+        roles = "GST WEB";
         switcher({ theme: "blue" });
       } else if (path.split("/")[2].split(".")[1] == "ddgd") {
         roles = "CRM_DDGD";

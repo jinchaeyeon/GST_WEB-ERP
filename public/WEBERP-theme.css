@@ -11229,7 +11229,7 @@ kendo-sortable {
 
 .k-checkbox:checked:focus,
 .k-checkbox.k-checked.k-focus {
-    box-shadow: 0 0 0 2px rgba(235, 175, 13, 0.3);
+    box-shadow: 0 0 0 2px rgba(34, 137, 195, 0.3);
 }
 
 .k-checkbox.k-invalid {
@@ -12454,7 +12454,7 @@ kendo-badge-container {
 }
 
 .k-button-solid-primary:focus, .k-button-solid-primary.k-focus {
-    box-shadow: 0 0 0px 2px rgba(235, 175, 13, 0.3);
+    box-shadow: 0 0 0px 2px rgba(34, 137, 195, 0.3);
 }
 
 .k-button-solid-primary:active, .k-button-solid-primary.k-active {
@@ -12715,7 +12715,7 @@ kendo-badge-container {
 }
 
 .k-button-outline-primary:focus, .k-button-outline-primary.k-focus {
-    box-shadow: 0 0 0px 2px rgba(235, 175, 13, 0.3);
+    box-shadow: 0 0 0px 2px rgba(34, 137, 195, 0.3);
 }
 
 .k-button-outline-primary:active, .k-button-outline-primary.k-active {
@@ -13073,7 +13073,7 @@ kendo-badge-container {
 }
 
 .k-button-link-primary:focus, .k-button-link-primary.k-focus {
-    box-shadow: 0 0 0px 2px rgba(235, 175, 13, 0.3);
+    box-shadow: 0 0 0px 2px rgba(34, 137, 195, 0.3);
 }
 
 .k-button-link-primary:active, .k-button-link-primary.k-active {
@@ -14597,7 +14597,7 @@ textarea.k-input-inner {
 
 .k-table-tbody .k-table-row.k-selected,
 .k-table-list .k-table-row.k-selected {
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
 }
 
 .k-virtual-scroller {
@@ -17710,7 +17710,7 @@ kendo-label > .k-label {
 
 .k-radio:checked:focus,
 .k-radio.k-checked.k-focus {
-    box-shadow: 0 0 0 2px rgba(235, 175, 13, 0.3);
+    box-shadow: 0 0 0 2px rgba(34, 137, 195, 0.3);
 }
 
 .k-ripple-container .k-radio::after {
@@ -18278,11 +18278,11 @@ kendo-label > .k-label {
 }
 
 .k-slider .k-draghandle:focus, .k-slider .k-draghandle.k-focus {
-    box-shadow: 0 0 0 2px rgba(235, 175, 13, 0.3);
+    box-shadow: 0 0 0 2px rgba(34, 137, 195, 0.3);
 }
 
 .k-slider.k-focus .k-draghandle {
-    box-shadow: 0 0 0 2px rgba(235, 175, 13, 0.3);
+    box-shadow: 0 0 0 2px rgba(34, 137, 195, 0.3);
 }
 
 .k-slider-horizontal .k-tick {
@@ -18907,7 +18907,7 @@ kendo-label > .k-label {
 .k-calendar .k-range-start,
 .k-calendar .k-range-end,
 .k-calendar .k-range-mid {
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
 }
 
 .k-calendar .k-range-start.k-range-end {
@@ -18945,13 +18945,13 @@ kendo-label > .k-label {
 .k-calendar .k-range-split-start::after {
     left: -5px;
     right: auto;
-    background-image: linear-gradient(to left, rgba(235, 175, 13, 0.25), transparent 100%);
+    background-image: linear-gradient(to left, rgba(34, 137, 195, 0.25), transparent 100%);
 }
 
 .k-calendar .k-range-split-end::after {
     right: -5px;
     left: auto;
-    background-image: linear-gradient(to right, rgba(235, 175, 13, 0.25), transparent 100%);
+    background-image: linear-gradient(to right, rgba(34, 137, 195, 0.25), transparent 100%);
 }
 
 .k-timeselector {
@@ -20425,7 +20425,7 @@ kendo-label > .k-label {
 }
 
 .k-switch-on:focus .k-switch-track, .k-switch-on.k-focus .k-switch-track {
-    outline: 2px solid rgba(235, 175, 13, 0.25);
+    outline: 2px solid rgba(34, 137, 195, 0.25);
 }
 
 .k-switch-on .k-switch-label-off {
@@ -21460,7 +21460,7 @@ kendo-label > .k-label {
 .k-fab-solid-primary:focus {
     outline-style: solid;
     outline-width: 2px;
-    outline-color: rgba(235, 175, 13, 0.3);
+    outline-color: rgba(34, 137, 195, 0.3);
 }
 
 .k-fab-solid-secondary.k-focus,
@@ -24160,17 +24160,17 @@ kendo-card-footer {
 
 .k-pager-numbers .k-link:hover, .k-pager-numbers .k-link.k-hover {
     color: #2289c3;
-    background-color: rgba(235, 175, 13, 0.08);
+    background-color: rgba(34, 137, 195, 0.08);
 }
 
 .k-pager-numbers .k-link:focus, .k-pager-numbers .k-link.k-focus {
     background-color: transparent;
-    box-shadow: inset 0 0 0 2px rgba(235, 175, 13, 0.12);
+    box-shadow: inset 0 0 0 2px rgba(34, 137, 195, 0.12);
 }
 
 .k-pager-numbers .k-link.k-selected {
     color: #2289c3;
-    background-color: rgba(235, 175, 13, 0.2);
+    background-color: rgba(34, 137, 195, 0.2);
 }
 
 .k-pager-md .k-pager-numbers .k-current-page .k-link,
@@ -27693,7 +27693,7 @@ tbody .k-group-cell {
 
 .k-grid td.k-selected,
 .k-grid tr.k-selected > td {
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
 }
 
 .k-grid td:focus,
@@ -28136,7 +28136,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 }
 
 .k-listview-content > .k-selected {
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
 }
 
 .k-spreadsheet {
@@ -29093,12 +29093,12 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 
 .k-spreadsheet .k-selection-full,
 .k-spreadsheet .k-selection-partial {
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
 }
 
 .k-spreadsheet-selection {
     border-color: #2289c3;
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
     box-shadow: inset 0 0 0 1px #2289c3;
 }
 
@@ -29126,7 +29126,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 
 .k-spreadsheet .k-auto-fill {
     border-color: #2289c3;
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
     box-shadow: inset 0 0 0 1px #2289c3;
 }
 
@@ -29218,7 +29218,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 }
 
 .k-spreadsheet-drawing-anchor-cell {
-    background: rgba(235, 175, 13, 0.25);
+    background: rgba(34, 137, 195, 0.25);
 }
 
 .k-rtl .k-spreadsheet .k-spreadsheet-has-comment::after,
@@ -29922,7 +29922,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 
 .k-pivotgrid-cell.k-selected,
 .k-pivotgrid-row.k-selected > .k-pivotgrid-cell {
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
 }
 
 .k-pivotgrid-configurator-button,
@@ -33847,7 +33847,7 @@ kendo-scheduler .k-recurrence-editor {
 
 .k-scheduler-layout td.k-selected,
 .k-scheduler-layout .k-scheduler-cell.k-selected {
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
 }
 
 .k-scheduler-layout-flex .k-scheduler-head,
@@ -33903,7 +33903,7 @@ kendo-scheduler .k-recurrence-editor {
 }
 
 .k-scheduler-agendaview .k-scheduler-content tr.k-selected {
-    background-color: rgba(235, 175, 13, 0.25);
+    background-color: rgba(34, 137, 195, 0.25);
 }
 
 .k-scheduler-agendaview .k-scheduler-content tr.k-selected .k-scheduler-datecolumn,
@@ -34492,15 +34492,15 @@ kendo-scheduler .k-recurrence-editor {
     border-color: #2289c3;
     color: white;
     background-color: #2289c3;
-    box-shadow: 0 1px 2px rgba(235, 175, 13, 0.2);
+    box-shadow: 0 1px 2px rgba(34, 137, 195, 0.2);
 }
 
 .k-chat .k-alt .k-bubble:hover {
-    box-shadow: 0 1px 2px rgba(235, 175, 13, 0.2);
+    box-shadow: 0 1px 2px rgba(34, 137, 195, 0.2);
 }
 
 .k-chat .k-alt .k-selected .k-bubble {
-    box-shadow: 0 3px 10px rgba(235, 175, 13, 0.4);
+    box-shadow: 0 3px 10px rgba(34, 137, 195, 0.4);
 }
 
 .k-chat .k-quick-reply {
@@ -35087,7 +35087,7 @@ kendo-scheduler .k-recurrence-editor {
 }
 
 .k-timeline-track-item.k-focus .k-timeline-circle {
-    box-shadow: 0 3px 4px 0 rgba(235, 175, 13, 0.4);
+    box-shadow: 0 3px 4px 0 rgba(34, 137, 195, 0.4);
 }
 
 .k-pdf-viewer {
