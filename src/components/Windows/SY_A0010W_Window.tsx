@@ -1,22 +1,25 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridToolbar,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridHeaderSelectionChangeEvent,
-  GridFooterCellProps,
   GridDataStateChangeEvent,
-  GridSortChangeEvent,
-  GridPageChangeEvent,
-  GridItemChangeEvent,
+  GridFooterCellProps,
   GridHeaderCellProps,
+  GridHeaderSelectionChangeEvent,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  GridSortChangeEvent,
+  GridToolbar,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -26,35 +29,32 @@ import {
   GridContainer,
   GridContainerWrap,
 } from "../../CommonStyled";
-import { Iparameters } from "../../store/types";
-import {
-  getQueryFromBizComponent,
-  UseBizComponent,
-  UseCustomOption,
-  UseMessages,
-  findMessage,
-  UseParaPc,
-  UseGetValueFromSessionItem,
-  getGridItemChangedData,
-} from "../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { CellRender, RowRender } from "../Renderers/Renderers";
-import { bytesToBase64 } from "byte-base64";
-import RequiredHeader from "../HeaderCells/RequiredHeader";
 import {
-  isLoading,
   deletedAttadatnumsState,
+  isLoading,
   unsavedAttadatnumsState,
 } from "../../store/atoms";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
+import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+} from "../CommonFunction";
+import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
+import { CellRender, RowRender } from "../Renderers/Renderers";
+import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 
 let deletedMainRows: any[] = [];
 
@@ -813,7 +813,7 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       // 초기화
       const isLastDataDeleted =
-        detailDataResult.data.length == 0 && filters.pgNum > 1;
+        detailDataResult.data.length == 0 && filters.pgNum > 0;
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -1135,7 +1135,7 @@ const KendoWindow = ({
     }
 
     const isLastDataDeleted =
-      detailDataResult.data.length == 0 && filters.pgNum > 1;
+      detailDataResult.data.length == 0 && filters.pgNum > 0;
 
     if (isLastDataDeleted) {
       setPage({
@@ -1466,7 +1466,7 @@ const KendoWindow = ({
             ref_key={initialVal.group_code}
             form_id={pathname}
             table_id={"comCodeMaster"}
-            style={{ height: "28vh" }}
+            style={{ height: "25vh" }}
           />
         </GridContainer>
       </GridContainerWrap>
@@ -1523,31 +1523,25 @@ const KendoWindow = ({
         >
           <GridToolbar>
             <Button
-              type={"button"}
               themeColor={"primary"}
               onClick={onAddClick}
               icon="add"
-            >
-              추가
-            </Button>
+              title="행 추가"
+            />
             <Button
-              type={"button"}
               themeColor={"primary"}
               fillMode="outline"
               onClick={onDeleteClick}
               icon="minus"
-            >
-              삭제
-            </Button>
+              title="행 삭제"
+            />
             <Button
-              type={"button"}
               themeColor={"primary"}
               fillMode="outline"
               onClick={onCopyClick}
               icon="copy"
-            >
-              복사
-            </Button>
+              title="행 복사"
+            />
           </GridToolbar>
           <GridColumn
             field="chk"

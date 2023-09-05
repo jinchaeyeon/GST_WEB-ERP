@@ -1,56 +1,59 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  TreeList,
-  createDataTree,
-  treeToFlat,
-  mapTree,
-  extendDataItem,
-  TreeListExpandChangeEvent,
-  TreeListColumnProps,
-  TreeListItemChangeEvent,
-  modifySubItems,
-  TreeListCellProps,
-} from "@progress/kendo-react-treelist";
-import { gridList } from "../store/columns/SY_A0013W_C";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
-  GridPageChangeEvent,
   GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
   GridSortChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { Input } from "@progress/kendo-react-inputs";
 import {
-  Title,
+  TreeList,
+  TreeListCellProps,
+  TreeListColumnProps,
+  TreeListExpandChangeEvent,
+  TreeListItemChangeEvent,
+  createDataTree,
+  extendDataItem,
+  mapTree,
+  modifySubItems,
+  treeToFlat,
+} from "@progress/kendo-react-treelist";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
   FilterBox,
   GridContainer,
-  GridTitle,
-  TitleContainer,
-  ButtonContainer,
-  GridTitleContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
+import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  getQueryFromBizComponent,
-  getYn,
   UseBizComponent,
   UseCustomOption,
-  UsePermissions,
-  handleKeyPressSearch,
-  UseParaPc,
   UseGetValueFromSessionItem,
+  UseParaPc,
+  UsePermissions,
   getGridItemChangedData,
+  getQueryFromBizComponent,
+  getYn,
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -60,16 +63,13 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import { Renderers } from "../components/Renderers/TreeListRenderers";
-import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
-import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
-import { isLoading } from "../store/atoms";
-import { useSetRecoilState } from "recoil";
-import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import { Renderers } from "../components/Renderers/TreeListRenderers";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/SY_A0013W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -2018,7 +2018,7 @@ const Page: React.FC = () => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
-    if (Name == "grdList") {
+    if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -2026,7 +2026,8 @@ const Page: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else {
+    } 
+    if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +

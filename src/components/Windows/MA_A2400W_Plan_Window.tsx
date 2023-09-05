@@ -817,7 +817,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       };
     });
   };
-  console.log(subDataResult)
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
 

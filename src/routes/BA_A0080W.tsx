@@ -1065,6 +1065,7 @@ const BA_A0080: React.FC = () => {
       fetchSubGrid(deepCopiedFilters);
     }
   }, [subfilters, permissions]);
+
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex !== null && gridRef.current) {
@@ -1632,7 +1633,7 @@ const BA_A0080: React.FC = () => {
 
     if (data.isSuccess === true) {
       const isLastDataDeleted =
-        mainDataResult.data.length == 0 && filters.pgNum > 1;
+        mainDataResult.data.length == 0 && filters.pgNum > 0;
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -1644,7 +1645,11 @@ const BA_A0080: React.FC = () => {
         setFilters((prev: any) => ({
           ...prev,
           find_row_value: "",
-          pgNum: prev.pgNum - 1,
+          pgNum: isLastDataDeleted
+            ? prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
           isSearch: true,
         }));
       } else {
@@ -1815,27 +1820,21 @@ const BA_A0080: React.FC = () => {
       setGridCurrent(grid.current.offsetWidth);
       setGridCurrent2(grid2.current.offsetWidth);
       setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.offsetWidth  < minGridWidth2.current);
+      setApplyMinWidth2(grid2.current.offsetWidth < minGridWidth2.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (
-      grid.current.offsetWidth < minGridWidth.current &&
-      !applyMinWidth
-    ) {
+    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
     } else if (grid.current.offsetWidth > minGridWidth.current) {
       setGridCurrent(grid.current.offsetWidth);
       setApplyMinWidth(false);
     }
-    if (
-      grid2.current.offsetWidth  < minGridWidth2.current &&
-      !applyMinWidth2
-    ) {
+    if (grid2.current.offsetWidth < minGridWidth2.current && !applyMinWidth2) {
       setApplyMinWidth2(true);
-    } else if (grid2.current.offsetWidth  > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.offsetWidth );
+    } else if (grid2.current.offsetWidth > minGridWidth2.current) {
+      setGridCurrent2(grid2.current.offsetWidth);
       setApplyMinWidth2(false);
     }
   };
@@ -1844,7 +1843,7 @@ const BA_A0080: React.FC = () => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
-    if (Name == "grdList") {
+    if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -1852,7 +1851,8 @@ const BA_A0080: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else {
+    }
+    if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +
@@ -1994,24 +1994,23 @@ const BA_A0080: React.FC = () => {
             //컬럼너비조정
             resizable={true}
             id="grdList2"
-          >{customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList2"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    id={item.id}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={setWidth("grdList2", item.width)}
-                    footerCell={
-                      item.sortOrder === 0
-                        ? subTotalFooterCell
-                        : undefined
-                    }
-                  />
-                )
-            )}
+          >
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList2"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={setWidth("grdList2", item.width)}
+                      footerCell={
+                        item.sortOrder === 0 ? subTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </GridContainer>
         <FormContext.Provider
@@ -2028,12 +2027,9 @@ const BA_A0080: React.FC = () => {
               }}
             >
               <GridTitleContainer>
-                <GridTitle>
-                  상세정보
-                </GridTitle>
+                <GridTitle>상세정보</GridTitle>
                 <ButtonContainer>
-                  
-                {permissions && (
+                  {permissions && (
                     <ExcelUploadButtons
                       saveExcel={saveExcel}
                       permissions={permissions}

@@ -1,31 +1,20 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { useEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
-  FieldWrap,
   FormBox,
-  FormBoxWrap,
+  FormBoxWrap
 } from "../../CommonStyled";
-import {
-  Form,
-  Field,
-  FormElement,
-  FormRenderProps,
-} from "@progress/kendo-react-form";
-import { FormInput, FormReadOnly, FormCheckBox } from "../Editors";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
 import { Iparameters } from "../../store/types";
 import {
-  validator,
-  UseParaPc,
   UseGetValueFromSessionItem,
+  UseParaPc
 } from "../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;

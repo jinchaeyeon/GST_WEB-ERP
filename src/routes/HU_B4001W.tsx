@@ -3,13 +3,9 @@ import * as ReactDOM from "react-dom";
 import {
     Grid,
     GridColumn,
-    GridDataStateChangeEvent,
     GridEvent,
-    GridSelectionChangeEvent,
-    getSelectedState,
     GridFooterCellProps,
     GridCellProps,
-    GridItemChangeEvent,
   } from "@progress/kendo-react-grid";
   import { DatePicker } from "@progress/kendo-react-dateinputs";
   import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -23,7 +19,6 @@ import {
     TitleContainer,
     ButtonContainer,
     GridTitleContainer,
-    ButtonInInput,
     GridContainerWrap,
     FormBox,
     FormBoxWrap,
@@ -32,80 +27,106 @@ import {
   import FilterContainer from "../components/Containers/FilterContainer";
   import { useApi } from "../hooks/api";
   import { Iparameters, TPermissions,TColumn, TGrid } from "../store/types";
-  import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
   import {
     chkScrollHandler,
     convertDateToStr,
     UseBizComponent,
     UsePermissions,
-    UseParaPc,
     UseGetValueFromSessionItem,
     UseCustomOption,
     UseMessages,
-    getQueryFromBizComponent,
     findMessage,
-    toDate,
     dateformat2,
-    dateformat,
     isValidDate,
   } from "../components/CommonFunction";
+  import { gridList } from "../store/columns/HU_B4001W_C";
   import DateCell from "../components/Cells/DateCell";
   import NumberCell from "../components/Cells/NumberCell";
-  import { gridList } from "../store/columns/HU_B4001W_C";
+  import ComboBoxCell from "../components/Cells/ComboBoxCell";
 
   import {
     SELECTED_FIELD,
-    COM_CODE_DEFAULT_VALUE,
     PAGE_SIZE,
-    GAP,
   } from "../components/CommonString";
   import TopButtons from "../components/Buttons/TopButtons";
   import { useSetRecoilState } from "recoil";
   import { isLoading } from "../store/atoms";
   import Calendar from "../components/Calendars/Calendar";
   import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-  import { bytesToBase64 } from "byte-base64";
 
-  const DATA_ITEM_KEY = "prsnnum";  
-  const NumberField = ["cnt", "qty"];
-  const DateField = ["yerdt", "yyyymm"];  
+  const DATA_ITEM_KEY_USE = "reckey";  
+  const DATA_ITEM_KEY_ADJ = "reckey";  
+  const NumberField = ["cnt","qty"];
+  const DateField = ["startdate"];  
+  const ComboField = ["adjdiv", "insert_userid"];
+
+  const CustomComboBoxCell = (props: GridCellProps) => {    
+    const [bizComponentData, setBizComponentData] = useState([]);
+    
+    // 조정구분, 사용자 
+    UseBizComponent("L_HU092,L_sysUserMaster_001", setBizComponentData);  
   
+    const field = props.field ?? "";
+    const bizComponentIdVal =
+      field === "adjdiv" ? "L_HU092" : field === "insert_userid" ? "L_sysUserMaster_001" : "";
+  
+    const bizComponent = bizComponentData.find(
+      (item: any) => item.bizComponentId === bizComponentIdVal
+    );
+  
+    return bizComponent ? (
+      <ComboBoxCell
+        bizComponent={bizComponent}
+        {...props}
+      />
+    ) : (
+      <td></td>
+    );
+  };
+
 const HU_B4001W: React.FC = () => {
+  let grdUse: any = useRef(null);
+  let grdAdj: any = useRef(null);
 
   const setLoading = useSetRecoilState(isLoading);
-  const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter_use = getter(DATA_ITEM_KEY_USE);
+  const idGetter_adj = getter(DATA_ITEM_KEY_ADJ);
+
   const processApi = useApi();
-  const userId = UseGetValueFromSessionItem("user_id");  
-  const pathname: string = window.location.pathname.replace("/", ""); 
+  const userId = UseGetValueFromSessionItem("user_id");
+  const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
-  // 조회조건 
+  // 조회조건
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     orgdiv: "01",
     ymdFrdt: new Date(),
     cboPrsnnum: "",
 
+    find_row_value: "",
     pgNum: 1,
     isSearch: true,
+
     pgGap: 0,
-    find_row_value: "",
     scrollDirrection: "down",
     pgSize: PAGE_SIZE,
   });
-  
-  // 사원정보 
-  const [userInfo, setUserInfo] = useState<{ [name: string]: any }>({      
-    prsnnum : "",
-    prsnnm : "",
-    regorgdt :  "",
-    rtrdt :  "",
-    totalday :0,
-    usedday :0 ,
-    ramainday :0,
+
+  // 사원정보
+  const [userInfo, setUserInfo] = useState<{ [name: string]: any }>({
+    prsnnum: "",
+    prsnnm: "",
+    regorgdt: "",
+    rtrdt: "",
+    totalday: 0,
+    usedday: 0,
+    ramainday: 0,
   });
-  
+
   const [useDataState, setUseDataState] = useState<State>({
     sort: [],
   });
@@ -118,32 +139,59 @@ const HU_B4001W: React.FC = () => {
   const [useDataResult, setUseDataResult] = useState<DataResult>(
     process([], useDataState)
   );
-  
+
   // 연차조정
   const [adjDataResult, setAdjDataResult] = useState<DataResult>(
     process([], adjDataState)
   );
 
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
 
-      let prsnnum = defaultOption.find((item: any) => item.id === "cboPrsnnum").valueCode;
+      let prsnnum = defaultOption.find(
+        (item: any) => item.id === "cboPrsnnum"
+      ).valueCode;
       setFilters((prev) => ({
         ...prev,
-        cboPrsnnum: (prsnnum === "" || prsnnum === undefined) ?  userId : prsnnum
+        cboPrsnnum: prsnnum === "" || prsnnum === undefined ? userId : prsnnum,
       }));
     }
-
-    console.log(filters.cboPrsnnum);
   }, [customOptionData]);
 
-  
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
+
+  // 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+  useEffect(() => {
+    if (grdUse.current) {
+      grdUse.current.scrollIntoView({ rowIndex: 0 });
+    }
+  }, [useDataResult]);
+
+  useEffect(() => {
+    if (grdAdj.current) {
+      grdAdj.current.scrollIntoView({ rowIndex: 0 });
+    }
+  }, [adjDataResult]);
+
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -158,35 +206,22 @@ const HU_B4001W: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
-  
-  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
-  useEffect(() => {
-    if (filters.isSearch) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(filters);
-      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      fetchMainGrid(deepCopiedFilters);
-    }
-  }, [filters]);
 
   //그리드 리셋
   const resetAllGrid = () => {
-
-    console.log("A");
-    console.log(adjDataState);
-    console.log(process([], adjDataState));
     setUseDataResult(process([], useDataState));
-    setAdjDataResult(process([], adjDataState));  
+    setAdjDataResult(process([], adjDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    let data: any;    
+    let data: any;
 
     //조회프로시저  파라미터
     const parameters: Iparameters = {
@@ -201,8 +236,8 @@ const HU_B4001W: React.FC = () => {
       },
     };
 
-    setLoading(true);    
-    
+    setLoading(true);
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -213,64 +248,68 @@ const HU_B4001W: React.FC = () => {
       let totalRowCnt = data.tables[0].TotalRowCount;
       let row = data.tables[0].Rows[0];
 
-      // 사원정보 
-      if(totalRowCnt > 0)
-      { 
+      // 사원정보
+      setUserInfo({
+        prsnnum: "",
+        prsnnm: "",
+        regorgdt: "",
+        rtrdt: "",
+        totalday: 0,
+        usedday: 0,
+        ramainday: 0,
+      });
+
+      if (totalRowCnt > 0) {
         setUserInfo({
           prsnnum: row.prsnnum,
-          prsnnm: row.prsnnm, 
+          prsnnm: row.prsnnm,
           regorgdt: isValidDate(row.regorgdt)
-          ? dateformat2(row.regorgdt)
-          : null,             
-          rtrdt: isValidDate(row.rtrdt)
-              ? dateformat2(row.rtrdt)
-              : null,          
-          totalday: row.totalday, 
+            ? dateformat2(row.regorgdt)
+            : null,
+          rtrdt: isValidDate(row.rtrdt) ? dateformat2(row.rtrdt) : null,
+          totalday: row.totalday,
           usedday: row.usedday,
           ramainday: row.ramainday,
-        })
-      }
-      else
-      { 
-        setUserInfo({
-          prsnnum : "",
-          prsnnm : "",
-          regorgdt :  "",
-          rtrdt :  "",
-          totalday :0,
-          usedday :0 ,
-          ramainday :0,
         });
       }
 
-      // //연차상세 
-      // totalRowCnt = data.tables[1].TotalRowCount;
-      // row = data.tables[1].Rows;
-
-      // setUseDataResult((prev) => {
-      //   return {
-      //     data:  [...prev.data, ...row],
-      //     total: totalRowCnt == -1 ? 0 : totalRowCnt,
-      //   };
-      // });
-
-       // 연차조정
-      totalRowCnt = data.tables[2].TotalRowCount;
-      row = data.tables[2].Rows;
-
-      setAdjDataResult((prev) => {
+      //연차상세      
+      setUseDataResult((prev) => {
         return {
-          data:  [...prev.data, ...row],
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          data: [...data.tables[1].Rows],
+          total: totalRowCnt === -1 ? 0 : totalRowCnt,
         };
       });
+
+      totalRowCnt = data.tables[1].TotalRowCount;
+      
+      if (totalRowCnt > 0) {
+        setSelectedState({ [data.tables[1].Rows[0][DATA_ITEM_KEY_USE]]: true });
+      }
+      
+      // 연차조정    
+      setAdjDataResult((prev) => {
+        return {
+          data: [...data.tables[2].Rows],
+          total:
+            data.tables[2].TotalRowCount === -1
+              ? 0
+              : data.tables[2].TotalRowCount,
+        };
+      });
+
+      totalRowCnt = data.tables[2].TotalRowCount;
+      if(totalRowCnt > 0)
+      {
+        setSelectedState({ [data.tables[2].Rows[0][DATA_ITEM_KEY_ADJ]]: true });
+      }
 
     } else {
       console.log("[오류 발생]");
       console.log(data);
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
-   
+
     // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
@@ -282,18 +321,48 @@ const HU_B4001W: React.FC = () => {
     }));
 
     setLoading(false);
-  };  
+  };
 
   //그리드 푸터
-  const grdTotalFooterCell=  (props: GridFooterCellProps) => {  
-    let dataResult = adjDataResult ; // props.field === "startdate" ? useDataResult : adjDataResult;
+  const grdTotalFooterCell = (props: GridFooterCellProps) => {
+    let dataResult;
 
-    return (      
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {dataResult.total}건
-      </td>
-    );
-  };
+    if (props.field === "yyyymm" || props.field === "startdate") {
+      
+      dataResult = props.field === "yyyymm" ? adjDataResult : useDataResult;
+      
+      return (
+        <td colSpan={props.colSpan} style={props.style}>
+          총 {dataResult.total}건
+        </td>
+      );
+    }
+    else if(props.field === "qty") {
+       let sumqty = 0;
+      adjDataResult.data.forEach((element) => {
+        sumqty += element.qty;
+      });
+
+      return (
+        <td colSpan={props.colSpan} style={props.style}>
+          {sumqty}
+        </td>
+      );
+    }
+    else 
+    {let sumqty = 0;
+        useDataResult.data.forEach((element) => {
+          sumqty += element.cnt;
+        });
+  
+        return (
+          <td colSpan={props.colSpan} style={props.style}>
+            {sumqty}
+          </td>
+        );
+
+    }
+  };  
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
@@ -327,21 +396,22 @@ const HU_B4001W: React.FC = () => {
     }
   };
 
-  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
-    setAdjDataState(event.dataState);
-    console.log("AA");
-    console.log(event.dataState);
-  };
-
-
-
   const search = () => {
-    try {     
-
-        resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    
-      } catch (e) {
+    try {
+      if (convertDateToStr(filters.ymdFrdt) === "") {
+        throw findMessage(messagesData, "HU_B4001W_001"); //적용일은 필수 입력 항목입니다.
+        return;
+      }
+      if (
+        filters.cboPrsnnum === null ||
+        filters.cboPrsnnum === "" ||
+        filters.cboPrsnnum === undefined
+      ) {
+        throw findMessage(messagesData, "HU_B4001W_002"); //성명은 필수 입력 항목입니다.
+        return;
+      }
+      resetAllGrid();
+    } catch (e) {
       alert(e);
     }
   };
@@ -401,8 +471,8 @@ const HU_B4001W: React.FC = () => {
                     customOptionData={customOptionData}
                     changeData={ComboBoxChange}
                     textField="user_name"
-                    valueField="user_id"     
-                    className="required"   
+                    valueField="user_id"
+                    className="required"
                   />
                 )}
               </td>
@@ -416,35 +486,23 @@ const HU_B4001W: React.FC = () => {
         <GridTitle>사원정보</GridTitle>
         <FormBoxWrap border={true}>
           <FormBox>
-            {/* <colgroup>
-              <col width="10%" />
-              <col width="20%" />
-              <col width="20%" />
-              <col width="20%" />
-              <col width="10%" />
-              <col width="10%" />
-              <col width="10%" />
-            </colgroup> */}
-             {/* <thead>
-               
-              </thead> */}
-            <tbody>          
-            <tr>
-                  <th> 사번   </th>
-                  <th> 성명   </th>
-                  <th> 입사일 </th>
-                  <th> 퇴사일 </th>
-                  <th> 발생   </th>
-                  <th> 사용   </th>
-                  <th> 잔여   </th>
-                </tr> 
+            <tbody>
+              <tr>
+                <th style={{textAlign :"center"}}> 사번 </th>
+                <th style={{textAlign :"center"}}> 성명 </th>
+                <th style={{textAlign :"center"}}> 입사일 </th>
+                <th style={{textAlign :"center"}}> 퇴사일 </th>
+                <th style={{textAlign :"center"}}> 발생 </th>
+                <th style={{textAlign :"center"}}> 사용 </th>
+                <th style={{textAlign :"center"}}> 잔여 </th>
+              </tr>
               <tr>
                 <td>
                   <Input
                     name="prsnnum"
                     type="text"
                     value={userInfo.prsnnum}
-                    readOnly= {true}
+                    readOnly={true}
                   />
                 </td>
                 <td>
@@ -452,24 +510,24 @@ const HU_B4001W: React.FC = () => {
                     name="prsnnm"
                     type="text"
                     value={userInfo.prsnnm}
-                    readOnly= {true}
+                    readOnly={true}
                   />
                 </td>
                 <td>
-                <Input
+                  <Input
                     name="regorgdt"
                     type="text"
                     value={userInfo.regorgdt}
-                    readOnly= {true}
+                    readOnly={true}
                     style={{ textAlign: "center" }}
                   />
                 </td>
                 <td>
-                <Input
+                  <Input
                     name="rtrdt"
                     type="text"
                     value={userInfo.rtrdt}
-                    readOnly= {true}
+                    readOnly={true}
                     style={{ textAlign: "center" }}
                   />
                 </td>
@@ -478,7 +536,7 @@ const HU_B4001W: React.FC = () => {
                     name="totalday"
                     type="number"
                     value={userInfo.totalday}
-                    readOnly= {true}
+                    readOnly={true}
                     style={{ textAlign: "center" }}
                   />
                 </td>
@@ -487,7 +545,7 @@ const HU_B4001W: React.FC = () => {
                     name="usedday"
                     type="number"
                     value={userInfo.usedday}
-                    readOnly= {true}
+                    readOnly={true}
                     style={{ textAlign: "center" }}
                   />
                 </td>
@@ -496,7 +554,7 @@ const HU_B4001W: React.FC = () => {
                     name="ramainday"
                     type="number"
                     value={userInfo.ramainday}
-                    readOnly= {true}
+                    readOnly={true}
                     style={{ textAlign: "center" }}
                   />
                 </td>
@@ -511,35 +569,36 @@ const HU_B4001W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle style={{ height: "10%" }}>연차상세</GridTitle>
           </GridTitleContainer>
-          <Grid          
+          <Grid
             style={{ height: "70vh" }}
             data={process(
               useDataResult.data.map((row) => ({
-                ...row,            
+                ...row,
+                [SELECTED_FIELD]: selectedState[idGetter_use(row)],
               })),
               useDataState
             )}
             {...useDataState}
-
             //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
+            dataItemKey={DATA_ITEM_KEY_USE}
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
               mode: "single",
             }}
-
             //스크롤 조회 기능
             fixedScroll={true}
             total={useDataResult.total}
             onScroll={onMainScrollHandler}
+            // //원하는 행 위치로 스크롤 기능
+            ref={grdUse}
             //정렬기능
-            sortable={true}        
+            sortable={true}
             //컬럼순서조정
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id = "grdUse"
+            id="grdUse"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdUse"].map(
@@ -550,18 +609,16 @@ const HU_B4001W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={item.width}
+                      width={item.width}                    
                       cell={
-                        NumberField.includes(item.fieldName)
-                          ? NumberCell
-                          : DateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
+                         DateField.includes(item.fieldName)
+                        ? DateCell
+                        : NumberField.includes(item.fieldName)
+                        ? NumberCell
+                        : undefined
                       }
-                      footerCell={
-                        item.sortOrder === 0 ? grdTotalFooterCell : undefined
-                      }
-                    ></GridColumn>
+                      footerCell={grdTotalFooterCell}
+                    />
                   )
               )}
           </Grid>
@@ -575,27 +632,27 @@ const HU_B4001W: React.FC = () => {
             style={{ height: "70vh" }}
             data={process(
               adjDataResult.data.map((row) => ({
-                ...row,               
+                ...row,
+                [SELECTED_FIELD]: selectedState[idGetter_adj(row)],
               })),
               adjDataState
             )}
             {...adjDataState}
-
-            onDataStateChange={onMainDataStateChange}
             //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
+            dataItemKey={DATA_ITEM_KEY_ADJ}
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
               mode: "single",
             }}
-
             //스크롤 조회 기능
             fixedScroll={true}
             total={adjDataResult.total}
             onScroll={onMainScrollHandler}
+            //원하는 행 위치로 스크롤 기능
+            ref={grdAdj}
             //정렬기능
-            sortable={true}           
+            sortable={true}
             //컬럼순서조정
             reorderable={true}
             //컬럼너비조정
@@ -611,17 +668,19 @@ const HU_B4001W: React.FC = () => {
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      cell={
-                        NumberField.includes(item.fieldName)
-                          ? NumberCell
-                          : DateField.includes(item.fieldName)
-                          ? DateCell
+                      cell={ 
+                         NumberField.includes(item.fieldName)
+                       ? NumberCell
+                      //  : ComboField.includes(item.fieldName)
+                      //  ? CustomComboBoxCell
+                       : undefined
+                     }
+                      footerCell={
+                        (item.fieldName === "yyyymm" || item.fieldName === "qty")
+                          ? grdTotalFooterCell
                           : undefined
                       }
-                      footerCell={
-                        item.sortOrder === 0 ? grdTotalFooterCell : undefined
-                      }
-                    ></GridColumn>
+                    />
                   )
               )}
           </Grid>

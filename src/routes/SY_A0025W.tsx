@@ -1,76 +1,60 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import * as ReactDOM from "react-dom";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
   GridItemChangeEvent,
-  GridCellProps,
   GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { gridList } from "../store/columns/SY_A0025W_C";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { bytesToBase64 } from "byte-base64";
-import { DataResult, process, State } from "@progress/kendo-data-query";
+import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
+import React, { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
-  Title,
-  FilterBox,
-  GridContainer,
-  GridTitle,
-  TitleContainer,
   ButtonContainer,
-  GridTitleContainer,
-  GridContainerWrap,
-  FormBoxWrap,
+  FilterBox,
   FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { Button } from "@progress/kendo-react-buttons";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  chkScrollHandler,
-  convertDateToStr,
-  findMessage,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
-  UsePermissions,
-  handleKeyPressSearch,
-  getGridItemChangedData,
-  dateformat,
-  UseParaPc,
   UseGetValueFromSessionItem,
-  setDefaultDate,
-  toDate,
-  useSysMessage,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  dateformat,
+  getGridItemChangedData,
+  handleKeyPressSearch,
+  useSysMessage
 } from "../components/CommonFunction";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import DateCell from "../components/Cells/DateCell";
-import NumberCell from "../components/Cells/NumberCell";
 import {
-  COM_CODE_DEFAULT_VALUE,
-  PAGE_SIZE,
-  SELECTED_FIELD,
   EDIT_FIELD,
   GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD
 } from "../components/CommonString";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
+import FilterContainer from "../components/Containers/FilterContainer";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import RequiredHeader from "../components/HeaderCells/RequiredHeader";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import { gridList } from "../store/columns/SY_A0025W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
@@ -925,13 +909,13 @@ const SY_A0025W: React.FC = () => {
             setFilters2((prev) => ({
               ...prev,
               find_row_value: findRow.number_prefix,
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             }));
           } else {
             setFilters2((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             }));
           }
           if (data.isSuccess == true) {
@@ -943,7 +927,7 @@ const SY_A0025W: React.FC = () => {
           }
         } else if (data.isSuccess == true && infomation.worktype == "D") {
           const isLastDataDeleted =
-            mainDataResult.data.length === 1 && filters.pgNum > 1;
+            mainDataResult.data.length === 1 && filters.pgNum > 0;
           const findRowIndex = mainDataResult.data.findIndex(
             (row: any) =>
               row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -959,7 +943,7 @@ const SY_A0025W: React.FC = () => {
             setFilters((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
               isSearch: true,
             }));
           } else {
@@ -970,9 +954,9 @@ const SY_A0025W: React.FC = () => {
                 mainDataResult.data.length == 1
                   ? ""
                   : mainDataResult.data[
-                      findRowIndex == 0 ? 1 : findRowIndex - 1
+                      findRowIndex < 1 ? 1 : findRowIndex - 1
                     ].numbering_id,
-              pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+                    pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
               isSearch: true,
             }));
           }
@@ -1184,7 +1168,7 @@ const SY_A0025W: React.FC = () => {
       minWidth = 0;
     }
 
-    if (Name == "grdList") {
+    if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -1192,7 +1176,8 @@ const SY_A0025W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else {
+    } 
+    if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +

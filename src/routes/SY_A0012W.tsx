@@ -1,3 +1,21 @@
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
+import { Buffer } from "buffer";
+import cryptoRandomString from "crypto-random-string";
 import React, {
   createContext,
   useContext,
@@ -5,69 +23,51 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  Grid,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridFooterCellProps,
-  GridItemChangeEvent,
-  GridCellProps,
-  GridPageChangeEvent,
-} from "@progress/kendo-react-grid";
-import RequiredHeader from "../components/HeaderCells/RequiredHeader";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import cryptoRandomString from "crypto-random-string";
-import { gridList } from "../store/columns/SY_A0012W_C";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { Buffer } from "buffer";
-import {
-  Title,
+  ButtonContainer,
+  ButtonInGridInput,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInGridInput,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import DateCell from "../components/Cells/DateCell";
+import EncryptedCell from "../components/Cells/EncryptedCell";
+import NameCell from "../components/Cells/NameCell";
+import RadioGroupCell from "../components/Cells/RadioGroupCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
   getGridItemChangedData,
-  UseBizComponent,
-  UseCustomOption,
-  UseMessages,
-  UsePermissions,
   handleKeyPressSearch,
-  UseParaPc,
-  UseGetValueFromSessionItem,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import FilterContainer from "../components/Containers/FilterContainer";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import DateCell from "../components/Cells/DateCell";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import EncryptedCell from "../components/Cells/EncryptedCell";
-import TopButtons from "../components/Buttons/TopButtons";
-import RadioGroupCell from "../components/Cells/RadioGroupCell";
-import NameCell from "../components/Cells/NameCell";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
+import { gridList } from "../store/columns/SY_A0012W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: any[] = [];
@@ -1062,7 +1062,7 @@ const SY_A0120: React.FC = () => {
           throw data.resultMessage;
         } else {
           const isLastDataDeleted =
-            mainDataResult.data.length == 0 && filters.pgNum > 1;
+            mainDataResult.data.length == 0 && filters.pgNum > 0;
           if (isLastDataDeleted) {
             setPage({
               skip:
@@ -1074,7 +1074,7 @@ const SY_A0120: React.FC = () => {
             setFilters((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: prev.pgNum - 1,
+              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
               isSearch: true,
             }));
           } else {

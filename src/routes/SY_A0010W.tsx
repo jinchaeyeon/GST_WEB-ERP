@@ -1,61 +1,58 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
+  GridExpandChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridFooterCellProps,
-  GridCellProps,
-  GridExpandChangeEvent,
-  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
   FilterBox,
   GridContainer,
-  GridTitle,
   GridContainerWrap,
-  TitleContainer,
-  ButtonContainer,
+  GridTitle,
   GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
   UseCustomOption,
-  UsePermissions,
-  handleKeyPressSearch,
-  UseParaPc,
   UseGetValueFromSessionItem,
-  rowsWithSelectedDataResult,
-  rowsOfDataResult,
+  UseParaPc,
+  UsePermissions,
   getQueryFromBizComponent,
+  handleKeyPressSearch,
+  rowsOfDataResult,
+  rowsWithSelectedDataResult,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/SY_A0010W_Window";
-import NumberCell from "../components/Cells/NumberCell";
 import {
-  CLIENT_WIDTH,
   GAP,
-  GNV_WIDTH,
-  GRID_MARGIN,
   PAGE_SIZE,
-  SELECTED_FIELD,
+  SELECTED_FIELD
 } from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import DetailWindow from "../components/Windows/SY_A0010W_Window";
+import { useApi } from "../hooks/api";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
-import TopButtons from "../components/Buttons/TopButtons";
-import { isLoading, deletedAttadatnumsState } from "../store/atoms";
-import { useSetRecoilState } from "recoil";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { bytesToBase64 } from "byte-base64";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const numberField = [
   "sort_seq",
@@ -1078,7 +1075,7 @@ const Page: React.FC = () => {
       }
 
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
       const findRowIndex = rowsOfDataResult(mainDataResult).findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -1095,7 +1092,7 @@ const Page: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
-          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
           isSearch: true,
         }));
       } else {
@@ -1104,9 +1101,9 @@ const Page: React.FC = () => {
           ...prev,
           find_row_value:
             rowsOfDataResult(mainDataResult)[
-              findRowIndex == 0 ? 1 : findRowIndex - 1
+              findRowIndex < 1 ? 1 : findRowIndex - 1
             ].group_code,
-          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
           isSearch: true,
         }));
       }

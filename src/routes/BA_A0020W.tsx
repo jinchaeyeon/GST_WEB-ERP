@@ -2631,7 +2631,7 @@ const BA_A0020: React.FC = () => {
     if (data.isSuccess === true) {
       resetAllGrid();
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
 
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
@@ -2648,10 +2648,10 @@ const BA_A0020: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         find_row_value:
-          mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1] ==
+          mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1] ==
           undefined
             ? ""
-            : mainDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1][
+            : mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1][
                 DATA_ITEM_KEY
               ],
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
@@ -2756,7 +2756,7 @@ const BA_A0020: React.FC = () => {
     if (data.isSuccess === true) {
       if (paraData.workType == "CustPerson") {
         const isLastDataDeleted =
-          subDataResult.data.length == 0 && subfilters.pgNum > 1;
+          subDataResult.data.length == 0 && subfilters.pgNum > 0;
         if (isLastDataDeleted) {
           setPage2({
             skip:
@@ -2768,7 +2768,7 @@ const BA_A0020: React.FC = () => {
           setsubFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             isSearch: true,
           }));
         } else {
@@ -2793,7 +2793,7 @@ const BA_A0020: React.FC = () => {
           setsubFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             isSearch: true,
           }));
         } else {
@@ -3063,7 +3063,7 @@ const BA_A0020: React.FC = () => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
-    if (Name == "grdList") {
+    if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -3071,7 +3071,8 @@ const BA_A0020: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else if (grid2.current) {
+    }
+    if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +
@@ -3079,7 +3080,8 @@ const BA_A0020: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else if (grid3.current) {
+    } 
+    if (grid3.current && Name == "grdList3") {
       let width = applyMinWidth3
         ? minWidth
         : minWidth +

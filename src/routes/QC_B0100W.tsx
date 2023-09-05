@@ -1,34 +1,34 @@
+import { Container } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { bytesToBase64 } from "byte-base64";
+import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
+import { DropdownChangeEvent } from "primereact/dropdown";
+import { Toolbar } from "primereact/toolbar";
 import React, { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
-import { useApi } from "../hooks/api";
 import {
+  UseBizComponent,
+  UseCustomOption,
   convertDateToStr,
   getQueryFromBizComponent,
   setDefaultDate,
-  UseBizComponent,
-  UseCustomOption,
 } from "../components/CommonFunction";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
-import { Toolbar } from "primereact/toolbar";
-import { Divider } from "primereact/divider";
-import { Button } from "primereact/button";
-import { Container } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import ComboBox from "../components/KPIcomponents/ComboBox/ComboBox";
+import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
 import Card from "../components/KPIcomponents/Card/CardBox";
-import GridTitle from "../components/KPIcomponents/Title/Title";
-import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
-import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
-import GroupTable from "../components/KPIcomponents/Table/GroupTable";
-import LineChart from "../components/KPIcomponents/Chart/LineChart";
-import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
-import { bytesToBase64 } from "byte-base64";
-import { DropdownChangeEvent } from "primereact/dropdown";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
+import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
+import LineChart from "../components/KPIcomponents/Chart/LineChart";
+import ComboBox from "../components/KPIcomponents/ComboBox/ComboBox";
+import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
+import GroupTable from "../components/KPIcomponents/Table/GroupTable";
+import GridTitle from "../components/KPIcomponents/Title/Title";
+import { useApi } from "../hooks/api";
+import { colors, colorsName, isLoading } from "../store/atoms";
 
 interface TList {
   code_name: string;
@@ -53,7 +53,30 @@ interface Tsize {
 }
 
 const QC_B0100W: React.FC = () => {
-  const theme = createTheme();
+  const [color, setColor] = useRecoilState(
+    colors
+  );
+  const [colorName, setColorName] = useRecoilState(
+    colorsName
+  );
+
+  useEffect(() => {
+
+  },[color])
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: `${color[0]}`,
+        dark: `${color[1]}`,
+        light: `${color[2]}`,
+      },
+      secondary: {
+        main: `${color[3]}`,
+      },
+    },
+  });
+
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -422,7 +445,7 @@ const QC_B0100W: React.FC = () => {
             ? "-"
             : CardData[0].Rows[0].proccdnm + " : " + CardData[0].Rows[0].badrate
           : "-",
-      backgroundColor: "#1976d2",
+      backgroundColor: theme.palette.primary.dark,
     },
     {
       title: "불량율 TOP 고객사",
@@ -432,7 +455,7 @@ const QC_B0100W: React.FC = () => {
             ? "-"
             : CardData[1].Rows[0].custnm + " : " + CardData[1].Rows[0].badrate
           : "-",
-      backgroundColor: "#5393d3",
+      backgroundColor: theme.palette.primary.main,
     },
     {
       title: "불량율 TOP 품목",
@@ -442,7 +465,7 @@ const QC_B0100W: React.FC = () => {
             ? "-"
             : CardData[2].Rows[0].itemnm + " : " + CardData[2].Rows[0].badrate
           : "-",
-      backgroundColor: "#94b6d7",
+      backgroundColor: theme.palette.primary.light,
     },
     {
       title: "불량율 TOP 설비",
@@ -452,7 +475,7 @@ const QC_B0100W: React.FC = () => {
             ? "-"
             : CardData[3].Rows[0].fxnm + " : " + CardData[3].Rows[0].badrate
           : "-",
-      backgroundColor: "#b4c4d3",
+      backgroundColor: theme.palette.secondary.main,
     },
   ];
 
@@ -504,6 +527,7 @@ const QC_B0100W: React.FC = () => {
                 data={All}
                 option={["okrate", "badrate"]}
                 label={["양품율", "불량율"]}
+                theme={theme}
               />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
@@ -514,6 +538,7 @@ const QC_B0100W: React.FC = () => {
                 alllabel={stackChartAllLabel}
                 random={true}
                 name="proccdnm"
+                colorName={colorName}
               />
             </Grid>
           </Grid>
@@ -559,13 +584,14 @@ const QC_B0100W: React.FC = () => {
                 value="value"
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}
-                color={["#1976d2", "#FF0000"]}
-                borderColor={["#d7ecfb", "#fbded7"]}
+                color={[theme.palette.primary.dark, theme.palette.primary.light]}
+                borderColor={[theme.palette.primary.main, theme.palette.secondary.main]}
                 name="series"
               />
             </Grid>
           </Grid>
         </Container>
+        <SpecialDial />
       </ThemeProvider>
     </>
   );

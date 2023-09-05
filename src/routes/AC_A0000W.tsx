@@ -751,7 +751,7 @@ const AC_A0000W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -764,7 +764,7 @@ const AC_A0000W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
-          pgNum: prev.pgNum - 1,
+          pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
           isSearch: true,
         }));
       } else {

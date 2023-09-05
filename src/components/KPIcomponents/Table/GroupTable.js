@@ -1,8 +1,5 @@
-import React from "react";
-import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { FilterMatchMode } from 'primereact/api';
-import { InputText } from 'primereact/inputtext';
+import { DataTable } from "primereact/datatable";
 
 const PaginatorTable = (props) => {
   const header = (

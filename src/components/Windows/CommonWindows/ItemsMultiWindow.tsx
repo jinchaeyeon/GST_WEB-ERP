@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridCellProps,
-  GridEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -22,32 +22,36 @@ import {
   GridTitleContainer,
   Title,
   TitleContainer,
-  PrimaryP,
 } from "../../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
+import FilterContainer from "../../../components/Containers/FilterContainer";
+import { useApi } from "../../../hooks/api";
 import { IItemData, IWindowPosition } from "../../../hooks/interfaces";
+import { isLoading } from "../../../store/atoms";
+import { UseBizComponent } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
-import FilterContainer from "../../../components/Containers/FilterContainer";
+
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: IItemData[]): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal?: boolean;
 };
 const DATA_ITEM_KEY = "itemcd";
 const KEEPING_DATA_ITEM_KEY = "idx";
+let targetRowIndex: null | number = null;
+let temp = 0;
 
-const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
+const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
+    width: isMobile == true ? deviceWidth : 1200,
     height: 850,
   });
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const keepingIdGetter = getter(KEEPING_DATA_ITEM_KEY);
@@ -115,7 +119,6 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
   const [keepingDataResult, setKeepingDataResult] = useState<DataResult>(
     process([], keepingDataState)
   );
-  const [mainPgNum, setMainPgNum] = useState(1);
 
   const [filters, setFilters] = useState({
     itemcd: "",
@@ -131,32 +134,64 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     custnm: "",
     dwgno: "",
     useyn: "Y",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+    pgSize: PAGE_SIZE,
   });
 
-  //팝업 조회 파라미터
-  const parameters = {
-    para:
-      "popup-data?id=" +
-      "P_ITEMCD" +
-      "&page=" +
-      mainPgNum +
-      "&pageSize=" +
-      PAGE_SIZE,
-    itemcd: filters.itemcd,
-    itemnm: filters.itemnm,
-    insiz: filters.insiz,
-    useyn:
-      filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
+
+  let gridRef: any = useRef(null);
+
   useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
+
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
 
   //그리드 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
-
+    //팝업 조회 파라미터
+    const parameters = {
+      para:
+        "popup-data?id=" +
+        "P_ITEMCD" +
+        "&page=" +
+        filters.pgNum +
+        "&pageSize=" +
+        filters.pgSize,
+      itemcd: filters.itemcd,
+      itemnm: filters.itemnm,
+      insiz: filters.insiz,
+      useyn:
+        filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
+    };
     try {
       data = await processApi<any>("popup-data", parameters);
     } catch (error) {
@@ -165,30 +200,42 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
 
     if (data !== null) {
       const totalRowCnt = data.data.TotalRowCount;
-      const rows = data.data.Rows;
+      const rows = data.data.Rows.map((item: any) => ({
+        ...item,
+        idx: temp++,
+      }));
 
-      if (totalRowCnt) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
+      if (gridRef.current) {
+        targetRowIndex = 0;
       }
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow = rows[0];
+        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+      }
+    } else {
+      console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
+    setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], {}));
-  };
-
-  //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -209,33 +256,94 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
 
   const onRowDoubleClick = (props: any) => {
     const selectedData = props.dataItem;
+    keepingDataResult.data.map((item) => {
+      if (item[KEEPING_DATA_ITEM_KEY] > temp) {
+        temp = item[KEEPING_DATA_ITEM_KEY];
+      }
+    });
+
+    const newDataItem = {
+      [KEEPING_DATA_ITEM_KEY]: ++temp,
+      bnatur: selectedData.bnatur,
+      color: selectedData.color,
+      custitemnm: selectedData.custitemnm,
+      dwgno: selectedData.dwgno,
+      extra_field1: selectedData.extra_field1,
+      extra_field2: selectedData.extra_field2,
+      extra_field6: selectedData.extra_field6,
+      extra_field7: selectedData.extra_field7,
+      extra_field8: selectedData.extra_field8,
+      gubun: selectedData.gubun,
+      insiz: selectedData.insiz,
+      invunit: selectedData.invunit,
+      invunitnm: selectedData.invunitnm,
+      itemacnt: selectedData.itemacnt,
+      itemacntnm: selectedData.itemacntnm,
+      itemcd: selectedData.itemcd,
+      itemlvl1: selectedData.itemlvl1,
+      itemlvl1nm: selectedData.itemlvl1nm,
+      itemlvl2: selectedData.itemlvl2,
+      itemlvl2nm: selectedData.itemlvl2nm,
+      itemlvl3: selectedData.itemlvl3,
+      itemlvl3nm: selectedData.itemlvl3nm,
+      itemlvl4: selectedData.itemlvl4,
+      itemlvl5: selectedData.itemlvl5,
+      itemnm: selectedData.itemnm,
+      itemno: selectedData.itemno,
+      itemthick:selectedData.itemthick,
+      load_place_601: selectedData.load_place_601,
+      maker: selectedData.maker,
+      model: selectedData.model,
+      outside: selectedData.outside,
+      packingsiz: selectedData.packingsiz,
+      prodline: selectedData.prodline,
+      qcyn: selectedData.qcyn,
+      remark: selectedData.remark,
+      spec: selectedData.spec,
+      unitqty: selectedData.unitqty,
+      unitwgt: selectedData.unitwgt,
+      useyn: selectedData.useyn,
+      wgtunit: selectedData.wgtunit,
+      wgtunitnm: selectedData.wgtunitnm,
+      rowstatus: "N",
+    };
+
+    setKeepingSelectedState({ [newDataItem[KEEPING_DATA_ITEM_KEY]]: true });
 
     setKeepingDataResult((prev) => {
       return {
-        data: [
-          ...prev.data,
-          ...[{ ...selectedData, idx: keepingDataResult.data.length + 1 }],
-        ],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
   };
 
   const onRemoveKeepingRow = () => {
-    //삭제 안 할 데이터 newData에 push
     let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
 
-    keepingDataResult.data.forEach((item: any) => {
+    keepingDataResult.data.forEach((item: any, index: number) => {
       if (!keepingSelectedState[item[KEEPING_DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
+      } else {
+        Object.push(index);
       }
     });
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = keepingDataResult.data[Math.min(...Object2)];
+    } else {
+      data = keepingDataResult.data[Math.min(...Object) - 1];
+    }
+    setKeepingDataResult((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
 
-    setKeepingDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total - 1,
-      };
+    setKeepingSelectedState({
+      [data != undefined ? data[KEEPING_DATA_ITEM_KEY] : newData[0]]: true,
     });
   };
 
@@ -266,18 +374,41 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
+  //그리드 푸터
   const keepingTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = keepingDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {keepingDataResult.total}건
+        총
+        {keepingDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
+  };
+
+  const search = () => {
+    resetAllGrid();
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
   };
 
   return (
@@ -288,18 +419,12 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <Title></Title>
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            themeColor={"primary"}
-          >
+          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
@@ -350,46 +475,12 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
                 )}
               </td>
             </tr>
-            {/* <tr>
-              <th>사양</th>
-              <td>
-                <Input
-                  name="spec"
-                  type="text"
-                  value={filters.spec}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>재질</th>
-              <td>
-                <Input
-                  name="bnatur"
-                  type="text"
-                  value={filters.bnatur}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>품목계정</th>
-              <td>
-                <Input
-                  name="itenacnt"
-                  type="text"
-                  value={filters.itemacnt}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th></th>
-              <td></td>
-            </tr> */}
           </tbody>
         </FilterBox>
       </FilterContainer>
       <GridContainer height="calc(100% - 470px)">
         <GridTitleContainer>
           <GridTitle>품목리스트</GridTitle>
-          <PrimaryP>※ 더블 클릭하여 품목 Keeping</PrimaryP>
         </GridTitleContainer>
         <Grid
           style={{ height: "calc(100% - 42px)" }}
@@ -413,7 +504,13 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
           //스크롤 조회기능
           fixedScroll={true}
           total={mainDataResult.total}
-          onScroll={onScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
+          //원하는 행 위치로 스크롤 기능
+          ref={gridRef}
+          rowHeight={30}
           //정렬기능
           sortable={true}
           onSortChange={onMainSortChange}
@@ -448,7 +545,6 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>Keeping</GridTitle>
-          <PrimaryP>※ 더블 클릭하여 Keeping 해제</PrimaryP>
         </GridTitleContainer>
         <Grid
           style={{ height: "250px" }}
@@ -489,7 +585,6 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
             width="200px"
             footerCell={keepingTotalFooterCell}
           />
-
           <GridColumn field="itemnm" title="품목명" width="200px" />
           <GridColumn field="insiz" title="규격" width="120px" />
           <GridColumn field="model" title="MODEL" width="120px" />
@@ -506,11 +601,11 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
-            취소
-          </Button>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인
+          </Button>
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            취소
           </Button>
         </ButtonContainer>
       </BottomContainer>

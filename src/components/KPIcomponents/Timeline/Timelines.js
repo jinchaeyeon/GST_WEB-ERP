@@ -11,7 +11,7 @@ export default function Timelines(props) {
     return (
       <span
         className="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
-        style={{ backgroundColor: "#1976d2" }}
+        style={{ backgroundColor: props.theme.palette.primary.main}}
       >
         <i className="pi pi-cog"></i>
       </span>
@@ -23,7 +23,7 @@ export default function Timelines(props) {
       <Card
         title={item.proccdnm}
         subTitle={item.proddt == undefined ? "" : dateformat2(item.proddt)}
-        style={{fontFamily: "TheJamsil5Bold", fontWeight: "lighter", marginBottom: "10px" , backgroundColor: "#eef2ff"}}
+        style={{fontFamily: "TheJamsil5Bold", fontWeight: "lighter", marginBottom: "10px" , backgroundColor: props.theme.palette.secondary.main}}
       >
         <p>작업자 : {item.prodemp}</p>
         <p>설비명 : {item.prodmacnm}</p>

@@ -1356,7 +1356,7 @@ const BA_A0041W: React.FC = () => {
     if (data.isSuccess === true) {
       if (paraData.workType == "N") {
         const isLastDataDeleted =
-          mainDataResult.data.length == 0 && filters.pgNum > 1;
+          mainDataResult.data.length == 0 && filters.pgNum > 0;
 
         if (isLastDataDeleted) {
           setPage({
@@ -1369,7 +1369,7 @@ const BA_A0041W: React.FC = () => {
           setFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             isSearch: true,
           }));
         } else {
@@ -1384,7 +1384,7 @@ const BA_A0041W: React.FC = () => {
         const chkdata = mainDataResult.data.filter((item: any) => {
           return item.chk == false;
         });
-        const isLastDataDeleted = chkdata.length == 0 && filters.pgNum > 1;
+        const isLastDataDeleted = chkdata.length == 0 && filters.pgNum > 0;
 
         if (isLastDataDeleted) {
           setPage({
@@ -1397,7 +1397,7 @@ const BA_A0041W: React.FC = () => {
           setFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
             isSearch: true,
           }));
         } else {

@@ -11,7 +11,13 @@ import { useApi } from "../hooks/api";
 import { IComboBoxColumns } from "../hooks/interfaces";
 import { useSetRecoilState } from "recoil";
 import { FormInput, FormComboBox } from "../components/Editors";
-import { AppName, LoginAppName, LoginBox, Logo } from "../CommonStyled";
+import {
+  AppName,
+  LoginAppName,
+  LoginBox,
+  Logo,
+  LoginImg,
+} from "../CommonStyled";
 
 import { isLoading } from "../store/atoms";
 import Loading from "../components/Loading";
@@ -203,63 +209,62 @@ const Login: React.FC = () => {
   }, []);
 
   return (
-    <LoginBox>
-      <Form
-        onSubmit={handleSubmit}
-        render={() => (
-          <FormElement horizontal={true}>
-            <LoginAppName>
-              <Logo size="36px" />
-              GST ERP
-            </LoginAppName>
-            <fieldset className={"k-form-fieldset"}>
-              <Field
-                name={"langCode"}
-                label={"언어설정"}
-                component={FormComboBox}
-                data={culterCodesData}
-                valueField="code"
-                textField="name"
-                columns={langCodesColumns}
-                defaultValue={DEFAULT_LANG_CODE}
-              />
-              {ifShowCompanyList ? (
+    <div style={{ backgroundColor: "#2289c3" }}>
+      <LoginBox>
+        <Form
+          onSubmit={handleSubmit}
+          render={() => (
+            <FormElement>
+              <fieldset className={"k-form-fieldset"}>
                 <Field
-                  name={"companyCode"}
-                  label={"회사코드"}
+                  name={"langCode"}
+                  label={"언어설정"}
                   component={FormComboBox}
-                  data={companyCodesData}
-                  valueField="company_code"
+                  data={culterCodesData}
+                  valueField="code"
                   textField="name"
-                  columns={companyCodesColumns}
-                  onKeyDown={companyCodesKeyDown}
+                  columns={langCodesColumns}
+                  defaultValue={DEFAULT_LANG_CODE}
                 />
-              ) : (
+                {ifShowCompanyList ? (
+                  <Field
+                    name={"companyCode"}
+                    label={"회사코드"}
+                    component={FormComboBox}
+                    data={companyCodesData}
+                    valueField="company_code"
+                    textField="name"
+                    columns={companyCodesColumns}
+                    onKeyDown={companyCodesKeyDown}
+                  />
+                ) : (
+                  <Field
+                    name={"companyCode"}
+                    label={"회사코드"}
+                    component={FormInput}
+                    onKeyDown={companyCodesKeyDown}
+                  />
+                )}
+                <Field name={"userId"} label={"ID"} component={FormInput} />
                 <Field
-                  name={"companyCode"}
-                  label={"회사코드"}
+                  name={"password"}
+                  label={"Password"}
+                  type={"password"}
                   component={FormInput}
-                  onKeyDown={companyCodesKeyDown}
                 />
-              )}
-
-              <Field name={"userId"} label={"ID"} component={FormInput} />
-              <Field
-                name={"password"}
-                label={"PASSWORD"}
-                type={"password"}
-                component={FormInput}
-              />
-            </fieldset>
-            <Button className="login-btn" themeColor={"primary"} size="large">
-              LOGIN
-            </Button>
-          </FormElement>
-        )}
-      ></Form>
-
-      <Loading />
-    </LoginBox>
+              </fieldset>
+              <Button className="login-btn" themeColor={"primary"} size="large">
+                Login
+              </Button>
+            </FormElement>
+          )}
+        ></Form>
+        <Loading />
+      </LoginBox>
+      <LoginImg>
+        <LoginAppName></LoginAppName>
+      </LoginImg>
+    </div>
   );
 };
 export default Login;

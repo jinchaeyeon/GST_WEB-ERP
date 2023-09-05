@@ -1,48 +1,47 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridHeaderSelectionChangeEvent,
-  GridPageChangeEvent,
   GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridHeaderSelectionChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
+import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  FilterBox,
   ButtonInInput,
-  GridTitleContainer,
-  GridTitle,
+  FilterBox,
+  GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
-import { COM_CODE_DEFAULT_VALUE, GAP, SELECTED_FIELD } from "../CommonString";
-import { Input } from "@progress/kendo-react-inputs";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading, loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
-  handleKeyPressSearch,
+  UseCustomOption,
   UseParaPc,
   getQueryFromBizComponent,
-  UseCustomOption,
+  handleKeyPressSearch,
 } from "../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { PAGE_SIZE } from "../CommonString";
-import NumberCell from "../Cells/NumberCell";
+import { COM_CODE_DEFAULT_VALUE, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
-import { isLoading, loginResultState } from "../../store/atoms";
-import { useRecoilState, useSetRecoilState } from "recoil";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY = "itemcd";

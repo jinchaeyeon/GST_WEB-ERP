@@ -956,10 +956,10 @@ const BA_A0070W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const isLastDataDeleted2 =
-        subDataResult.data.length == 1 && subfilters.pgNum > 1;
+        subDataResult.data.length == 1 && subfilters.pgNum > 0;
       if (paraData.workType == "SAVE") {
         const isLastDataDeleted =
-          mainDataResult.data.length == 0 && filters.pgNum > 1;
+          mainDataResult.data.length == 0 && filters.pgNum > 0;
 
         if (isLastDataDeleted) {
           setPage({
@@ -972,7 +972,7 @@ const BA_A0070W: React.FC = () => {
           setFilters((prev) => ({
             ...prev,
             find_row_value: "",
-            pgNum: prev.pgNum - 1,
+            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
           }));
           if (isLastDataDeleted2 == true) {
             setPage2({
@@ -985,7 +985,7 @@ const BA_A0070W: React.FC = () => {
             setSubFilters((prev) => ({
               ...prev,
               find_row_value: data.returnString.split("|")[0],
-              pgNum: isLastDataDeleted2 ? prev.pgNum - 1 : prev.pgNum,
+              pgNum: isLastDataDeleted2 ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
               isSearch: true,
             }));
           } else {
@@ -1054,10 +1054,10 @@ const BA_A0070W: React.FC = () => {
           setSubFilters((prev) => ({
             ...prev,
             find_row_value:
-              subDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1] ==
+              subDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1] ==
               undefined
                 ? ""
-                : subDataResult.data[findRowIndex == 0 ? 1 : findRowIndex - 1]
+                : subDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
                     .basedt,
             pgNum: isLastDataDeleted2 ? prev.pgNum - 1 : prev.pgNum,
             isSearch: true,
@@ -1228,7 +1228,7 @@ const BA_A0070W: React.FC = () => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
-    if (Name == "grdList") {
+    if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
         : minWidth +
@@ -1236,7 +1236,8 @@ const BA_A0070W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } else {
+    } 
+    if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
         : minWidth +
