@@ -1340,7 +1340,7 @@ const CM_A3000W: React.FC = () => {
               <GridTitle>부서리스트</GridTitle>
             </GridTitleContainer>
             <TreeList
-              style={{ height: "80vh", overflow: "auto" }}
+              style={{ height: "81.3vh", overflow: "auto" }}
               data={processData()}
               expandField={EXPANDED_FIELD}
               subItemsField={SUB_ITEMS_FIELD}

@@ -11,16 +11,20 @@ type TColor = {
 };
 
 export const TitleContainer = styled.div`
-  display: inline-block;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   min-height: 40px;
   padding-top: 10px;
   padding-bottom: 5px;
-  width: 100%;
 
   .iot-title {
     font-size: 26px;
+  }
+
+  @media (max-width: 850px) {
+    display: inline-block;
+    width: 100%;
   }
 `;
 

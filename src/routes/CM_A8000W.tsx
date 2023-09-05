@@ -1711,7 +1711,7 @@ const CM_A8000W: React.FC = () => {
             <GridTitle>대분류</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "78vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
@@ -1755,7 +1755,7 @@ const CM_A8000W: React.FC = () => {
             <GridTitle>중분류</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "78vh" }}
             data={process(
               subDataResult2.data.map((row) => ({
                 ...row,
@@ -1799,7 +1799,7 @@ const CM_A8000W: React.FC = () => {
             <GridTitle>소분류</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "78vh" }}
             data={process(
               subDataResult3.data.map((row) => ({
                 ...row,
@@ -1888,7 +1888,7 @@ const CM_A8000W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "80vh" }}
+              style={{ height: "73vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

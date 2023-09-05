@@ -466,7 +466,7 @@ const QC_A0120: React.FC = () => {
           </ButtonContainer>
         </GridTitleContainer>
         <Grid
-          style={{ height: "64vh" }}
+          style={{ height: "68.5vh" }}
           data={process(
             detail1DataResult.data.map((row) => ({
               ...row,

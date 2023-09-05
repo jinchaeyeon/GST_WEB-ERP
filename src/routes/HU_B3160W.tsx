@@ -439,7 +439,7 @@ const HU_B3160W: React.FC = () => {
             <GridTitle>기본정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "78vh" }}
+            style={{ height: "81.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

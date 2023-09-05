@@ -1831,7 +1831,7 @@ const CM_A4100W: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "55vh" }}
+                style={{ height: "54vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2061,7 +2061,7 @@ const CM_A4100W: React.FC = () => {
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "71vh" }}
+                style={{ height: "73vh" }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
@@ -2297,7 +2297,7 @@ const CM_A4100W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "46vh" }}
+                  style={{ height: "42vh" }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,

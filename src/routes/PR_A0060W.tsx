@@ -2061,7 +2061,7 @@ const PR_A0060: React.FC = () => {
       </GridContainer>
       <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="설비정보">
-          <FormBoxWrap style={{ height: "40vh" }}>
+          <FormBoxWrap style={{ height: "33vh" }}>
             <FormBox>
               <tbody>
                 <tr>
@@ -2389,7 +2389,7 @@ const PR_A0060: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "26vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

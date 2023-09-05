@@ -3219,7 +3219,7 @@ const BA_A0020: React.FC = () => {
               <GridTitle>요약정보</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "74vh" }}
+              style={{ height: "77.9vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -3321,7 +3321,7 @@ const BA_A0020: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap style={{ height: isMobile ? "100%" : "61vh" }}>
+              <FormBoxWrap style={{ height: isMobile ? "100%" : "65.3vh" }}>
                 <FormBox>
                   <tbody>
                     <tr>
@@ -3900,7 +3900,7 @@ const BA_A0020: React.FC = () => {
                     </ButtonContainer>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "62vh" }}
+                    style={{ height: "66vh" }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -4020,7 +4020,7 @@ const BA_A0020: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "62vh" }}
+                  style={{ height: "66vh" }}
                   data={process(
                     subDataResult2.data.map((row) => ({
                       ...row,

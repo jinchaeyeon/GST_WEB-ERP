@@ -935,7 +935,7 @@ const MA_B7201W: React.FC = () => {
               <GridTitle>품목별기간재고</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "74vh" }}
+              style={{ height: "78.1vh" }}
               data={mainDataResult}
               {...mainDataState}
               onDataStateChange={onMainDataStateChange}
@@ -996,7 +996,7 @@ const MA_B7201W: React.FC = () => {
               <GridTitle>입고상세내역</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "37.5vh" }}
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,
@@ -1066,7 +1066,7 @@ const MA_B7201W: React.FC = () => {
               <GridTitle>출고상세내역</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "37.5vh" }}
               data={process(
                 detailDataResult2.data.map((row) => ({
                   ...row,

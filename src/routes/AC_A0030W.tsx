@@ -1323,7 +1323,7 @@ const AC_A0030W: React.FC = () => {
               <GridTitle>요약정보</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "76vh" }} //76vh
+              style={{ height: "81.5vh" }} //76vh
               data={process(
                 mainDataResult.data.map((item) => ({
                   ...item,
@@ -1411,7 +1411,7 @@ const AC_A0030W: React.FC = () => {
                   삭제
                 </Button>
               </ButtonContainer>
-              <FormBoxWrap style={{ height: "41.7vh", overflow: "auto"}} /*67.5*/> 
+              <FormBoxWrap style={{ height: "41vh", overflow: "auto"}} /*67.5*/> 
                 <FormBox>
                   <tbody>
                     <tr>
@@ -1834,7 +1834,7 @@ const AC_A0030W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "65vh"}}
+                  style={{ height: "64vh"}}
                   data={process(
                     subDataResult2.data.map((row) => ({
                       ...row,

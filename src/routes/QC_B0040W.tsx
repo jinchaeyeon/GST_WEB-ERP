@@ -1095,7 +1095,7 @@ const QC_B0040W: React.FC = () => {
             <GridTitle>입고 LOT</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "22vh" }}
+            style={{ height: "24vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1162,7 +1162,7 @@ const QC_B0040W: React.FC = () => {
             <GridTitle>생산실적 및 투입정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "22vh" }}
+            style={{ height: "24vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
@@ -1232,7 +1232,7 @@ const QC_B0040W: React.FC = () => {
             <GridTitle>완제품 입고 및 출고내역</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "22vh" }}
+            style={{ height: "23.5vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
@@ -1297,7 +1297,7 @@ const QC_B0040W: React.FC = () => {
             <GridTitle>원자재 투입정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "22vh" }}
+            style={{ height: "23.5vh" }}
             data={process(
               detailDataResult2.data.map((row) => ({
                 ...row,

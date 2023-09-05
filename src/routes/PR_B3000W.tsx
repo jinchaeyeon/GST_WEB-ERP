@@ -941,7 +941,7 @@ const PR_B3000W: React.FC = () => {
             )}
           </GridTitleContainer>
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: "74.5vh" }}
             data={process(
               mainDataResult.data.map((row, idx) => ({
                 ...row,

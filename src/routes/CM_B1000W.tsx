@@ -675,7 +675,7 @@ const CM_B1000W: React.FC = () => {
             onChange={filterInputChange}
           />
           <Grid
-            style={{ height: "53vh" }}
+            style={{ height: "56vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
@@ -880,7 +880,7 @@ const CM_B1000W: React.FC = () => {
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "35vh" }}
+                style={{ height: "39vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

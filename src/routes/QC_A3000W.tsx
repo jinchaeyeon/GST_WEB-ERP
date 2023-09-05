@@ -1709,7 +1709,7 @@ const QC_A3000: React.FC = () => {
               <GridTitle>생산실적리스트</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "36vh" }}
+              style={{ height: "35.4vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1800,7 +1800,7 @@ const QC_A3000: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "34vh" }}
+            style={{ height: "35.4vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
@@ -2007,7 +2007,7 @@ const QC_A3000: React.FC = () => {
           </FormBox>
           <GridContainer>
             <Grid
-              style={{ height: "36vh" }}
+              style={{ height: "37.5vh" }}
               data={process(
                 detailDataResult2.data.map((row) => ({
                   ...row,

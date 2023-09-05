@@ -1636,7 +1636,7 @@ const AC_B5080W: React.FC = () => {
               }}
             >
               <Grid
-                style={{ height: "73vh" }}
+                style={{ height: "76vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1706,7 +1706,7 @@ const AC_B5080W: React.FC = () => {
         <TabStripTab title="전표미발(매출)">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult2.data.map((row) => ({
                   ...row,
@@ -1784,7 +1784,7 @@ const AC_B5080W: React.FC = () => {
         <TabStripTab title="TAX오류(매출)">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult3.data.map((row) => ({
                   ...row,
@@ -1859,7 +1859,7 @@ const AC_B5080W: React.FC = () => {
         <TabStripTab title="TAX미발(매입)">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult4.data.map((row) => ({
                   ...row,
@@ -1940,7 +1940,7 @@ const AC_B5080W: React.FC = () => {
         <TabStripTab title="전표미발(매입)">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult5.data.map((row) => ({
                   ...row,
@@ -2012,7 +2012,7 @@ const AC_B5080W: React.FC = () => {
         <TabStripTab title="TAX오류(매입)">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult6.data.map((row) => ({
                   ...row,
@@ -2093,7 +2093,7 @@ const AC_B5080W: React.FC = () => {
         <TabStripTab title="전표오류(전체)">
           <GridContainer width="87vw">
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "76vh" }}
               data={process(
                 mainDataResult7.data.map((row) => ({
                   ...row,

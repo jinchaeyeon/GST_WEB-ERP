@@ -443,7 +443,7 @@ const AC_B8030W: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "78vh" }}
+            style={{ height: "81vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
