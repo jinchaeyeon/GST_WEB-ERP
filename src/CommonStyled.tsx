@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { CLOSED_GNV_WIDTH, GNV_WIDTH } from "./components/CommonString";
 import logoSrc from "./img/logo.png";
 import loginBgSrc from "./img/login_bg.png";
+import { GetColor } from "./components/CommonFunction";
 
 export const TitleContainer = styled.div`
   display: inline-block;
@@ -65,8 +66,8 @@ export const MainWorkStartEndContainer = styled.div`
 
 export const TextContainer = styled.div`
   display: flex;
-  border: solid 1px #2289c3;
-  color: #2289c3;
+  border: ${GetColor().border};
+  color: ${GetColor().color};
   border-radius: 50px;
   width: 180px;
   line-height: 30px;
@@ -386,7 +387,7 @@ export const GridTitle = styled.h3`
 `;
 
 export const PrimaryP = styled.p`
-  color: #2289c3;
+  color: ${GetColor().color};
 `;
 
 export const PortraitPrint = styled.div`
@@ -513,7 +514,7 @@ export const LoginBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #2289c3;
+  background-color: ${GetColor().backgroundColor};
   height: 100vh;
   width: 50%;
   border-top-left-radius: 300px;
@@ -530,8 +531,8 @@ export const LoginBox = styled.div`
     height: 48px;
     font-size: 18px;
     font-weight: 600;
-    background-color: #2289c3;
-    border-color: #2289c3;
+    background-color: ${GetColor().backgroundColor};
+    border-color: ${GetColor().border};
   }
   .k-input {
     height: 44px;
@@ -634,9 +635,9 @@ export const InfoList = styled.ul`
 
   .big-input {
     height: 50px;
-    border: solid 1px #2289c3;
+    border: ${GetColor().border};
     border-radius: 10px;
-    color: #2289c3;
+    color: ${GetColor().color};
     text-align: right;
     padding-left: 15px;
     font-size: 18px;
@@ -670,8 +671,8 @@ export const NumberKeypadRow = styled.div`
   justify-content: space-between;
 `;
 export const NumberKeypadCell = styled.div`
-  border: solid 1px #2289c3;
-  color: #2289c3;
+  border: ${GetColor().border};
+  color: ${GetColor().color};
   font-size: 20px;
   text-align: center;
   border-radius: 5px;
@@ -683,15 +684,15 @@ export const NumberKeypadCell = styled.div`
   justify-content: center;
   cursor: pointer;
   :hover {
-    background-color: #2289c3;
+    background-color: ${GetColor().backgroundColor};
     color: #ffffff;
   }
   :focus {
-    background-color: #2289c3;
+    background-color: ${GetColor().backgroundColor};
     color: #ffffff;
   }
   :active {
-    background-color: #2289c3;
+    background-color: ${GetColor().backgroundColor};
     color: #ffffff;
   }
 `;
@@ -732,7 +733,7 @@ export const Gnv = styled.div<TGnv>`
   .k-panelbar-item-icon.k-icon.k-i-gear,
   .k-panelbar-item-icon.k-icon.k-i-star,
   .k-panelbar-item-icon.k-icon.k-i-star-outline {
-    color: #2289c3;
+    color: ${GetColor().color};
   }
 
   .k-selected > .k-panelbar-item-icon.k-icon.k-i-star-outline {
@@ -831,7 +832,7 @@ export const Footer = styled.div`
 
 export const AppName = styled.h1`
   font-size: 20px;
-  color: #2289c3;
+  color: ${GetColor().color};
   font-weight: 400;
   /* padding: 10px 0; */
   height: 50px;

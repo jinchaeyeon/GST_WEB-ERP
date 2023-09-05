@@ -1,24 +1,42 @@
+import { DataResult, getter } from "@progress/kendo-data-query";
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
+import { bytesToBase64 } from "byte-base64";
+import calculateSize from "calculate-size";
+import { detect } from "detect-browser";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { sessionItemState, loginResultState } from "../store/atoms";
-import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
-import { detect } from "detect-browser";
-import { bytesToBase64 } from "byte-base64";
+import { loginResultState, sessionItemState } from "../store/atoms";
+import captionEnUs from "../store/cultures/Captions.en-US.json";
+import captionKoKr from "../store/cultures/Captions.ko-KR.json";
+import messageEnUs from "../store/cultures/Messages.en-US.json";
+import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import {
   TSessionItemCode,
   TSysCaptionKey,
   TSysMessageKey,
 } from "../store/types";
-import calculateSize from "calculate-size";
-import captionEnUs from "../store/cultures/Captions.en-US.json";
-import captionKoKr from "../store/cultures/Captions.ko-KR.json";
-import captionJaJp from "../store/cultures/Captions.ja-JP.json";
-import captionZhCn from "../store/cultures/Captions.zh-CN.json";
-import messageEnUs from "../store/cultures/Messages.en-US.json";
-import messageKoKr from "../store/cultures/Messages.ko-KR.json";
-import { DataResult, getter } from "@progress/kendo-data-query";
+import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
+
+export function GetColor(){
+  let mainColor = "#2289c3";
+  const path = window.location.href;
+  if (path.includes("localhost")) {
+    mainColor = "#f9d202"
+  } else {
+    if (path.split("/")[2].split(".")[0] == "gsti") {
+      mainColor = "#2289c3";
+    } else if (path.split("/")[2].split(".")[0] == "ddgd") {
+      mainColor = "#f9d202"
+    }
+  }
+  return ({
+    border: `1px solid ${mainColor}`,
+    color: `${mainColor}`,
+    backgroundColor: `${mainColor}`,
+    borderColor: `${mainColor}`,
+  })
+}
 
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {

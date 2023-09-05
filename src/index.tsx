@@ -5,20 +5,32 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
-import './flags.css';
-import 'primereact/resources/themes/lara-light-indigo/theme.css';   // theme
-import 'primereact/resources/primereact.css';                       // core css
-import 'primeicons/primeicons.css';                                 // icons
-import 'primeflex/primeflex.css';  
+import "./flags.css";
+import "primereact/resources/themes/lara-light-indigo/theme.css"; // theme
+import "primereact/resources/primereact.css"; // core css
+import "primeicons/primeicons.css"; // icons
+import "primeflex/primeflex.css";
+import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 
+const themes = {
+  blue: `./index.css`,
+  yellow: `./indexCRM.css`,
+};
 const root = ReactDOM.createRoot(document.getElementById("root")!);
+
 root.render(
   //<React.StrictMode>
-  <RecoilRoot>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </RecoilRoot>
+  <ThemeSwitcherProvider
+    themeMap={themes}
+    defaultTheme={"blue"}
+    insertionPoint="styles-insertion-point"
+  >
+    <RecoilRoot>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </RecoilRoot>
+  </ThemeSwitcherProvider>
   //</React.StrictMode>
 );
 
