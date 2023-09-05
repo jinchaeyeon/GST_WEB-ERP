@@ -2,6 +2,13 @@ import styled from "styled-components";
 import { CLOSED_GNV_WIDTH, GNV_WIDTH } from "./components/CommonString";
 import logoSrc from "./img/logo.png";
 import loginBgSrc from "./img/login_bg.png";
+import logoWEBERP from "./img/login_web_erp.png";
+import logoDDGD from "./img/login_ddgd.png";
+
+
+type TColor = {
+  theme: string;
+};
 
 export const TitleContainer = styled.div`
   display: flex;
@@ -67,10 +74,10 @@ export const MainWorkStartEndContainer = styled.div`
   }
 `;
 
-export const TextContainer = styled.div`
+export const TextContainer = styled.div<TColor>`
   display: flex;
-  border: solid 1px #2289c3;
-  color: #2289c3;
+  border: 1px solid ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
   border-radius: 50px;
   width: 180px;
   line-height: 30px;
@@ -389,8 +396,8 @@ export const GridTitle = styled.h3`
   margin-bottom: 10px;
 `;
 
-export const PrimaryP = styled.p`
-  color: #2289c3;
+export const PrimaryP = styled.p<TColor>`
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
 `;
 
 export const PortraitPrint = styled.div`
@@ -513,11 +520,11 @@ export const FieldWrap = styled.div<TFieldWrap>`
   }
 `;
 
-export const LoginBox = styled.div`
+export const LoginBox = styled.div<TColor>`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #2289c3;
+  background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
   height: 100vh;
   width: 50%;
   border-top-left-radius: 300px;
@@ -534,8 +541,9 @@ export const LoginBox = styled.div`
     height: 48px;
     font-size: 18px;
     font-weight: 600;
-    background-color: #2289c3;
-    border-color: #2289c3;
+    background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+    border-color: 1px solid ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+
   }
   .k-input {
     height: 44px;
@@ -608,7 +616,7 @@ export const ApprovalInner = styled.div`
   }
 `;
 
-export const InfoList = styled.ul`
+export const InfoList = styled.ul<TColor>`
   display: flex;
   gap: 20px;
   display: flex;
@@ -638,9 +646,9 @@ export const InfoList = styled.ul`
 
   .big-input {
     height: 50px;
-    border: solid 1px #2289c3;
+    border: 1px solid ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
     border-radius: 10px;
-    color: #2289c3;
+    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
     text-align: right;
     padding-left: 15px;
     font-size: 18px;
@@ -673,9 +681,9 @@ export const NumberKeypadRow = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-export const NumberKeypadCell = styled.div`
-  border: solid 1px #2289c3;
-  color: #2289c3;
+export const NumberKeypadCell = styled.div<TColor>`
+  border: 1px solid ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
   font-size: 20px;
   text-align: center;
   border-radius: 5px;
@@ -687,15 +695,15 @@ export const NumberKeypadCell = styled.div`
   justify-content: center;
   cursor: pointer;
   :hover {
-    background-color: #2289c3;
+    background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
     color: #ffffff;
   }
   :focus {
-    background-color: #2289c3;
+    background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
     color: #ffffff;
   }
   :active {
-    background-color: #2289c3;
+    background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
     color: #ffffff;
   }
 `;
@@ -706,6 +714,7 @@ export const NumberKeypadCell = styled.div`
 
 type TWrapper = {
   isMobileMenuOpend: boolean;
+  theme: string;
 };
 
 export const Wrapper = styled.div<TWrapper>`
@@ -736,7 +745,7 @@ export const Gnv = styled.div<TGnv>`
   .k-panelbar-item-icon.k-icon.k-i-gear,
   .k-panelbar-item-icon.k-icon.k-i-star,
   .k-panelbar-item-icon.k-icon.k-i-star-outline {
-    color: #2289c3;
+    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
   }
 
   .k-selected > .k-panelbar-item-icon.k-icon.k-i-star-outline {
@@ -833,9 +842,9 @@ export const Footer = styled.div`
   }
 `;
 
-export const AppName = styled.h1`
+export const AppName = styled.h1<TColor>`
   font-size: 20px;
-  color: #2289c3;
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
   font-weight: 400;
   /* padding: 10px 0; */
   height: 50px;
@@ -920,10 +929,10 @@ export const Modal = styled.div<TModal>`
 /*=========================================================================
 	// PanelBarNavContainer 종료
 =========================================================================*/
-type TLogo = { size: string };
+type TLogo = { size: string, name: string};
 
 export const Logo = styled.div<TLogo>`
-  background: url(${logoSrc});
+  background: url(${(props) => props.name == "GST WEP" ? (logoWEBERP): (logoDDGD)});
   background-size: contain;
   background-repeat: no-repeat;
   width: ${(props) => props.size};

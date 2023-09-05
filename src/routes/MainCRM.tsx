@@ -44,7 +44,6 @@ import {
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 
 const DATA_ITEM_KEY = "datnum";
 
@@ -52,7 +51,6 @@ const Main: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
-  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const userId = loginResult ? loginResult.userId : "";
@@ -559,169 +557,7 @@ const Main: React.FC = () => {
 
   return (
     <>
-      <MainTopContainer>
-        <ButtonContainer>
-          <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
-            HOMEPAGE
-          </Button>
-          <Button icon={"email"} fillMode={"flat"} themeColor={"primary"}>
-            E-MAIL
-          </Button>
-        </ButtonContainer>
-
-        <MainWorkStartEndContainer>
-          <TextContainer theme={currentTheme}>
-            {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
-          </TextContainer>
-          <Button
-            themeColor={"primary"}
-            onClick={() => {
-              fetchWorkTimeSaved("start");
-            }}
-          >
-            출근
-          </Button>
-          <Button
-            themeColor={"primary"}
-            onClick={() => {
-              fetchWorkTimeSaved("end");
-            }}
-          >
-            퇴근
-          </Button>
-        </MainWorkStartEndContainer>
-        <ApprovalBox>
-          <ApprovalInner>
-            <div>미결</div>
-            <div>{approvalValueState.app}</div>
-          </ApprovalInner>
-          <ApprovalInner>
-            <div>참조</div>
-            <div>{approvalValueState.ref}</div>
-          </ApprovalInner>
-          <ApprovalInner>
-            <div>반려</div>
-            <div>{approvalValueState.rtr}</div>
-          </ApprovalInner>
-        </ApprovalBox>
-      </MainTopContainer>
-
-      <GridContainerWrap>
-        <GridContainer width={`65%`} >
-          <GridTitleContainer>
-            <GridTitle>Work Calendar</GridTitle>
-            {customOptionData !== null && (
-              <div>
-                <CustomOptionComboBox
-                  name="cboSchedulerType"
-                  value={schedulerFilter.cboSchedulerType}
-                  customOptionData={customOptionData}
-                  changeData={schedulerFilterChange}
-                />
-              </div>
-            )}
-          </GridTitleContainer>
-          <Scheduler
-            height={"718px"}
-            data={schedulerDataResult}
-            defaultDate={displayDate}
-          >
-            <MonthView />
-            <DayView />
-            <WeekView />
-          </Scheduler>
-        </GridContainer>
-        <GridContainerWrap style={{width: isMobile ? "100%" : `calc(35% - ${GAP}px)`}} flexDirection="column">
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>공지사항</GridTitle>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "339px" }}
-              data={process(
-                noticeDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
-                })),
-                noticeDataState
-              )}
-              {...noticeDataState}
-              onDataStateChange={onNoticeDataStateChange}
-              //선택기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "multiple",
-              }}
-              onSelectionChange={onDetailSelectionChange}
-              //정렬기능
-              sortable={true}
-              onSortChange={onNoticeSortChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={noticeDataResult.total}
-              onScroll={onNoticeScrollHandler}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn
-                field="recdt_week"
-                title="작성일"
-                cell={CenterCell}
-                footerCell={noticeTotalFooterCell}
-                width="140px"
-              />
-              <GridColumn
-                field="person"
-                title="작성자"
-                cell={CenterCell}
-                width="120px"
-              />
-              <GridColumn field="title" title="제목" />
-            </Grid>
-          </GridContainer>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>업무지시요청</GridTitle>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "339px" }}
-              data={process(workOrderDataResult.data, workOrderDataState)}
-              {...workOrderDataState}
-              onDataStateChange={onWorkOrderDataStateChange}
-              //정렬기능
-              sortable={true}
-              onSortChange={onWorkOrderSortChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={workOrderDataResult.total}
-              onScroll={onWorkOrderScrollHandler}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn
-                field="recdt_week"
-                title="작성일"
-                cell={CenterCell}
-                footerCell={workOrderTotalFooterCell}
-                width="140px"
-              />
-              <GridColumn
-                field="user_name"
-                title="작성자"
-                cell={CenterCell}
-                width="120px"
-              />
-              <GridColumn field="title" title="제목" />
-            </Grid>
-          </GridContainer>
-        </GridContainerWrap>
-      </GridContainerWrap>
+      gggggggggggggg
     </>
   );
 };

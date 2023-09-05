@@ -80,6 +80,7 @@ import {
 
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -1023,6 +1024,7 @@ const KendoWindow = ({
   const [itemacntListData, setItemacntListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -1746,7 +1748,7 @@ const KendoWindow = ({
               <GridContainerWrap>
                 <GridContainer>
                   <>
-                    <InfoList>
+                    <InfoList theme={currentTheme}>
                       <InfoTitle>수주정보</InfoTitle>
                       <InfoItem>
                         <InfoLabel>품목코드</InfoLabel>
@@ -1770,7 +1772,7 @@ const KendoWindow = ({
                       </InfoItem>
                     </InfoList>
 
-                    <InfoList>
+                    <InfoList theme={currentTheme}>
                       <InfoTitle>계획정보</InfoTitle>
                       <InfoItem>
                         <InfoLabel>수주량</InfoLabel>

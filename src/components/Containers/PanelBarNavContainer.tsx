@@ -42,6 +42,7 @@ import {
   AutoCompleteCloseEvent,
 } from "@progress/kendo-react-dropdowns";
 import cookie from "react-cookies";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -57,18 +58,18 @@ const PanelBarNavContainer = (props: any) => {
   // }, [token]);
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMobileMenuOpend, setIsMobileMenuOpend] = useRecoilState(
-    isMobileMenuOpendState,
+    isMobileMenuOpendState
   );
   const [isMenuOpend, setIsMenuOpend] = useRecoilState(isMenuOpendState);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
-    deletedAttadatnumsState,
+    deletedAttadatnumsState
   );
 
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState,
+    unsavedAttadatnumsState
   );
 
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -78,7 +79,7 @@ const PanelBarNavContainer = (props: any) => {
   const loginKey = loginResult ? loginResult.loginKey : "";
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN";
-
+  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
 
@@ -90,7 +91,7 @@ const PanelBarNavContainer = (props: any) => {
 
   // 반응형 처리
   const [clientWidth, setClientWidth] = useState(
-    document.documentElement.getBoundingClientRect().width,
+    document.documentElement.getBoundingClientRect().width
   );
   useEffect(() => {
     const handleWindowResize = () => {
@@ -266,7 +267,7 @@ const PanelBarNavContainer = (props: any) => {
         (menu: any) =>
           menu.menuCategory === "GROUP" &&
           menu.menuName !== "Home" &&
-          menu.menuName !== "PlusWin6",
+          menu.menuName !== "PlusWin6"
       )
       .forEach((menu: any, idx: number) => {
         paths.push({
@@ -285,7 +286,7 @@ const PanelBarNavContainer = (props: any) => {
       menus
         .filter(
           (menu: any) =>
-            menu.menuCategory === "WEB" && path.menuId === menu.parentMenuId,
+            menu.menuCategory === "WEB" && path.menuId === menu.parentMenuId
         )
         .forEach((menu: any, idx: number) => {
           paths.push({
@@ -341,7 +342,7 @@ const PanelBarNavContainer = (props: any) => {
       // 폼 로그 처리
       if (previousRoute === "") {
         const pathitem = paths.find(
-          (item) => item.path.replace("/", "") === pathname,
+          (item) => item.path.replace("/", "") === pathname
         );
 
         //최초 오픈
@@ -353,10 +354,10 @@ const PanelBarNavContainer = (props: any) => {
         });
       } else if (pathname !== previousRoute) {
         const pathitem = paths.find(
-          (item) => item.path.replace("/", "") === pathname,
+          (item) => item.path.replace("/", "") === pathname
         );
         const previousPathitem = paths.find(
-          (item) => item.path.replace("/", "") === previousRoute,
+          (item) => item.path.replace("/", "") === previousRoute
         );
         // 오픈, 클로즈
         fetchToLog({
@@ -545,6 +546,20 @@ const PanelBarNavContainer = (props: any) => {
       }
     }
   };
+  const path = window.location.href;
+  let names = "";
+  useEffect(() => {
+    //개발 전용
+    if (path.includes("localhost")) {
+      names = "CRM CRM_DDGD";
+    } else {
+      if (path.split("/")[2].split(".")[0] == "gsti") {
+        names = "GST WEP";
+      } else if (path.split("/")[2].split(".")[0] == "ddgd") {
+        names = "CRM CRM_DDGD";
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -552,9 +567,15 @@ const PanelBarNavContainer = (props: any) => {
         <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
         {isMenuOpend ? (
           <Gnv isMobileMenuOpend={isMobileMenuOpend}>
-            <AppName onClick={() => setIsMenuOpend(false)}>
-              <Logo size="32px" />
-              GST ERP
+            <AppName theme={currentTheme} onClick={() => setIsMenuOpend(false)}>
+              {names == "GST WER" ? (
+                <Logo size="32px" name={names}/>
+              ) : names == "CRM CRM_DDGD" ? (
+                <Logo size="32px" name={names}/>
+              ) : (
+                <Logo size="32px" name={names}/>
+              )}
+              {props.roles}
             </AppName>
             {prgMenus && (
               <MenuSearchBox>
@@ -604,7 +625,7 @@ const PanelBarNavContainer = (props: any) => {
                         .filter(
                           (childPath: TPath) =>
                             childPath.menuCategory === "WEB" &&
-                            childPath.parentMenuId === path.menuId,
+                            childPath.parentMenuId === path.menuId
                         )
                         .map((childPath: TPath, childIdx: number) => (
                           <PanelBarItem
@@ -695,8 +716,8 @@ const PanelBarNavContainer = (props: any) => {
         <Content isMenuOpen={isMenuOpend}>
           <TopTitle>
             <div style={{ width: "30px" }}></div>
-            <AppName>
-              <Logo size="32px" />
+            <AppName theme={currentTheme}>
+              <Logo size="32px" name={names}/>
             </AppName>
             <Button
               icon="menu"

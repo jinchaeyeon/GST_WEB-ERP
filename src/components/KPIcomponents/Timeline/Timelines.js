@@ -1,7 +1,6 @@
 import React from "react";
 import { Timeline } from "primereact/timeline";
 import { Card } from "primereact/card";
-import "../../../index.css";
 import {  dateformat2 } from "../../CommonFunction";
 
 export default function Timelines(props) {

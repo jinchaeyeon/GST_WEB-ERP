@@ -1,12 +1,9 @@
-import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import "./index.scss";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import { createGlobalStyle } from "styled-components";
-import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
 import AuthRoute from "./components/AuthRoute";
-import Login from "./routes/Login";
-import Main from "./routes/Main";
+import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
 import AC_A0000W from "./routes/AC_A0000W";
 import AC_A0020W from "./routes/AC_A0020W";
 import AC_A0030W from "./routes/AC_A0030W";
@@ -27,6 +24,35 @@ import BA_A0070W from "./routes/BA_A0070W";
 import BA_A0080W from "./routes/BA_A0080W";
 import BA_A0100W from "./routes/BA_A0100W";
 import BA_B0080W from "./routes/BA_B0080W";
+import CM_A0000W from "./routes/CM_A0000W";
+import CM_A1000W from "./routes/CM_A1000W";
+import CM_A1600W from "./routes/CM_A1600W";
+import CM_A1710W from "./routes/CM_A1710W";
+import CM_A2000W from "./routes/CM_A2000W";
+import CM_A3000W from "./routes/CM_A3000W";
+import CM_A4100W from "./routes/CM_A4100W";
+import CM_A8000W from "./routes/CM_A8000W";
+import CM_A8210W from "./routes/CM_A8210W";
+import CM_A8250W from "./routes/CM_A8250W";
+import CM_B1000W from "./routes/CM_B1000W";
+import CM_B1101W from "./routes/CM_B1101W";
+import CM_B8100W from "./routes/CM_B8100W";
+import CT_A0111W from "./routes/CT_A0111W";
+import EA_A1000W from "./routes/EA_A1000W";
+import EA_A2000W from "./routes/EA_A2000W";
+import HU_A1000W from "./routes/HU_A1000W";
+import HU_A2070W from "./routes/HU_A2070W";
+import HU_A2100W from "./routes/HU_A2100W";
+import HU_A3020W from "./routes/HU_A3020W";
+import HU_A4100W from "./routes/HU_A4100W";
+import HU_A5020W from "./routes/HU_A5020W";
+import HU_B1020W from "./routes/HU_B1020W";
+import HU_B2100W from "./routes/HU_B2100W";
+import HU_B3140W from "./routes/HU_B3140W";
+import HU_B3160W from "./routes/HU_B3160W";
+import HU_B4000W from "./routes/HU_B4000W";
+import HU_B4001W from "./routes/HU_B4001W";
+import Login from "./routes/Login";
 import MA_A0010W from "./routes/MA_A0010W";
 import MA_A1000W from "./routes/MA_A1000W";
 import MA_A2000W from "./routes/MA_A2000W";
@@ -35,10 +61,10 @@ import MA_A2400W from "./routes/MA_A2400W";
 import MA_A2500W from "./routes/MA_A2500W";
 import MA_A2700W from "./routes/MA_A2700W";
 import MA_A3000W from "./routes/MA_A3000W";
-import MA_A7000W from "./routes/MA_A7000W";
 import MA_A3300W from "./routes/MA_A3300W";
 import MA_A3400W from "./routes/MA_A3400W";
 import MA_A3500W from "./routes/MA_A3500W";
+import MA_A7000W from "./routes/MA_A7000W";
 import MA_A9001W from "./routes/MA_A9001W";
 import MA_B2000W from "./routes/MA_B2000W";
 import MA_B2100W from "./routes/MA_B2100W";
@@ -50,6 +76,31 @@ import MA_B3100W from "./routes/MA_B3100W";
 import MA_B7000W from "./routes/MA_B7000W";
 import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
+import Main from "./routes/Main";
+import PR_A0030W from "./routes/PR_A0030W";
+import PR_A0040W from "./routes/PR_A0040W";
+import PR_A0060W from "./routes/PR_A0060W";
+import PR_A1100W from "./routes/PR_A1100W";
+import PR_A3000W from "./routes/PR_A3000W";
+import PR_A4100W from "./routes/PR_A4100W";
+import PR_A5000W from "./routes/PR_A5000W";
+import PR_A6000W from "./routes/PR_A6000W";
+import PR_A7000W from "./routes/PR_A7000W";
+import PR_A9000W from "./routes/PR_A9000W";
+import PR_A9100W from "./routes/PR_A9100W";
+import PR_B1103W from "./routes/PR_B1103W";
+import PR_B1104W from "./routes/PR_B1104W";
+import PR_B3000W from "./routes/PR_B3000W";
+import QC_A0060W from "./routes/QC_A0060W";
+import QC_A0120W from "./routes/QC_A0120W";
+import QC_A2000W from "./routes/QC_A2000W";
+import QC_A2500W from "./routes/QC_A2500W";
+import QC_A3000W from "./routes/QC_A3000W";
+import QC_A6000W from "./routes/QC_A6000W";
+import QC_B0040W from "./routes/QC_B0040W";
+import QC_B0100W from "./routes/QC_B0100W";
+import QC_B0200W from "./routes/QC_B0200W";
+import QC_B0300W from "./routes/QC_B0300W";
 import SA_A2000W from "./routes/SA_A2000W";
 import SA_A2010W from "./routes/SA_A2010W";
 import SA_A2300W from "./routes/SA_A2300W";
@@ -66,24 +117,12 @@ import SA_B3000W from "./routes/SA_B3000W";
 import SA_B3100W from "./routes/SA_B3100W";
 import SA_B3101W from "./routes/SA_B3101W";
 import SA_B3600W from "./routes/SA_B3600W";
-import QC_A0060W from "./routes/QC_A0060W";
-import QC_A0120W from "./routes/QC_A0120W";
-import QC_A2000W from "./routes/QC_A2000W";
-import QC_A2500W from "./routes/QC_A2500W";
-import QC_A3000W from "./routes/QC_A3000W";
-import QC_A6000W from "./routes/QC_A6000W";
-import QC_B0200W from "./routes/QC_B0200W";
-import QC_B0300W from "./routes/QC_B0300W";
-import QC_B0040W from "./routes/QC_B0040W";
-import QC_B0100W from "./routes/QC_B0100W";
-import SY_A0120W from "./routes/SY_A0120W";
-import SY_A0110W from "./routes/SY_A0110W";
 import SY_A0010W from "./routes/SY_A0010W";
+import SY_A0011W from "./routes/SY_A0011W";
 import SY_A0012W from "./routes/SY_A0012W";
 import SY_A0013W from "./routes/SY_A0013W";
-import SY_A0125W from "./routes/SY_A0125W";
-import SY_A0011W from "./routes/SY_A0011W";
 import SY_A0025W from "./routes/SY_A0025W";
+<<<<<<< HEAD
 import CM_A1000W from "./routes/CM_A1000W";
 import CM_A1600W from "./routes/CM_A1600W";
 import CM_A1710W from "./routes/CM_A1710W";
@@ -128,53 +167,62 @@ import HU_B3140W from "./routes/HU_B3140W";
 import HU_B3160W from "./routes/HU_B3160W";
 import HU_B4001W from "./routes/HU_B4001W";
 import HU_B4000W from "./routes/HU_B4000W";
+=======
+import SY_A0110W from "./routes/SY_A0110W";
+import SY_A0120W from "./routes/SY_A0120W";
+import SY_A0125W from "./routes/SY_A0125W";
+>>>>>>> ac3a024b79a61b1acab386eac1f8f2b2ae87031e
 
-import TO_B0011W from "./routes/TO_B0011W";
-import CHAT_A0001W from "./routes/CHAT_A0001W";
-import CHAT_A0002W from "./routes/CHAT_A0002W";
-import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
-import WORD_EDITOR from "./routes/WORD_EDITOR";
-import GANTT from "./routes/GANTT";
-import SY_A0100W from "./routes/SY_A0100W";
-import {
-  colors,
-  isMobileMenuOpendState,
-  loginResultState,
-} from "./store/atoms";
 import {
   IntlProvider,
   LocalizationProvider,
   load,
 } from "@progress/kendo-react-intl";
+import CHAT_A0001W from "./routes/CHAT_A0001W";
+import CHAT_A0002W from "./routes/CHAT_A0002W";
+import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
+import GANTT from "./routes/GANTT";
+import SY_A0100W from "./routes/SY_A0100W";
+import TO_B0011W from "./routes/TO_B0011W";
+import WORD_EDITOR from "./routes/WORD_EDITOR";
+import {
+  colors,
+  isMobileMenuOpendState,
+  loginResultState,
+} from "./store/atoms";
 
-import likelySubtags from "cldr-core/supplemental/likelySubtags.json";
 import currencyData from "cldr-core/supplemental/currencyData.json";
+import likelySubtags from "cldr-core/supplemental/likelySubtags.json";
 import weekData from "cldr-core/supplemental/weekData.json";
 
-import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 import caGregorianKo from "cldr-dates-full/main/ko/ca-gregorian.json";
 import dateFieldsKo from "cldr-dates-full/main/ko/dateFields.json";
 import timeZoneNamesKo from "cldr-dates-full/main/ko/timeZoneNames.json";
+import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 
-import numbersEn from "cldr-numbers-full/main/en/numbers.json";
 import caGregorianEn from "cldr-dates-full/main/en/ca-gregorian.json";
 import dateFieldsEn from "cldr-dates-full/main/en/dateFields.json";
 import timeZoneNamesEn from "cldr-dates-full/main/en/timeZoneNames.json";
+import numbersEn from "cldr-numbers-full/main/en/numbers.json";
 
-import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 import caGregorianJa from "cldr-dates-full/main/ja/ca-gregorian.json";
 import dateFieldsJa from "cldr-dates-full/main/ja/dateFields.json";
 import timeZoneNamesJa from "cldr-dates-full/main/ja/timeZoneNames.json";
+import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 
-import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
 import caGregorianZh from "cldr-dates-full/main/zh/ca-gregorian.json";
 import dateFieldsZh from "cldr-dates-full/main/zh/dateFields.json";
 import timeZoneNamesZh from "cldr-dates-full/main/zh/timeZoneNames.json";
+import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
 
-import { DEFAULT_LANG_CODE } from "./components/CommonString";
-import styled from "styled-components";
 import { createTheme } from "@mui/material";
+import styled from "styled-components";
+import { DEFAULT_LANG_CODE } from "./components/CommonString";
+import LoginCRM from "./routes/LoginCRM";
+import MainCRM from "./routes/MainCRM";
 import SY_A0500W from "./routes/SY_A0500W";
+
+import { useThemeSwitcher } from "react-css-theme-switcher";
 
 load(
   likelySubtags,
@@ -264,6 +312,7 @@ a {
 }
 
 `;
+let roles = "";
 
 const App: React.FC = () => {
   return (
@@ -273,6 +322,8 @@ const App: React.FC = () => {
   );
 };
 const AppInner: React.FC = () => {
+  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
+ 
   const [color, setColor] = useRecoilState(colors);
   const [themecolor, setThemeColor] = useState<string[]>([
     "#2196f3",
@@ -362,11 +413,15 @@ const AppInner: React.FC = () => {
     }
 
     .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon,
-    .p-datatable .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover .p-sortable-column-icon {
+    .p-datatable
+      .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover
+      .p-sortable-column-icon {
       color: black;
     }
 
-    .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd.p-highlight {
+    .p-datatable.p-datatable-striped
+      .p-datatable-tbody
+      > tr.p-row-odd.p-highlight {
       color: black;
       background-color: ${theme.palette.secondary.main};
     }
@@ -399,6 +454,23 @@ const AppInner: React.FC = () => {
 
   const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
   const loginResult = useRecoilValue(loginResultState);
+  const path = window.location.href;
+
+  useEffect(() => {
+    //개발 전용
+    if (path.includes("localhost")) {
+      roles = "CRM_DDGD";
+      switcher({ theme: "yellow" });
+    } else {
+      if (path.split("/")[2].split(".")[0] == "gsti") {
+        roles = "WEB ERP";
+        switcher({ theme: "blue" });
+      } else if (path.split("/")[2].split(".")[0] == "ddgd") {
+        roles = "CRM_DDGD";
+        switcher({ theme: "yellow" });
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -416,14 +488,30 @@ const AppInner: React.FC = () => {
               : DEFAULT_LANG_CODE.code
           }
         >
-          <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
+          <GlobalStyle
+            isMobileMenuOpend={isMobileMenuOpend}
+            theme={currentTheme}
+          />
           <Router>
             <Switch>
-              <Route path="/" component={Login} exact />
-              <PanelBarNavContainer>
+              {roles == "WER ERP" ? (
+                <Route path="/" component={Login} exact />
+              ) : roles == "CRM_DDGD" ? (
+                <Route path="/" component={LoginCRM} exact />
+              ) : (
+                <Route path="/" component={Login} exact />
+              )}
+
+              <PanelBarNavContainer roles={roles}>
                 {/* 메인 홈 */}
-                <AuthRoute path="/Home" component={Main} exact />
-                <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
+                {roles == "WER ERP" ? (
+                  <AuthRoute path="/Home" component={Main} exact />
+                ) : roles == "CRM_DDGD" ? (
+                  <AuthRoute path="/Home" component={MainCRM} exact />
+                ) : (
+                  <AuthRoute path="/Home" component={Main} exact />
+                )}
+
                 {/* 기준정보 */}
                 <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
                 <AuthRoute path="/BA_A0020W" component={BA_A0020W} exact />
@@ -436,6 +524,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/BA_B0080W" component={BA_B0080W} exact />
                 <AuthRoute path="/CM_B8100W" component={CM_B8100W} exact />
                 <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
+                <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
                 {/* 물류관리 */}
                 <AuthRoute path="/MA_A0010W" component={MA_A0010W} exact />
                 <AuthRoute path="/MA_A1000W" component={MA_A1000W} exact />
@@ -579,7 +668,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
                 </GlobalStyles>
 
-                {/*CRM */}
+                {/*바이오톡스텍CRM */}
                 <AuthRoute
                   path="/BA_A0020W_603"
                   component={BA_A0020W_603}
