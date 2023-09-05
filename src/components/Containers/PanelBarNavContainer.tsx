@@ -553,9 +553,9 @@ const PanelBarNavContainer = (props: any) => {
     if (path.includes("localhost")) {
       names = "CRM CRM_DDGD";
     } else {
-      if (path.split("/")[2].split(".")[0] == "gsti") {
+      if (path.split("/")[2].split(".")[1] == "gsti") {
         names = "GST WEP";
-      } else if (path.split("/")[2].split(".")[0] == "ddgd") {
+      } else if (path.split("/")[2].split(".")[1] == "ddgd") {
         names = "CRM CRM_DDGD";
       }
     }

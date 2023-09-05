@@ -415,10 +415,10 @@ const AppInner: React.FC = () => {
       roles = "CRM_DDGD";
       switcher({ theme: "yellow" });
     } else {
-      if (path.split("/")[2].split(".")[0] == "gsti") {
+      if (path.split("/")[2].split(".")[1] == "gsti") {
         roles = "WEB ERP";
         switcher({ theme: "blue" });
-      } else if (path.split("/")[2].split(".")[0] == "ddgd") {
+      } else if (path.split("/")[2].split(".")[1] == "ddgd") {
         roles = "CRM_DDGD";
         switcher({ theme: "yellow" });
       }

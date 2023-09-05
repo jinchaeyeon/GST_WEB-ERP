@@ -20,9 +20,9 @@ const path = window.location.href;
 
 const defaultTheme = path.includes("localhost")
   ? "yellow"
-  : path.split("/")[2].split(".")[0] == "gsti"
+  : path.split("/")[2].split(".")[1] == "gsti"
   ? "blue"
-  : path.split("/")[2].split(".")[0] == "ddgd"
+  : path.split("/")[2].split(".")[1] == "ddgd"
   ? "yellow"
   : "blue";
 
