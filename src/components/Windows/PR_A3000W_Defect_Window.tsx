@@ -61,6 +61,7 @@ import {
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { sessionItemState } from "../../store/atoms";
 import { useRecoilState } from "recoil";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = createContext<{
@@ -108,6 +109,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     fieldArrayRenderProps;
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const editItemCloneRef = useRef();
+  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
   const dataWithIndexes = fieldArrayRenderProps.value.map(
     (item: any, index: any) => {
@@ -382,24 +384,24 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
         <NumberKeypad>
           <NumberKeypadRow>
-            <NumberKeypadCell onClick={enterNumber}>1</NumberKeypadCell>
-            <NumberKeypadCell onClick={enterNumber}>2</NumberKeypadCell>
-            <NumberKeypadCell onClick={enterNumber}>3</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>1</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>2</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>3</NumberKeypadCell>
           </NumberKeypadRow>
           <NumberKeypadRow>
-            <NumberKeypadCell onClick={enterNumber}>4</NumberKeypadCell>
-            <NumberKeypadCell onClick={enterNumber}>5</NumberKeypadCell>
-            <NumberKeypadCell onClick={enterNumber}>6</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>4</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>5</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>6</NumberKeypadCell>
           </NumberKeypadRow>
           <NumberKeypadRow>
-            <NumberKeypadCell onClick={enterNumber}>7</NumberKeypadCell>
-            <NumberKeypadCell onClick={enterNumber}>8</NumberKeypadCell>
-            <NumberKeypadCell onClick={enterNumber}>9</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>7</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>8</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>9</NumberKeypadCell>
           </NumberKeypadRow>
           <NumberKeypadRow>
-            <NumberKeypadCell onClick={enterNumber}>.</NumberKeypadCell>
-            <NumberKeypadCell onClick={enterNumber}>0</NumberKeypadCell>
-            <NumberKeypadCell onClick={enterNumber}>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>.</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>0</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
               <span className={"k-icon k-i-x"}></span>
             </NumberKeypadCell>
           </NumberKeypadRow>

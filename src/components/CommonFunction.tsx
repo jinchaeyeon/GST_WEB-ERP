@@ -18,26 +18,6 @@ import {
 } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
-export function GetColor(){
-  let mainColor = "#2289c3";
-  const path = window.location.href;
-  if (path.includes("localhost")) {
-    mainColor = "#f9d202"
-  } else {
-    if (path.split("/")[2].split(".")[0] == "gsti") {
-      mainColor = "#2289c3";
-    } else if (path.split("/")[2].split(".")[0] == "ddgd") {
-      mainColor = "#f9d202"
-    }
-  }
-  return ({
-    border: `1px solid ${mainColor}`,
-    color: `${mainColor}`,
-    backgroundColor: `${mainColor}`,
-    borderColor: `${mainColor}`,
-  })
-}
-
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
   const date = new Date();

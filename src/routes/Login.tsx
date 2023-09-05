@@ -23,6 +23,7 @@ import { isLoading } from "../store/atoms";
 import Loading from "../components/Loading";
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import cookie from "react-cookies";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 
 interface IFormData {
   langCode: string;
@@ -79,6 +80,7 @@ const Login: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const setAccessToken = useSetRecoilState(accessTokenState);
   const [ifShowCompanyList, setIfShowCompanyList] = useState(false);
+  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
   useEffect(() => {
     fetchCultureCodes();
@@ -210,7 +212,7 @@ const Login: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: "#2289c3" }}>
-      <LoginBox>
+      <LoginBox theme={currentTheme}>
         <Form
           onSubmit={handleSubmit}
           render={() => (

@@ -45,6 +45,7 @@ import { isLoading, loginResultState } from "../../../store/atoms";
 import PrsnnumWindow from "./PrsnnumWindow";
 import { bytesToBase64 } from "byte-base64";
 import FilterContainer from "../../../components/Containers/FilterContainer";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 interface IPrsnnumMulti {
   prsnnum: string;
   prsnnm: string;
@@ -73,6 +74,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     width: 830,
     height: 850,
   });
+  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
   const setLoading = useSetRecoilState(isLoading);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -457,7 +459,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       <GridContainer height="calc(100% - 470px)">
         <GridTitleContainer>
           <GridTitle>사용자 리스트</GridTitle>
-          <PrimaryP>※ 더블 클릭하여 사용자 Keeping</PrimaryP>
+          <PrimaryP theme={currentTheme}>※ 더블 클릭하여 사용자 Keeping</PrimaryP>
         </GridTitleContainer>
         <Grid
           style={{ height: "calc(100% - 42px)" }}
@@ -515,7 +517,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>Keeping</GridTitle>
-          <PrimaryP>※ 더블 클릭하여 Keeping 해제</PrimaryP>
+          <PrimaryP theme={currentTheme}>※ 더블 클릭하여 Keeping 해제</PrimaryP>
         </GridTitleContainer>
         <Grid
           style={{ height: "250px" }}

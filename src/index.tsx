@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
@@ -13,16 +12,25 @@ import "primeflex/primeflex.css";
 import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 
 const themes = {
-  blue: `./index.css`,
-  yellow: `./indexCRM.css`,
+  blue: `${process.env.PUBLIC_URL}/WEBERP-theme.css`,
+  yellow: `${process.env.PUBLIC_URL}/DDGD-theme.css`,
 };
 const root = ReactDOM.createRoot(document.getElementById("root")!);
+const path = window.location.href;
+
+const defaultTheme = path.includes("localhost")
+  ? "yellow"
+  : path.split("/")[2].split(".")[0] == "gsti"
+  ? "blue"
+  : path.split("/")[2].split(".")[0] == "ddgd"
+  ? "yellow"
+  : "blue";
 
 root.render(
   //<React.StrictMode>
   <ThemeSwitcherProvider
     themeMap={themes}
-    defaultTheme={"blue"}
+    defaultTheme={defaultTheme}
     insertionPoint="styles-insertion-point"
   >
     <RecoilRoot>

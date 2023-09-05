@@ -276,7 +276,7 @@ const App: React.FC = () => {
 };
 const AppInner: React.FC = () => {
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
-
+ 
   const [color, setColor] = useRecoilState(colors);
   const [themecolor, setThemeColor] = useState<string[]>([
     "#2196f3",
@@ -412,14 +412,14 @@ const AppInner: React.FC = () => {
   useEffect(() => {
     //개발 전용
     if (path.includes("localhost")) {
-      roles = "DDGD";
+      roles = "CRM_DDGD";
       switcher({ theme: "yellow" });
     } else {
       if (path.split("/")[2].split(".")[0] == "gsti") {
         roles = "WEB ERP";
         switcher({ theme: "blue" });
       } else if (path.split("/")[2].split(".")[0] == "ddgd") {
-        roles = "DDGD";
+        roles = "CRM_DDGD";
         switcher({ theme: "yellow" });
       }
     }
@@ -449,17 +449,17 @@ const AppInner: React.FC = () => {
             <Switch>
               {roles == "WER ERP" ? (
                 <Route path="/" component={Login} exact />
-              ) : roles == "DDGD" ? (
+              ) : roles == "CRM_DDGD" ? (
                 <Route path="/" component={LoginCRM} exact />
               ) : (
                 <Route path="/" component={Login} exact />
               )}
 
-              <PanelBarNavContainer>
+              <PanelBarNavContainer roles={roles}>
                 {/* 메인 홈 */}
                 {roles == "WER ERP" ? (
                   <AuthRoute path="/Home" component={Main} exact />
-                ) : roles == "DDGD" ? (
+                ) : roles == "CRM_DDGD" ? (
                   <AuthRoute path="/Home" component={MainCRM} exact />
                 ) : (
                   <AuthRoute path="/Home" component={Main} exact />
