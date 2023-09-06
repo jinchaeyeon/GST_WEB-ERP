@@ -180,6 +180,7 @@ import SY_A0500W from "./routes/SY_A0500W";
 
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import NotFound from "./routes/NotFound";
+import CR_A1000W from "./routes/CR_A1000W";
 
 load(
   likelySubtags,
@@ -470,11 +471,13 @@ const AppInner: React.FC = () => {
                 {roles == "WER ERP" ? (
                   <AuthRoute path="/Home" component={Main} exact />
                 ) : roles == "CRM_DDGD" ? (
-                  isAdmin ? (
-                    <AuthRoute path="/Home" component={MainAdminCRM} exact />
-                  ) : (
-                    <AuthRoute path="/Home" component={MainUserCRM} exact />
-                  )
+                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                    {isAdmin ? (
+                      <AuthRoute path="/Home" component={MainAdminCRM} exact />
+                    ) : (
+                      <AuthRoute path="/Home" component={MainUserCRM} exact />
+                    )}
+                  </GlobalStyles>
                 ) : (
                   <AuthRoute path="/Home" component={Main} exact />
                 )}
@@ -627,12 +630,14 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
                 <AuthRoute path="/GANTT" component={GANTT} exact />
 
-                {/*KPI관리 */}
                 <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                  {/*KPI관리 */}
                   <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
                   <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
                   <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
                   <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
+                  {/* DDGD페이지 */}
+                  <AuthRoute path="/CR_A1000W" component={CR_A1000W} exact />
                 </GlobalStyles>
 
                 {/*바이오톡스텍CRM */}
@@ -641,6 +646,7 @@ const AppInner: React.FC = () => {
                   component={BA_A0020W_603}
                   exact
                 />
+
                 {/* 에러페이지 */}
                 <AuthRoute path="/Error" component={NotFound} exact />
               </PanelBarNavContainer>

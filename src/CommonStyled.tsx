@@ -313,11 +313,13 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
 type TGridContainer = {
   maxWidth?: string;
   minHeight?: string;
+  maxHeight?: string;
   clientWidth?: number;
   height?: string;
   width?: string;
   inTab?: boolean;
   margin?: TMargin;
+  overflowY? :string;
 };
 
 type TMargin = {
@@ -341,6 +343,9 @@ export const GridContainer = styled.div<TGridContainer>`
   flex-direction: column;
   max-width: ${(props) => props.maxWidth};
   min-height: ${(props) => props.minHeight};
+  max-height: ${(props) => props.maxHeight};
+  overflow-Y: ${(props) => props.overflowY ? props.overflowY : "visible"};
+
   width: ${(props) =>
     props.width
       ? props.width
