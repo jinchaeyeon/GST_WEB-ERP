@@ -62,7 +62,9 @@ export const MainWorkStartEndContainer = styled.div`
   display: flex;
   float: right;
   margin-top: 20px;
-
+  margin-left: auto;
+  margin-right: 10px;
+  
   input,
   button {
     margin-left: 5px;
