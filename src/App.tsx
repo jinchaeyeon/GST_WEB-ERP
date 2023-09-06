@@ -174,10 +174,12 @@ import { createTheme } from "@mui/material";
 import styled from "styled-components";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import LoginCRM from "./routes/LoginCRM";
-import MainCRM from "./routes/MainCRM";
+import MainUserCRM from "./routes/MainUserCRM";
+import MainAdminCRM from "./routes/MainAdminCRM";
 import SY_A0500W from "./routes/SY_A0500W";
 
 import { useThemeSwitcher } from "react-css-theme-switcher";
+import NotFound from "./routes/NotFound";
 
 load(
   likelySubtags,
@@ -278,7 +280,9 @@ const App: React.FC = () => {
 };
 const AppInner: React.FC = () => {
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const role = loginResult ? loginResult.role : "";
+  const isAdmin = role === "ADMIN";
   const [color, setColor] = useRecoilState(colors);
   const [themecolor, setThemeColor] = useState<string[]>([
     "#2196f3",
@@ -408,7 +412,6 @@ const AppInner: React.FC = () => {
   `;
 
   const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
-  const loginResult = useRecoilValue(loginResultState);
   const path = window.location.href;
 
   useEffect(() => {
@@ -467,7 +470,11 @@ const AppInner: React.FC = () => {
                 {roles == "WER ERP" ? (
                   <AuthRoute path="/Home" component={Main} exact />
                 ) : roles == "CRM_DDGD" ? (
-                  <AuthRoute path="/Home" component={MainCRM} exact />
+                  isAdmin ? (
+                    <AuthRoute path="/Home" component={MainAdminCRM} exact />
+                  ) : (
+                    <AuthRoute path="/Home" component={MainUserCRM} exact />
+                  )
                 ) : (
                   <AuthRoute path="/Home" component={Main} exact />
                 )}
@@ -634,6 +641,8 @@ const AppInner: React.FC = () => {
                   component={BA_A0020W_603}
                   exact
                 />
+                {/* 에러페이지 */}
+                <AuthRoute path="/Error" component={NotFound} exact />
               </PanelBarNavContainer>
             </Switch>
           </Router>

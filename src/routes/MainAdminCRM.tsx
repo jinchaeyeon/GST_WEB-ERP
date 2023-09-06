@@ -557,7 +557,7 @@ const Main: React.FC = () => {
 
   return (
     <>
-      gggggggggggggg
+      Admin
     </>
   );
 };
