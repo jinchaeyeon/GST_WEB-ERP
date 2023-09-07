@@ -286,6 +286,7 @@ const CalendarContainer = styled.div`
       background-color: #d3d3d3;
       opacity: 0.5;
       color: #ff4d4d;
+      cursor: not-allowed;
     }
 
     &:hover {
