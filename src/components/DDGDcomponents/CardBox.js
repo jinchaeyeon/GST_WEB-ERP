@@ -22,6 +22,7 @@ const CardBox = (props) => {
           borderRadius: "10px",
           backgroundColor: colors,
         }}
+        onClick={(e) => props.Click(e)}
       >
         <CardHeader
           action={

@@ -3,16 +3,66 @@ import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import styled from "styled-components";
 import { convertDateToStr } from "../CommonFunction";
+import { useApi } from "../../hooks/api";
 
 let height = window.innerHeight;
 
 function App(props) {
+  const data =
+    props.data == undefined
+      ? {
+          adjqty: 0,
+          class: "1",
+          color: "#fff2cc",
+          custcd: "A000",
+          custnm: "",
+          dayofweek: 20,
+          enddt: "20230831",
+          strdt: "20230901",
+          useqty: 0,
+        }
+      : props.data;
   const [value, onChange] = useState(new Date());
-  const day = moment(new Date()).format("YYYYMMDD");
   const [checked, setChecked] = React.useState(false);
   const [holidays, setHolidays] = useState([]);
   const storageKey = "__holidays";
-  const mark = ["20230901", "20230904", "20230908"];
+  const [schedulerData, setSchedulerData] = useState([]);
+  const processApi = useApi();
+  const fetchMain = async () => {
+    let datas = "";
+    const Parameters = {
+      procedureName: "P_CR_A1000W_Q",
+      pageNumber: 1,
+      pageSize: 100,
+      parameters: {
+        "@p_work_type": "Q",
+        "@p_orgdiv": "01",
+        "@p_custcd": data.custcd == undefined ? "" : data.custcd,
+      },
+    };
+    try {
+      datas = await processApi("procedure", Parameters);
+    } catch (error) {
+      datas = null;
+    }
+
+    if (datas.isSuccess === true) {
+      const rowCount = datas.tables[0].RowCount;
+      const row = datas.tables[0].Rows;
+
+      if (rowCount > 0) {
+        setSchedulerData(row);
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(datas);
+    }
+  };
+
+  useEffect(() => {
+    fetchMain();
+  }, [props]);
+
   useEffect(() => {
     if (holidays.length == 0) {
       const storageHolidays = localStorage.getItem(storageKey);
@@ -51,25 +101,58 @@ function App(props) {
   };
 
   return (
-    <CalendarContainer backgroundColor={props.color}>
-      <div style={{ display: "inline-block", width: "100%"}}>
+    <CalendarContainer backgroundColor={data.color}>
+      <div style={{ display: "inline-block", width: "100%" }}>
         <img
           src={`${process.env.PUBLIC_URL}/Born.png`}
           alt=""
           width={"20px"}
           height={"20px"}
-          style={{ marginRight: "2px", paddingTop: "5px", paddingBottom: "-5px"}}
+          style={{
+            marginRight: "2px",
+            paddingTop: "5px",
+            paddingBottom: "-5px",
+          }}
         />
-        강아지 이름
-        <p style={{ marginLeft: "30px", display: "inline" }}>등원 완료 :</p>
+        {data.custnm}
+        <p
+          style={{ marginLeft: "15px", marginRight: "5px", display: "inline" }}
+        >
+          등원 완료 :
+        </p>
         <span
           class="k-icon k-i-heart k-icon-md"
-          style={{ color: "#D3D3D3", backgroundColor: "white" }}
+          style={{
+            color: "#D3D3D3",
+            backgroundColor: "white",
+            borderRadius: "30px",
+          }}
         ></span>
-        <p style={{ marginLeft: "30px", display: "inline" }}>등원 예정 :</p>
+        <p
+          style={{ marginLeft: "15px", marginRight: "5px", display: "inline" }}
+        >
+          등원 예정 :
+        </p>
         <span
           class="k-icon k-i-heart k-icon-md"
-          style={{ color: props.color, backgroundColor: "white" }}
+          style={{
+            color: data.color,
+            backgroundColor: "white",
+            borderRadius: "30px",
+          }}
+        ></span>
+        <p
+          style={{ marginLeft: "15px", marginRight: "5px", display: "inline" }}
+        >
+          변경 신청 완료 :
+        </p>
+        <span
+          class="k-icon k-i-heart k-icon-md"
+          style={{
+            color: "#F9D202",
+            backgroundColor: "white",
+            borderRadius: "30px",
+          }}
         ></span>
         <div style={{ float: "right" }}>
           <button
@@ -77,7 +160,12 @@ function App(props) {
             onClick={handleToggleSwitch}
             style={{ width: "200px" }}
           >
-            변경 버튼 - 현재 상태 : {checked == true ? "가능" : "불가능"}
+            변경 버튼 - 현재 상태 :{" "}
+            {checked == true ? (
+              <a style={{ color: "red" }}>가능</a>
+            ) : (
+              <a style={{ color: "red" }}>불가능</a>
+            )}
           </button>
         </div>
       </div>
@@ -92,8 +180,15 @@ function App(props) {
         onChange={(date) => changeDate(date)}
         formatDay={(locale, date) => moment(date).format("DD")}
         tileContent={({ date, view }) => {
-          if (mark.find((x) => x === moment(date).format("YYYYMMDD"))) {
-            if (moment(date).format("YYYYMMDD") < day) {
+          if (
+            schedulerData.find((x) => x.date == moment(date).format("YYYYMMDD"))
+          ) {
+            if (
+              schedulerData.find(
+                (x) =>
+                  x.date == moment(date).format("YYYYMMDD") && x.finyn == "Y"
+              )
+            ) {
               return (
                 <>
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
@@ -104,13 +199,31 @@ function App(props) {
                   </div>
                 </>
               );
+            } else if (
+              schedulerData.find(
+                (x) =>
+                  x.date == moment(date).format("YYYYMMDD") &&
+                  x.finyn == "N" &&
+                  x.appyn == "N"
+              )
+            ) {
+              return (
+                <>
+                  <div style={{ paddingTop: "30px", position: "absolute" }}>
+                    <span
+                      class="k-icon k-i-heart k-icon-xl"
+                      style={{ color: "#F9D202" }}
+                    ></span>
+                  </div>
+                </>
+              );
             } else {
               return (
                 <>
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
                     <span
                       class="k-icon k-i-heart k-icon-xl"
-                      style={{ color: props.color }}
+                      style={{ color: data.color }}
                     ></span>
                   </div>
                 </>
@@ -167,6 +280,7 @@ const CalendarContainer = styled.div`
     color: black;
     padding: 5px 0;
     position: relative;
+    border: 1px solid grey;
 
     &:disabled {
       background-color: #d3d3d3;
@@ -175,11 +289,11 @@ const CalendarContainer = styled.div`
     }
 
     &:hover {
-      background-color: #f9d202;
+      background-color: ${(props) => props.backgroundColor};
     }
 
     &:active {
-      background-color: #f9d202;
+      background-color: ${(props) => props.backgroundColor};
     }
   }
 

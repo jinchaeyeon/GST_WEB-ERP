@@ -1,6 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { UseGetValueFromSessionItem } from "../components/CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  convertDateToStr,
+  dateformat2,
+  dateformat4,
+} from "../components/CommonFunction";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
@@ -14,16 +19,27 @@ import { GAP } from "../components/CommonString";
 import { Grid } from "@mui/material";
 import CardBox from "../components/DDGDcomponents/CardBox";
 import Calender from "../components/DDGDcomponents/Calender";
+import {
+  DataResult,
+  State,
+  process as processQuery,
+} from "@progress/kendo-data-query";
 
 interface Tsize {
   width: number;
   height: number;
 }
-
+const DATA_ITEM_KEY = "custcd";
 const Main: React.FC = () => {
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
-
+  const [cardOptionState, setCardOptionState] = useState<State>({
+    sort: [],
+  });
+  const [cardOptionData, setCardOptionData] = useState<DataResult>(
+    processQuery([], cardOptionState)
+  );
+  const [selectedState, setSelectedState] = useState<string>("");
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
@@ -91,46 +107,73 @@ const Main: React.FC = () => {
     }
   }, []);
 
-  //더미 데이터
-  const cardOption = [
-    {
-      name: "오토리",
-      class: "활동반",
-      date: "23.08.01 ~ 23.08.31",
-      data: 1,
-      backgroundColor: "#fff2cc",
-      attendance: 5,
-      change: 2,
-    },
-    {
-      name: "오토리",
-      class: "활동반",
-      date: "23.08.01 ~ 23.08.31",
-      data: 1,
-      backgroundColor: "#fff2cc",
-      attendance: 5,
-      change: 2,
-    },
-    {
-      name: "오토리",
-      class: "활동반",
-      date: "23.08.01 ~ 23.08.31",
-      data: 1,
-      backgroundColor: "#fff2cc",
-      attendance: 5,
-      change: 2,
-    },
-    {
-      name: "오토리",
-      class: "활동반",
-      date: "23.08.01 ~ 23.08.31",
-      data: 1,
-      backgroundColor: "#fff2cc",
-      attendance: 5,
-      change: 2,
-    },
-  ];
+  const fetchMain = async () => {
+    let data: any;
+    const Parameters: Iparameters = {
+      procedureName: "sys_sel_default_home_web",
+      pageNumber: 1,
+      pageSize: 100,
+      parameters: {
+        "@p_work_type": "ATTENDANCE",
+        "@p_orgdiv": "01",
+        "@p_location": "",
+        "@p_user_id": "",
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_ref_date": convertDateToStr(new Date()),
+        "@p_ref_key": "",
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", Parameters);
+    } catch (error) {
+      data = null;
+    }
 
+    if (data.isSuccess === true) {
+      const rowCount = data.tables[0].RowCount;
+      const row = data.tables[0].Rows;
+
+      if (rowCount > 0) {
+        setCardOptionData((prev) => {
+          return {
+            data: row,
+            total: rowCount == -1 ? 0 : rowCount,
+          };
+        });
+
+        setSelectedState(row[0][DATA_ITEM_KEY]);
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+  };
+
+  useEffect(() => {
+    fetchMain();
+  }, []);
+
+  const changeColor = (code: string) => {
+    const newData = cardOptionData.data.map((item) =>
+      item[DATA_ITEM_KEY] == selectedState
+        ? {
+            ...item,
+            color: code,
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setCardOptionData((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+  
   return (
     <>
       <TitleContainer>
@@ -155,18 +198,20 @@ const Main: React.FC = () => {
           }}
         >
           <Grid container spacing={2}>
-            {cardOption.map((item) => (
+            {cardOptionData.data.map((item) => (
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <CardBox
-                  name={item.name}
+                  name={item.custnm}
                   class={item.class}
-                  date={item.date}
-                  attendance={item.attendance}
-                  change={item.change}
-                  data={item.data}
-                  backgroundColor={item.backgroundColor}
+                  date={`${dateformat4(item.strdt)} ~ ${dateformat4(
+                    item.enddt
+                  )}`}
+                  attendance={item.useqty}
+                  change={item.adjqty}
+                  backgroundColor={item.color}
                   fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
-                  propFunction={(code: string) => console.log(code)}
+                  propFunction={(code: string) => changeColor(code)}
+                  Click={() => setSelectedState(item[DATA_ITEM_KEY])}
                 />
               </Grid>
             ))}
@@ -176,7 +221,13 @@ const Main: React.FC = () => {
           ""
         ) : (
           <GridContainer width={`calc(75% - ${GAP}px)`}>
-            <Calender color={cardOption[0].backgroundColor}/>
+            <Calender
+              data={
+                cardOptionData.data.filter(
+                  (item) => item[DATA_ITEM_KEY] == selectedState
+                )[0]
+              }
+            />
           </GridContainer>
         )}
       </GridContainerWrap>
