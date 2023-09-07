@@ -26,6 +26,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "CM_B8100W" ||
       link == "SY_A0125W" ||
       link == "SY_A0500W" ||
+      link == "PS_A0060_301W" ||
       link == "MA_A0010W" ||
       link == "MA_A1000W" ||
       link == "MA_A2000W" ||
@@ -145,6 +146,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "PR_B1104W" ||
       link == "BA_A0020W_603" ||
       link == "CR_A1000W"||
+      link == "CR_A0010W"||
       link == "Error"
     ) {
       return false;
