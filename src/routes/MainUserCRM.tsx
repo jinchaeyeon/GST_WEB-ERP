@@ -13,6 +13,7 @@ import {
 import { GAP } from "../components/CommonString";
 import { Grid } from "@mui/material";
 import CardBox from "../components/DDGDcomponents/CardBox";
+import Calender from "../components/DDGDcomponents/Calender";
 
 interface Tsize {
   width: number;
@@ -165,6 +166,7 @@ const Main: React.FC = () => {
                   data={item.data}
                   backgroundColor={item.backgroundColor}
                   fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                  propFunction={(code: string) => console.log(code)}
                 />
               </Grid>
             ))}
@@ -173,7 +175,9 @@ const Main: React.FC = () => {
         {isMobile ? (
           ""
         ) : (
-          <GridContainer width={`calc(75% - ${GAP})`}></GridContainer>
+          <GridContainer width={`calc(75% - ${GAP}px)`}>
+            <Calender color={cardOption[0].backgroundColor}/>
+          </GridContainer>
         )}
       </GridContainerWrap>
     </>

@@ -1,34 +1,121 @@
+import moment from "moment";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import styled from "styled-components";
-import React, { useState } from "react";
-import moment from "moment";
+import { convertDateToStr } from "../CommonFunction";
 
 let height = window.innerHeight;
 
 function App(props) {
   const [value, onChange] = useState(new Date());
-  const day = moment(value).format("YYYY-MM-DD");
-  const currDate = new Date();
-  const currDateTime = moment(currDate).format("MM-DD");
-  const mark = ["2023-09-02", "2023-09-04", "2023-09-11"];
+  const day = moment(new Date()).format("YYYYMMDD");
+  const [checked, setChecked] = React.useState(false);
+  const [holidays, setHolidays] = useState([]);
+  const storageKey = "__holidays";
+  const mark = ["20230901", "20230904", "20230908"];
+  useEffect(() => {
+    if (holidays.length == 0) {
+      const storageHolidays = localStorage.getItem(storageKey);
+      if (storageHolidays) {
+        /** localStorage에 저장되어 있다면 그 값을 사용 */
+        const newHolidays = JSON.parse(storageHolidays);
+        setHolidays(newHolidays);
+      } else {
+        /** localStorage에 값이 없다면 Google Calendar API 호출 */
+        const calendarId =
+          "ko.south_korea.official%23holiday%40group.v.calendar.google.com";
+        const apiKey = "AIzaSyAByXhstT-FdBVgDTO-cqhHk-IBBjDSwAY";
+        const startDate = new Date("2000-01-01").toISOString();
+        const endDate = new Date("2070-12-31").toISOString();
+        fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&orderBy=startTime&singleEvents=true&timeMin=${startDate}&timeMax=${endDate}`
+        ).then((response) => {
+          response.json().then((result) => {
+            const newHolidays = result.items.map((item) =>
+              convertDateToStr(new Date(item.start.date))
+            );
+            setHolidays(newHolidays);
+            localStorage.setItem(storageKey, JSON.stringify(newHolidays));
+          });
+        });
+      }
+    }
+  }, []);
+
+  const changeDate = (date) => {
+    console.log(moment(date).format("YYYYMMDD"));
+  };
+
+  const handleToggleSwitch = () => {
+    setChecked(!checked);
+  };
 
   return (
-    <CalendarContainer
-      backgroundColor={props.color}
-    >
+    <CalendarContainer backgroundColor={props.color}>
+      <div style={{ display: "inline-block" }}>
+        <img
+          src={`${process.env.PUBLIC_URL}/Born.png`}
+          alt=""
+          width={"20px"}
+          height={"20px"}
+          style={{ marginRight: "2px", marginBottom: "2px" }}
+        />
+        강아지 이름
+        <p style={{ marginLeft: "30px", display: "inline" }}>등원 완료 :</p>
+        <span
+          class="k-icon k-i-heart k-icon-md"
+          style={{ color: "#D3D3D3", backgroundColor: "white" }}
+        ></span>
+        <p style={{ marginLeft: "30px", display: "inline" }}>등원 예정 :</p>
+        <span
+          class="k-icon k-i-heart k-icon-md"
+          style={{ color: props.color, backgroundColor: "white" }}
+        ></span>
+        <div style={{ float: "right" }}>
+          <button
+            className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
+            onClick={handleToggleSwitch}
+            style={{ width: "200px" }}
+          >
+            변경 버튼 * 현재 상태 : {checked == true ? "가능" : "불가능"}
+          </button>
+        </div>
+      </div>
       <Calendar
         calendarType="US"
         locale="ko-KO"
+        selected={value}
+        minDate={checked ? new Date() : undefined}
+        tileDisabled={({ date }) =>
+          holidays.includes(moment(date).format("YYYYMMDD"))
+        }
+        onChange={(date) => changeDate(date)}
         formatDay={(locale, date) => moment(date).format("DD")}
         tileContent={({ date, view }) => {
-          if (mark.find((x) => x === moment(date).format("YYYY-MM-DD"))) {
-            return (
-              <>
-                <div style={{ paddingTop: "50px", position: "absolute" }}>
-                  <div className="heart"></div>
-                </div>
-              </>
-            );
+          if (mark.find((x) => x === moment(date).format("YYYYMMDD"))) {
+            if (moment(date).format("YYYYMMDD") < day) {
+              return (
+                <>
+                  <div style={{ paddingTop: "30px", position: "absolute" }}>
+                    <span
+                      class="k-icon k-i-heart k-icon-xl"
+                      style={{ color: "#D3D3D3" }}
+                    ></span>
+                  </div>
+                </>
+              );
+            } else {
+              return (
+                <>
+                  <div style={{ paddingTop: "30px", position: "absolute" }}>
+                    <span
+                      class="k-icon k-i-heart k-icon-xl"
+                      style={{ color: props.color }}
+                    ></span>
+                  </div>
+                </>
+              );
+            }
           }
         }}
       />
@@ -41,9 +128,8 @@ export default App;
 const CalendarContainer = styled.div`
   /* ~~~ container styles ~~~ */
   margin: auto;
-  height: calc(100% - 20px);
-  margin-top: 20px;
-  background-color: #fff2cc;
+  height: 100%;
+  background-color: ${(props) => props.backgroundColor};
   padding: 10px;
   border-radius: 3px;
 
@@ -82,6 +168,12 @@ const CalendarContainer = styled.div`
     padding: 5px 0;
     position: relative;
 
+    &:disabled {
+      background-color: #d3d3d3;
+      opacity: 0.5;
+      color: #ff4d4d;
+    }
+
     &:hover {
       background-color: #f9d202;
     }
@@ -95,32 +187,7 @@ const CalendarContainer = styled.div`
   .react-calendar__month-view__days {
     display: grid !important;
     grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;
-    height: ${height - 250}px;
-
-    .heart {
-      width: 30px !important;
-      height: 30px !important;
-      position: relative !important;
-      background: ${(props) => props.backgroundColor} !important;
-      transform: rotate(45deg) !important;
-      display: flex !important;
-      justify-content: center !important;
-    }
-    .heart::before,
-    .heart::after {
-      content: "" !important;
-      width: 30px !important;
-      height: 30px !important;
-      position: absolute !important;
-      border-radius: 50% !important;
-      background: ${(props) => props.backgroundColor} !important;
-    }
-    .heart::before {
-      left: -50% !important;
-    }
-    .heart::after {
-      top: -50% !important;
-    }
+    height: ${height - 280}px;
 
     .react-calendar__tile {
       max-width: initial !important;
@@ -141,16 +208,13 @@ const CalendarContainer = styled.div`
   }
 
   /* ~~~ neighboring month & weekend styles ~~~ */
-  .react-calendar__month-view__days__day--neighboringMonth {
-    opacity: 0.5;
-    display: flex;
-    justify-content: center;
-    background-color: #d3d3d3;
-  }
   .react-calendar__month-view__days__day--weekend {
     color: #ff4d4d;
     display: flex;
     justify-content: center;
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 
   /* ~~~ other view styles ~~~ */

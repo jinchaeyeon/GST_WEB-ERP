@@ -4,15 +4,15 @@ import { CardContent, CardHeader, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import PaletteIcon from "@mui/icons-material/Palette";
 import Grid from "@mui/material/Grid";
-import DDGDColorWindow from "../Windows/CommonWindows/DDGDColorWindow"
+import DDGDColorWindow from "../Windows/CommonWindows/DDGDColorWindow";
 const CardBox = (props) => {
   const [colors, setColors] = useState(props.backgroundColor);
   const [colorWindowVisible, setColorWindowVisible] = useState(false);
 
   const handleColors = () => {
     setColorWindowVisible(true);
-  }
-  
+  };
+
   return (
     <>
       <Card
@@ -26,7 +26,7 @@ const CardBox = (props) => {
         <CardHeader
           action={
             <IconButton aria-label="setting">
-              <PaletteIcon onClick={handleColors}/>
+              <PaletteIcon onClick={handleColors} />
             </IconButton>
           }
           subheaderTypographyProps={{
@@ -47,6 +47,13 @@ const CardBox = (props) => {
                   fontFamily: "TheJamsil5Bold",
                 }}
               >
+                <img
+                  src={`${process.env.PUBLIC_URL}/Born.png`}
+                  alt=""
+                  width={"20px"}
+                  height={"20px"}
+                  style={{ marginRight: "2px", marginBottom: "2px" }}
+                />
                 {props.name}
                 <Typography
                   style={{
@@ -62,9 +69,20 @@ const CardBox = (props) => {
               </Typography>
             </>
           }
-          subheader={props.date}
+          subheader={
+            <Typography
+              style={{
+                color: "#8f918d",
+                fontSize: "12px",
+                fontWeight: 500,
+                fontFamily: "TheJamsil5Bold",
+              }}
+            >
+              이용기간: {props.date}
+            </Typography>
+          }
         />
-        <CardContent style={{ display: "flex"}}>
+        <CardContent style={{ display: "flex" }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
               <Typography
@@ -122,7 +140,11 @@ const CardBox = (props) => {
         </CardContent>
       </Card>
       {colorWindowVisible && (
-        <DDGDColorWindow setVisible={setColorWindowVisible} setData={(code) => setColors(code)} para={colors}/>
+        <DDGDColorWindow
+          setVisible={setColorWindowVisible}
+          setData={(code) => {setColors(code); props.propFunction(code);}}
+          para={colors}
+        />
       )}
     </>
   );

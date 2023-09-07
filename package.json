@@ -62,6 +62,7 @@
     "cldr-numbers-full": "^42.0.0",
     "crypto-random-string": "^5.0.0",
     "date-fns": "^2.30.0",
+    "dayjs": "^1.11.9",
     "detect-browser": "^5.3.0",
     "devextreme": "^22.2.3",
     "devextreme-react": "^22.2.3",
