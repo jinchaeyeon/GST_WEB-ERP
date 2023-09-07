@@ -1003,10 +1003,10 @@ const PS_A0060_301W: React.FC = () => {
                 )
             )}
           </Grid>
-          <ExcelExportColumn field = "orgdiv" title = "회사구분" width = {120}/>;
-          <ExcelExportColumn field = "location" title = "사업장" width = {120}/>;
-          <ExcelExportColumn field = "date" title = "일자" width = {150}/>;
-          <ExcelExportColumn field = "description" title = "비고" width = {300}/>;
+          <ExcelExportColumn field = "orgdiv" title = "회사구분" width = {120}/>
+          <ExcelExportColumn field = "location" title = "사업장" width = {120}/>
+          <ExcelExportColumn field = "date" title = "일자" width = {150}/>
+          <ExcelExportColumn field = "description" title = "비고" width = {300}/>
         </ExcelExport>
       </GridContainer>
       {/* 컨트롤 네임 불러오기 용 */}
