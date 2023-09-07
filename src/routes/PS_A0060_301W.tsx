@@ -1,10 +1,27 @@
-import { Grid, GridCellProps, GridColumn, GridDataStateChangeEvent, GridFooterCellProps, GridItemChangeEvent, GridPageChangeEvent, GridSelectionChangeEvent, getSelectedState } from "@progress/kendo-react-grid";
-import { ButtonContainer, FilterBox, GridContainer, GridTitle, GridTitleContainer, Title, TitleContainer } from "../CommonStyled";
+import { 
+  Grid, 
+  GridCellProps, 
+  GridColumn, 
+  GridDataStateChangeEvent, 
+  GridFooterCellProps, 
+  GridItemChangeEvent, 
+  GridPageChangeEvent, 
+  GridSelectionChangeEvent, 
+  getSelectedState 
+} from "@progress/kendo-react-grid";
+import { 
+  ButtonContainer, 
+  FilterBox, 
+  GridContainer, 
+  GridTitle, 
+  GridTitleContainer, 
+  Title, 
+  TitleContainer 
+} from "../CommonStyled";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { Button } from "@progress/kendo-react-buttons";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { 
-  getQueryFromBizComponent,
   UseBizComponent, 
   UseCustomOption, 
   UseGetValueFromSessionItem, 
@@ -21,23 +38,21 @@ import {
  } from "../components/CommonFunction";
 import TopButtons from "../components/Buttons/TopButtons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import { DataResult, process, State } from "@progress/kendo-data-query";
 import { gridList } from "../store/columns/PS_A0060_301W_C";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
 import { useApi } from "../hooks/api";
 import { getter } from "@progress/kendo-react-common";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import React from "react";
 import DateCell from "../components/Cells/DateCell";
-import { bytesToBase64 } from "byte-base64";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
 
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: any[] = [];
@@ -80,7 +95,6 @@ const PS_A0060_301W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [sessionItem] = useRecoilState(sessionItemState);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -192,12 +206,8 @@ const PS_A0060_301W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.work_type,
-        "@p_orgdiv": sessionItem.find(
-          (sessionItem) => sessionItem.code === "orgdiv"
-        )?.value,
-        "@p_location": sessionItem.find(
-          (sessionItem) => sessionItem.code === "location"
-        )?.value,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
         "@p_resource_type": filters.resource_type,
         "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0, 6),
         "@p_find_row_value": filters.find_row_value,
