@@ -1,13 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card } from "primereact/card";
 import { CardContent, CardHeader, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import PaletteIcon from "@mui/icons-material/Palette";
 import Grid from "@mui/material/Grid";
 import DDGDColorWindow from "../Windows/CommonWindows/DDGDColorWindow";
+import { getQueryFromBizComponent, UseBizComponent } from "../CommonFunction";
+import { bytesToBase64 } from "byte-base64";
+import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
+import { useApi } from "../../hooks/api";
+
 const CardBox = (props) => {
   const [colors, setColors] = useState(props.backgroundColor);
   const [colorWindowVisible, setColorWindowVisible] = useState(false);
+  const [bizComponentData, setBizComponentData] = useState(null);
+  UseBizComponent(
+    "L_BA310",
+    //사용여부,
+    setBizComponentData
+  );
+
+  const [classListData, setClassListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const processApi = useApi();
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const classQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item) => item.bizComponentId === "L_BA310")
+      );
+      fetchQuery(classQueryStr, setClassListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr, setListData) => {
+    let data;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const handleColors = () => {
     setColorWindowVisible(true);
@@ -65,7 +109,10 @@ const CardBox = (props) => {
                     fontFamily: "TheJamsil5Bold",
                   }}
                 >
-                  {props.name}
+                  {
+                    classListData.find((items) => items.sub_code == props.class)
+                      ?.code_name
+                  }
                 </Typography>
               </Typography>
             </>
@@ -77,9 +124,10 @@ const CardBox = (props) => {
                 fontSize: "12px",
                 fontWeight: 500,
                 fontFamily: "TheJamsil5Bold",
+                float: "left"
               }}
             >
-              이용기간: {props.date}
+              이용기간: {props.date} {props.day}
             </Typography>
           }
         />
@@ -143,7 +191,10 @@ const CardBox = (props) => {
       {colorWindowVisible && (
         <DDGDColorWindow
           setVisible={setColorWindowVisible}
-          setData={(code) => {setColors(code); props.propFunction(code);}}
+          setData={(code) => {
+            setColors(code);
+            props.propFunction(code);
+          }}
           para={colors}
         />
       )}

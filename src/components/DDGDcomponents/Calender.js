@@ -22,8 +22,8 @@ function App(props) {
           useqty: 0,
         }
       : props.data;
-  const [value, onChange] = useState(new Date());
-  const [checked, setChecked] = React.useState(false);
+
+  const [value, onChange] = useState(null);
   const [holidays, setHolidays] = useState([]);
   const storageKey = "__holidays";
   const [schedulerData, setSchedulerData] = useState([]);
@@ -61,6 +61,7 @@ function App(props) {
 
   useEffect(() => {
     fetchMain();
+    onChange(null);
   }, [props]);
 
   useEffect(() => {
@@ -93,92 +94,167 @@ function App(props) {
   }, []);
 
   const changeDate = (date) => {
-    console.log(moment(date).format("YYYYMMDD"));
+    props.propFunction(convertDateToStr(date));
   };
-
-  const handleToggleSwitch = () => {
-    setChecked(!checked);
-  };
+  
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 850;
 
   return (
     <CalendarContainer backgroundColor={data.color}>
-      <div style={{ display: "inline-block", width: "100%" }}>
-        <img
-          src={`${process.env.PUBLIC_URL}/Born.png`}
-          alt=""
-          width={"20px"}
-          height={"20px"}
-          style={{
-            marginRight: "2px",
-            paddingTop: "5px",
-            paddingBottom: "-5px",
-          }}
-        />
-        {data.custnm}
-        <p
-          style={{ marginLeft: "15px", marginRight: "5px", display: "inline" }}
-        >
-          등원 완료 :
-        </p>
-        <span
-          class="k-icon k-i-heart k-icon-md"
-          style={{
-            color: "#D3D3D3",
-            backgroundColor: "white",
-            borderRadius: "30px",
-          }}
-        ></span>
-        <p
-          style={{ marginLeft: "15px", marginRight: "5px", display: "inline" }}
-        >
-          등원 예정 :
-        </p>
-        <span
-          class="k-icon k-i-heart k-icon-md"
-          style={{
-            color: data.color,
-            backgroundColor: "white",
-            borderRadius: "30px",
-          }}
-        ></span>
-        <p
-          style={{ marginLeft: "15px", marginRight: "5px", display: "inline" }}
-        >
-          변경 신청 완료 :
-        </p>
-        <span
-          class="k-icon k-i-heart k-icon-md"
-          style={{
-            color: "#F9D202",
-            backgroundColor: "white",
-            borderRadius: "30px",
-          }}
-        ></span>
-        <div style={{ float: "right" }}>
-          <button
-            className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
-            onClick={handleToggleSwitch}
-            style={{ width: "200px" }}
+      {isMobile ? (
+        <>
+          <div style={{ display: "block", width: "100%" }}>
+            <img
+              src={`${process.env.PUBLIC_URL}/Born.png`}
+              alt=""
+              width={"20px"}
+              height={"20px"}
+              style={{
+                marginRight: "2px",
+                paddingTop: "5px",
+                paddingBottom: "-5px",
+              }}
+            />
+            {data.custnm}
+          </div>
+          <div style={{ display: "block", width: "100%", marginTop: "3px" }}>
+            <p
+              style={{
+                marginLeft: "15px",
+                marginRight: "5px",
+                display: "inline",
+                fontSize: "14px",
+              }}
+            >
+              등원 완료 :
+            </p>
+            <span
+              class="k-icon k-i-heart k-icon-md"
+              style={{
+                color: "#D3D3D3",
+                backgroundColor: "white",
+                borderRadius: "30px",
+                fontSize: "14px",
+              }}
+            ></span>
+            <p
+              style={{
+                marginLeft: "15px",
+                marginRight: "5px",
+                display: "inline",
+                fontSize: "14px",
+              }}
+            >
+              등원 예정 :
+            </p>
+            <span
+              class="k-icon k-i-heart k-icon-md"
+              style={{
+                color: data.color,
+                backgroundColor: "white",
+                borderRadius: "30px",
+                fontSize: "14px",
+              }}
+            ></span>
+            <p
+              style={{
+                marginLeft: "15px",
+                marginRight: "5px",
+                display: "inline",
+                fontSize: "14px",
+              }}
+            >
+              변경 신청 완료 :
+            </p>
+            <span
+              class="k-icon k-i-heart k-icon-md"
+              style={{
+                color: "#F9D202",
+                backgroundColor: "white",
+                borderRadius: "30px",
+                fontSize: "14px",
+              }}
+            ></span>
+          </div>
+        </>
+      ) : (
+        <div style={{ display: "inline-block", width: "100%" }}>
+          <img
+            src={`${process.env.PUBLIC_URL}/Born.png`}
+            alt=""
+            width={"20px"}
+            height={"20px"}
+            style={{
+              marginRight: "2px",
+              paddingTop: "5px",
+              paddingBottom: "-5px",
+            }}
+          />
+          {data.custnm}
+          <p
+            style={{
+              marginLeft: "15px",
+              marginRight: "5px",
+              display: "inline",
+            }}
           >
-            변경 버튼 - 현재 상태 :{" "}
-            {checked == true ? (
-              <a style={{ color: "red" }}>가능</a>
-            ) : (
-              <a style={{ color: "red" }}>불가능</a>
-            )}
-          </button>
+            등원 완료 :
+          </p>
+          <span
+            class="k-icon k-i-heart k-icon-md"
+            style={{
+              color: "#D3D3D3",
+              backgroundColor: "white",
+              borderRadius: "30px",
+            }}
+          ></span>
+          <p
+            style={{
+              marginLeft: "15px",
+              marginRight: "5px",
+              display: "inline",
+            }}
+          >
+            등원 예정 :
+          </p>
+          <span
+            class="k-icon k-i-heart k-icon-md"
+            style={{
+              color: data.color,
+              backgroundColor: "white",
+              borderRadius: "30px",
+            }}
+          ></span>
+          <p
+            style={{
+              marginLeft: "15px",
+              marginRight: "5px",
+              display: "inline",
+            }}
+          >
+            변경 신청 완료 :
+          </p>
+          <span
+            class="k-icon k-i-heart k-icon-md"
+            style={{
+              color: "#F9D202",
+              backgroundColor: "white",
+              borderRadius: "30px",
+            }}
+          ></span>
         </div>
-      </div>
+      )}
+
       <Calendar
         calendarType="US"
         locale="ko-KO"
         selected={value}
-        minDate={checked ? new Date() : undefined}
-        tileDisabled={({ date }) =>
-          holidays.includes(moment(date).format("YYYYMMDD"))
+        minDate={new Date()}
+        tileDisabled={({ date, view }) =>
+          view === "month" && holidays.includes(moment(date).format("YYYYMMDD"))
         }
         onChange={(date) => changeDate(date)}
-        formatDay={(locale, date) => moment(date).format("DD")}
         tileContent={({ date, view }) => {
           if (
             schedulerData.find((x) => x.date == moment(date).format("YYYYMMDD"))
@@ -192,10 +268,19 @@ function App(props) {
               return (
                 <>
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
-                    <span
-                      class="k-icon k-i-heart k-icon-xl"
-                      style={{ color: "#D3D3D3" }}
-                    ></span>
+                    {!isMobile ? (
+                      <span
+                        class="k-icon k-i-heart k-icon-xl"
+                        style={{ color: "#D3D3D3" }}
+                      ></span>
+                    ) : (
+                      <span
+                        class="k-icon k-i-heart"
+                        style={{
+                          color: "#D3D3D3",
+                        }}
+                      ></span>
+                    )}
                   </div>
                 </>
               );
@@ -210,10 +295,19 @@ function App(props) {
               return (
                 <>
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
-                    <span
-                      class="k-icon k-i-heart k-icon-xl"
-                      style={{ color: "#F9D202" }}
-                    ></span>
+                    {!isMobile ? (
+                      <span
+                        class="k-icon k-i-heart k-icon-xl"
+                        style={{ color: "#F9D202" }}
+                      ></span>
+                    ) : (
+                      <span
+                        class="k-icon k-i-heart"
+                        style={{
+                          color: "#F9D202",
+                        }}
+                      ></span>
+                    )}
                   </div>
                 </>
               );
@@ -221,10 +315,19 @@ function App(props) {
               return (
                 <>
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
-                    <span
-                      class="k-icon k-i-heart k-icon-xl"
-                      style={{ color: data.color }}
-                    ></span>
+                    {!isMobile ? (
+                      <span
+                        class="k-icon k-i-heart k-icon-xl"
+                        style={{ color: data.color }}
+                      ></span>
+                    ) : (
+                      <span
+                        class="k-icon k-i-heart"
+                        style={{
+                          color: data.color,
+                        }}
+                      ></span>
+                    )}
                   </div>
                 </>
               );
@@ -249,6 +352,10 @@ const CalendarContainer = styled.div`
   * {
     font-family: TheJamsil5Bold;
     font-size: 18px;
+
+    @media (max-width: 850px) {
+      font-size: 14px;
+    }
   }
 
   /* ~~~ navigation styles ~~~ */
@@ -304,6 +411,10 @@ const CalendarContainer = styled.div`
     grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;
     height: ${height - 280}px;
 
+    @media (max-width: 850px) {
+      height: ${height * 0.6}px;
+    }
+
     .react-calendar__tile {
       max-width: initial !important;
       display: flex;
@@ -318,7 +429,7 @@ const CalendarContainer = styled.div`
 
     .react-calendar__tile--range {
       box-shadow: 0 0 6px 2px grey;
-      background-color: #f9bb02;
+      background-color: ${(props) => props.backgroundColor};
     }
   }
 

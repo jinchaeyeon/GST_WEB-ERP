@@ -18,6 +18,37 @@ import {
 } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
+//enum 한글로 변경
+export const getDayOfWeeks = (value:number) => {
+  const dayofweeks = {일:1, 월:2, 화: 4, 수:8, 목:16, 금:32, 토:64}
+
+  let dayofweek:string[] = [];
+
+  if ((dayofweeks.일 & value) == dayofweeks.일) {
+    dayofweek.push("일");
+  }
+  if ((dayofweeks.월 & value) == dayofweeks.월) {
+    dayofweek.push("월");
+  }
+  if ((dayofweeks.화 & value) == dayofweeks.화) {
+    dayofweek.push("화");
+  }
+  if ((dayofweeks.수 & value) == dayofweeks.수) {
+    dayofweek.push("수");
+  }
+  if ((dayofweeks.목 & value) == dayofweeks.목) {
+    dayofweek.push("목");
+  }
+  if ((dayofweeks.금 & value) == dayofweeks.금) {
+    dayofweek.push("금");
+  }
+  if ((dayofweeks.토 & value) == dayofweeks.토) {
+    dayofweek.push("토");
+  }
+
+  return dayofweek.join("/");
+  //console.log(dayofweek.join("/"));
+}
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
   const date = new Date();
