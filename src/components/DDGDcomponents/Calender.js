@@ -52,13 +52,13 @@ function App(props) {
 
   return (
     <CalendarContainer backgroundColor={props.color}>
-      <div style={{ display: "inline-block" }}>
+      <div style={{ display: "inline-block", width: "100%"}}>
         <img
           src={`${process.env.PUBLIC_URL}/Born.png`}
           alt=""
           width={"20px"}
           height={"20px"}
-          style={{ marginRight: "2px", marginBottom: "2px" }}
+          style={{ marginRight: "2px", paddingTop: "5px", paddingBottom: "-5px"}}
         />
         강아지 이름
         <p style={{ marginLeft: "30px", display: "inline" }}>등원 완료 :</p>
@@ -77,7 +77,7 @@ function App(props) {
             onClick={handleToggleSwitch}
             style={{ width: "200px" }}
           >
-            변경 버튼 * 현재 상태 : {checked == true ? "가능" : "불가능"}
+            변경 버튼 - 현재 상태 : {checked == true ? "가능" : "불가능"}
           </button>
         </div>
       </div>
