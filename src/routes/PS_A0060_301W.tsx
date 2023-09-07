@@ -37,7 +37,7 @@ import {
   toDate
  } from "../components/CommonFunction";
 import TopButtons from "../components/Buttons/TopButtons";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
+import { ExcelExport, ExcelExportColumn } from "@progress/kendo-react-excel-export";
 import { useEffect, useRef, useState } from "react";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -871,47 +871,54 @@ const PS_A0060_301W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>요약정보</GridTitle>
-          <ButtonContainer>
-            <Button
-              onClick={onAddClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="plus"
-              title="행 추가"
-            ></Button>
-            <Button
-              onClick={onRemoveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus"
-              title="행 삭제"
-            ></Button>
-            <Button
-              onClick={onSaveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-              title="저장"
-            ></Button>
-            <Button
-              onClick={onSetSaturdayClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="calendar"
-            >
-              토요일 자동 생성
-            </Button>
-            <Button
-              onClick={onSetSundayClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="calendar"
-            >
-              일요일 자동 생성
-            </Button>
-          </ButtonContainer>
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
+          }}
+        >
+          <GridTitleContainer>
+            <GridTitle>요약정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+              ></Button>
+              <Button
+                onClick={onRemoveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제"
+              ></Button>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+              ></Button>
+              <Button
+                onClick={onSetSaturdayClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="calendar"
+              >
+                토요일 자동 생성
+              </Button>
+              <Button
+                onClick={onSetSundayClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="calendar"
+              >
+                일요일 자동 생성
+              </Button>
+            </ButtonContainer>
+          </GridTitleContainer>
           <Grid
             style={{ height: "78vh"}}
             data={process(
@@ -996,7 +1003,11 @@ const PS_A0060_301W: React.FC = () => {
                 )
             )}
           </Grid>
-        </GridTitleContainer>
+          <ExcelExportColumn field = "orgdiv" title = "회사구분" width = {120}/>;
+          <ExcelExportColumn field = "location" title = "사업장" width = {120}/>;
+          <ExcelExportColumn field = "date" title = "일자" width = {150}/>;
+          <ExcelExportColumn field = "description" title = "비고" width = {300}/>;
+        </ExcelExport>
       </GridContainer>
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
