@@ -498,11 +498,6 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/CM_B8100W" component={CM_B8100W} exact />
                 <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
                 <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
-                <AuthRoute 
-                  path="/PS_A0060_301W" 
-                  component={PS_A0060_301W} 
-                  exact 
-                />
                 {/* 물류관리 */}
                 <AuthRoute path="/MA_A0010W" component={MA_A0010W} exact />
                 <AuthRoute path="/MA_A1000W" component={MA_A1000W} exact />
@@ -647,8 +642,12 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
                   {/* DDGD페이지 */}
                   <AuthRoute path="/CR_A1000W" component={CR_A1000W} exact />
-
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
+                  <AuthRoute 
+                    path="/PS_A0060_301W" 
+                    component={PS_A0060_301W} 
+                    exact 
+                  />
                 </GlobalStyles>
 
                 {/*바이오톡스텍CRM */}
