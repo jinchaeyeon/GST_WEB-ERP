@@ -357,7 +357,7 @@ const Main: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer height="87vh" width="100%" style={{overflowY: "scroll"}}>
+              <GridContainer height="100vh" width="100%" style={{overflowY: "scroll"}}>
                 <TitleContainer>
                   <Title>
                     우리집 강아지
@@ -434,7 +434,7 @@ const Main: React.FC = () => {
             </SwiperSlide>
             {changeDate != "" ? (
               <SwiperSlide key={2}>
-                <GridContainer height="100%" width="100%">
+                <GridContainer height="100vh" width="100%" style={{overflowY: "scroll"}}>
                   <TitleContainer>
                     <Title>
                       {
