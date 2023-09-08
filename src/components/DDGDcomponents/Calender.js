@@ -22,8 +22,6 @@ function App(props) {
       : props.data;
 
   const [value, onChange] = useState(null);
-  const [holidays, setHolidays] = useState([]);
-  const storageKey = "__holidays";
   const [schedulerData, setSchedulerData] = useState([]);
   const processApi = useApi();
   const fetchMain = async () => {
@@ -61,35 +59,6 @@ function App(props) {
     fetchMain();
     onChange(null);
   }, [props]);
-
-  useEffect(() => {
-    if (holidays.length == 0) {
-      const storageHolidays = localStorage.getItem(storageKey);
-      if (storageHolidays) {
-        /** localStorage에 저장되어 있다면 그 값을 사용 */
-        const newHolidays = JSON.parse(storageHolidays);
-        setHolidays(newHolidays);
-      } else {
-        /** localStorage에 값이 없다면 Google Calendar API 호출 */
-        const calendarId =
-          "ko.south_korea.official%23holiday%40group.v.calendar.google.com";
-        const apiKey = "AIzaSyAByXhstT-FdBVgDTO-cqhHk-IBBjDSwAY";
-        const startDate = new Date("2000-01-01").toISOString();
-        const endDate = new Date("2070-12-31").toISOString();
-        fetch(
-          `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&orderBy=startTime&singleEvents=true&timeMin=${startDate}&timeMax=${endDate}`
-        ).then((response) => {
-          response.json().then((result) => {
-            const newHolidays = result.items.map((item) =>
-              convertDateToStr(new Date(item.start.date))
-            );
-            setHolidays(newHolidays);
-            localStorage.setItem(storageKey, JSON.stringify(newHolidays));
-          });
-        });
-      }
-    }
-  }, []);
 
   const changeDate = (date) => {
     props.propFunction(convertDateToStr(date));
@@ -248,9 +217,8 @@ function App(props) {
         calendarType="US"
         locale="ko-KO"
         selected={value}
-        minDate={new Date()}
-        tileDisabled={({ date, view }) =>
-          view === "month" && holidays.includes(moment(date).format("YYYYMMDD"))
+        tileDisabled={({ date, view }) => 
+          view == "month" && !schedulerData.find((x) => x.date == moment(date).format("YYYYMMDD") && x.finyn == "N"&& x.appyn == "Y") 
         }
         onChange={(date) => changeDate(date)}
         tileContent={({ date, view }) => {
@@ -456,9 +424,6 @@ const CalendarContainer = styled.div`
     color: #ff4d4d;
     display: flex;
     justify-content: center;
-    background-color: #d3d3d3;
-    cursor: not-allowed;
-    opacity: 0.5;
   }
 
   /* ~~~ other view styles ~~~ */

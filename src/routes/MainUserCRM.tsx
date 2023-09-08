@@ -226,38 +226,11 @@ const Main: React.FC = () => {
       const row = datas.tables[0].Rows;
 
       if (rowCount > 0) {
-        let ok = 0;
-        let valid = true;
-        row.map((item: any) => {
-          if (valid == true) {
-            if (item.date == date && item.finyn == "Y") {
-              alert("이미 등원 완료된 일자입니다.");
-              setChangeDate("");
-              valid = false;
-            } else if (
-              item.date == date &&
-              item.finyn == "N" &&
-              item.appyn == "N"
-            ) {
-              alert("이미 변경신청이 완료된 일자입니다.");
-              setChangeDate("");
-              valid = false;
-            } else if (item.date == date) {
-              ok++;
-            }
-          }
-        });
-
-        if (ok == 0 && valid == true) {
-          alert("해당 일자에는 등원예정이 없습니다.");
-          setChangeDate("");
-        } else if (valid == true) {
-          if (!isMobile) {
-            setChangeDateVisible(true);
-          } else {
-            if (swiper) {
-              swiper.slideTo(2);
-            }
+        if (!isMobile) {
+          setChangeDateVisible(true);
+        } else {
+          if (swiper) {
+            swiper.slideTo(2);
           }
         }
       }
@@ -323,7 +296,7 @@ const Main: React.FC = () => {
                 ))}
               </Grid>
             </GridContainer>
-            <GridContainer width={`calc(75% - ${GAP}px)`}  height="100%">
+            <GridContainer width={`calc(75% - ${GAP}px)`} height="100%">
               <GridTitleContainer>
                 <GridTitle>
                   등원 스케줄 관리
@@ -357,7 +330,11 @@ const Main: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer height="100vh" width="100%" style={{overflowY: "scroll"}}>
+              <GridContainer
+                height="100vh"
+                width="100%"
+                style={{ overflowY: "scroll" }}
+              >
                 <TitleContainer>
                   <Title>
                     우리집 강아지
@@ -399,7 +376,7 @@ const Main: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <div style={{width: "100%", height: "100%"}}>
+              <div style={{ width: "100%", height: "100%" }}>
                 <TitleContainer>
                   <Title>
                     {cardOptionData.data.filter(
@@ -430,11 +407,15 @@ const Main: React.FC = () => {
                     fetchDetail(date);
                   }}
                 />
-                </div>
+              </div>
             </SwiperSlide>
             {changeDate != "" ? (
               <SwiperSlide key={2}>
-                <GridContainer height="100vh" width="100%" style={{overflowY: "scroll"}}>
+                <GridContainer
+                  height="100vh"
+                  width="100%"
+                  style={{ overflowY: "scroll" }}
+                >
                   <TitleContainer>
                     <Title>
                       {
@@ -511,7 +492,8 @@ const Main: React.FC = () => {
                               cardOptionData.data.filter(
                                 (item) => item[DATA_ITEM_KEY] == selectedState
                               )[0].adjqty
-                            }회
+                            }
+                            회
                           </Typography>
                         </CardContent>
                       </Card>
@@ -548,7 +530,7 @@ const Main: React.FC = () => {
                                     marginBottom: "2px",
                                   }}
                                 />
-                               선택 등원일
+                                선택 등원일
                               </Typography>
                             </>
                           }
@@ -641,7 +623,7 @@ const Main: React.FC = () => {
                             }
                             setChangeDate("");
                           }}
-                          style={{ width: "48%", backgroundColor: "#D3D3D3"}}
+                          style={{ width: "48%", backgroundColor: "#D3D3D3" }}
                         >
                           취소
                         </Buttons>
@@ -666,7 +648,11 @@ const Main: React.FC = () => {
       {ChangeDateVisible && (
         <SelectDateWindow
           setVisible={setChangeDateVisible}
-          data={cardOptionData.data.filter((item) => item[DATA_ITEM_KEY] == selectedState)[0]}
+          data={
+            cardOptionData.data.filter(
+              (item) => item[DATA_ITEM_KEY] == selectedState
+            )[0]
+          }
           changeDate={changeDate}
           reload={() => fetchMain()}
         />
