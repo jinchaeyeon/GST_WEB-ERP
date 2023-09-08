@@ -92,7 +92,7 @@ const KendoWindow = ({
                   <Typography
                     style={{
                       color: "black",
-                      fontSize: "20px",
+                      fontSize: "1vw",
                       fontWeight: 700,
                       display: "flex",
                       alignItems: "center",
@@ -118,7 +118,7 @@ const KendoWindow = ({
               <Typography
                 style={{
                   color: "black",
-                  fontSize: "25px",
+                  fontSize: "1.2vw",
                   fontWeight: 500,
                   fontFamily: "TheJamsil5Bold",
                   display: "flex",
@@ -145,7 +145,7 @@ const KendoWindow = ({
                   <Typography
                     style={{
                       color: "black",
-                      fontSize: "20px",
+                      fontSize: "1vw",
                       fontWeight: 700,
                       display: "flex",
                       alignItems: "center",
@@ -171,7 +171,7 @@ const KendoWindow = ({
               <Typography
                 style={{
                   color: "black",
-                  fontSize: "25px",
+                  fontSize: "1.5vw",
                   fontWeight: 500,
                   fontFamily: "TheJamsil5Bold",
                   display: "flex",
@@ -198,7 +198,7 @@ const KendoWindow = ({
                   <Typography
                     style={{
                       color: "black",
-                      fontSize: "20px",
+                      fontSize: "1vw",
                       fontWeight: 700,
                       display: "flex",
                       alignItems: "center",
@@ -224,7 +224,7 @@ const KendoWindow = ({
               <Typography
                 style={{
                   color: "#8f918d",
-                  fontSize: "25px",
+                  fontSize: "1.2vw",
                   fontWeight: 500,
                   fontFamily: "TheJamsil5Bold",
                   display: "flex",

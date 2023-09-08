@@ -279,7 +279,7 @@ const Main: React.FC = () => {
       <TitleContainer>
         <Title>{userName}님 안녕하세요!</Title>
       </TitleContainer>
-      <GridContainerWrap height={"87vh"}>
+      <GridContainerWrap height={"90vh"}>
         {!isMobile ? (
           <>
             <GridContainer
@@ -323,7 +323,7 @@ const Main: React.FC = () => {
                 ))}
               </Grid>
             </GridContainer>
-            <GridContainer width={`calc(75% - ${GAP}px)`}>
+            <GridContainer width={`calc(75% - ${GAP}px)`}  height="100%">
               <GridTitleContainer>
                 <GridTitle>
                   등원 스케줄 관리
@@ -357,7 +357,7 @@ const Main: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer height="100%" width="100%">
+              <GridContainer height="87vh" width="100%" style={{overflowY: "scroll"}}>
                 <TitleContainer>
                   <Title>
                     우리집 강아지

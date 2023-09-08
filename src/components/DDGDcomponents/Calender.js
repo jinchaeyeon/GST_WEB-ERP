@@ -5,8 +5,6 @@ import styled from "styled-components";
 import { convertDateToStr } from "../CommonFunction";
 import { useApi } from "../../hooks/api";
 
-let height = window.innerHeight;
-
 function App(props) {
   const data =
     props.data == undefined
@@ -270,8 +268,8 @@ function App(props) {
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
                     {!isMobile ? (
                       <span
-                        class="k-icon k-i-heart k-icon-xl"
-                        style={{ color: "#D3D3D3" }}
+                        class="k-icon k-i-heart"
+                        style={{ color: "#D3D3D3", fontSize: "3vw"}}
                       ></span>
                     ) : (
                       <span
@@ -297,8 +295,8 @@ function App(props) {
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
                     {!isMobile ? (
                       <span
-                        class="k-icon k-i-heart k-icon-xl"
-                        style={{ color: "#F9D202" }}
+                        class="k-icon k-i-heart"
+                        style={{ color: "#F9D202", fontSize: "3vw"}}
                       ></span>
                     ) : (
                       <span
@@ -317,8 +315,8 @@ function App(props) {
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
                     {!isMobile ? (
                       <span
-                        class="k-icon k-i-heart k-icon-xl"
-                        style={{ color: data.color }}
+                        class="k-icon k-i-heart"
+                        style={{ color: data.color, fontSize: "3vw"}}
                       ></span>
                     ) : (
                       <span
@@ -344,7 +342,7 @@ export default App;
 const CalendarContainer = styled.div`
   /* ~~~ container styles ~~~ */
   margin: auto;
-  height: 100%;
+  height: 85vh;
   background-color: ${(props) => props.backgroundColor};
   padding: 10px;
   border-radius: 3px;
@@ -358,6 +356,22 @@ const CalendarContainer = styled.div`
     }
   }
 
+  .react-calendar__viewContainer {
+    height: 95%;
+  }
+
+  .react-calendar__month-view {
+    height: 95%;
+
+    & > div{
+      height: 95%;
+      display: block !important;
+
+      & > div{
+        height: 100%;
+      }
+    }
+  }
   /* ~~~ navigation styles ~~~ */
   .react-calendar__navigation {
     display: flex;
@@ -409,10 +423,10 @@ const CalendarContainer = styled.div`
   .react-calendar__month-view__days {
     display: grid !important;
     grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;
-    height: ${height - 280}px;
+    height: 95%;
 
     @media (max-width: 850px) {
-      height: ${height * 0.6}px;
+      height: 95%;
     }
 
     .react-calendar__tile {
