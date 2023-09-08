@@ -640,16 +640,17 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
                   <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
                   <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
-                  {/* DDGD페이지 */}
+                  {/* DDGD 고객페이지 */}
                   <AuthRoute path="/CR_A1000W" component={CR_A1000W} exact />
+                </GlobalStyles>
+                
+                {/* DDGD 관리자페이지 */}
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
                   <AuthRoute 
                     path="/PS_A0060_301W" 
                     component={PS_A0060_301W} 
                     exact 
                   />
-                </GlobalStyles>
-
                 {/*바이오톡스텍CRM */}
                 <AuthRoute
                   path="/BA_A0020W_603"
