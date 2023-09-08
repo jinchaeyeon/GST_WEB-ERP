@@ -474,7 +474,7 @@ const AppInner: React.FC = () => {
                 {roles == "WER ERP" ? (
                   <AuthRoute path="/Home" component={Main} exact />
                 ) : roles == "CRM_DDGD" ? (
-                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}>
                     {isAdmin ? (
                       <AuthRoute path="/Home" component={MainAdminCRM} exact />
                     ) : (
@@ -634,7 +634,7 @@ const AppInner: React.FC = () => {
                 <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
                 <AuthRoute path="/GANTT" component={GANTT} exact />
 
-                <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                <GlobalStyles style={{ fontFamily: "TheJamsil5Bold"}}>
                   {/*KPI관리 */}
                   <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
                   <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
@@ -643,7 +643,7 @@ const AppInner: React.FC = () => {
                   {/* DDGD 고객페이지 */}
                   <AuthRoute path="/CR_A1000W" component={CR_A1000W} exact />
                 </GlobalStyles>
-                
+
                 {/* DDGD 관리자페이지 */}
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
                   <AuthRoute 

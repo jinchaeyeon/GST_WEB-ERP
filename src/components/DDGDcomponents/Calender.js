@@ -347,6 +347,10 @@ const CalendarContainer = styled.div`
   padding: 10px;
   border-radius: 3px;
 
+  @media (max-width: 850px) {
+    height: 100%;
+  }
+
   * {
     font-family: TheJamsil5Bold;
     font-size: 18px;

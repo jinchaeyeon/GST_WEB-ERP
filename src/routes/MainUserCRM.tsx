@@ -279,7 +279,7 @@ const Main: React.FC = () => {
       <TitleContainer>
         <Title>{userName}님 안녕하세요!</Title>
       </TitleContainer>
-      <GridContainerWrap height={"90vh"}>
+      <GridContainerWrap height={"90%"}>
         {!isMobile ? (
           <>
             <GridContainer

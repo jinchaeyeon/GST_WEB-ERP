@@ -728,10 +728,6 @@ export const Wrapper = styled.div<TWrapper>`
   display: flex;
   width: 100%;
   //overflow: ${(props) => (props.isMobileMenuOpend ? "hidden" : "auto")};
-  margin-bottom: 30px;
-  @media (max-width: 850px) {
-    margin-bottom: 0;
-  }
 `;
 
 type TGnv = TWrapper;
@@ -808,7 +804,6 @@ export const Content = styled.div<ContentType>`
   =========================================================================*/
   @media (max-width: 850px) {
     width: 100%;
-    padding-bottom: 5vh;
   }
 `;
 
@@ -818,7 +813,8 @@ export const PageWrap = styled.div`
 
   @media (max-width: 850px) {
     min-height: auto;
-    height: auto;
+    height: 100%;
+    position: relative;
     padding-top: 50px;
   }
 `;
