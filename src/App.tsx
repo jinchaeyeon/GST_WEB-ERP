@@ -38,6 +38,8 @@ import CM_A8250W from "./routes/CM_A8250W";
 import CM_B1000W from "./routes/CM_B1000W";
 import CM_B1101W from "./routes/CM_B1101W";
 import CM_B8100W from "./routes/CM_B8100W";
+import CR_A0010W from "./routes/CR_A0010W";
+import CR_A0020W from "./routes/CR_A0020W";
 import CT_A0111W from "./routes/CT_A0111W";
 import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
@@ -129,8 +131,6 @@ import SY_A0025W from "./routes/SY_A0025W";
 import SY_A0110W from "./routes/SY_A0110W";
 import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
-import CR_A0010W from "./routes/CR_A0010W";
-import CR_A0020W from "./routes/CR_A0020W";
 
 import {
   IntlProvider,
@@ -178,14 +178,14 @@ import { createTheme } from "@mui/material";
 import styled from "styled-components";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import LoginCRM from "./routes/LoginCRM";
-import MainUserCRM from "./routes/MainUserCRM";
 import MainAdminCRM from "./routes/MainAdminCRM";
+import MainUserCRM from "./routes/MainUserCRM";
 import SY_A0500W from "./routes/SY_A0500W";
 
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import NotFound from "./routes/NotFound";
 import CR_A1000W from "./routes/CR_A1000W";
-
+import CR_A1001W from "./routes/CR_A1001W";
+import NotFound from "./routes/NotFound";
 load(
   likelySubtags,
   currencyData,
@@ -650,6 +650,7 @@ const AppInner: React.FC = () => {
                 {/* DDGD 관리자페이지 */}
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
                   <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
+                  <AuthRoute path="/CR_A1001W" component={CR_A1001W} exact />
                   <AuthRoute 
                     path="/PS_A0060_301W" 
                     component={PS_A0060_301W} 
