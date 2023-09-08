@@ -130,6 +130,7 @@ import SY_A0110W from "./routes/SY_A0110W";
 import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
 import CR_A0010W from "./routes/CR_A0010W";
+import CR_A0020W from "./routes/CR_A0020W";
 
 import {
   IntlProvider,
@@ -647,12 +648,14 @@ const AppInner: React.FC = () => {
                 </GlobalStyles>
 
                 {/* DDGD 관리자페이지 */}
-                <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
-                <AuthRoute
-                  path="/PS_A0060_301W"
-                  component={PS_A0060_301W}
-                  exact
-                />
+                  <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
+                  <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
+                  <AuthRoute 
+                    path="/PS_A0060_301W" 
+                    component={PS_A0060_301W} 
+                    exact 
+                  />
+
                 {/*바이오톡스텍CRM */}
                 <AuthRoute
                   path="/BA_A0020W_603"
