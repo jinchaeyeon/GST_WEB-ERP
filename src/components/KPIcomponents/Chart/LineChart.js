@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export default function LineChart(props) {
   const [chartData, setChartData] = useState({});
@@ -45,6 +46,21 @@ export default function LineChart(props) {
               color: textColor,
             },
           },
+          datalabels: {
+            color: 'black',
+            display: function(context) {
+              return context.dataset.data[context.dataIndex] > 0;
+            },
+            font: {
+              weight: 'bold',
+            },
+            anchor: 'end',
+            clamp: true,
+            clip: true,
+            align: '-135',
+            offset: 1,
+            formatter: Math.round
+          }
         },
         scales: {
           x: {
@@ -73,7 +89,7 @@ export default function LineChart(props) {
 
   return (
     <div className="card">
-      <Chart type="line" data={chartData} options={chartOptions} />
+      <Chart type="line" data={chartData} plugins={[ChartDataLabels]} options={chartOptions} />
     </div>
   );
 }

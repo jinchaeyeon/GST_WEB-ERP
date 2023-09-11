@@ -24,8 +24,9 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, isLoading } from "../store/atoms";
+import { colors, colorsName, isLoading } from "../store/atoms";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
+import BarChart from "../components/KPIcomponents/Chart/BarChart";
 
 interface TList {
   badcnt?: number;
@@ -47,6 +48,9 @@ const SA_B3600W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
   const [color, setColor] = useRecoilState(colors);
+  const [colorName, setColorName] = useRecoilState(
+    colorsName
+  );
 
   useEffect(() => {}, [color]);
 
@@ -120,11 +124,12 @@ const SA_B3600W: React.FC = () => {
     frdt: new Date(),
     todt: new Date(),
     dtdiv: "W",
-    dtgb: "A",
+    dtgb: "B",
     isSearch: true,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState();
+  const [AllChartAllLabel, setAllChartAllLabel] = useState();
   const [ChartList, setChartList] = useState();
   const [AllPanel, setAllPanel] = useState({
     badcnt: 0,
@@ -238,6 +243,15 @@ const SA_B3600W: React.FC = () => {
       );
 
       setAllList(rows);
+      let objects = rows.filter(
+        (arr: { custcd: any }, index: any, callback: any[]) =>
+          index === callback.findIndex((t) => t.custcd === arr.custcd)
+      );
+      setAllChartAllLabel(
+        objects.map((item: { custnm: any }) => {
+          return item.custnm;
+        })
+      );
       if (rows.length > 0) {
         setSelected(rows[0]);
       } else {
@@ -388,6 +402,8 @@ const SA_B3600W: React.FC = () => {
               todt: e.value,
             }))
           }
+          view="month" 
+          dateFormat="yy-mm"
           xs={12}
           sm={8}
           md={6}
@@ -532,6 +548,20 @@ const SA_B3600W: React.FC = () => {
                   150, 160, 150, 130, 130
                 ]}
                 title={"지연건수 TOP5"}
+              />
+            </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle title="전체 업체 준수율 월별 그래프" />
+              <BarChart
+                props={AllList}
+                value="rate"
+                alllabel={AllChartAllLabel}
+                random={true}
+                name="custnm"
+                colorName={colorName}
               />
             </Grid>
           </Grid>

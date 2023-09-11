@@ -11,7 +11,8 @@ const DatePicker = (props) => {
             <Calendar
               value={props.frdt}
               onChange={props.onFrdtChange}
-              dateFormat="yy-mm-dd"
+              dateFormat={props.dateFormat == undefined ? "yy-mm-dd" : props.dateFormat}
+              view={props.view == undefined ? "date" : props.view}
               showIcon
             />
           </Grid>
@@ -22,7 +23,8 @@ const DatePicker = (props) => {
             <Calendar
               value={props.todt}
               onChange={props.onTodtChange}
-              dateFormat="yy-mm-dd"
+              dateFormat={props.dateFormat == undefined ? "yy-mm-dd" : props.dateFormat}
+              view={props.view == undefined ? "date" : props.view}
               showIcon
             />
           </Grid> 

@@ -248,20 +248,6 @@ const PR_B1104W: React.FC = () => {
     },
   };
 
-  const ALLparameters = {
-    procedureName: "P_PR_B1104W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "DONUTCHART",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_planno": selected == null ? "" : selected.planno,
-      "@p_option": filters.option,
-    },
-  };
-
   const Proccdparameters = {
     procedureName: "P_PR_B1104W_Q",
     pageNumber: mainPgNum,
@@ -387,29 +373,6 @@ const PR_B1104W: React.FC = () => {
         setDetailList(rows);
       } else {
         setDetailList([]);
-      }
-    }
-
-    let data4: any;
-    try {
-      data4 = await processApi<any>("procedure", ALLparameters);
-    } catch (error) {
-      data4 = null;
-    }
-
-    if (data4.isSuccess === true) {
-      const rows = data4.tables[0].Rows;
-
-      if (rows.length > 0) {
-        setAll({
-          value: rows[0].value,
-          argument: rows[0].argument,
-        });
-      } else {
-        setAll({
-          value: 0,
-          argument: "",
-        });
       }
     }
   };
@@ -633,20 +596,8 @@ const PR_B1104W: React.FC = () => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <GridTitle
-                title={`공정 소요일수 비율(출하일수 제외) : ${All.argument}`}
-              />
-              <ProgressBar
-                style={{ marginTop: "30px" }}
-                value={All.value}
-              ></ProgressBar>
-            </Grid>
-          </Grid>
-          <Divider />
           <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-            <GridTitle title="공정정보" />
+            <GridTitle title="작업공정정보" />
             <Timelines value={DetailList} theme={theme} />
           </Grid>
         </Container>

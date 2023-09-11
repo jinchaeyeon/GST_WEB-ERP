@@ -44,9 +44,7 @@ const PR_B1103W: React.FC = () => {
   const toast = useRef<Toast>(null);
   const [color, setColor] = useRecoilState(colors);
 
-  useEffect(() => {
-
-  },[color])
+  useEffect(() => {}, [color]);
 
   const theme = createTheme({
     palette: {
@@ -170,6 +168,7 @@ const PR_B1103W: React.FC = () => {
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
+    proccd: "",
     recdt: "",
     isSearch: true,
   });
@@ -204,6 +203,7 @@ const PR_B1103W: React.FC = () => {
       "@p_itemlvl1": filters.itemlvl1,
       "@p_itemlvl2": filters.itemlvl2,
       "@p_itemlvl3": filters.itemlvl3,
+      "@p_proccd": filters.proccd
     },
   };
 
@@ -224,6 +224,7 @@ const PR_B1103W: React.FC = () => {
       "@p_itemlvl1": filters.itemlvl1,
       "@p_itemlvl2": filters.itemlvl2,
       "@p_itemlvl3": filters.itemlvl3,
+      "@p_proccd": filters.proccd
     },
   };
 
@@ -243,6 +244,7 @@ const PR_B1103W: React.FC = () => {
       "@p_itemlvl1": filters.itemlvl1,
       "@p_itemlvl2": filters.itemlvl2,
       "@p_itemlvl3": filters.itemlvl3,
+      "@p_proccd": filters.proccd
     },
   };
 
@@ -262,6 +264,7 @@ const PR_B1103W: React.FC = () => {
       "@p_itemlvl1": filters.itemlvl1,
       "@p_itemlvl2": filters.itemlvl2,
       "@p_itemlvl3": filters.itemlvl3,
+      "@p_proccd": filters.proccd
     },
   };
 
@@ -354,17 +357,16 @@ const PR_B1103W: React.FC = () => {
 
       setDetailList(rows);
       if (rows.length > 0) {
-        const rows2 : any = data.tables[0].Rows.map((items: any) => ({
+        const rows2: any = data.tables[0].Rows.map((items: any) => ({
           ...items,
-          prodemp : userListData == undefined
-          ? items.prodemp
-          : userListData.find(
-              (item: any) => item.user_id == items.prodemp
-            )?.user_name == undefined
-          ? items.prodemp
-          : userListData.find(
-              (item: any) => item.user_id == items.prodemp
-            )?.user_name
+          prodemp:
+            userListData == undefined
+              ? items.prodemp
+              : userListData.find((item: any) => item.user_id == items.prodemp)
+                  ?.user_name == undefined
+              ? items.prodemp
+              : userListData.find((item: any) => item.user_id == items.prodemp)
+                  ?.user_name,
         }));
 
         setDetailSelected(rows2[0]);
@@ -479,8 +481,8 @@ const PR_B1103W: React.FC = () => {
             placeholder={"대분류"}
             id="itemlvl1"
             xs={12}
-            sm={4}
-            md={3}
+            sm={3}
+            md={2}
             lg={2}
             xl={2}
           />
@@ -498,8 +500,8 @@ const PR_B1103W: React.FC = () => {
             placeholder={"중분류"}
             id="itemlvl2"
             xs={12}
-            sm={4}
-            md={3}
+            sm={3}
+            md={2}
             lg={2}
             xl={2}
           />
@@ -517,8 +519,27 @@ const PR_B1103W: React.FC = () => {
             placeholder={"소분류"}
             id="itemlvl3"
             xs={12}
-            sm={4}
-            md={3}
+            sm={3}
+            md={2}
+            lg={2}
+            xl={2}
+          />
+        )}
+        {customOptionData !== null && (
+          <ComboBox
+            value={filters.proccd}
+            onChange={(e: DropdownChangeEvent) =>
+              setFilters((prev) => ({
+                ...prev,
+                proccd: e.value == undefined ? "" : e.value.sub_code,
+              }))
+            }
+            option={customOptionData}
+            placeholder={"공정"}
+            id="proccd"
+            xs={12}
+            sm={3}
+            md={2}
             lg={2}
             xl={2}
           />

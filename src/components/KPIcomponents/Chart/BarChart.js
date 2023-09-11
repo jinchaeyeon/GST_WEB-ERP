@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
 import { red, orange, yellow, lime, lightGreen, green, cyan, blue, indigo, purple, pink, grey } from '@mui/material/colors';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export default function BarChart(props) {
   const [chartData, setChartData] = useState({});
@@ -81,6 +82,14 @@ export default function BarChart(props) {
             },
             display: false,
           },
+          datalabels: {
+            color: 'black',
+            display: true,
+            font: {
+              weight: 'bold'
+            },
+            formatter: Math.round
+          }
         },
         scales: {
           x: {
@@ -109,7 +118,7 @@ export default function BarChart(props) {
 
   return (
     <div className="card">
-      <Chart type="bar" data={chartData} options={chartOptions} />
+      <Chart type="bar" data={chartData} plugins={[ChartDataLabels]} options={chartOptions} />
     </div>
   );
 }

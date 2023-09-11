@@ -53,16 +53,10 @@ interface Tsize {
 }
 
 const QC_B0100W: React.FC = () => {
-  const [color, setColor] = useRecoilState(
-    colors
-  );
-  const [colorName, setColorName] = useRecoilState(
-    colorsName
-  );
+  const [color, setColor] = useRecoilState(colors);
+  const [colorName, setColorName] = useRecoilState(colorsName);
 
-  useEffect(() => {
-
-  },[color])
+  useEffect(() => {}, [color]);
 
   const theme = createTheme({
     palette: {
@@ -169,6 +163,7 @@ const QC_B0100W: React.FC = () => {
     frym: new Date(),
     toym: new Date(),
     proccd: "W",
+    proccdgubun: "",
     gubun: "",
     isSearch: true,
   });
@@ -305,16 +300,11 @@ const QC_B0100W: React.FC = () => {
           ...item,
         })
       );
- 
+
       setProccdData(rows);
       let objects = rows.filter(
         (arr: { proccd: any }, index: any, callback: any[]) =>
           index === callback.findIndex((t) => t.proccd === arr.proccd)
-      );
-      setStackChartLabel(
-        objects.map((item: { proccdnm: any }) => {
-          return item.proccdnm;
-        })
       );
       setStackChartAllLabel(
         rows.map((items: { proccdnm: any }) => {
@@ -354,24 +344,24 @@ const QC_B0100W: React.FC = () => {
         ...item,
       }));
 
-        setMonthData(rows);
+      setMonthData(rows);
 
-        let objects = rows.filter(
-          (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
-        );
-        setStackChartLabel(
-          objects.map((item: { series: any }) => {
-            return item.series;
+      let objects = rows.filter(
+        (arr: { series: any }, index: any, callback: any[]) =>
+          index === callback.findIndex((t) => t.series === arr.series)
+      );
+      setStackChartLabel(
+        objects.map((item: { series: any }) => {
+          return item.series;
+        })
+      );
+      setStackChartAllLabel(
+        rows
+          .filter((item: { series: any }) => item.series == objects[0].series)
+          .map((items: { argument: any }) => {
+            return items.argument;
           })
-        );
-        setStackChartAllLabel(
-          rows
-            .filter((item: { series: any }) => item.series == objects[0].series)
-            .map((items: { argument: any }) => {
-              return items.argument;
-            })
-        );
+      );
     }
   };
 
@@ -409,17 +399,17 @@ const QC_B0100W: React.FC = () => {
           }
           xs={12}
           sm={12}
-          md={9}
-          xl={9}
+          md={6}
+          xl={6}
         />
         {customOptionData !== null && (
           <ComboBox
             value={filters.gubun}
-            onChange={(e: DropdownChangeEvent) => 
-                setFilters((prev) => ({
-                  ...prev,
-                  gubun: e.value == undefined ? "" : e.value.code,
-                }))
+            onChange={(e: DropdownChangeEvent) =>
+              setFilters((prev) => ({
+                ...prev,
+                gubun: e.value == undefined ? "" : e.value.code,
+              }))
             }
             option={customOptionData}
             placeholder={"단위"}
@@ -432,13 +422,31 @@ const QC_B0100W: React.FC = () => {
             xl={3}
           />
         )}
+        {customOptionData !== null && (
+          <ComboBox
+            value={filters.proccdgubun}
+            onChange={(e: DropdownChangeEvent) =>
+              setFilters((prev) => ({
+                ...prev,
+                proccdgubun: e.value == undefined ? "" : e.value.sub_code,
+              }))
+            }
+            option={customOptionData}
+            placeholder={"공정"}
+            id="proccdgubun"
+            xs={12}
+            sm={12}
+            md={3}
+            xl={3}
+          />
+        )}
       </Grid>
     </React.Fragment>
   );
 
   const cardOption = [
     {
-      title: "불량율 TOP 공정",
+      title: "불량률 TOP 공정",
       data:
         CardData.length != 0
           ? CardData[0].Rows.length == 0
@@ -448,7 +456,7 @@ const QC_B0100W: React.FC = () => {
       backgroundColor: theme.palette.primary.dark,
     },
     {
-      title: "불량율 TOP 고객사",
+      title: "불량률 TOP 고객사",
       data:
         CardData.length != 0
           ? CardData[1].Rows.length == 0
@@ -458,7 +466,7 @@ const QC_B0100W: React.FC = () => {
       backgroundColor: theme.palette.primary.main,
     },
     {
-      title: "불량율 TOP 품목",
+      title: "불량률 TOP 품목",
       data:
         CardData.length != 0
           ? CardData[2].Rows.length == 0
@@ -468,7 +476,7 @@ const QC_B0100W: React.FC = () => {
       backgroundColor: theme.palette.primary.light,
     },
     {
-      title: "불량율 TOP 설비",
+      title: "불량률 TOP 설비",
       data:
         CardData.length != 0
           ? CardData[3].Rows.length == 0
@@ -487,7 +495,7 @@ const QC_B0100W: React.FC = () => {
           style={{ width: "100%", marginBottom: "25px" }}
         >
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>공정불량율</Title>
+            <Title>공정불량률</Title>
             <ButtonContainer>
               <Button
                 icon="pi pi-search"
@@ -522,16 +530,17 @@ const QC_B0100W: React.FC = () => {
           <Divider />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
-              <GridTitle title="전체 공정율" />
+              <GridTitle title="전체 불량률" />
               <DoughnutChart
                 data={All}
                 option={["okrate", "badrate"]}
-                label={["양품율", "불량율"]}
+                label={["양품율", "불량률"]}
                 theme={theme}
+                form={"QC_B0100W"}
               />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-              <GridTitle title="공정별 불량율" />
+              <GridTitle title="공정별 불량률" />
               <BarChart
                 props={ProccdData}
                 value="badrate"
@@ -564,9 +573,12 @@ const QC_B0100W: React.FC = () => {
                   yrmm12: "12월",
                 }}
                 width={[
-                  120, 110, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+                  120, 110, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+                  100, 100,
                 ]}
-                title={filters.gubun == "A" ? "전체 목록 PPM" : "전체 목록 불량율"}
+                title={
+                  filters.gubun == "A" ? "전체 목록 PPM" : "전체 목록 불량률"
+                }
                 key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
@@ -584,8 +596,14 @@ const QC_B0100W: React.FC = () => {
                 value="value"
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}
-                color={[theme.palette.primary.dark, theme.palette.primary.light]}
-                borderColor={[theme.palette.primary.main, theme.palette.secondary.main]}
+                color={[
+                  theme.palette.primary.dark,
+                  theme.palette.primary.light,
+                ]}
+                borderColor={[
+                  theme.palette.primary.main,
+                  theme.palette.secondary.main,
+                ]}
                 name="series"
               />
             </Grid>

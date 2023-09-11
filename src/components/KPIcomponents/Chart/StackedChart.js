@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export default function StackedChart(props) {
   const [chartData, setChartData] = useState({});
@@ -48,6 +49,16 @@ export default function StackedChart(props) {
             },
             display: false
           },
+          datalabels: {
+            color: 'black',
+            display: function(context) {
+              return context.dataset.data[context.dataIndex] > 0;
+            },
+            font: {
+              weight: 'bold'
+            },
+            formatter: Math.round
+          }
         },
         scales: {
           x: {
@@ -78,7 +89,7 @@ export default function StackedChart(props) {
 
   return (
     <div className="card">
-      <Chart type="bar" data={chartData} options={chartOptions} />
+      <Chart type="bar" data={chartData}  plugins={[ChartDataLabels]} options={chartOptions} />
     </div>
   );
 }

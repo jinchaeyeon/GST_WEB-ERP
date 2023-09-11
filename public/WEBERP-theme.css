@@ -25,6 +25,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.p-timeline-event-opposite {
+    display: none;
+}
+
 .k-theme-test-class,
 .k-common-test-class {
     opacity: 0;

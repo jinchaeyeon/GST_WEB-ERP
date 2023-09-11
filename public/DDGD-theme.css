@@ -20,7 +20,9 @@ body {
     display: none;
     /* 크롬, 사파리, 오페라, 엣지 */
 }
-
+.p-timeline-event-opposite {
+    display: none;
+}
 .react-calendar {
     height: 100%;
 }
