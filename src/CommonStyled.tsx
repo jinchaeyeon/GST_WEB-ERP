@@ -82,7 +82,7 @@ export const TextContainer = styled.div<TColor>`
   color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
   border-radius: 50px;
   width: 180px;
-  line-height: 30px;
+  line-height: 30px;F
   align-items: center;
   justify-content: center;
 `;
@@ -473,10 +473,15 @@ export const DeliyReportPrint = styled.div`
 `;
 
 export const GridTitleContainer = styled.div`
-  display: block;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   /* margin: 5 0px; */
+
+  @media (max-width: 850px) {
+    display: inline-block;
+    width: 100%;
+  }
 `;
 
 export const ButtonInInput = styled.div`
