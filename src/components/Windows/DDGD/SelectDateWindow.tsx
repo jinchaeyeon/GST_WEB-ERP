@@ -4,15 +4,14 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { useState } from "react";
 import { ButtonContainer } from "../../../CommonStyled";
-import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { dateformat4 } from "../../CommonFunction";
+import { convertDateToStr, dateformat4 } from "../../CommonFunction";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
   data: any;
   changeDate: string;
-  reload(): void;
+  reload(pastday: string, currentday: string): void;
 };
 
 const KendoWindow = ({
@@ -21,7 +20,7 @@ const KendoWindow = ({
   changeDate,
   reload,
 }: IKendoWindow) => {
-  console.log(data);
+
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -30,14 +29,14 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 400,
     height: 600,
   });
-  const processApi = useApi();
   const [date, setDate] = useState<{ [name: string]: any }>({ date: null });
   const onClose = () => {
     setVisible(false);
   };
 
   const onSave = () => {
-    if (date != null) {
+    if (date.date != null) {
+      reload(changeDate, convertDateToStr(date.date))
     } else {
       alert("변경 등원일을 선택해주세요.");
     }

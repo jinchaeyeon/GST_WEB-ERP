@@ -8,11 +8,14 @@ import { useRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../../CommonStyled";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { colors, colorsName } from "../../../store/atoms";
+import { UseGetValueFromSessionItem, UseParaPc } from "../../CommonFunction";
+import { useApi } from "../../../hooks/api";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
   setData(code: string): void;
   para: string;
+  custcd: string;
 };
 
 function PaperComponent(props: PaperProps) {
@@ -26,7 +29,7 @@ function PaperComponent(props: PaperProps) {
   );
 }
 
-const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
+const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -35,6 +38,10 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? window.innerHeight : 800,
   });
+  const processApi = useApi();
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
 
   useEffect(() => {
     if(para != undefined) {
@@ -73,37 +80,94 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
     setVisible(false);
   }
 
-  const onSave = () => {
+  const onSave = async () => {
+    let code = ""
     setColorNames(colorNames);
     if(colorNames == "빨강") {
       setData("#FFBEBE");
+      code = "#FFBEBE"
     } else if(colorNames == "주황") {
       setData("#FFC8A2");
+      code = "#FFC8A2"
     } else if(colorNames == "아이보리") {
       setData("#fff8eb");
+      code = "#fff8eb"
     } else if(colorNames == "노랑") {
       setData("#fff2cc");
+      code = "#fff2cc"
     } else if(colorNames == "연두") {
       setData("#e2f0d9");
+      code = "#e2f0d9"
     } else if(colorNames == "초록") {
       setData("#85D4BE");
+      code = "#85D4BE"
     } else if(colorNames == "하늘") {
       setData("#CDEEF3");
+      code = "#CDEEF3"
     } else if(colorNames == "파랑") {
       setData("#C4C5FF");
+      code = "#C4C5FF"
     } else if(colorNames == "연보라") {
       setData("#EADFF2");
+      code = "#EADFF2"
     } else if(colorNames == "보라") {
       setData("#dcc8ed");
+      code = "#dcc8ed"
     } else if(colorNames == "연핑크") {
       setData("#FFE1E8");
+      code = "#FFE1E8"
     } else if(colorNames == "핑크") {
       setData("#FFBCD9");
+      code = "#FFBCD9"
     } else {
       setData("#fff2cc");
+      code = "#fff2cc"
+    }
+    const paraSaved = {
+      procedureName: "P_CR_A0020W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "COLOR",
+        "@p_orgdiv": "01", // 세션 회사구분
+        "@p_custcd": custcd, // 반려견코드
+        "@p_location": "",
+        "@p_custnm": "",
+        "@p_class": "",
+        "@p_owner": "",
+        "@p_species": "",
+        "@p_gender": "",
+        "@p_age": 0,
+        "@p_manager": "",
+        "@p_strdt": "",
+        "@p_enddt": "",
+        "@p_dayofweek": "",
+        "@p_birdt": "",
+        "@p_bircd": "",
+        "@p_useyn": "",
+        "@p_color": code, // 색상코드
+        "@p_remark": "",
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "HOME",
+      },
+    };
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", paraSaved);
+    } catch (error) {
+      data = null;
     }
 
-    setVisible(false);
+    if (data.isSuccess === true) {
+      alert("저장되었습니다.");
+      setVisible(false);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
   };
 
   return (
