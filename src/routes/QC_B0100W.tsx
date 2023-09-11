@@ -163,8 +163,9 @@ const QC_B0100W: React.FC = () => {
     frym: new Date(),
     toym: new Date(),
     proccd: "W",
-    proccdgubun: "",
+    proccdQuery: "",
     gubun: "",
+    card_click: "P",
     isSearch: true,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
@@ -176,6 +177,7 @@ const QC_B0100W: React.FC = () => {
   const [selected, setSelected] = useState<TList | null>(null);
   const [stackChartLabel, setStackChartLabel] = useState();
   const [stackChartAllLabel, setStackChartAllLabel] = useState();
+  const [stackChartAllLabel2, setStackChartAllLabel2] = useState();
 
   const parameters = {
     procedureName: "P_QC_B0100W_Q",
@@ -188,6 +190,8 @@ const QC_B0100W: React.FC = () => {
       "@p_toym": convertDateToStr(filters.toym),
       "@p_proccd": "",
       "@p_gubun": filters.gubun,
+      "@p_proccdQuery": filters.proccdQuery,
+      "@p_card_click": filters.card_click,
     },
   };
 
@@ -202,6 +206,8 @@ const QC_B0100W: React.FC = () => {
       "@p_toym": convertDateToStr(filters.toym),
       "@p_proccd": "",
       "@p_gubun": filters.gubun,
+      "@p_proccdQuery": filters.proccdQuery,
+      "@p_card_click": filters.card_click,
     },
   };
 
@@ -221,6 +227,8 @@ const QC_B0100W: React.FC = () => {
               (item: any) => item.code_name === selected.code_name
             )?.sub_code,
       "@p_gubun": filters.gubun,
+      "@p_proccdQuery": filters.proccdQuery,
+      "@p_card_click": filters.card_click,
     },
   };
 
@@ -235,6 +243,8 @@ const QC_B0100W: React.FC = () => {
       "@p_toym": convertDateToStr(filters.toym),
       "@p_proccd": "",
       "@p_gubun": filters.gubun,
+      "@p_proccdQuery": filters.proccdQuery,
+      "@p_card_click": filters.card_click,
     },
   };
 
@@ -249,6 +259,8 @@ const QC_B0100W: React.FC = () => {
       "@p_toym": convertDateToStr(filters.toym),
       "@p_proccd": "",
       "@p_gubun": filters.gubun,
+      "@p_proccdQuery": filters.proccdQuery,
+      "@p_card_click": filters.card_click,
     },
   };
 
@@ -300,17 +312,22 @@ const QC_B0100W: React.FC = () => {
           ...item,
         })
       );
-
+        
       setProccdData(rows);
-      let objects = rows.filter(
-        (arr: { proccd: any }, index: any, callback: any[]) =>
-          index === callback.findIndex((t) => t.proccd === arr.proccd)
-      );
-      setStackChartAllLabel(
-        rows.map((items: { proccdnm: any }) => {
-          return items.proccdnm;
-        })
-      );
+
+      if(filters.card_click == "F") {
+        setStackChartAllLabel2(
+          rows.map((items: { fxnm: any }) => {
+            return items.fxnm;
+          })
+        );
+      } else {
+        setStackChartAllLabel2(
+          rows.map((items: { proccdnm: any }) => {
+            return items.proccdnm;
+          })
+        );
+      }
     }
 
     let data4: any;
@@ -322,10 +339,12 @@ const QC_B0100W: React.FC = () => {
 
     if (data4.isSuccess === true) {
       const rows = data4.tables[0].Rows;
-
       setAll({
         okrate: rows[0].badrate,
         badrate: rows[1].badrate,
+        qty: rows[0].qty,
+        badqty: rows[0].badqty,
+        totqty: rows[0].totqty,
       });
     }
     setLoading(false);
@@ -424,16 +443,16 @@ const QC_B0100W: React.FC = () => {
         )}
         {customOptionData !== null && (
           <ComboBox
-            value={filters.proccdgubun}
+            value={filters.proccdQuery}
             onChange={(e: DropdownChangeEvent) =>
               setFilters((prev) => ({
                 ...prev,
-                proccdgubun: e.value == undefined ? "" : e.value.sub_code,
+                proccdQuery: e.value == undefined ? "" : e.value.sub_code,
               }))
             }
             option={customOptionData}
             placeholder={"공정"}
-            id="proccdgubun"
+            id="proccdQuery"
             xs={12}
             sm={12}
             md={3}
@@ -487,6 +506,33 @@ const QC_B0100W: React.FC = () => {
     },
   ];
 
+  const selectCard = (title: string) => {
+    if (title == "불량률 TOP 공정") {
+      setFilters((prev) => ({
+        ...prev,
+        card_click: "P",
+        isSearch: true,
+      }))
+    } else if (title == "불량률 TOP 고객사") {
+      setFilters((prev) => ({
+        ...prev,
+        card_click: "C",
+        isSearch: true,
+      }))
+    } else if (title == "불량률 TOP 품목") {
+      setFilters((prev) => ({
+        ...prev,
+        card_click: "I",
+        isSearch: true,
+      }))
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        card_click: "F",
+        isSearch: true,
+      }))
+    }
+  };
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -522,6 +568,8 @@ const QC_B0100W: React.FC = () => {
                     fontsize={
                       size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
                     }
+                    form={"QC_B0100W"}
+                    Click={() => selectCard(item.title)}
                   />
                 </Grid>
               ))}
@@ -540,15 +588,55 @@ const QC_B0100W: React.FC = () => {
               />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-              <GridTitle title="공정별 불량률" />
-              <BarChart
-                props={ProccdData}
-                value="badrate"
-                alllabel={stackChartAllLabel}
-                random={true}
-                name="proccdnm"
-                colorName={colorName}
-              />
+              {filters.card_click == "P" ? (
+                <>
+                  <GridTitle title="공정별 불량률" />
+                  <BarChart
+                    props={ProccdData}
+                    value="badrate"
+                    alllabel={stackChartAllLabel2}
+                    random={true}
+                    name="proccdnm"
+                    colorName={colorName}
+                  />
+                </>
+              ) : filters.card_click == "C" ? (
+                <>
+                  <GridTitle title="고객사별 불량률" />
+                  <BarChart
+                    props={ProccdData}
+                    value="badrate"
+                    alllabel={stackChartAllLabel2}
+                    random={true}
+                    name="proccdnm"
+                    colorName={colorName}
+                  />
+                </>
+              ) : filters.card_click == "I" ? (
+                <>
+                  <GridTitle title="품목별 불량률" />
+                  <BarChart
+                    props={ProccdData}
+                    value="badrate"
+                    alllabel={stackChartAllLabel2}
+                    random={true}
+                    name="proccdnm"
+                    colorName={colorName}
+                  />
+                </>
+              ) : (
+                <>
+                  <GridTitle title="설비별 불량률" />
+                  <BarChart
+                    props={ProccdData}
+                    value="badrate"
+                    alllabel={stackChartAllLabel2}
+                    random={true}
+                    name="fxnm"
+                    colorName={colorName}
+                  />
+                </>
+              )}
             </Grid>
           </Grid>
           <Divider />

@@ -613,6 +613,7 @@ const PR_B1103W: React.FC = () => {
                     data={item.data}
                     backgroundColor={item.backgroundColor}
                     fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                    form={"PR_B1103W"}
                   />
                 </Grid>
               ))}
