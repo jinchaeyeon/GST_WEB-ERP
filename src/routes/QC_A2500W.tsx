@@ -1162,7 +1162,7 @@ const QC_A2500W: React.FC = () => {
             <GridTitle>불량내역</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "34.6vh" }}
+            style={{ height: "37.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

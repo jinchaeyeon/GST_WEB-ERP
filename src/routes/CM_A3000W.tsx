@@ -1366,7 +1366,7 @@ const CM_A3000W: React.FC = () => {
             <GridTitle>부서인원정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "23vh" }}
+            style={{ height: "23.7vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

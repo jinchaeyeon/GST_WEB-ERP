@@ -3321,7 +3321,7 @@ const BA_A0020: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap style={{ height: isMobile ? "100%" : "65.3vh" }}>
+              <FormBoxWrap style={{ height: isMobile ? "100%" : "68.8vh" }}>
                 <FormBox>
                   <tbody>
                     <tr>

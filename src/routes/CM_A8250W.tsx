@@ -939,7 +939,7 @@ const CM_A8250W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "78.2vh" }}
+              style={{ height: "81.6vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

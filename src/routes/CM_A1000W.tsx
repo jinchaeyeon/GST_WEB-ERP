@@ -1309,7 +1309,7 @@ const CM_A1000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <GridContainerWrap>
-        <GridContainer width="19%" style={{ marginTop: "5px" }}>
+        <GridContainer width="22%" style={{ marginTop: "5px" }}>
           <Calendar
             focusedDate={filters.todt}
             value={filters.todt}
@@ -1334,7 +1334,7 @@ const CM_A1000W: React.FC = () => {
             onChange={InputChange}
           />
         </GridContainer>
-        <GridContainer width={`calc(81% - ${GAP}px)`}>
+        <GridContainer width={`calc(78% - ${GAP}px)`}>
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -1450,7 +1450,7 @@ const CM_A1000W: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "31.5vh" }}
+                style={{ height: "32.7vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
