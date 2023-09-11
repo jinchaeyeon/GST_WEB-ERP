@@ -1338,7 +1338,7 @@ const Page: React.FC = () => {
               )}
             </GridTitleContainer>
             <Grid
-              style={{ height: "74.5vh" }}
+              style={{ height: "77.6vh" }}
               data={mainDataResult}
               {...mainDataState}
               onDataStateChange={onMainDataStateChange}
