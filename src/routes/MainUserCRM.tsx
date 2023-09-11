@@ -12,7 +12,7 @@ import {
   process as processQuery,
 } from "@progress/kendo-data-query";
 import React, { useCallback, useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
@@ -25,6 +25,7 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
+  UseParaPc,
   convertDateToStr,
   dateformat4,
   getDayOfWeeks,
@@ -34,7 +35,7 @@ import { GAP } from "../components/CommonString";
 import Calender from "../components/DDGDcomponents/Calender";
 import CardBox from "../components/DDGDcomponents/CardBox";
 import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
+import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import "swiper/css";
 import SwiperCore from "swiper";
@@ -49,15 +50,24 @@ interface Tsize {
 const DATA_ITEM_KEY = "custcd";
 const Main: React.FC = () => {
   const processApi = useApi();
+  const setLoading = useSetRecoilState(isLoading);
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userName = loginResult ? loginResult.userName : "";
   const [cardOptionState, setCardOptionState] = useState<State>({
     sort: [],
   });
+  const [schedulerState, setSchedulerState] = useState<State>({
+    sort: [],
+  });
   const [cardOptionData, setCardOptionData] = useState<DataResult>(
     processQuery([], cardOptionState)
   );
+  const [schedulerData, setSchedulerData] = useState<DataResult>(
+    processQuery([], schedulerState)
+  );
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const [selectedState, setSelectedState] = useState<string>("");
   const [ChangeDateVisible, setChangeDateVisible] = useState<boolean>(false);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
@@ -136,7 +146,7 @@ const Main: React.FC = () => {
       [name]: value,
     }));
   };
-  const fetchMain = async () => {
+  const fetchMain = async (key: any) => {
     let data: any;
     const Parameters: Iparameters = {
       procedureName: "sys_sel_default_home_web",
@@ -146,11 +156,11 @@ const Main: React.FC = () => {
         "@p_work_type": "ATTENDANCE",
         "@p_orgdiv": "01",
         "@p_location": "",
-        "@p_user_id": "",
         "@p_frdt": "",
         "@p_todt": "",
         "@p_ref_date": convertDateToStr(new Date()),
         "@p_ref_key": "",
+        "@p_user_id": userId,
       },
     };
     try {
@@ -162,16 +172,18 @@ const Main: React.FC = () => {
     if (data.isSuccess === true) {
       const rowCount = data.tables[0].RowCount;
       const row = data.tables[0].Rows;
-
+      setCardOptionData((prev) => {
+        return {
+          data: row,
+          total: rowCount == -1 ? 0 : rowCount,
+        };
+      });
       if (rowCount > 0) {
-        setCardOptionData((prev) => {
-          return {
-            data: row,
-            total: rowCount == -1 ? 0 : rowCount,
-          };
-        });
-
-        setSelectedState(row[0][DATA_ITEM_KEY]);
+        if(key != "") {
+          setSelectedState(key);
+        } else {
+          setSelectedState(row[0][DATA_ITEM_KEY]);
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -180,7 +192,7 @@ const Main: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchMain();
+    fetchMain("");
   }, []);
 
   const changeColor = (code: string) => {
@@ -203,7 +215,7 @@ const Main: React.FC = () => {
     });
   };
 
-  const fetchDetail = async (date: string) => {
+  const fetchDetail = async () => {
     let datas: any = "";
     const Parameters = {
       procedureName: "P_CR_A1000W_Q",
@@ -223,30 +235,122 @@ const Main: React.FC = () => {
 
     if (datas.isSuccess === true) {
       const rowCount = datas.tables[0].RowCount;
-      const row = datas.tables[0].Rows;
-
-      if (rowCount > 0) {
-        if (!isMobile) {
-          setChangeDateVisible(true);
-        } else {
-          if (swiper) {
-            swiper.slideTo(2);
-          }
-        }
-      }
+      const row = datas.tables[0].Rows.map((prev: any) => ({
+        ...prev,
+        rowstatus: "U",
+      }));
+  
+      setSchedulerData((prev) => {
+        return {
+          data: row,
+          total: rowCount,
+        };
+      });
     } else {
       console.log("[오류 발생]");
       console.log(datas);
     }
   };
 
-  const onSave = () => {
-    if (date != null) {
+  const [ParaData, setParaData] = useState({
+    pgSize: 100,
+    workType: "",
+    orgdiv: "01",
+    location: "01",
+    custcd: "",
+    membership_key: "",
+    adjdt: "",
+    userid: userId,
+    pc: pc,
+    form_id: "HOME"
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_CR_A1000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_location": ParaData.location,
+      "@p_custcd": ParaData.custcd,
+      "@p_membership_key": ParaData.membership_key,
+      "@p_adjdt": ParaData.adjdt,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HOME",
+    },
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      alert("신청이 완료되었습니다.");
+      if(isMobile) {
+        if (swiper) {
+          swiper.slideTo(1);
+        }
+      } else {
+        setChangeDateVisible(false);
+      }
+      fetchMain(selectedState);
+      setParaData({
+        pgSize: 100,
+        workType: "",
+        orgdiv: "01",
+        location: "01",
+        custcd: "",
+        membership_key: "",
+        adjdt: "",
+        userid: userId,
+        pc: pc,
+        form_id: "HOME"
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  const onSave = (pastday: string, currentday: string) => {
+    if (currentday != null) {
+      const find_key = schedulerData.data.filter((item) => item.date == pastday)[0].membership_key;
+      const number = cardOptionData.data.filter((item) => item[DATA_ITEM_KEY] == selectedState)[0].adjqty;
+      if(find_key != undefined) {
+        alert(`잔여 변경 횟수는 ${number}회 입니다.`);
+        if (!window.confirm("변경신청 후 취소 할 수 없습니다. 신청하시겠습니까?")) {
+          return false;
+        }
+        setParaData((prev) => ({
+          ...prev,
+          workType: "N",
+          custcd: selectedState,
+          membership_key: find_key,
+          adjdt: currentday,
+        }));
+      }
     } else {
       alert("변경 등원일을 선택해주세요.");
     }
   };
 
+  useEffect(() => {
+    fetchDetail();
+  }, [selectedState])
   return (
     <>
       <TitleContainer>
@@ -279,6 +383,7 @@ const Main: React.FC = () => {
                 {cardOptionData.data.map((item) => (
                   <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <CardBox
+                      code={item.custcd}
                       name={item.custnm}
                       class={item.class}
                       date={`${dateformat4(item.strdt)} ~ ${dateformat4(
@@ -317,7 +422,7 @@ const Main: React.FC = () => {
                 }
                 propFunction={(date: string) => {
                   setChangeDate(date);
-                  fetchDetail(date);
+                  setChangeDateVisible(true);
                 }}
               />
             </GridContainer>
@@ -404,7 +509,9 @@ const Main: React.FC = () => {
                   }
                   propFunction={(date: string) => {
                     setChangeDate(date);
-                    fetchDetail(date);
+                    if (swiper) {
+                      swiper.slideTo(2);
+                    }
                   }}
                 />
               </div>
@@ -629,7 +736,9 @@ const Main: React.FC = () => {
                         </Buttons>
                         <Buttons
                           themeColor={"primary"}
-                          onClick={onSave}
+                          onClick={() =>
+                            onSave(changeDate, convertDateToStr(date.date))
+                          }
                           style={{ width: "48%" }}
                         >
                           변경신청
@@ -654,7 +763,7 @@ const Main: React.FC = () => {
             )[0]
           }
           changeDate={changeDate}
-          reload={() => fetchMain()}
+          reload={(pastday, currentday) => onSave(pastday, currentday)}
         />
       )}
     </>

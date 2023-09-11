@@ -46,9 +46,7 @@ function App(props) {
       const rowCount = datas.tables[0].RowCount;
       const row = datas.tables[0].Rows;
 
-      if (rowCount > 0) {
-        setSchedulerData(row);
-      }
+      setSchedulerData(row);
     } else {
       console.log("[오류 발생]");
       console.log(datas);
@@ -383,7 +381,7 @@ const CalendarContainer = styled.div`
     }
 
     &:hover {
-      background-color: ${(props) => props.backgroundColor};
+      cursor: pointer;
     }
 
     &:active {
@@ -414,8 +412,7 @@ const CalendarContainer = styled.div`
     }
 
     .react-calendar__tile--range {
-      box-shadow: 0 0 6px 2px grey;
-      background-color: ${(props) => props.backgroundColor};
+      cursor: pointer;
     }
   }
 

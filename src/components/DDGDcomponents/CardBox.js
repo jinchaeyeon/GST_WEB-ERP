@@ -4,7 +4,7 @@ import { CardContent, CardHeader, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import PaletteIcon from "@mui/icons-material/Palette";
 import Grid from "@mui/material/Grid";
-import DDGDColorWindow from "../Windows/CommonWindows/DDGDColorWindow";
+import DDGDColorWindow from "../Windows/DDGD/DDGDColorWindow";
 import { getQueryFromBizComponent, UseBizComponent } from "../CommonFunction";
 import { bytesToBase64 } from "byte-base64";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
@@ -104,7 +104,7 @@ const CardBox = (props) => {
                 <Typography
                   style={{
                     color: "#8f918d",
-                    fontSize: isMobile? "15px" :"1.5vw",
+                    fontSize: isMobile? "15px" :"0.8vw",
                     fontWeight: 500,
                     marginLeft: "5px",
                     fontFamily: "TheJamsil5Bold",
@@ -196,6 +196,7 @@ const CardBox = (props) => {
             setColors(code);
             props.propFunction(code);
           }}
+          custcd={props.code}
           para={colors}
         />
       )}
