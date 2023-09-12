@@ -1837,7 +1837,7 @@ const SA_B2410: React.FC = () => {
           <GridTitle>세부정보</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "29.5vh" }}
+          style={{ height: "27.5vh" }}
           data={process(
             detail1DataResult.data.map((row) => ({
               ...row,

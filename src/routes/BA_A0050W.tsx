@@ -2234,7 +2234,7 @@ const BA_A0050: React.FC = () => {
               <GridTitle>BOM구성정보</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "30vh" }}
+              style={{ height: "28.4vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -2316,7 +2316,7 @@ const BA_A0050: React.FC = () => {
               </FormBox>
             </FormBoxWrap>
             <Grid
-              style={{ height: "37vh" }}
+              style={{ height: "36.5vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -2421,7 +2421,7 @@ const BA_A0050: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "77.8vh" }}
+                style={{ height: "76vh" }}
                 data={process(
                   subData2Result.data.map((row) => ({
                     ...row,

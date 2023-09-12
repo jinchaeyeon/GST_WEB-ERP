@@ -809,7 +809,7 @@ const SA_B2410: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "73.9vh" }}
+            style={{ height: "72vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
