@@ -34,7 +34,8 @@ import {
   setDefaultDate,
   dateformat,
   getGridItemChangedData,
-  toDate
+  toDate,
+  convertDateToStrWithTime2
  } from "../components/CommonFunction";
 import TopButtons from "../components/Buttons/TopButtons";
 import { ExcelExport, ExcelExportColumn } from "@progress/kendo-react-excel-export";
@@ -53,6 +54,8 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import React from "react";
 import DateCell from "../components/Cells/DateCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import App from "../components/DDGDcomponents/Calender";
+import Calender from "../components/DDGDcomponents/Calender";
 
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: any[] = [];
@@ -385,6 +388,7 @@ const PS_A0060_301W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        deletedMainRows = [];
       }
     } catch (e) {
       alert(e);
@@ -459,6 +463,64 @@ const PS_A0060_301W: React.FC = () => {
     });
   };
 
+  //저장 파라미터 초기 값
+  const [paraDataSaved, setParaDataSaved] = useState({
+    workType: "save",
+    resource_type: "holiday",
+    row_status: "",
+    orgdiv: "01",
+    datnum: "",
+    location: "01",
+    code: "",
+    type: "",
+    date: "",
+    apply_date: "",
+    start_time: convertDateToStrWithTime2(new Date()),
+    end_time: convertDateToStrWithTime2(new Date()),
+    description: "",
+    id: userId,
+    pc: pc,
+    form_id: "PS_A0060_301W",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_PS_A0060_301W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": "save",
+      "@p_resource_type": "holiday",
+      "@p_row_status": paraDataSaved.row_status,
+      "@p_orgdiv": paraDataSaved.orgdiv,
+      "@p_datnum": paraDataSaved.datnum,
+      "@p_location": paraDataSaved.location,
+      "@p_code": paraDataSaved.code,
+      "@p_type": paraDataSaved.type,
+      "@p_date": paraDataSaved.date,
+      "@p_apply_date": paraDataSaved.apply_date,
+      "@p_start_time": paraDataSaved.start_time,
+      "@p_end_time": paraDataSaved.end_time,
+      "@p_description": paraDataSaved.description,
+      "@p_id": paraDataSaved.id,
+      "@p_pc": paraDataSaved.pc,
+      "@p_form_id": paraDataSaved.form_id,
+    },
+  };
+
+  type TdataArr = {
+    rowstatus: string[];
+    orgdiv: string[];
+    datnum: string[];
+    location: string[];
+    code: string[];
+    type: string[];
+    date: string[];
+    apply_date: string[];
+    start_time: string[];
+    end_time: string[];
+    description: string[];
+  };
+
   const onSaveClick = async () => {
     let valid = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
@@ -474,6 +536,8 @@ const PS_A0060_301W: React.FC = () => {
       dataItem.map((item: any) => {
         if (
           item.date.substring(0, 4) < "1997" ||
+          item.date.substring(6, 8) > "31" ||
+          item.date.substring(6, 8) < "01" ||
           item.date.substring(4, 6).length != 2
         ) {
           throw findMessage(messagesData, "PS_A0060_301W_001");
@@ -485,20 +549,6 @@ const PS_A0060_301W: React.FC = () => {
     }
 
     if (!valid) return false;
-
-    type TdataArr = {
-      rowstatus: string[];
-      orgdiv: string[];
-      datnum: string[];
-      location: string[];
-      code: string[];
-      type: string[];
-      date: string[];
-      apply_date: string[];
-      start_time: string[];
-      end_time: string[];
-      description: string[];
-    };
 
     let dataArr: TdataArr = {
       rowstatus: [],
@@ -569,51 +619,79 @@ const PS_A0060_301W: React.FC = () => {
       dataArr.end_time.push(end_time);
       dataArr.description.push(description);
     });
-    
-    const para: Iparameters = {
-      procedureName: "P_PS_A0060_301W_S",
-      pageNumber: 0,
-      pageSize: 0,
-      parameters: {
-        "@p_work_type": "save",
-        "@p_resource_type": "holiday",
-        "@p_row_status": dataArr.rowstatus.join("|"),
-        "@p_orgdiv": dataArr.orgdiv.join("|"),
-        "@p_datnum": dataArr.datnum.join("|"),
-        "@p_location": dataArr.location.join("|"),
-        "@p_code": dataArr.code.join("|"),
-        "@p_type": dataArr.type.join("|"),
-        "@p_date": dataArr.date.join("|"),
-        "@p_apply_date": dataArr.apply_date.join("|"),
-        "@p_start_time": dataArr.start_time.join("|"),
-        "@p_end_time": dataArr.end_time.join("|"),
-        "@p_description": dataArr.description.join("|"),
-        "@p_id": userId,
-        "@p_pc": pc,
-        "@p_form_id": "PS_A0060_301W",
-      },
-    };
 
+    setParaDataSaved((prev) => ({
+      ...prev,
+      workType: "save",
+      resource_type: "holiday",
+      row_status: dataArr.rowstatus.join("|"),
+      orgdiv: dataArr.orgdiv.join("|"),
+      datnum: dataArr.datnum.join("|"),
+      location: dataArr.location.join("|"),
+      code: dataArr.code.join("|"),
+      type: dataArr.type.join("|"),
+      date: dataArr.date.join("|"),
+      apply_date: dataArr.apply_date.join("|"),
+      start_time: dataArr.start_time.join("|"),
+      end_time: dataArr.end_time.join("|"),
+      description: dataArr.description.join("|"),
+      id: userId,
+      pc: pc,
+      form_id: "PS_A0060_301W",
+    }));
+  };
+
+  const fetchTodoGridSaved = async () => {
     let data: any;
-
+    setLoading(true);
     try {
       data = await processApi<any>("procedure", para);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess !== true) {
+    if (data.isSuccess === true) {
+      const isLastDataDeleted =
+        mainDataResult.data.length == 0 && filters.pgNum > 0;
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+        setFilters((prev: any) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: isLastDataDeleted
+            ? prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev: any) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          pgNum: prev.pgNum,
+          isSearch: true,
+        }));
+      }
+    } else {
       console.log("[오류 발생]");
       console.log(data);
       alert(data.resultMessage);
-    } else {
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value: data.returnString,
-        isSearch: true,
-      }));
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    if (paraDataSaved != undefined && paraDataSaved.orgdiv != "") {
+      fetchTodoGridSaved();
+    }
+  }, [paraDataSaved])
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev: any) => ({ ...prev, sort: [] }));
@@ -811,6 +889,131 @@ const PS_A0060_301W: React.FC = () => {
     };
   };
 
+  // 공휴일 API
+  const [holidays, setHolidays] = useState([]);
+  const storageKey = "__holidays";
+
+  useEffect(() => {
+    if (holidays.length == 0) {
+      const storageHolidays = localStorage.getItem(storageKey);
+      if (storageHolidays) {
+        /** localStorage에 저장되어 있다면 그 값을 사용 */
+        const newHolidays = JSON.parse(storageHolidays);
+        setHolidays(newHolidays);
+      } else {
+        /** localStorage에 값이 없다면 Google Calendar API 호출 */
+        const calendarId =
+          "ko.south_korea.official%23holiday%40group.v.calendar.google.com";
+        const apiKey = "AIzaSyBiSKNEJO9AafkvjzG7lQ7nCwAA2541tWI";
+        const startDate = new Date("2023-01-01").toISOString();
+        const endDate = new Date("2070-12-31").toISOString();
+        fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&orderBy=startTime&singleEvents=true&timeMin=${startDate}&timeMax=${endDate}`
+        ).then((response) => {
+          response.json().then((result) => {
+            const newHolidays = result.items.map((item: any) =>
+              convertDateToStr(new Date(item.start.date))
+            );
+            setHolidays(newHolidays);
+            localStorage.setItem(storageKey, JSON.stringify(newHolidays));
+          });
+        });
+      }
+    }
+  }, []);
+
+  const onHolidayClick = () => {
+    // 기준년월에 해당하는 공휴일만 불러오기
+    let tempDate = convertDateToStr(filters.yyyymm).substring(0, 6);
+    const holidayList: any[] = [];
+    if (holidays.length > 0) 
+    {
+      // 해당 월의 공휴일만 holidayList push
+      holidays.forEach((item: any) => {
+        if (item.substring(0,6) == tempDate) {
+          holidayList.push(item);
+        }
+      });
+      
+      // holidayList의 길이 만큼 행 추가
+      holidayList.forEach((item) => {
+        mainDataResult.data.map((item) => {
+          if (item.num > temp) 
+          {
+            temp = item.num;
+          }
+        });
+        const newDataItem = {
+          [DATA_ITEM_KEY]: ++temp,
+          orgdiv: filters.orgdiv,
+          location: filters.location,
+          date: item,
+          description: "공휴일",
+          rowstatus: "N",
+        };
+
+        setMainDataResult((prev) => {
+          return {
+            data: [newDataItem, ...prev.data],
+            total: prev.total + 1,
+          };
+        });
+
+        setPage((prev) => ({
+          ...prev,
+          skip: 0,
+          take: prev.take + 1,
+        }));
+        setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true});
+      })
+    };
+  };
+
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+      window.addEventListener("resize", handleResize);
+
+      //가장 작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+      minGridWidth.current += 10;
+      setGridCurrent(grid.current.offsetWidth);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    if (grid.current && Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    } 
+  };
+
   return (
     <>
       <TitleContainer>
@@ -917,6 +1120,14 @@ const PS_A0060_301W: React.FC = () => {
               >
                 일요일 자동 생성
               </Button>
+              <Button
+                onClick={onHolidayClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="calendar"
+              >
+                공휴일 자동 생성
+              </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
@@ -986,7 +1197,7 @@ const PS_A0060_301W: React.FC = () => {
                     id={item.id}
                     field={item.fieldName}
                     title={item.caption}
-                    width={item.width}
+                    width={setWidth("grdList", item.width)}
                     cell={
                       DateField.includes(item.fieldName)
                         ? DateCell
@@ -1003,10 +1214,6 @@ const PS_A0060_301W: React.FC = () => {
                 )
             )}
           </Grid>
-          <ExcelExportColumn field = "orgdiv" title = "회사구분" width = {120}/>
-          <ExcelExportColumn field = "location" title = "사업장" width = {120}/>
-          <ExcelExportColumn field = "date" title = "일자" width = {150}/>
-          <ExcelExportColumn field = "description" title = "비고" width = {300}/>
         </ExcelExport>
       </GridContainer>
       {/* 컨트롤 네임 불러오기 용 */}

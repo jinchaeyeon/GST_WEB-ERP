@@ -1,192 +1,186 @@
-import React, { useEffect, useState } from "react";
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
-import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
-import { createGlobalStyle } from "styled-components";
-import AuthRoute from "./components/AuthRoute";
-import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
-import AC_A0000W from "./routes/AC_A0000W";
-import AC_A0020W from "./routes/AC_A0020W";
-import AC_A0030W from "./routes/AC_A0030W";
-import AC_A0070W from "./routes/AC_A0070W";
-import AC_A1000W from "./routes/AC_A1000W";
-import AC_B1100W from "./routes/AC_B1100W";
-import AC_B1280W from "./routes/AC_B1280W";
-import AC_B1300W from "./routes/AC_B1300W";
-import AC_B5000W from "./routes/AC_B5000W";
-import AC_B5080W from "./routes/AC_B5080W";
-import AC_B6060W from "./routes/AC_B6060W";
-import AC_B8030W from "./routes/AC_B8030W";
-import BA_A0020W from "./routes/BA_A0020W";
-import BA_A0020W_603 from "./routes/BA_A0020W_603";
-import BA_A0040W from "./routes/BA_A0040W";
-import BA_A0041W from "./routes/BA_A0041W";
-import BA_A0050W from "./routes/BA_A0050W";
-import BA_A0070W from "./routes/BA_A0070W";
-import BA_A0080W from "./routes/BA_A0080W";
-import BA_A0100W from "./routes/BA_A0100W";
-import BA_B0080W from "./routes/BA_B0080W";
-import CM_A0000W from "./routes/CM_A0000W";
-import CM_A1000W from "./routes/CM_A1000W";
-import CM_A1600W from "./routes/CM_A1600W";
-import CM_A1710W from "./routes/CM_A1710W";
-import CM_A2000W from "./routes/CM_A2000W";
-import CM_A3000W from "./routes/CM_A3000W";
-import CM_A4100W from "./routes/CM_A4100W";
-import CM_A8000W from "./routes/CM_A8000W";
-import CM_A8210W from "./routes/CM_A8210W";
-import CM_A8250W from "./routes/CM_A8250W";
-import CM_B1000W from "./routes/CM_B1000W";
-import CM_B1101W from "./routes/CM_B1101W";
-import CM_B8100W from "./routes/CM_B8100W";
-import CR_A0010W from "./routes/CR_A0010W";
-import CR_A0020W from "./routes/CR_A0020W";
-import CR_A1100W from "./routes/CR_A1100W";
-import CT_A0111W from "./routes/CT_A0111W";
-import EA_A1000W from "./routes/EA_A1000W";
-import EA_A2000W from "./routes/EA_A2000W";
-import HU_A1000W from "./routes/HU_A1000W";
-import HU_A2070W from "./routes/HU_A2070W";
-import HU_A2100W from "./routes/HU_A2100W";
-import HU_A3020W from "./routes/HU_A3020W";
-import HU_A4100W from "./routes/HU_A4100W";
-import HU_A5020W from "./routes/HU_A5020W";
-import HU_B1020W from "./routes/HU_B1020W";
-import HU_B2100W from "./routes/HU_B2100W";
-import HU_B3140W from "./routes/HU_B3140W";
-import HU_B3160W from "./routes/HU_B3160W";
-import HU_B4000W from "./routes/HU_B4000W";
-import HU_B4001W from "./routes/HU_B4001W";
-import Login from "./routes/Login";
-import MA_A0010W from "./routes/MA_A0010W";
-import MA_A1000W from "./routes/MA_A1000W";
-import MA_A2000W from "./routes/MA_A2000W";
-import MA_A2300W from "./routes/MA_A2300W";
-import MA_A2400W from "./routes/MA_A2400W";
-import MA_A2500W from "./routes/MA_A2500W";
-import MA_A2700W from "./routes/MA_A2700W";
-import MA_A3000W from "./routes/MA_A3000W";
-import MA_A3300W from "./routes/MA_A3300W";
-import MA_A3400W from "./routes/MA_A3400W";
-import MA_A3500W from "./routes/MA_A3500W";
-import MA_A7000W from "./routes/MA_A7000W";
-import MA_A9001W from "./routes/MA_A9001W";
-import MA_B2000W from "./routes/MA_B2000W";
-import MA_B2100W from "./routes/MA_B2100W";
-import MA_B2500W from "./routes/MA_B2500W";
-import MA_B2700W from "./routes/MA_B2700W";
-import MA_B2800W from "./routes/MA_B2800W";
-import MA_B3000W from "./routes/MA_B3000W";
-import MA_B3100W from "./routes/MA_B3100W";
-import MA_B7000W from "./routes/MA_B7000W";
-import MA_B7200W from "./routes/MA_B7200W";
-import MA_B7201W from "./routes/MA_B7201W";
-import Main from "./routes/Main";
-import PR_A0030W from "./routes/PR_A0030W";
-import PR_A0040W from "./routes/PR_A0040W";
-import PR_A0060W from "./routes/PR_A0060W";
-import PR_A1100W from "./routes/PR_A1100W";
-import PR_A3000W from "./routes/PR_A3000W";
-import PR_A4000W from "./routes/PR_A4000W";
-import PR_A4100W from "./routes/PR_A4100W";
-import PR_A5000W from "./routes/PR_A5000W";
-import PR_A6000W from "./routes/PR_A6000W";
-import PR_A7000W from "./routes/PR_A7000W";
-import PR_A9000W from "./routes/PR_A9000W";
-import PR_A9100W from "./routes/PR_A9100W";
-import PR_B0020W from "./routes/PR_B0020W";
-import PR_B1103W from "./routes/PR_B1103W";
-import PR_B1104W from "./routes/PR_B1104W";
-import PR_B3000W from "./routes/PR_B3000W";
-import PS_A0060_301W from "./routes/PS_A0060_301W";
-import QC_A0060W from "./routes/QC_A0060W";
-import QC_A0120W from "./routes/QC_A0120W";
-import QC_A2000W from "./routes/QC_A2000W";
-import QC_A2500W from "./routes/QC_A2500W";
-import QC_A3000W from "./routes/QC_A3000W";
-import QC_A6000W from "./routes/QC_A6000W";
-import QC_B0040W from "./routes/QC_B0040W";
-import QC_B0100W from "./routes/QC_B0100W";
-import QC_B0200W from "./routes/QC_B0200W";
-import QC_B0300W from "./routes/QC_B0300W";
-import SA_A2000W from "./routes/SA_A2000W";
-import SA_A2010W from "./routes/SA_A2010W";
-import SA_A2300W from "./routes/SA_A2300W";
-import SA_A3000W from "./routes/SA_A3000W";
-import SA_A5000W from "./routes/SA_A5000W";
-import SA_A5001W from "./routes/SA_A5001W";
-import SA_A5010W from "./routes/SA_A5010W";
-import SA_B2200W from "./routes/SA_B2200W";
-import SA_B2211W from "./routes/SA_B2211W";
-import SA_B2221W from "./routes/SA_B2221W";
-import SA_B2410W from "./routes/SA_B2410W";
-import SA_B2410_290W from "./routes/SA_B2410_290W";
-import SA_B3000W from "./routes/SA_B3000W";
-import SA_B3100W from "./routes/SA_B3100W";
-import SA_B3101W from "./routes/SA_B3101W";
-import SA_B3600W from "./routes/SA_B3600W";
-import SY_A0010W from "./routes/SY_A0010W";
-import SY_A0011W from "./routes/SY_A0011W";
-import SY_A0012W from "./routes/SY_A0012W";
-import SY_A0013W from "./routes/SY_A0013W";
-import SY_A0025W from "./routes/SY_A0025W";
-import SY_A0110W from "./routes/SY_A0110W";
-import SY_A0120W from "./routes/SY_A0120W";
-import SY_A0125W from "./routes/SY_A0125W";
-
+import { createTheme } from "@mui/material";
 import {
   IntlProvider,
   LocalizationProvider,
   load,
 } from "@progress/kendo-react-intl";
-import CHAT_A0001W from "./routes/CHAT_A0001W";
-import CHAT_A0002W from "./routes/CHAT_A0002W";
-import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
-import GANTT from "./routes/GANTT";
-import SY_A0100W from "./routes/SY_A0100W";
-import TO_B0011W from "./routes/TO_B0011W";
-import WORD_EDITOR from "./routes/WORD_EDITOR";
+import currencyData from "cldr-core/supplemental/currencyData.json";
+import likelySubtags from "cldr-core/supplemental/likelySubtags.json";
+import weekData from "cldr-core/supplemental/weekData.json";
+import caGregorianEn from "cldr-dates-full/main/en/ca-gregorian.json";
+import dateFieldsEn from "cldr-dates-full/main/en/dateFields.json";
+import timeZoneNamesEn from "cldr-dates-full/main/en/timeZoneNames.json";
+import caGregorianJa from "cldr-dates-full/main/ja/ca-gregorian.json";
+import dateFieldsJa from "cldr-dates-full/main/ja/dateFields.json";
+import timeZoneNamesJa from "cldr-dates-full/main/ja/timeZoneNames.json";
+import caGregorianKo from "cldr-dates-full/main/ko/ca-gregorian.json";
+import dateFieldsKo from "cldr-dates-full/main/ko/dateFields.json";
+import timeZoneNamesKo from "cldr-dates-full/main/ko/timeZoneNames.json";
+import caGregorianZh from "cldr-dates-full/main/zh/ca-gregorian.json";
+import dateFieldsZh from "cldr-dates-full/main/zh/dateFields.json";
+import timeZoneNamesZh from "cldr-dates-full/main/zh/timeZoneNames.json";
+import numbersEn from "cldr-numbers-full/main/en/numbers.json";
+import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
+import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
+import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
+import React, { Suspense, lazy, useEffect, useState } from "react";
+import { useThemeSwitcher } from "react-css-theme-switcher";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
+import styled, { createGlobalStyle } from "styled-components";
+import AuthRoute from "./components/AuthRoute";
+import { DEFAULT_LANG_CODE } from "./components/CommonString";
+import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
 import {
   colors,
   isMobileMenuOpendState,
   loginResultState,
 } from "./store/atoms";
 
-import currencyData from "cldr-core/supplemental/currencyData.json";
-import likelySubtags from "cldr-core/supplemental/likelySubtags.json";
-import weekData from "cldr-core/supplemental/weekData.json";
-
-import caGregorianKo from "cldr-dates-full/main/ko/ca-gregorian.json";
-import dateFieldsKo from "cldr-dates-full/main/ko/dateFields.json";
-import timeZoneNamesKo from "cldr-dates-full/main/ko/timeZoneNames.json";
-import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
-
-import caGregorianEn from "cldr-dates-full/main/en/ca-gregorian.json";
-import dateFieldsEn from "cldr-dates-full/main/en/dateFields.json";
-import timeZoneNamesEn from "cldr-dates-full/main/en/timeZoneNames.json";
-import numbersEn from "cldr-numbers-full/main/en/numbers.json";
-
-import caGregorianJa from "cldr-dates-full/main/ja/ca-gregorian.json";
-import dateFieldsJa from "cldr-dates-full/main/ja/dateFields.json";
-import timeZoneNamesJa from "cldr-dates-full/main/ja/timeZoneNames.json";
-import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
-
-import caGregorianZh from "cldr-dates-full/main/zh/ca-gregorian.json";
-import dateFieldsZh from "cldr-dates-full/main/zh/dateFields.json";
-import timeZoneNamesZh from "cldr-dates-full/main/zh/timeZoneNames.json";
-import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
-
-import { createTheme } from "@mui/material";
-import styled from "styled-components";
-import { DEFAULT_LANG_CODE } from "./components/CommonString";
-import LoginCRM from "./routes/LoginCRM";
-import MainAdminCRM from "./routes/MainAdminCRM";
-import MainUserCRM from "./routes/MainUserCRM";
-import SY_A0500W from "./routes/SY_A0500W";
-
-import { useThemeSwitcher } from "react-css-theme-switcher";
-import CR_A1000W from "./routes/CR_A1000W";
-import CR_A1001W from "./routes/CR_A1001W";
-import NotFound from "./routes/NotFound";
+const AC_A0000W = lazy(() => import("./routes/AC_A0000W"));
+const AC_A0020W = lazy(() => import("./routes/AC_A0020W"));
+const AC_A0030W = lazy(() => import("./routes/AC_A0030W"));
+const AC_A0070W = lazy(() => import("./routes/AC_A0070W"));
+const AC_A1000W = lazy(() => import("./routes/AC_A1000W"));
+const AC_B1100W = lazy(() => import("./routes/AC_B1100W"));
+const AC_B1280W = lazy(() => import("./routes/AC_B1280W"));
+const AC_B1300W = lazy(() => import("./routes/AC_B1300W"));
+const AC_B5000W = lazy(() => import("./routes/AC_B5000W"));
+const AC_B5080W = lazy(() => import("./routes/AC_B5080W"));
+const AC_B6060W = lazy(() => import("./routes/AC_B6060W"));
+const AC_B8030W = lazy(() => import("./routes/AC_B8030W"));
+const BA_A0020W = lazy(() => import("./routes/BA_A0020W"));
+const BA_A0020W_603 = lazy(() => import("./routes/BA_A0020W_603"));
+const BA_A0040W = lazy(() => import("./routes/BA_A0040W"));
+const BA_A0041W = lazy(() => import("./routes/BA_A0041W"));
+const BA_A0050W = lazy(() => import("./routes/BA_A0050W"));
+const BA_A0070W = lazy(() => import("./routes/BA_A0070W"));
+const BA_A0080W = lazy(() => import("./routes/BA_A0080W"));
+const BA_A0100W = lazy(() => import("./routes/BA_A0100W"));
+const BA_B0080W = lazy(() => import("./routes/BA_B0080W"));
+const CHAT_A0001W = lazy(() => import("./routes/CHAT_A0001W"));
+const CHAT_A0002W = lazy(() => import("./routes/CHAT_A0002W"));
+const CHAT_TEST_TRAVEL_BOT = lazy(
+  () => import("./routes/CHAT_TEST_TRAVEL_BOT")
+);
+const CM_A0000W = lazy(() => import("./routes/CM_A0000W"));
+const CM_A1000W = lazy(() => import("./routes/CM_A1000W"));
+const CM_A1600W = lazy(() => import("./routes/CM_A1600W"));
+const CM_A1710W = lazy(() => import("./routes/CM_A1710W"));
+const CM_A2000W = lazy(() => import("./routes/CM_A2000W"));
+const CM_A3000W = lazy(() => import("./routes/CM_A3000W"));
+const CM_A4100W = lazy(() => import("./routes/CM_A4100W"));
+const CM_A8000W = lazy(() => import("./routes/CM_A8000W"));
+const CM_A8210W = lazy(() => import("./routes/CM_A8210W"));
+const CM_A8250W = lazy(() => import("./routes/CM_A8250W"));
+const CM_B1000W = lazy(() => import("./routes/CM_B1000W"));
+const CM_B1101W = lazy(() => import("./routes/CM_B1101W"));
+const CM_B8100W = lazy(() => import("./routes/CM_B8100W"));
+const CR_A0010W = lazy(() => import("./routes/CR_A0010W"));
+const CR_A0020W = lazy(() => import("./routes/CR_A0020W"));
+const CR_A1000W = lazy(() => import("./routes/CR_A1000W"));
+const CR_A1001W = lazy(() => import("./routes/CR_A1001W"));
+const CR_A1100W = lazy(() => import("./routes/CR_A1100W"));
+const CT_A0111W = lazy(() => import("./routes/CT_A0111W"));
+const EA_A1000W = lazy(() => import("./routes/EA_A1000W"));
+const EA_A2000W = lazy(() => import("./routes/EA_A2000W"));
+const GANTT = lazy(() => import("./routes/GANTT"));
+const HU_A1000W = lazy(() => import("./routes/HU_A1000W"));
+const HU_A2070W = lazy(() => import("./routes/HU_A2070W"));
+const HU_A2100W = lazy(() => import("./routes/HU_A2100W"));
+const HU_A3020W = lazy(() => import("./routes/HU_A3020W"));
+const HU_A4100W = lazy(() => import("./routes/HU_A4100W"));
+const HU_A5020W = lazy(() => import("./routes/HU_A5020W"));
+const HU_B1020W = lazy(() => import("./routes/HU_B1020W"));
+const HU_B2100W = lazy(() => import("./routes/HU_B2100W"));
+const HU_B3140W = lazy(() => import("./routes/HU_B3140W"));
+const HU_B3160W = lazy(() => import("./routes/HU_B3160W"));
+const HU_B4000W = lazy(() => import("./routes/HU_B4000W"));
+const HU_B4001W = lazy(() => import("./routes/HU_B4001W"));
+const MA_A0010W = lazy(() => import("./routes/MA_A0010W"));
+const MA_A1000W = lazy(() => import("./routes/MA_A1000W"));
+const MA_A2000W = lazy(() => import("./routes/MA_A2000W"));
+const MA_A2300W = lazy(() => import("./routes/MA_A2300W"));
+const MA_A2400W = lazy(() => import("./routes/MA_A2400W"));
+const MA_A2500W = lazy(() => import("./routes/MA_A2500W"));
+const MA_A2700W = lazy(() => import("./routes/MA_A2700W"));
+const MA_A3000W = lazy(() => import("./routes/MA_A3000W"));
+const MA_A3300W = lazy(() => import("./routes/MA_A3300W"));
+const MA_A3400W = lazy(() => import("./routes/MA_A3400W"));
+const MA_A3500W = lazy(() => import("./routes/MA_A3500W"));
+const MA_A7000W = lazy(() => import("./routes/MA_A7000W"));
+const MA_A9001W = lazy(() => import("./routes/MA_A9001W"));
+const MA_B2000W = lazy(() => import("./routes/MA_B2000W"));
+const MA_B2100W = lazy(() => import("./routes/MA_B2100W"));
+const MA_B2500W = lazy(() => import("./routes/MA_B2500W"));
+const MA_B2700W = lazy(() => import("./routes/MA_B2700W"));
+const MA_B2800W = lazy(() => import("./routes/MA_B2800W"));
+const MA_B3000W = lazy(() => import("./routes/MA_B3000W"));
+const MA_B3100W = lazy(() => import("./routes/MA_B3100W"));
+const MA_B7000W = lazy(() => import("./routes/MA_B7000W"));
+const MA_B7200W = lazy(() => import("./routes/MA_B7200W"));
+const MA_B7201W = lazy(() => import("./routes/MA_B7201W"));
+const Main = lazy(() => import("./routes/Main"));
+const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
+const MainUserCRM = lazy(() => import("./routes/MainUserCRM"));
+const NotFound = lazy(() => import("./routes/NotFound"));
+const PR_A0030W = lazy(() => import("./routes/PR_A0030W"));
+const PR_A0040W = lazy(() => import("./routes/PR_A0040W"));
+const PR_A0060W = lazy(() => import("./routes/PR_A0060W"));
+const PR_A1100W = lazy(() => import("./routes/PR_A1100W"));
+const PR_A3000W = lazy(() => import("./routes/PR_A3000W"));
+const PR_A4000W = lazy(() => import("./routes/PR_A4000W"));
+const PR_A4100W = lazy(() => import("./routes/PR_A4100W"));
+const PR_A5000W = lazy(() => import("./routes/PR_A5000W"));
+const PR_A6000W = lazy(() => import("./routes/PR_A6000W"));
+const PR_A7000W = lazy(() => import("./routes/PR_A7000W"));
+const PR_A9000W = lazy(() => import("./routes/PR_A9000W"));
+const PR_A9100W = lazy(() => import("./routes/PR_A9100W"));
+const PR_B0020W = lazy(() => import("./routes/PR_B0020W"));
+const PR_B1103W = lazy(() => import("./routes/PR_B1103W"));
+const PR_B1104W = lazy(() => import("./routes/PR_B1104W"));
+const PR_B3000W = lazy(() => import("./routes/PR_B3000W"));
+const PS_A0060_301W = lazy(() => import("./routes/PS_A0060_301W"));
+const QC_A0060W = lazy(() => import("./routes/QC_A0060W"));
+const QC_A0120W = lazy(() => import("./routes/QC_A0120W"));
+const QC_A2000W = lazy(() => import("./routes/QC_A2000W"));
+const QC_A2500W = lazy(() => import("./routes/QC_A2500W"));
+const QC_A3000W = lazy(() => import("./routes/QC_A3000W"));
+const QC_A6000W = lazy(() => import("./routes/QC_A6000W"));
+const QC_B0040W = lazy(() => import("./routes/QC_B0040W"));
+const QC_B0100W = lazy(() => import("./routes/QC_B0100W"));
+const QC_B0200W = lazy(() => import("./routes/QC_B0200W"));
+const QC_B0300W = lazy(() => import("./routes/QC_B0300W"));
+const SA_A2000W = lazy(() => import("./routes/SA_A2000W"));
+const SA_A2010W = lazy(() => import("./routes/SA_A2010W"));
+const SA_A2300W = lazy(() => import("./routes/SA_A2300W"));
+const SA_A3000W = lazy(() => import("./routes/SA_A3000W"));
+const SA_A5000W = lazy(() => import("./routes/SA_A5000W"));
+const SA_A5001W = lazy(() => import("./routes/SA_A5001W"));
+const SA_A5010W = lazy(() => import("./routes/SA_A5010W"));
+const SA_B2200W = lazy(() => import("./routes/SA_B2200W"));
+const SA_B2211W = lazy(() => import("./routes/SA_B2211W"));
+const SA_B2221W = lazy(() => import("./routes/SA_B2221W"));
+const SA_B2410W = lazy(() => import("./routes/SA_B2410W"));
+const SA_B2410_290W = lazy(() => import("./routes/SA_B2410_290W"));
+const SA_B3000W = lazy(() => import("./routes/SA_B3000W"));
+const SA_B3100W = lazy(() => import("./routes/SA_B3100W"));
+const SA_B3101W = lazy(() => import("./routes/SA_B3101W"));
+const SA_B3600W = lazy(() => import("./routes/SA_B3600W"));
+const SY_A0010W = lazy(() => import("./routes/SY_A0010W"));
+const SY_A0011W = lazy(() => import("./routes/SY_A0011W"));
+const SY_A0012W = lazy(() => import("./routes/SY_A0012W"));
+const SY_A0013W = lazy(() => import("./routes/SY_A0013W"));
+const SY_A0025W = lazy(() => import("./routes/SY_A0025W"));
+const SY_A0100W = lazy(() => import("./routes/SY_A0100W"));
+const SY_A0110W = lazy(() => import("./routes/SY_A0110W"));
+const SY_A0120W = lazy(() => import("./routes/SY_A0120W"));
+const SY_A0125W = lazy(() => import("./routes/SY_A0125W"));
+const SY_A0500W = lazy(() => import("./routes/SY_A0500W"));
+const TO_B0011W = lazy(() => import("./routes/TO_B0011W"));
+const WORD_EDITOR = lazy(() => import("./routes/WORD_EDITOR"));
+const LoginCRM = lazy(() => import("./routes/LoginCRM"));
+const Login = lazy(() => import("./routes/Login"));
 
 load(
   likelySubtags,
@@ -423,14 +417,14 @@ const AppInner: React.FC = () => {
   const path = window.location.href;
 
   useEffect(() => {
-      //개발 전용
-      if (path.includes("localhost")) {
-        //WEB ERP개발할떄 바꿀부분입니다.
+    //개발 전용
+    if (path.includes("localhost")) {
+      //WEB ERP개발할떄 바꿀부분입니다.
 
-        //roles = "CRM_DDGD";
-        //switcher({ theme: "yellow" });
-        roles = "GST WEB";
-        switcher({ theme: "blue" });
+        roles = "CRM_DDGD";
+        switcher({ theme: "yellow" });
+        // roles = "GST WEB";
+        // switcher({ theme: "blue" });
       } else {
         if (path.split("/")[2].split(".")[1] == "gsti") {
           roles = "GST WEB";
@@ -458,220 +452,234 @@ const AppInner: React.FC = () => {
               : DEFAULT_LANG_CODE.code
           }
         >
-          <GlobalStyle
-            isMobileMenuOpend={isMobileMenuOpend}
-            theme={currentTheme}
-          />
-          <Router>
-            <Switch>
-              {roles == "WER ERP" ? (
-                <Route path="/" component={Login} exact />
-              ) : roles == "CRM_DDGD" ? (
-                <Route path="/" component={LoginCRM} exact />
-              ) : (
-                <Route path="/" component={Login} exact />
-              )}
-
-              <PanelBarNavContainer roles={roles}>
-                {/* 메인 홈 */}
+          <Suspense fallback={<div></div>}>
+            <GlobalStyle
+              isMobileMenuOpend={isMobileMenuOpend}
+              theme={currentTheme}
+            />
+            <Router>
+              <Switch>
                 {roles == "WER ERP" ? (
-                  <AuthRoute path="/Home" component={Main} exact />
+                  <Route path="/" component={Login} exact />
                 ) : roles == "CRM_DDGD" ? (
-                  isAdmin ? (
-                    <AuthRoute path="/Home" component={MainAdminCRM} exact />
-                  ) : (
-                    <GlobalStyles
-                      style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}
-                    >
-                      <AuthRoute path="/Home" component={MainUserCRM} exact />
-                    </GlobalStyles>
-                  )
+                  <Route path="/" component={LoginCRM} exact />
                 ) : (
-                  <AuthRoute path="/Home" component={Main} exact />
+                  <Route path="/" component={Login} exact />
                 )}
 
-                {/* 기준정보 */}
-                <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
-                <AuthRoute path="/BA_A0020W" component={BA_A0020W} exact />
-                <AuthRoute path="/BA_A0040W" component={BA_A0040W} exact />
-                <AuthRoute path="/BA_A0041W" component={BA_A0041W} exact />
-                <AuthRoute path="/BA_A0050W" component={BA_A0050W} exact />
-                <AuthRoute path="/BA_A0070W" component={BA_A0070W} exact />
-                <AuthRoute path="/BA_A0080W" component={BA_A0080W} exact />
-                <AuthRoute path="/BA_A0100W" component={BA_A0100W} exact />
-                <AuthRoute path="/BA_B0080W" component={BA_B0080W} exact />
-                <AuthRoute path="/CM_B8100W" component={CM_B8100W} exact />
-                <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
-                <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
-                {/* 물류관리 */}
-                <AuthRoute path="/MA_A0010W" component={MA_A0010W} exact />
-                <AuthRoute path="/MA_A1000W" component={MA_A1000W} exact />
-                <AuthRoute path="/MA_A2000W" component={MA_A2000W} exact />
-                <AuthRoute path="/MA_A2300W" component={MA_A2300W} exact />
-                <AuthRoute path="/MA_A2400W" component={MA_A2400W} exact />
-                <AuthRoute path="/MA_A2500W" component={MA_A2500W} exact />
-                <AuthRoute path="/MA_A2700W" component={MA_A2700W} exact />
-                <AuthRoute path="/MA_A3000W" component={MA_A3000W} exact />
-                <AuthRoute path="/MA_A7000W" component={MA_A7000W} exact />
-                <AuthRoute path="/MA_A3300W" component={MA_A3300W} exact />
-                <AuthRoute path="/MA_A3400W" component={MA_A3400W} exact />
-                <AuthRoute path="/MA_A3500W" component={MA_A3500W} exact />
-                <AuthRoute path="/MA_A9001W" component={MA_A9001W} exact />
-                <AuthRoute path="/MA_B2000W" component={MA_B2000W} exact />
-                <AuthRoute path="/MA_B2100W" component={MA_B2100W} exact />
-                <AuthRoute path="/MA_B2500W" component={MA_B2500W} exact />
-                <AuthRoute path="/MA_B2700W" component={MA_B2700W} exact />
-                <AuthRoute path="/MA_B2800W" component={MA_B2800W} exact />
-                <AuthRoute path="/MA_B3000W" component={MA_B3000W} exact />
-                <AuthRoute path="/MA_B3100W" component={MA_B3100W} exact />
-                <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
-                <AuthRoute path="/MA_B7200W" component={MA_B7200W} exact />
-                <AuthRoute path="/MA_B7201W" component={MA_B7201W} exact />
-                {/* 영업관리 */}
-                <AuthRoute path="/SA_A2000W" component={SA_A2000W} exact />
-                <AuthRoute path="/SA_A2010W" component={SA_A2010W} exact />
-                <AuthRoute path="/SA_A2300W" component={SA_A2300W} exact />
-                <AuthRoute path="/SA_A3000W" component={SA_A3000W} exact />
-                <AuthRoute path="/SA_A5000W" component={SA_A5000W} exact />
-                <AuthRoute path="/SA_A5001W" component={SA_A5001W} exact />
-                <AuthRoute path="/SA_A5010W" component={SA_A5010W} exact />
-                <AuthRoute path="/SA_B2200W" component={SA_B2200W} exact />
-                <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
-                <AuthRoute path="/SA_B2221W" component={SA_B2221W} exact />
-                <AuthRoute path="/SA_B2410W" component={SA_B2410W} exact />
-                <AuthRoute
-                  path="/SA_B2410_290W"
-                  component={SA_B2410_290W}
-                  exact
-                />
-                <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
-                <AuthRoute path="/SA_B3100W" component={SA_B3100W} exact />
-                <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
-                {/* 생산관리 */}
-                <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />
-                <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />
-                <AuthRoute path="/PR_A0060W" component={PR_A0060W} exact />
-                <AuthRoute path="/PR_A4000W" component={PR_A4000W} exact />
-                <AuthRoute path="/PR_A4100W" component={PR_A4100W} exact />
-                <AuthRoute path="/PR_A5000W" component={PR_A5000W} exact />
-                <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
-                <AuthRoute path="/PR_A9100W" component={PR_A9100W} exact />
-                <AuthRoute path="/PR_B0020W" component={PR_B0020W} exact />
-                <AuthRoute path="/PR_B3000W" component={PR_B3000W} exact />
-                <AuthRoute path="/PR_A3000W" component={PR_A3000W} exact />
-                <AuthRoute path="/PR_A6000W" component={PR_A6000W} exact />
-                <AuthRoute path="/PR_A7000W" component={PR_A7000W} exact />
-                <AuthRoute path="/PR_A9000W" component={PR_A9000W} exact />
-                {/* 품질관리 */}
-                <AuthRoute path="/QC_A0060W" component={QC_A0060W} exact />
-                <AuthRoute path="/QC_A0120W" component={QC_A0120W} exact />
-                <AuthRoute path="/QC_A2000W" component={QC_A2000W} exact />
-                <AuthRoute path="/QC_A2500W" component={QC_A2500W} exact />
-                <AuthRoute path="/QC_A3000W" component={QC_A3000W} exact />
-                <AuthRoute path="/QC_A6000W" component={QC_A6000W} exact />
-                <AuthRoute path="/QC_B0200W" component={QC_B0200W} exact />
-                <AuthRoute path="/QC_B0300W" component={QC_B0300W} exact />
-                <AuthRoute path="/QC_B0040W" component={QC_B0040W} exact />
-                {/* 시스템 */}
-                <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
-                <AuthRoute path="/SY_A0110W" component={SY_A0110W} exact />
-                <AuthRoute path="/SY_A0010W" component={SY_A0010W} exact />
-                <AuthRoute path="/SY_A0012W" component={SY_A0012W} exact />
-                <AuthRoute path="/SY_A0013W" component={SY_A0013W} exact />
-                <AuthRoute path="/SY_A0011W" component={SY_A0011W} exact />
-                <AuthRoute path="/SY_A0100W" component={SY_A0100W} exact />
-                <AuthRoute path="/SY_A0025W" component={SY_A0025W} exact />
-                {/* 전사관리 */}
-                <AuthRoute path="/CM_A0000W" component={CM_A0000W} exact />
-                <AuthRoute path="/CM_A1000W" component={CM_A1000W} exact />
-                <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
-                <AuthRoute path="/CM_A1710W" component={CM_A1710W} exact />
-                <AuthRoute path="/CM_A2000W" component={CM_A2000W} exact />
-                <AuthRoute path="/CM_A3000W" component={CM_A3000W} exact />
-                <AuthRoute path="/CM_A4100W" component={CM_A4100W} exact />
-                <AuthRoute path="/CM_A8000W" component={CM_A8000W} exact />
-                <AuthRoute path="/CM_A8210W" component={CM_A8210W} exact />
-                <AuthRoute path="/CM_A8250W" component={CM_A8250W} exact />
-                <AuthRoute path="/CM_B1000W" component={CM_B1000W} exact />
-                <AuthRoute path="/CM_B1101W" component={CM_B1101W} exact />
-                {/* 전자결재 */}
-                <AuthRoute path="/EA_A1000W" component={EA_A1000W} exact />
-                <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
-                {/* 원가관리 */}
-                <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
-                {/* 인사관리 */}
-                <AuthRoute path="/HU_A1000W" component={HU_A1000W} exact />
-                <AuthRoute path="/HU_A2070W" component={HU_A2070W} exact />
-                <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
-                <AuthRoute path="/HU_A3020W" component={HU_A3020W} exact />
-                <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
-                <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
-                <AuthRoute path="/HU_B1020W" component={HU_B1020W} exact />
-                <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />
-                <AuthRoute path="/HU_B3140W" component={HU_B3140W} exact />
-                <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
-                <AuthRoute path="/HU_B4001W" component={HU_B4001W} exact />
-                <AuthRoute path="/HU_B4000W" component={HU_B4000W} exact />
+                <PanelBarNavContainer roles={roles}>
+                  {/* 메인 홈 */}
+                  {roles == "WER ERP" ? (
+                    <AuthRoute path="/Home" component={Main} exact />
+                  ) : roles == "CRM_DDGD" ? (
+                    isAdmin ? (
+                      <AuthRoute path="/Home" component={MainAdminCRM} exact />
+                    ) : (
+                      <GlobalStyles
+                        style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}
+                      >
+                        <AuthRoute path="/Home" component={MainUserCRM} exact />
+                      </GlobalStyles>
+                    )
+                  ) : (
+                    <AuthRoute path="/Home" component={Main} exact />
+                  )}
 
-                {/* 회계관리 */}
-                <AuthRoute path="/AC_A0020W" component={AC_A0020W} exact />
-                <AuthRoute path="/AC_A0030W" component={AC_A0030W} exact />
-                <AuthRoute path="/AC_A0070W" component={AC_A0070W} exact />
-                <AuthRoute path="/AC_A1000W" component={AC_A1000W} exact />
-                <AuthRoute path="/AC_B1100W" component={AC_B1100W} exact />
-                <AuthRoute path="/AC_B1280W" component={AC_B1280W} exact />
-                <AuthRoute path="/AC_B1300W" component={AC_B1300W} exact />
-                <AuthRoute path="/AC_B5000W" component={AC_B5000W} exact />
-                <AuthRoute path="/AC_B5080W" component={AC_B5080W} exact />
-                <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
-                <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
-                {/* 목형관리 */}
-                <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />
-                {/* CHAT BOT */}
-                <AuthRoute path="/CHAT_A0001W" component={CHAT_A0001W} exact />
-                <AuthRoute path="/CHAT_A0002W" component={CHAT_A0002W} exact />
-                <AuthRoute
-                  path="/CHAT_TEST_TRAVEL_BOT"
-                  component={CHAT_TEST_TRAVEL_BOT}
-                  exact
-                />
-                {/* 연구개발 */}
-                <AuthRoute path="/WORD_EDITOR" component={WORD_EDITOR} exact />
-                <AuthRoute path="/GANTT" component={GANTT} exact />
+                  {/* 기준정보 */}
+                  <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
+                  <AuthRoute path="/BA_A0020W" component={BA_A0020W} exact />
+                  <AuthRoute path="/BA_A0040W" component={BA_A0040W} exact />
+                  <AuthRoute path="/BA_A0041W" component={BA_A0041W} exact />
+                  <AuthRoute path="/BA_A0050W" component={BA_A0050W} exact />
+                  <AuthRoute path="/BA_A0070W" component={BA_A0070W} exact />
+                  <AuthRoute path="/BA_A0080W" component={BA_A0080W} exact />
+                  <AuthRoute path="/BA_A0100W" component={BA_A0100W} exact />
+                  <AuthRoute path="/BA_B0080W" component={BA_B0080W} exact />
+                  <AuthRoute path="/CM_B8100W" component={CM_B8100W} exact />
+                  <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
+                  <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
+                  {/* 물류관리 */}
+                  <AuthRoute path="/MA_A0010W" component={MA_A0010W} exact />
+                  <AuthRoute path="/MA_A1000W" component={MA_A1000W} exact />
+                  <AuthRoute path="/MA_A2000W" component={MA_A2000W} exact />
+                  <AuthRoute path="/MA_A2300W" component={MA_A2300W} exact />
+                  <AuthRoute path="/MA_A2400W" component={MA_A2400W} exact />
+                  <AuthRoute path="/MA_A2500W" component={MA_A2500W} exact />
+                  <AuthRoute path="/MA_A2700W" component={MA_A2700W} exact />
+                  <AuthRoute path="/MA_A3000W" component={MA_A3000W} exact />
+                  <AuthRoute path="/MA_A7000W" component={MA_A7000W} exact />
+                  <AuthRoute path="/MA_A3300W" component={MA_A3300W} exact />
+                  <AuthRoute path="/MA_A3400W" component={MA_A3400W} exact />
+                  <AuthRoute path="/MA_A3500W" component={MA_A3500W} exact />
+                  <AuthRoute path="/MA_A9001W" component={MA_A9001W} exact />
+                  <AuthRoute path="/MA_B2000W" component={MA_B2000W} exact />
+                  <AuthRoute path="/MA_B2100W" component={MA_B2100W} exact />
+                  <AuthRoute path="/MA_B2500W" component={MA_B2500W} exact />
+                  <AuthRoute path="/MA_B2700W" component={MA_B2700W} exact />
+                  <AuthRoute path="/MA_B2800W" component={MA_B2800W} exact />
+                  <AuthRoute path="/MA_B3000W" component={MA_B3000W} exact />
+                  <AuthRoute path="/MA_B3100W" component={MA_B3100W} exact />
+                  <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
+                  <AuthRoute path="/MA_B7200W" component={MA_B7200W} exact />
+                  <AuthRoute path="/MA_B7201W" component={MA_B7201W} exact />
+                  {/* 영업관리 */}
+                  <AuthRoute path="/SA_A2000W" component={SA_A2000W} exact />
+                  <AuthRoute path="/SA_A2010W" component={SA_A2010W} exact />
+                  <AuthRoute path="/SA_A2300W" component={SA_A2300W} exact />
+                  <AuthRoute path="/SA_A3000W" component={SA_A3000W} exact />
+                  <AuthRoute path="/SA_A5000W" component={SA_A5000W} exact />
+                  <AuthRoute path="/SA_A5001W" component={SA_A5001W} exact />
+                  <AuthRoute path="/SA_A5010W" component={SA_A5010W} exact />
+                  <AuthRoute path="/SA_B2200W" component={SA_B2200W} exact />
+                  <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
+                  <AuthRoute path="/SA_B2221W" component={SA_B2221W} exact />
+                  <AuthRoute path="/SA_B2410W" component={SA_B2410W} exact />
+                  <AuthRoute
+                    path="/SA_B2410_290W"
+                    component={SA_B2410_290W}
+                    exact
+                  />
+                  <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
+                  <AuthRoute path="/SA_B3100W" component={SA_B3100W} exact />
+                  <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
+                  {/* 생산관리 */}
+                  <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />
+                  <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />
+                  <AuthRoute path="/PR_A0060W" component={PR_A0060W} exact />
+                  <AuthRoute path="/PR_A4000W" component={PR_A4000W} exact />
+                  <AuthRoute path="/PR_A4100W" component={PR_A4100W} exact />
+                  <AuthRoute path="/PR_A5000W" component={PR_A5000W} exact />
+                  <AuthRoute path="/PR_A1100W" component={PR_A1100W} exact />
+                  <AuthRoute path="/PR_A9100W" component={PR_A9100W} exact />
+                  <AuthRoute path="/PR_B0020W" component={PR_B0020W} exact />
+                  <AuthRoute path="/PR_B3000W" component={PR_B3000W} exact />
+                  <AuthRoute path="/PR_A3000W" component={PR_A3000W} exact />
+                  <AuthRoute path="/PR_A6000W" component={PR_A6000W} exact />
+                  <AuthRoute path="/PR_A7000W" component={PR_A7000W} exact />
+                  <AuthRoute path="/PR_A9000W" component={PR_A9000W} exact />
+                  {/* 품질관리 */}
+                  <AuthRoute path="/QC_A0060W" component={QC_A0060W} exact />
+                  <AuthRoute path="/QC_A0120W" component={QC_A0120W} exact />
+                  <AuthRoute path="/QC_A2000W" component={QC_A2000W} exact />
+                  <AuthRoute path="/QC_A2500W" component={QC_A2500W} exact />
+                  <AuthRoute path="/QC_A3000W" component={QC_A3000W} exact />
+                  <AuthRoute path="/QC_A6000W" component={QC_A6000W} exact />
+                  <AuthRoute path="/QC_B0200W" component={QC_B0200W} exact />
+                  <AuthRoute path="/QC_B0300W" component={QC_B0300W} exact />
+                  <AuthRoute path="/QC_B0040W" component={QC_B0040W} exact />
+                  {/* 시스템 */}
+                  <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
+                  <AuthRoute path="/SY_A0110W" component={SY_A0110W} exact />
+                  <AuthRoute path="/SY_A0010W" component={SY_A0010W} exact />
+                  <AuthRoute path="/SY_A0012W" component={SY_A0012W} exact />
+                  <AuthRoute path="/SY_A0013W" component={SY_A0013W} exact />
+                  <AuthRoute path="/SY_A0011W" component={SY_A0011W} exact />
+                  <AuthRoute path="/SY_A0100W" component={SY_A0100W} exact />
+                  <AuthRoute path="/SY_A0025W" component={SY_A0025W} exact />
+                  {/* 전사관리 */}
+                  <AuthRoute path="/CM_A0000W" component={CM_A0000W} exact />
+                  <AuthRoute path="/CM_A1000W" component={CM_A1000W} exact />
+                  <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
+                  <AuthRoute path="/CM_A1710W" component={CM_A1710W} exact />
+                  <AuthRoute path="/CM_A2000W" component={CM_A2000W} exact />
+                  <AuthRoute path="/CM_A3000W" component={CM_A3000W} exact />
+                  <AuthRoute path="/CM_A4100W" component={CM_A4100W} exact />
+                  <AuthRoute path="/CM_A8000W" component={CM_A8000W} exact />
+                  <AuthRoute path="/CM_A8210W" component={CM_A8210W} exact />
+                  <AuthRoute path="/CM_A8250W" component={CM_A8250W} exact />
+                  <AuthRoute path="/CM_B1000W" component={CM_B1000W} exact />
+                  <AuthRoute path="/CM_B1101W" component={CM_B1101W} exact />
+                  {/* 전자결재 */}
+                  <AuthRoute path="/EA_A1000W" component={EA_A1000W} exact />
+                  <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
+                  {/* 원가관리 */}
+                  <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
+                  {/* 인사관리 */}
+                  <AuthRoute path="/HU_A1000W" component={HU_A1000W} exact />
+                  <AuthRoute path="/HU_A2070W" component={HU_A2070W} exact />
+                  <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
+                  <AuthRoute path="/HU_A3020W" component={HU_A3020W} exact />
+                  <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
+                  <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
+                  <AuthRoute path="/HU_B1020W" component={HU_B1020W} exact />
+                  <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />
+                  <AuthRoute path="/HU_B3140W" component={HU_B3140W} exact />
+                  <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
+                  <AuthRoute path="/HU_B4001W" component={HU_B4001W} exact />
+                  <AuthRoute path="/HU_B4000W" component={HU_B4000W} exact />
 
-                <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
-                  {/*KPI관리 */}
-                  <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
-                  <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
-                  <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
-                  <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
-                  {/* DDGD 고객페이지 */}
-                  <AuthRoute path="/CR_A1000W" component={CR_A1000W} exact />
-                </GlobalStyles>
+                  {/* 회계관리 */}
+                  <AuthRoute path="/AC_A0020W" component={AC_A0020W} exact />
+                  <AuthRoute path="/AC_A0030W" component={AC_A0030W} exact />
+                  <AuthRoute path="/AC_A0070W" component={AC_A0070W} exact />
+                  <AuthRoute path="/AC_A1000W" component={AC_A1000W} exact />
+                  <AuthRoute path="/AC_B1100W" component={AC_B1100W} exact />
+                  <AuthRoute path="/AC_B1280W" component={AC_B1280W} exact />
+                  <AuthRoute path="/AC_B1300W" component={AC_B1300W} exact />
+                  <AuthRoute path="/AC_B5000W" component={AC_B5000W} exact />
+                  <AuthRoute path="/AC_B5080W" component={AC_B5080W} exact />
+                  <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
+                  <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
+                  {/* 목형관리 */}
+                  <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />
+                  {/* CHAT BOT */}
+                  <AuthRoute
+                    path="/CHAT_A0001W"
+                    component={CHAT_A0001W}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/CHAT_A0002W"
+                    component={CHAT_A0002W}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/CHAT_TEST_TRAVEL_BOT"
+                    component={CHAT_TEST_TRAVEL_BOT}
+                    exact
+                  />
+                  {/* 연구개발 */}
+                  <AuthRoute
+                    path="/WORD_EDITOR"
+                    component={WORD_EDITOR}
+                    exact
+                  />
+                  <AuthRoute path="/GANTT" component={GANTT} exact />
 
-                {/* DDGD 관리자페이지 */}
-                <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
-                <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
-                <AuthRoute path="/CR_A1001W" component={CR_A1001W} exact />
-                <AuthRoute path="/CR_A1100W" component={CR_A1100W} exact />
-                <AuthRoute
-                  path="/PS_A0060_301W"
-                  component={PS_A0060_301W}
-                  exact
-                />
+                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                    {/*KPI관리 */}
+                    <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
+                    <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
+                    <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
+                    <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
+                    {/* DDGD 고객페이지 */}
+                    <AuthRoute path="/CR_A1000W" component={CR_A1000W} exact />
+                  </GlobalStyles>
 
-                {/*바이오톡스텍CRM */}
-                <AuthRoute
-                  path="/BA_A0020W_603"
-                  component={BA_A0020W_603}
-                  exact
-                />
+                  {/* DDGD 관리자페이지 */}
+                  <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
+                  <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
+                  <AuthRoute path="/CR_A1001W" component={CR_A1001W} exact />
+                  <AuthRoute path="/CR_A1100W" component={CR_A1100W} exact />
+                  <AuthRoute
+                    path="/PS_A0060_301W"
+                    component={PS_A0060_301W}
+                    exact
+                  />
 
-                {/* 에러페이지 */}
-                <AuthRoute path="/Error" component={NotFound} exact />
-              </PanelBarNavContainer>
-            </Switch>
-          </Router>
+                  {/*바이오톡스텍CRM */}
+                  <AuthRoute
+                    path="/BA_A0020W_603"
+                    component={BA_A0020W_603}
+                    exact
+                  />
+
+                  {/* 에러페이지 */}
+                  <AuthRoute path="/Error" component={NotFound} exact />
+                </PanelBarNavContainer>
+              </Switch>
+            </Router>
+          </Suspense>
         </IntlProvider>
       </LocalizationProvider>
     </>

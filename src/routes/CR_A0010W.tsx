@@ -13,6 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
+import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Buffer } from "buffer";
 import cryptoRandomString from "crypto-random-string";
@@ -70,6 +71,7 @@ import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 import { gridList } from "../store/columns/CR_A0010W_C";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -1224,11 +1226,10 @@ const CR_A0010W: React.FC = () => {
       window.addEventListener("resize", handleResize);
 
       //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth.current += item.width)
-            : minGridWidth.current
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
       );
 
       setGridCurrent(grid.current.offsetWidth - 40);
@@ -1261,10 +1262,91 @@ const CR_A0010W: React.FC = () => {
     return width;
   };
 
+  const saveExcel = (jsonArr: any[]) => {
+    // if (jsonArr.length == 0) {
+    //   alert("데이터가 없습니다.");
+    // } else {
+    //   let valid = true;
+    //   jsonArr.map((item: any) => {
+    //     Object.keys(item).map((items: any) => {
+    //       if (
+    //         items != "단가" &&
+    //         items != "비고" &&
+    //         items != "품목명" &&
+    //         items != "품목코드"
+    //       ) {
+    //         valid = false;
+    //       }
+    //     });
+    //   });
+    //   if (valid == true) {
+    //     let dataArr: TdataArr = {
+    //       unpitem: [],
+    //       rowstatus: [],
+    //       itemcd: [],
+    //       unp: [],
+    //       itemacnt: [],
+    //       remark: [],
+    //       recdt: [],
+    //       amtunit: [],
+    //     };
+    //     jsonArr.forEach((item: any, idx: number) => {
+    //       const {
+    //         unpitem = "",
+    //         품목코드 = "",
+    //         품목명 = "",
+    //         단가 = "",
+    //         비고 = "",
+    //         itemacnt = "",
+    //         recdt = "",
+    //         amtunit = "",
+    //       } = item;
+    //       dataArr.rowstatus.push("N");
+    //       dataArr.unpitem.push(unpitem == "" ? subfilters.unpitem : unpitem);
+    //       dataArr.itemcd.push(품목코드);
+    //       dataArr.unp.push(단가);
+    //       dataArr.itemacnt.push(
+    //         itemacnt == ""
+    //           ? Object.getOwnPropertyNames(selectedsubDataState)[0]
+    //           : itemacnt
+    //       );
+    //       dataArr.remark.push(비고);
+    //       dataArr.recdt.push(
+    //         recdt == "" ? convertDateToStr(new Date()) : recdt
+    //       );
+    //       dataArr.amtunit.push(amtunit == "" ? subfilters.amtunit : amtunit);
+    //     });
+    //     setParaData((prev) => ({
+    //       ...prev,
+    //       workType: "N",
+    //       orgdiv: "01",
+    //       user_id: userId,
+    //       form_id: "BA_A0080W",
+    //       pc: pc,
+    //       unpitem: dataArr.unpitem.join("|"),
+    //       rowstatus: dataArr.rowstatus.join("|"),
+    //       itemcd: dataArr.itemcd.join("|"),
+    //       unp: dataArr.unp.join("|"),
+    //       itemacnt: dataArr.itemacnt.join("|"),
+    //       remark: dataArr.remark.join("|"),
+    //       recdt: dataArr.recdt.join("|"),
+    //       amtunit: dataArr.amtunit.join("|"),
+    //     }));
+    //   } else {
+    //     alert("양식이 맞지 않습니다.");
+    //   }
+    // }
+  };
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer>
-        <Title>사용자 정보</Title>
+        <Title>고객관리</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -1360,10 +1442,23 @@ const CR_A0010W: React.FC = () => {
               }}
             >
               <GridTitleContainer>
-                <GridTitle>사용자 리스트</GridTitle>
-
+                <GridTitle>고객 리스트</GridTitle>
                 {permissions && (
                   <ButtonContainer>
+                    <ExcelUploadButtons
+                      saveExcel={saveExcel}
+                      permissions={permissions}
+                      style={{ marginLeft: "15px" }}
+                    />
+                    <Button
+                      title="Export Excel"
+                      onClick={onAttachmentsWndClick}
+                      icon="file"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                    >
+                      엑셀양식
+                    </Button>
                     <Button
                       onClick={onAddClick}
                       themeColor={"primary"}
@@ -1519,6 +1614,13 @@ const CR_A0010W: React.FC = () => {
             hidden
           />
         ))
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          para={"CR_A0010W"}
+          modal={true}
+        />
       )}
     </>
   );
