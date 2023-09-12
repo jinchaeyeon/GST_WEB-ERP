@@ -2004,7 +2004,7 @@ const QC_A2000: React.FC = () => {
                   }}
                 >
                   <Grid
-                    style={{ height: "61.5vh" }}
+                    style={{ height: "64.5vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,

@@ -2161,7 +2161,7 @@ const Page: React.FC = () => {
               )}
             </GridTitleContainer>
             <Grid
-              style={{ height: "74.5vh" }}
+              style={{ height: "77.5vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -2350,7 +2350,7 @@ const Page: React.FC = () => {
                 )}
               </GridTitleContainer>
               <TreeList
-                style={{ height: "37.8vh", overflow: "auto" }}
+                style={{ height: "43.3vh", overflow: "auto" }}
                 data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                   extendDataItem(item, SUB_ITEMS_FIELD, {
                     [EXPANDED_FIELD]: expanded.includes(

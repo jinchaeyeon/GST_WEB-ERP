@@ -1398,7 +1398,7 @@ const SY_A0025W: React.FC = () => {
             <FormBoxWrap
               border={true}
               style={{
-                minHeight: "56.3vh",
+                minHeight: "58.4vh",
                 display: isMobile == true ? "block" : "flex",
                 alignItems: "center",
               }}
@@ -1640,7 +1640,7 @@ const SY_A0025W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "78.2vh" }}
+              style={{ height: "81.5vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

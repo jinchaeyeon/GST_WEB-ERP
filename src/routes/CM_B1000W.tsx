@@ -665,7 +665,7 @@ const CM_B1000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <GridContainerWrap>
-        <GridContainer width="19%" style={{ marginTop: "5px" }}>
+        <GridContainer width="22%" style={{ marginTop: "5px" }}>
           <GridTitleContainer>
             <GridTitle>달력</GridTitle>
           </GridTitleContainer>
@@ -724,7 +724,7 @@ const CM_B1000W: React.FC = () => {
                 )}
           </Grid>
         </GridContainer>
-        <GridContainer width={`calc(81% - ${GAP}px)`}>
+        <GridContainer width={`calc(80% - ${GAP}px)`}>
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -880,7 +880,7 @@ const CM_B1000W: React.FC = () => {
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "39vh" }}
+                style={{ height: "38vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
