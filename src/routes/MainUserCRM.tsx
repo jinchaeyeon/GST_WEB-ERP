@@ -322,6 +322,7 @@ const Main: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data.resultMessage);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

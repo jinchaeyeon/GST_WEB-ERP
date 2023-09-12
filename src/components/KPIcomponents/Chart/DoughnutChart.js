@@ -74,12 +74,12 @@ export default function DoughnutChart(props) {
             position: "absolute",
             width: "100%",
             top: "50%",
-            left: "40%"
+            left: "30%"
           }}
         >
-          <h5>총 생산량 : </h5>
-          <h5>총 양품수 : </h5>
-          <h5>총 불량수 : </h5>
+          <h5>총 생산량 : {props.data == undefined ? 0 : props.data.qty}</h5>
+          <h5>총 양품수 : {props.data== undefined ? 0 : props.data.badqty}</h5>
+          <h5>총 불량수 : {props.data== undefined ? 0 : props.data.totqty}</h5>
         </div>
       ) : (
         ""

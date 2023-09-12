@@ -511,6 +511,7 @@ const SA_B3600W: React.FC = () => {
                     data={item.data}
                     backgroundColor={item.backgroundColor}
                     fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                        form={"SA_B3600W"}
                   />
                 </Grid>
               ))}

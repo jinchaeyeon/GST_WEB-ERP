@@ -34,7 +34,7 @@ root.render(
   <ThemeSwitcherProvider
     themeMap={themes}
     defaultTheme={defaultTheme}
-    insertionPoint="styles-insertion-point"
+    insertionPoint={document.getElementById('inject-styles-here')}
   >
     <RecoilRoot>
       <BrowserRouter>

@@ -439,7 +439,7 @@ const PR_B1104W: React.FC = () => {
           onChange={(e: { target: { value: any } }) =>
             setFilters((prev) => ({
               ...prev,
-              itemcd: e.target.value,
+              planno: e.target.value,
             }))
           }
           xs={12}
@@ -513,6 +513,7 @@ const PR_B1104W: React.FC = () => {
                     fontsize={
                       size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
                     }
+                    form={"PR_B1104W"}
                   />
                 </Grid>
               ))}

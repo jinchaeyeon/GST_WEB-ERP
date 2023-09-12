@@ -40,6 +40,7 @@ import CM_B1101W from "./routes/CM_B1101W";
 import CM_B8100W from "./routes/CM_B8100W";
 import CR_A0010W from "./routes/CR_A0010W";
 import CR_A0020W from "./routes/CR_A0020W";
+import CR_A1100W from "./routes/CR_A1100W";
 import CT_A0111W from "./routes/CT_A0111W";
 import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
@@ -186,6 +187,7 @@ import { useThemeSwitcher } from "react-css-theme-switcher";
 import CR_A1000W from "./routes/CR_A1000W";
 import CR_A1001W from "./routes/CR_A1001W";
 import NotFound from "./routes/NotFound";
+
 load(
   likelySubtags,
   currencyData,
@@ -285,6 +287,7 @@ const App: React.FC = () => {
 };
 const AppInner: React.FC = () => {
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
+
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN";
@@ -420,24 +423,23 @@ const AppInner: React.FC = () => {
   const path = window.location.href;
 
   useEffect(() => {
-    //개발 전용
-    if (path.includes("localhost")) {
-      //WEB ERP개발할떄 바꿀부분입니다.
+      //개발 전용
+      if (path.includes("localhost")) {
+        //WEB ERP개발할떄 바꿀부분입니다.
 
-      //roles = "CRM_DDGD";
-      //switcher({ theme: "yellow" });
-
-      roles = "GST WEB";
-      switcher({ theme: "blue" });
-    } else {
-      if (path.split("/")[2].split(".")[1] == "gsti") {
-        roles = "GST WEB";
-        switcher({ theme: "blue" });
-      } else if (path.split("/")[2].split(".")[1] == "ddgd") {
         roles = "CRM_DDGD";
         switcher({ theme: "yellow" });
+        // roles = "GST WEB";
+        // switcher({ theme: "blue" });
+      } else {
+        if (path.split("/")[2].split(".")[1] == "gsti") {
+          roles = "GST WEB";
+          switcher({ theme: "blue" });
+        } else if (path.split("/")[2].split(".")[1] == "ddgd") {
+          roles = "CRM_DDGD";
+          switcher({ theme: "yellow" });
+        } 
       }
-    }
   }, []);
 
   return (
@@ -648,14 +650,15 @@ const AppInner: React.FC = () => {
                 </GlobalStyles>
 
                 {/* DDGD 관리자페이지 */}
-                  <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
-                  <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
-                  <AuthRoute path="/CR_A1001W" component={CR_A1001W} exact />
-                  <AuthRoute 
-                    path="/PS_A0060_301W" 
-                    component={PS_A0060_301W} 
-                    exact 
-                  />
+                <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
+                <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
+                <AuthRoute path="/CR_A1001W" component={CR_A1001W} exact />
+                <AuthRoute path="/CR_A1100W" component={CR_A1100W} exact />
+                <AuthRoute
+                  path="/PS_A0060_301W"
+                  component={PS_A0060_301W}
+                  exact
+                />
 
                 {/*바이오톡스텍CRM */}
                 <AuthRoute

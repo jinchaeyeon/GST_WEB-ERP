@@ -4,6 +4,7 @@ import Calendar from "react-calendar";
 import styled from "styled-components";
 import { convertDateToStr } from "../CommonFunction";
 import { useApi } from "../../hooks/api";
+import { process } from "@progress/kendo-data-query";
 
 function App(props) {
   const data =
@@ -53,18 +54,73 @@ function App(props) {
     }
   };
 
+  const [mainDataState, setMainDataState] = useState({
+    sort: [],
+  });
+  const [mainDataResult, setMainDataResult] = useState(
+    process([], mainDataState)
+  );
+
+  const [filters, setFilters] = useState({
+    work_type: "holiday",
+    orgdiv: "01",
+    location: "01",
+    resource_type: "",
+    yyyymm: "",
+  });
+
+  //그리드 데이터 조회
+  const fetchMainGrid = async () => {
+    let data;
+
+    //조회조건 파라미터
+    const parameters = {
+      procedureName: "P_PS_A0060_301W_Q",
+      pageNumber: 1,
+      pageSize: 10000,
+      parameters: {
+        "@p_work_type": filters.work_type,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_resource_type": filters.resource_type,
+        "@p_yyyymm": "",
+        "@p_find_row_value": "",
+      },
+    };
+
+    try {
+      data = await processApi("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+  };
   useEffect(() => {
     fetchMain();
+    fetchMainGrid();
     onChange(null);
   }, [props]);
 
   const changeDate = (date) => {
     props.propFunction(convertDateToStr(date));
   };
-  
+
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 850;
-
+  console.log(mainDataResult.data);
   return (
     <CalendarContainer backgroundColor={data.color}>
       {isMobile ? (
@@ -215,8 +271,23 @@ function App(props) {
         calendarType="US"
         locale="ko-KO"
         selected={value}
-        tileDisabled={({ date, view }) => 
-          view == "month" && !schedulerData.find((x) => x.date == moment(date).format("YYYYMMDD") && x.finyn == "N"&& x.appyn == "Y") 
+        tileDisabled={({ date, view }) =>
+          view == "month" &&
+          mainDataResult.data.find(
+            (x) => x.date == moment(date).format("YYYYMMDD")
+          )
+        }
+        tileClassName={({ date, view }) =>
+          (view == "month" &&
+          ! mainDataResult.data.find(
+            (x) => x.date == moment(date).format("YYYYMMDD")
+          ) &&
+          !schedulerData.find(
+            (x) =>
+              x.date == moment(date).format("YYYYMMDD") &&
+              x.finyn == "N" &&
+              x.appyn == "Y"
+          )) ? "no" : "yes"
         }
         onChange={(date) => changeDate(date)}
         tileContent={({ date, view }) => {
@@ -235,7 +306,7 @@ function App(props) {
                     {!isMobile ? (
                       <span
                         class="k-icon k-i-heart"
-                        style={{ color: "#D3D3D3", fontSize: "3vw"}}
+                        style={{ color: "#D3D3D3", fontSize: "3vw" }}
                       ></span>
                     ) : (
                       <span
@@ -262,7 +333,7 @@ function App(props) {
                     {!isMobile ? (
                       <span
                         class="k-icon k-i-heart"
-                        style={{ color: "#F9D202", fontSize: "3vw"}}
+                        style={{ color: "#F9D202", fontSize: "3vw" }}
                       ></span>
                     ) : (
                       <span
@@ -282,7 +353,7 @@ function App(props) {
                     {!isMobile ? (
                       <span
                         class="k-icon k-i-heart"
-                        style={{ color: data.color, fontSize: "3vw"}}
+                        style={{ color: data.color, fontSize: "3vw" }}
                       ></span>
                     ) : (
                       <span
@@ -317,6 +388,14 @@ const CalendarContainer = styled.div`
     height: 100%;
   }
 
+  .no{
+    background-color: #d3d3d3;
+    opacity: 0.5;
+    color: black;
+    cursor: not-allowed !important;
+    pointer-events: none;
+  }
+
   * {
     font-family: TheJamsil5Bold;
     font-size: 18px;
@@ -333,11 +412,11 @@ const CalendarContainer = styled.div`
   .react-calendar__month-view {
     height: 95%;
 
-    & > div{
+    & > div {
       height: 95%;
       display: block !important;
 
-      & > div{
+      & > div {
         height: 100%;
       }
     }
@@ -377,7 +456,8 @@ const CalendarContainer = styled.div`
       background-color: #d3d3d3;
       opacity: 0.5;
       color: #ff4d4d;
-      cursor: not-allowed;
+      cursor: not-allowed !important;
+      pointer-events: none;
     }
 
     &:hover {
@@ -414,13 +494,6 @@ const CalendarContainer = styled.div`
     .react-calendar__tile--range {
       cursor: pointer;
     }
-  }
-
-  /* ~~~ neighboring month & weekend styles ~~~ */
-  .react-calendar__month-view__days__day--weekend {
-    color: #ff4d4d;
-    display: flex;
-    justify-content: center;
   }
 
   /* ~~~ other view styles ~~~ */
