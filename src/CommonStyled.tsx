@@ -348,11 +348,6 @@ export const GridContainer = styled.div<TGridContainer>`
   max-height: ${(props) => props.maxHeight};
   overflow-y: ${(props) => (props.overflowY ? props.overflowY : "visible")};
 
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
   width: ${(props) =>
     props.width
       ? props.width
