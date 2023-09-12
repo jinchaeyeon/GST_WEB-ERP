@@ -336,8 +336,10 @@ const EncryptedCell2 = (props: GridCellProps) => {
     >
       {isInEdit ? (
         <Input value={value} onChange={handleChange} type={"password"}></Input>
+      ) : value ? (
+        "*********"
       ) : (
-        value ? "*********" : ""
+        ""
       )}
       <ButtonInGridInput>
         <Button
@@ -401,7 +403,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     />
   ) : (
     <td></td>
-  ); 
+  );
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
@@ -420,7 +422,7 @@ const CustomRadioCell = (props: GridCellProps) => {
     <RadioGroupCell bizComponentData={bizComponent} {...props} />
   ) : (
     <td></td>
-  ); 
+  );
 };
 
 const CR_A0010W: React.FC = () => {
@@ -432,7 +434,7 @@ const CR_A0010W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
-  UsePermissions(setPermissions); 
+  UsePermissions(setPermissions);
   //const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -1078,7 +1080,11 @@ const CR_A0010W: React.FC = () => {
             setFilters((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
+              pgNum: isLastDataDeleted
+                ? prev.pgNum != 1
+                  ? prev.pgNum - 1
+                  : prev.pgNum
+                : prev.pgNum,
               isSearch: true,
             }));
           } else {
@@ -1218,13 +1224,14 @@ const CR_A0010W: React.FC = () => {
       window.addEventListener("resize", handleResize);
 
       //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"]?.map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
+      customOptionData.menuCustomColumnOptions["grdList"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth.current += item.width)
+            : minGridWidth.current
       );
 
-      setGridCurrent(grid.current.offsetWidth-40);
+      setGridCurrent(grid.current.offsetWidth - 40);
       setApplyMinWidth(grid.current.offsetWidth - 40 < minGridWidth.current);
     }
   }, [customOptionData]);
@@ -1236,7 +1243,7 @@ const CR_A0010W: React.FC = () => {
     ) {
       setApplyMinWidth(true);
     } else if (grid.current.offsetWidth - 40 > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth -40);
+      setGridCurrent(grid.current.offsetWidth - 40);
       setApplyMinWidth(false);
     }
   };

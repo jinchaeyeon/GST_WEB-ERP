@@ -82,7 +82,7 @@ export const TextContainer = styled.div<TColor>`
   color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
   border-radius: 50px;
   width: 180px;
-  line-height: 30px;F
+  line-height: 30px;
   align-items: center;
   justify-content: center;
 `;

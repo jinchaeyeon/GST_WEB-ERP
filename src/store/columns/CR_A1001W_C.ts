@@ -17,6 +17,12 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
+        id: "col_finyn",
+        field: "finyn",
+        caption: "등원여부",
+        width: 150,
+      },
+      {
         id: "col_add1",
         field: "add1",
         caption: "양치신청",
