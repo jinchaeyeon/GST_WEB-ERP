@@ -66,6 +66,7 @@ const CardBox = (props) => {
           marginRight: "15px",
           borderRadius: "10px",
           backgroundColor: colors,
+          cursor: "pointer"
         }}
         onClick={(e) => props.Click(e)}
       >
