@@ -5,7 +5,6 @@ import loginBgSrc from "./img/login_bg.png";
 import logoWEBERP from "./img/login_web_erp.png";
 import logoDDGD from "./img/login_ddgd.png";
 
-
 type TColor = {
   theme: string;
 };
@@ -64,7 +63,7 @@ export const MainWorkStartEndContainer = styled.div`
   margin-top: 20px;
   margin-left: auto;
   margin-right: 10px;
-  
+
   input,
   button {
     margin-left: 5px;
@@ -78,8 +77,9 @@ export const MainWorkStartEndContainer = styled.div`
 
 export const TextContainer = styled.div<TColor>`
   display: flex;
-  border: 1px solid ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+  border: 1px solid
+    ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
   border-radius: 50px;
   width: 180px;
   line-height: 30px;
@@ -321,7 +321,7 @@ type TGridContainer = {
   width?: string;
   inTab?: boolean;
   margin?: TMargin;
-  overflowY? :string;
+  overflowY?: string;
 };
 
 type TMargin = {
@@ -346,8 +346,13 @@ export const GridContainer = styled.div<TGridContainer>`
   max-width: ${(props) => props.maxWidth};
   min-height: ${(props) => props.minHeight};
   max-height: ${(props) => props.maxHeight};
-  overflow-Y: ${(props) => props.overflowY ? props.overflowY : "visible"};
+  overflow-y: ${(props) => (props.overflowY ? props.overflowY : "visible")};
 
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
   width: ${(props) =>
     props.width
       ? props.width
@@ -404,7 +409,7 @@ export const GridTitle = styled.h3`
 `;
 
 export const PrimaryP = styled.p<TColor>`
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
 `;
 
 export const PortraitPrint = styled.div`
@@ -536,7 +541,8 @@ export const LoginBox = styled.div<TColor>`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+  background-color: ${(props) =>
+    props.theme === "blue" ? "#2289c3" : "#f9d202"};
   height: 100vh;
   width: 50%;
   border-top-left-radius: 300px;
@@ -553,9 +559,10 @@ export const LoginBox = styled.div<TColor>`
     height: 48px;
     font-size: 18px;
     font-weight: 600;
-    background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
-    border-color: 1px solid ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
-
+    background-color: ${(props) =>
+      props.theme === "blue" ? "#2289c3" : "#f9d202"};
+    border-color: 1px solid
+      ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
   }
   .k-input {
     height: 44px;
@@ -658,9 +665,10 @@ export const InfoList = styled.ul<TColor>`
 
   .big-input {
     height: 50px;
-    border: 1px solid ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+    border: 1px solid
+      ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
     border-radius: 10px;
-    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
     text-align: right;
     padding-left: 15px;
     font-size: 18px;
@@ -694,8 +702,9 @@ export const NumberKeypadRow = styled.div`
   justify-content: space-between;
 `;
 export const NumberKeypadCell = styled.div<TColor>`
-  border: 1px solid ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+  border: 1px solid
+    ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
   font-size: 20px;
   text-align: center;
   border-radius: 5px;
@@ -707,15 +716,18 @@ export const NumberKeypadCell = styled.div<TColor>`
   justify-content: center;
   cursor: pointer;
   :hover {
-    background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+    background-color: ${(props) =>
+      props.theme === "blue" ? "#2289c3" : "#f9d202"};
     color: #ffffff;
   }
   :focus {
-    background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+    background-color: ${(props) =>
+      props.theme === "blue" ? "#2289c3" : "#f9d202"};
     color: #ffffff;
   }
   :active {
-    background-color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+    background-color: ${(props) =>
+      props.theme === "blue" ? "#2289c3" : "#f9d202"};
     color: #ffffff;
   }
 `;
@@ -753,7 +765,7 @@ export const Gnv = styled.div<TGnv>`
   .k-panelbar-item-icon.k-icon.k-i-gear,
   .k-panelbar-item-icon.k-icon.k-i-star,
   .k-panelbar-item-icon.k-icon.k-i-star-outline {
-    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
   }
 
   .k-selected > .k-panelbar-item-icon.k-icon.k-i-star-outline {
@@ -852,7 +864,7 @@ export const Footer = styled.div`
 
 export const AppName = styled.h1<TColor>`
   font-size: 20px;
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202" )};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
   font-weight: 400;
   /* padding: 10px 0; */
   height: 50px;
@@ -937,10 +949,15 @@ export const Modal = styled.div<TModal>`
 /*=========================================================================
 	// PanelBarNavContainer 종료
 =========================================================================*/
-type TLogo = { size: string, name: string};
+type TLogo = { size: string; name: string };
 
 export const Logo = styled.div<TLogo>`
-  background: url(${(props) => props.name == "GST WEB" ? (logoWEBERP): props.name == "CRM_DDGD" ? logoDDGD : logoWEBERP});
+  background: url(${(props) =>
+    props.name == "GST WEB"
+      ? logoWEBERP
+      : props.name == "CRM_DDGD"
+      ? logoDDGD
+      : logoWEBERP});
   background-size: contain;
   background-repeat: no-repeat;
   width: ${(props) => props.size};
