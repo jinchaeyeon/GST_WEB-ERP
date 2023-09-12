@@ -1,5 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { DateInput } from "@progress/kendo-react-dateinputs";
+import { DateInput, DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -50,7 +50,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { Button } from "@progress/kendo-react-buttons";
 
-const CheckField = ["add1", "add2", "add3"];
+const CheckField = ["add1", "add2", "add3", "finyn"];
 
 const Page: React.FC = () => {
   const DATA_ITEM_KEY = "custcd";
@@ -555,14 +555,43 @@ const Page: React.FC = () => {
             <tr>
               <th>날짜</th>
               <td>
-                <DateInput
-                  name="frdt"
-                  spinners={true}
-                  value={filters.frdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  className="required"
-                />
+                <div className="filter-item-wrap">
+                  <Button
+                    type={"button"}
+                    onClick={() => {
+                      const today = filters.frdt;
+                      const yesterday = new Date(today);
+                      yesterday.setDate(today.getDate() - 1);
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: yesterday,
+                      }));
+                    }}
+                    icon="arrow-60-left"
+                    fillMode="flat"
+                  />
+                  <DatePicker
+                    name="frdt"
+                    value={filters.frdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+                  <Button
+                    type={"button"}
+                    onClick={() => {
+                      const today = filters.frdt;
+                      const tomorrow = new Date(today);
+                      tomorrow.setDate(today.getDate() + 1);
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: tomorrow,
+                      }));
+                    }}
+                    icon="arrow-60-right"
+                    fillMode="flat"
+                  />
+                </div>
               </td>
               <th>그룹</th>
               <td>

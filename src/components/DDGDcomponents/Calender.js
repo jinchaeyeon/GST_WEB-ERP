@@ -120,7 +120,7 @@ function App(props) {
 
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 850;
-  console.log(mainDataResult.data);
+
   return (
     <CalendarContainer backgroundColor={data.color}>
       {isMobile ? (

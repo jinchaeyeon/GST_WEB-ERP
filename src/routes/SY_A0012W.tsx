@@ -1074,7 +1074,11 @@ const SY_A0120: React.FC = () => {
             setFilters((prev) => ({
               ...prev,
               find_row_value: "",
-              pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
+              pgNum: isLastDataDeleted
+                ? prev.pgNum != 1
+                  ? prev.pgNum - 1
+                  : prev.pgNum
+                : prev.pgNum,
               isSearch: true,
             }));
           } else {
@@ -1220,7 +1224,7 @@ const SY_A0120: React.FC = () => {
           : minGridWidth.current
       );
 
-      setGridCurrent(grid.current.offsetWidth-40);
+      setGridCurrent(grid.current.offsetWidth - 40);
       setApplyMinWidth(grid.current.offsetWidth - 40 < minGridWidth.current);
     }
   }, [customOptionData]);
@@ -1232,7 +1236,7 @@ const SY_A0120: React.FC = () => {
     ) {
       setApplyMinWidth(true);
     } else if (grid.current.offsetWidth - 40 > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth -40);
+      setGridCurrent(grid.current.offsetWidth - 40);
       setApplyMinWidth(false);
     }
   };
