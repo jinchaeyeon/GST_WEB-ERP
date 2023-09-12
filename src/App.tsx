@@ -452,7 +452,7 @@ const AppInner: React.FC = () => {
               : DEFAULT_LANG_CODE.code
           }
         >
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div></div>}>
             <GlobalStyle
               isMobileMenuOpend={isMobileMenuOpend}
               theme={currentTheme}
