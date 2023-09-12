@@ -553,7 +553,7 @@ const PanelBarNavContainer = (props: any) => {
       <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
         <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
         {isMenuOpend ? (
-          <Gnv isMobileMenuOpend={isMobileMenuOpend}>
+          <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={currentTheme}>
             <AppName theme={currentTheme} onClick={() => setIsMenuOpend(false)}>
             {/* WEB ERP개발할떄 바꿀부분입니다. */}
               {path.includes("localhost") ? (
@@ -657,7 +657,7 @@ const PanelBarNavContainer = (props: any) => {
 
             <ButtonContainer
               flexDirection={"column"}
-              style={{ marginTop: "10px", gap: "5px" }}
+              style={{ marginTop: "10px", gap: "5px", marginBottom: "30px"}}
             >
               <Button
                 onClick={onClickChatbot}
