@@ -1450,7 +1450,7 @@ const Page: React.FC = () => {
                 )}
             </GridTitleContainer>
             <Grid
-              style={{ height: "81.6vh" }}
+              style={{ height: "80.5vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -1536,7 +1536,7 @@ const Page: React.FC = () => {
             </GridTitleContainer>
 
             <TreeList
-              style={{ height: "81.6vh", overflow: "auto" }}
+              style={{ height: "80.5vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1583,7 +1583,7 @@ const Page: React.FC = () => {
               <GridTitle>[참조] 전체 메뉴</GridTitle>
             </GridTitleContainer>
             <TreeList
-              style={{ height: "82vh" }}
+              style={{ height: "80.8vh" }}
               data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: allMenuDataResult.expanded.includes(

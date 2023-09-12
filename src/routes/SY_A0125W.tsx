@@ -1339,7 +1339,7 @@ const SY_A0125W: React.FC = () => {
               <GridTitle>부서리스트</GridTitle>
             </GridTitleContainer>
             <TreeList
-              style={{ height: "82vh", overflow: "auto" }}
+              style={{ height: "80.7vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1497,7 +1497,7 @@ const SY_A0125W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "60vh" }}
+            style={{ height: "58vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

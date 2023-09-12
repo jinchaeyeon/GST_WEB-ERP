@@ -2189,7 +2189,7 @@ const BA_A0040: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "41.3vh" }}
+            style={{ height: "39vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

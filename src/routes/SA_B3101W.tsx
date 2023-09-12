@@ -346,7 +346,7 @@ const SA_B3101W: React.FC = () => {
 
         </Chart>
         <Grid
-          style={{ height: "39.5vh" }}
+          style={{ height: "38vh" }}
           data={process(
             gridDataResult.data.map((row) => ({
               ...row,
