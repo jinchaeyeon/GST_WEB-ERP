@@ -35,6 +35,12 @@ export const gridList: Array<TGrid> = [
         width: 80,
       },
       {
+        id: "col_plandt",
+        field: "plandt",
+        caption: "등원예정일자",
+        width: 120,
+      },
+      {
         id: "col_custcd",
         field: "custcd",
         caption: "반려견코드",
@@ -89,10 +95,10 @@ export const gridList: Array<TGrid> = [
         width: 250,
       },
       {
-        id: "col_minus",
-        field: "minus",
-        caption: "차감",
-        width: 100,
+        id: "col_att_check",
+        field: "att_check",
+        caption: "등원상태",
+        width: 120,
       },
       {
         id: "col_manager",
