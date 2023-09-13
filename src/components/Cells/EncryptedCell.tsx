@@ -32,7 +32,7 @@ const EncryptedCell = (props: GridCellProps) => {
       {isInEdit ? (
         <Input value={value} onChange={handleChange} type={"password"}></Input>
       ) : (
-        value ? "*********" : ""
+        value != "" ? "*********" : ""
       )}
     </td>
   );

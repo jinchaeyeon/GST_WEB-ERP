@@ -28,7 +28,8 @@ import {
   dateformat, 
   findMessage, 
   getGridItemChangedData, 
-  handleKeyPressSearch } from "../components/CommonFunction";
+  handleKeyPressSearch, 
+  toDate} from "../components/CommonFunction";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import TopButtons from "../components/Buttons/TopButtons";
 import { isLoading } from "../store/atoms";
@@ -54,13 +55,15 @@ import DateCell from "../components/Cells/DateCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import CenterCell from "../components/Cells/CenterCell";
 
 const DATA_ITEM_KEY = "num";
-let deletedMainRows: any[] = [];
 let targetRowIndex: null | number = null;
 const CustomComboField = ["owner", "manager", "class", "species", "gender"];
-const DateField = ["recdt"];
+const DateField = ["recdt", "plandt"];
 const NumberField = ["age"];
+const CenterField = ["att_check"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -169,6 +172,16 @@ const CR_A1100W: React.FC = () => {
     }));
   };
 
+   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+   const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -202,6 +215,7 @@ const CR_A1100W: React.FC = () => {
     owner: "",
     species: "",
     manager: "",
+    att_check: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -230,6 +244,7 @@ const CR_A1100W: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_owner": filters.owner,
         "@p_manager": filters.manager,
+        "@p_att_check": filters.att_check,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -334,7 +349,7 @@ const CR_A1100W: React.FC = () => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총
+        총{" "}
         {mainDataResult.total == -1
           ? 0
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -390,7 +405,6 @@ const CR_A1100W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        deletedMainRows = [];
       }
     } catch (e) {
       alert(e);
@@ -409,7 +423,7 @@ const CR_A1100W: React.FC = () => {
 
   //저장 파라미터 초기 값
   const [paraDataSaved, setParaDataSaved] = useState({
-    workType: "",
+    workType: "N",
     orgdiv: "01",
     location: "01",
     rowstatus: "",
@@ -422,39 +436,23 @@ const CR_A1100W: React.FC = () => {
     form_id: "CR_A1100W",
   });
 
-  const onRemoveClick = async () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
-    let newData: any[] = [];
-    let Object: any[] = [];
-    let Object2: any[] = [];
-    let data;
-    mainDataResult.data.forEach((item: any, index: number) => {
-      if (!selectedState[item[DATA_ITEM_KEY]]) {
-        newData.push(item);
-        Object2.push(item);
-      } else {
-        const deletedData = {
-          ...item,
-          rowstatus: "D",
-        };
-        Object.push(index);
-        deletedMainRows.push(deletedData);
-      }
-    });
-
-    if (Math.min(...Object) < Math.min(...Object2)) {
-      data = mainDataResult.data[Math.min(...Object2)];
-    } else {
-      data = mainDataResult.data[Math.min(...Object) - 1];
-    }
-
-    setMainDataResult((prev: { total: number}) => ({
-      data: newData,
-      total: prev.total-  Object.length,
-    }));
-    setSelectedState({
-      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
-    });
+  const para: Iparameters = {
+    procedureName: "P_CR_A1100W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": "N",
+      "@p_orgdiv": paraDataSaved.orgdiv,
+      "@p_location": paraDataSaved.location,
+      "@p_rowstatus_s": paraDataSaved.rowstatus,
+      "@p_membership_id_s": paraDataSaved.membership_id,
+      "@p_seq_s": paraDataSaved.seq,
+      "@p_custcd_s": paraDataSaved.custcd,
+      "@p_recdt_s": paraDataSaved.recdt,
+      "@p_userid": paraDataSaved.userid,
+      "@p_pc": paraDataSaved.pc,
+      "@p_form_id": paraDataSaved.form_id,
+    },
   };
 
   type TdataArr = {
@@ -469,12 +467,12 @@ const CR_A1100W: React.FC = () => {
     let valid = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstauts === "N" || item.rowstauts === "U") &&
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length === 0) return false;
 
     try {
       dataItem.map((item: any) => {
@@ -485,6 +483,10 @@ const CR_A1100W: React.FC = () => {
           item.recdt.substring(6, 8).length != 2
         ) {
           throw findMessage(messagesData, "CR_A1100W_002");
+        } else if (
+          toDate(item.recdt) < toDate(item.plandt)   // 등원예정일자 이전 일자로 수정할 경우
+        ) {
+          throw findMessage(messagesData, "CR_A1100W_003");
         }
       });
     } catch (e) {
@@ -493,6 +495,20 @@ const CR_A1100W: React.FC = () => {
     }
 
     if (!valid) return false;
+
+    // 등원예정 일자와 다른 건이 있을 경우 안내 메세지 (Yes, No)
+    let check = false;
+    dataItem.forEach((item: any) => {
+      if (item.recdt !== item.plandt) {
+        check = true;
+      }
+    });
+
+    if (check) {
+      if (!window.confirm(findMessage(messagesData, "CR_A1100W_004"))) {
+        return;
+      }
+    };
 
     let dataArr: TdataArr = {
       rowstatus: [],
@@ -503,22 +519,6 @@ const CR_A1100W: React.FC = () => {
     };
 
     dataItem.forEach((item: any, idx: number) => {
-      const {
-        rowstatus = "",
-        membership_id = "",
-        seq = "",
-        custcd = "",
-        recdt = "",
-      } = item;
-
-      dataArr.rowstatus.push(rowstatus);
-      dataArr.membership_id.push(membership_id);
-      dataArr.seq.push(seq);
-      dataArr.custcd.push(custcd);
-      dataArr.recdt.push(recdt);
-    });
-
-    deletedMainRows.forEach((item: any, idx: number) => {
       const {
         rowstatus = "",
         membership_id = "",
@@ -554,7 +554,7 @@ const CR_A1100W: React.FC = () => {
     let data: any;
     setLoading(true);
     try {
-      data = await processApi<any>("procedure", paraDataSaved);
+      data = await processApi<any>("procedure", para);
     } catch (error) {
       data = null;
     }
@@ -597,7 +597,7 @@ const CR_A1100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataSaved != undefined && paraDataSaved.recdt != "") {
+    if (paraDataSaved != undefined) {
       fetchTodoGridSaved();
     }
   }, [paraDataSaved])
@@ -661,13 +661,15 @@ const CR_A1100W: React.FC = () => {
         field == "tel_no" ||
         field == "gubun" ||
         field == "minus" ||
-        field == "manager"
+        field == "manager" ||
+        field == "plandt" ||
+        field == "att_check"
     ) {
       valid = true;
     }
 
     if (valid == false) {
-      const newData = mainDataResult.data.map((item: { [x: string]: any}) =>
+      const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
@@ -678,20 +680,20 @@ const CR_A1100W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
-      setTempResult((prev: { total: any }) => {
+      setTempResult((prev) => {
         return {
           data: newData,
           total: prev.total,
         };
       });
-      setMainDataResult((prev: { total: any }) => {
+      setMainDataResult((prev) => {
         return {
           data: newData,
           total: prev.total,
         };
       });
     } else {
-      setTempResult((prev: { total: any }) => {
+      setTempResult((prev) => {
         return {
           data: mainDataResult.data,
           total: prev.total,
@@ -805,7 +807,7 @@ const CR_A1100W: React.FC = () => {
                   />
                 )}
               </td>
-              <th>출석일자</th>
+              <th>조회일자</th>
               <td>
                 <DatePicker
                   name="recdt"
@@ -826,6 +828,20 @@ const CR_A1100W: React.FC = () => {
                     changeData={filterComboBoxChange}
                   />
                 )}
+              </td>
+              <th>등원여부</th>
+              <td>
+                <div className="radio_form_box">
+                  <div className="radio_inner">
+                    {customOptionData !== null && (
+                      <CommonRadioGroup
+                        name="att_check"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </div>
+                </div>
               </td>
             </tr>
             <tr>
@@ -889,13 +905,6 @@ const CR_A1100W: React.FC = () => {
             <GridTitle>출석 리스트</GridTitle>
             <ButtonContainer>
               <Button
-                onClick={onRemoveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
                 onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
@@ -905,13 +914,13 @@ const CR_A1100W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{height: "73vh"}}
+            style={{height: "75vh"}}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
                 recdt: row.recdt  
                   ? new Date(dateformat(row.recdt))
-                  : new Date(),
+                  : new Date(dateformat("19991231")),
                 rowstatus:
                     row.rowstatus == null ||
                     row.rowstatus == "" ||
@@ -979,6 +988,8 @@ const CR_A1100W: React.FC = () => {
                         ? CustomComboBoxCell
                         : NumberField.includes(item.fieldName)
                         ? NumberCell
+                        : CenterField.includes(item.fieldName)
+                        ? CenterCell
                         : undefined
                     }
                     footerCell={

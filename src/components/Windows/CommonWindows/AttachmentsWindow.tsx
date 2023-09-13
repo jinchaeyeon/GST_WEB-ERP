@@ -374,6 +374,7 @@ const KendoWindow = ({
               id="uploadAttachment"
               style={{ display: "none" }}
               type="file"
+              accept="*"
               multiple
               ref={excelInput}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
