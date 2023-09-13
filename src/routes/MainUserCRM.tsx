@@ -179,7 +179,7 @@ const Main: React.FC = () => {
         };
       });
       if (rowCount > 0) {
-        if(key != "") {
+        if (key != "") {
           setSelectedState(key);
         } else {
           setSelectedState(row[0][DATA_ITEM_KEY]);
@@ -239,7 +239,7 @@ const Main: React.FC = () => {
         ...prev,
         rowstatus: "U",
       }));
-  
+
       setSchedulerData((prev) => {
         return {
           data: row,
@@ -262,7 +262,7 @@ const Main: React.FC = () => {
     adjdt: "",
     userid: userId,
     pc: pc,
-    form_id: "HOME"
+    form_id: "HOME",
   });
 
   const para: Iparameters = {
@@ -299,7 +299,7 @@ const Main: React.FC = () => {
 
     if (data.isSuccess === true) {
       alert("신청이 완료되었습니다.");
-      if(isMobile) {
+      if (isMobile) {
         if (swiper) {
           swiper.slideTo(1);
         }
@@ -317,7 +317,7 @@ const Main: React.FC = () => {
         adjdt: "",
         userid: userId,
         pc: pc,
-        form_id: "HOME"
+        form_id: "HOME",
       });
     } else {
       console.log("[오류 발생]");
@@ -329,11 +329,17 @@ const Main: React.FC = () => {
 
   const onSave = (pastday: string, currentday: string) => {
     if (currentday != null) {
-      const find_key = schedulerData.data.filter((item) => item.date == pastday)[0].membership_key;
-      const number = cardOptionData.data.filter((item) => item[DATA_ITEM_KEY] == selectedState)[0].adjqty;
-      if(find_key != undefined) {
+      const find_key = schedulerData.data.filter(
+        (item) => item.date == pastday
+      )[0].membership_key;
+      const number = cardOptionData.data.filter(
+        (item) => item[DATA_ITEM_KEY] == selectedState
+      )[0].adjqty;
+      if (find_key != undefined) {
         alert(`잔여 변경 횟수는 ${number}회 입니다.`);
-        if (!window.confirm("변경신청 후 취소 할 수 없습니다. 신청하시겠습니까?")) {
+        if (
+          !window.confirm("변경신청 후 취소 할 수 없습니다. 신청하시겠습니까?")
+        ) {
           return false;
         }
         setParaData((prev) => ({
@@ -351,13 +357,13 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     fetchDetail();
-  }, [selectedState])
+  }, [selectedState]);
   return (
     <>
-      <TitleContainer>
+      <TitleContainer style={{ display: "block" }}>
         <Title>{userName}님 안녕하세요!</Title>
       </TitleContainer>
-      <GridContainerWrap height={"90%"}>
+      <GridContainerWrap height={isMobile ? "" : "90%"}>
         {!isMobile ? (
           <>
             <GridContainer
@@ -436,11 +442,7 @@ const Main: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                height="100vh"
-                width="100%"
-                style={{ overflowY: "scroll" }}
-              >
+              <GridContainer width="100%" style={{height: "100vh", overflowY: "scroll"}}>
                 <TitleContainer>
                   <Title>
                     우리집 강아지
@@ -482,7 +484,7 @@ const Main: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <div style={{ width: "100%", height: "100%" }}>
+              <GridContainer width="100%" height="100%">
                 <TitleContainer>
                   <Title>
                     {cardOptionData.data.filter(
@@ -515,7 +517,7 @@ const Main: React.FC = () => {
                     }
                   }}
                 />
-              </div>
+              </GridContainer>
             </SwiperSlide>
             {changeDate != "" ? (
               <SwiperSlide key={2}>

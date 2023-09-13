@@ -385,7 +385,7 @@ export default App;
 const CalendarContainer = styled.div`
   /* ~~~ container styles ~~~ */
   margin: auto;
-  height: 85vh;
+  height: 100vh !important;
   background-color: ${(props) => props.backgroundColor};
   padding: 10px;
   border-radius: 3px;
