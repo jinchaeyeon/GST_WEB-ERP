@@ -557,8 +557,8 @@ const PanelBarNavContainer = (props: any) => {
             <AppName theme={currentTheme} onClick={() => setIsMenuOpend(false)}>
             {/* WEB ERP개발할떄 바꿀부분입니다. */}
               {path.includes("localhost") ? (
-                <Logo size="32px" name={"CRM_DDGD"} />
-                //<Logo size="32px" name={"GST WEB"} />
+                // <Logo size="32px" name={"CRM_DDGD"} />
+                <Logo size="32px" name={"GST WEB"} />
               ) : path.split("/")[2].split(".")[1] == "gsti" ? (
                 <Logo size="32px" name={"GST WEB"} />
               ) : path.split("/")[2].split(".")[1] == "ddgd" ? (
@@ -710,8 +710,8 @@ const PanelBarNavContainer = (props: any) => {
             <AppName theme={currentTheme}>
               {/* WEB ERP개발할떄 바꿀부분입니다. */}
               {path.includes("localhost") ? (
-                <Logo size="32px" name={"CRM_DDGD"} />
-                //<Logo size="32px" name={"GST WEB"} />
+                //<Logo size="32px" name={"CRM_DDGD"} />
+                <Logo size="32px" name={"GST WEB"} />
               ) : path.split("/")[2].split(".")[1] == "gsti" ? (
                 <Logo size="32px" name={"GST WEB"} />
               ) : path.split("/")[2].split(".")[1] == "ddgd" ? (

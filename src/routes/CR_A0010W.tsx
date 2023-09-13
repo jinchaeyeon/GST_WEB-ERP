@@ -126,7 +126,6 @@ const defaultItemInfo = {
   user_id: "",
 };
 let temp = 0;
-const COLUMN_MIN = 4;
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
   setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
@@ -146,7 +145,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setItemInfo } = useContext(FormContext);
-  const excelInput: any = React.useRef();
+  const excelInput2: any = React.useRef();
   const [imgBase64, setImgBase64] = useState<string>(); // 파일 base64
 
   useEffect(() => {
@@ -164,8 +163,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
   });
 
   const onAttWndClick2 = () => {
-    const uploadInput = document.getElementById("uploadAttachment");
-    uploadInput!.click();
+    const uploadInput2 = document.getElementById("uploadAttachment2");
+    uploadInput2!.click();
   };
 
   const getAttachmentsData = async (files: FileList | null) => {
@@ -209,7 +208,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
         <div style={{ textAlign: "center" }}>
           <img
             style={{ display: "block", margin: "auto", width: "60%" }}
-            ref={excelInput}
+            ref={excelInput2}
             src={imgBase64}
             alt="UserImage"
           />
@@ -236,11 +235,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
             이미지 업로드
           </Button>
           <input
-            id="uploadAttachment"
+            id="uploadAttachment2"
             style={{ display: "none" }}
             type="file"
             accept="image/*"
-            ref={excelInput}
+            ref={excelInput2}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               getAttachmentsData(event.target.files);
             }}
@@ -338,7 +337,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
     >
       {isInEdit ? (
         <Input value={value} onChange={handleChange} type={"password"}></Input>
-      ) : value ? (
+      ) : value != ""? (
         "*********"
       ) : (
         ""
@@ -1263,79 +1262,92 @@ const CR_A0010W: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
-    // if (jsonArr.length == 0) {
-    //   alert("데이터가 없습니다.");
-    // } else {
-    //   let valid = true;
-    //   jsonArr.map((item: any) => {
-    //     Object.keys(item).map((items: any) => {
-    //       if (
-    //         items != "단가" &&
-    //         items != "비고" &&
-    //         items != "품목명" &&
-    //         items != "품목코드"
-    //       ) {
-    //         valid = false;
-    //       }
-    //     });
-    //   });
-    //   if (valid == true) {
-    //     let dataArr: TdataArr = {
-    //       unpitem: [],
-    //       rowstatus: [],
-    //       itemcd: [],
-    //       unp: [],
-    //       itemacnt: [],
-    //       remark: [],
-    //       recdt: [],
-    //       amtunit: [],
-    //     };
-    //     jsonArr.forEach((item: any, idx: number) => {
-    //       const {
-    //         unpitem = "",
-    //         품목코드 = "",
-    //         품목명 = "",
-    //         단가 = "",
-    //         비고 = "",
-    //         itemacnt = "",
-    //         recdt = "",
-    //         amtunit = "",
-    //       } = item;
-    //       dataArr.rowstatus.push("N");
-    //       dataArr.unpitem.push(unpitem == "" ? subfilters.unpitem : unpitem);
-    //       dataArr.itemcd.push(품목코드);
-    //       dataArr.unp.push(단가);
-    //       dataArr.itemacnt.push(
-    //         itemacnt == ""
-    //           ? Object.getOwnPropertyNames(selectedsubDataState)[0]
-    //           : itemacnt
-    //       );
-    //       dataArr.remark.push(비고);
-    //       dataArr.recdt.push(
-    //         recdt == "" ? convertDateToStr(new Date()) : recdt
-    //       );
-    //       dataArr.amtunit.push(amtunit == "" ? subfilters.amtunit : amtunit);
-    //     });
-    //     setParaData((prev) => ({
-    //       ...prev,
-    //       workType: "N",
-    //       orgdiv: "01",
-    //       user_id: userId,
-    //       form_id: "BA_A0080W",
-    //       pc: pc,
-    //       unpitem: dataArr.unpitem.join("|"),
-    //       rowstatus: dataArr.rowstatus.join("|"),
-    //       itemcd: dataArr.itemcd.join("|"),
-    //       unp: dataArr.unp.join("|"),
-    //       itemacnt: dataArr.itemacnt.join("|"),
-    //       remark: dataArr.remark.join("|"),
-    //       recdt: dataArr.recdt.join("|"),
-    //       amtunit: dataArr.amtunit.join("|"),
-    //     }));
-    //   } else {
-    //     alert("양식이 맞지 않습니다.");
-    //   }
-    // }
+    if (jsonArr.length == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      setLoading(true);
+      let valid = true;
+      jsonArr.map((item: any) => {
+        Object.keys(item).map((items: any) => {
+          if (
+            items != "사용자ID" &&
+            items != "사용자명" &&
+            items != "전화번호" &&
+            items != "휴대폰번호" &&
+            items != "생년월일"
+          ) {
+            valid = false;
+          }
+        });
+      });
+      if (valid == true) {
+        mainDataResult.data.map((item) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
+
+        jsonArr.forEach((item: any, idx: number) => {
+          const {
+            사용자ID = "",
+            사용자명 = "",
+            전화번호 = "",
+            휴대폰번호 = "",
+            생년월일 = "",
+          } = item;
+
+          const newDataItem = {
+            [DATA_ITEM_KEY]: ++temp,
+            apply_start_date: convertDateToStr(new Date()),
+            apply_end_date: "99991231",
+            bircd: "Y",
+            birdt: 생년월일.toString(),
+            custcd: "",
+            dptcd: "",
+            email: "",
+            hold_check_yn: "N",
+            home_menu_id: "",
+            ip_check_yn: "N",
+            location: "",
+            mbouseyn: "N",
+            memo: "",
+            mobile_no: 휴대폰번호,
+            opengb: "",
+            orgdiv: "01",
+            password: "",
+            password_confirm: "",
+            position: "",
+            postcd: "",
+            profile_image: "",
+            rtrchk: "N",
+            tel_no: 전화번호,
+            temp: "",
+            usediv: "Y",
+            user_category: "EXTERNAL",
+            user_id: 사용자ID,
+            user_ip: "",
+            user_name: 사용자명,
+            rowstatus: "N",
+          };
+          console.log(newDataItem)
+          setMainDataResult((prev) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+          setPage((prev) => ({
+            ...prev,
+            skip: 0,
+            take: prev.take + 1,
+          }));
+          setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+        });
+      } else {
+        alert("양식이 맞지 않습니다.");
+      }
+      setLoading(false);
+    }
   };
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
