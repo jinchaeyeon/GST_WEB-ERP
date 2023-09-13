@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { convertDateToStr } from "../CommonFunction";
 import { useApi } from "../../hooks/api";
 import { process } from "@progress/kendo-data-query";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 function App(props) {
   const data =
@@ -150,15 +151,15 @@ function App(props) {
             >
               등원 완료 :
             </p>
-            <span
-              class="k-icon k-i-heart k-icon-md"
-              style={{
+            <FavoriteIcon
+              sx={{
                 color: "#D3D3D3",
                 backgroundColor: "white",
                 borderRadius: "30px",
                 fontSize: "14px",
+                marginBottom: "-5px",
               }}
-            ></span>
+            />
             <p
               style={{
                 marginLeft: "15px",
@@ -169,15 +170,15 @@ function App(props) {
             >
               등원 예정 :
             </p>
-            <span
-              class="k-icon k-i-heart k-icon-md"
-              style={{
+            <FavoriteIcon
+              sx={{
                 color: data.color,
                 backgroundColor: "white",
                 borderRadius: "30px",
+                marginBottom: "-5px",
                 fontSize: "14px",
               }}
-            ></span>
+            />
             <p
               style={{
                 marginLeft: "15px",
@@ -188,15 +189,15 @@ function App(props) {
             >
               변경 신청 완료 :
             </p>
-            <span
-              class="k-icon k-i-heart k-icon-md"
-              style={{
+            <FavoriteIcon
+              sx={{
                 color: "#F9D202",
                 backgroundColor: "white",
                 borderRadius: "30px",
+                marginBottom: "-5px",
                 fontSize: "14px",
               }}
-            ></span>
+            />
           </div>
         </>
       ) : (
@@ -222,14 +223,14 @@ function App(props) {
           >
             등원 완료 :
           </p>
-          <span
-            class="k-icon k-i-heart k-icon-md"
-            style={{
+          <FavoriteIcon
+            sx={{
               color: "#D3D3D3",
               backgroundColor: "white",
               borderRadius: "30px",
+              marginBottom: "-5px",
             }}
-          ></span>
+          />
           <p
             style={{
               marginLeft: "15px",
@@ -239,14 +240,14 @@ function App(props) {
           >
             등원 예정 :
           </p>
-          <span
-            class="k-icon k-i-heart k-icon-md"
-            style={{
+          <FavoriteIcon
+            sx={{
               color: data.color,
               backgroundColor: "white",
               borderRadius: "30px",
+              marginBottom: "-5px",
             }}
-          ></span>
+          />
           <p
             style={{
               marginLeft: "15px",
@@ -256,14 +257,14 @@ function App(props) {
           >
             변경 신청 완료 :
           </p>
-          <span
-            class="k-icon k-i-heart k-icon-md"
-            style={{
+          <FavoriteIcon
+            sx={{
               color: "#F9D202",
               backgroundColor: "white",
               borderRadius: "30px",
+              marginBottom: "-5px",
             }}
-          ></span>
+          />
         </div>
       )}
 
@@ -278,8 +279,8 @@ function App(props) {
           )
         }
         tileClassName={({ date, view }) =>
-          (view == "month" &&
-          ! mainDataResult.data.find(
+          view == "month" &&
+          !mainDataResult.data.find(
             (x) => x.date == moment(date).format("YYYYMMDD")
           ) &&
           !schedulerData.find(
@@ -287,7 +288,9 @@ function App(props) {
               x.date == moment(date).format("YYYYMMDD") &&
               x.finyn == "N" &&
               x.appyn == "Y"
-          )) ? "no" : "yes"
+          )
+            ? "no"
+            : "yes"
         }
         onChange={(date) => changeDate(date)}
         tileContent={({ date, view }) => {
@@ -304,17 +307,18 @@ function App(props) {
                 <>
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
                     {!isMobile ? (
-                      <span
-                        class="k-icon k-i-heart"
-                        style={{ color: "#D3D3D3", fontSize: "3vw" }}
-                      ></span>
+                      <FavoriteIcon
+                        sx={{
+                          color: "#D3D3D3",
+                          fontSize: "3vw",
+                        }}
+                      />
                     ) : (
-                      <span
-                        class="k-icon k-i-heart"
-                        style={{
+                      <FavoriteIcon
+                        sx={{
                           color: "#D3D3D3",
                         }}
-                      ></span>
+                      />
                     )}
                   </div>
                 </>
@@ -331,17 +335,18 @@ function App(props) {
                 <>
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
                     {!isMobile ? (
-                      <span
-                        class="k-icon k-i-heart"
-                        style={{ color: "#F9D202", fontSize: "3vw" }}
-                      ></span>
+                      <FavoriteIcon
+                        sx={{
+                          color: "#F9D202",
+                          fontSize: "3vw",
+                        }}
+                      />
                     ) : (
-                      <span
-                        class="k-icon k-i-heart"
-                        style={{
+                      <FavoriteIcon
+                        sx={{
                           color: "#F9D202",
                         }}
-                      ></span>
+                      />
                     )}
                   </div>
                 </>
@@ -351,17 +356,18 @@ function App(props) {
                 <>
                   <div style={{ paddingTop: "30px", position: "absolute" }}>
                     {!isMobile ? (
-                      <span
-                        class="k-icon k-i-heart"
-                        style={{ color: data.color, fontSize: "3vw" }}
-                      ></span>
+                      <FavoriteIcon
+                        sx={{
+                          color: data.color,
+                          fontSize: "3vw",
+                        }}
+                      />
                     ) : (
-                      <span
-                        class="k-icon k-i-heart"
-                        style={{
+                      <FavoriteIcon
+                        sx={{
                           color: data.color,
                         }}
-                      ></span>
+                      />
                     )}
                   </div>
                 </>
@@ -388,7 +394,7 @@ const CalendarContainer = styled.div`
     height: 100%;
   }
 
-  .no{
+  .no {
     background-color: #d3d3d3;
     opacity: 0.5;
     color: black;

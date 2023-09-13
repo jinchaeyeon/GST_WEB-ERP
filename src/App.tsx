@@ -111,7 +111,6 @@ import MA_B3100W from "./routes/MA_B3100W";
 import MA_B7000W from "./routes/MA_B7000W";
 import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
-import Main from "./routes/Main";
 import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
@@ -176,6 +175,7 @@ const LoginCRM = lazy(() => import("./routes/LoginCRM"));
 const Login = lazy(() => import("./routes/Login"));
 const MainUserCRM = lazy(() => import("./routes/MainUserCRM"));
 const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
+const Main = lazy(() => import("./routes/Main"));
 
 load(
   likelySubtags,
@@ -416,10 +416,10 @@ const AppInner: React.FC = () => {
     if (path.includes("localhost")) {
       //WEB ERP개발할떄 바꿀부분입니다.
 
-      // roles = "CRM_DDGD";
-      // switcher({ theme: "yellow" });
-      roles = "GST WEB";
-      switcher({ theme: "blue" });
+      roles = "CRM_DDGD";
+      switcher({ theme: "yellow" });
+      // roles = "GST WEB";
+      // switcher({ theme: "blue" });
     } else {
       if (path.split("/")[2].split(".")[1] == "gsti") {
         roles = "GST WEB";
