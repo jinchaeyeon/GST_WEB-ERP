@@ -56,10 +56,10 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DetailWindow from "../components/Windows/SA_A2000W_Window";
+import DetailWindow from "../components/Windows/SA_A2010W_Window";
 import { useApi } from "../hooks/api";
 import { deletedAttadatnumsState, isLoading } from "../store/atoms";
-import { gridList } from "../store/columns/SA_A2000W_C";
+import { gridList } from "../store/columns/SA_A2010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "ordnum";
@@ -1081,14 +1081,14 @@ const SA_B2000: React.FC = () => {
         convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A2000W_008");
+        throw findMessage(messagesData, "SA_A2010W_008");
       } else if (
         convertDateToStr(filters.ymdTodt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.ymdTodt).substring(6, 8) > "31" ||
         convertDateToStr(filters.ymdTodt).substring(6, 8) < "01" ||
         convertDateToStr(filters.ymdTodt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A2000W_008");
+        throw findMessage(messagesData, "SA_A2010W_008");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화

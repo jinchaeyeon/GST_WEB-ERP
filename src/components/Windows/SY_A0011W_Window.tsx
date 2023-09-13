@@ -13,7 +13,9 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import { Iparameters } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc
+  UseParaPc,
+  findMessage,
+  UseMessages
 } from "../CommonFunction";
 
 type TKendoWindow = {
@@ -135,6 +137,10 @@ const KendoWindow = ({
       });
     }
   };
+  
+  const pathname: string = window.location.pathname.replace("/", "");
+  const [messagesData, setMessagesData] = useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
@@ -192,6 +198,22 @@ const KendoWindow = ({
   };
 
   const handleSubmit = () => {
+    
+
+    let valid = true;
+    try {
+      if (!initialVal.user_group_id) {
+        throw findMessage(messagesData, "SY_A0011W_001");
+      }
+
+      if (!initialVal.user_group_name) {
+        throw findMessage(messagesData, "SY_A0011W_002");
+      }
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+    if (!valid) return false;
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
@@ -200,6 +222,7 @@ const KendoWindow = ({
       memo: initialVal.memo,
       use_yn: initialVal.use_yn === "Y" ? "Y" : "N",
     }));
+    
   };
 
   useEffect(() => {

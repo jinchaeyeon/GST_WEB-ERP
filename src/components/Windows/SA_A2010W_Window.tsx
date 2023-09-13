@@ -1067,19 +1067,19 @@ const KendoWindow = ({
     try {
       mainDataResult.data.map((item: any) => {
         if (!item.itemcd) {
-          throw findMessage(messagesData, "SA_A2000W_004");
+          throw findMessage(messagesData, "SA_A2010W_004");
         }
         if (!item.itemnm) {
-          throw findMessage(messagesData, "SA_A2000W_005");
+          throw findMessage(messagesData, "SA_A2010W_005");
         }
         if (!checkIsDDLValid(item.itemacnt)) {
-          throw findMessage(messagesData, "SA_A2000W_006");
+          throw findMessage(messagesData, "SA_A2010W_006");
         }
         if (item.qty < 1) {
-          throw findMessage(messagesData, "SA_A2000W_007");
+          throw findMessage(messagesData, "SA_A2010W_007");
         }
         if (!item.unp) {
-          throw findMessage(messagesData, "SA_A2000W_009");
+          throw findMessage(messagesData, "SA_A2010W_009");
         }
       });
     } catch (e) {

@@ -1380,7 +1380,6 @@ const SA_B2000: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
