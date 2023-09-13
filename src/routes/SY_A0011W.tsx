@@ -48,7 +48,7 @@ import {
   UsePermissions,
   getQueryFromBizComponent,
   getYn,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -65,6 +65,7 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0011W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { Item } from "devextreme-react/gantt";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -858,6 +859,8 @@ const Page: React.FC = () => {
       "menu_name",
       SUB_ITEMS_FIELD
     );
+    let valid = true;
+
     flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
     const dataItem: { [name: string]: any } = flatData.filter((item: any) => {

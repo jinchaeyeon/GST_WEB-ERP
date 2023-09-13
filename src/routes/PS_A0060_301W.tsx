@@ -35,7 +35,6 @@ import {
   dateformat,
   getGridItemChangedData,
   toDate,
-  convertDateToStrWithTime2
  } from "../components/CommonFunction";
 import TopButtons from "../components/Buttons/TopButtons";
 import { ExcelExport, ExcelExportColumn } from "@progress/kendo-react-excel-export";
@@ -54,8 +53,6 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import React from "react";
 import DateCell from "../components/Cells/DateCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import App from "../components/DDGDcomponents/Calender";
-import Calender from "../components/DDGDcomponents/Calender";
 
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: any[] = [];
@@ -475,8 +472,6 @@ const PS_A0060_301W: React.FC = () => {
     type: "",
     date: "",
     apply_date: "",
-    start_time: convertDateToStrWithTime2(new Date()),
-    end_time: convertDateToStrWithTime2(new Date()),
     description: "",
     id: userId,
     pc: pc,
@@ -498,8 +493,6 @@ const PS_A0060_301W: React.FC = () => {
       "@p_type": paraDataSaved.type,
       "@p_date": paraDataSaved.date,
       "@p_apply_date": paraDataSaved.apply_date,
-      "@p_start_time": paraDataSaved.start_time,
-      "@p_end_time": paraDataSaved.end_time,
       "@p_description": paraDataSaved.description,
       "@p_id": paraDataSaved.id,
       "@p_pc": paraDataSaved.pc,
@@ -516,8 +509,6 @@ const PS_A0060_301W: React.FC = () => {
     type: string[];
     date: string[];
     apply_date: string[];
-    start_time: string[];
-    end_time: string[];
     description: string[];
   };
 
@@ -525,7 +516,7 @@ const PS_A0060_301W: React.FC = () => {
     let valid = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstauts === "U") &&
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -559,8 +550,6 @@ const PS_A0060_301W: React.FC = () => {
       type: [],
       date: [],
       apply_date: [],
-      start_time: [],
-      end_time: [],
       description: [],
     };
 
@@ -574,8 +563,6 @@ const PS_A0060_301W: React.FC = () => {
         type = "",
         date = "",
         apply_date = "",
-        start_time = "",
-        end_time= "",
         description = "",
       } = item;
 
@@ -587,8 +574,6 @@ const PS_A0060_301W: React.FC = () => {
       dataArr.type.push(type);
       dataArr.date.push(date);
       dataArr.apply_date.push(apply_date);
-      dataArr.start_time.push(start_time);
-      dataArr.end_time.push(end_time);
       dataArr.description.push(description);
     });
 
@@ -615,8 +600,6 @@ const PS_A0060_301W: React.FC = () => {
       dataArr.type.push(type);
       dataArr.date.push(date);
       dataArr.apply_date.push(apply_date);
-      dataArr.start_time.push(start_time);
-      dataArr.end_time.push(end_time);
       dataArr.description.push(description);
     });
 
@@ -632,8 +615,6 @@ const PS_A0060_301W: React.FC = () => {
       type: dataArr.type.join("|"),
       date: dataArr.date.join("|"),
       apply_date: dataArr.apply_date.join("|"),
-      start_time: dataArr.start_time.join("|"),
-      end_time: dataArr.end_time.join("|"),
       description: dataArr.description.join("|"),
       id: userId,
       pc: pc,
@@ -1081,7 +1062,7 @@ const PS_A0060_301W: React.FC = () => {
           }}
         >
           <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
+            <GridTitle>휴일 리스트</GridTitle>
             <ButtonContainer>
               <Button
                 onClick={onAddClick}
