@@ -51,7 +51,7 @@ const UserWindow = ({ setVisible, setData }: IWindow) => {
     left: 300,
     top: 100,
     width: 830,
-    height: 850,
+    height: 1200,
   });
 
   const setLoading = useSetRecoilState(isLoading);

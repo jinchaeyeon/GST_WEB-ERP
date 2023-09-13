@@ -842,7 +842,7 @@ const EA_A2000: React.FC = () => {
   };
   let deviceHeight = window.innerHeight;
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   const search = () => {
     resetAllGrid();

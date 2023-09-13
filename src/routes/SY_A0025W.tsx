@@ -80,7 +80,7 @@ const SY_A0025W: React.FC = () => {
 
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);

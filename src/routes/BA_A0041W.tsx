@@ -153,7 +153,7 @@ const BA_A0041W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 

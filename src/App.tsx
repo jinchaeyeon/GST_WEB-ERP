@@ -468,7 +468,13 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/Home" component={Main} exact />
                   ) : roles == "CRM_DDGD" ? (
                     isAdmin ? (
-                      <AuthRoute path="/Home" component={MainAdminCRM} exact />
+                      <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                        <AuthRoute
+                          path="/Home"
+                          component={MainAdminCRM}
+                          exact
+                        />
+                      </GlobalStyles>
                     ) : (
                       <GlobalStyles
                         style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}

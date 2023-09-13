@@ -59,7 +59,7 @@ const Main: React.FC = () => {
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   useEffect(() => {
     if (sessionUserId === "") fetchSessionItem();

@@ -20,7 +20,7 @@ const CardBox = (props) => {
     setBizComponentData
   );
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
   const [classListData, setClassListData] = useState([COM_CODE_DEFAULT_VALUE]);
   const processApi = useApi();
   useEffect(() => {

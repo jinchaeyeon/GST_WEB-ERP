@@ -441,7 +441,7 @@ const BA_A0080: React.FC = () => {
   //FormContext에서 받아오기위해 state
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
   UsePermissions(setPermissions);
 
   //메시지 조회

@@ -171,7 +171,7 @@ const KendoWindow = ({
   UseBizComponent("L_sysUserMaster_001, L_BA000", setBizComponentData);
 
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,

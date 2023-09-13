@@ -729,7 +729,7 @@ const QC_A0120: React.FC = () => {
                   <ChartSeries>
                     <ChartSeriesItem
                       type="pie"
-                      width={850}
+                      width={1200}
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "설비별"
                       )}
@@ -780,7 +780,7 @@ const QC_A0120: React.FC = () => {
               </GridContainerWrap>
             </GridContainer>
 
-            <CusomizedGrid maxWidth="850px"></CusomizedGrid>
+            <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="소재불량">
@@ -814,7 +814,7 @@ const QC_A0120: React.FC = () => {
                   <ChartSeries>
                     <ChartSeriesItem
                       type="pie"
-                      width={850}
+                      width={1200}
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "설비별"
                       )}
@@ -868,7 +868,7 @@ const QC_A0120: React.FC = () => {
               </GridContainerWrap>
             </GridContainer>
 
-            <CusomizedGrid maxWidth="850px"></CusomizedGrid>
+            <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="검사불량">

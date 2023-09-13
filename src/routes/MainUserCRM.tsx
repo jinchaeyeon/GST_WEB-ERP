@@ -75,7 +75,7 @@ const Main: React.FC = () => {
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [changeDate, setChangeDate] = useState<string>("");
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
   const size: Tsize = useWindowSize();
   function useWindowSize() {
     // Initialize state with undefined width/height so server and client renders match
