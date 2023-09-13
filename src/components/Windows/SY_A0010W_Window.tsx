@@ -858,15 +858,24 @@ const KendoWindow = ({
             valid = false;
           }
         });
-
+        
         if (!item.sub_code) {
           throw findMessage(messagesData, "SY_A0010W_004");
         }
         if (!item.code_name) {
           throw findMessage(messagesData, "SY_A0010W_005");
         }
-        if (isNaN(item.sort_seq)) {
+        if (!item.sort_seq) {
           throw findMessage(messagesData, "SY_A0010W_006");
+        }
+        if (!initialVal.group_code) {
+          throw findMessage(messagesData, "SY_A0010W_008");
+        }
+        if (!initialVal.group_name) {
+          throw findMessage(messagesData, "SY_A0010W_009");
+        }
+        if (!initialVal.group_category) {
+          throw findMessage(messagesData, "SY_A0010W_010");
         }
       });
     } catch (e) {
@@ -1228,6 +1237,7 @@ const KendoWindow = ({
                   <td>
                     {workType == "N" ? (
                       <Input
+
                         name="group_code"
                         type="text"
                         value={initialVal.group_code}
