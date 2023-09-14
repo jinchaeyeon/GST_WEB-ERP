@@ -20,19 +20,19 @@ export const gridList: Array<TGrid> = [
         id: "col_publishdate",
         field: "publishdate",
         caption: "공지기간",
-        width: 280,
+        width: 250,
       },
       {
         id: "col_title",
         field: "title",
         caption: "제목",
-        width: 150,
+        width: 200,
       },
       {
         id: "col_contents2",
         field: "contents2",
         caption: "내용",
-        width: 800,
+        width: 500,
       },
       {
         id: "col_publish_yn",

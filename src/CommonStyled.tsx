@@ -999,6 +999,14 @@ export const AdminQuestionBox = styled.div`
     color: #fff;
     margin-right: 10px;
     font-size: 0.8rem;
+
+    .Y {
+      background-color: #f9d202;
+    }
+
+    .R {
+      background-color: #f76700;
+    }
   }
 
   @media (max-width: 1200px) {
@@ -1014,7 +1022,7 @@ export const AdminQuestionBox = styled.div`
     > .date {
       width: 100%;
       display: flex;
-      justify-content: center;
+      justify-content: flex-end;
     }
   }
 `;

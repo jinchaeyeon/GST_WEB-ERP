@@ -2,6 +2,14 @@ import { Card, CardContent, Grid } from "@mui/material";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
+import {
+  GridColumn,
+  GridDataStateChangeEvent,
+  Grid as GridKendo,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -26,22 +34,14 @@ import {
   dateformat2,
   getQueryFromBizComponent,
 } from "../components/CommonFunction";
-import CurrentTime from "../components/DDGDcomponents/CurrentTime";
-import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
-import { Iparameters } from "../store/types";
 import {
   COM_CODE_DEFAULT_VALUE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import {
-  Grid as GridKendo,
-  GridDataStateChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridColumn,
-} from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
+import CurrentTime from "../components/DDGDcomponents/CurrentTime";
+import { useApi } from "../hooks/api";
+import { loginResultState, sessionItemState } from "../store/atoms";
+import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 
@@ -480,20 +480,30 @@ const Main: React.FC = () => {
                 <div className="scroll-wrapper">
                   {questionDataResult.data.map((item, idx) => (
                     <AdminQuestionBox key={idx}>
-                      <div className={`status`}>{item.custnm}</div>
+                      <div
+                        className={`status ${
+                          item.janqty == 1 ? "Y" : item.janqty == 0 ? "R" : ""
+                        }`}
+                      >
+                        {item.custnm}
+                      </div>
                       <div>
-                        <p className="title">회원권명 : {item.gubunnm}</p>
-                        <p className="customer">잔량 : {item.janqty}</p>
+                        <p className="title">
+                          기간 : {dateformat2(item.strdt)} ~{" "}
+                          {dateformat2(item.enddt)}
+                        </p>
+                        <p className="customer">반 명 : {item.class}</p>
+                        <p className="customer">
+                          잔여 등원횟수 : {item.janqty}
+                        </p>
+                        <p className="customer">
+                          변경 가능횟수 : {item.adjqty}
+                        </p>
                       </div>
                       <div className="date">
-                        <p>{dateformat2(item.strdt)}</p>
-                        <p
-                          style={{ display: "flex", justifyContent: "center" }}
-                        >
-                          {" "}
-                          ~{" "}
+                        <p>
+                          <Button themeColor={"primary"}>카톡</Button>
                         </p>
-                        <p>{dateformat2(item.enddt)}</p>
                       </div>
                     </AdminQuestionBox>
                   ))}
@@ -501,10 +511,10 @@ const Main: React.FC = () => {
               </ScrollableContainer>
             </GridContainer>
             <GridContainer width="25%" height="100%">
-              미지정
+              잔여 포인트
             </GridContainer>
             <GridContainer width="25%" height="100%">
-              <GridContainer height="55vh">미지정</GridContainer>
+              <GridContainer height="55vh">공지사항</GridContainer>
               <GridContainer height="35vh">
                 <GridTitleContainer>
                   <GridTitle>시스템 업데이트 공지사항</GridTitle>
@@ -757,15 +767,42 @@ const Main: React.FC = () => {
                   <div className="scroll-wrapper">
                     {questionDataResult.data.map((item, idx) => (
                       <AdminQuestionBox key={idx}>
-                        <div className={`status`}>{item.custnm}</div>
-                        <div>
-                          <p className="title">회원권명 : {item.gubunnm}</p>
-                          <p className="customer">잔량 : {item.janqty}</p>
+                        <div
+                          style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <div
+                            className={`status ${
+                              item.janqty == 1
+                                ? "Y"
+                                : item.janqty == 0
+                                ? "R"
+                                : ""
+                            }`}
+                          >
+                            {item.custnm}
+                          </div>
+                          <div className="date">
+                            <p>
+                              <Button themeColor={"primary"}>카톡</Button>
+                            </p>
+                          </div>
                         </div>
-                        <div className="date">
-                          <p>{dateformat2(item.strdt)}</p>
-                          <p> ~ </p>
-                          <p>{dateformat2(item.enddt)}</p>
+                        <div>
+                          <p className="title">
+                            기간 : {dateformat2(item.strdt)} ~{" "}
+                            {dateformat2(item.enddt)}
+                          </p>
+                          <p className="customer">반 명 : {item.class}</p>
+                        <p className="customer">
+                          잔여 등원횟수 : {item.janqty}
+                        </p>
+                        <p className="customer">
+                          변경 가능횟수 : {item.adjqty}
+                        </p>
                         </div>
                       </AdminQuestionBox>
                     ))}
@@ -774,11 +811,11 @@ const Main: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={2}>
-              <GridContainer width="100%">미지정</GridContainer>
+              <GridContainer width="100%">잔여 포인트</GridContainer>
             </SwiperSlide>
             <SwiperSlide key={3}>
               <GridContainer width="100%">
-                <GridContainer>미지정</GridContainer>
+                <GridContainer>공지사항</GridContainer>
                 <GridContainer>
                   <GridTitleContainer>
                     <GridTitle>시스템 업데이트 공지사항</GridTitle>

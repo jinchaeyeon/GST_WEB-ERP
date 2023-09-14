@@ -461,7 +461,7 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       if (workType === "U") {
         resetAllGrid();
-        reloadData(data.returnString);
+        reloadData(data.resultString);
         fetchMain(para);
         fetchGrid(filters.category);
       } else {
