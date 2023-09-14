@@ -2335,7 +2335,6 @@ const Page: React.FC = () => {
             >
               <GridTitleContainer>
                 <GridTitle>사용자별 메뉴 권한</GridTitle>
-
                 {permissions && (
                   <ButtonContainer>
                     <Button
@@ -2349,6 +2348,7 @@ const Page: React.FC = () => {
                   </ButtonContainer>
                 )}
               </GridTitleContainer>
+              
               <TreeList
                 style={{ height: "41.8vh", overflow: "auto" }}
                 data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -2366,6 +2366,9 @@ const Page: React.FC = () => {
                 subItemsField={SUB_ITEMS_FIELD}
                 expandField={EXPANDED_FIELD}
                 onExpandChange={onUserMenuExpandChange}
+                
+                
+
                 // 수정 기능
                 editField={EDIT_FIELD}
                 cellRender={renderers.cellRender}

@@ -890,10 +890,10 @@ const Page: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       group_code: selectedRowData.group_code,
-      pgNum: 1,
+      //pgNum: 1,
       isSearch: true,
     }));
-    setPage2(initialPageState);
+    //setPage(initialPageState);
   };
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1072,9 +1072,7 @@ const Page: React.FC = () => {
         } catch (error) {
           data3 = null;
         }
-      }
-
-      const isLastDataDeleted =
+        const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 0;
       const findRowIndex = rowsOfDataResult(mainDataResult).findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
@@ -1110,6 +1108,7 @@ const Page: React.FC = () => {
 
       if (paraDataDeleted.attdatnum)
         setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);

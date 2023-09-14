@@ -1442,12 +1442,12 @@ const BA_A0040: React.FC = () => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
 
-  const onDeleteClick2 = (e: any) => {
+  const onDeleteClick2 = () => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
 
-    if (mainDataResult.total > 0) {
+    if (mainDataResult.data.length != 0) {
       const items = Object.getOwnPropertyNames(selectedState)[0];
       const data = mainDataResult.data.filter(
         (item) => item.itemcd === items
