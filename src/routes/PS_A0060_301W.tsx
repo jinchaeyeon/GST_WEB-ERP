@@ -184,7 +184,7 @@ const PS_A0060_301W: React.FC = () => {
     work_type: "holiday",
     orgdiv: "01",
     location: "01",
-    resource_type: "",
+    resource_type: "holiday",
     yyyymm: new Date(),
     find_row_value: "",
     pgNum: 1,
@@ -194,7 +194,7 @@ const PS_A0060_301W: React.FC = () => {
   let gridRef : any = useRef(null); 
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -214,6 +214,7 @@ const PS_A0060_301W: React.FC = () => {
       },
     };
 
+    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -229,7 +230,7 @@ const PS_A0060_301W: React.FC = () => {
           // find_row_value 행으로 스크롤 이동
           if (gridRef.current) {
             const findRowIndex = rows.findIndex(
-              (row: any) => row.user_id == filters.find_row_value
+              (row: any) => row.datnum == filters.find_row_value
             );
             targetRowIndex = findRowIndex;
           }
@@ -257,7 +258,7 @@ const PS_A0060_301W: React.FC = () => {
           const selectedRow =
             filters.find_row_value == ""
               ? rows[0]
-              : rows.find((row: any) => row.user_id == filters.find_row_value);
+              : rows.find((row: any) => row.datnum == filters.find_row_value);
 
           if (selectedRow != undefined) {
             setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -297,8 +298,10 @@ const PS_A0060_301W: React.FC = () => {
       filters.isSearch && 
       permissions !== null
     ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
-      fetchMainGrid();
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions]);
 
@@ -332,7 +335,7 @@ const PS_A0060_301W: React.FC = () => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 
+        총{" "}
         {mainDataResult.total == -1
           ? 0
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -659,6 +662,7 @@ const PS_A0060_301W: React.FC = () => {
           pgNum: prev.pgNum,
           isSearch: true,
         }));
+        console.log(data.returnString);
       }
     } else {
       console.log("[오류 발생]");
@@ -690,7 +694,6 @@ const PS_A0060_301W: React.FC = () => {
       item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
         : {
@@ -954,28 +957,28 @@ const PS_A0060_301W: React.FC = () => {
   const grid = React.useRef<any>(null);
   const [applyMinWidth, setApplyMinWidth] = React.useState(false);
   const [gridCurrent, setGridCurrent] = React.useState(0);
-
   React.useEffect(() => {
     if (customOptionData != null) {
       grid.current = document.getElementById("grdList");
+
       window.addEventListener("resize", handleResize);
 
-      //가장 작은 그리드 이름
+      //가장작은 그리드 이름
       customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
         item.width !== undefined
           ? (minGridWidth.current += item.width)
           : minGridWidth.current
       );
-      minGridWidth.current += 10;
-      setGridCurrent(grid.current.offsetWidth);
+      setGridCurrent(grid.current.offsetWidth + 270);
+      setApplyMinWidth(grid.current.offsetWidth + 270 < minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.offsetWidth + 270 < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth);
+    } else if (grid.current.offsetWidth + 270 > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth + 270);
       setApplyMinWidth(false);
     }
   };
@@ -992,7 +995,7 @@ const PS_A0060_301W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
   };
 
   return (
@@ -1065,6 +1068,27 @@ const PS_A0060_301W: React.FC = () => {
             <GridTitle>휴일 리스트</GridTitle>
             <ButtonContainer>
               <Button
+                onClick={onSetSaturdayClick}
+                themeColor={"primary"}
+                icon="calendar"
+              >
+                토요일 자동 생성
+              </Button>
+              <Button
+                onClick={onSetSundayClick}
+                themeColor={"primary"}
+                icon="calendar"
+              >
+                일요일 자동 생성
+              </Button>
+              <Button
+                onClick={onHolidayClick}
+                themeColor={"primary"}
+                icon="calendar"
+              >
+                공휴일 자동 생성
+              </Button>
+              <Button
                 onClick={onAddClick}
                 fillMode="outline"
                 themeColor={"primary"}
@@ -1085,30 +1109,6 @@ const PS_A0060_301W: React.FC = () => {
                 icon="save"
                 title="저장"
               ></Button>
-              <Button
-                onClick={onSetSaturdayClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                토요일 자동 생성
-              </Button>
-              <Button
-                onClick={onSetSundayClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                일요일 자동 생성
-              </Button>
-              <Button
-                onClick={onHolidayClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                공휴일 자동 생성
-              </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <Grid

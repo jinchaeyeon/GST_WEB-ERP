@@ -291,7 +291,7 @@ const CR_A1100W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.num == filters.find_row_value);
+            : rows.find((row: any) => row.membership_id == filters.find_row_value);
         
             if(selectedRow != undefined) {
               setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -618,16 +618,15 @@ const CR_A1100W: React.FC = () => {
           ? (minGridWidth.current += item.width)
           : minGridWidth.current
       );
-      minGridWidth.current += 10;
-      setGridCurrent(grid.current.offsetWidth);
+      setGridCurrent(grid.current.offsetWidth + 300);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.offsetWidth + 300 < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth);
+    } else if (grid.current.offsetWidth + 300 > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth + 300);
       setApplyMinWidth(false);
     }
   };
