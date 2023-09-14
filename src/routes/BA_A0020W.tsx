@@ -264,7 +264,7 @@ const BA_A0020: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);

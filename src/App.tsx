@@ -72,6 +72,7 @@ import CM_B1101W from "./routes/CM_B1101W";
 import CM_B8100W from "./routes/CM_B8100W";
 import CR_A0010W from "./routes/CR_A0010W";
 import CR_A0020W from "./routes/CR_A0020W";
+import CR_A0040W from "./routes/CR_A0040W";
 import CR_A1100W from "./routes/CR_A1100W";
 import CT_A0111W from "./routes/CT_A0111W";
 import EA_A1000W from "./routes/EA_A1000W";
@@ -468,7 +469,13 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/Home" component={Main} exact />
                   ) : roles == "CRM_DDGD" ? (
                     isAdmin ? (
-                      <AuthRoute path="/Home" component={MainAdminCRM} exact />
+                      <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                        <AuthRoute
+                          path="/Home"
+                          component={MainAdminCRM}
+                          exact
+                        />
+                      </GlobalStyles>
                     ) : (
                       <GlobalStyles
                         style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}
@@ -648,6 +655,7 @@ const AppInner: React.FC = () => {
                   {/* DDGD 관리자페이지 */}
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
                   <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
+                  <AuthRoute path="/CR_A0040W" component={CR_A0040W} exact />
                   <AuthRoute path="/CR_A1001W" component={CR_A1001W} exact />
                   <AuthRoute path="/CR_A1100W" component={CR_A1100W} exact />
                   <AuthRoute

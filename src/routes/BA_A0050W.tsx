@@ -427,7 +427,7 @@ const BA_A0050: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

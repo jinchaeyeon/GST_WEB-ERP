@@ -113,7 +113,7 @@ const SA_B3100W: React.FC = () => {
   const [page3, setPage3] = useState(initialPageState);
   const [page4, setPage4] = useState(initialPageState);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);

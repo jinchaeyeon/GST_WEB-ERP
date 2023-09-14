@@ -43,7 +43,7 @@ const KendoWindow = ({
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,

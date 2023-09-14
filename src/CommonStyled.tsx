@@ -21,7 +21,7 @@ export const TitleContainer = styled.div`
     font-size: 26px;
   }
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     display: inline-block;
     width: 100%;
   }
@@ -50,7 +50,7 @@ export const LoginImg = styled.div`
 export const MainTopContainer = styled(TitleContainer)`
   padding-top: 20px;
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     padding-top: 0;
     flex-direction: column;
     align-items: flex-start;
@@ -69,7 +69,7 @@ export const MainWorkStartEndContainer = styled.div`
     margin-left: 5px;
   }
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     margin-left: 0;
     margin-bottom: 20px;
   }
@@ -136,7 +136,7 @@ export const ButtonContainer = styled.div<TButtonContainer>`
     font-size: 32px;
   }
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     overflow: auto;
     flex-wrap: wrap;
   }
@@ -208,7 +208,7 @@ export const FilterBox = styled.table`
     padding-left: 10px;
   }
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     tr {
       display: flex;
       flex-direction: column;
@@ -240,6 +240,13 @@ export const FormBox = styled.table`
   /* border: solid 1px #d7d7d7;
   background-color: #fff; */
   width: 100%;
+
+  .home {
+    width: 25% !important;
+    min-width: auto !important;
+    padding-right: 0px !important;
+  }
+  
   tr th + td {
     min-height: 40px;
   }
@@ -272,7 +279,7 @@ export const FormBox = styled.table`
     border: solid 1px rgba(0, 0, 0, 0.08);
     border-radius: 4px;
   }
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     tr {
       display: flex;
       flex-direction: column;
@@ -307,7 +314,7 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
   height: ${(props) =>
     typeof props.height === "number" ? props.height + "px" : props.height};
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     flex-direction: column;
   }
 `;
@@ -336,7 +343,7 @@ export const FormFieldWrap = styled.div`
   justify-content: space-between;
   flex-direction: row;
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     flex-direction: column;
   }
 `;
@@ -390,10 +397,6 @@ export const GridContainer = styled.div<TGridContainer>`
   /* .required {
     background-color: #fff0ef;
   } */
-
-  @media (max-width: 850px) {
-    width: auto;
-  }
 `;
 
 export const GridTitle = styled.h3`
@@ -478,7 +481,7 @@ export const GridTitleContainer = styled.div`
   align-items: center;
   /* margin: 5 0px; */
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     display: inline-block;
     width: 100%;
   }
@@ -601,7 +604,7 @@ export const ApprovalBox = styled.div`
     background-color: #ff8549;
   }
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     margin-top: 10px;
     margin-left: 0;
     width: 100%;
@@ -786,9 +789,9 @@ export const Gnv = styled.div<TGnv>`
   /*=========================================================================
 	미디어 쿼리
 	##Device = 모바일
-	##Screen = 850px 이하 해상도 모바일
+	##Screen = 1200px 이하 해상도 모바일
   =========================================================================*/
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     display: ${(props) => (props.isMobileMenuOpend ? "block" : "none")};
     z-index: 10;
     position: fixed;
@@ -812,9 +815,9 @@ export const Content = styled.div<ContentType>`
   /*=========================================================================
   미디어 쿼리
   ##Device = 모바일
-  ##Screen = 850px 이하 해상도 모바일
+  ##Screen = 1200px 이하 해상도 모바일
   =========================================================================*/
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     width: 100%;
   }
 `;
@@ -823,7 +826,7 @@ export const PageWrap = styled.div`
   padding: 0 15px;
   height: 100%;
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     min-height: auto;
     height: 100%;
     position: relative;
@@ -852,7 +855,7 @@ export const Footer = styled.div`
     font-size: 13px;
     font-weight: 100;
   }
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     display: none;
   }
 `;
@@ -870,7 +873,7 @@ export const AppName = styled.h1<TColor>`
   background-color: #fff;
   cursor: pointer;
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     border-right: none;
   }
 `;
@@ -919,9 +922,9 @@ export const TopTitle = styled.div`
   /*=========================================================================
   미디어 쿼리
   ##Device = 모바일
-  ##Screen = 850px 이하 해상도 모바일
+  ##Screen = 1200px 이하 해상도 모바일
   =========================================================================*/
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     display: flex;
     position: fixed;
     z-index: 9;
@@ -958,4 +961,90 @@ export const Logo = styled.div<TLogo>`
   width: ${(props) => props.size};
   height: ${(props) => props.size};
   background-position: center;
+`;
+
+export const AdminQuestionBox = styled.div`
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* cursor: pointer; */
+
+  > div:nth-child(2) {
+    width: 60%;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .customer {
+    font-size: 0.8rem;;
+    padding-top: 10px;
+    font-weight: 400;
+  }
+  .date {
+    font-size: 0.8rem;
+  }
+  .status {
+    width: 60px;
+    height: 32px;
+    border-radius: 30px;
+    padding: 0 5px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #877201;
+    color: #fff;
+    margin-right: 10px;
+    font-size: 0.8rem;
+  }
+  .Y {
+    background-color: #f9d202;
+  }
+
+  .R {
+    background-color: #f76700;
+  }
+  
+  @media (max-width: 1200px) {
+    min-width: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    > div:nth-child(2) {
+      width: 100%;
+    }
+
+    > .date {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+`;
+
+type TScrollableContainer = {
+  atBottom?: boolean;
+};
+
+export const ScrollableContainer = styled.div<TScrollableContainer>`
+  border: solid 1px #ebebeb;
+  border-radius: 10px;
+  padding: 10px;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+
+  .scroll-wrapper {
+    height: 100%;
+    overflow: auto;
+  }
+  @media (max-width: 1200px) {
+    border: 2px solid #f9D202;
+    height: 80vh;
+  }
+
 `;

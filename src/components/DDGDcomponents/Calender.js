@@ -120,7 +120,7 @@ function App(props) {
   };
 
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   return (
     <CalendarContainer backgroundColor={data.color}>
@@ -385,12 +385,12 @@ export default App;
 const CalendarContainer = styled.div`
   /* ~~~ container styles ~~~ */
   margin: auto;
-  height: 85vh;
+  height: 100vh !important;
   background-color: ${(props) => props.backgroundColor};
   padding: 10px;
   border-radius: 3px;
 
-  @media (max-width: 850px) {
+  @media (max-width: 1200px) {
     height: 100%;
   }
 
@@ -406,7 +406,7 @@ const CalendarContainer = styled.div`
     font-family: TheJamsil5Bold;
     font-size: 18px;
 
-    @media (max-width: 850px) {
+    @media (max-width: 1200px) {
       font-size: 14px;
     }
   }
@@ -481,7 +481,7 @@ const CalendarContainer = styled.div`
     grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;
     height: 95%;
 
-    @media (max-width: 850px) {
+    @media (max-width: 1200px) {
       height: 95%;
     }
 

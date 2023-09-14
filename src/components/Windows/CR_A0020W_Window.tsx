@@ -88,6 +88,7 @@ const KendoWindow = ({
   custcd,
   modal = false,
 }: TKendoWindow) => {
+  const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -166,12 +167,12 @@ const KendoWindow = ({
     }
   }, [customOptionData]);
 
-  // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent("L_sysUserMaster_001, L_BA000", setBizComponentData);
+  // // 비즈니스 컴포넌트 조회
+  // const [bizComponentData, setBizComponentData] = useState<any>([]);
+  // UseBizComponent("L_sysUserMaster_001, L_BA000", setBizComponentData);
 
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -274,9 +275,9 @@ const KendoWindow = ({
     setLoading(false);
   };
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  // //메시지 조회
+  // const [messagesData, setMessagesData] = useState<any>(null);
+  // UseMessages(pathname, setMessagesData);
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
@@ -309,7 +310,7 @@ const KendoWindow = ({
       "@p_work_type": paraData.work_type,
       "@p_orgdiv": orgdiv,
       "@p_custcd": paraData.custcd,
-      "@p_location": "",
+      "@p_location": location,
       "@p_custnm": paraData.custnm,
       "@p_class": paraData.class,
       "@p_owner": paraData.owner,
@@ -342,12 +343,10 @@ const KendoWindow = ({
     }
     if (data.isSuccess === true) {
       if (workType === "U") {
-        //reloadData("U", paraData.group_code);
         setFilters((prev:any) => ({ ...prev, find_row_value: paraData.custcd, isSearch: true })); // 한번만 조회되도록
         fetchMain();
       } else {
         setVisible(false);
-        //reloadData("N", paraData.group_code);
         setFilters((prev:any) => ({ ...prev, find_row_value: paraData.custcd, isSearch: true })); // 한번만 조회되도록
       }
     } else {
@@ -542,14 +541,6 @@ const KendoWindow = ({
                       placeholder=""
                     />
                   </td>
-                  {/* <th>사용여부</th>
-                  <td>
-                    <Checkbox
-                      name="useyn"
-                      value={initialVal.useyn == "Y" ? true : false}
-                      onChange={filterInputChange}
-                    />
-                  </td> */}
                 </tr>
                 <tr>
                 <th>요일</th>
@@ -609,23 +600,6 @@ const KendoWindow = ({
                       onChange={filterInputChange}
                     />
                   </td>
-                  {/* <th>첨부번호</th>
-                  <td colSpan={7}>
-                    <Input
-                      name="files"
-                      type="text"
-                      value={initialVal.files}
-                      className="readonly"
-                    />
-                    <ButtonInInput>
-                      <Button
-                        type={"button"}
-                        onClick={onAttachmentsWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td> */}
                 </tr>
                 <tr>
                   <th>메모</th>

@@ -21,35 +21,32 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
+import FilterContainer from "../../Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
-import { Iparameters } from "../../../store/types";
-import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+
 type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void;
-  workType: string;
-  para?: Iparameters;
+  bizComponentID: string;
   modal?: boolean;
 };
 
-const DATA_ITEM_KEY = "custcd";
 let targetRowIndex: null | number = null;
+
+let DATA_ITEM_KEY:string;
 
 const KendoWindow = ({
   setVisible,
-  workType,
   setData,
-  para,
+  bizComponentID,
   modal = false,
 }: IKendoWindow) => {
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 1200;
+  let isMobile = deviceWidth <= 850;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -66,7 +63,9 @@ const KendoWindow = ({
     setBizComponentData
   );
 
-  const idGetter = getter(DATA_ITEM_KEY);
+  const [title, setTitle] = useState<string>("");
+  
+  const idGetter = DATA_ITEM_KEY ? getter(DATA_ITEM_KEY) : undefined;
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -82,19 +81,14 @@ const KendoWindow = ({
     }));
   };
 
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
+    setPosition({ 
+      ...position, 
+      left: event.left, 
+      top: event.top 
+    });
   };
+
   const handleResize = (event: WindowMoveEvent) => {
     setPosition({
       left: event.left,
@@ -102,6 +96,18 @@ const KendoWindow = ({
       width: event.width,
       height: event.height,
     });
+
+    // let a = grid.current.offsetWidth - 40;
+
+    if (
+      grid.current.offsetWidth < minGridWidth.current 
+      && !applyMinWidth
+    ) {
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(false);
+    }
   };
 
   const onClose = () => {
@@ -117,17 +123,104 @@ const KendoWindow = ({
     process([], mainDataState)
   );
 
+  const [filterData, setFilterData] = useState<{
+    [id: string]: string;
+  }>();
+
+  const [columnData, setColumnData] = useState<[{
+    [id: string]: string;
+  }]>();
+
+  useEffect(() => {
+    fetchPopupData();
+  }, []);
+
+  //요약정보 조회
+  const fetchPopupData = async () => {
+    let data: any;
+    setLoading(true);
+
+    //비즈니스컴포넌트 정보 조회 파라미터
+    const parameters = {
+      id:
+        "biz-components?id=" +
+        bizComponentID +
+        "&data=false"
+    };
+
+    try {
+      data = await processApi<any>("biz-components", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    //if (data !== null) {
+    if (data.length > 0) {
+      const queryWhere = data[0].queryWhere;
+      const bizComponentItems = data[0].bizComponentItems;
+      const bizComponentName = data[0].bizComponentName;
+
+      let startIndex:number = 0;
+      let endIndex:number = 0;
+
+      // {필드명: 캡션}
+      let filters:{
+        [id: string]: string;
+      } = {};
+
+      // WHERE 쿼리에서 필드명 추출
+      while (queryWhere.indexOf("{", endIndex) > 0) {
+        
+        startIndex = queryWhere.indexOf("{", endIndex);
+        endIndex = queryWhere.indexOf("}", startIndex);
+
+        let fieldName = queryWhere.substring(startIndex+1, endIndex);
+        let caption = bizComponentItems.find((x:any) => { return x.fieldName == fieldName; }).caption;
+
+        filters = {...filters, [fieldName]:caption};
+      }
+
+      DATA_ITEM_KEY = bizComponentItems[0].fieldName; // 첫번째 필드를 키값으로 사용
+
+      setTitle(bizComponentName + " 참조 팝업");
+
+      setFilterData(filters);
+
+      setColumnData(bizComponentItems.filter((x:any) => x.columnWidth > 0));
+
+    } else {
+      console.log(data);
+    }
+    
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (filterData) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filterData);
+
+      const keys = Object.getOwnPropertyNames(deepCopiedFilters)
+
+      for (let i = 0; i < keys.length; i++) {
+        deepCopiedFilters[keys[i]] = "";
+      }
+
+      setFilters(() => ({
+        ...deepCopiedFilters,
+        find_row_value: "",
+        pgNum: 1,
+        isSearch: true,
+        pgSize: PAGE_SIZE,
+      }))
+    }
+  }, [filterData])
+
+
   //조회조건 초기값
-  const [filters, setFilters] = useState({
-    custcd: "",
-    custnm: "",
-    custdiv: "",
-    useyn: "Y",
-    find_row_value: "",
-    pgNum: 1,
-    isSearch: true,
-    pgSize: PAGE_SIZE,
-  });
+  const [filters, setFilters] = useState<{
+    [id: string]: any;
+  }>();
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -154,7 +247,8 @@ const KendoWindow = ({
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters 
+      && filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -171,16 +265,12 @@ const KendoWindow = ({
     const parameters = {
       para:
         "popup-data?id=" +
-        "P_CUSTCD" +
+        bizComponentID +
         "&page=" +
         filters.pgNum +
         "&pageSize=" +
         filters.pgSize,
-      custcd: filters.custcd,
-      custnm: filters.custnm,
-      custdiv: filters.custdiv,
-      useyn:
-        filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
+      ...filters,
     };
 
     try {
@@ -213,7 +303,7 @@ const KendoWindow = ({
       pgNum:
         data && data.hasOwnProperty("pageNumber")
           ? data.pageNumber
-          : prev.pgNum,
+          : (!prev ? 1 : prev.pgNum),
       isSearch: false,
     }));
     setLoading(false);
@@ -242,7 +332,7 @@ const KendoWindow = ({
 
   const onConfirmClick = (props: any) => {
     const rowData = mainDataResult.data.find(
-      (row: any) => row.custcd === Object.keys(selectedState)[0]
+      (row: any) => !!idGetter && idGetter(row) === Object.keys(selectedState)[0]
     );
 
     // 부모로 데이터 전달, 창 닫기
@@ -286,9 +376,88 @@ const KendoWindow = ({
     }));
   };
 
+  const drawFilters = (colCount:number) => {
+    let rowElements: JSX.Element[] = [];
+
+    if (filterData) {
+      let filterElements = 
+        Object.getOwnPropertyNames(filterData).map((field: string) => {
+        return (
+          <>
+            <th>{filterData[field]}</th>
+            <td>
+              <Input
+                name={field}
+                type="text"
+                value={!filters ? "" : filters[field]}
+                onChange={filterInputChange}
+              />
+            </td>
+          </>
+        )});
+
+      let rowCount = filterElements.length / colCount; // 2:colCount
+
+      for (let i = 0; i < rowCount; i++) {
+        rowElements.push(
+          <tr>
+            {
+              filterElements.filter((value, index) => {return index >= (colCount*i) && index < (colCount*(i+1));})
+                            .map((value) => {
+                return value;
+              })
+            }
+          </tr>
+        );
+      }
+    }
+
+    return rowElements;
+  }
+
+  const minGridWidth = useRef<number>(0);
+  const grid = useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = useState(false);
+  const [gridCurrent, setGridCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!!columnData) {
+      grid.current = document.getElementById("popup_grdList");
+      minGridWidth.current = 0;
+      //window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      columnData.map((item: any) =>
+        item.columnWidth !== undefined
+          ? (minGridWidth.current += item.columnWidth)
+          : minGridWidth.current
+      );
+
+      // let a = grid.current.offsetWidth - 40;
+
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+    }
+  }, [columnData]);
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (!minWidth) {
+      minWidth = 0;
+    }
+
+    let width = minWidth;
+
+    if (!applyMinWidth
+      && !!columnData) {
+        width += (gridCurrent - minGridWidth.current) / columnData.length;
+    }
+
+    return width;
+  };
+
   return (
     <Window
-      title={"업체마스터"}
+      title={title}
       width={position.width}
       height={position.height}
       onMove={handleMove}
@@ -305,52 +474,11 @@ const KendoWindow = ({
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>업체코드</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={filters.custcd}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>업체명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>업체구분</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="custdiv"
-                    value={filters.custdiv}
-                    bizComponentId="L_BA026"
-                    bizComponentData={bizComponentData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-              <th>사용여부</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentRadioGroup
-                    name="useyn"
-                    value={filters.useyn}
-                    bizComponentId="R_USEYN"
-                    bizComponentData={bizComponentData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
+        <FilterBox style={{border: "0px"}} onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody> 
+            <>
+              {drawFilters(4).map((value) => {return value;})}
+            </>
           </tbody>
         </FilterBox>
       </FilterContainer>
@@ -360,7 +488,7 @@ const KendoWindow = ({
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              [SELECTED_FIELD]: !idGetter ? "" : selectedState[idGetter(row)], //선택된 데이터
             })),
             mainDataState
           )}
@@ -393,22 +521,21 @@ const KendoWindow = ({
           resizable={true}
           //더블클릭
           onRowDoubleClick={onRowDoubleClick}
+          id="popup_grdList"
         >
-          <GridColumn
-            field="custcd"
-            title="업체코드"
-            width="140px"
-            footerCell={mainTotalFooterCell}
-          />
-
-          <GridColumn field="custnm" title="업체명" width="200px" />
-          <GridColumn field="custabbr" title="업체약어" width="120px" />
-          <GridColumn field="bizregnum" title="사업자등록번호" width="140px" />
-          <GridColumn field="custdiv" title="업체구분" width="120px" />
-          <GridColumn field="useyn" title="사용유무" width="120px" />
-          <GridColumn field="compclass" title="업태" width="120px" />
-          <GridColumn field="ceonm" title="대표자명" width="120px" />
-          <GridColumn field="remark" title="비고" width="300px" />
+          {columnData 
+          && columnData.length > 0 
+          && columnData.filter((x:any) => x.columnWidth > 0)
+                       .map((column: any, index) => {
+            return (
+              <GridColumn 
+                field={column.fieldName} 
+                title={column.caption} 
+                width={setWidth("popup_grdList", column.columnWidth)}
+                footerCell={index == 0 ? mainTotalFooterCell : undefined}
+              />
+            )})
+          }
         </Grid>
       </GridContainer>
       <BottomContainer>

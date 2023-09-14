@@ -12673,8 +12673,8 @@ kendo-badge-container {
 
 .k-button-solid-primary:hover,
 .k-button-solid-primary.k-hover {
-    border-color: #f55f54;
-    background-color: #f55f54;
+    border-color: #2057bd;
+    background-color: #2057bd;
 }
 
 .k-button-solid-primary:focus,
@@ -12684,13 +12684,13 @@ kendo-badge-container {
 
 .k-button-solid-primary:active,
 .k-button-solid-primary.k-active {
-    border-color: #e0574d;
-    background-color: #e0574d;
+    border-color: #2057bd;
+    background-color: #2057bd;
 }
 
 .k-button-solid-primary.k-selected {
-    border-color: #e0574d;
-    background-color: #e0574d;
+    border-color: #2057bd;
+    background-color: #2057bd;
 }
 
 .k-button-solid-secondary {
@@ -18756,13 +18756,13 @@ kendo-label>.k-label {
 
 .k-slider .k-draghandle:hover {
     border-color: #2289c3;
-    background-color: #f55f54;
+    background-color: #2057bd;
 }
 
 .k-slider .k-draghandle:active,
 .k-slider .k-draghandle.k-pressed {
-    border-color: #e0574d;
-    background-color: #e0574d;
+    border-color: #2057bd;
+    background-color: #2057bd;
 }
 
 .k-slider .k-draghandle:focus,
@@ -19356,7 +19356,7 @@ kendo-label>.k-label {
 .k-calendar .k-calendar-td.k-selected.k-hover .k-calendar-cell-inner,
 .k-calendar .k-calendar-td.k-selected.k-hover .k-link {
     color: white;
-    background-color: #f55f54;
+    background-color: #2057bd;
 }
 
 .k-calendar .k-calendar-td:focus .k-calendar-cell-inner,
@@ -21945,8 +21945,8 @@ kendo-label>.k-label {
 
 .k-hover.k-fab-solid-primary,
 .k-fab-solid-primary:hover {
-    border-color: #f55f54;
-    background-color: #f55f54;
+    border-color: #2057bd;
+    background-color: #2057bd;
 }
 
 .k-hover.k-fab-solid-secondary,
@@ -22076,8 +22076,8 @@ kendo-label>.k-label {
 .k-active.k-fab-solid-primary,
 .k-selected.k-fab-solid-primary,
 .k-fab-solid-primary:active {
-    border-color: #e0574d;
-    background-color: #e0574d;
+    border-color: #2057bd;
+    background-color: #2057bd;
 }
 
 .k-active.k-fab-solid-secondary,
@@ -23165,7 +23165,7 @@ kendo-drawer .k-drawer-wrapper {
 .k-drawer-item.k-selected:hover,
 .k-drawer-item.k-selected.k-hover {
     color: white;
-    background-color: #f55f54;
+    background-color: #2057bd;
 }
 
 .k-drawer-separator {
@@ -37667,7 +37667,7 @@ input.readonly {
 }
 
 /* 모바일 결재문서 숨김 처리 */
-@media (max-width: 850px) {
+@media (max-width: 1200px) {
     .visible-mobile-only {
         display: block;
     }

@@ -43,12 +43,12 @@ let temp = 0;
 
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 850;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 850,
+    height: 1200,
   });
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
