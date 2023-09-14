@@ -294,7 +294,7 @@ const CR_A0020W: React.FC = () => {
           // find_row_value 행으로 스크롤 이동
           if (gridRef.current) {
             const findRowIndex = rows.findIndex(
-              (row: any) => row.user_id == filters.find_row_value
+              (row: any) => row.custcd == filters.find_row_value
             );
             targetRowIndex = findRowIndex;
           }
@@ -321,7 +321,7 @@ const CR_A0020W: React.FC = () => {
           const selectedRow =
             filters.find_row_value == ""
               ? rows[0]
-              : rows.find((row: any) => row.user_id == filters.find_row_value);
+              : rows.find((row: any) => row.custcd == filters.find_row_value);
 
           if (selectedRow != undefined) {
             setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -448,19 +448,21 @@ const CR_A0020W: React.FC = () => {
           : minGridWidth.current
       );
 
-      setGridCurrent(grid.current.offsetWidth-40);
-      setApplyMinWidth(grid.current.offsetWidth - 40 < minGridWidth.current);
+      minGridWidth.current += 55;
+
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
     if (
-      grid.current.offsetWidth - 40 < minGridWidth.current &&
+      grid.current.offsetWidth < minGridWidth.current &&
       !applyMinWidth
     ) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth - 40 > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth -40);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
       setApplyMinWidth(false);
     }
   };
@@ -484,6 +486,11 @@ const CR_A0020W: React.FC = () => {
   }
 
   const onClickDelete = async () => {
+
+    if (!window.confirm("선택한 데이터를 삭제하시겠습니까?")) {
+      return;
+    }
+
     let data: any;
     setLoading(true);
 
@@ -524,7 +531,33 @@ const CR_A0020W: React.FC = () => {
       data = null;
     }
     if (data.isSuccess === true) {
-        setFilters((prev:any) => ({ ...prev, find_row_value: "", isSearch: true })); // 한번만 조회되도록
+      const isLastDataDeleted =
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
+
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          isSearch: true,
+        }));
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -649,6 +682,7 @@ const CR_A0020W: React.FC = () => {
                 onClick={onClickDelete}
                 icon="delete"
                 themeColor={"primary"}
+                fillMode={"outline"}
               >
                 삭제
               </Button>
@@ -763,6 +797,7 @@ const CR_A0020W: React.FC = () => {
           workType={workType}
           orgdiv={orgdiv}
           custcd={mainDataResult.data.find((x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0])?.custcd ?? ""}
+          modal={true}
         />
       )}
     </>

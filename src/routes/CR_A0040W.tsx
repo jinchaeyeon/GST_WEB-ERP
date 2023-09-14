@@ -73,6 +73,7 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { gridList } from "../store/columns/CR_A0040W_C";
 import CR_A0040W_Window from "../components/Windows/CR_A0040W_Window";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import NumberCell from "../components/Cells/NumberCell";
 
 const firstDay = (date:Date) => {
   return new Date(date.getFullYear(), date.getMonth(), 1);
@@ -96,10 +97,6 @@ const editableField:string[] = [];
 
 const NameField:string[] = [];
 
-const EncryptedField:string[] = [];
-
-const EncryptedField2:string[] = [];
-
 const CustomField:string[] = [
   "owner",
   "species",
@@ -107,6 +104,10 @@ const CustomField:string[] = [
   "class",
   "manager"
 ];
+
+const numberField:string[] = [
+  "amt"
+]
 
 const checkField:string[] = [];
 
@@ -364,6 +365,16 @@ const CR_A0040W: React.FC = () => {
     }));
   };
 
+  const chkDate = (date: Date) => {
+    const yyyyMMdd:string = convertDateToStr(date)
+    return !(
+      yyyyMMdd.substring(0, 4) < "1997" ||
+      yyyyMMdd.substring(6, 8) > "31" ||
+      yyyyMMdd.substring(6, 8) < "01" ||
+      yyyyMMdd.substring(6, 8).length != 2
+    )
+  }
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -384,6 +395,7 @@ const CR_A0040W: React.FC = () => {
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     if (!permissions?.view) return;
+
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -419,7 +431,7 @@ const CR_A0040W: React.FC = () => {
           // find_row_value 행으로 스크롤 이동
           if (gridRef.current) {
             const findRowIndex = rows.findIndex(
-              (row: any) => row.user_id == filters.find_row_value
+              (row: any) => row.membership_id == filters.find_row_value
             );
             targetRowIndex = findRowIndex;
           }
@@ -436,7 +448,7 @@ const CR_A0040W: React.FC = () => {
           }
         }
 
-        setMainDataResult((prev) => {
+        setMainDataResult(() => {
           return {
             data: rows,
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
@@ -554,6 +566,14 @@ const CR_A0040W: React.FC = () => {
   );
 
   const search = () => {
+    // 조회조건 검증
+    if (!chkDate(filters.frdt)
+      || !chkDate(filters.todt)
+    ) {
+      alert(findMessage(messagesData, "CR_A0040W_004")); // 조회일자를 입력해주세요.
+      return;
+    }
+
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
@@ -575,19 +595,19 @@ const CR_A0040W: React.FC = () => {
           : minGridWidth.current
       );
 
-      setGridCurrent(grid.current.offsetWidth-40);
-      setApplyMinWidth(grid.current.offsetWidth - 40 < minGridWidth.current);
+      minGridWidth.current += 55;
+
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (
-      grid.current.offsetWidth - 40 < minGridWidth.current &&
-      !applyMinWidth
+    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth
     ) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth - 40 > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth -40);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
       setApplyMinWidth(false);
     }
   };
@@ -618,6 +638,11 @@ const CR_A0040W: React.FC = () => {
   }
 
   const onClickDelete = async () => {
+
+    if (!window.confirm("선택한 데이터를 삭제하시겠습니까?")) {
+      return;
+    }
+
     let data: any;
     setLoading(true);
 
@@ -649,8 +674,34 @@ const CR_A0040W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
-        setFilters((prev:any) => ({ ...prev, find_row_value: "", isSearch: true })); // 한번만 조회되도록
+    if (data.isSuccess) {
+      const isLastDataDeleted =
+          mainDataResult.data.length == 1 && filters.pgNum > 0;
+
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          isSearch: true,
+        }));
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -775,13 +826,6 @@ const CR_A0040W: React.FC = () => {
                 <GridTitle>회원권 리스트</GridTitle>
                 <ButtonContainer>
                   <Button
-                    onClick={onClickCopy}
-                    icon="copy"
-                    themeColor={"primary"}
-                  >
-                    복사
-                  </Button>
-                  <Button
                     onClick={onClickNew}
                     icon="file-add"
                     themeColor={"primary"}
@@ -792,8 +836,17 @@ const CR_A0040W: React.FC = () => {
                     onClick={onClickDelete}
                     icon="delete"
                     themeColor={"primary"}
+                    fillMode={"outline"}
                   >
                     삭제
+                  </Button>
+                  <Button
+                    onClick={onClickCopy}
+                    icon="copy"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    복사
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -871,6 +924,8 @@ const CR_A0040W: React.FC = () => {
                                 ? CustomRadioCell
                                 : CustonCommandField.includes(item.fieldName)
                                 ? ColumnCommandCell
+                                : numberField.includes(item.fieldName)
+                                ? NumberCell
                                 : undefined
                             }
                             headerCell={
@@ -922,6 +977,7 @@ const CR_A0040W: React.FC = () => {
           workType={workType}
           isCopy={isCopy}
           membership_id={mainDataResult.data.find((x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0])?.membership_id ?? ""}
+          modal={true}
         />
       )}
     </>

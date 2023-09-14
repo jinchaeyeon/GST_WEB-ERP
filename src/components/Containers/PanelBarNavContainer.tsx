@@ -83,7 +83,7 @@ const PanelBarNavContainer = (props: any) => {
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
 
-  const [ip, setIp] = useState(null);
+  const [ip, setIp] = useState<any>(null);
   UseGetIp(setIp);
 
   let broswer = getBrowser();

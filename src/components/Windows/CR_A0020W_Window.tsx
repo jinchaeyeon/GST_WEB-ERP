@@ -1,62 +1,28 @@
-import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import {
-  Grid,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridFooterCellProps,
-  GridHeaderCellProps,
-  GridHeaderSelectionChangeEvent,
-  GridItemChangeEvent,
-  GridPageChangeEvent,
-  GridSelectionChangeEvent,
-  GridSortChangeEvent,
-  GridToolbar,
-  getSelectedState,
-} from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  ButtonInInput,
   FormBox,
   FormBoxWrap,
-  GridContainer,
-  GridContainerWrap,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
+import { IWindowPosition } from "../../hooks/interfaces";
 import {
-  deletedAttadatnumsState,
   isLoading,
-  unsavedAttadatnumsState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import CheckBoxCell from "../Cells/CheckBoxCell";
-import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
-  UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UseParaPc,
-  findMessage,
-  getGridItemChangedData,
-  getQueryFromBizComponent,
   convertDateToStr,
   dateformat,
 } from "../CommonFunction";
-import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import CommentsGrid from "../Grids/CommentsGrid";
-import RequiredHeader from "../HeaderCells/RequiredHeader";
-import { CellRender, RowRender } from "../Renderers/Renderers";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 
 enum weekDay
@@ -343,11 +309,11 @@ const KendoWindow = ({
     }
     if (data.isSuccess === true) {
       if (workType === "U") {
-        setFilters((prev:any) => ({ ...prev, find_row_value: paraData.custcd, isSearch: true })); // 한번만 조회되도록
+        setFilters((prev:any) => ({ ...prev, find_row_value: data.returnString, isSearch: true })); // 한번만 조회되도록
         fetchMain();
       } else {
         setVisible(false);
-        setFilters((prev:any) => ({ ...prev, find_row_value: paraData.custcd, isSearch: true })); // 한번만 조회되도록
+        setFilters((prev:any) => ({ ...prev, find_row_value: data.returnString, isSearch: true })); // 한번만 조회되도록
       }
     } else {
       console.log("[오류 발생]");
