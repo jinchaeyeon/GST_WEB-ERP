@@ -483,7 +483,7 @@ const Main: React.FC = () => {
                   width: "100%",
                   marginRight: "15px",
                   borderRadius: "10px",
-                  backgroundColor: "#f9D202",
+                  backgroundColor: "#f5b901",
                   height: "15vh",
                   display: "flex",
                   alignItems: "center",
@@ -563,7 +563,7 @@ const Main: React.FC = () => {
                 style={{
                   overflowY: "scroll",
                   marginBottom: "20px",
-                  border: "3px solid #f9d202",
+                  border: "3px solid #f5b901",
                   borderRadius: "10px",
                 }}
               >
@@ -576,7 +576,7 @@ const Main: React.FC = () => {
                             width: "100%",
                             marginRight: "15px",
                             borderRadius: "10px",
-                            backgroundColor: "#f9D202",
+                            backgroundColor: "#f5b901",
                           }}
                         >
                           <CardContent
@@ -598,7 +598,7 @@ const Main: React.FC = () => {
                               width: "100%",
                               marginRight: "15px",
                               borderRadius: "10px",
-                              backgroundColor: "#f9D202",
+                              backgroundColor: "#f5b901",
                             }}
                           >
                             <CardContent
@@ -634,7 +634,7 @@ const Main: React.FC = () => {
                   width: "100%",
                   marginRight: "15px",
                   borderRadius: "10px",
-                  backgroundColor: "#f9D202",
+                  backgroundColor: "#f5b901",
                   marginBottom: "30px",
                   height: "10vh",
                 }}
@@ -660,7 +660,7 @@ const Main: React.FC = () => {
                   width: "100%",
                   marginRight: "15px",
                   borderRadius: "10px",
-                  backgroundColor: "#f9D202",
+                  backgroundColor: "#f5b901",
                   height: "10vh",
                 }}
               >
@@ -820,7 +820,7 @@ const Main: React.FC = () => {
                     width: "100%",
                     marginRight: "15px",
                     borderRadius: "10px",
-                    backgroundColor: "#f9D202",
+                    backgroundColor: "#f5b901",
                     height: "15vh",
                     display: "flex",
                     alignItems: "center",
@@ -894,7 +894,7 @@ const Main: React.FC = () => {
                     style={{
                       overflowY: "scroll",
                       marginBottom: "20px",
-                      border: "3px solid #f9d202",
+                      border: "3px solid #f5b901",
                       borderRadius: "10px",
                     }}
                   >
@@ -907,7 +907,7 @@ const Main: React.FC = () => {
                                 width: "100%",
                                 marginRight: "15px",
                                 borderRadius: "10px",
-                                backgroundColor: "#f9D202",
+                                backgroundColor: "#f5b901",
                               }}
                             >
                               <CardContent
@@ -929,7 +929,7 @@ const Main: React.FC = () => {
                                   width: "100%",
                                   marginRight: "15px",
                                   borderRadius: "10px",
-                                  backgroundColor: "#f9D202",
+                                  backgroundColor: "#f5b901",
                                 }}
                               >
                                 <CardContent
@@ -966,7 +966,7 @@ const Main: React.FC = () => {
                       width: "100%",
                       marginRight: "15px",
                       borderRadius: "10px",
-                      backgroundColor: "#f9D202",
+                      backgroundColor: "#f5b901",
                       marginBottom: "30px",
                       height: "10vh",
                     }}
@@ -993,7 +993,7 @@ const Main: React.FC = () => {
                       width: "100%",
                       marginRight: "15px",
                       borderRadius: "10px",
-                      backgroundColor: "#f9D202",
+                      backgroundColor: "#f5b901",
                       marginBottom: "20px",
                       height: "10vh",
                     }}

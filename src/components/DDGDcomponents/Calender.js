@@ -191,7 +191,7 @@ function App(props) {
             </p>
             <FavoriteIcon
               sx={{
-                color: "#F9D202",
+                color: "#f5b901",
                 backgroundColor: "white",
                 borderRadius: "30px",
                 marginBottom: "-5px",
@@ -259,7 +259,7 @@ function App(props) {
           </p>
           <FavoriteIcon
             sx={{
-              color: "#F9D202",
+              color: "#f5b901",
               backgroundColor: "white",
               borderRadius: "30px",
               marginBottom: "-5px",
@@ -337,14 +337,14 @@ function App(props) {
                     {!isMobile ? (
                       <FavoriteIcon
                         sx={{
-                          color: "#F9D202",
+                          color: "#f5b901",
                           fontSize: "3vw",
                         }}
                       />
                     ) : (
                       <FavoriteIcon
                         sx={{
-                          color: "#F9D202",
+                          color: "#f5b901",
                         }}
                       />
                     )}
