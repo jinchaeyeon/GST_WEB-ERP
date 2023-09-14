@@ -999,16 +999,15 @@ export const AdminQuestionBox = styled.div`
     color: #fff;
     margin-right: 10px;
     font-size: 0.8rem;
-
-    .Y {
-      background-color: #f9d202;
-    }
-
-    .R {
-      background-color: #f76700;
-    }
+  }
+  .Y {
+    background-color: #f9d202;
   }
 
+  .R {
+    background-color: #f76700;
+  }
+  
   @media (max-width: 1200px) {
     min-width: auto;
     flex-direction: column;
@@ -1045,6 +1044,7 @@ export const ScrollableContainer = styled.div<TScrollableContainer>`
   }
   @media (max-width: 1200px) {
     border: 2px solid #f9D202;
+    height: 80vh;
   }
 
 `;

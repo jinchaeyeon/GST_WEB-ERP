@@ -8,7 +8,7 @@ import {
   GridDataStateChangeEvent,
   GridItemChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -171,7 +171,7 @@ const KendoWindow = ({
     [id: string]: boolean | number[];
   }>({});
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     datnum: workType == "N" ? "" : datnum,
     orgdiv: "01",
     category: categories == undefined ? "" : categories,
@@ -504,7 +504,12 @@ const KendoWindow = ({
       category: filters.category,
       title: filters.title,
       contents: filters.contents,
-      publish_yn: filters.publish_yn,
+      publish_yn:
+        filters.publish_yn == true
+          ? "Y"
+          : filters.publish_yn == false
+          ? "N"
+          : filters.publish_yn,
       publish_start_date: convertDateToStr(filters.publish_start_date),
       publish_end_date: convertDateToStr(filters.publish_end_date),
       person: filters.user_id,
@@ -751,8 +756,14 @@ const KendoWindow = ({
                   <td>
                     <Checkbox
                       name="publish_yn"
-                      value={filters.publish_yn == "Y" ? true : false}
-                      onClick={filterInputChange}
+                      value={
+                        filters.publish_yn == "Y"
+                          ? true
+                          : filters.publish_yn == "N"
+                          ? false
+                          : filters.publish_yn
+                      }
+                      onChange={filterInputChange}
                     ></Checkbox>
                   </td>
                 </tr>

@@ -11,7 +11,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -36,18 +36,23 @@ import {
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CurrentTime from "../components/DDGDcomponents/CurrentTime";
+import DetailWindow2 from "../components/Windows/CM_A0000_301W_Window";
 import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
+import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
+const DATA_ITEM_KEY2 = "num";
 
 const Main: React.FC = () => {
   const processApi = useApi();
+  const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(DATA_ITEM_KEY2);
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userName = loginResult ? loginResult.userName : "";
@@ -56,19 +61,24 @@ const Main: React.FC = () => {
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA310",
+    "L_BA310, L_SYS007",
     //품목계정, 수량단위
     setBizComponentData
   );
   //공통코드 리스트 조회 ()
   const [classListData, setClassListData] = useState([COM_CODE_DEFAULT_VALUE]);
-
+  const [categoryListData, setCategoryListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const classQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId == "L_BA310")
       );
-
+      const categoryQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SYS007")
+      );
+      fetchQuery(categoryQueryStr, setCategoryListData);
       fetchQuery(classQueryStr, setClassListData);
     }
   }, [bizComponentData]);
@@ -106,6 +116,9 @@ const Main: React.FC = () => {
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],
   });
+  const [mainnoticeDataState, setMainNoticeDataState] = useState<State>({
+    sort: [],
+  });
   const [cardOptionData, setCardOptionData] = useState<DataResult>(
     process([], cardOptionState)
   );
@@ -115,20 +128,33 @@ const Main: React.FC = () => {
   const [noticeDataResult, setNoticeDataResult] = useState<DataResult>(
     process([], noticeDataState)
   );
-
+  const [mainnoticeDataResult, setMainNoticeDataResult] = useState<DataResult>(
+    process([], mainnoticeDataState)
+  );
   const [adjcnt, setAdjcnt] = useState(0);
   const [addcnt, setAddcnt] = useState(0);
-  const [selectedState, setSelectedState] = useState<{
+  const [noticeselectedState, setNoticeSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [mainnoticeselectedState, setMainnoticeSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: noticeselectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
-    setSelectedState(newSelectedState);
+    setNoticeSelectedState(newSelectedState);
+  };
+  const onMainNoticeSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: mainnoticeselectedState,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+    setMainnoticeSelectedState(newSelectedState);
   };
   useEffect(() => {
     if (sessionUserId === "") fetchSessionItem();
@@ -185,6 +211,71 @@ const Main: React.FC = () => {
     frdt: new Date(),
     find_row_value: "",
   });
+
+  //조회조건 초기값
+  const [mainNoticefilters, setMainNoticeFilters] = useState({
+    cbocategory: "",
+    pgSize: PAGE_SIZE,
+    orgdiv: "01",
+    cboPerson: "",
+    publishdate: new Date(),
+    title: "",
+    contents2: "",
+    chooses_s: "",
+    loadok_s: "",
+    readok_s: "",
+    cbodtgb: "C",
+    datnum: "",
+    radPublish_yn: "Y",
+    publish_start_date: new Date(),
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  const [detailFilters, setDetailFilters] = useState({
+    pgSize: PAGE_SIZE,
+    location: "01",
+    datnum: "",
+    category: "",
+    pgNum: 1,
+    find_row_value: "",
+    isSearch: true,
+  });
+  const detailParameters: Iparameters = {
+    procedureName: "P_CM_A0000W_Q",
+    pageNumber: 1,
+    pageSize: detailFilters.pgSize,
+    parameters: {
+      "@p_work_type": "Q",
+      "@p_orgdiv": "01",
+      "@p_datnum": detailFilters.datnum,
+      "@p_dtgb": mainNoticefilters.cbodtgb,
+      "@p_frdt": convertDateToStr(mainNoticefilters.publish_start_date),
+      "@p_category": detailFilters.category,
+      "@p_title": "",
+      "@p_yn": mainNoticefilters.radPublish_yn,
+      "@p_attdatnum": "",
+      "@p_userid": userId,
+      "@p_newDiv": "N",
+      "@p_find_row_value": mainNoticefilters.find_row_value,
+    },
+  };
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (mainNoticefilters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(mainNoticefilters);
+      setMainNoticeFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [mainNoticefilters]);
+
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -218,11 +309,7 @@ const Main: React.FC = () => {
 
     if (data.isSuccess === true) {
       const rowCount = data.tables[0].RowCount;
-      const row = data.tables[0].Rows.map((items: any) => ({
-        ...items,
-        class: classListData.find((item: any) => item.sub_code == items.class)
-          ?.code_name,
-      }));
+      const row = data.tables[0].Rows;
       const row2 = data.tables[1].Rows;
       const row3 = data.tables[2].Rows;
       const rowCount4 = data.tables[3].RowCount;
@@ -251,7 +338,7 @@ const Main: React.FC = () => {
         };
       });
       if (rowCount5 > 0) {
-        setSelectedState({ [row5[0][DATA_ITEM_KEY]]: true });
+        setNoticeSelectedState({ [row5[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
@@ -265,10 +352,123 @@ const Main: React.FC = () => {
   const onNoticeDataStateChange = (event: GridDataStateChangeEvent) => {
     setNoticeDataState(event.dataState);
   };
-
+  const onMainNoticeDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainNoticeDataState(event.dataState);
+  };
   const onNoticeSortChange = (e: any) => {
     setNoticeDataState((prev) => ({ ...prev, sort: e.sort }));
   };
+  const onMainNoticeSortChange = (e: any) => {
+    setMainNoticeDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid = async (filters: any) => {
+    let data: any;
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_CM_A0000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "Q",
+        "@p_orgdiv": "01",
+        "@p_datnum": filters.datnum,
+        "@p_dtgb": filters.cbodtgb,
+        "@p_frdt": convertDateToStr(filters.publish_start_date),
+        "@p_category": filters.cbocategory,
+        "@p_title": filters.title,
+        "@p_yn": filters.radPublish_yn,
+        "@p_attdatnum": "",
+        "@p_userid": userId,
+        "@p_newDiv": "N",
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainNoticeDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.datnum == filters.find_row_value);
+
+        if (selectedRow != undefined) {
+          setMainnoticeSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          setDetailFilters((prev) => ({
+            ...prev,
+            location: selectedRow.location,
+            datnum: selectedRow.datnum,
+            category: selectedRow.category,
+            pgNum: 1,
+            find_row_value: "",
+            isSearch: true,
+          }));
+        } else {
+          setMainnoticeSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          setDetailFilters((prev) => ({
+            ...prev,
+            location: rows[0].location,
+            datnum: rows[0].datnum,
+            category: rows[0].category,
+            pgNum: 1,
+            find_row_value: "",
+            isSearch: true,
+          }));
+        }
+      }
+    }
+    setMainNoticeFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+  const [detailWindowVisible2, setDetailWindowVisible2] =
+    useState<boolean>(false);
+  const onRowDoubleClick = (props: any) => {
+    //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+    const rowData = props.dataItem;
+
+    setMainnoticeSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
+
+    const categories = categoryListData.find(
+      (item: any) => item.code_name == rowData.category
+    )?.sub_code;
+
+    setDetailFilters((prev) => ({
+      ...prev,
+      location: rowData.location,
+      datnum: rowData.datnum,
+      category: categories == undefined ? "" : categories,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+
+    setDetailWindowVisible2(true);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -408,7 +608,13 @@ const Main: React.FC = () => {
                                 justifyContent: "space-between",
                               }}
                             >
-                              <div style={{ float: "left" }}>{item.class}</div>
+                              <div style={{ float: "left" }}>
+                                {
+                                  classListData.find(
+                                    (items: any) => items.sub_code == item.class
+                                  )?.code_name
+                                }
+                              </div>
                               <div style={{ float: "right" }}>
                                 {item.cnt}마리
                               </div>
@@ -492,7 +698,14 @@ const Main: React.FC = () => {
                           기간 : {dateformat2(item.strdt)} ~{" "}
                           {dateformat2(item.enddt)}
                         </p>
-                        <p className="customer">반 명 : {item.class}</p>
+                        <p className="customer">
+                          반 명 :{" "}
+                          {
+                            classListData.find(
+                              (items: any) => items.sub_code == item.class
+                            )?.code_name
+                          }
+                        </p>
                         <p className="customer">
                           잔여 등원횟수 : {item.janqty}
                         </p>
@@ -514,7 +727,45 @@ const Main: React.FC = () => {
               잔여 포인트
             </GridContainer>
             <GridContainer width="25%" height="100%">
-              <GridContainer height="55vh">공지사항</GridContainer>
+              <GridContainer height="55vh">
+                <GridTitleContainer>
+                  <GridTitle>공지사항</GridTitle>
+                </GridTitleContainer>
+                <GridKendo
+                  style={{ height: "90%" }}
+                  data={process(
+                    mainnoticeDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: mainnoticeselectedState[idGetter2(row)],
+                    })),
+                    mainnoticeDataState
+                  )}
+                  {...mainnoticeDataState}
+                  onDataStateChange={onMainNoticeDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onMainNoticeSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainnoticeDataResult.total}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainNoticeSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onRowDoubleClick={onRowDoubleClick}
+                >
+                  <GridColumn field="title" title="제목" />
+                  <GridColumn field="contents2" title="내용" />
+                </GridKendo>
+              </GridContainer>
               <GridContainer height="35vh">
                 <GridTitleContainer>
                   <GridTitle>시스템 업데이트 공지사항</GridTitle>
@@ -524,7 +775,7 @@ const Main: React.FC = () => {
                   data={process(
                     noticeDataResult.data.map((row) => ({
                       ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      [SELECTED_FIELD]: noticeselectedState[idGetter(row)],
                     })),
                     noticeDataState
                   )}
@@ -549,6 +800,7 @@ const Main: React.FC = () => {
                   //컬럼너비조정
                   resizable={true}
                 >
+                  <GridColumn field="title" title="제목" />
                   <GridColumn field="contents" title="내용" />
                 </GridKendo>
               </GridContainer>
@@ -688,7 +940,12 @@ const Main: React.FC = () => {
                                   }}
                                 >
                                   <div style={{ float: "left" }}>
-                                    {item.class}
+                                    {
+                                      classListData.find(
+                                        (items: any) =>
+                                          items.sub_code == item.class
+                                      )?.code_name
+                                    }
                                   </div>
                                   <div style={{ float: "right" }}>
                                     {item.cnt}마리
@@ -796,13 +1053,20 @@ const Main: React.FC = () => {
                             기간 : {dateformat2(item.strdt)} ~{" "}
                             {dateformat2(item.enddt)}
                           </p>
-                          <p className="customer">반 명 : {item.class}</p>
-                        <p className="customer">
-                          잔여 등원횟수 : {item.janqty}
-                        </p>
-                        <p className="customer">
-                          변경 가능횟수 : {item.adjqty}
-                        </p>
+                          <p className="customer">
+                            반 명 :{" "}
+                            {
+                              classListData.find(
+                                (items: any) => items.sub_code == item.class
+                              )?.code_name
+                            }
+                          </p>
+                          <p className="customer">
+                            잔여 등원횟수 : {item.janqty}
+                          </p>
+                          <p className="customer">
+                            변경 가능횟수 : {item.adjqty}
+                          </p>
                         </div>
                       </AdminQuestionBox>
                     ))}
@@ -815,7 +1079,46 @@ const Main: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={3}>
               <GridContainer width="100%">
-                <GridContainer>공지사항</GridContainer>
+                <GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>공지사항</GridTitle>
+                  </GridTitleContainer>
+                  <GridKendo
+                    style={{ minHeight: "30vh" }}
+                    data={process(
+                      mainnoticeDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]:
+                          mainnoticeselectedState[idGetter2(row)],
+                      })),
+                      mainnoticeDataState
+                    )}
+                    {...mainnoticeDataState}
+                    onDataStateChange={onMainNoticeDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onMainNoticeSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainnoticeDataResult.total}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainNoticeSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onRowDoubleClick={onRowDoubleClick}
+                  >
+                    <GridColumn field="title" title="제목" />
+                    <GridColumn field="contents2" title="내용" />
+                  </GridKendo>
+                </GridContainer>
                 <GridContainer>
                   <GridTitleContainer>
                     <GridTitle>시스템 업데이트 공지사항</GridTitle>
@@ -825,7 +1128,7 @@ const Main: React.FC = () => {
                     data={process(
                       noticeDataResult.data.map((row) => ({
                         ...row,
-                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                        [SELECTED_FIELD]: noticeselectedState[idGetter(row)],
                       })),
                       noticeDataState
                     )}
@@ -858,6 +1161,21 @@ const Main: React.FC = () => {
           </Swiper>
         )}
       </GridContainerWrap>
+      {detailWindowVisible2 && (
+        <DetailWindow2
+          getVisible={setDetailWindowVisible2}
+          workType={"U"} //신규 : N, 수정 : U
+          datnum={detailFilters.datnum}
+          reloadData={(returnString: string) => {
+            setMainNoticeFilters((prev) => ({
+              ...prev,
+              find_row_value: returnString,
+              isSearch: true,
+            }));
+          }}
+          para={detailParameters}
+        />
+      )}
     </>
   );
 };

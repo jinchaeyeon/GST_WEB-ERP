@@ -51,6 +51,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import DetailWindow from "../components/Windows/CM_A0000W_Window";
+import DetailWindow2 from "../components/Windows/CM_A0000_301W_Window";
 import { useApi } from "../hooks/api";
 import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A0000W_C";
@@ -769,7 +770,6 @@ const CM_A0000W: React.FC = () => {
                   value={filters.publish_start_date}
                   format="yyyy-MM-dd"
                   onChange={filterInputChange}
-                  width="160px"
                   className="required"
                   placeholder=""
                 />
@@ -933,6 +933,21 @@ const CM_A0000W: React.FC = () => {
                   (item: any) => item.code_name === detailFilters.category
                 )?.sub_code
           }
+          reloadData={(returnString: string) => {
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: returnString,
+              isSearch: true,
+            }));
+          }}
+          para={detailParameters}
+        />
+      )}
+       {detailWindowVisible2 && (
+        <DetailWindow2
+          getVisible={setDetailWindowVisible2}
+          workType={workType} //신규 : N, 수정 : U
+          datnum={detailFilters.datnum}
           reloadData={(returnString: string) => {
             setFilters((prev) => ({
               ...prev,
