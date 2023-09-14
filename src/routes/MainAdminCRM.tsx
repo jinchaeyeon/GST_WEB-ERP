@@ -1174,6 +1174,7 @@ const Main: React.FC = () => {
             }));
           }}
           para={detailParameters}
+          modal={true}
         />
       )}
     </>

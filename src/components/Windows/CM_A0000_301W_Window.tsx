@@ -38,6 +38,7 @@ type TKendoWindow = {
   workType: "U" | "N";
   datnum?: string;
   para?: Iparameters; //{};
+  modal?: boolean;
 };
 
 const KendoWindow = ({
@@ -46,7 +47,10 @@ const KendoWindow = ({
   workType,
   datnum,
   para,
+  modal = false,
 }: TKendoWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const userId = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
   const pathname: string = window.location.pathname.replace("/", "");
@@ -70,7 +74,7 @@ const KendoWindow = ({
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 800,
+    width: isMobile == true ? deviceWidth : 800,
     height: 550,
   });
 
@@ -335,7 +339,7 @@ const KendoWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
-      modal={true}
+      modal={modal}
     >
       <GridContainer>
         <FormBoxWrap>

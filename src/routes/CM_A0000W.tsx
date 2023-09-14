@@ -941,6 +941,7 @@ const CM_A0000W: React.FC = () => {
             }));
           }}
           para={detailParameters}
+          modal={true}
         />
       )}
        {detailWindowVisible2 && (
@@ -956,6 +957,7 @@ const CM_A0000W: React.FC = () => {
             }));
           }}
           para={detailParameters}
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>
