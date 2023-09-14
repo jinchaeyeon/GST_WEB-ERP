@@ -291,7 +291,7 @@ const CR_A1100W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.num == filters.find_row_value);
+            : rows.find((row: any) => row.membership_id == filters.find_row_value);
         
             if(selectedRow != undefined) {
               setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
