@@ -687,31 +687,38 @@ const Main: React.FC = () => {
                   {questionDataResult.data.map((item, idx) => (
                     <AdminQuestionBox key={idx}>
                       <div
-                        className={`status ${
-                          item.janqty == 1 ? "Y" : item.janqty == 0 ? "R" : ""
-                        }`}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
                       >
-                        {item.custnm}
-                      </div>
-                      <div>
-                        <p className="title">
-                          기간 : {dateformat2(item.strdt)} ~{" "}
-                          {dateformat2(item.enddt)}
-                        </p>
-                        <p className="customer">
-                          반 명 :{" "}
+                        <p
+                          style={{
+                            color: "#939393",
+                            fontSize: "0.7rem",
+                            marginBottom: "5px",
+                          }}
+                        >
                           {
                             classListData.find(
                               (items: any) => items.sub_code == item.class
                             )?.code_name
                           }
                         </p>
-                        <p className="customer">
-                          잔여 등원횟수 : {item.janqty}
+                        <div
+                          className={`status ${
+                            item.janqty == 1 ? "Y" : item.janqty == 0 ? "R" : ""
+                          }`}
+                        >
+                          {item.custnm}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="title" style={{ fontSize: "0.9rem" }}>
+                          유효기간 : {dateformat2(item.enddt)}
                         </p>
-                        <p className="customer">
-                          변경 가능횟수 : {item.adjqty}
-                        </p>
+                        <p className="customer">잔여 등원 : {item.janqty}</p>
                       </div>
                       <div className="date">
                         <p>
@@ -1029,44 +1036,57 @@ const Main: React.FC = () => {
                             width: "100%",
                             display: "flex",
                             justifyContent: "space-between",
+                            alignItems: "center",
                           }}
                         >
                           <div
-                            className={`status ${
-                              item.janqty == 1
-                                ? "Y"
-                                : item.janqty == 0
-                                ? "R"
-                                : ""
-                            }`}
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
                           >
-                            {item.custnm}
+                            <p
+                              style={{
+                                color: "#939393",
+                                fontSize: "0.7rem",
+                                marginBottom: "5px",
+                              }}
+                            >
+                              {
+                                classListData.find(
+                                  (items: any) => items.sub_code == item.class
+                                )?.code_name
+                              }
+                            </p>
+                            <div
+                              className={`status ${
+                                item.janqty == 1
+                                  ? "Y"
+                                  : item.janqty == 0
+                                  ? "R"
+                                  : ""
+                              }`}
+                            >
+                              {item.custnm}
+                            </div>
+                          </div>
+                          <div className="title" style={{ margin: "0 2px" }}>
+                            <p
+                              style={{
+                                marginBottom: "3px",
+                                fontSize: "0.9rem",
+                              }}
+                            >
+                              유효기간 : {dateformat2(item.enddt)}
+                            </p>
+                            <p>잔여 등원 : {item.janqty}</p>
                           </div>
                           <div className="date">
                             <p>
                               <Button themeColor={"primary"}>카톡</Button>
                             </p>
                           </div>
-                        </div>
-                        <div>
-                          <p className="title">
-                            기간 : {dateformat2(item.strdt)} ~{" "}
-                            {dateformat2(item.enddt)}
-                          </p>
-                          <p className="customer">
-                            반 명 :{" "}
-                            {
-                              classListData.find(
-                                (items: any) => items.sub_code == item.class
-                              )?.code_name
-                            }
-                          </p>
-                          <p className="customer">
-                            잔여 등원횟수 : {item.janqty}
-                          </p>
-                          <p className="customer">
-                            변경 가능횟수 : {item.adjqty}
-                          </p>
                         </div>
                       </AdminQuestionBox>
                     ))}

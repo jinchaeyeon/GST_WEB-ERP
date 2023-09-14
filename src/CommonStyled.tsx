@@ -246,7 +246,7 @@ export const FormBox = styled.table`
     min-width: auto !important;
     padding-right: 0px !important;
   }
-  
+
   tr th + td {
     min-height: 40px;
   }
@@ -975,11 +975,11 @@ export const AdminQuestionBox = styled.div`
   }
 
   .title {
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: 500;
   }
   .customer {
-    font-size: 0.8rem;;
+    font-size: 0.8rem;
     padding-top: 10px;
     font-weight: 400;
   }
@@ -997,7 +997,6 @@ export const AdminQuestionBox = styled.div`
     justify-content: center;
     background-color: #877201;
     color: #fff;
-    margin-right: 10px;
     font-size: 0.8rem;
   }
   .Y {
@@ -1007,7 +1006,7 @@ export const AdminQuestionBox = styled.div`
   .R {
     background-color: #f76700;
   }
-  
+
   @media (max-width: 1200px) {
     min-width: auto;
     flex-direction: column;
@@ -1022,6 +1021,12 @@ export const AdminQuestionBox = styled.div`
       width: 100%;
       display: flex;
       justify-content: flex-end;
+    }
+
+    > .status {
+      font-size: 0.7rem;
+      width: 50px;
+      height: 25px;
     }
   }
 `;
@@ -1046,5 +1051,4 @@ export const ScrollableContainer = styled.div<TScrollableContainer>`
     border: 2px solid #f5b901;
     height: 80vh;
   }
-
 `;

@@ -421,13 +421,32 @@ const AppInner: React.FC = () => {
       switcher({ theme: "yellow" });
       // roles = "GST WEB";
       // switcher({ theme: "blue" });
+
+      //변경안함
+      document.title = "localhost"; 
     } else {
       if (path.split("/")[2].split(".")[1] == "gsti") {
         roles = "GST WEB";
         switcher({ theme: "blue" });
+        document.title = "GST ERP"; 
+        var metaRobots = document.querySelector('meta[name="description"]');
+        if (!metaRobots) {
+          metaRobots = document.createElement('meta');
+          metaRobots.setAttribute('content', '영업/물류/생산/품질/회계/인사/원가까지, 성장하는 제조업을 위한 클라우드 기반 맞춤형 스마트공장 통합관리 시스템');
+          document.head.appendChild(metaRobots);
+        }
+        metaRobots.setAttribute('content', '영업/물류/생산/품질/회계/인사/원가까지, 성장하는 제조업을 위한 클라우드 기반 맞춤형 스마트공장 통합관리 시스템');
       } else if (path.split("/")[2].split(".")[1] == "ddgd") {
         roles = "CRM_DDGD";
         switcher({ theme: "yellow" });
+        document.title = "댕댕가든";
+        var metaRobots = document.querySelector('meta[name="description"]');
+        if (!metaRobots) {
+          metaRobots = document.createElement('meta');
+          metaRobots.setAttribute('content', '고객/회원권/강아지 정보부터 직원/매출/매입 관리까지, 보편적 관리 시스템을 뛰어넘은 반려견 유치원을 위한 원스톱 맞춤형 시스템');
+          document.head.appendChild(metaRobots);
+        }
+        metaRobots.setAttribute('content', '고객/회원권/강아지 정보부터 직원/매출/매입 관리까지, 보편적 관리 시스템을 뛰어넘은 반려견 유치원을 위한 원스톱 맞춤형 시스템');
       }
     }
   }, []);

@@ -8,6 +8,8 @@ import { process } from "@progress/kendo-data-query";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 function App(props) {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const data =
     props.data == undefined
       ? {
@@ -119,11 +121,8 @@ function App(props) {
     props.propFunction(convertDateToStr(date));
   };
 
-  let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 1200;
-
   return (
-    <CalendarContainer backgroundColor={data.color}>
+    <CalendarContainer backgroundColor={data.color} isMobile={isMobile}>
       {isMobile ? (
         <>
           <div style={{ display: "block", width: "100%" }}>
@@ -385,7 +384,7 @@ export default App;
 const CalendarContainer = styled.div`
   /* ~~~ container styles ~~~ */
   margin: auto;
-  height: 100vh !important;
+  height: ${(props) => props.isMobile ? "100vh !important;" : "calc(100% - 40px) !important;"}
   background-color: ${(props) => props.backgroundColor};
   padding: 10px;
   border-radius: 3px;
