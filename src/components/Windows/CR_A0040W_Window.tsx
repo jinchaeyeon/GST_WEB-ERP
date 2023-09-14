@@ -67,27 +67,31 @@ const KendoWindow = ({
     const { value, name } = e.target;
 
     if (name == "strdt") { // 등록일자 변경 시 만기일자도 셋팅
-      let enddt:Date;
+      if (!!value) {
+        let enddt:Date;
 
-      if (value.getDate() == 1) { // 등록일자가 월초면 만기일자를 월말로 셋팅
-       enddt = lastDay(value);
-      }
-      else { // 월초가 아니면 한달뒤로 셋팅
-        enddt = new Date(value);
-        enddt.setMonth(enddt.getMonth() + 1);
-      }
+        if (value.getDate() == 1) { // 등록일자가 월초면 만기일자를 월말로 셋팅
+        enddt = lastDay(value);
+        }
+        else { // 월초가 아니면 한달뒤로 셋팅
+          enddt = new Date(value);
+          enddt.setMonth(enddt.getMonth() + 1);
+        }
 
-      setInitialVal((prev) => ({
-        ...prev,
-        [name]: convertDateToStr(value),
-        enddt: convertDateToStr(enddt),
-      }));
+        setInitialVal((prev) => ({
+          ...prev,
+          [name]: convertDateToStr(value),
+          enddt: convertDateToStr(enddt),
+        }));
+      }
     }
     else if (name == "enddt") {
-      setInitialVal((prev) => ({
-        ...prev,
-        [name]: convertDateToStr(value),
-      }));
+      if (!!value) {
+        setInitialVal((prev) => ({
+          ...prev,
+          [name]: convertDateToStr(value),
+        }));
+      }
     }
     else {
       setInitialVal((prev) => ({
@@ -307,11 +311,11 @@ const KendoWindow = ({
     }
     if (data.isSuccess === true) {
       if (workType === "U") {
-        setFilters((prev:any) => ({ ...prev, find_row_value: paraData.custcd, isSearch: true })); // 한번만 조회되도록
+        setFilters((prev:any) => ({ ...prev, find_row_value: data.returnString, isSearch: true })); // 한번만 조회되도록
         fetchMain();
       } else {
         setVisible(false);
-        setFilters((prev:any) => ({ ...prev, find_row_value: paraData.custcd, isSearch: true })); // 한번만 조회되도록
+        setFilters((prev:any) => ({ ...prev, find_row_value: data.returnString, isSearch: true })); // 한번만 조회되도록
       }
     } else {
       console.log("[오류 발생]");
@@ -423,6 +427,7 @@ const KendoWindow = ({
                           type="text"
                           value={initialVal.custcd}
                           className="required"
+                          readOnly={true}
                           onChange={filterInputChange}
                         />
                         <ButtonInInput>
