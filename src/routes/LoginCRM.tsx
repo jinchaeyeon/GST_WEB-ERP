@@ -144,7 +144,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#f9d202" }}>
+    <div style={{ backgroundColor: "#f5b901" }}>
       <LoginBox theme={currentTheme}>
         <Form
           onSubmit={handleSubmit}

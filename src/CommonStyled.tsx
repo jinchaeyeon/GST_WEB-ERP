@@ -78,8 +78,8 @@ export const MainWorkStartEndContainer = styled.div`
 export const TextContainer = styled.div<TColor>`
   display: flex;
   border: 1px solid
-    ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+    ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
   border-radius: 50px;
   width: 180px;
   line-height: 30px;
@@ -407,7 +407,7 @@ export const GridTitle = styled.h3`
 `;
 
 export const PrimaryP = styled.p<TColor>`
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
 `;
 
 export const PortraitPrint = styled.div`
@@ -540,7 +540,7 @@ export const LoginBox = styled.div<TColor>`
   align-items: center;
   justify-content: center;
   background-color: ${(props) =>
-    props.theme === "blue" ? "#2289c3" : "#f9d202"};
+    props.theme === "blue" ? "#2289c3" : "#f5b901"};
   height: 100vh;
   width: 50%;
   border-top-left-radius: 300px;
@@ -558,9 +558,9 @@ export const LoginBox = styled.div<TColor>`
     font-size: 18px;
     font-weight: 600;
     background-color: ${(props) =>
-      props.theme === "blue" ? "#2289c3" : "#f9d202"};
+      props.theme === "blue" ? "#2289c3" : "#f5b901"};
     border-color: 1px solid
-      ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+      ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
   }
   .k-input {
     height: 44px;
@@ -664,9 +664,9 @@ export const InfoList = styled.ul<TColor>`
   .big-input {
     height: 50px;
     border: 1px solid
-      ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+      ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
     border-radius: 10px;
-    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
     text-align: right;
     padding-left: 15px;
     font-size: 18px;
@@ -701,8 +701,8 @@ export const NumberKeypadRow = styled.div`
 `;
 export const NumberKeypadCell = styled.div<TColor>`
   border: 1px solid
-    ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+    ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
   font-size: 20px;
   text-align: center;
   border-radius: 5px;
@@ -715,17 +715,17 @@ export const NumberKeypadCell = styled.div<TColor>`
   cursor: pointer;
   :hover {
     background-color: ${(props) =>
-      props.theme === "blue" ? "#2289c3" : "#f9d202"};
+      props.theme === "blue" ? "#2289c3" : "#f5b901"};
     color: #ffffff;
   }
   :focus {
     background-color: ${(props) =>
-      props.theme === "blue" ? "#2289c3" : "#f9d202"};
+      props.theme === "blue" ? "#2289c3" : "#f5b901"};
     color: #ffffff;
   }
   :active {
     background-color: ${(props) =>
-      props.theme === "blue" ? "#2289c3" : "#f9d202"};
+      props.theme === "blue" ? "#2289c3" : "#f5b901"};
     color: #ffffff;
   }
 `;
@@ -763,7 +763,7 @@ export const Gnv = styled.div<TGnv>`
   .k-panelbar-item-icon.k-icon.k-i-gear,
   .k-panelbar-item-icon.k-icon.k-i-star,
   .k-panelbar-item-icon.k-icon.k-i-star-outline {
-    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
   }
 
   .k-selected > .k-panelbar-item-icon.k-icon.k-i-star-outline {
@@ -862,7 +862,7 @@ export const Footer = styled.div`
 
 export const AppName = styled.h1<TColor>`
   font-size: 20px;
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f9d202")};
+  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
   font-weight: 400;
   /* padding: 10px 0; */
   height: 50px;
@@ -1001,7 +1001,7 @@ export const AdminQuestionBox = styled.div`
     font-size: 0.8rem;
   }
   .Y {
-    background-color: #f9d202;
+    background-color: #f5b901;
   }
 
   .R {
@@ -1043,7 +1043,7 @@ export const ScrollableContainer = styled.div<TScrollableContainer>`
     overflow: auto;
   }
   @media (max-width: 1200px) {
-    border: 2px solid #f9D202;
+    border: 2px solid #f5b901;
     height: 80vh;
   }
 

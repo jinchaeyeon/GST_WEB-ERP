@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" style="overflow-y: scroll">
-  <head>
-    <base href="/" />
-    <meta charset="utf-8" />
-    <!-- <meta
+
+<head>
+  <base href="/" />
+  <meta charset="utf-8" />
+  <!-- <meta
       http-equiv="Content-Security-Policy"
       content="upgrade-insecure-requests"
     /> -->
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -32,12 +30,50 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>GST ERP</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
+  <script>
+    function titles() {
+      if (stristr($_SERVER[HTTP_HOST], "gsti")) {
+        document.title = "GST ERP"; var metaRobots = document.querySelector('meta[name="description"]');
+        if (!metaRobots) {
+          metaRobots = document.createElement('meta');
+          metaRobots.setAttribute('content', '영업/물류/생산/품질/회계/인사/원가까지, 성장하는 제조업을 위한 클라우드 기반 맞춤형 스마트공장 통합관리 시스템');
+          document.head.appendChild(metaRobots);
+        }
+        metaRobots.setAttribute('content', '영업/물류/생산/품질/회계/인사/원가까지, 성장하는 제조업을 위한 클라우드 기반 맞춤형 스마트공장 통합관리 시스템');
+      }
+
+      else if (stristr($_SERVER[HTTP_HOST], "ddgd")) {
+        document.title = "댕댕가든";
+        var metaRobots = document.querySelector('meta[name="description"]');
+        if (!metaRobots) {
+          metaRobots = document.createElement('meta');
+          metaRobots.setAttribute('content', '고객/회원권/강아지 정보부터 직원/매출/매입 관리까지, 보편적 관리 시스템을 뛰어넘은 반려견 유치원을 위한 원스톱 맞춤형 시스템');
+          document.head.appendChild(metaRobots);
+        }
+        metaRobots.setAttribute('content', '고객/회원권/강아지 정보부터 직원/매출/매입 관리까지, 보편적 관리 시스템을 뛰어넘은 반려견 유치원을 위한 원스톱 맞춤형 시스템');
+      }
+
+      else if (stristr($_SERVER[HTTP_HOST], "local")) { document.title = "localhost"; }
+      else { document.title = "error"; }
+    }
+    titles();
+  </script>
+  <script>
+    var metaRobots = document.querySelector('meta[name="description"]');
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.setAttribute('content', 'Your meta description');
+      document.head.appendChild(metaRobots);
+    }
+    metaRobots.setAttribute('content', 'Your meta description');
+  </script>
+  <title>localhost</title>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
@@ -47,5 +83,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-  </body>
+</body>
+
 </html>
