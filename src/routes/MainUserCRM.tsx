@@ -71,6 +71,7 @@ const Main: React.FC = () => {
   const [selectedState, setSelectedState] = useState<string>("");
   const [ChangeDateVisible, setChangeDateVisible] = useState<boolean>(false);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const [show, setShow] = useState(false);
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [changeDate, setChangeDate] = useState<string>("");
@@ -329,26 +330,35 @@ const Main: React.FC = () => {
 
   const onSave = (pastday: string, currentday: string) => {
     if (currentday != null) {
-      const find_key = schedulerData.data.filter(
-        (item) => item.date == pastday
-      )[0].membership_key;
-      const number = cardOptionData.data.filter(
+      const data = cardOptionData.data.filter(
         (item) => item[DATA_ITEM_KEY] == selectedState
-      )[0].adjqty;
-      if (find_key != undefined) {
-        alert(`잔여 변경 횟수는 ${number}회 입니다.`);
-        if (
-          !window.confirm("변경신청 후 취소 할 수 없습니다. 신청하시겠습니까?")
-        ) {
-          return false;
+      )[0];
+      if (currentday > data.enddt) {
+        setShow(true);
+      } else {
+        const find_key = schedulerData.data.filter(
+          (item) => item.date == pastday
+        )[0].membership_key;
+        const number = cardOptionData.data.filter(
+          (item) => item[DATA_ITEM_KEY] == selectedState
+        )[0].adjqty;
+        if (find_key != undefined) {
+          alert(`잔여 변경 횟수는 ${number}회 입니다.`);
+          if (
+            !window.confirm(
+              "변경신청 후 취소 할 수 없습니다. 신청하시겠습니까?"
+            )
+          ) {
+            return false;
+          }
+          setParaData((prev) => ({
+            ...prev,
+            workType: "N",
+            custcd: selectedState,
+            membership_key: find_key,
+            adjdt: currentday,
+          }));
         }
-        setParaData((prev) => ({
-          ...prev,
-          workType: "N",
-          custcd: selectedState,
-          membership_key: find_key,
-          adjdt: currentday,
-        }));
       }
     } else {
       alert("변경 등원일을 선택해주세요.");
@@ -442,7 +452,10 @@ const Main: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer width="100%" style={{height: "100vh", overflowY: "scroll"}}>
+              <GridContainer
+                width="100%"
+                style={{ height: "100vh", overflowY: "scroll" }}
+              >
                 <TitleContainer>
                   <Title>
                     우리집 강아지
@@ -724,6 +737,16 @@ const Main: React.FC = () => {
                         </CardContent>
                       </Card>
                     </Grid>
+                    {show ? (
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <p style={{ color: "red" }}>
+                          설정하신 일자가 회원권 종료일 이후입니다.
+                        </p>
+                        <p style={{ color: "red" }}>다시 설정해주세요.</p>
+                      </Grid>
+                    ) : (
+                      ""
+                    )}
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                       <ButtonContainer>
                         <Buttons
@@ -767,6 +790,7 @@ const Main: React.FC = () => {
           }
           changeDate={changeDate}
           reload={(pastday, currentday) => onSave(pastday, currentday)}
+          show={show}
         />
       )}
     </>

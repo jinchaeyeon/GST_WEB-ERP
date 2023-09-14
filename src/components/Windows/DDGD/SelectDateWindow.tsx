@@ -12,6 +12,7 @@ type IKendoWindow = {
   data: any;
   changeDate: string;
   reload(pastday: string, currentday: string): void;
+  show: boolean;
 };
 
 const KendoWindow = ({
@@ -19,8 +20,8 @@ const KendoWindow = ({
   data,
   changeDate,
   reload,
+  show,
 }: IKendoWindow) => {
-
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -36,7 +37,7 @@ const KendoWindow = ({
 
   const onSave = () => {
     if (date.date != null) {
-      reload(changeDate, convertDateToStr(date.date))
+      reload(changeDate, convertDateToStr(date.date));
     } else {
       alert("변경 등원일을 선택해주세요.");
     }
@@ -243,6 +244,16 @@ const KendoWindow = ({
             </CardContent>
           </Card>
         </Grid>
+        {show ? (
+          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+            <p style={{ color: "red" }}>
+              설정하신 일자가 회원권 종료일 이후입니다.
+            </p>
+            <p style={{ color: "red" }}>다시 설정해주세요.</p>
+          </Grid>
+        ) : (
+          ""
+        )}
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
           <ButtonContainer>
             <Button
