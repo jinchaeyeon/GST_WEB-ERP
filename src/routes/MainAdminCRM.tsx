@@ -646,7 +646,7 @@ const Main: React.FC = () => {
                   height: "10vh",
                   cursor: "pointer",
                 }}
-                onClick={onAdjustWndClick}
+                onClick={(e) => onAdjustWndClick}
               >
                 <CardContent
                   style={{
