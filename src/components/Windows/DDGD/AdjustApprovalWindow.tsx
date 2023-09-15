@@ -12,7 +12,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Checkbox, CheckboxChangeEvent, Input } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  CheckboxChangeEvent,
+  Input,
+} from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";
 import { atom, useSetRecoilState } from "recoil";
 import {
@@ -29,7 +33,12 @@ import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IItemData, IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
-import { UseBizComponent, UseGetValueFromSessionItem, UseParaPc, getGridItemChangedData } from "../../CommonFunction";
+import {
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  getGridItemChangedData,
+} from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import { Iparameters, TColumn } from "../../../store/types";
@@ -38,9 +47,7 @@ import CenterCell from "../../Cells/CenterCell";
 import { createTheme } from "@mui/material";
 import styled, { createGlobalStyle } from "styled-components";
 
-const color = [
-  "#2196f3", "#1976d2", "#64b5f6", "#bbdefb",
-];
+const color = ["#2196f3", "#1976d2", "#64b5f6", "#bbdefb"];
 
 const theme = createTheme({
   palette: {
@@ -56,118 +63,110 @@ const theme = createTheme({
 });
 
 const GlobalStyles = styled.div`
-@font-face {
-  font-family: "TheJamsil5Bold";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2")
-    format("woff2");
-  font-weight: 700;
-  font-style: normal;
-}
+  @font-face {
+    font-family: "TheJamsil5Bold";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2")
+      format("woff2");
+    font-weight: 700;
+    font-style: normal;
+  }
 
-.p-button {
-  background: ${theme.palette.primary.main};
-  border: 1px solid ${theme.palette.primary.main};
-  box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
-}
+  .p-button {
+    background: ${theme.palette.primary.main};
+    border: 1px solid ${theme.palette.primary.main};
+    box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
+  }
 
-.p-button:hover {
-  background: ${theme.palette.primary.dark};
-  border: 1px solid ${theme.palette.primary.dark};
-}
+  .p-button:hover {
+    background: ${theme.palette.primary.dark};
+    border: 1px solid ${theme.palette.primary.dark};
+  }
 
-.p-inputtext:enabled:focus {
-  border: 1px solid ${theme.palette.primary.main};
-  box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
-}
+  .p-inputtext:enabled:focus {
+    border: 1px solid ${theme.palette.primary.main};
+    box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
+  }
 
-.p-inputtext:enabled:hover {
-  border: 1px solid ${theme.palette.primary.main};
-  box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
-}
+  .p-inputtext:enabled:hover {
+    border: 1px solid ${theme.palette.primary.main};
+    box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
+  }
 
-.p-dropdown:not(.p-disabled):hover,
-.p-dropdown:not(.p-disabled).p-focus {
-  border: 1px solid ${theme.palette.primary.main};
-  outline: 0.15rem solid ${theme.palette.primary.main};
-  box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
-}
+  .p-dropdown:not(.p-disabled):hover,
+  .p-dropdown:not(.p-disabled).p-focus {
+    border: 1px solid ${theme.palette.primary.main};
+    outline: 0.15rem solid ${theme.palette.primary.main};
+    box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
+  }
 
-.p-datatable .p-datatable-tbody > tr.p-highlight {
-  color: black;
-  background-color: ${theme.palette.secondary.main};
-}
+  .p-datatable .p-datatable-tbody > tr.p-highlight {
+    color: black;
+    background-color: ${theme.palette.secondary.main};
+  }
 
-.p-datatable.p-datatable-selectable
-  .p-datatable-tbody
-  > tr.p-selectable-row:focus {
-  outline: 0.15rem solid ${theme.palette.primary.light};
-}
+  .p-datatable.p-datatable-selectable
+    .p-datatable-tbody
+    > tr.p-selectable-row:focus {
+    outline: 0.15rem solid ${theme.palette.primary.light};
+  }
 
-.p-datatable .p-sortable-column.p-highlight {
-  color: black;
-  background-color: ${theme.palette.secondary.main};
-}
+  .p-datatable .p-sortable-column.p-highlight {
+    color: black;
+    background-color: ${theme.palette.secondary.main};
+  }
 
-.p-datatable
-  .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover {
-  color: black;
-  background-color: ${theme.palette.primary.light};
-}
+  .p-datatable .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover {
+    color: black;
+    background-color: ${theme.palette.primary.light};
+  }
 
-.p-datatable .p-sortable-column:focus {
-  box-shadow: inset 0 0 0 0.15rem ${theme.palette.primary.light};
-}
+  .p-datatable .p-sortable-column:focus {
+    box-shadow: inset 0 0 0 0.15rem ${theme.palette.primary.light};
+  }
 
-.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon,
-.p-datatable
-  .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover
-  .p-sortable-column-icon {
-  color: black;
-}
+  .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon,
+  .p-datatable
+    .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover
+    .p-sortable-column-icon {
+    color: black;
+  }
 
-.p-datatable.p-datatable-striped
-  .p-datatable-tbody
-  > tr.p-row-odd.p-highlight {
-  color: black;
-  background-color: ${theme.palette.secondary.main};
-}
+  .p-datatable.p-datatable-striped
+    .p-datatable-tbody
+    > tr.p-row-odd.p-highlight {
+    color: black;
+    background-color: ${theme.palette.secondary.main};
+  }
 
-.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  color: black;
-  background-color: ${theme.palette.secondary.main};
-  border-color: ${theme.palette.secondary.main};
-}
+  .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    color: black;
+    background-color: ${theme.palette.secondary.main};
+    border-color: ${theme.palette.secondary.main};
+  }
 
-.p-radiobutton .p-radiobutton-box.p-highlight {
-  background-color: ${theme.palette.primary.main};
-  border-color: ${theme.palette.primary.main};
-}
-.p-radiobutton .p-radiobutton-box.p-highlight:not(.p-disabled):hover {
-  background-color: ${theme.palette.primary.dark};
-  border-color: ${theme.palette.primary.dark};
-}
-.p-radiobutton .p-radiobutton-box:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 0.15rem ${theme.palette.primary.light};
-}
-.p-radiobutton .p-radiobutton-box:not(.p-disabled):not(.p-highlight):hover {
-  border-color: ${theme.palette.primary.main};
-}
+  .p-radiobutton .p-radiobutton-box.p-highlight {
+    background-color: ${theme.palette.primary.main};
+    border-color: ${theme.palette.primary.main};
+  }
+  .p-radiobutton .p-radiobutton-box.p-highlight:not(.p-disabled):hover {
+    background-color: ${theme.palette.primary.dark};
+    border-color: ${theme.palette.primary.dark};
+  }
+  .p-radiobutton .p-radiobutton-box:not(.p-disabled).p-focus {
+    box-shadow: inset 0 0 0 0.15rem ${theme.palette.primary.light};
+  }
+  .p-radiobutton .p-radiobutton-box:not(.p-disabled):not(.p-highlight):hover {
+    border-color: ${theme.palette.primary.main};
+  }
 
-.p-progressbar .p-progressbar-value {
-  background: ${theme.palette.primary.main};
-}
+  .p-progressbar .p-progressbar-value {
+    background: ${theme.palette.primary.main};
+  }
 `;
 
-
 const CustomCheckBoxCell = (props: GridCellProps) => {
-  const {
-    ariaColumnIndex,
-    columnIndex,
-    dataItem,
-    field,
-    render,
-    onChange,
-  } = props;
+  const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange } =
+    props;
 
   let value = dataItem[field ?? ""];
   if (value === "Y" || value === true) {
@@ -194,7 +193,7 @@ const CustomCheckBoxCell = (props: GridCellProps) => {
       aria-colindex={ariaColumnIndex}
       data-grid-col-index={columnIndex}
     >
-      <Checkbox value={value} onChange={handleChange}></Checkbox> 
+      <Checkbox value={value} onChange={handleChange}></Checkbox>
     </td>
   );
 
@@ -203,11 +202,7 @@ const CustomCheckBoxCell = (props: GridCellProps) => {
     : render?.call(undefined, defaultRendering, props);
 };
 
-const centerField = [
-  "classnm",
-  "orgdt",
-  "adjdt"
-]
+const centerField = ["classnm", "orgdt", "adjdt"];
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -293,11 +288,10 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
     });
 
     if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-    } 
-    else if (grid.current.offsetWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.offsetWidth);
-        setApplyMinWidth(false);
+      setApplyMinWidth(true);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(false);
     }
   };
 
@@ -349,9 +343,9 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
     let data: any;
     setLoading(true);
     //팝업 조회 파라미터
-    
+
     // 프로시저
-    const parameters:Iparameters = {
+    const parameters: Iparameters = {
       procedureName: "P_CR_A1000W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
@@ -429,13 +423,13 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
   };
 
   const fetchMainGridSaved = async () => {
-    let keys:string[] = [];
+    let keys: string[] = [];
     // 체크한 항목 승인
     mainDataResult.data.forEach((row) => {
       if (row.chk == "Y" || row.chk === true) {
         keys.push(row.membership_key);
       }
-    })
+    });
 
     if (keys.length == 0) {
       alert("선택한 자료가 없습니다.");
@@ -469,10 +463,10 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
 
     if (data.isSuccess === true) {
       alert("승인이 완료되었습니다.");
-      
+
       // 현재 페이지 전부 승인
       const isLastDataDeleted =
-          keys.length == mainDataResult.data.length && filters.pgNum > 0;
+        keys.length == mainDataResult.data.length && filters.pgNum > 0;
 
       if (isLastDataDeleted) {
         setPage({
@@ -485,9 +479,7 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
 
         setFilters((prev) => ({
           ...prev,
-          pgNum: prev.pgNum != 1
-              ? prev.pgNum - 1
-              : prev.pgNum,
+          pgNum: prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,
         }));
       } else {
@@ -549,7 +541,7 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
     }));
   };
 
-  const columnData:TColumn[] = [
+  const columnData: TColumn[] = [
     {
       id: "",
       field: "classnm",
@@ -604,9 +596,7 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
     }
     let width = applyMinWidth
       ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          columnData.length;
+      : minWidth + (gridCurrent - minGridWidth.current) / columnData.length;
 
     return width;
   };
@@ -629,34 +619,14 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      {/* <FilterContainer>
-        <FilterBox>
-          <tbody>
-            <tr>
-              <th>품목코드</th>
-              <td>
-                <Input
-                  name="itemcd"
-                  type="text"
-                  value={filters.itemcd}
-                  onChange={filterInputChange}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer> */}
       <GridContainer height="calc(100% - 110px)">
-        {/* <GridTitleContainer>
-          <GridTitle>품목리스트</GridTitle>
-        </GridTitleContainer> */}
         <Grid
           style={{ height: "calc(100%)" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              chk: row.chk == "Y" || row.chk === true  ? true : false
+              chk: row.chk == "Y" || row.chk === true ? true : false,
             })),
             mainDataState
           )}
@@ -687,43 +657,34 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
           reorderable={true}
           //컬럼너비조정
           resizable={true}
-
           onItemChange={onMainItemChange}
           //더블클릭
           onRowDoubleClick={onRowDoubleClick}
           id="grdAdjList"
         >
-          <GridColumn 
-            field="chk" 
+          <GridColumn
+            field="chk"
             title=" "
-            width="50px" 
+            width="50px"
             editable={true}
             cell={CustomCheckBoxCell}
           />
 
-          {columnData 
-          && columnData.length > 0 
-          && columnData.map((column, index) => {
-            return (
-              <GridColumn 
-                field={column.field} 
-                title={column.caption} 
-                width={setWidth("", column.width)}
-                footerCell={index == 0 ? mainTotalFooterCell : undefined}
-                cell={
-                  centerField.includes(column.field) 
-                  ? CenterCell
-                  : undefined
-                }
-              />
-            )})
-          }
-
-
-          {/* <GridColumn field="classnm" title="반" width="200px" footerCell={mainTotalFooterCell}/>
-          <GridColumn field="custnm" title="반려견명" width="120px" />
-          <GridColumn field="orgdt" title="기존일자" width="120px" />
-          <GridColumn field="adjdt" title="변경일자" width="120px" /> */}
+          {columnData &&
+            columnData.length > 0 &&
+            columnData.map((column, index) => {
+              return (
+                <GridColumn
+                  field={column.field}
+                  title={column.caption}
+                  width={setWidth("", column.width)}
+                  footerCell={index == 0 ? mainTotalFooterCell : undefined}
+                  cell={
+                    centerField.includes(column.field) ? CenterCell : undefined
+                  }
+                />
+              );
+            })}
         </Grid>
       </GridContainer>
       <BottomContainer>
