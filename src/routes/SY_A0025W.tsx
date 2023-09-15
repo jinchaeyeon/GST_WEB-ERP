@@ -1138,10 +1138,10 @@ const SY_A0025W: React.FC = () => {
             : minGridWidth2.current
       );
 
-      setGridCurrent(grid.current.offsetWidth-25);
-      setGridCurrent2(grid2.current.offsetWidth-25);
-      setApplyMinWidth(grid.current.offsetWidth-25 < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.offsetWidth-25 < minGridWidth2.current);
+      setGridCurrent(grid.current.offsetWidth);
+      setGridCurrent2(grid2.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+      setApplyMinWidth2(grid2.current.offsetWidth < minGridWidth2.current);
     }
   }, [customOptionData]);
 

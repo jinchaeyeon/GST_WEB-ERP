@@ -395,7 +395,7 @@ const CM_B8100W: React.FC = () => {
           ? (minGridWidth.current += item.width)
           : minGridWidth.current 
       );
-      minGridWidth.current+=15
+      minGridWidth.current-=20
       setGridCurrent(grid.current.offsetWidth);
       setApplyMinWidth(grid.current.offsetWidth< minGridWidth.current);
     }

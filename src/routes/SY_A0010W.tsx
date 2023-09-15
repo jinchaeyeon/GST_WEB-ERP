@@ -1185,8 +1185,8 @@ const Page: React.FC = () => {
           : minGridWidth.current 
       );
 
-      setGridCurrent(grid.current.offsetWidth-87);
-      setApplyMinWidth(grid.current.offsetWidth-87 < minGridWidth.current);
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
     }
   }, [customOptionData]);
 

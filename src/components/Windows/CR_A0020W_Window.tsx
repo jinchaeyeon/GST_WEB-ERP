@@ -171,7 +171,9 @@ const KendoWindow = ({
     }
   }, []);
 
-  const [initialVal, setInitialVal] = useState({
+  const [initialVal, setInitialVal] = useState<
+    {[id: string]: any}
+  >({
     custcd: "",
     custnm: "",
     class: "",
@@ -179,10 +181,10 @@ const KendoWindow = ({
     species: "",
     gender: "",
     manager: "",
-    strdt: convertDateToStr(new Date()),
-    enddt: "20991231",
+    strdt: new Date(),
+    enddt: new Date("2099-12-31"),
     dayofweek: 0,
-    birdt: "19991231",
+    birdt: null,
     bircd: "Y",
     remark: "",
     useyn: "Y",
@@ -228,10 +230,10 @@ const KendoWindow = ({
           species: row.species ?? "",
           gender: row.gender ?? "",
           manager: row.manager ?? "",
-          strdt: row.strdt ?? "",
-          enddt: row.enddt ?? "",
+          strdt: !row.strdt ? null : new Date(dateformat(row.strdt)),
+          enddt: !row.enddt ? null : new Date(dateformat(row.enddt)),
           dayofweek: row.dayofweek ?? "",
-          birdt: row.birdt ?? "",
+          birdt: !row.birdt ? null : new Date(dateformat(row.birdt)),
           bircd: row.bircd ?? "",
           remark: row.remark ?? "",
           useyn: row.useyn ?? "",
@@ -255,10 +257,10 @@ const KendoWindow = ({
     species: "",
     gender: "",
     manager: "",
-    strdt: convertDateToStr(new Date()),
-    enddt: "20991231",
+    strdt: new Date(),
+    enddt: new Date("2099-12-31"),
     dayofweek: 0,
-    birdt: "19991231",
+    birdt: new Date("1999-12-31"),
     bircd: "Y",
     remark: "",
     useyn: "Y",
@@ -284,10 +286,10 @@ const KendoWindow = ({
       "@p_gender": paraData.gender,
       "@p_age": 0,
       "@p_manager": paraData.manager,
-      "@p_strdt": paraData.strdt,
-      "@p_enddt": paraData.enddt,
+      "@p_strdt": convertDateToStr(paraData.strdt),
+      "@p_enddt": convertDateToStr(paraData.enddt),
       "@p_dayofweek": paraData.dayofweek,
-      "@p_birdt": paraData.birdt,
+      "@p_birdt": convertDateToStr(paraData.birdt),
       "@p_bircd": paraData.bircd,
       "@p_useyn": paraData.useyn,
       "@p_color": "",
@@ -491,7 +493,7 @@ const KendoWindow = ({
                   <td>
                     <DatePicker
                       name="strdt"
-                      value={new Date(dateformat(initialVal.strdt))}
+                      value={initialVal.strdt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       placeholder=""
@@ -501,7 +503,7 @@ const KendoWindow = ({
                   <td>
                     <DatePicker
                       name="enddt"
-                      value={new Date(dateformat(initialVal.enddt))}
+                      value={initialVal.enddt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       placeholder=""
@@ -552,7 +554,7 @@ const KendoWindow = ({
                     <DatePicker
                       width={"calc(100% - 52px)"}
                       name="birdt"
-                      value={new Date(dateformat(initialVal.birdt))}
+                      value={initialVal.birdt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       placeholder=""
