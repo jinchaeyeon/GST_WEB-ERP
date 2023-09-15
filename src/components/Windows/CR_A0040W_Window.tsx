@@ -67,9 +67,9 @@ const KendoWindow = ({
     const { value, name } = e.target;
 
     if (name == "strdt") { // 등록일자 변경 시 만기일자도 셋팅
-      if (!!value) {
-        let enddt:Date;
+      let enddt:Date;
 
+      if (value) {
         if (value.getDate() == 1) { // 등록일자가 월초면 만기일자를 월말로 셋팅
         enddt = lastDay(value);
         }
@@ -80,18 +80,22 @@ const KendoWindow = ({
 
         setInitialVal((prev) => ({
           ...prev,
-          [name]: convertDateToStr(value),
-          enddt: convertDateToStr(enddt),
+          [name]: value,
+          enddt: enddt,
+        }));
+      }
+      else {
+        setInitialVal((prev) => ({
+          ...prev,
+          [name]: value,
         }));
       }
     }
     else if (name == "enddt") {
-      if (!!value) {
-        setInitialVal((prev) => ({
-          ...prev,
-          [name]: convertDateToStr(value),
-        }));
-      }
+      setInitialVal((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
     else {
       setInitialVal((prev) => ({
@@ -185,15 +189,17 @@ const KendoWindow = ({
     }
   }, []);
 
-  const [initialVal, setInitialVal] = useState({
+  const [initialVal, setInitialVal] = useState<
+    {[id: string]: any}
+  >({
     membership_id: "",
     custcd: "",
     custnm: "",
     gubun: "",
     remark: "",
     amt: 0,
-    strdt: convertDateToStr(firstDay(new Date())),
-    enddt: convertDateToStr(lastDay(new Date())),
+    strdt: firstDay(new Date()),
+    enddt: lastDay(new Date()),
     janqty: 0,
     adjqty: 0,
   });
@@ -232,8 +238,8 @@ const KendoWindow = ({
 
       if (isCopy) {
         row.membership_id = initialVal.membership_id;
-        row.strdt = initialVal.strdt;
-        row.enddt = initialVal.enddt;
+        row.strdt = convertDateToStr(initialVal.strdt);
+        row.enddt = convertDateToStr(initialVal.enddt);
         row.janqty = row.orguseqty;
         row.adjqty = row.orgadjqty;
       }
@@ -247,8 +253,8 @@ const KendoWindow = ({
           gubun: row.gubun,
           remark: row.remark,
           amt: row.amt,
-          strdt: row.strdt,
-          enddt: row.enddt,
+          strdt: !row.strdt ? null : new Date(dateformat(row.strdt)),
+          enddt: !row.enddt ? null : new Date(dateformat(row.enddt)),
           janqty: row.janqty,
           adjqty: row.adjqty,
         };
@@ -270,8 +276,8 @@ const KendoWindow = ({
     gubun: "",
     remark: "",
     amt: 0,
-    strdt: convertDateToStr(new Date()),
-    enddt: "20991231",
+    strdt: new Date(),
+    enddt: new Date("2099-12-31"),
     janqty: 0,
     adjqty: 0,
   });
@@ -294,8 +300,8 @@ const KendoWindow = ({
         "@p_gubun": paraData.gubun,
         "@p_remark": paraData.remark,
         "@p_amt": paraData.amt,
-        "@p_strdt": paraData.strdt,
-        "@p_enddt": paraData.enddt,
+        "@p_strdt": convertDateToStr(paraData.strdt),
+        "@p_enddt": convertDateToStr(paraData.enddt),
         "@p_useqty": paraData.janqty,
         "@p_adjqty": paraData.adjqty,
         "@p_userid": userId,
@@ -358,6 +364,7 @@ const KendoWindow = ({
         errorMessage = findMessage(messagesData, "CR_A0040W_003"); // 변경횟수를 입력해주세요.
         vaild = false;
       }
+      // strdt, enddt
     }
     if (!vaild) {
       alert(errorMessage);
@@ -475,7 +482,7 @@ const KendoWindow = ({
                   <td>
                     <DatePicker
                       name="strdt"
-                      value={new Date(dateformat(initialVal.strdt))}
+                      value={initialVal.strdt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       placeholder=""
@@ -515,7 +522,7 @@ const KendoWindow = ({
                   <td>
                     <DatePicker
                       name="enddt"
-                      value={new Date(dateformat(initialVal.enddt))}
+                      value={initialVal.enddt}
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       placeholder=""

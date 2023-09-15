@@ -40,6 +40,7 @@ import {
   UseMessages,
   UseParaPc,
   UsePermissions,
+  convertDateToStr,
   dateformat,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -57,6 +58,8 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 import { gridList } from "../store/columns/CR_A0020W_C";
 import CR_A0020W_Window from "../components/Windows/CR_A0020W_Window";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
 
 enum weekDay
 {
@@ -160,6 +163,7 @@ const CR_A0020W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
+  const location = UseGetValueFromSessionItem("location");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -204,7 +208,7 @@ const CR_A0020W: React.FC = () => {
   // }, [customOptionData]); 2134
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_dptcd_001,L_SYS005", setBizComponentData);
+  UseBizComponent("L_BA310", setBizComponentData);
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
@@ -604,6 +608,150 @@ const CR_A0020W: React.FC = () => {
     );
   };
 
+  const saveExcel = (jsonArr: any[]) => {
+    if (jsonArr.length == 0) {
+      alert("데이터가 없습니다.");
+      return;
+    } 
+
+    const columns:string[] = [
+      "반려견ID",
+      "반려견명",
+      "반려인ID",
+      "반",
+      "담당자ID",
+      "월",
+      "화",
+      "수",
+      "목",
+      "금",
+    ]
+
+    setLoading(true);
+
+    jsonArr.map((items: any) => {
+      Object.keys(items).map((item: any) => {
+        if (!columns.includes(item)) {
+          alert("양식이 맞지 않습니다.");
+          return;
+        }
+      });
+    });
+
+    // let temp = 0;
+    // mainDataResult.data.map((item) => {
+    //   if (item.num > temp) {
+    //     temp = item.num;
+    //   }
+    // });
+
+    const bizComponent:any = bizComponentData.find(
+      (item: any) => item.bizComponentId === "L_BA310"
+    );
+
+    let isSuccess:boolean = true;
+    let errorMessage:string = "";
+    let returnString:string = "";
+    jsonArr.forEach(async (item: any) => {
+      const {
+        반려견ID = "",
+        반려견명 = "",
+        반려인ID = "",
+        반 = "",
+        담당자ID = "",
+        월 = "",
+        화 = "",
+        수 = "",
+        목 = "",
+        금 = "",
+      } = item;
+
+      let classCode = bizComponent ? bizComponent.data.find((x:any) => x.code_name == 반).sub_code : "";
+      
+      let dayofweek = weekDay.None;
+
+      // 요일은 빈칸만 아니면 체크된걸로 처리
+      if (!!월) {
+        dayofweek |= weekDay.월;
+      }
+      if (!!화) {
+        dayofweek |= weekDay.화;
+      }
+      if (!!수) {
+        dayofweek |= weekDay.수;
+      }
+      if (!!목) {
+        dayofweek |= weekDay.목;
+      }
+      if (!!금) {
+        dayofweek |= weekDay.금;
+      }
+
+      //프로시저 파라미터
+      const paraSaved: Iparameters = {
+        procedureName: "P_CR_A0020W_S",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_work_type": "N",
+          "@p_orgdiv": orgdiv,
+          "@p_custcd": 반려견ID,
+          "@p_location": location,
+          "@p_custnm": 반려견명,
+          "@p_class": classCode,
+          "@p_owner": 반려인ID,
+          "@p_species": "",
+          "@p_gender": "",
+          "@p_age": 0,
+          "@p_manager": 담당자ID,
+          "@p_strdt": convertDateToStr(new Date()),
+          "@p_enddt": "20991231",
+          "@p_dayofweek": dayofweek,
+          "@p_birdt": "",
+          "@p_bircd": "",
+          "@p_useyn": "Y",
+          "@p_color": "",
+          "@p_remark": "",
+          "@p_userid": userId,
+          "@p_pc": pc,
+          "@p_form_id": pathname,
+        },
+      };
+
+      let data: any;
+      try {
+        data = await processApi<any>("procedure", paraSaved);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        returnString = data.returnString;
+      } else {
+        console.log("[오류 발생]");
+        console.log(data);
+
+        isSuccess = false;
+        errorMessage = data.resultMessage;
+      }
+    });
+
+    if (isSuccess) {
+      setFilters((prev:any) => ({ ...prev, find_row_value: returnString, isSearch: true })); // 한번만 조회되도록
+    }
+    else {
+      alert(errorMessage);
+    }
+
+    setLoading(false);
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] = useState<boolean>(false);
+
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -670,23 +818,39 @@ const CR_A0020W: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>반려견 리스트</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onClickNew}
-                icon="file-add"
-                themeColor={"primary"}
-              >
-                신규
-              </Button>
-              <Button
-                onClick={onClickDelete}
-                icon="delete"
-                themeColor={"primary"}
-                fillMode={"outline"}
-              >
-                삭제
-              </Button>
-            </ButtonContainer>
+            {permissions && (
+              <ButtonContainer>
+                <ExcelUploadButton
+                  saveExcel={saveExcel}
+                  permissions={permissions}
+                  style={{ marginLeft: "15px" }}
+                />
+                <Button
+                  title="Export Excel"
+                  onClick={onAttachmentsWndClick}
+                  icon="file"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                >
+                  엑셀양식
+                </Button>
+                <Button
+                  onClick={onClickNew}
+                  icon="file-add"
+                  themeColor={"primary"}
+                >
+                  신규
+                </Button>
+                <Button
+                  onClick={onClickDelete}
+                  icon="delete"
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                >
+                  삭제
+                </Button>
+              </ButtonContainer>
+            )}
           </GridTitleContainer>
           <Grid
             style={{ height: "80.5vh" }}
@@ -797,6 +961,13 @@ const CR_A0020W: React.FC = () => {
           workType={workType}
           orgdiv={orgdiv}
           custcd={mainDataResult.data.find((x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0])?.custcd ?? ""}
+          modal={true}
+        />
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          para={"CR_A0020W"}
           modal={true}
         />
       )}
