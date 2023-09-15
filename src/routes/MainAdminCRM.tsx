@@ -44,6 +44,7 @@ import DetailWindow2 from "../components/Windows/CM_A0000_301W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
+import AdjustApprovalWindow from "../components/Windows/DDGD/AdjustApprovalWindow";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -469,6 +470,12 @@ const Main: React.FC = () => {
     setDetailWindowVisible2(true);
   };
 
+  const [adjustWindowVisible, setAdjustWindowVisible] = useState<boolean>(false);
+
+  const onAdjustWndClick = () => {
+    setAdjustWindowVisible(true);
+  }
+
   return (
     <>
       <TitleContainer>
@@ -629,7 +636,7 @@ const Main: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>변경권 신청 확인</GridTitle>
               </GridTitleContainer>
-              <Card
+              <Card 
                 style={{
                   width: "100%",
                   marginRight: "15px",
@@ -637,7 +644,9 @@ const Main: React.FC = () => {
                   backgroundColor: "#f5b901",
                   marginBottom: "30px",
                   height: "10vh",
+                  cursor: "pointer",
                 }}
+                onClick={onAdjustWndClick}
               >
                 <CardContent
                   style={{
@@ -1194,6 +1203,12 @@ const Main: React.FC = () => {
             }));
           }}
           para={detailParameters}
+          modal={true}
+        />
+      )}
+      {adjustWindowVisible && (
+        <AdjustApprovalWindow
+          setVisible={setAdjustWindowVisible}
           modal={true}
         />
       )}
