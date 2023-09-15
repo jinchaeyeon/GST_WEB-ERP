@@ -579,7 +579,7 @@ const PS_A0060_301W: React.FC = () => {
       dataArr.description.push(description);
     });
 
-    deletedMainRows.forEach((item: any, idx: number) => {
+    deletedMainRows.forEach((item: any) => {
       const {
         rowstatus = "",
         orgdiv = "",
@@ -589,8 +589,6 @@ const PS_A0060_301W: React.FC = () => {
         type = "",
         date = "",
         apply_date = "",
-        start_time = "",
-        end_time = "",
         description = "",
       } = item;
 
@@ -958,7 +956,6 @@ const PS_A0060_301W: React.FC = () => {
   React.useEffect(() => {
     if (customOptionData != null) {
       grid.current = document.getElementById("grdList");
-
       window.addEventListener("resize", handleResize);
 
       //가장작은 그리드 이름
@@ -986,16 +983,14 @@ const PS_A0060_301W: React.FC = () => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
-    if (customOptionData.menuCustomColumnOptions[Name].sortOrder !== -1) {
-      if (grid.current && Name == "grdList") {
-        let width = applyMinWidth
-          ? minWidth
-          : minWidth +
-            (gridCurrent - minGridWidth.current) /
-              customOptionData.menuCustomColumnOptions[Name].length;
-  
-        return width;
-      }
+    if (grid.current && Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
     }
   };
 
@@ -1057,7 +1052,6 @@ const PS_A0060_301W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}

@@ -637,16 +637,14 @@ const CR_A1100W: React.FC = () => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
-    if (customOptionData.menuCustomColumnOptions[Name].sortOrder !== -1) {
-      if (grid.current && Name == "grdList") {
-        let width = applyMinWidth
-          ? minWidth
-          : minWidth +
-            (gridCurrent - minGridWidth.current) /
-              customOptionData.menuCustomColumnOptions[Name].length;
-  
-        return width;
-      }
+    if (grid.current && Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
     }
   };
 
