@@ -10,6 +10,7 @@ import "primereact/resources/primereact.css"; // core css
 import "primeicons/primeicons.css"; // icons
 import "primeflex/primeflex.css";
 import { ThemeSwitcherProvider } from "react-css-theme-switcher";
+import { HelmetProvider } from "react-helmet-async";
 
 const themes = {
   blue: `${process.env.PUBLIC_URL}/WEBERP-theme.css`,
@@ -19,11 +20,10 @@ const root = ReactDOM.createRoot(document.getElementById("root")!);
 const path = window.location.href;
 
 const defaultTheme = path.includes("localhost")
-  ? 
-  //WEB ERP개발할떄 바꿀부분입니다.
-   "yellow"
-  //"blue"
-  : path.split("/")[2].split(".")[1] == "gsti"
+  ? //WEB ERP개발할떄 바꿀부분입니다.
+    "yellow"
+  : //"blue"
+  path.split("/")[2].split(".")[1] == "gsti"
   ? "blue"
   : path.split("/")[2].split(".")[1] == "ddgd"
   ? "yellow"
@@ -34,12 +34,14 @@ root.render(
   <ThemeSwitcherProvider
     themeMap={themes}
     defaultTheme={defaultTheme}
-    insertionPoint={document.getElementById('inject-styles-here')}
+    insertionPoint={document.getElementById("inject-styles-here")}
   >
     <RecoilRoot>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <HelmetProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </HelmetProvider>
     </RecoilRoot>
   </ThemeSwitcherProvider>
   //</React.StrictMode>

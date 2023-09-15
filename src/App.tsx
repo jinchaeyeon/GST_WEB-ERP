@@ -422,17 +422,13 @@ const AppInner: React.FC = () => {
       // roles = "GST WEB";
       // switcher({ theme: "blue" });
 
-      //변경안함
-      document.title = "localhost"; 
     } else {
       if (path.split("/")[2].split(".")[1] == "gsti") {
         roles = "GST WEB";
         switcher({ theme: "blue" });
-        document.title = "GST ERP"; 
       } else if (path.split("/")[2].split(".")[1] == "ddgd") {
         roles = "CRM_DDGD";
         switcher({ theme: "yellow" });
-        document.title = "댕댕가든";
       }
     }
   }, []);
