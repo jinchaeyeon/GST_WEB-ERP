@@ -1385,8 +1385,8 @@ const BA_A0100W: React.FC = () => {
             ? (minGridWidth2.current += item.width)
             : minGridWidth2.current
       );
-      minGridWidth.current += 70;
-      minGridWidth2.current += 20;
+      minGridWidth.current -= 20;
+      minGridWidth2.current -= 20;
       setGridCurrent(grid.current.offsetWidth);
       setGridCurrent2(grid2.current.offsetWidth);
       setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
@@ -1650,7 +1650,7 @@ const BA_A0100W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "78.5vh" }}
+            style={{ height: "80.5vh" }}
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,

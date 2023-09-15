@@ -1247,9 +1247,9 @@ const SA_B2410: React.FC = () => {
         (item: TColumn) =>
           item.width !== undefined
             ? (minGridWidth5.current += item.width)
-            : minGridWidth5.current
+            : minGridWidth5.current 
       );
-
+      minGridWidth5.current -= 20
       if (grid.current) {
         setGridCurrent(grid.current.offsetWidth);
       }
