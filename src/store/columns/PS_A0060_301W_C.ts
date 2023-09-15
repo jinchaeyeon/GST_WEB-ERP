@@ -17,12 +17,6 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
-        id: "col_datnum",
-        field: "datnum",
-        caption: "문서번호",
-        width: 120,
-      },
-      {
         id: "col_date",
         field: "date",
         caption: "일자",
