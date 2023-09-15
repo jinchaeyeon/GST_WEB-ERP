@@ -606,27 +606,29 @@ const CR_A1100W: React.FC = () => {
   const grid = React.useRef<any>(null);
   const [applyMinWidth, setApplyMinWidth] = React.useState(false);
   const [gridCurrent, setGridCurrent] = React.useState(0);
-
   React.useEffect(() => {
     if (customOptionData != null) {
       grid.current = document.getElementById("grdList");
+
       window.addEventListener("resize", handleResize);
 
-      //가장 작은 그리드 이름
+      //가장작은 그리드 이름
       customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
         item.width !== undefined
           ? (minGridWidth.current += item.width)
           : minGridWidth.current
       );
-      setGridCurrent(grid.current.offsetWidth + 300);
+      minGridWidth.current += 30;
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth + 300 < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth + 300 > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth + 300);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
       setApplyMinWidth(false);
     }
   };
@@ -643,8 +645,9 @@ const CR_A1100W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
   };
+
 
   const enterEdit = (dataItem: any, field: string) => {
     let valid = false;

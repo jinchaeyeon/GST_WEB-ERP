@@ -36,6 +36,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
@@ -74,6 +75,7 @@ import { gridList } from "../store/columns/CR_A0040W_C";
 import CR_A0040W_Window from "../components/Windows/CR_A0040W_Window";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import NumberCell from "../components/Cells/NumberCell";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 
 const firstDay = (date:Date) => {
   return new Date(date.getFullYear(), date.getMonth(), 1);
@@ -116,29 +118,6 @@ const DateField:string[] = ["strdt", "enddt"];
 const CustomRadioField:string[] = [];
 
 const CustonCommandField:string[] = [];
-
-type TItemInfo = {
-  files: string;
-  url: string;
-  user_id: string;
-};
-
-const defaultItemInfo = {
-  files: "",
-  url: "",
-  user_id: "",
-};
-let temp = 0;
-const COLUMN_MIN = 4;
-export const FormContext = createContext<{
-  itemInfo: TItemInfo;
-  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
-}>({} as any);
-
-export const FormContext2 = createContext<{
-  password: String;
-  setPassword: (p: React.SetStateAction<String>) => void;
-}>({} as any);
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -222,15 +201,15 @@ const CR_A0040W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
+  const location = UseGetValueFromSessionItem("location");
   const pathname: string = window.location.pathname.replace("/", "");
-  // const [permissions, setPermissions] = useState<TPermissions | null>(null);
-  // UsePermissions(setPermissions); 2134
-  const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions); 
+  //const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
-  const [password, setPassword] = useState<String>("");
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -253,51 +232,6 @@ const CR_A0040W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
-  //FormContext에서 데이터 받아 set
-  useEffect(() => {
-    const items = mainDataResult.data.filter(
-      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-    const datas = mainDataResult.data.map((item: any) =>
-      item.num == items.num
-        ? {
-            ...item,
-            profile_image: itemInfo.files,
-            url: itemInfo.url,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : { ...item }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: datas,
-        total: prev.total,
-      };
-    });
-  }, [itemInfo]);
-
-  useEffect(() => {
-    const items = mainDataResult.data.filter(
-      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-    const datas = mainDataResult.data.map((item: any) =>
-      item.num == items.num
-        ? {
-            ...item,
-            password: password,
-            temp: password,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : { ...item }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: datas,
-        total: prev.total,
-      };
-    });
-  }, [password]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -749,6 +683,112 @@ const CR_A0040W: React.FC = () => {
     );
   };
 
+  const saveExcel = (jsonArr: any[]) => {
+    if (jsonArr.length == 0) {
+      alert("데이터가 없습니다.");
+      return;
+    } 
+
+    const columns:string[] = [
+      "반려견ID",
+      "반려견명",
+      "시작일자",
+      "만기일자",
+      "등원횟수",
+      "변경횟수",
+      "금액"
+    ]
+
+    setLoading(true);
+
+    jsonArr.map((items: any) => {
+      Object.keys(items).map((item: any) => {
+        if (!columns.includes(item)) {
+          alert("양식이 맞지 않습니다.");
+          return;
+        }
+      });
+    });
+
+    // let temp = 0;
+    // mainDataResult.data.map((item) => {
+    //   if (item.num > temp) {
+    //     temp = item.num;
+    //   }
+    // });
+
+    let isSuccess:boolean = true;
+    let errorMessage:string = "";
+    let returnString:string = "";
+    jsonArr.forEach(async (item: any) => {
+      const {
+        반려견ID = "",
+        //반려견명 = "",
+        시작일자 = "",
+        만기일자 = "",
+        등원횟수 = "",
+        변경횟수 = "",
+        금액 = "",
+      } = item;
+
+      //프로시저 파라미터
+      const paraSaved: Iparameters = {
+        procedureName: "P_CR_A0040W_S",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_work_type": "N",
+          "@p_orgdiv": orgdiv,
+          "@p_location": location,
+          "@p_membership_id": "",
+          "@p_custcd": 반려견ID,
+          "@p_gubun": "",
+          "@p_remark": "",
+          "@p_amt": 금액,
+          "@p_strdt": 시작일자,
+          "@p_enddt": 만기일자,
+          "@p_useqty": 등원횟수,
+          "@p_adjqty": 변경횟수,
+          "@p_userid": userId,
+          "@p_pc": pc,
+          "@p_form_id": pathname,
+        },
+      };
+
+      let data: any;
+      try {
+        data = await processApi<any>("procedure", paraSaved);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        returnString = data.returnString;
+      } else {
+        console.log("[오류 발생]");
+        console.log(data);
+
+        isSuccess = false;
+        errorMessage = data.resultMessage;
+      }
+    });
+
+    if (isSuccess) {
+      setFilters((prev:any) => ({ ...prev, find_row_value: returnString, isSearch: true })); // 한번만 조회되도록
+    }
+    else {
+      alert(errorMessage);
+    }
+
+    setLoading(false);
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] = useState<boolean>(false);
+
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -803,159 +843,161 @@ const CR_A0040W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <FormContext.Provider
-        value={{
-          itemInfo,
-          setItemInfo,
-        }}
-      >
-        <FormContext2.Provider
-          value={{
-            password,
-            setPassword,
+      <GridContainer width="100%">
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
           }}
         >
-          <GridContainer width="100%">
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-            >
-              <GridTitleContainer>
-                <GridTitle>회원권 리스트</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onClickNew}
-                    icon="file-add"
-                    themeColor={"primary"}
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onClickDelete}
-                    icon="delete"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                  >
-                    삭제
-                  </Button>
-                  <Button
-                    onClick={onClickCopy}
-                    icon="copy"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                  >
-                    복사
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "80.5vh" }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onMainSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                // //incell 수정 기능
-                // onItemChange={onMainItemChange}
-                 cellRender={customCellRender}
-                // rowRender={customRowRender}
-                // editField={EDIT_FIELD}
-                id="grdList"
-              >
-                <GridColumn cell={ColumnCommandCell} width="55px" />
-                {/* <GridColumn
-                  field="rowstatus"
-                  title=" "
-                  width="40px"
-                  editable={false}
-                /> */}
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                    (item: any, idx: number) => {
-                      return (
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={setWidth("grdList", item.width)}
-                            cell={
-                              NameField.includes(item.fieldName)
-                                ? NameCell
-                                : CustomField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : checkField.includes(item.fieldName)
-                                ? CheckBoxCell
-                                : DateField.includes(item.fieldName)
-                                ? DateCell
-                                : CustomRadioField.includes(item.fieldName)
-                                ? CustomRadioCell
-                                : CustonCommandField.includes(item.fieldName)
-                                ? ColumnCommandCell
-                                : numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : undefined
-                            }
-                            headerCell={
-                              requiredHeaderField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            className={
-                              editableField.includes(item.fieldName)
-                                ? "editable-new-only"
-                                : requiredField.includes(item.fieldName)
-                                ? "required"
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                            editable={false}
-                          />
-                        )
-                      );
-                    }
-                  )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </FormContext2.Provider>
-      </FormContext.Provider>
+          <GridTitleContainer>
+            <GridTitle>회원권 리스트</GridTitle>
+            {permissions && (
+              <ButtonContainer>
+                <ExcelUploadButton
+                  saveExcel={saveExcel}
+                  permissions={permissions}
+                  style={{ marginLeft: "15px" }}
+                />
+                <Button
+                  title="Export Excel"
+                  onClick={onAttachmentsWndClick}
+                  icon="file"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                >
+                  엑셀양식
+                </Button>
+                <Button
+                  onClick={onClickNew}
+                  icon="file-add"
+                  themeColor={"primary"}
+                >
+                  신규
+                </Button>
+                <Button
+                  onClick={onClickDelete}
+                  icon="delete"
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                >
+                  삭제
+                </Button>
+                <Button
+                  onClick={onClickCopy}
+                  icon="copy"
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                >
+                  복사
+                </Button>
+              </ButtonContainer>
+            )}
+          </GridTitleContainer>
+          <Grid
+            style={{ height: "80.5vh" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onMainSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            // //incell 수정 기능
+            // onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+            // rowRender={customRowRender}
+            // editField={EDIT_FIELD}
+            id="grdList"
+          >
+            <GridColumn cell={ColumnCommandCell} width="55px" />
+            {/* <GridColumn
+              field="rowstatus"
+              title=" "
+              width="40px"
+              editable={false}
+            /> */}
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                (item: any, idx: number) => {
+                  return (
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={setWidth("grdList", item.width)}
+                        cell={
+                          NameField.includes(item.fieldName)
+                            ? NameCell
+                            : CustomField.includes(item.fieldName)
+                            ? CustomComboBoxCell
+                            : checkField.includes(item.fieldName)
+                            ? CheckBoxCell
+                            : DateField.includes(item.fieldName)
+                            ? DateCell
+                            : CustomRadioField.includes(item.fieldName)
+                            ? CustomRadioCell
+                            : CustonCommandField.includes(item.fieldName)
+                            ? ColumnCommandCell
+                            : numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        headerCell={
+                          requiredHeaderField.includes(item.fieldName)
+                            ? RequiredHeader
+                            : undefined
+                        }
+                        className={
+                          editableField.includes(item.fieldName)
+                            ? "editable-new-only"
+                            : requiredField.includes(item.fieldName)
+                            ? "required"
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell
+                            : undefined
+                        }
+                        editable={false}
+                      />
+                    )
+                  );
+                }
+              )}
+          </Grid>
+        </ExcelExport>
+      </GridContainer>
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
@@ -977,6 +1019,13 @@ const CR_A0040W: React.FC = () => {
           workType={workType}
           isCopy={isCopy}
           membership_id={mainDataResult.data.find((x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0])?.membership_id ?? ""}
+          modal={true}
+        />
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          para={"CR_A0040W"}
           modal={true}
         />
       )}

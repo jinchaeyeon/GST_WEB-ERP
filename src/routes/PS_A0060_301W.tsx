@@ -214,7 +214,6 @@ const PS_A0060_301W: React.FC = () => {
       },
     };
 
-    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -580,7 +579,7 @@ const PS_A0060_301W: React.FC = () => {
       dataArr.description.push(description);
     });
 
-    deletedMainRows.forEach((item: any, idx: number) => {
+    deletedMainRows.forEach((item: any) => {
       const {
         rowstatus = "",
         orgdiv = "",
@@ -590,8 +589,6 @@ const PS_A0060_301W: React.FC = () => {
         type = "",
         date = "",
         apply_date = "",
-        start_time = "",
-        end_time = "",
         description = "",
       } = item;
 
@@ -662,7 +659,6 @@ const PS_A0060_301W: React.FC = () => {
           pgNum: prev.pgNum,
           isSearch: true,
         }));
-        console.log(data.returnString);
       }
     } else {
       console.log("[오류 발생]");
@@ -960,7 +956,6 @@ const PS_A0060_301W: React.FC = () => {
   React.useEffect(() => {
     if (customOptionData != null) {
       grid.current = document.getElementById("grdList");
-
       window.addEventListener("resize", handleResize);
 
       //가장작은 그리드 이름
@@ -969,16 +964,17 @@ const PS_A0060_301W: React.FC = () => {
           ? (minGridWidth.current += item.width)
           : minGridWidth.current
       );
-      setGridCurrent(grid.current.offsetWidth + 270);
-      setApplyMinWidth(grid.current.offsetWidth + 270 < minGridWidth.current);
+      minGridWidth.current += 30;
+      setGridCurrent(grid.current.offsetWidth);
+      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth + 270 < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth + 270 > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth + 270);
+    } else if (grid.current.offsetWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.offsetWidth);
       setApplyMinWidth(false);
     }
   };
@@ -1056,7 +1052,6 @@ const PS_A0060_301W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}

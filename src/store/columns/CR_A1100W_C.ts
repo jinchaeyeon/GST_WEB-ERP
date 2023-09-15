@@ -5,34 +5,10 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList",
     columns: [
       {
-        id: "col_orgdiv",
-        field: "orgdiv",
-        caption: "회사구분",
-        width: 150,
-      },
-      {
-        id: "col_location",
-        field: "location",
-        caption: "사업장",
-        width: 150
-      },
-      {
         id: "col_recdt",
         field: "recdt",
         caption: "출석일자",
         width: 200,
-      },
-      {
-        id: "col_membership_id",
-        field: "membership_id",
-        caption: "회원권ID",
-        width: 100,
-      },
-      {
-        id: "col_seq",
-        field: "seq",
-        caption: "순번",
-        width: 80,
       },
       {
         id: "col_plandt",
