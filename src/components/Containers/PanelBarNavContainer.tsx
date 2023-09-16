@@ -17,13 +17,13 @@ import {
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
 } from "../../store/atoms";
+import { Tooltip } from "@progress/kendo-react-tooltip";
 import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
 import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
 import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
 import { useApi } from "../../hooks/api";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import Loading from "../Loading";
-import { Tooltip } from "@progress/kendo-react-tooltip";
 import {
   AppName,
   ButtonContainer,
@@ -558,7 +558,7 @@ const PanelBarNavContainer = (props: any) => {
             <AppName theme={currentTheme} onClick={() => setIsMenuOpend(false)}>
               {/* WEB ERP개발할떄 바꿀부분입니다. */}
               {path.includes("localhost") ? (
-                //<Logo size="32px" name={"CRM_DDGD"} />
+                // <Logo size="32px" name={"CRM_DDGD"} />
                 <Logo size="32px" name={"GST WEB"} />
               ) : path.split("/")[2].split(".")[1] == "gsti" ? (
                 <Logo size="32px" name={"GST WEB"} />
@@ -622,7 +622,13 @@ const PanelBarNavContainer = (props: any) => {
                         .map((childPath: TPath, childIdx: number) => (
                           <PanelBarItem
                             key={childIdx}
-                            title={childPath.menuName}
+                            title={
+                              <Tooltip position="right" anchorElement="target">
+                                <span title={childPath.menuName}>
+                                  {childPath.menuName}
+                                </span>
+                              </Tooltip>
+                            }
                             route={
                               path.menuId === "setting"
                                 ? undefined
@@ -711,9 +717,9 @@ const PanelBarNavContainer = (props: any) => {
             <AppName theme={currentTheme}>
               {/* WEB ERP개발할떄 바꿀부분입니다. */}
               {path.includes("localhost") ? (
-                //<Logo size="32px" name={"CRM_DDGD"} />
-                <Logo size="32px" name={"GST WEB"} />
-              ) : path.split("/")[2].split(".")[1] == "gsti" ? (
+                <Logo size="32px" name={"CRM_DDGD"} />
+              ) : // <Logo size="32px" name={"GST WEB"} />
+              path.split("/")[2].split(".")[1] == "gsti" ? (
                 <Logo size="32px" name={"GST WEB"} />
               ) : path.split("/")[2].split(".")[1] == "ddgd" ? (
                 <Logo size="32px" name={"CRM_DDGD"} />

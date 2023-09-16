@@ -39,6 +39,16 @@ code {
     opacity: 0;
 }
 
+.k-panelbar-item-text div span {
+    text-overflow: ellipsis;
+    width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    text-align: start;
+    margin-left: 10%;
+}
+
 [hidden] {
     display: none !important;
 }
@@ -11206,14 +11216,6 @@ kendo-sortable {
     border-color: #cacaca;
     color: #222222;
     background-color: #d9d9d9;
-}
-
-.k-link > .k-panelbar-item-text {
-    text-overflow: ellipsis;
-    width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-align: start;
 }
 
 .k-checkbox {

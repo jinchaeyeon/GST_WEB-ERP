@@ -66,12 +66,14 @@ code {
     opacity: 0;
 }
 
-.k-link > .k-panelbar-item-text {
+.k-panelbar-item-text div span {
     text-overflow: ellipsis;
     width: 150px;
     white-space: nowrap;
     overflow: hidden;
+    display: block;
     text-align: start;
+    margin-left: 10%;
 }
 
 [hidden] {
