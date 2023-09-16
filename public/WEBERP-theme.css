@@ -11208,6 +11208,14 @@ kendo-sortable {
     background-color: #d9d9d9;
 }
 
+.k-link > .k-panelbar-item-text {
+    text-overflow: ellipsis;
+    width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: start;
+}
+
 .k-checkbox {
     margin: 0;
     padding: 0;

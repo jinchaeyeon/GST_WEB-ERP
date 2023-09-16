@@ -66,6 +66,14 @@ code {
     opacity: 0;
 }
 
+.k-link > .k-panelbar-item-text {
+    text-overflow: ellipsis;
+    width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: start;
+}
+
 [hidden] {
     display: none !important;
 }
