@@ -62,7 +62,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_strdt",
         field: "strdt",
-        caption: "등록일자",
+        caption: "시작일자",
         width: 120,
       },
       {
@@ -74,7 +74,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_janqty",
         field: "janqty",
-        caption: "잔여횟수",
+        caption: "등원가능횟수",
         width: 100,
       },
       {
