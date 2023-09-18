@@ -747,7 +747,7 @@ export const Wrapper = styled.div<TWrapper>`
 
 type TGnv = TWrapper;
 export const Gnv = styled.div<TGnv>`
-  min-width: ${GNV_WIDTH}px;
+  width: ${GNV_WIDTH}px;
   text-align: center;
 
   min-height: 100vh;

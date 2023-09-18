@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" style="overflow-y: scroll">
-
 <head>
   <base href="/" />
   <meta charset="utf-8" />
@@ -11,10 +10,37 @@
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Web site created using create-react-app" />
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
+  <meta name="description" content=""/>
+  <meta property="og:type" content="website">
+  <meta property="og:description" content="">
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <script type='text/javascript'>
+    if (window.location.href.includes("gsti")) {
+      document.title = "WEB ERP";
+      document.querySelector('meta[name="description"]').setAttribute("content", "영업/물류/생산/품질/회계/인사/원가까지, 성장하는 제조업을 위한 클라우드 기반 맞춤형 스마트공장 통합관리 시스템");
+      document.querySelector('meta[property="og:description"]').setAttribute("content", "영업/물류/생산/품질/회계/인사/원가까지, 성장하는 제조업을 위한 클라우드 기반 맞춤형 스마트공장 통합관리 시스템");
+      document.querySelector('meta[property="og:title"]').setAttribute("content", "WEB ERP");
+      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
+    }
+    if (window.location.href.includes("ddgd")) {
+      document.title = "댕댕가든";
+      document.querySelector('meta[name="description"]').setAttribute("content", "고객/회원권/강아지 정보부터 직원/매출/매입 관리까지, 보편적 관리 시스템을 뛰어넘은 반려견 유치원을 위한 원스톱 맞춤형 시스템");
+      document.querySelector('meta[property="og:description"]').setAttribute("content", "고객/회원권/강아지 정보부터 직원/매출/매입 관리까지, 보편적 관리 시스템을 뛰어넘은 반려견 유치원을 위한 원스톱 맞춤형 시스템");
+      document.querySelector('meta[property="og:title"]').setAttribute("content", "댕댕가든");
+      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
+    }
+    if (window.location.href.includes("local")) {
+      document.title = "local";
+      document.querySelector('meta[name="description"]').setAttribute("content", "local입니다");
+      document.querySelector('meta[property="og:description"]').setAttribute("content", "local입니다");
+      document.querySelector('meta[property="og:title"]').setAttribute("content", "local");
+      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
+    }
+  </script>
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
   <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -30,8 +56,6 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-  </script>
-  <title>localhost</title>
 </head>
 
 <body>

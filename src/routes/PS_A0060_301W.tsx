@@ -417,12 +417,7 @@ const PS_A0060_301W: React.FC = () => {
         total: prev.total + 1,
       };
     });
-
-    setPage((prev) => ({
-      ...prev,
-      skip: 0,
-      take: prev.take + 1,
-    }));
+    
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
@@ -1085,7 +1080,6 @@ const PS_A0060_301W: React.FC = () => {
               </Button>
               <Button
                 onClick={onAddClick}
-                fillMode="outline"
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"

@@ -417,22 +417,18 @@ const AppInner: React.FC = () => {
     if (path.includes("localhost")) {
       //WEB ERP개발할떄 바꿀부분입니다.
 
-      roles = "CRM_DDGD";
-      switcher({ theme: "yellow" });
-      // roles = "GST WEB";
-      // switcher({ theme: "blue" });
+      // roles = "CRM_DDGD";
+      // switcher({ theme: "yellow" });
+      roles = "GST WEB";
+      switcher({ theme: "blue" });
 
-      //변경안함
-      document.title = "localhost"; 
     } else {
       if (path.split("/")[2].split(".")[1] == "gsti") {
         roles = "GST WEB";
         switcher({ theme: "blue" });
-        document.title = "GST ERP"; 
       } else if (path.split("/")[2].split(".")[1] == "ddgd") {
         roles = "CRM_DDGD";
         switcher({ theme: "yellow" });
-        document.title = "댕댕가든";
       }
     }
   }, []);
