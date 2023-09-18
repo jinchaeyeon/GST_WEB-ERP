@@ -364,6 +364,14 @@ const KendoWindow = ({
         errorMessage = findMessage(messagesData, "CR_A0040W_003"); // 변경횟수를 입력해주세요.
         vaild = false;
       }
+      else if (!strdt) {
+        errorMessage = findMessage(messagesData, "CR_A0040W_005"); // 시작일자를 입력해주세요.
+        vaild = false;
+      }
+      else if (!enddt) {
+        errorMessage = findMessage(messagesData, "CR_A0040W_006"); // 만기일자를 입력해주세요.
+        vaild = false;
+      }
       // strdt, enddt
     }
     if (!vaild) {
@@ -466,29 +474,27 @@ const KendoWindow = ({
                   </td>
                 </tr>
                 <tr>
-                  <th>종류</th>
+                  <th>회원권 종류</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        type="new"
-                        name="gubun"
-                        value={initialVal.gubun}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
+                    <Input
+                      type="text"
+                      name="gubun"
+                      value={initialVal.gubun}
+                      onChange={filterInputChange}
+                    />
                   </td>
-                  <th>등록일자</th>
+                  <th>시작일자</th>
                   <td>
                     <DatePicker
                       name="strdt"
                       value={initialVal.strdt}
                       format="yyyy-MM-dd"
+                      className="required"
                       onChange={filterInputChange}
                       placeholder=""
                     />
                   </td>
-                  <th>잔여등원횟수</th>
+                  <th>등원가능 횟수</th>
                   <td>
                     {workType == "N" ? (
                       <Input
@@ -524,11 +530,12 @@ const KendoWindow = ({
                       name="enddt"
                       value={initialVal.enddt}
                       format="yyyy-MM-dd"
+                      className="required"
                       onChange={filterInputChange}
                       placeholder=""
                     />
                   </td>
-                  <th>잔여변경횟수</th>
+                  <th>변경가능 횟수</th>
                   <td>
                     {workType == "N" ? (
                       <Input

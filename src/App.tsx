@@ -74,6 +74,7 @@ import CR_A0010W from "./routes/CR_A0010W";
 import CR_A0020W from "./routes/CR_A0020W";
 import CR_A0040W from "./routes/CR_A0040W";
 import CR_A1100W from "./routes/CR_A1100W";
+import CR_A1101W from "./routes/CR_A1101W";
 import CT_A0111W from "./routes/CT_A0111W";
 import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
@@ -651,6 +652,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
                     <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
                     {/* DDGD 고객페이지 */}
+                    <AuthRoute path="/CR_A1101W" component={CR_A1101W} exact />
                   </GlobalStyles>
 
                   {/* DDGD 관리자페이지 */}

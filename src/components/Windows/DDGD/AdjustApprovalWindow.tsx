@@ -15,154 +15,27 @@ import {
 import {
   Checkbox,
   CheckboxChangeEvent,
-  Input,
 } from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";
-import { atom, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  FilterBox,
   GridContainer,
-  GridTitle,
-  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
-import { IItemData, IWindowPosition } from "../../../hooks/interfaces";
+import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import {
-  UseBizComponent,
   UseGetValueFromSessionItem,
   UseParaPc,
   getGridItemChangedData,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import { Iparameters, TColumn } from "../../../store/types";
-import CheckBoxCell from "../../Cells/CheckBoxCell";
 import CenterCell from "../../Cells/CenterCell";
-import { createTheme } from "@mui/material";
-import styled, { createGlobalStyle } from "styled-components";
-
-const color = ["#2196f3", "#1976d2", "#64b5f6", "#bbdefb"];
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: `${color[0]}`,
-      dark: `${color[1]}`,
-      light: `${color[2]}`,
-    },
-    secondary: {
-      main: `${color[3]}`,
-    },
-  },
-});
-
-const GlobalStyles = styled.div`
-  @font-face {
-    font-family: "TheJamsil5Bold";
-    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2")
-      format("woff2");
-    font-weight: 700;
-    font-style: normal;
-  }
-
-  .p-button {
-    background: ${theme.palette.primary.main};
-    border: 1px solid ${theme.palette.primary.main};
-    box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
-  }
-
-  .p-button:hover {
-    background: ${theme.palette.primary.dark};
-    border: 1px solid ${theme.palette.primary.dark};
-  }
-
-  .p-inputtext:enabled:focus {
-    border: 1px solid ${theme.palette.primary.main};
-    box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
-  }
-
-  .p-inputtext:enabled:hover {
-    border: 1px solid ${theme.palette.primary.main};
-    box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
-  }
-
-  .p-dropdown:not(.p-disabled):hover,
-  .p-dropdown:not(.p-disabled).p-focus {
-    border: 1px solid ${theme.palette.primary.main};
-    outline: 0.15rem solid ${theme.palette.primary.main};
-    box-shadow: 0 0 0 0.2rem ${theme.palette.primary.main};
-  }
-
-  .p-datatable .p-datatable-tbody > tr.p-highlight {
-    color: black;
-    background-color: ${theme.palette.secondary.main};
-  }
-
-  .p-datatable.p-datatable-selectable
-    .p-datatable-tbody
-    > tr.p-selectable-row:focus {
-    outline: 0.15rem solid ${theme.palette.primary.light};
-  }
-
-  .p-datatable .p-sortable-column.p-highlight {
-    color: black;
-    background-color: ${theme.palette.secondary.main};
-  }
-
-  .p-datatable .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover {
-    color: black;
-    background-color: ${theme.palette.primary.light};
-  }
-
-  .p-datatable .p-sortable-column:focus {
-    box-shadow: inset 0 0 0 0.15rem ${theme.palette.primary.light};
-  }
-
-  .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon,
-  .p-datatable
-    .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover
-    .p-sortable-column-icon {
-    color: black;
-  }
-
-  .p-datatable.p-datatable-striped
-    .p-datatable-tbody
-    > tr.p-row-odd.p-highlight {
-    color: black;
-    background-color: ${theme.palette.secondary.main};
-  }
-
-  .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-    color: black;
-    background-color: ${theme.palette.secondary.main};
-    border-color: ${theme.palette.secondary.main};
-  }
-
-  .p-radiobutton .p-radiobutton-box.p-highlight {
-    background-color: ${theme.palette.primary.main};
-    border-color: ${theme.palette.primary.main};
-  }
-  .p-radiobutton .p-radiobutton-box.p-highlight:not(.p-disabled):hover {
-    background-color: ${theme.palette.primary.dark};
-    border-color: ${theme.palette.primary.dark};
-  }
-  .p-radiobutton .p-radiobutton-box:not(.p-disabled).p-focus {
-    box-shadow: inset 0 0 0 0.15rem ${theme.palette.primary.light};
-  }
-  .p-radiobutton .p-radiobutton-box:not(.p-disabled):not(.p-highlight):hover {
-    border-color: ${theme.palette.primary.main};
-  }
-
-  .p-progressbar .p-progressbar-value {
-    background: ${theme.palette.primary.main};
-  }
-`;
 
 const CustomCheckBoxCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange } =
