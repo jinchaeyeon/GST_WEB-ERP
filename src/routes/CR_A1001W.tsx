@@ -1,5 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { DateInput, DatePicker } from "@progress/kendo-react-dateinputs";
+import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -23,7 +24,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
-import CenterCell from "../components/Cells/CenterCell";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
@@ -42,13 +43,11 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CR_A1001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { Button } from "@progress/kendo-react-buttons";
 
 const CheckField = ["add1", "add2", "add3", "finyn"];
 
@@ -538,7 +537,7 @@ const Page: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>등원변경신청</Title>
+        <Title>일별 출석 및 부가서비스 관리</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons
@@ -604,6 +603,8 @@ const Page: React.FC = () => {
                   />
                 )}
               </td>
+              <th></th>
+              <td></td>
             </tr>
           </tbody>
         </FilterBox>

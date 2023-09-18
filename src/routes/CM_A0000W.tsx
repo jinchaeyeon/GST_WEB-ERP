@@ -215,9 +215,9 @@ const CM_A0000W: React.FC = () => {
       setWorkType("U");
       path.includes("localhost")
         ? //WEB ERP개발할떄 바꿀부분입니다.
-         // setDetailWindowVisible2(true) :
-          setDetailWindowVisible(true) :
-        path.split("/")[2].split(".")[1] == "gsti"
+          //setDetailWindowVisible2(true) :
+          setDetailWindowVisible(true)
+        : path.split("/")[2].split(".")[1] == "gsti"
         ? setDetailWindowVisible(true)
         : path.split("/")[2].split(".")[1] == "ddgd"
         ? setDetailWindowVisible2(true)
@@ -280,9 +280,9 @@ const CM_A0000W: React.FC = () => {
     setWorkType("N");
     path.includes("localhost")
       ? //WEB ERP개발할떄 바꿀부분입니다.
-        // setDetailWindowVisible2(true)
-       setDetailWindowVisible(true) :
-      path.split("/")[2].split(".")[1] == "gsti"
+        //setDetailWindowVisible2(true):
+        setDetailWindowVisible(true)
+      : path.split("/")[2].split(".")[1] == "gsti"
       ? setDetailWindowVisible(true)
       : path.split("/")[2].split(".")[1] == "ddgd"
       ? setDetailWindowVisible2(true)
@@ -944,7 +944,7 @@ const CM_A0000W: React.FC = () => {
           modal={true}
         />
       )}
-       {detailWindowVisible2 && (
+      {detailWindowVisible2 && (
         <DetailWindow2
           getVisible={setDetailWindowVisible2}
           workType={workType} //신규 : N, 수정 : U

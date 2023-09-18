@@ -397,6 +397,7 @@ export const GridContainer = styled.div<TGridContainer>`
   /* .required {
     background-color: #fff0ef;
   } */
+  
 `;
 
 export const GridTitle = styled.h3`

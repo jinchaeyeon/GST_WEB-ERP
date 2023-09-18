@@ -38,6 +38,7 @@ function App(props) {
         "@p_work_type": "Q",
         "@p_orgdiv": "01",
         "@p_custcd": data.custcd == undefined ? "" : data.custcd,
+        "@p_adjdt": "",
       },
     };
     try {
@@ -116,11 +117,7 @@ function App(props) {
     fetchMainGrid();
     onChange(null);
   }, [props]);
-
-  const changeDate = (date) => {
-    props.propFunction(convertDateToStr(date));
-  };
-
+  console.log(schedulerData)
   return (
     <CalendarContainer backgroundColor={data.color} isMobile={isMobile}>
       {isMobile ? (
@@ -286,91 +283,129 @@ function App(props) {
             (x) =>
               x.date == moment(date).format("YYYYMMDD") &&
               x.finyn == "N" &&
-              x.appyn == "Y"
+              x.appyn == "Y" && 
+              x.planyn == "Y"
           )
             ? "no"
             : "yes"
         }
-        onChange={(date) => changeDate(date)}
+        onChange={(date) => props.propFunction(convertDateToStr(date))}
         tileContent={({ date, view }) => {
           if (
             schedulerData.find((x) => x.date == moment(date).format("YYYYMMDD"))
           ) {
             if (
-              schedulerData.find(
-                (x) =>
-                  x.date == moment(date).format("YYYYMMDD") && x.finyn == "Y"
+              !mainDataResult.data.find(
+                (x) => x.date == moment(date).format("YYYYMMDD")
               )
             ) {
-              return (
-                <>
-                  <div style={{ paddingTop: "30px", position: "absolute" }}>
-                    {!isMobile ? (
-                      <FavoriteIcon
-                        sx={{
-                          color: "#D3D3D3",
-                          fontSize: "3vw",
-                        }}
-                      />
-                    ) : (
-                      <FavoriteIcon
-                        sx={{
-                          color: "#D3D3D3",
-                        }}
-                      />
-                    )}
-                  </div>
-                </>
-              );
-            } else if (
-              schedulerData.find(
-                (x) =>
-                  x.date == moment(date).format("YYYYMMDD") &&
-                  x.finyn == "N" &&
-                  x.appyn == "N"
-              )
-            ) {
-              return (
-                <>
-                  <div style={{ paddingTop: "30px", position: "absolute" }}>
-                    {!isMobile ? (
-                      <FavoriteIcon
-                        sx={{
-                          color: "#f5b901",
-                          fontSize: "3vw",
-                        }}
-                      />
-                    ) : (
-                      <FavoriteIcon
-                        sx={{
-                          color: "#f5b901",
-                        }}
-                      />
-                    )}
-                  </div>
-                </>
-              );
-            } else {
-              return (
-                <>
-                  <div style={{ paddingTop: "30px", position: "absolute" }}>
-                    {!isMobile ? (
-                      <FavoriteIcon
-                        sx={{
-                          color: data.color,
-                          fontSize: "3vw",
-                        }}
-                      />
-                    ) : (
-                      <FavoriteIcon
-                        sx={{
-                          color: data.color,
-                        }}
-                      />
-                    )}
-                  </div>
-                </>
-              );
+              if (
+                schedulerData.find(
+                  (x) =>
+                    x.date == moment(date).format("YYYYMMDD") && x.finyn == "Y"
+                )
+              ) {
+                return (
+                  <>
+                    <div style={{ paddingTop: "30px", position: "absolute" }}>
+                      {!isMobile ? (
+                        <>
+                          <FavoriteIcon
+                            sx={{
+                              color: "#D3D3D3",
+                              fontSize: "3vw",
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <FavoriteIcon
+                            sx={{
+                              color: "#D3D3D3",
+                            }}
+                          />
+                        </>
+                      )}
+                    </div>
+                  </>
+                );
+              } else {
+                if (
+                  schedulerData.find(
+                    (x) =>
+                      x.date == moment(date).format("YYYYMMDD") &&
+                      x.appyn == "N"
+                  )
+                ) {
+                  return (
+                    <>
+                      <div style={{ paddingTop: "30px", position: "absolute" }}>
+                        {!isMobile ? (
+                          <>
+                            <FavoriteIcon
+                              sx={{
+                                color: "#f5b901",
+                                fontSize: "3vw",
+                              }}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <FavoriteIcon
+                              sx={{
+                                color: "#f5b901",
+                              }}
+                            />
+                          </>
+                        )}
+                      </div>
+                    </>
+                  );
+                } else {
+                  if (
+                    schedulerData.find(
+                      (x) =>
+                        x.date == moment(date).format("YYYYMMDD") &&
+                        x.planyn == "Y"
+                    )
+                  ) {
+                    return (
+                      <>
+                        <div style={{ paddingTop: "30px", position: "absolute" }}>
+                          {!isMobile ? (
+                            <>
+                              <FavoriteIcon
+                                sx={{
+                                  color: data.color,
+                                  fontSize: "3vw",
+                                }}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <FavoriteIcon
+                                sx={{
+                                  color: data.color,
+                                }}
+                              />
+                            </>
+                          )}
+                        </div>
+                      </>
+                    );
+                  } else {
+                    return (
+                      <>
+                        <div
+                          style={{ bottom: "10px", position: "absolute" }}
+                        >
+                          {schedulerData.filter((item) => item.date == moment(date).format("YYYYMMDD"))[0].capqty}
+                        </div>
+                      </>
+                    );
+                  }
+                }
+              }
             }
           }
         }}
@@ -384,7 +419,8 @@ export default App;
 const CalendarContainer = styled.div`
   /* ~~~ container styles ~~~ */
   margin: auto;
-  height: ${(props) => props.isMobile ? "100vh !important;" : "calc(100% - 40px) !important;"}
+  height: ${(props) =>
+    props.isMobile ? "100vh !important;" : "calc(100% - 40px) !important;"}
   background-color: ${(props) => props.backgroundColor};
   padding: 10px;
   border-radius: 3px;

@@ -353,6 +353,7 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
         "@p_work_type": "ADJLIST",
         "@p_orgdiv": orgdiv,
         "@p_custcd": "",
+        "@p_adjdt" : ""
       },
     };
 

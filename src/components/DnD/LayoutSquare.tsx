@@ -1,4 +1,4 @@
-import { useEffect, type FC, type ReactNode, useState } from "react";
+import { useState, type FC, type ReactNode } from "react";
 import { useDrop } from "react-dnd";
 
 import type { Layout } from "./Layout";
@@ -32,25 +32,35 @@ export const LayoutSquare: FC<BoardSquareProps> = ({
       drop: () => {
         const loop = async (list: any[]) => {
           const promises = list.map(async (data: any) => {
-            if (x == data[0] && y == data[1]) {
+            if (x == data.row_index && y == data.col_index) {
               return true;
             }
           });
+
           const results = await Promise.all(promises);
           if (!results.includes(true)) {
             const index = layout.position[2];
             layout.moveKnight(x, y, index);
-            let array = [];
-            for (var i = 0; i < list.length; i++) {
-              if (index == i) {
-                array.push([x, y, index]);
-              } else {
-                array.push(list[i]);
-              }
-            }
-            setLists(array[0]);
+            const newItem = list.map((item: any) =>
+              item.seq == index
+                ? { ...item, col_index: y, row_index: x }
+                : { ...item }
+            );
+            setLists(newItem);
           } else {
-            alert("같은 영역에 배치할 수 없습니다");
+            const check = list.map(async (data: any) => {
+              if (
+                x == data.row_index &&
+                y == data.col_index &&
+                layout.position[2] == data.seq
+              ) {
+                return true;
+              }
+            });
+            const results2 = await Promise.all(check);
+            if (!results2.includes(true)) {
+              alert("같은 영역에 배치할 수 없습니다");
+            }
           }
         };
         loop(list);

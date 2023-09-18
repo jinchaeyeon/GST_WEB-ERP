@@ -1249,7 +1249,7 @@ const SA_B2410: React.FC = () => {
             ? (minGridWidth5.current += item.width)
             : minGridWidth5.current 
       );
-      minGridWidth5.current -= 20
+
       if (grid.current) {
         setGridCurrent(grid.current.offsetWidth);
       }

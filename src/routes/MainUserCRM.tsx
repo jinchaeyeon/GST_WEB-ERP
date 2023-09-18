@@ -1,18 +1,18 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
 import {
   DataResult,
   State,
   process as processQuery,
 } from "@progress/kendo-data-query";
+import { Button as Buttons } from "@progress/kendo-react-buttons";
+import {
+  Calendar,
+  CalendarChangeEvent,
+} from "@progress/kendo-react-dateinputs";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
@@ -29,24 +29,18 @@ import {
   convertDateToStr,
   dateformat4,
   getDayOfWeeks,
-  toDate2,
 } from "../components/CommonFunction";
 import { GAP } from "../components/CommonString";
 import Calender from "../components/DDGDcomponents/Calender";
 import CardBox from "../components/DDGDcomponents/CardBox";
+import SelectDateWindow from "../components/Windows/DDGD/SelectDateWindow";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
-import "swiper/css";
-import SwiperCore from "swiper";
-import SelectDateWindow from "../components/Windows/DDGD/SelectDateWindow";
-import { Button as Buttons } from "@progress/kendo-react-buttons";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 interface Tsize {
   width: number;
   height: number;
 }
-
 const DATA_ITEM_KEY = "custcd";
 const Main: React.FC = () => {
   const processApi = useApi();
@@ -72,12 +66,15 @@ const Main: React.FC = () => {
   const [ChangeDateVisible, setChangeDateVisible] = useState<boolean>(false);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [show, setShow] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [slice, setSlice] = useState(false);
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [changeDate, setChangeDate] = useState<string>("");
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const size: Tsize = useWindowSize();
+  const [adjnumber, setAdjnumber] = useState<number>(0);
   function useWindowSize() {
     // Initialize state with undefined width/height so server and client renders match
     // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
@@ -138,15 +135,66 @@ const Main: React.FC = () => {
       console.log("menus error", e);
     }
   }, []);
-  const [date, setDate] = useState<{ [name: string]: any }>({ date: null });
-  const filterInputChange = (e: any) => {
-    const { value, name } = e.target;
+  const [date, setDate] = useState<Date | null>(null);
+  const filterInputChange = async (event: CalendarChangeEvent) => {
+    const dayOfWeek = event.value.getDay();
+    if (!(convertDateToStr(event.value) < convertDateToStr(new Date()))) {
+      if (
+        !(
+          convertDateToStr(event.value) >
+          cardOptionData.data.filter(
+            (item) => item[DATA_ITEM_KEY] == selectedState
+          )[0].enddt
+        )
+      ) {
+        // 0 = Sunday, 6 = Saturday
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          let datas: any = "";
+          const Parameters = {
+            procedureName: "P_CR_A1000W_Q",
+            pageNumber: 1,
+            pageSize: 100,
+            parameters: {
+              "@p_work_type": "CAPACITY",
+              "@p_orgdiv": "01",
+              "@p_custcd": selectedState,
+              "@p_adjdt": convertDateToStr(event.value),
+            },
+          };
 
-    setDate((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+          try {
+            datas = await processApi("procedure", Parameters);
+          } catch (error) {
+            datas = null;
+          }
+
+          if (datas.isSuccess === true) {
+            const rowCount = datas.tables[0].RowCount;
+            const row = datas.tables[0].Rows[0];
+
+            if (rowCount > 0) {
+              setAdjnumber(row.cnt);
+            } else {
+              setAdjnumber(0);
+            }
+            setDate(event.value);
+            setShow2(false);
+            setShow(false);
+          } else {
+            console.log("[오류 발생]");
+            console.log(datas);
+          }
+        }
+      } else {
+        setShow(true);
+        setShow2(false);
+      }
+    } else {
+      setShow2(true);
+      setShow(false);
+    }
   };
+
   const fetchMain = async (key: any) => {
     let data: any;
     const Parameters: Iparameters = {
@@ -226,6 +274,7 @@ const Main: React.FC = () => {
         "@p_work_type": "Q",
         "@p_orgdiv": "01",
         "@p_custcd": selectedState,
+        "@p_adjdt": "",
       },
     };
     try {
@@ -328,43 +377,82 @@ const Main: React.FC = () => {
     setLoading(false);
   };
 
-  const onSave = (pastday: string, currentday: string) => {
-    if (currentday != null) {
-      const data = cardOptionData.data.filter(
-        (item) => item[DATA_ITEM_KEY] == selectedState
-      )[0];
-      if (currentday > data.enddt) {
-        setShow(true);
-      } else {
-        const find_key = schedulerData.data.filter(
-          (item) => item.date == pastday
-        )[0].membership_key;
-        const number = cardOptionData.data.filter(
+  const onSave = async (
+    pastday: string,
+    currentday: string,
+    show: boolean,
+    show2: boolean
+  ) => {
+    if (show != true && show2 != true) {
+      if (currentday != null) {
+        const data = cardOptionData.data.filter(
           (item) => item[DATA_ITEM_KEY] == selectedState
-        )[0].adjqty;
-        if (find_key != undefined) {
-          alert(`잔여 변경 횟수는 ${number}회 입니다.`);
-          if (
-            !window.confirm(
-              "변경신청 후 취소 할 수 없습니다. 신청하시겠습니까?"
-            )
-          ) {
-            return false;
+        )[0];
+        if (currentday > data.enddt) {
+          setShow(true);
+        } else if (currentday < convertDateToStr(new Date())) {
+          setShow2(true);
+        } else {
+          const find_key = schedulerData.data.filter(
+            (item) => item.date == pastday
+          )[0].membership_key;
+          if (find_key != undefined) {
+            let datas: any = "";
+            const Parameters = {
+              procedureName: "P_CR_A1000W_Q",
+              pageNumber: 1,
+              pageSize: 100,
+              parameters: {
+                "@p_work_type": "ADJQTY",
+                "@p_orgdiv": "01",
+                "@p_custcd": selectedState,
+                "@p_adjdt": currentday,
+              },
+            };
+
+            try {
+              datas = await processApi("procedure", Parameters);
+            } catch (error) {
+              datas = null;
+            }
+
+            if (datas.isSuccess === true) {
+              const rowCount = datas.tables[0].RowCount;
+              const row = datas.tables[0].Rows[0];
+
+              if (rowCount > 0) {
+                if (
+                  !window.confirm(
+                    `잔여 변경 횟수는 ${row.adjqty}회 입니다. 변경신청 후 취소 할 수 없습니다. 신청하시겠습니까?`
+                  )
+                ) {
+                  return false;
+                }
+
+                setParaData((prev) => ({
+                  ...prev,
+                  workType: "N",
+                  custcd: selectedState,
+                  membership_key: find_key,
+                  adjdt: currentday,
+                }));
+              }
+            } else {
+              console.log("[오류 발생]");
+              console.log(datas);
+            }
           }
-          setParaData((prev) => ({
-            ...prev,
-            workType: "N",
-            custcd: selectedState,
-            membership_key: find_key,
-            adjdt: currentday,
-          }));
         }
+      } else {
+        alert("변경 등원일을 선택해주세요.");
       }
-    } else {
-      alert("변경 등원일을 선택해주세요.");
     }
   };
-
+  useEffect(() => {
+    if (swiper) {
+      swiper.slideTo(2);
+    }
+  }, [slice]);
   useEffect(() => {
     fetchDetail();
   }, [selectedState]);
@@ -486,6 +574,7 @@ const Main: React.FC = () => {
                         Click={() => {
                           setSelectedState(item[DATA_ITEM_KEY]);
                           setChangeDate("");
+                          setSlice(false);
                           if (swiper) {
                             swiper.slideTo(1);
                           }
@@ -500,6 +589,24 @@ const Main: React.FC = () => {
               <GridContainer width="100%" height="100%">
                 <TitleContainer>
                   <Title>
+                    <span
+                      style={{
+                        color:
+                          cardOptionData.data.filter(
+                            (item) => item[DATA_ITEM_KEY] == selectedState
+                          )[0] == undefined
+                            ? "black"
+                            : cardOptionData.data.filter(
+                                (item) => item[DATA_ITEM_KEY] == selectedState
+                              )[0].color,
+                      }}
+                      className="k-icon k-i-arrow-60-left k-icon-lg"
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                    ></span>
                     {cardOptionData.data.filter(
                       (item) => item[DATA_ITEM_KEY] == selectedState
                     )[0] == undefined
@@ -525,14 +632,12 @@ const Main: React.FC = () => {
                   }
                   propFunction={(date: string) => {
                     setChangeDate(date);
-                    if (swiper) {
-                      swiper.slideTo(2);
-                    }
+                    setSlice(true);
                   }}
                 />
               </GridContainer>
             </SwiperSlide>
-            {changeDate != "" ? (
+            {changeDate != "" || slice == true ? (
               <SwiperSlide key={2}>
                 <GridContainer
                   height="100vh"
@@ -541,6 +646,26 @@ const Main: React.FC = () => {
                 >
                   <TitleContainer>
                     <Title>
+                      <span
+                        style={{
+                          color:
+                            cardOptionData.data.filter(
+                              (item) => item[DATA_ITEM_KEY] == selectedState
+                            )[0] == undefined
+                              ? "black"
+                              : cardOptionData.data.filter(
+                                  (item) => item[DATA_ITEM_KEY] == selectedState
+                                )[0].color,
+                        }}
+                        className="k-icon k-i-arrow-60-left k-icon-lg"
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                          setChangeDate("");
+                          setSlice(false);
+                        }}
+                      ></span>
                       {
                         cardOptionData.data.filter(
                           (item) => item[DATA_ITEM_KEY] == selectedState
@@ -595,7 +720,7 @@ const Main: React.FC = () => {
                                       item[DATA_ITEM_KEY] == selectedState
                                   )[0].custnm
                                 }
-                                의 등원 변경 남은 횟수
+                                의 등원 변경 가능 횟수
                               </Typography>
                             </>
                           }
@@ -680,6 +805,69 @@ const Main: React.FC = () => {
                           width: "100%",
                           marginRight: "15px",
                           borderRadius: "10px",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <CardHeader
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "black",
+                                  fontSize: "20px",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                }}
+                              >
+                                <img
+                                  src={`${process.env.PUBLIC_URL}/Born.png`}
+                                  alt=""
+                                  width={"20px"}
+                                  height={"20px"}
+                                  style={{
+                                    marginRight: "2px",
+                                    marginBottom: "2px",
+                                  }}
+                                />
+                                회원권 유효기간
+                              </Typography>
+                            </>
+                          }
+                        />
+                        <CardContent style={{ display: "flex" }}>
+                          <Typography
+                            style={{
+                              color: "black",
+                              fontSize: "1.2rem",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            {dateformat4(
+                              cardOptionData.data.filter(
+                                (item) => item[DATA_ITEM_KEY] == selectedState
+                              )[0].strdt
+                            )}
+                            ~
+                            {dateformat4(
+                              cardOptionData.data.filter(
+                                (item) => item[DATA_ITEM_KEY] == selectedState
+                              )[0].enddt
+                            )}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
                           backgroundColor: cardOptionData.data.filter(
                             (item) => item[DATA_ITEM_KEY] == selectedState
                           )[0].color,
@@ -722,17 +910,52 @@ const Main: React.FC = () => {
                               fontFamily: "TheJamsil5Bold",
                               display: "flex",
                               alignItems: "center",
+                              width: "100%",
                             }}
                           >
-                            <DatePicker
-                              name="date"
-                              value={date.date}
-                              format="yyyy-MM-dd"
+                            <Calendar
+                              navigation={false}
+                              value={date}
                               onChange={filterInputChange}
-                              className="required"
-                              placeholder=""
-                              size={"large"}
                             />
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <CardContent
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography
+                            style={{
+                              color: "black",
+                              fontSize: "25px",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                          >
+                            해당 일자 잔여석
+                          </Typography>
+                          <Typography
+                            style={{
+                              color: "black",
+                              fontSize: "25px",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                          >
+                            {adjnumber}석
                           </Typography>
                         </CardContent>
                       </Card>
@@ -747,6 +970,16 @@ const Main: React.FC = () => {
                     ) : (
                       ""
                     )}
+                    {show2 ? (
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <p style={{ color: "red" }}>
+                          설정하신 일자가 오늘 이전입니다.
+                        </p>
+                        <p style={{ color: "red" }}>다시 설정해주세요.</p>
+                      </Grid>
+                    ) : (
+                      ""
+                    )}
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                       <ButtonContainer>
                         <Buttons
@@ -755,6 +988,7 @@ const Main: React.FC = () => {
                               swiper.slideTo(1);
                             }
                             setChangeDate("");
+                            setSlice(false);
                           }}
                           style={{ width: "48%", backgroundColor: "#D3D3D3" }}
                         >
@@ -763,7 +997,12 @@ const Main: React.FC = () => {
                         <Buttons
                           themeColor={"primary"}
                           onClick={() =>
-                            onSave(changeDate, convertDateToStr(date.date))
+                            onSave(
+                              changeDate,
+                              convertDateToStr(date),
+                              show,
+                              show2
+                            )
                           }
                           style={{ width: "48%" }}
                         >
@@ -789,8 +1028,11 @@ const Main: React.FC = () => {
             )[0]
           }
           changeDate={changeDate}
-          reload={(pastday, currentday) => onSave(pastday, currentday)}
+          reload={(pastday, currentday, shows, shows2) => {
+            onSave(pastday, currentday, shows, shows2);
+          }}
           show={show}
+          show2={show2}
         />
       )}
     </>
