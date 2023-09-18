@@ -157,6 +157,7 @@ import SA_B3100W from "./routes/SA_B3100W";
 import SA_B3101W from "./routes/SA_B3101W";
 import SA_B3600W from "./routes/SA_B3600W";
 import SY_A0010W from "./routes/SY_A0010W";
+import SY_A0010_301W from "./routes/SY_A0010_301W";
 import SY_A0011W from "./routes/SY_A0011W";
 import SY_A0012W from "./routes/SY_A0012W";
 import SY_A0013W from "./routes/SY_A0013W";
@@ -664,6 +665,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute
                     path="/PS_A0060_301W"
                     component={PS_A0060_301W}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/SY_A0010_301W"
+                    component={SY_A0010_301W}
                     exact
                   />
 

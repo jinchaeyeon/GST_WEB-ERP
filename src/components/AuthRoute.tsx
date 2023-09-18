@@ -91,6 +91,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "SY_A0120W" ||
       link == "SY_A0110W" ||
       link == "SY_A0010W" ||
+      link == "SY_A0010_301W" ||
       link == "SY_A0012W" ||
       link == "SY_A0013W" ||
       link == "SY_A0011W" ||
