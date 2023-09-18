@@ -1,6 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { 
   State, 
   DataResult, 
@@ -104,14 +104,13 @@ const CR_A1101W: React.FC = () => {
     }
   };
 
-  const onCheckUser = (mobile_no: string) => {
+  useEffect(() => {
     fetchMainGrid();
-    
-    setFilters((prev) => ({
-      ...prev,
-      mobile_no: mobile_no,
-    }));
+  }, [filters]);
 
+  const onCheckUser = async() => {
+    const mobile_no = filters.mobile_no;
+    
     if (mobile_no != null && mobile_no != "") {
       mainDataResult.data.map((item: any) => {
         if (item.mobile_no == mobile_no) {
@@ -178,9 +177,7 @@ const CR_A1101W: React.FC = () => {
               value={inputValue}
             />
             <Button
-              onClick={() =>
-                onCheckUser(filters.mobile_no)
-              }
+              onClick={onCheckUser}
               themeColor={"primary"} 
               style = {{ marginLeft: "10px", marginTop: "10px"}}
               size="large"
