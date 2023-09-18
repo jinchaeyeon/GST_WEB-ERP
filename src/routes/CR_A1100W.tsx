@@ -57,6 +57,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CenterCell from "../components/Cells/CenterCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -114,6 +115,7 @@ const CR_A1100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -207,8 +209,9 @@ const CR_A1100W: React.FC = () => {
     pgSize: PAGE_SIZE,
     work_type: "LIST",
     orgdiv: "01",
-    location: "01",
-    recdt: new Date(),
+    location: location,
+    frdt: new Date(),
+    todt: new Date(),
     custcd: "",
     custnm: "",
     class: "",
@@ -238,7 +241,8 @@ const CR_A1100W: React.FC = () => {
         "@p_work_type": filters.work_type,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_recdt": convertDateToStr(filters.recdt),
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
         "@p_class": filters.class,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
@@ -391,10 +395,17 @@ const CR_A1100W: React.FC = () => {
       ) {
         throw findMessage(messagesData, "CR_A1100W_001")
       } else if (
-        convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.recdt).substring(6, 8).length != 2
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CR_A1100W_002")
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "CR_A1100W_002")
       } else {
@@ -424,8 +435,8 @@ const CR_A1100W: React.FC = () => {
   //저장 파라미터 초기 값
   const [paraDataSaved, setParaDataSaved] = useState({
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: filters.orgdiv,
+    location: location,
     rowstatus: "",
     membership_id: "",
     seq: "",
@@ -538,7 +549,7 @@ const CR_A1100W: React.FC = () => {
       ...prev,
       workType: "N",
       orgdiv: "01",
-      location: "01",
+      location: location,
       rowstatus: dataArr.rowstatus.join("|"),
       membership_id: dataArr.membership_id.join("|"),
       seq: dataArr.seq.join("|"),
@@ -798,26 +809,21 @@ const CR_A1100W: React.FC = () => {
                 />
                 )}
               </td>
-              <th>사업장</th>
+              <th>조회기간</th>
               <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="location"
-                    value={filters.location}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>조회일자</th>
-              <td>
-                <DatePicker
-                  name="recdt"
-                  value={filters.recdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: {value: { start: any; end: any}}) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,                      
+                    }))
+                  }
                   className="required"
-                  placeholder=""
                 />
               </td>
               <th>반</th>
