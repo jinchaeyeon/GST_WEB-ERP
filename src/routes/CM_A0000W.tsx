@@ -282,8 +282,7 @@ const CM_A0000W: React.FC = () => {
     path.includes("localhost")
       ? //WEB ERP개발할떄 바꿀부분입니다.
         // setDetailWindowVisible2(true)
-        setDetailWindowVisible(true)
-      : 
+       setDetailWindowVisible(true) :
       path.split("/")[2].split(".")[1] == "gsti"
       ? setDetailWindowVisible(true)
       : path.split("/")[2].split(".")[1] == "ddgd"
