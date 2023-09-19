@@ -85,6 +85,33 @@ const lastDay = (date:Date) => {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0);
 }
 
+enum weekDay
+{
+  None = 0,
+  일 = 1 << 0,
+  월 = 1 << 1,
+  화 = 1 << 2,
+  수 = 1 << 3,
+  목 = 1 << 4,
+  금 = 1 << 5,
+  토 = 1 << 6
+}
+
+const getWeekDay = (value:any) => {
+  let stringValues:string[] = [];
+  
+  const keys = Object.keys(weekDay).filter((x:any) => isNaN(x))
+  for (let i in keys) {
+    const key:any = keys[i];
+    const dayofweek:any = weekDay[key]
+    if (value & dayofweek) {
+      stringValues.push(key);
+    }
+  }
+
+  return stringValues.join("/");
+}
+
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 
@@ -597,6 +624,7 @@ const CR_A0040W: React.FC = () => {
         "@p_enddt": "",
         "@p_useqty": 0,
         "@p_adjqty": 0,
+        "@p_dayofweek": 0,
         "@p_userid": userId,
         "@p_pc": pc,
         "@p_form_id": pathname,
@@ -729,7 +757,31 @@ const CR_A0040W: React.FC = () => {
         등원횟수 = "",
         변경횟수 = "",
         금액 = "",
+        월 = "",
+        화 = "",
+        수 = "",
+        목 = "",
+        금 = "",
       } = item;
+
+      let dayofweek = weekDay.None;
+
+      // 요일은 빈칸만 아니면 체크된걸로 처리
+      if (!!월) {
+        dayofweek |= weekDay.월;
+      }
+      if (!!화) {
+        dayofweek |= weekDay.화;
+      }
+      if (!!수) {
+        dayofweek |= weekDay.수;
+      }
+      if (!!목) {
+        dayofweek |= weekDay.목;
+      }
+      if (!!금) {
+        dayofweek |= weekDay.금;
+      }
 
       //프로시저 파라미터
       const paraSaved: Iparameters = {
@@ -749,6 +801,7 @@ const CR_A0040W: React.FC = () => {
           "@p_enddt": 만기일자,
           "@p_useqty": 등원횟수,
           "@p_adjqty": 변경횟수,
+          "@p_dayofweek": dayofweek,
           "@p_userid": userId,
           "@p_pc": pc,
           "@p_form_id": pathname,
@@ -899,6 +952,7 @@ const CR_A0040W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
+                dayofweek: getWeekDay(row.dayofweek),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

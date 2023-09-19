@@ -1,6 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { Input, InputChangeEvent, TextArea } from "@progress/kendo-react-inputs";
+import { Checkbox, Input, InputChangeEvent, TextArea } from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -36,6 +36,18 @@ const firstDay = (date:Date) => {
 
 const lastDay = (date:Date) => {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}
+
+enum weekDay
+{
+  None = 0,
+  Sunday = 1 << 0,
+  Monday = 1 << 1,
+  Tuesday = 1 << 2,
+  Wednesday = 1 << 3,
+  Thursday = 1 << 4,
+  Friday = 1 << 5,
+  Saturday = 1 << 6
 }
 
 type TKendoWindow = {
@@ -97,6 +109,23 @@ const KendoWindow = ({
         [name]: value,
       }));
     }
+    else if (name in weekDay) 
+    {
+      const day:any = weekDay[name];
+
+      if (value) {
+        setInitialVal((prev) => ({
+          ...prev,
+          dayofweek: prev.dayofweek | day,
+        }));
+      }
+      else {
+        setInitialVal((prev) => ({
+          ...prev,
+          dayofweek: prev.dayofweek & ~day,
+        }));
+      }
+    } 
     else {
       setInitialVal((prev) => ({
         ...prev,
@@ -202,6 +231,7 @@ const KendoWindow = ({
     enddt: lastDay(new Date()),
     janqty: 0,
     adjqty: 0,
+    dayofweek: 0,
   });
 
   const parameters: Iparameters = {
@@ -257,6 +287,7 @@ const KendoWindow = ({
           enddt: !row.enddt ? null : new Date(dateformat(row.enddt)),
           janqty: row.janqty,
           adjqty: row.adjqty,
+          dayofweek: row.dayofweek,
         };
       });
     }
@@ -278,6 +309,7 @@ const KendoWindow = ({
     amt: 0,
     strdt: new Date(),
     enddt: new Date("2099-12-31"),
+    dayofweek: 0,
     janqty: 0,
     adjqty: 0,
   });
@@ -304,6 +336,7 @@ const KendoWindow = ({
         "@p_enddt": convertDateToStr(paraData.enddt),
         "@p_useqty": paraData.janqty,
         "@p_adjqty": paraData.adjqty,
+        "@p_dayofweek": paraData.dayofweek,
         "@p_userid": userId,
         "@p_pc": pc,
         "@p_form_id": pathname,
@@ -346,6 +379,7 @@ const KendoWindow = ({
       enddt,
       janqty,
       adjqty,
+      dayofweek,
     } = initialVal;
 
     //검증
@@ -392,6 +426,7 @@ const KendoWindow = ({
       enddt: enddt,
       janqty: janqty,
       adjqty: adjqty,
+      dayofweek: dayofweek,
     }));
   };
 
@@ -476,12 +511,15 @@ const KendoWindow = ({
                 <tr>
                   <th>회원권 종류</th>
                   <td>
-                    <Input
-                      type="text"
-                      name="gubun"
-                      value={initialVal.gubun}
-                      onChange={filterInputChange}
-                    />
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        type="new"
+                        name="gubun"
+                        value={initialVal.gubun}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
                   </td>
                   <th>시작일자</th>
                   <td>
@@ -556,6 +594,44 @@ const KendoWindow = ({
                   </td>
                 </tr>
                 <tr>
+                  <th>요일</th>
+                  <td>
+                    {" 월"}
+                    <Checkbox
+                      title="월"
+                      name="Monday"
+                      value={(initialVal.dayofweek & weekDay.Monday) ? true : false}
+                      onChange={filterInputChange}
+                    />
+                    {" 화"}
+                    <Checkbox
+                      title="화"
+                      name="Tuesday"
+                      value={(initialVal.dayofweek & weekDay.Tuesday) ? true : false}
+                      onChange={filterInputChange}
+                    />
+                    {" 수"}
+                    <Checkbox
+                      title="수"
+                      name="Wednesday"
+                      value={(initialVal.dayofweek & weekDay.Wednesday) ? true : false}
+                      onChange={filterInputChange}
+                    />
+                    {" 목"}
+                    <Checkbox
+                      title="목"
+                      name="Thursday"
+                      value={(initialVal.dayofweek & weekDay.Thursday) ? true : false}
+                      onChange={filterInputChange}
+                    />
+                    {" 금"}
+                    <Checkbox
+                      title="금"
+                      name="Friday"
+                      value={(initialVal.dayofweek & weekDay.Friday) ? true : false}
+                      onChange={filterInputChange}
+                    />
+                  </td>
                   <th>메모</th>
                   <td colSpan={7}>
                     <TextArea

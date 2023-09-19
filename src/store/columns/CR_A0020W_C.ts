@@ -58,12 +58,6 @@ export const gridList: Array<TGrid> = [
         caption: "반",
         width: 150,
       },
-      {
-        id: "col_dayofweek",
-        field: "dayofweek",
-        caption: "등원요일",
-        width: 150,
-      },
     ],
   },
 ];
