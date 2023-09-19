@@ -74,8 +74,14 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_janqty",
         field: "janqty",
-        caption: "등원가능횟수",
+        caption: "등원가능",
         width: 100,
+      },
+      {
+        id: "col_dayofweek",
+        field: "dayofweek",
+        caption: "등원요일",
+        width: 150,
       },
       {
         id: "col_manager",

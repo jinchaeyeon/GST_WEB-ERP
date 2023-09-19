@@ -61,33 +61,6 @@ import CR_A0020W_Window from "../components/Windows/CR_A0020W_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
 
-enum weekDay
-{
-  None = 0,
-  일 = 1 << 0,
-  월 = 1 << 1,
-  화 = 1 << 2,
-  수 = 1 << 3,
-  목 = 1 << 4,
-  금 = 1 << 5,
-  토 = 1 << 6
-}
-
-const getWeekDay = (value:any) => {
-  let stringValues:string[] = [];
-  
-  const keys = Object.keys(weekDay).filter((x:any) => isNaN(x))
-  for (let i in keys) {
-    const key:any = keys[i];
-    const dayofweek:any = weekDay[key]
-    if (value & dayofweek) {
-      stringValues.push(key);
-    }
-  }
-
-  return stringValues.join("/");
-}
-
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 
@@ -659,33 +632,9 @@ const CR_A0020W: React.FC = () => {
         반려인ID = "",
         반 = "",
         담당자ID = "",
-        월 = "",
-        화 = "",
-        수 = "",
-        목 = "",
-        금 = "",
       } = item;
 
       const classCode = bizComponent ? bizComponent.data.Rows.find((x:any) => x.code_name == 반).sub_code : "";
-      
-      let dayofweek = weekDay.None;
-
-      // 요일은 빈칸만 아니면 체크된걸로 처리
-      if (!!월) {
-        dayofweek |= weekDay.월;
-      }
-      if (!!화) {
-        dayofweek |= weekDay.화;
-      }
-      if (!!수) {
-        dayofweek |= weekDay.수;
-      }
-      if (!!목) {
-        dayofweek |= weekDay.목;
-      }
-      if (!!금) {
-        dayofweek |= weekDay.금;
-      }
 
       //프로시저 파라미터
       const paraSaved: Iparameters = {
@@ -706,7 +655,7 @@ const CR_A0020W: React.FC = () => {
           "@p_manager": 담당자ID,
           "@p_strdt": convertDateToStr(new Date()),
           "@p_enddt": "",
-          "@p_dayofweek": dayofweek,
+          "@p_dayofweek": "",
           "@p_birdt": "",
           "@p_bircd": "",
           "@p_useyn": "Y",
@@ -860,7 +809,6 @@ const CR_A0020W: React.FC = () => {
                 birdt: row.birdt
                   ? new Date(dateformat(row.birdt))
                   : null,//new Date(dateformat("19991231")),
-                dayofweek: getWeekDay(row.dayofweek),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

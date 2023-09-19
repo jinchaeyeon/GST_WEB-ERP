@@ -25,17 +25,7 @@ import {
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 
-enum weekDay
-{
-  None = 0,
-  Sunday = 1 << 0,
-  Monday = 1 << 1,
-  Tuesday = 1 << 2,
-  Wednesday = 1 << 3,
-  Thursday = 1 << 4,
-  Friday = 1 << 5,
-  Saturday = 1 << 6
-}
+
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -76,23 +66,6 @@ const KendoWindow = ({
         [name]: value == true ? "N" : "Y",
       }));
     }
-    else if (name in weekDay) 
-    {
-      const day:any = weekDay[name];
-
-      if (value) {
-        setInitialVal((prev) => ({
-          ...prev,
-          dayofweek: prev.dayofweek | day,
-        }));
-      }
-      else {
-        setInitialVal((prev) => ({
-          ...prev,
-          dayofweek: prev.dayofweek & ~day,
-        }));
-      }
-    } 
     else {
       setInitialVal((prev) => ({
         ...prev,
@@ -511,44 +484,6 @@ const KendoWindow = ({
                   </td>
                 </tr>
                 <tr>
-                <th>요일</th>
-                  <td>
-                    {" 월"}
-                    <Checkbox
-                      title="월"
-                      name="Monday"
-                      value={(initialVal.dayofweek & weekDay.Monday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                    {" 화"}
-                    <Checkbox
-                      title="화"
-                      name="Tuesday"
-                      value={(initialVal.dayofweek & weekDay.Tuesday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                    {" 수"}
-                    <Checkbox
-                      title="수"
-                      name="Wednesday"
-                      value={(initialVal.dayofweek & weekDay.Wednesday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                    {" 목"}
-                    <Checkbox
-                      title="목"
-                      name="Thursday"
-                      value={(initialVal.dayofweek & weekDay.Thursday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                    {" 금"}
-                    <Checkbox
-                      title="금"
-                      name="Friday"
-                      value={(initialVal.dayofweek & weekDay.Friday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                  </td>
                   <th>생일</th>
                   <td>
                     <DatePicker
@@ -568,8 +503,6 @@ const KendoWindow = ({
                       onChange={filterInputChange}
                     />
                   </td>
-                </tr>
-                <tr>
                   <th>메모</th>
                   <td colSpan={7}>
                     <TextArea
