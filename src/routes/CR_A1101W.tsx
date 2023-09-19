@@ -17,6 +17,7 @@ import { GridContainer, GridContainerWrap } from "../CommonStyled";
 import { Box, Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
+import { Field } from "@progress/kendo-react-form";
 
 let check_userid = "";
 let deviceWidth = window.innerWidth;
@@ -31,8 +32,8 @@ const CR_A1101W: React.FC = () => {
   const userid = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const [selectedState, setSelectedState] = useState<string>("");
   const [inputValue, setInputValue] = useState("");
+  const [count, setCount] = useState(30);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -46,6 +47,7 @@ const CR_A1101W: React.FC = () => {
   const [subDataResult, setSubDataResult] = useState<DataResult>(
     processQuery([], subDataState)
   );
+  
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -206,8 +208,7 @@ const CR_A1101W: React.FC = () => {
   };
 
   const resetInput = () => {
-     // 타이머 적용되서 리셋 처리
-     // 휴대폰 번호 빈값 처리
+     // 휴대폰 번호 빈값 처리 및 조회 reset
      setInputValue("");
      setFilters((prev) => ({
        ...prev,
@@ -301,14 +302,28 @@ const CR_A1101W: React.FC = () => {
     if (paraData != undefined && paraData.custcd != ""){
       fetchTodoGridSaved();
     }
-  }, [paraData])
+  }, [paraData]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCount((count) => count - 1);
+    }, 1000);
+
+    // 0이 되면 새로고침 및 다시 30초 카운트
+    if (count === 0) {
+      clearInterval(id);
+      resetInput();
+      setCount(30);
+    };
+    return () => clearInterval(id);
+  }, [count]);
 
   return (
     <>
       <GridContainerWrap>
         <GridContainer 
           style = {{ width: isMobile ? "100%" : "45%", 
-                    height: isMobile ? "60%" : "97vh", 
+                    height: isMobile ? "45%" : "97vh", 
                     display: "flex",
                     backgroundColor: "#f5b901",
                     justifyContent: "center", 
@@ -317,18 +332,19 @@ const CR_A1101W: React.FC = () => {
           <img
             src={`${process.env.PUBLIC_URL}/logo_ddgd.png`}
             alt=""
-            width="400px"
-            height="400px"
+            width={isMobile ? "200px" : "400px"}
+            height={isMobile ? "200px" : "400px"}
             style={{  borderRadius: "70%", overflow: "hidden", backgroundColor: "white" }}
           />
         </GridContainer>
         <GridContainer 
           style = {{
             width: isMobile ? "100%" : `calc(55% - ${GAP}px)`,
-            height: isMobile ? "40%" : "97vh"
-          }}>
+            height: isMobile ? `calc(55% - ${GAP}px)` : "97vh"
+          }}
+        >
           <GridContainer 
-            style = {{ height: isMobile ? `calc(60% - ${GAP}px)` : "30%",
+            style = {{ height: "30%",
                       marginTop: isMobile ? "50px" : "",
                       display: "flex",
                       justifyContent: "center", 
@@ -336,10 +352,16 @@ const CR_A1101W: React.FC = () => {
             >
             <div 
               style={{ 
+                width: "100%",
+                height: "10vh",
                 fontSize: "40px", 
-                marginBottom: "40px", 
+                marginBottom: "40px",
+                backgroundColor: "#F7E8CF", 
+                display: "flex",
+                justifyContent: "center", 
+                alignItems: "center"
                 }}
-              >체크인독 출석체크</div>
+            >체크인독 출석체크</div>
             <div style = {{ display: "flex", justifyContent: "center", 
                             alignItems: "center" }}>
               <Input 
@@ -348,13 +370,17 @@ const CR_A1101W: React.FC = () => {
                 type="text"
                 onChange={filterInputChange}
                 value={inputValue}
-                width="150px"
+                size={30}
               />
               <Button
                 onClick={onCheckUser}
-                themeColor={"primary"} 
-                style = {{ marginLeft: "10px", marginTop: "10px"}}
-                size="large"
+                style = {{ 
+                  marginLeft: "10px", 
+                  marginTop: "10px", 
+                  backgroundColor: "#F7E8CF",
+                  width: "100px",
+                  height: "50px",
+                }}
               >
                 조회
               </Button>
@@ -362,9 +388,10 @@ const CR_A1101W: React.FC = () => {
           </GridContainer>
           <GridContainer 
             style = {{ 
-              height: `calc(70% - ${GAP}px)`, 
+              height: `calc(60% - ${GAP}px)`, 
               overflowY: "scroll", 
-              maxHeight: `calc(70% - ${GAP}px)`
+              maxHeight: `calc(70% - ${GAP}px)`,
+              marginTop: isMobile ? "20px" : "",
             }}>
             <Grid container spacing={2}>
               {subDataResult.data.map((item) => (
@@ -381,14 +408,14 @@ const CR_A1101W: React.FC = () => {
                     }}
                     onClick={() => onSaveClick(item.custcd, item.custnm)}
                   >
-                    <Box style = {{ width: "30%"}}>
+                    <Box style = {{ width: "30%", marginLeft: isMobile ? "10px" : "20px"}}>
                       <CardHeader
                         title={
                           <>
                             <Typography
                               style={{
                                 color: "black",
-                                fontSize: "20px",
+                                fontSize: isMobile ? "10px" :"20px",
                                 fontWeight: 700,
                                 display: "flex",
                                 alignItems: "center",
@@ -404,7 +431,7 @@ const CR_A1101W: React.FC = () => {
                         <Typography
                           style={{
                             color: "black",
-                            fontSize: "40px",
+                            fontSize: isMobile ? "20px": "40px",
                             fontWeight: 700,
                             display: "flex",
                             alignItems: "center",
@@ -422,7 +449,7 @@ const CR_A1101W: React.FC = () => {
                             <Typography
                               style={{
                                 color: "black",
-                                fontSize: "20px",
+                                fontSize: isMobile ? "10px" : "20px",
                                 fontWeight: 700,
                                 display: "flex",
                                 alignItems: "center",
@@ -438,7 +465,7 @@ const CR_A1101W: React.FC = () => {
                         <Typography
                           style={{
                             color: "black",
-                            fontSize: "40px",
+                            fontSize: isMobile ? "20px" : "40px",
                             fontWeight: 700,
                             display: "flex",
                             alignItems: "center",
@@ -456,7 +483,7 @@ const CR_A1101W: React.FC = () => {
                             <Typography
                               style={{
                                 color: "black",
-                                fontSize: "20px",
+                                fontSize: isMobile ? "10px" : "20px",
                                 fontWeight: 700,
                                 display: "flex",
                                 alignItems: "center",
@@ -472,7 +499,7 @@ const CR_A1101W: React.FC = () => {
                         <Typography
                           style={{
                             color: "black",
-                            fontSize: "40px",
+                            fontSize: isMobile ? "20px" : "40px",
                             fontWeight: 700,
                             display: "flex",
                             alignItems: "center",
@@ -490,7 +517,7 @@ const CR_A1101W: React.FC = () => {
                             <Typography
                               style={{
                                 color: "black",
-                                fontSize: "20px",
+                                fontSize: isMobile ? "10px" : "20px",
                                 fontWeight: 700,
                                 display: "flex",
                                 alignItems: "center",
@@ -506,7 +533,7 @@ const CR_A1101W: React.FC = () => {
                         <Typography
                           style={{
                             color: "black",
-                            fontSize: "40px",
+                            fontSize: isMobile ? "20px" : "40px",
                             fontWeight: 700,
                             display: "flex",
                             alignItems: "center",
@@ -521,6 +548,20 @@ const CR_A1101W: React.FC = () => {
                 </Grid>
               ))}
             </Grid>
+          </GridContainer>
+          <GridContainer 
+            style = {{
+              width: "100%",
+              height: "10%",
+              color: "#373737",
+              fontSize: isMobile ? "20px" : "30px",
+              display: "flex", 
+              justifyContent: "center", 
+              alignItems: "center",
+              marginTop: isMobile ? "30px" : "",
+            }}
+          >
+            <div>({count})초 뒤 새로고침 됩니다.</div>
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>
