@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -2687,33 +2686,10 @@ const BA_A0020_603: React.FC = () => {
     let valid = true;
     try {
       if (infomation.custnm == "") {
-        throw findMessage(messagesData, "BA_A0020W_001");
+        throw findMessage(messagesData, "BA_A0020W_001");  //업체명을 입력하세요.
       }
-
       if (infomation.custdiv == "") {
-        throw findMessage(messagesData, "BA_A0020W_002");
-      }
-
-      if (infomation.bizdiv == "") {
-        throw findMessage(messagesData, "BA_A0020W_003");
-      }
-
-      if (infomation.inunpitem == "") {
-        throw findMessage(messagesData, "BA_A0020W_004");
-      }
-
-      if (infomation.unpitem == "") {
-        throw findMessage(messagesData, "BA_A0020W_005");
-      }
-
-      if (
-        infomation.estbdt != null &&
-        (convertDateToStr(infomation.estbdt).length != 8 ||
-          convertDateToStr(infomation.estbdt).substring(0, 4) >
-            convertDateToStr(new Date()).substring(0, 4) ||
-          convertDateToStr(infomation.estbdt).substring(0, 4) < "1400")
-      ) {
-        throw findMessage(messagesData, "BA_A0020W_007");
+        throw findMessage(messagesData, "BA_A0020W_002"); //업체구분을 입력하세요.
       }
     } catch (e) {
       alert(e);
@@ -2978,7 +2954,7 @@ const BA_A0020_603: React.FC = () => {
       ...event.page,
     });
   };
-
+  
   const minGridWidth = React.useRef<number>(0);
   const grid = React.useRef<any>(null);
   const [applyMinWidth, setApplyMinWidth] = React.useState(false);
