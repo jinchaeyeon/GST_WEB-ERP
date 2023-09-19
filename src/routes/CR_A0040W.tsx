@@ -135,6 +135,7 @@ const CustomField:string[] = [
 ];
 
 const numberField:string[] = [
+  "janqty",
   "amt"
 ]
 

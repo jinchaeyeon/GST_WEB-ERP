@@ -1003,7 +1003,7 @@ const KendoWindow = ({
           "@p_numref3": numref3,
           "@p_numref4": numref4,
           "@p_numref5": numref5,
-          "@p_memo": memo,
+          "@p_memo": item.memo,
           "@p_sort_seq": sort_seq,
           "@p_use_yn": use_yn === "Y" || use_yn === true ? "Y" : "N",
           "@p_userid": userId,
@@ -1217,6 +1217,8 @@ const KendoWindow = ({
       return;
     } 
 
+    console.log(jsonArr); //    
+
     const columns:string[] = [
       "코드",
       "코드명",
@@ -1240,7 +1242,17 @@ const KendoWindow = ({
     });
 
     jsonArr.forEach(async (item: any) => {
-      const numref1Name = "(잔여석)";
+      let numref1 = 0;
+      let numref2 = 0;
+      let numref3 = 0;
+      if (item.hasOwnProperty("정원")) {
+        numref1 = item.정원;
+      }
+      else if (item.hasOwnProperty("등원가능횟수")) {
+        numref1 = item.등원가능횟수;
+        numref2 = item.변경가능횟수;
+        numref3 = item.금액;
+      }
 
       const {
         코드 = "",
@@ -1251,9 +1263,9 @@ const KendoWindow = ({
         [DATA_ITEM_KEY]: ++temp,
         sort_seq: 0,
         use_yn: "Y",
-        numref1: item[numref1Name],
-        numref2: 0,
-        numref3: 0,
+        numref1: numref1,
+        numref2: numref2,
+        numref3: numref3,
         numref4: 0,
         numref5: 0,
         rowstatus: "N",
@@ -1530,13 +1542,69 @@ const KendoWindow = ({
           <GridColumn field="extra_field9" width="200px" title={field9} />
           <GridColumn field="extra_field10" width="200px" title={field10} /> */}
 
+          {!!field1 && field1 != "세부코드명1" &&
+            <GridColumn field="extra_field1" width="200px" title={field1} />}
+          {!!field2 && field2 != "세부코드명2" &&
+            <GridColumn field="extra_field2" width="200px" title={field2} />}
+          {!!field3 && field3 != "세부코드명3" &&
+            <GridColumn field="extra_field3" width="200px" title={field3} />}
+          {!!field4 && field4 != "세부코드명4" &&
+            <GridColumn field="extra_field4" width="200px" title={field4} />}
+          {!!field5 && field5 != "세부코드명5" &&
+            <GridColumn field="extra_field5" width="200px" title={field5} />}
+          {!!field6 && field6 != "세부코드명6" &&
+            <GridColumn field="extra_field6" width="200px" title={field6} />}
+          {!!field7 && field7 != "세부코드명7" &&
+            <GridColumn field="extra_field7" width="200px" title={field7} />}
+          {!!field8 && field8 != "세부코드명8" &&
+            <GridColumn field="extra_field8" width="200px" title={field8} />}
+          {!!field9 && field9 != "세부코드명9" &&
+            <GridColumn field="extra_field9" width="200px" title={field9} />}
+          {!!field10 && field10 != "세부코드명10" &&
+            <GridColumn field="extra_field10" width="200px" title={field10} />}
+
           {
-            !!num1 &&
-            num1 != "숫자참조1" &&
+            !!num1 && num1 != "숫자참조1" &&
             <GridColumn
               field="numref1"
               width="200px"
               title={num1}
+              cell={NumberCell}
+          />
+          }
+          {
+            !!num2 && num2 != "숫자참조2" &&
+            <GridColumn
+              field="numref2"
+              width="200px"
+              title={num2}
+              cell={NumberCell}
+          />
+          }
+          {
+            !!num3 && num3 != "숫자참조3" &&
+            <GridColumn
+              field="numref3"
+              width="200px"
+              title={num3}
+              cell={NumberCell}
+          />
+          }
+          {
+            !!num4 && num4 != "숫자참조4" &&
+            <GridColumn
+              field="numref4"
+              width="200px"
+              title={num4}
+              cell={NumberCell}
+          />
+          }
+          {
+            !!num5 && num5 != "숫자참조5" &&
+            <GridColumn
+              field="numref5"
+              width="200px"
+              title={num5}
               cell={NumberCell}
           />
           }

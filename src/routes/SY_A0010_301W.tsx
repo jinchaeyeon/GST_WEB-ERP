@@ -1452,15 +1452,71 @@ const Page: React.FC = () => {
             <GridColumn field="extra_field9" width="200px" title={field9} />
             <GridColumn field="extra_field10" width="200px" title={field10} /> */}
 
+            {!!field1 && field1 != "세부코드명1" &&
+              <GridColumn field="extra_field1" width="200px" title={field1} />}
+            {!!field2 && field2 != "세부코드명2" &&
+              <GridColumn field="extra_field2" width="200px" title={field2} />}
+            {!!field3 && field3 != "세부코드명3" &&
+              <GridColumn field="extra_field3" width="200px" title={field3} />}
+            {!!field4 && field4 != "세부코드명4" &&
+              <GridColumn field="extra_field4" width="200px" title={field4} />}
+            {!!field5 && field5 != "세부코드명5" &&
+              <GridColumn field="extra_field5" width="200px" title={field5} />}
+            {!!field6 && field6 != "세부코드명6" &&
+              <GridColumn field="extra_field6" width="200px" title={field6} />}
+            {!!field7 && field7 != "세부코드명7" &&
+              <GridColumn field="extra_field7" width="200px" title={field7} />}
+            {!!field8 && field8 != "세부코드명8" &&
+              <GridColumn field="extra_field8" width="200px" title={field8} />}
+            {!!field9 && field9 != "세부코드명9" &&
+              <GridColumn field="extra_field9" width="200px" title={field9} />}
+            {!!field10 && field10 != "세부코드명10" &&
+              <GridColumn field="extra_field10" width="200px" title={field10} />}
+
             {
-              !!num1 &&
-              num1 != "숫자참조1" &&
+              !!num1 && num1 != "숫자참조1" &&
               <GridColumn
                 field="numref1"
                 width="200px"
                 title={num1}
                 cell={NumberCell}
-              />
+            />
+            }
+            {
+              !!num2 && num2 != "숫자참조2" &&
+              <GridColumn
+                field="numref2"
+                width="200px"
+                title={num2}
+                cell={NumberCell}
+            />
+            }
+            {
+              !!num3 && num3 != "숫자참조3" &&
+              <GridColumn
+                field="numref3"
+                width="200px"
+                title={num3}
+                cell={NumberCell}
+            />
+            }
+            {
+              !!num4 && num4 != "숫자참조4" &&
+              <GridColumn
+                field="numref4"
+                width="200px"
+                title={num4}
+                cell={NumberCell}
+            />
+            }
+            {
+              !!num5 && num5 != "숫자참조5" &&
+              <GridColumn
+                field="numref5"
+                width="200px"
+                title={num5}
+                cell={NumberCell}
+            />
             }
 
             <GridColumn field="memo" width="120px" title="메모" />

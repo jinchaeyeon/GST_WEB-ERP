@@ -18,6 +18,7 @@ import {
 import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
@@ -136,10 +137,25 @@ const KendoWindow = ({
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    setInitialVal((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "gubun"
+      && bizComponentData) {
+      const BA330 = bizComponentData.find((item: any) => item.bizComponentId === "L_BA330");
+      const row = BA330.data.Rows.find((item: any) => item.sub_code == value);
+
+      setInitialVal((prev) => ({
+        ...prev,
+        [name]: value,
+        janqty: row.numref1,
+        adjqty: row.numref2,
+        amt: row.numref3,
+      }));
+    }
+    else {
+      setInitialVal((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const pathname: string = window.location.pathname.replace("/", "");
@@ -158,9 +174,9 @@ const KendoWindow = ({
   //   }
   // }, [customOptionData]);
 
-  //// 비즈니스 컴포넌트 조회
-  // const [bizComponentData, setBizComponentData] = useState<any>([]);
-  // UseBizComponent("L_sysUserMaster_001, L_BA000", setBizComponentData);
+  // 비즈니스 컴포넌트 조회
+  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  UseBizComponent("L_BA330", setBizComponentData);
 
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
