@@ -398,6 +398,9 @@ export const GridContainer = styled.div<TGridContainer>`
     background-color: #fff0ef;
   } */
   
+  @media (max-width: 1200px) {
+    width: auto;
+  }
 `;
 
 export const GridTitle = styled.h3`
