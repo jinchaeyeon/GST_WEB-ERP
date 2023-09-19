@@ -31,11 +31,6 @@ import styled, { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
-import {
-  colors,
-  isMobileMenuOpendState,
-  loginResultState,
-} from "./store/atoms";
 import AC_A0000W from "./routes/AC_A0000W";
 import AC_A0020W from "./routes/AC_A0020W";
 import AC_A0030W from "./routes/AC_A0030W";
@@ -57,6 +52,9 @@ import BA_A0070W from "./routes/BA_A0070W";
 import BA_A0080W from "./routes/BA_A0080W";
 import BA_A0100W from "./routes/BA_A0100W";
 import BA_B0080W from "./routes/BA_B0080W";
+import CHAT_A0001W from "./routes/CHAT_A0001W";
+import CHAT_A0002W from "./routes/CHAT_A0002W";
+import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
 import CM_A0000W from "./routes/CM_A0000W";
 import CM_A1000W from "./routes/CM_A1000W";
 import CM_A1600W from "./routes/CM_A1600W";
@@ -73,11 +71,13 @@ import CM_B8100W from "./routes/CM_B8100W";
 import CR_A0010W from "./routes/CR_A0010W";
 import CR_A0020W from "./routes/CR_A0020W";
 import CR_A0040W from "./routes/CR_A0040W";
+import CR_A1001W from "./routes/CR_A1001W";
 import CR_A1100W from "./routes/CR_A1100W";
 import CR_A1101W from "./routes/CR_A1101W";
 import CT_A0111W from "./routes/CT_A0111W";
 import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
+import GANTT from "./routes/GANTT";
 import HU_A1000W from "./routes/HU_A1000W";
 import HU_A2070W from "./routes/HU_A2070W";
 import HU_A2100W from "./routes/HU_A2100W";
@@ -113,6 +113,7 @@ import MA_B3100W from "./routes/MA_B3100W";
 import MA_B7000W from "./routes/MA_B7000W";
 import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
+import NotFound from "./routes/NotFound";
 import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
@@ -134,6 +135,7 @@ import QC_A0060W from "./routes/QC_A0060W";
 import QC_A0120W from "./routes/QC_A0120W";
 import QC_A2000W from "./routes/QC_A2000W";
 import QC_A2500W from "./routes/QC_A2500W";
+import QC_A2500_603W from "./routes/QC_A2500_603W";
 import QC_A3000W from "./routes/QC_A3000W";
 import QC_A6000W from "./routes/QC_A6000W";
 import QC_B0040W from "./routes/QC_B0040W";
@@ -162,18 +164,17 @@ import SY_A0011W from "./routes/SY_A0011W";
 import SY_A0012W from "./routes/SY_A0012W";
 import SY_A0013W from "./routes/SY_A0013W";
 import SY_A0025W from "./routes/SY_A0025W";
+import SY_A0100W from "./routes/SY_A0100W";
 import SY_A0110W from "./routes/SY_A0110W";
 import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
-import CHAT_A0001W from "./routes/CHAT_A0001W";
-import CHAT_A0002W from "./routes/CHAT_A0002W";
-import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
-import GANTT from "./routes/GANTT";
-import SY_A0100W from "./routes/SY_A0100W";
-import TO_B0011W from "./routes/TO_B0011W";
-import CR_A1001W from "./routes/CR_A1001W";
-import NotFound from "./routes/NotFound";
 import SY_A0500W from "./routes/SY_A0500W";
+import TO_B0011W from "./routes/TO_B0011W";
+import {
+  colors,
+  isMobileMenuOpendState,
+  loginResultState,
+} from "./store/atoms";
 const LoginCRM = lazy(() => import("./routes/LoginCRM"));
 const Login = lazy(() => import("./routes/Login"));
 const MainUserCRM = lazy(() => import("./routes/MainUserCRM"));
@@ -423,7 +424,6 @@ const AppInner: React.FC = () => {
       // switcher({ theme: "yellow" });
       roles = "GST WEB";
       switcher({ theme: "blue" });
-
     } else {
       if (path.split("/")[2].split(".")[1] == "gsti") {
         roles = "GST WEB";
@@ -677,6 +677,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute
                     path="/BA_A0020W_603"
                     component={BA_A0020W_603}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/QC_A2500_603W"
+                    component={QC_A2500_603W}
                     exact
                   />
 
