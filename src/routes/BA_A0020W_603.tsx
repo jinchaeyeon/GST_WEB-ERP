@@ -88,8 +88,9 @@ import {
   unsavedAttadatnumsState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0020W_603_C";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "num";
@@ -294,7 +295,7 @@ const BA_A0020_603: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_AC401,L_BA025,L_AC901, L_sysUserMaster_001,L_BA171, L_BA172,L_BA173,L_BA049, L_BA026,L_BA027,L_BA008",
+    "L_AC401,L_BA025,L_AC901, L_sysUserMaster_001,L_BA171, L_BA172,L_BA173,L_BA049, L_BA026,L_BA027,L_BA008,L_BA075",
     //업체구분, 사업자구분, 매출단가항목(매입단가항목)
     setBizComponentData
   );
@@ -303,8 +304,8 @@ const BA_A0020_603: React.FC = () => {
   const [custdivListData, setCustdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [bizdivListData, setBizdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
+  const [itemlvl1ListData, setItemlvl1ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,    
   ]);
 
   useEffect(() => {
@@ -312,12 +313,14 @@ const BA_A0020_603: React.FC = () => {
       const custdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
       );
-      const BizdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA027")
+
+      const itemlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA075")
       );
 
       fetchQuery(custdivQueryStr, setCustdivListData);
-      fetchQuery(BizdivQueryStr, setBizdivListData);
+      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
+
     }
   }, [bizComponentData]);
 
@@ -594,6 +597,9 @@ const BA_A0020_603: React.FC = () => {
         "@p_find_row_value": filters.find_row_value,
       },
     };
+
+    console.log(parameters);
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -1201,14 +1207,7 @@ const BA_A0020_603: React.FC = () => {
       unpitem: selectedRowData.unpitem,
       ceonm: selectedRowData.ceonm,
       address: selectedRowData.address,
-      bizdiv:
-        bizdivListData.find(
-          (item: any) => item.code_name === selectedRowData.bizdiv
-        )?.sub_code == undefined
-          ? selectedRowData.bizdiv
-          : bizdivListData.find(
-              (item: any) => item.code_name === selectedRowData.bizdiv
-            )?.sub_code,
+      bizdiv:selectedRowData.bizdiv,
       repreregno: selectedRowData.repreregno,
       address_eng: selectedRowData.address_eng,
       estbdt: isValidDate(selectedRowData.estbdt)
@@ -1232,7 +1231,14 @@ const BA_A0020_603: React.FC = () => {
       scmyn: selectedRowData.scmyn == "Y" ? "Y" : "N",
       pariodyn: selectedRowData.pariodyn == "Y" ? "Y" : "N",
       attdatnum: selectedRowData.attdatnum,
-      itemlvl1: selectedRowData.itemlvl1,
+      itemlvl1 :  itemlvl1ListData.find(
+            (item: any) => item.code_name === selectedRowData.itemlvl1
+          )?.sub_code == undefined
+            ? selectedRowData.itemlvl1
+            : itemlvl1ListData.find(
+                (item: any) => item.code_name === selectedRowData.itemlvl1
+              )?.sub_code,
+
       itemlvl2: selectedRowData.itemlvl2,
       itemlvl3: selectedRowData.itemlvl3,
       etax: selectedRowData.etax,
@@ -2038,13 +2044,7 @@ const BA_A0020_603: React.FC = () => {
               (item: any) => item.code_name === infomation.custdiv
             )?.sub_code,
       "@p_custabbr": paraData.custabbr,
-      "@p_bizdiv":
-        bizdivListData.find((item: any) => item.code_name === infomation.bizdiv)
-          ?.sub_code == undefined
-          ? ""
-          : bizdivListData.find(
-              (item: any) => item.code_name === infomation.bizdiv
-            )?.sub_code,
+      "@p_bizdiv":paraData.bizdiv,
       "@p_bizregnum": paraData.bizregnum,
       "@p_ceonm": paraData.ceonm,
       "@p_repreregno": paraData.repreregno,
@@ -2211,13 +2211,7 @@ const BA_A0020_603: React.FC = () => {
               (item: any) => item.code_name === infomation.custdiv
             )?.sub_code,
       "@p_custabbr": infomation.custabbr,
-      "@p_bizdiv":
-        bizdivListData.find((item: any) => item.code_name === infomation.bizdiv)
-          ?.sub_code == undefined
-          ? infomation.bizdiv
-          : bizdivListData.find(
-              (item: any) => item.code_name === infomation.bizdiv
-            )?.sub_code,
+      "@p_bizdiv":infomation.bizdiv,
       "@p_bizregnum": infomation.bizregnum,
       "@p_ceonm": infomation.ceonm,
       "@p_repreregno": infomation.repreregno,
@@ -2246,7 +2240,14 @@ const BA_A0020_603: React.FC = () => {
       "@p_etax": infomation.etax,
       "@p_inunpitem": infomation.inunpitem,
       "@p_email": infomation.email,
-      "@p_itemlvl1": infomation.itemlvl1,
+      "@p_itemlvl1": itemlvl1ListData.find(
+        (item: any) => item.code_name === infomation.itemlvl1
+      )?.sub_code == undefined
+        ? infomation.itemlvl1
+        : itemlvl1ListData.find(
+            (item: any) => item.code_name === infomation.itemlvl1
+          )?.sub_code,
+
       "@p_itemlvl2": infomation.itemlvl2,
       "@p_itemlvl3": infomation.itemlvl3,
       "@p_bankacnt": infomation.bankacnt,
@@ -3136,9 +3137,6 @@ const BA_A0020_603: React.FC = () => {
                   custdiv: custdivListData.find(
                     (item: any) => item.sub_code === row.custdiv
                   )?.code_name,
-                  bizdiv: bizdivListData.find(
-                    (item: any) => item.sub_code === row.bizdiv
-                  )?.code_name,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -3313,9 +3311,9 @@ const BA_A0020_603: React.FC = () => {
                       <th style={{ width: "15%" }}>그룹명(모기업)</th>
                       <td>
                         <Input
-                          name="companyName"
+                          name="custabbr"
                           type="text"
-                          value={infomation.companyName}
+                          value={infomation.custabbr}
                           onChange={InputChange}
                         />
                       </td>
@@ -3334,20 +3332,27 @@ const BA_A0020_603: React.FC = () => {
                     <tr>
                       <th style={{ width: "15%" }}>기업 분류</th>
                       <td>
-                        <MultiColumnComboBox
-                          data={[]}
-                          columns={[]}
-                          onChange={ComboBoxChange}
-                        />
+                      {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="custdiv"
+                            value={infomation.custdiv}
+                            bizComponentId="L_BA026"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            textField={"code_name"}
+                            valueField={"sub_code"}
+                          />
+                        )}
                       </td>
                     </tr>
                     <tr>
                       <th style={{ width: "15%" }}>개발분야</th>
                       <td>
-                        <MultiColumnComboBox
-                          data={[]}
-                          columns={[]}
-                          onChange={ComboBoxChange}
+                      <Input
+                          name="comptype"
+                          type="text"
+                          value={infomation.comptype}
+                          onChange={InputChange}
                         />
                       </td>
                     </tr>
@@ -3366,11 +3371,17 @@ const BA_A0020_603: React.FC = () => {
                     <tr>
                       <th style={{ width: "15%" }}>신용평가 등급</th>
                       <td>
-                        <MultiColumnComboBox
-                          data={[]}
-                          columns={[]}
-                          onChange={ComboBoxChange}
-                        />
+                      {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="itemlvl1"
+                            value={infomation.itemlvl1}
+                            bizComponentId="L_BA075"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            textField={"code_name"}
+                            valueField={"sub_code"}
+                          />
+                        )}
                       </td>
                     </tr>
                     <tr>

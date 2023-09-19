@@ -17,8 +17,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_companyName",
-        field: "companyName",
+        id: "col_custabbr",
+        field: "custabbr",
         caption: "그룹명(모기업)",
         width: 120,
       },
@@ -35,8 +35,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_devdiv",
-        field: "devdiv",
+        id: "col_comptype",
+        field: "comptype",
         caption: "개발분야",
         width: 120,
       },
@@ -47,8 +47,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_class",
-        field: "class",
+        id: "col_itemlvl1",
+        field: "itemlvl1",
         caption: "신용평가 등급",
         width: 120,
       },
