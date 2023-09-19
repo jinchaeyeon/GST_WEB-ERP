@@ -666,7 +666,7 @@ const CR_A0020W: React.FC = () => {
         금 = "",
       } = item;
 
-      let classCode = bizComponent ? bizComponent.data.find((x:any) => x.code_name == 반).sub_code : "";
+      const classCode = bizComponent ? bizComponent.data.Rows.find((x:any) => x.code_name == 반).sub_code : "";
       
       let dayofweek = weekDay.None;
 
@@ -705,7 +705,7 @@ const CR_A0020W: React.FC = () => {
           "@p_age": 0,
           "@p_manager": 담당자ID,
           "@p_strdt": convertDateToStr(new Date()),
-          "@p_enddt": "20991231",
+          "@p_enddt": "",
           "@p_dayofweek": dayofweek,
           "@p_birdt": "",
           "@p_bircd": "",
