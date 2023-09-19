@@ -427,7 +427,6 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   const selected = setSelectedIndex(props.location.pathname);
-
   const logout = () => {
     fetchLogout();
 

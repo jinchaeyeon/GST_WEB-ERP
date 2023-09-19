@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, Typography } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -14,7 +14,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -44,7 +44,7 @@ import {
   convertDateToStrWithTime2,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  toDate2,
+  toDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -405,6 +405,7 @@ const BA_A0020_603: React.FC = () => {
     datnum: "",
     ordnum: "",
     ordseq: 0,
+    person: "",
   });
 
   //그리드 데이터 조회
@@ -568,7 +569,7 @@ const BA_A0020_603: React.FC = () => {
         chkperson: rows[0].chkperson,
         itemcd: rows[0].itemcd,
         itemnm: rows[0].itemnm,
-        baddt: toDate2(rows[0].baddt),
+        baddt: toDate(rows[0].baddt),
         requiretext: rows[0].requiretext,
         protext: rows[0].protext,
         errtext: rows[0].errtext,
@@ -577,6 +578,7 @@ const BA_A0020_603: React.FC = () => {
         datnum: rows[0].datnum,
         ordnum: rows[0].ordnum,
         ordseq: rows[0].ordseq,
+        person: rows[0].person,
       });
 
       setCommentDataResult((prev) => {
@@ -601,16 +603,22 @@ const BA_A0020_603: React.FC = () => {
         setCommentSelectedState({
           [comeentrows[0][COMMENT_DATA_ITEM_KEY]]: true,
         });
+      } else {
+        setCommentDataResult(process([], commentDataState));
       }
       if (commenttotalRowCnt2 > 0) {
         setCommentSelectedState2({
           [comeentrows2[0][COMMENT_DATA_ITEM_KEY2]]: true,
         });
+      } else {
+        setCommentDataResult2(process([], commentDataState2));
       }
       if (commenttotalRowCnt3 > 0) {
         setCommentSelectedState3({
           [comeentrows3[0][COMMENT_DATA_ITEM_KEY3]]: true,
         });
+      } else {
+        setCommentDataResult3(process([], commentDataState3));
       }
     } else {
       console.log("[오류 발생]");
@@ -687,6 +695,18 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (e.selected == 1) {
+      const data = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      setCommentFilters((prev) => ({
+        ...prev,
+        datnum: data.datnum,
+        pgNum: 1,
+        isSearch: true,
+      }));
+    }
     setTabSelected(e.selected);
   };
 
@@ -855,11 +875,21 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
+    deletedMainRows = [];
+    deletedMainRows2 = [];
+    deletedMainRows3 = [];
+    setCommentDataResult(process([], commentDataState));
+    setCommentDataResult2(process([], commentDataState2));
+    setCommentDataResult3(process([], commentDataState3));
     const selectedRowData = event.dataItem;
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
-
+    setCommentFilters((prev) => ({
+      ...prev,
+      datnum: selectedRowData.datnum,
+      pgNum: 1,
+      isSearch: true,
+    }));
     setTabSelected(1);
-
     setWorkType("U");
   };
 
@@ -889,7 +919,14 @@ const BA_A0020_603: React.FC = () => {
       datnum: "",
       ordnum: data.ordnum == undefined ? "" : data.ordnum,
       ordseq: data.ordseq == undefined ? 0 : data.ordseq,
+      person: "",
     });
+    deletedMainRows = [];
+    deletedMainRows2 = [];
+    deletedMainRows3 = [];
+    setCommentDataResult(process([], commentDataState));
+    setCommentDataResult2(process([], commentDataState2));
+    setCommentDataResult3(process([], commentDataState3));
     setWorkType("N");
     setTabSelected(1);
   };
@@ -1251,7 +1288,7 @@ const BA_A0020_603: React.FC = () => {
 
     setCommentDataResult((prev) => {
       return {
-        data: [newDataItem, ...prev.data],
+        data: [...prev.data, newDataItem],
         total: prev.total + 1,
       };
     });
@@ -1280,7 +1317,7 @@ const BA_A0020_603: React.FC = () => {
 
     setCommentDataResult2((prev) => {
       return {
-        data: [newDataItem, ...prev.data],
+        data: [...prev.data, newDataItem],
         total: prev.total + 1,
       };
     });
@@ -1309,7 +1346,7 @@ const BA_A0020_603: React.FC = () => {
 
     setCommentDataResult3((prev) => {
       return {
-        data: [newDataItem, ...prev.data],
+        data: [...prev.data, newDataItem],
         total: prev.total + 1,
       };
     });
@@ -1512,8 +1549,8 @@ const BA_A0020_603: React.FC = () => {
       orgdiv: "01",
       location: "01",
       datnum: Information.datnum,
-      ordnum: Information.ordnum,
-      ordseq: Information.ordseq,
+      ordnum: workType == "N" ? Information.ordnum : "",
+      ordseq: workType == "N" ? Information.ordseq : 0,
       status: Information.status,
       ncrdiv: Information.ncrdiv,
       combytype: Information.combytype,
@@ -1904,7 +1941,12 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="smperson"
                           type="text"
-                          value={Information.smperson}
+                          value={
+                            userListData.find(
+                              (items: any) =>
+                                items.user_id == Information.smperson
+                            )?.user_name
+                          }
                           className="readonly"
                         />
                       </td>
@@ -1915,7 +1957,12 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="cpmperson"
                           type="text"
-                          value={Information.cpmperson}
+                          value={
+                            userListData.find(
+                              (items: any) =>
+                                items.user_id == Information.cpmperson
+                            )?.user_name
+                          }
                           className="readonly"
                         />
                       </td>
@@ -1968,7 +2015,12 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="chkperson"
                           type="text"
-                          value={Information.chkperson}
+                          value={
+                            userListData.find(
+                              (items: any) =>
+                                items.user_id == Information.chkperson
+                            )?.user_name
+                          }
                           className="readonly"
                         />
                       </td>
@@ -2010,273 +2062,243 @@ const BA_A0020_603: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(70% - ${GAP}px)`}>
               <FormBoxWrap border={true}>
-                <GridContainer
-                  style={{ borderBottom: "solid 1px rgba(0, 0, 0, 0.08)" }}
-                  height={isMobile ? "" : "50vh"}
-                >
+                <GridContainer height={isMobile ? "" : "50vh"}>
                   <GridTitleContainer>
                     <GridTitle>Claim, Complain 사유</GridTitle>
                   </GridTitleContainer>
+                  <Typography
+                    style={{
+                      color: "black",
+                      fontSize: "0.8vw",
+                      fontWeight: 500,
+                      marginBottom: "10px",
+                    }}
+                  >
+                    작성자 :{" "}
+                    {
+                      userListData.find(
+                        (items: any) => items.user_id == Information.person
+                      )?.user_name
+                    }
+                  </Typography>
+                  <TextArea
+                    value={Information.requiretext}
+                    name="requiretext"
+                    rows={3}
+                    onChange={InputChange}
+                    style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
+                  />
                   <Card
                     style={{
                       width: "100%",
                       marginRight: "15px",
                       borderRadius: "10px",
                       backgroundColor: "white",
-                      marginBottom: "10px",
+                      marginTop: "10px",
                     }}
                   >
-                    <CardHeader
-                      style={{ paddingBottom: "5px" }}
-                      title={
-                        <>
-                          <Typography
-                            style={{
-                              color: "black",
-                              fontSize: "0.8vw",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            송준형 프로
-                            <Typography
-                              style={{
-                                marginLeft: "10px",
-                                color: "#d3d3d3",
-                                fontSize: "0.6vw",
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              방금 전
-                            </Typography>
-                          </Typography>
-                        </>
-                      }
-                    />
-                    <CardContent style={{ display: "flex", paddingTop: "0px" }}>
-                      <Input
-                        name="requiretext"
-                        type="text"
-                        value={Information.requiretext}
-                        onChange={InputChange}
-                      />
+                    <CardContent>
+                      <GridTitleContainer>
+                        <GridTitle></GridTitle>
+                        <ButtonContainer>
+                          <Button
+                            onClick={onCommentAddClick}
+                            themeColor={"primary"}
+                            icon="plus"
+                            title="행 추가"
+                          ></Button>
+                          <Button
+                            onClick={onCommentRemoveClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="minus"
+                            title="행 삭제"
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
+                      <Grid
+                        style={{ height: "25vh" }}
+                        data={process(
+                          commentDataResult.data.map((row) => ({
+                            ...row,
+                            insert_userid: userListData.find(
+                              (items: any) => items.user_id == row.insert_userid
+                            )?.user_name,
+                            [SELECTED_FIELD]:
+                              commentselectedState[commentidGetter(row)],
+                          })),
+                          commentDataState
+                        )}
+                        {...commentDataState}
+                        onDataStateChange={onCommentDataStateChange}
+                        //선택기능
+                        dataItemKey={COMMENT_DATA_ITEM_KEY}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onCommentSelectionChange}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onCommentSortChange}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={commentDataResult.total}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        //incell 수정 기능
+                        onItemChange={onCommentItemChange}
+                        cellRender={customCellRender}
+                        rowRender={customRowRender}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="40px" />
+                        <GridColumn
+                          field="insert_userid"
+                          title="작성자"
+                          width="120px"
+                          footerCell={commentTotalFooterCell}
+                        />
+                        <GridColumn field="comment" title="내용" />
+                        <GridColumn
+                          field="insert_time"
+                          title="등록일시"
+                          width="180px"
+                        />
+                        <GridColumn
+                          field="update_time"
+                          title="수정일시"
+                          width="180px"
+                        />
+                      </Grid>
                     </CardContent>
                   </Card>
-                  <GridTitleContainer>
-                    <GridTitle data-control-name="grtlCmtList">댓글</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onCommentAddClick}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                      ></Button>
-                      <Button
-                        onClick={onCommentRemoveClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: "30vh" }}
-                    data={process(
-                      commentDataResult.data.map((row) => ({
-                        ...row,
-                        insert_userid: userListData.find(
-                          (items: any) => items.user_id == row.insert_userid
-                        )?.user_name,
-                        [SELECTED_FIELD]:
-                          commentselectedState[commentidGetter(row)],
-                      })),
-                      commentDataState
-                    )}
-                    {...commentDataState}
-                    onDataStateChange={onCommentDataStateChange}
-                    //선택기능
-                    dataItemKey={COMMENT_DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onCommentSelectionChange}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onCommentSortChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={commentDataResult.total}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    //incell 수정 기능
-                    onItemChange={onCommentItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn field="rowstatus" title=" " width="40px" />
-                    <GridColumn
-                      field="insert_userid"
-                      title="작성자"
-                      width="120px"
-                      footerCell={commentTotalFooterCell}
-                    />
-                    <GridColumn field="comment" title="내용" />
-                    <GridColumn
-                      field="insert_time"
-                      title="등록일시"
-                      width="180px"
-                    />
-                    <GridColumn
-                      field="update_time"
-                      title="등록일시"
-                      width="180px"
-                    />
-                  </Grid>
                 </GridContainer>
+              </FormBoxWrap>
+              <FormBoxWrap border={true}>
                 <GridContainer
-                  style={{
-                    borderBottom: "solid 1px rgba(0, 0, 0, 0.08)",
-                    marginTop: "5px",
-                  }}
+                  style={{ marginTop: "5px" }}
                   height={isMobile ? "" : "50vh"}
                 >
                   <GridTitleContainer>
                     <GridTitle>후속조치(계획)</GridTitle>
                   </GridTitleContainer>
+                  <Typography
+                    style={{
+                      color: "black",
+                      fontSize: "0.8vw",
+                      fontWeight: 500,
+                      marginBottom: "10px",
+                    }}
+                  >
+                    작성자 :{" "}
+                    {
+                      userListData.find(
+                        (items: any) => items.user_id == Information.person
+                      )?.user_name
+                    }
+                  </Typography>
+                  <TextArea
+                    value={Information.protext}
+                    name="protext"
+                    rows={3}
+                    onChange={InputChange}
+                    style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
+                  />
                   <Card
                     style={{
                       width: "100%",
                       marginRight: "15px",
                       borderRadius: "10px",
                       backgroundColor: "white",
-                      marginBottom: "10px",
+                      marginTop: "10px",
                     }}
                   >
-                    <CardHeader
-                      style={{ paddingBottom: "5px" }}
-                      title={
-                        <>
-                          <Typography
-                            style={{
-                              color: "black",
-                              fontSize: "0.8vw",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            송준형 프로
-                            <Typography
-                              style={{
-                                marginLeft: "10px",
-                                color: "#d3d3d3",
-                                fontSize: "0.6vw",
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              방금 전
-                            </Typography>
-                          </Typography>
-                        </>
-                      }
-                    />
-                    <CardContent style={{ display: "flex", paddingTop: "0px" }}>
-                      <Input
-                        name="protext"
-                        type="text"
-                        value={Information.protext}
-                        onChange={InputChange}
-                      />
+                    <CardContent>
+                      <GridTitleContainer>
+                        <GridTitle></GridTitle>
+                        <ButtonContainer>
+                          <Button
+                            onClick={onCommentAddClick2}
+                            themeColor={"primary"}
+                            icon="plus"
+                            title="행 추가"
+                          ></Button>
+                          <Button
+                            onClick={onCommentRemoveClick2}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="minus"
+                            title="행 삭제"
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
+                      <Grid
+                        style={{ height: "25vh" }}
+                        data={process(
+                          commentDataResult2.data.map((row) => ({
+                            ...row,
+                            insert_userid: userListData.find(
+                              (items: any) => items.user_id == row.insert_userid
+                            )?.user_name,
+                            [SELECTED_FIELD]:
+                              commentselectedState2[commentidGetter2(row)],
+                          })),
+                          commentDataState2
+                        )}
+                        {...commentDataState2}
+                        onDataStateChange={onCommentDataStateChange2}
+                        //선택기능
+                        dataItemKey={COMMENT_DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onCommentSelectionChange2}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onCommentSortChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={commentDataResult2.total}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        //incell 수정 기능
+                        onItemChange={onCommentItemChange2}
+                        cellRender={customCellRender2}
+                        rowRender={customRowRender2}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="40px" />
+                        <GridColumn
+                          field="insert_userid"
+                          title="작성자"
+                          width="120px"
+                          footerCell={commentTotalFooterCell2}
+                        />
+                        <GridColumn field="comment" title="내용" />
+                        <GridColumn
+                          field="insert_time"
+                          title="등록일시"
+                          width="180px"
+                        />
+                        <GridColumn
+                          field="update_time"
+                          title="수정일시"
+                          width="180px"
+                        />
+                      </Grid>
                     </CardContent>
                   </Card>
-                  <GridTitleContainer>
-                    <GridTitle data-control-name="grtlCmtList">댓글</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onCommentAddClick2}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                      ></Button>
-                      <Button
-                        onClick={onCommentRemoveClick2}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: "30vh" }}
-                    data={process(
-                      commentDataResult2.data.map((row) => ({
-                        ...row,
-                        insert_userid: userListData.find(
-                          (items: any) => items.user_id == row.insert_userid
-                        )?.user_name,
-                        [SELECTED_FIELD]:
-                          commentselectedState2[commentidGetter2(row)],
-                      })),
-                      commentDataState2
-                    )}
-                    {...commentDataState2}
-                    onDataStateChange={onCommentDataStateChange2}
-                    //선택기능
-                    dataItemKey={COMMENT_DATA_ITEM_KEY2}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onCommentSelectionChange2}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onCommentSortChange2}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={commentDataResult2.total}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    //incell 수정 기능
-                    onItemChange={onCommentItemChange2}
-                    cellRender={customCellRender2}
-                    rowRender={customRowRender2}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn field="rowstatus" title=" " width="40px" />
-                    <GridColumn
-                      field="insert_userid"
-                      title="작성자"
-                      width="120px"
-                      footerCell={commentTotalFooterCell2}
-                    />
-                    <GridColumn field="comment" title="내용" />
-                    <GridColumn
-                      field="insert_time"
-                      title="등록일시"
-                      width="180px"
-                    />
-                    <GridColumn
-                      field="update_time"
-                      title="등록일시"
-                      width="180px"
-                    />
-                  </Grid>
                 </GridContainer>
+              </FormBoxWrap>
+              <FormBoxWrap border={true}>
                 <GridContainer
                   style={{ marginTop: "5px" }}
                   height={isMobile ? "" : "50vh"}
@@ -2284,130 +2306,116 @@ const BA_A0020_603: React.FC = () => {
                   <GridTitleContainer>
                     <GridTitle>결과 및 Feedback</GridTitle>
                   </GridTitleContainer>
+                  <Typography
+                    style={{
+                      color: "black",
+                      fontSize: "0.8vw",
+                      fontWeight: 500,
+                      marginBottom: "10px",
+                    }}
+                  >
+                    작성자 :{" "}
+                    {
+                      userListData.find(
+                        (items: any) => items.user_id == Information.person
+                      )?.user_name
+                    }
+                  </Typography>
+                  <TextArea
+                    value={Information.errtext}
+                    name="errtext"
+                    rows={3}
+                    onChange={InputChange}
+                    style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
+                  />
                   <Card
                     style={{
                       width: "100%",
                       marginRight: "15px",
                       borderRadius: "10px",
                       backgroundColor: "white",
-                      marginBottom: "10px",
+                      marginTop: "10px",
                     }}
                   >
-                    <CardHeader
-                      style={{ paddingBottom: "5px" }}
-                      title={
-                        <>
-                          <Typography
-                            style={{
-                              color: "black",
-                              fontSize: "0.8vw",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            송준형 프로
-                            <Typography
-                              style={{
-                                marginLeft: "10px",
-                                color: "#d3d3d3",
-                                fontSize: "0.6vw",
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              방금 전
-                            </Typography>
-                          </Typography>
-                        </>
-                      }
-                    />
-                    <CardContent style={{ display: "flex", paddingTop: "0px" }}>
-                      <Input
-                        name="errtext"
-                        type="text"
-                        value={Information.errtext}
-                        onChange={InputChange}
-                      />
+                    <CardContent>
+                      <GridTitleContainer>
+                        <GridTitle></GridTitle>
+                        <ButtonContainer>
+                          <Button
+                            onClick={onCommentAddClick3}
+                            themeColor={"primary"}
+                            icon="plus"
+                            title="행 추가"
+                          ></Button>
+                          <Button
+                            onClick={onCommentRemoveClick3}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="minus"
+                            title="행 삭제"
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
+                      <Grid
+                        style={{ height: "25vh" }}
+                        data={process(
+                          commentDataResult3.data.map((row) => ({
+                            ...row,
+                            insert_userid: userListData.find(
+                              (items: any) => items.user_id == row.insert_userid
+                            )?.user_name,
+                            [SELECTED_FIELD]:
+                              commentselectedState3[commentidGetter3(row)],
+                          })),
+                          commentDataState3
+                        )}
+                        {...commentDataState3}
+                        onDataStateChange={onCommentDataStateChange3}
+                        //선택기능
+                        dataItemKey={COMMENT_DATA_ITEM_KEY3}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onCommentSelectionChange3}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onCommentSortChange3}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={commentDataResult3.total}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        //incell 수정 기능
+                        onItemChange={onCommentItemChange3}
+                        cellRender={customCellRender3}
+                        rowRender={customRowRender3}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="40px" />
+                        <GridColumn
+                          field="insert_userid"
+                          title="작성자"
+                          width="120px"
+                          footerCell={commentTotalFooterCell3}
+                        />
+                        <GridColumn field="comment" title="내용" />
+                        <GridColumn
+                          field="insert_time"
+                          title="등록일시"
+                          width="180px"
+                        />
+                        <GridColumn
+                          field="update_time"
+                          title="수정일시"
+                          width="180px"
+                        />
+                      </Grid>
                     </CardContent>
                   </Card>
-                  <GridTitleContainer>
-                    <GridTitle data-control-name="grtlCmtList">댓글</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onCommentAddClick3}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                      ></Button>
-                      <Button
-                        onClick={onCommentRemoveClick3}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: "30vh" }}
-                    data={process(
-                      commentDataResult3.data.map((row) => ({
-                        ...row,
-                        insert_userid: userListData.find(
-                          (items: any) => items.user_id == row.insert_userid
-                        )?.user_name,
-                        [SELECTED_FIELD]:
-                          commentselectedState3[commentidGetter3(row)],
-                      })),
-                      commentDataState3
-                    )}
-                    {...commentDataState3}
-                    onDataStateChange={onCommentDataStateChange3}
-                    //선택기능
-                    dataItemKey={COMMENT_DATA_ITEM_KEY3}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onCommentSelectionChange3}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onCommentSortChange3}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={commentDataResult3.total}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    //incell 수정 기능
-                    onItemChange={onCommentItemChange3}
-                    cellRender={customCellRender3}
-                    rowRender={customRowRender3}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn field="rowstatus" title=" " width="40px" />
-                    <GridColumn
-                      field="insert_userid"
-                      title="작성자"
-                      width="120px"
-                      footerCell={commentTotalFooterCell3}
-                    />
-                    <GridColumn field="comment" title="내용" />
-                    <GridColumn
-                      field="insert_time"
-                      title="등록일시"
-                      width="180px"
-                    />
-                    <GridColumn
-                      field="update_time"
-                      title="등록일시"
-                      width="180px"
-                    />
-                  </Grid>
                 </GridContainer>
               </FormBoxWrap>
             </GridContainer>
