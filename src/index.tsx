@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
@@ -39,7 +38,7 @@ root.render(
     <RecoilRoot>
       <HelmetProvider>
         <BrowserRouter>
-          <App />
+        {defaultTheme == "yellow" ? ("") : ("")}
         </BrowserRouter>
       </HelmetProvider>
     </RecoilRoot>
