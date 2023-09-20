@@ -77,8 +77,7 @@ export const MainWorkStartEndContainer = styled.div`
 
 export const TextContainer = styled.div<TColor>`
   display: flex;
-  border: 1px solid
-    ${(props) => props.theme};
+  border: 1px solid ${(props) => props.theme};
   color: ${(props) => props.theme};
   border-radius: 50px;
   width: 180px;
@@ -397,7 +396,7 @@ export const GridContainer = styled.div<TGridContainer>`
   /* .required {
     background-color: #fff0ef;
   } */
-  
+
   @media (max-width: 1200px) {
     width: auto;
   }
@@ -543,8 +542,7 @@ export const LoginBox = styled.div<TColor>`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) =>
-    props.theme === "blue" ? "#2289c3" : "#f5b901"};
+  background-color: ${(props) => props.theme};
   height: 100vh;
   width: 50%;
   border-top-left-radius: 300px;
@@ -561,10 +559,8 @@ export const LoginBox = styled.div<TColor>`
     height: 48px;
     font-size: 18px;
     font-weight: 600;
-    background-color: ${(props) =>
-      props.theme === "blue" ? "#2289c3" : "#f5b901"};
-    border-color: 1px solid
-      ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+    background-color: ${(props) => props.theme};
+    border-color: 1px solid ${(props) => props.theme};
   }
   .k-input {
     height: 44px;
@@ -667,10 +663,9 @@ export const InfoList = styled.ul<TColor>`
 
   .big-input {
     height: 50px;
-    border: 1px solid
-      ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+    border: 1px solid ${(props) => props.theme};
     border-radius: 10px;
-    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+    color: ${(props) => props.theme};
     text-align: right;
     padding-left: 15px;
     font-size: 18px;
@@ -704,9 +699,8 @@ export const NumberKeypadRow = styled.div`
   justify-content: space-between;
 `;
 export const NumberKeypadCell = styled.div<TColor>`
-  border: 1px solid
-    ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+  border: 1px solid ${(props) => props.theme};
+  color: ${(props) => props.theme};
   font-size: 20px;
   text-align: center;
   border-radius: 5px;
@@ -718,18 +712,15 @@ export const NumberKeypadCell = styled.div<TColor>`
   justify-content: center;
   cursor: pointer;
   :hover {
-    background-color: ${(props) =>
-      props.theme === "blue" ? "#2289c3" : "#f5b901"};
+    background-color: ${(props) => props.theme};
     color: #ffffff;
   }
   :focus {
-    background-color: ${(props) =>
-      props.theme === "blue" ? "#2289c3" : "#f5b901"};
+    background-color: ${(props) => props.theme};
     color: #ffffff;
   }
   :active {
-    background-color: ${(props) =>
-      props.theme === "blue" ? "#2289c3" : "#f5b901"};
+    background-color: ${(props) => props.theme};
     color: #ffffff;
   }
 `;

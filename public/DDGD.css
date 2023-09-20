@@ -12721,7 +12721,7 @@ kendo-badge-container {
 
 .k-button-solid-base {
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
     background-color: #f5f5f5;
     background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.02));
 }
@@ -14336,7 +14336,7 @@ textarea.k-input-inner {
 
 .k-picker-solid {
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
     background-color: #f5f5f5;
     background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.02));
 }
@@ -14362,7 +14362,7 @@ textarea.k-input-inner {
 }
 
 .k-input-outline {
-    border-color: rgba(245, 245, 245, 0.5);
+    border-color: rgba(21, 21, 21, 0.5);
     color: #424242;
 }
 
@@ -14380,7 +14380,7 @@ textarea.k-input-inner {
 }
 
 .k-input-outline:hover, .k-input-outline.k-hover {
-    border-color: rgba(245, 245, 245, 0.8);
+    border-color: rgba(21, 21, 21, 0.8);
 }
 
 .k-input-outline:focus, .k-input-outline.k-focus {
@@ -14400,14 +14400,14 @@ textarea.k-input-inner {
 }
 
 .k-picker-outline {
-    border-color: rgba(245, 245, 245, 0.5);
-    color: #f5f5f5;
+    border-color: rgba(21, 21, 21, 0.5);
+    color: #151515;
 }
 
 .k-picker-outline:hover, .k-picker-outline.k-hover {
-    border-color: #f5f5f5;
-    color: black;
-    background-color: #f5f5f5;
+    border-color: #151515;
+    color: white;
+    background-color: #151515;
 }
 
 .k-picker-outline:focus, .k-picker-outline.k-focus {
@@ -14453,12 +14453,12 @@ textarea.k-input-inner {
 
 .k-picker-flat {
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
 }
 
 .k-picker-flat:hover, .k-picker-flat.k-hover {
     border-color: rgba(0, 0, 0, 0.16);
-    background-color: rgba(245, 245, 245, 0.04);
+    background-color: rgba(21, 21, 21, 0.04);
 }
 
 .k-picker-flat:focus, .k-picker-flat.k-focus {
@@ -15313,7 +15313,7 @@ textarea.k-input-inner {
 
 .k-chip-solid-base {
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
     background-color: #f5f5f5;
     background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.02));
 }
@@ -15407,8 +15407,8 @@ textarea.k-input-inner {
 }
 
 .k-chip-outline-base {
-    border-color: #f5f5f5;
-    color: #f5f5f5;
+    border-color: #151515;
+    color: #151515;
     background-color: #ffffff;
 }
 
@@ -15417,13 +15417,13 @@ textarea.k-input-inner {
 }
 
 .k-chip-outline-base:hover, .k-chip-outline-base.k-hover {
-    color: black;
-    background-color: #f5f5f5;
+    color: white;
+    background-color: #151515;
 }
 
 .k-chip-outline-base.k-selected {
-    color: black;
-    background-color: #f5f5f5;
+    color: white;
+    background-color: #151515;
 }
 
 .k-chip-outline-error {
@@ -15468,7 +15468,7 @@ textarea.k-input-inner {
 
 .k-chip-outline-warning {
     border-color: #fdce3e;
-    color: #f5f5f5;
+    color: #151515;
     background-color: #ffffff;
 }
 
@@ -22332,7 +22332,7 @@ kendo-label > .k-label {
 
 .k-fab-item-icon {
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
     background-color: #f5f5f5;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.14), 0 1px 18px rgba(0, 0, 0, 0.12), 0 3px 5px rgba(0, 0, 0, 0.2);
     outline: 1px solid rgba(0, 0, 0, 0.08);
@@ -24850,7 +24850,7 @@ kendo-card-footer {
 .k-pager-md .k-pager-numbers .k-current-page .k-link,
 .k-pager-sm .k-pager-numbers .k-current-page .k-link {
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
     background-color: #f5f5f5;
 }
 
@@ -29848,7 +29848,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 
 .k-spreadsheet-filter {
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
     background-color: #f5f5f5;
     background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.02));
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
@@ -35827,7 +35827,7 @@ kendo-scheduler .k-recurrence-editor {
 
 .k-timeline .k-timeline-arrow.k-disabled {
     opacity: 1;
-    color: #f9f9f9;
+    color: #676767;
     background-color: #f9f9f9;
     border-color: #f3f3f3;
 }
@@ -37113,7 +37113,7 @@ div.k-scrollview.k-scrollview-light .k-scrollview-nav-wrap {
 .k-handle {
     cursor: e-resize;
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
     background-color: #f5f5f5;
     background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.02));
 }
@@ -37296,7 +37296,7 @@ div.k-scrollview.k-scrollview-light .k-scrollview-nav-wrap {
 
 .k-map .k-navigator {
     border-color: rgba(0, 0, 0, 0.08);
-    color: #f5f5f5;
+    color: #151515;
     background-color: #f5f5f5;
     background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.02));
 }

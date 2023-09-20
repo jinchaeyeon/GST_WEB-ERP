@@ -51,6 +51,16 @@ code {
 }
 */
 
+/*버튼 색상 변경 */
+.k-button-solid-primary {
+  color: white !important;
+}
+
+/* 라디오 색 변경*/
+.k-radio:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3e%3ccircle cx='50%25' cy='50%25' r='4' fill='white'/%3e%3c/svg%3e") !important;
+}
+
 /*Kendo 버그 해결용 (Window 컴포넌트 z-index 100이라서 100 미만 내부 컴포넌트 안보이는 현상)*/
 div.k-animation-container {
   z-index: 10100 !important;
