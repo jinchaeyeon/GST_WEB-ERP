@@ -18,7 +18,6 @@ import {
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loading from "../components/Loading";
 import { isLoading } from "../store/atoms";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 
 interface IFormData {
   langCode: string;
@@ -30,7 +29,6 @@ interface IFormData {
 const Login: React.FC = () => {
   const processApi = useApi();
   const history = useHistory();
-  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
   const setLoginResult = useSetRecoilState(loginResultState);
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
@@ -145,7 +143,7 @@ const Login: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: "#f5b901" }}>
-      <LoginBox theme={currentTheme}>
+      <LoginBox theme={"#f5b901"}>
         <Form
           onSubmit={handleSubmit}
           render={() => (

@@ -24,13 +24,12 @@ import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
 import React, { Suspense, lazy, useEffect, useState } from "react";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import styled, { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
-import PanelBarNavContainer from "./components/Containers/PanelBarNavContainer";
+import PanelBarNavContainerDDGD from "./components/Containers/PanelBarNavContainerDDGD";
 import AC_A0000W from "./routes/AC_A0000W";
 import AC_A0020W from "./routes/AC_A0020W";
 import AC_A0030W from "./routes/AC_A0030W";
@@ -170,16 +169,15 @@ import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
 import SY_A0500W from "./routes/SY_A0500W";
 import TO_B0011W from "./routes/TO_B0011W";
+import "./sass/DDGD.scss";
 import {
   colors,
   isMobileMenuOpendState,
   loginResultState,
 } from "./store/atoms";
 const LoginCRM = lazy(() => import("./routes/LoginCRM"));
-const Login = lazy(() => import("./routes/Login"));
 const MainUserCRM = lazy(() => import("./routes/MainUserCRM"));
 const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
-const Main = lazy(() => import("./routes/Main"));
 
 load(
   likelySubtags,
@@ -269,7 +267,6 @@ a {
 }
 
 `;
-let roles = "";
 
 const App: React.FC = () => {
   return (
@@ -278,9 +275,8 @@ const App: React.FC = () => {
     </RecoilRoot>
   );
 };
-const AppInner: React.FC = () => {
-  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
+const AppInner: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN";
@@ -413,27 +409,6 @@ const AppInner: React.FC = () => {
   `;
 
   const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
-  const path = window.location.href;
-
-  useEffect(() => {
-    //개발 전용
-    if (path.includes("localhost")) {
-      //WEB ERP개발할떄 바꿀부분입니다.
-
-      // roles = "CRM_DDGD";
-      // switcher({ theme: "yellow" });
-      roles = "GST WEB";
-      switcher({ theme: "blue" });
-    } else {
-      if (path.split("/")[2].split(".")[1] == "gsti") {
-        roles = "GST WEB";
-        switcher({ theme: "blue" });
-      } else if (path.split("/")[2].split(".")[1] == "ddgd") {
-        roles = "CRM_DDGD";
-        switcher({ theme: "yellow" });
-      }
-    }
-  }, []);
 
   return (
     <>
@@ -452,42 +427,22 @@ const AppInner: React.FC = () => {
           }
         >
           <Suspense fallback={<div></div>}>
-            <GlobalStyle
-              isMobileMenuOpend={isMobileMenuOpend}
-              theme={currentTheme}
-            />
+            <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
             <Router>
               <Switch>
-                {roles == "WER ERP" ? (
-                  <Route path="/" component={Login} exact />
-                ) : roles == "CRM_DDGD" ? (
-                  <Route path="/" component={LoginCRM} exact />
-                ) : (
-                  <Route path="/" component={Login} exact />
-                )}
+                <Route path="/" component={LoginCRM} exact />
 
-                <PanelBarNavContainer roles={roles}>
-                  {/* 메인 홈 */}
-                  {roles == "WER ERP" ? (
-                    <AuthRoute path="/Home" component={Main} exact />
-                  ) : roles == "CRM_DDGD" ? (
-                    isAdmin ? (
-                      <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
-                        <AuthRoute
-                          path="/Home"
-                          component={MainAdminCRM}
-                          exact
-                        />
-                      </GlobalStyles>
-                    ) : (
-                      <GlobalStyles
-                        style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}
-                      >
-                        <AuthRoute path="/Home" component={MainUserCRM} exact />
-                      </GlobalStyles>
-                    )
+                <PanelBarNavContainerDDGD>
+                  {isAdmin ? (
+                    <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                      <AuthRoute path="/Home" component={MainAdminCRM} exact />
+                    </GlobalStyles>
                   ) : (
-                    <AuthRoute path="/Home" component={Main} exact />
+                    <GlobalStyles
+                      style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}
+                    >
+                      <AuthRoute path="/Home" component={MainUserCRM} exact />
+                    </GlobalStyles>
                   )}
 
                   {/* 기준정보 */}
@@ -687,7 +642,7 @@ const AppInner: React.FC = () => {
 
                   {/* 에러페이지 */}
                   <AuthRoute path="/Error" component={NotFound} exact />
-                </PanelBarNavContainer>
+                </PanelBarNavContainerDDGD>
               </Switch>
             </Router>
           </Suspense>

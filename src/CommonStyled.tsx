@@ -78,8 +78,8 @@ export const MainWorkStartEndContainer = styled.div`
 export const TextContainer = styled.div<TColor>`
   display: flex;
   border: 1px solid
-    ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+    ${(props) => props.theme};
+  color: ${(props) => props.theme};
   border-radius: 50px;
   width: 180px;
   line-height: 30px;
@@ -411,7 +411,7 @@ export const GridTitle = styled.h3`
 `;
 
 export const PrimaryP = styled.p<TColor>`
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+  color: black;
 `;
 
 export const PortraitPrint = styled.div`
@@ -767,7 +767,7 @@ export const Gnv = styled.div<TGnv>`
   .k-panelbar-item-icon.k-icon.k-i-gear,
   .k-panelbar-item-icon.k-icon.k-i-star,
   .k-panelbar-item-icon.k-icon.k-i-star-outline {
-    color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+    color: ${(props) => props.theme};
   }
 
   .k-selected > .k-panelbar-item-icon.k-icon.k-i-star-outline {
@@ -866,7 +866,7 @@ export const Footer = styled.div`
 
 export const AppName = styled.h1<TColor>`
   font-size: 20px;
-  color: ${(props) => (props.theme === "blue" ? "#2289c3" : "#f5b901")};
+  color: ${(props) => props.theme};
   font-weight: 400;
   /* padding: 10px 0; */
   height: 50px;

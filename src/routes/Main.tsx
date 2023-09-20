@@ -44,7 +44,6 @@ import {
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import CenterCell from "../components/Cells/CenterCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 
 const DATA_ITEM_KEY = "datnum";
 
@@ -52,7 +51,6 @@ const Main: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
-  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const userId = loginResult ? loginResult.userId : "";
@@ -570,7 +568,7 @@ const Main: React.FC = () => {
         </ButtonContainer>
 
         <MainWorkStartEndContainer>
-          <TextContainer theme={currentTheme}>
+          <TextContainer theme={"#2289c3"}>
             {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
           </TextContainer>
           <Button

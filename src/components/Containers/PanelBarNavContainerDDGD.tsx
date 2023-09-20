@@ -43,7 +43,6 @@ import {
   AutoCompleteCloseEvent,
 } from "@progress/kendo-react-dropdowns";
 import cookie from "react-cookies";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -80,7 +79,6 @@ const PanelBarNavContainer = (props: any) => {
   const loginKey = loginResult ? loginResult.loginKey : "";
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN";
-  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
 
@@ -553,20 +551,10 @@ const PanelBarNavContainer = (props: any) => {
       <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
         <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
         {isMenuOpend ? (
-          <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={currentTheme}>
-            <AppName theme={currentTheme} onClick={() => setIsMenuOpend(false)}>
-              {/* WEB ERP개발할떄 바꿀부분입니다. */}
-              {path.includes("localhost") ? (
-                // <Logo size="32px" name={"CRM_DDGD"} />
-                 <Logo size="32px" name={"GST WEB"} />
-              ) : path.split("/")[2].split(".")[1] == "gsti" ? (
-                <Logo size="32px" name={"GST WEB"} />
-              ) : path.split("/")[2].split(".")[1] == "ddgd" ? (
-                <Logo size="32px" name={"CRM_DDGD"} />
-              ) : (
-                <Logo size="32px" name={"GST WEB"} />
-              )}
-              {props.roles}
+          <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#f5b901"}>
+            <AppName theme={"#f5b901"} onClick={() => setIsMenuOpend(false)}>
+              <Logo size="32px" name={"CRM_DDGD"} />
+              DDGD
             </AppName>
             {prgMenus && (
               <MenuSearchBox>
@@ -713,19 +701,8 @@ const PanelBarNavContainer = (props: any) => {
         <Content isMenuOpen={isMenuOpend}>
           <TopTitle>
             <div style={{ width: "30px" }}></div>
-            <AppName theme={currentTheme}>
-              {/* WEB ERP개발할떄 바꿀부분입니다. */}
-              {path.includes("localhost") ? (
-                // <Logo size="32px" name={"CRM_DDGD"} />
-                <Logo size="32px" name={"GST WEB"} />
-              ) : 
-              path.split("/")[2].split(".")[1] == "gsti" ? (
-                <Logo size="32px" name={"GST WEB"} />
-              ) : path.split("/")[2].split(".")[1] == "ddgd" ? (
-                <Logo size="32px" name={"CRM_DDGD"} />
-              ) : (
-                <Logo size="32px" name={"GST WEB"} />
-              )}
+            <AppName theme={"#f5b901"}>
+              <Logo size="32px" name={"CRM_DDGD"} />
             </AppName>
             <Button
               icon="menu"
