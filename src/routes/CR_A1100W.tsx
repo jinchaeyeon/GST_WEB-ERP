@@ -37,7 +37,6 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Input } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { 
@@ -671,7 +670,7 @@ const CR_A1100W: React.FC = () => {
         field == "species" ||
         field == "gender"||
         field == "age" ||
-        field == "tel_no" ||
+        field == "mobile_no" ||
         field == "gubun" ||
         field == "minus" ||
         field == "manager" ||
