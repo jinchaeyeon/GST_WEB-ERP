@@ -402,7 +402,8 @@ const CR_A1101W: React.FC = () => {
               backgroundColor: "#f5b901",
               justifyContent: "center", 
               alignItems: "center",
-              height: "45vh"
+              height: "45vh",
+              marginTop: "10px",
             }}
           >
             <img
@@ -446,7 +447,7 @@ const CR_A1101W: React.FC = () => {
                 style = {{ 
                   marginLeft: "10px",
                   backgroundColor: "#F7E8CF",
-                  width: "150px",
+                  width: "280px",
                   height: "85px",
                   fontSize: "30px",
                 }}
@@ -462,26 +463,26 @@ const CR_A1101W: React.FC = () => {
           >
             <NumberKeypad style = {{ height : "100%"}}>
               <NumberKeypadRow style = {{ height : "25%"}}>
-                <NumberKeypadCell onClick={enterNumber}>1</NumberKeypadCell>
-                <NumberKeypadCell onClick={enterNumber}>2</NumberKeypadCell>
-                <NumberKeypadCell onClick={enterNumber}>3</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>1</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>2</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>3</NumberKeypadCell>
               </NumberKeypadRow>
               <NumberKeypadRow style = {{ height : "25%"}}>
-                <NumberKeypadCell onClick={enterNumber}>4</NumberKeypadCell>
-                <NumberKeypadCell onClick={enterNumber}>5</NumberKeypadCell>
-                <NumberKeypadCell onClick={enterNumber}>6</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>4</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>5</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>6</NumberKeypadCell>
               </NumberKeypadRow>
               <NumberKeypadRow style = {{ height : "25%"}}>
-                <NumberKeypadCell onClick={enterNumber}>7</NumberKeypadCell>
-                <NumberKeypadCell onClick={enterNumber}>8</NumberKeypadCell>
-                <NumberKeypadCell onClick={enterNumber}>9</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>7</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>8</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>9</NumberKeypadCell>
               </NumberKeypadRow>
               <NumberKeypadRow style = {{ height : "25%"}}>
-                <NumberKeypadCell onClick={enterNumber}>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>
                 <span className={"k-icon k-i-x"}></span>
                 </NumberKeypadCell>
-                <NumberKeypadCell onClick={enterNumber}>0</NumberKeypadCell>
-                <NumberKeypadCell onClick={enterNumber}>Del</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>0</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>Del</NumberKeypadCell>
               </NumberKeypadRow>
             </NumberKeypad>
           </GridContainer>
@@ -493,8 +494,8 @@ const CR_A1101W: React.FC = () => {
           }}
         >
           <GridContainer 
-            style = {{ height: "30%",
-                      marginTop: isMobile ? "50px" : "",
+            style = {{ height: "15%",
+                      marginTop: isMobile ? "50px" : "10px",
                       display: "flex",
                       justifyContent: "center", 
                       alignItems: "center" }} 
@@ -502,22 +503,19 @@ const CR_A1101W: React.FC = () => {
             <div 
               style={{ 
                 width: "100%",
-                height: "10vh",
+                height: "100%",
                 fontSize: "40px", 
                 marginBottom: "40px",
-                backgroundColor: "#F7E8CF", 
+                backgroundColor: "#f5b901", 
                 display: "flex",
                 justifyContent: "center", 
                 alignItems: "center"
                 }}
             >체크인독 출석체크</div>
-            <div style = {{ display: "flex", justifyContent: "center", 
-                            alignItems: "center" }}>
-            </div>
           </GridContainer>
           <GridContainer 
             style = {{ 
-              height: `calc(60% - ${GAP}px)`, 
+              height: `calc(75% - ${GAP}px)`, 
               overflowY: "scroll", 
               maxHeight: `calc(70% - ${GAP}px)`,
               marginTop: isMobile ? "20px" : "",
