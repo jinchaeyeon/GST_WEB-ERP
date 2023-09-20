@@ -51,6 +51,33 @@ code {
 }
 */
 
+/*DDGD 전용 css */
+.react-calendar {
+  height: 100%;
+}
+
+@media (max-width: 1200px) {
+  .react-calendar {
+      height: 80%;
+  }
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /*버튼 색상 변경 */
 .k-button-solid-primary {
   color: white !important;
