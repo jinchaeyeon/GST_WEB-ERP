@@ -169,12 +169,12 @@ import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
 import SY_A0500W from "./routes/SY_A0500W";
 import TO_B0011W from "./routes/TO_B0011W";
-import "./sass/WEBERP.scss";
 import {
   colors,
   isMobileMenuOpendState,
   loginResultState,
 } from "./store/atoms";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -408,7 +408,12 @@ const AppInner: React.FC = () => {
   `;
 
   const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
-
+  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
+  
+  useEffect(() => {
+    switcher({ theme: "blue" });
+  },[])
+  
   return (
     <>
       <LocalizationProvider

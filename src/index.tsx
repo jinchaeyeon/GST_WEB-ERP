@@ -11,15 +11,20 @@ import APPDDGD from "./APPDDGD";
 import APPWEBERP from "./APPWEBERP";
 import "./flags.css";
 import reportWebVitals from "./reportWebVitals";
+import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 const path = window.location.href;
+const themes = {
+  blue: `${process.env.PUBLIC_URL}/WEBERP.css`,
+  yellow: `${process.env.PUBLIC_URL}/DDGD.css`,
+};
 
 const defaultTheme = path.includes("localhost")
   ? //WEB ERP개발할떄 바꿀부분입니다.
     "yellow"
-    // "blue"
-  : path.split("/")[2].split(".")[1] == "gsti"
+  : // "blue"
+  path.split("/")[2].split(".")[1] == "gsti"
   ? "blue"
   : path.split("/")[2].split(".")[1] == "ddgd"
   ? "yellow"
@@ -27,6 +32,11 @@ const defaultTheme = path.includes("localhost")
 
 root.render(
   //<React.StrictMode>
+  <ThemeSwitcherProvider
+    themeMap={themes}
+    defaultTheme={defaultTheme}
+    insertionPoint="styles-insertion-point"
+  >
     <RecoilRoot>
       <HelmetProvider>
         <BrowserRouter>
@@ -34,6 +44,7 @@ root.render(
         </BrowserRouter>
       </HelmetProvider>
     </RecoilRoot>
+  </ThemeSwitcherProvider>
   //</React.StrictMode>
 );
 

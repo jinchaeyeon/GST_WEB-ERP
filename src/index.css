@@ -1,201 +1,253 @@
 /* 예외 처리는 해당 페이지에 작성 */
 
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-      "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-      sans-serif, "TheJamsil5Bold";
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif, "TheJamsil5Bold";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/* 드래그 디자인 */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: gray;
+}
+
+*::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+}
+
+/*Width 드래그 오류 수정
+.k-grid-header.k-grid-draggable-header {
+  padding: 0px;
+  user-select: none;
+  touch-action: none;
+}
+
+.k-grid-content {
+  width: 100%;
+  min-height: 0px;
+  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
+  position: relative;
+}
+*/
+
+/*Kendo 버그 해결용 (Window 컴포넌트 z-index 100이라서 100 미만 내부 컴포넌트 안보이는 현상)*/
+div.k-animation-container {
+  z-index: 10100 !important;
+}
+
+.k-pager-md .k-pager-numbers-wrap {
+  justify-content: center !important;
+  width: 100%;
+}
+
+.k-grouping-header {
+  border-width: 0 0 1px;
+  border-style: solid;
+  border-color: inherit;
+  white-space: normal;
+  display: none !important;
+  align-items: center;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.k-grouping-header::before {
+  content: "";
+  height: calc(1em + 10px);
+  display: none !important;
+  vertical-align: middle;
+}
+
+.k-grouping-header .k-chip-list {
+  flex-grow: 0;
+  display: none !important;
+}
+
+.k-grouping-header>.k-grouping-drop-container {
+  flex-grow: 1;
+  padding-block: 8px;
+  margin-block: -8px;
+  display: none !important;
+  align-self: stretch;
+  align-items: center;
+}
+
+/* 주석 해제 시 그리드 페이저의 우측 info 보임 */
+@media screen and (min-width: 600px) {
+  .k-pager-md .k-pager-info {
+    display: flex !important;
+    margin-right: 0;
+    margin-left: 0;
+    justify-content: flex-end !important;
   }
-  
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-      monospace;
+}
+
+@media screen and (max-width: 991px) {
+  .customized-timeline .p-timeline-event:nth-child(even) {
+    flex-direction: row !important;
   }
-  
-  /*Kendo 버그 해결용 (Window 컴포넌트 z-index 100이라서 100 미만 내부 컴포넌트 안보이는 현상)*/
-  div.k-animation-container {
-    z-index: 10100 !important;
+
+  .customized-timeline .p-timeline-event:nth-child(even) .p-timeline-event-content {
+    text-align: left !important;
   }
-  .k-pager-md .k-pager-numbers-wrap {
-    justify-content: center !important;
-    width: 100%;
+
+  .customized-timeline .p-timeline-event-opposite {
+    flex: 0;
   }
-  
-  .k-grouping-header {
-    border-width: 0 0 1px;
-    border-style: solid;
-    border-color: inherit;
-    white-space: normal;
-    display: none !important;
-    align-items: center;
-    position: relative;
-    flex-wrap: wrap;
+
+  .customized-timeline .p-card {
+    margin-top: 1rem;
   }
-  
-  .k-grouping-header::before {
-    content: "";
-    height: calc(1em + 10px);
-    display: none !important;
-    vertical-align: middle;
-  }
-  
-  .k-grouping-header .k-chip-list {
-    flex-grow: 0;
-    display: none !important;
-  }
-  
-  .k-grouping-header > .k-grouping-drop-container {
-    flex-grow: 1;
-    padding-block: 8px;
-    margin-block: -8px;
-    display: none !important;
-    align-self: stretch;
-    align-items: center;
-  }
-  
-  /* 주석 해제 시 그리드 페이저의 우측 info 보임 */
-  @media screen and (min-width: 600px) {
-    .k-pager-md .k-pager-info {
-      display: flex !important;
-      margin-right: 0;
-      margin-left: 0;
-      justify-content: flex-end !important;
-    }
-  }
-  
-  @media screen and (max-width: 991px) {
-    .customized-timeline .p-timeline-event:nth-child(even) {
-        flex-direction: row !important;
-    }
-    .customized-timeline .p-timeline-event:nth-child(even) .p-timeline-event-content {
-        text-align: left !important;
-    }
-    .customized-timeline .p-timeline-event-opposite {
-        flex: 0;
-    }
-    .customized-timeline .p-card {
-        margin-top: 1rem;
-    }
-  }
-  
-  /* .k-grid tr {
+}
+
+/* .k-grid tr {
     height: 36px;
   } */
-  .k-form-horizontal .k-form-field > .k-label,
-  .k-form-horizontal .k-form-field > kendo-label,
-  .k-form-horizontal .k-form-field > .k-form-label {
-    width: 40% !important;
-  }
-  .k-form-horizontal .k-form-field > .formLabel10 {
-    width: 10% !important;
-  }
-  
-  .k-form-horizontal .k-form-field-wrap {
-    max-width: calc(60% - 10px) !important;
-  }
-  .k-form-horizontal .forms {
-    max-width: calc(100% - 10px) !important;
-  }
-  /* 스케줄러 이벤트 팝업창 반복 여부 숨기기 */
-  .k-form.k-scheduler-edit-form > .k-form-field:nth-child(5) {
-    display: none;
-  }
-  .k-form.k-scheduler-edit-form
-    > .k-form-field:nth-child(4)
-    > .k-form-field-wrap {
-    display: flex;
-    align-items: center;
-  }
-  
-  .k-form.k-scheduler-edit-form #k-event-description {
-    min-height: 150px;
-  }
+.k-form-horizontal .k-form-field>.k-label,
+.k-form-horizontal .k-form-field>kendo-label,
+.k-form-horizontal .k-form-field>.k-form-label {
+  width: 40% !important;
+}
+
+.k-form-horizontal .k-form-field>.formLabel10 {
+  width: 10% !important;
+}
+
+.k-form-horizontal .k-form-field-wrap {
+  max-width: calc(60% - 10px) !important;
+}
+
+.k-form-horizontal .forms {
+  max-width: calc(100% - 10px) !important;
+}
+
+/* 스케줄러 이벤트 팝업창 반복 여부 숨기기 */
+.k-form.k-scheduler-edit-form>.k-form-field:nth-child(5) {
+  display: none;
+}
+
+.k-form.k-scheduler-edit-form>.k-form-field:nth-child(4)>.k-form-field-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.k-form.k-scheduler-edit-form #k-event-description {
+  min-height: 150px;
+}
+
+.visible-mobile-only {
+  display: none;
+}
+
+/*시스템 옵션*/
+.sys-opt-wnd-form-elem .k-form-field>.k-label,
+.sys-opt-wnd-form-elem .k-form-field>kendo-label,
+.sys-opt-wnd-form-elem .k-form-field>.k-form-label {
+  width: 70% !important;
+}
+
+.sys-opt-wnd-form-elem .k-form-field-wrap {
+  max-width: calc(30% - 10px) !important;
+}
+
+.k-grid .k-grid-header .k-header .k-cell-inner>.k-link {
+  justify-content: center;
+  /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
+}
+
+.k-window {
+  z-index: 10100 !important;
+  /* 버그 : 메뉴바가 window 위로 올라오는 현상 수정  */
+}
+
+ul.required,
+ul.required:hover,
+ul.required.k-hover,
+span.required,
+span.required:hover,
+span.required.k-hover,
+input.required,
+input.required:hover,
+input.required.k-hover,
+.k-daterangepicker.required input {
+  background-color: #fff0ef;
+}
+
+.k-daterangepicker.required,
+.k-daterangepicker.required:hover {
+  background-color: unset;
+}
+
+ul.readonly,
+span.readonly,
+input.readonly {
+  background-color: #efefef;
+}
+
+.k-radio-label {
+  font-size: 14px;
+  line-height: 1.4285714286;
+}
+
+/* 그리드 행높이 조절 */
+.k-grid tbody tr,
+.k-grid tbody tr td,
+.k-grid td.k-state-selected,
+.k-grid td.k-selected,
+.k-grid tr.k-state-selected>td,
+.k-grid tr.k-selected>td {
+  height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.k-tabstrip>.k-content.k-active,
+.k-tabstrip>.k-content.k-active>div.k-animation-container {
+  width: inherit;
+}
+
+.k-daterange-picker .k-dateinput,
+.k-daterangepicker .k-dateinput {
+  width: 50% !important;
+}
+
+/* 모바일 결재문서 숨김 처리 */
+@media (max-width: 768px) {
   .visible-mobile-only {
+    display: block;
+  }
+
+  .preview-grid-container {
     display: none;
   }
-  
-  /*시스템 옵션*/
-  .sys-opt-wnd-form-elem .k-form-field > .k-label,
-  .sys-opt-wnd-form-elem .k-form-field > kendo-label,
-  .sys-opt-wnd-form-elem .k-form-field > .k-form-label {
-    width: 70% !important;
+
+  .k-scheduler-edit-dialog .k-dialog {
+    min-width: 100% !important;
   }
-  .sys-opt-wnd-form-elem .k-form-field-wrap {
-    max-width: calc(30% - 10px) !important;
-  }
-  
-  .k-grid .k-grid-header .k-header .k-cell-inner > .k-link {
-    justify-content: center; /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
-  }
-  
-  .k-window {
-    z-index: 10100 !important; /* 버그 : 메뉴바가 window 위로 올라오는 현상 수정  */
-  }
-  
-  ul.required,
-  ul.required:hover,
-  ul.required.k-hover,
-  span.required,
-  span.required:hover,
-  span.required.k-hover,
-  input.required,
-  input.required:hover,
-  input.required.k-hover,
-  .k-daterangepicker.required input {
-    background-color: #fff0ef;
-  }
-  .k-daterangepicker.required,
-  .k-daterangepicker.required:hover {
-    background-color: unset;
-  }
-  ul.readonly,
-  span.readonly,
-  input.readonly {
-    background-color: #efefef;
-  }
-  .k-radio-label {
-    font-size: 14px;
-    line-height: 1.4285714286;
-  }
-  
-  /* 그리드 행높이 조절 */
-  .k-grid tbody tr,
-  .k-grid tbody tr td,
-  .k-grid td.k-state-selected,
-  .k-grid td.k-selected,
-  .k-grid tr.k-state-selected > td,
-  .k-grid tr.k-selected > td {
-    height: 34px;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  
-  .k-tabstrip > .k-content.k-active,
-  .k-tabstrip > .k-content.k-active > div.k-animation-container {
-    width: inherit;
-  }
-  
-  .k-daterange-picker .k-dateinput,
-  .k-daterangepicker .k-dateinput {
-    width: 50% !important;
-  }
-  
-  /* 모바일 결재문서 숨김 처리 */
-  @media (max-width: 768px) {
-    .visible-mobile-only {
-      display: block;
-    }
-    .preview-grid-container {
-      display: none;
-    }
-    .k-scheduler-edit-dialog .k-dialog {
-      min-width: 100% !important;
-    }
-  }
-  
-  /* @media print {
+}
+
+/* @media print {
     @page {
       size: 21cm 29.7cm;
       margin-top: 1cm;
@@ -212,643 +264,674 @@ body {
       display: none;
     }
   } */
-  
-  .printable {
-    width: 19cm;
-    min-height: 27.7cm;
-    padding: 1cm;
-    background-color: #fff;
-  }
-  .printable.landscape {
-    min-height: 19cm;
-    width: 27.7cm;
-  }
-  
-  .printable.barcode {
-    width: 5.7cm;
-    min-height: 2.7cm;
-  }
-  body {
-    -webkit-print-color-adjust: exact;
-  }
-  
-  /**************** 작업일보 ****************/
-  
-  #ItemCostSheet {
-    width: 100%;
-  }
-  #ItemCostSheet table {
-    border: 1px solid;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-  
-  #ItemCostSheet td,
-  #ItemCostSheet th {
-    font-family: Arial, sans-serif;
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    word-break: normal;
-    vertical-align: middle;
-  }
-  
-  #ItemCostSheet .title_container {
-    display: flex;
-    justify-content: space-between;
-  }
-  #ItemCostSheet .title {
-    text-align: center;
-    margin-bottom: 3cm;
-    margin-top: 0.5cm;
-    font-size: 3em;
-    width: 100%;
-  }
-  #ItemCostSheet table.tb_approval {
-    height: 3.6cm;
-    width: 8cm;
-    margin-bottom: 1cm;
-    text-align: center;
-  }
-  
-  #ItemCostSheet table.tb_approval th {
-    height: 0.7cm;
-  }
-  
-  #ItemCostSheet table.tb_approval tr.contents {
-    height: 2cm;
-  }
-  
-  #ItemCostSheet table.main_tb .center {
-    text-align: center;
-  }
-  #ItemCostSheet table.main_tb .number {
-    text-align: right;
-  }
-  
-  #ItemCostSheet table.main_tb th,
-  #ItemCostSheet table.main_tb td {
-    padding: 0 0.1cm;
-    line-height: 0.6cm;
-    height: 1.2cm;
-    word-wrap: break-word;
-    font-size: 0.85em;
-  }
-  
-  #ItemCostSheet .right {
-    float: right;
-    clear: both;
-  }
-  #ItemCostSheet .red {
-    background-color: rgb(253, 242, 242);
-  }
-  #ItemCostSheet .orange {
-    background-color: rgb(255, 233, 220);
-  }
-  
-  /**************** 업무일지 ****************/
-  
-  #DailyReport {
-    width: 100%;
-  }
-  
-  #DailyReport table {
-    border: 1px solid;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-  
-  #DailyReport td,
-  #DailyReport th {
-    font-family: Arial, sans-serif;
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    word-break: normal;
-    vertical-align: middle;
-  }
-  
-  #DailyReport .title_container {
-    display: flex;
-    justify-content: space-between;
-  }
-  #DailyReport .title {
-    text-align: center;
-    margin-bottom: 3cm;
-    margin-top: 0.5cm;
-    font-size: 3em;
-    width: 100%;
-  }
-  #DailyReport table.tb_approval {
-    height: 3.6cm;
-    width: 8cm;
-    margin-bottom: 1cm;
-    text-align: center;
-  }
-  
-  #DailyReport table.tb_approval th {
-    height: 0.7cm;
-  }
-  
-  #DailyReport table.tb_approval tr.contents {
-    height: 2cm;
-  }
-  
-  #DailyReport table.main_tb .center {
-    text-align: center;
-  }
-  #DailyReport table.main_tb .number {
-    text-align: right;
-  }
-  
-  #DailyReport table.main_tb th,
-  #DailyReport table.main_tb td {
-    padding: 0 0.1cm;
-    line-height: 0.6cm;
-    height: 1.2cm;
-    word-wrap: break-word;
-    font-size: 0.85em;
-  }
-  
-  #DailyReport .right {
-    float: right;
-    clear: both;
-  }
-  /**************** 작업일보 ****************/
-  
-  #WorkDailyReport table {
-    border: 1px solid;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-  
-  #WorkDailyReport td,
-  #WorkDailyReport th {
-    font-family: Arial, sans-serif;
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    word-break: normal;
-    vertical-align: middle;
-  }
-  
-  #WorkDailyReport .title_container {
-    display: flex;
-    justify-content: space-between;
-  }
-  #WorkDailyReport .title {
-    text-align: center;
-    margin-bottom: 3cm;
-    margin-top: 0.5cm;
-    font-size: 3em;
-    width: 100%;
-  }
-  #WorkDailyReport table.tb_approval {
-    height: 3.6cm;
-    width: 8cm;
-    margin-bottom: 1cm;
-    text-align: center;
-  }
-  
-  #WorkDailyReport table.tb_approval th {
-    height: 0.7cm;
-  }
-  
-  #WorkDailyReport table.tb_approval tr.contents {
-    height: 2cm;
-  }
-  
-  #WorkDailyReport table.main_tb .center {
-    text-align: center;
-  }
-  #WorkDailyReport table.main_tb .number {
-    text-align: right;
-  }
-  
-  #WorkDailyReport table.main_tb th,
-  #WorkDailyReport table.main_tb td {
-    padding: 0 0.1cm;
-    line-height: 0.6cm;
-    height: 1.2cm;
-    word-wrap: break-word;
-    font-size: 0.85em;
-  }
-  
-  #WorkDailyReport .right {
-    float: right;
-    clear: both;
-  }
-  
-  /**************** 직접입고 ********************/
-  #BarcodePrint table {
-    border: 1px solid;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-  
-  #BarcodePrint td,
-  #BarcodePrint th {
-    font-family: Arial, sans-serif;
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    word-break: normal;
-    vertical-align: middle;
-  }
-  
-  #BarcodePrint .title_container {
-    display: flex;
-    justify-content: space-between;
-  }
-  #BarcodePrint .title {
-    text-align: center;
-    margin-bottom: 3cm;
-    margin-top: 0.5cm;
-    font-size: 3em;
-    width: 100%;
-  }
-  #BarcodePrint table.tb_approval {
-    height: 3.6cm;
-    width: 8cm;
-    margin-bottom: 1cm;
-    text-align: center;
-  }
-  
-  #BarcodePrint table.tb_approval th {
-    height: 0.7cm;
-  }
-  
-  #BarcodePrint table.tb_approval tr.contents {
-    height: 2cm;
-  }
-  
-  #BarcodePrint table.main_tb .center {
-    text-align: center;
-  }
-  #BarcodePrint table.main_tb .number {
-    text-align: right;
-  }
-  
-  #BarcodePrint table.main_tb th,
-  #BarcodePrint table.main_tb td {
-    padding: 0 0.1cm;
-    line-height: 0.6cm;
-    height: 1.2cm;
-    word-wrap: break-word;
-    font-size: 0.85em;
-  }
-  
-  #BarcodePrint .right {
-    float: right;
-    clear: both;
-  }
-  /**************** 근태허가신청 ****************/
-  
-  #AbsenceRequest table {
-    border: 1px solid;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-  
-  #AbsenceRequest td,
-  #AbsenceRequest th {
-    font-family: Arial, sans-serif;
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    word-break: normal;
-    vertical-align: middle;
-  }
-  
-  #AbsenceRequest .title {
-    text-align: center;
-    margin-bottom: 3cm;
-    margin-top: 0.5cm;
-    font-size: 2.5em;
-  }
-  
-  #AbsenceRequest table.tb_approval {
-    height: 3.6cm;
-    width: 8cm;
-    margin-bottom: 1cm;
-    text-align: center;
-  }
-  
-  #AbsenceRequest table.tb_approval th {
-    height: 0.7cm;
-  }
-  
-  #AbsenceRequest table.tb_approval tr.contents {
-    height: 2cm;
-  }
-  
-  #AbsenceRequest table.tb_mid {
-    height: 6cm;
-    width: 100%;
-  }
-  
-  #AbsenceRequest table.tb_mid td {
-    padding-left: 0.5cm;
-    line-height: 0.8cm;
-    height: 0.8cm;
-  }
-  
-  #AbsenceRequest .right {
-    float: right;
-    clear: both;
-  }
-  
-  #AbsenceRequest #reason {
-    padding: 4cm 0;
-    text-align: center;
-    font-size: 1.3em;
-  }
-  
-  #AbsenceRequest td.tg-baqh.number {
-    text-align: right;
-    padding-right: 5px;
-  }
-  
-  #AbsenceRequest td.tg-baqh.bottom_dot {
-    border-bottom: 2px dotted;
-  }
-  
-  #AbsenceRequest td.tg-baqh.foot_1 {
-    text-align: right;
-  }
-  
-  #AbsenceRequest .tg th {
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    font-weight: normal;
-    /*padding:10px 5px;*/
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    word-break: normal;
-  }
-  #AbsenceRequest tr.contents .tg-baqh {
-    font-size: 0.95em;
-  }
-  
-  #AbsenceRequest .page-break {
-    page-break-before: always;
-  }
-  
-  #AbsenceRequest .tg .tg-baqh {
-    text-align: center;
-    vertical-align: middle;
-    height: 44px;
-    font-size: 0.95em;
-  }
-  
-  #AbsenceRequest .tg .tg-qj3h {
-    font-size: 1.4em;
-    text-align: center;
-    vertical-align: middle;
-  }
-  
-  #AbsenceRequest /*.tg .tg-lqy6{text-align:right;vertical-align:top}*/
-  #AbsenceRequest .tg .tg-13pz {
-    /*등록번호*/
-    font-size: 1.1em;
-    text-align: center;
-    vertical-align: middle;
-    height: 23.2px;
-  }
-  #AbsenceRequest .span1 {
-    letter-spacing: 10px;
-    font-weight: bold;
-    font-size: 1.2em;
-  }
-  #AbsenceRequest .span2 {
-    font-size: 0.65em;
-  }
-  
-  #AbsenceRequest #btn_print {
-    width: 21cm;
-    height: 35px;
-    font-size: 1.1em;
-    top: 0;
-    margin-bottom: 10px;
-  }
-  #AbsenceRequest .qc {
-    background-color: #ffff73;
-  }
-  #AbsenceRequest caption {
-    caption-side: bottom;
-  }
-  #AbsenceRequest .qc caption {
-    background-color: #ffff73;
-  }
-  #AbsenceRequest span.cap1 {
-    float: left;
-    font-size: 0.8em;
-  }
-  #AbsenceRequest span.cap2 {
-    /*float:right;*/
-    font-size: 0.8em;
-    font-weight: bold;
-  }
-  /*loading화면*/
-  #AbsenceRequest #mask {
-    z-index: 9998;
-    position: absolute;
-    background-color: black;
-    opacity: 0.4;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: -1px; /*없으면 인쇄버튼 들이 안가려짐*/
-  }
-  
-  #AbsenceRequest .important-cell {
-    background-color: rgb(235, 235, 235);
-    font-weight: 600;
-  }
-  
-  #AbsenceRequest .important-cell2 {
-    background-color: rgb(255, 247, 175);
-    font-weight: 600;
-  }
-  
-  #AbsenceRequest .tb_at_bottom .tg-baqh {
-    height: 50px;
-  }
-  
-  #AbsenceRequest #date {
-    margin-bottom: 1cm;
-  }
-  
-  #AbsenceRequest #name {
-    display: inline-block;
-    width: 3.5cm;
-    text-align: center;
-  }
-  
-  #AbsenceRequest .bottom {
-    font-size: 1.1em;
-  }
-  
-  #AbsenceRequest #company {
-    margin-top: 5cm;
-    text-align: center;
-  }
-  
-  #AbsenceRequest #button1 {
-    background-color: transparent;
-    color: #ff2015;
-    border: solid 2px #ff2015;
-    width: 2cm;
-    height: 40px;
-    margin-bottom: 5px;
-  }
-  
-  #AbsenceRequest #button1:hover {
-    color: #820e08;
-    border: solid 2px #820e08;
-  }
-  
-  #AbsenceRequest #button2 {
-    background-color: #1076ab;
-    color: white;
-    border: none;
-    width: 2cm;
-    height: 40px;
-    margin-bottom: 5px;
-  }
-  
-  #AbsenceRequest #button2:hover {
-    background-color: #004c77;
-  }
-  
-  #AbsenceRequest .button-head #button1,
-  #AbsenceRequest .button-head #button2 {
-    font-family: "Noto Sans KR", "Myriad Pro", "dotum", sans-serif;
-    font-size: 18px;
-    font-weight: 100;
-  }
-  
-  #AbsenceRequest .button_wrap {
-    width: 21cm;
-    text-align: right;
-  }
-  
-  /**************** 지출결의서 ****************/
-  
-  #CashDisbursementVoucher .logo {
-    /* background-image: url(image/gst_logo2.png); */
-    background-repeat: no-repeat;
-    width: 60%;
-    height: 90%;
-    background-size: 100%;
-    display: inline-block;
-    background-position: center;
-  }
-  
-  #CashDisbursementVoucher table {
-    border: 2px solid;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 17cm;
-  }
-  
-  #CashDisbursementVoucher table.top_tb {
-    height: 5cm;
-  }
-  
-  #CashDisbursementVoucher table td,
-  #CashDisbursementVoucher table th {
-    font-size: 0.8em;
-  }
-  
-  #CashDisbursementVoucher table.top_tb tr:nth-child(2) th:first-child,
-  #CashDisbursementVoucher table.top_tb tr:nth-child(4) td:first-child {
-    height: 0.7cm;
-  }
-  
-  #CashDisbursementVoucher table.top_tb tr:nth-child(2) th:nth-child(5) {
-    width: 0.5cm;
-  }
-  
-  #CashDisbursementVoucher table.title_tb tr,
-  #CashDisbursementVoucher table.main_tb tr {
-    height: 0.8cm;
-  }
-  
-  #CashDisbursementVoucher table.main_tb tr:last-child {
-    height: 2.5cm;
-  }
-  
-  #CashDisbursementVoucher table.main_tb {
-    border-bottom: none;
-    border-top: none;
-  }
-  
-  #CashDisbursementVoucher table.main_tb:last-child {
-    border-bottom: solid 2px;
-  }
-  
-  #CashDisbursementVoucher table.title_tb {
-    border-top: none;
-    border-bottom: none;
-  }
-  
-  #CashDisbursementVoucher table.title_tb tr:first-child th {
-    border-top: none;
-  }
-  
-  #CashDisbursementVoucher table.title_tb tr:last-child th {
-    border-bottom: none;
-  }
-  
-  #CashDisbursementVoucher td,
-  #CashDisbursementVoucher th {
-    font-family: Arial, sans-serif;
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    word-break: normal;
-    text-align: center;
-    vertical-align: middle;
-  }
-  
-  #CashDisbursementVoucher table.main_tb tr:last-child td:last-child {
-    text-align: left;
-    padding-left: 0.2cm;
-  }
-  
-  #CashDisbursementVoucher .title {
-    font-size: 1.7em;
-  }
-  
-  #CashDisbursementVoucher td.number {
-    text-align: right;
-    padding-right: 0.2cm;
-  }
-  
-  #CashDisbursementVoucher .tg th {
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    font-weight: normal;
-    /*padding:10px 5px;*/
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    word-break: normal;
-  }
-  
-  #CashDisbursementVoucher .page-break {
-    page-break-before: always;
-  }
-  
-  #CashDisbursementVoucher .important-cell {
-    background-color: rgb(235, 235, 235);
-    font-weight: 600;
-  }
+
+.printable {
+  width: 19cm;
+  min-height: 27.7cm;
+  padding: 1cm;
+  background-color: #fff;
+}
+
+.printable.landscape {
+  min-height: 19cm;
+  width: 27.7cm;
+}
+
+.printable.barcode {
+  width: 5.7cm;
+  min-height: 2.7cm;
+}
+
+body {
+  -webkit-print-color-adjust: exact;
+}
+
+/**************** 작업일보 ****************/
+
+#ItemCostSheet {
+  width: 100%;
+}
+
+#ItemCostSheet table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#ItemCostSheet td,
+#ItemCostSheet th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#ItemCostSheet .title_container {
+  display: flex;
+  justify-content: space-between;
+}
+
+#ItemCostSheet .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 3em;
+  width: 100%;
+}
+
+#ItemCostSheet table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#ItemCostSheet table.tb_approval th {
+  height: 0.7cm;
+}
+
+#ItemCostSheet table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#ItemCostSheet table.main_tb .center {
+  text-align: center;
+}
+
+#ItemCostSheet table.main_tb .number {
+  text-align: right;
+}
+
+#ItemCostSheet table.main_tb th,
+#ItemCostSheet table.main_tb td {
+  padding: 0 0.1cm;
+  line-height: 0.6cm;
+  height: 1.2cm;
+  word-wrap: break-word;
+  font-size: 0.85em;
+}
+
+#ItemCostSheet .right {
+  float: right;
+  clear: both;
+}
+
+#ItemCostSheet .red {
+  background-color: rgb(253, 242, 242);
+}
+
+#ItemCostSheet .orange {
+  background-color: rgb(255, 233, 220);
+}
+
+/**************** 업무일지 ****************/
+
+#DailyReport {
+  width: 100%;
+}
+
+#DailyReport table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#DailyReport td,
+#DailyReport th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#DailyReport .title_container {
+  display: flex;
+  justify-content: space-between;
+}
+
+#DailyReport .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 3em;
+  width: 100%;
+}
+
+#DailyReport table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#DailyReport table.tb_approval th {
+  height: 0.7cm;
+}
+
+#DailyReport table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#DailyReport table.main_tb .center {
+  text-align: center;
+}
+
+#DailyReport table.main_tb .number {
+  text-align: right;
+}
+
+#DailyReport table.main_tb th,
+#DailyReport table.main_tb td {
+  padding: 0 0.1cm;
+  line-height: 0.6cm;
+  height: 1.2cm;
+  word-wrap: break-word;
+  font-size: 0.85em;
+}
+
+#DailyReport .right {
+  float: right;
+  clear: both;
+}
+
+/**************** 작업일보 ****************/
+
+#WorkDailyReport table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#WorkDailyReport td,
+#WorkDailyReport th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#WorkDailyReport .title_container {
+  display: flex;
+  justify-content: space-between;
+}
+
+#WorkDailyReport .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 3em;
+  width: 100%;
+}
+
+#WorkDailyReport table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#WorkDailyReport table.tb_approval th {
+  height: 0.7cm;
+}
+
+#WorkDailyReport table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#WorkDailyReport table.main_tb .center {
+  text-align: center;
+}
+
+#WorkDailyReport table.main_tb .number {
+  text-align: right;
+}
+
+#WorkDailyReport table.main_tb th,
+#WorkDailyReport table.main_tb td {
+  padding: 0 0.1cm;
+  line-height: 0.6cm;
+  height: 1.2cm;
+  word-wrap: break-word;
+  font-size: 0.85em;
+}
+
+#WorkDailyReport .right {
+  float: right;
+  clear: both;
+}
+
+/**************** 직접입고 ********************/
+#BarcodePrint table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#BarcodePrint td,
+#BarcodePrint th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#BarcodePrint .title_container {
+  display: flex;
+  justify-content: space-between;
+}
+
+#BarcodePrint .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 3em;
+  width: 100%;
+}
+
+#BarcodePrint table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#BarcodePrint table.tb_approval th {
+  height: 0.7cm;
+}
+
+#BarcodePrint table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#BarcodePrint table.main_tb .center {
+  text-align: center;
+}
+
+#BarcodePrint table.main_tb .number {
+  text-align: right;
+}
+
+#BarcodePrint table.main_tb th,
+#BarcodePrint table.main_tb td {
+  padding: 0 0.1cm;
+  line-height: 0.6cm;
+  height: 1.2cm;
+  word-wrap: break-word;
+  font-size: 0.85em;
+}
+
+#BarcodePrint .right {
+  float: right;
+  clear: both;
+}
+
+/**************** 근태허가신청 ****************/
+
+#AbsenceRequest table {
+  border: 1px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#AbsenceRequest td,
+#AbsenceRequest th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+#AbsenceRequest .title {
+  text-align: center;
+  margin-bottom: 3cm;
+  margin-top: 0.5cm;
+  font-size: 2.5em;
+}
+
+#AbsenceRequest table.tb_approval {
+  height: 3.6cm;
+  width: 8cm;
+  margin-bottom: 1cm;
+  text-align: center;
+}
+
+#AbsenceRequest table.tb_approval th {
+  height: 0.7cm;
+}
+
+#AbsenceRequest table.tb_approval tr.contents {
+  height: 2cm;
+}
+
+#AbsenceRequest table.tb_mid {
+  height: 6cm;
+  width: 100%;
+}
+
+#AbsenceRequest table.tb_mid td {
+  padding-left: 0.5cm;
+  line-height: 0.8cm;
+  height: 0.8cm;
+}
+
+#AbsenceRequest .right {
+  float: right;
+  clear: both;
+}
+
+#AbsenceRequest #reason {
+  padding: 4cm 0;
+  text-align: center;
+  font-size: 1.3em;
+}
+
+#AbsenceRequest td.tg-baqh.number {
+  text-align: right;
+  padding-right: 5px;
+}
+
+#AbsenceRequest td.tg-baqh.bottom_dot {
+  border-bottom: 2px dotted;
+}
+
+#AbsenceRequest td.tg-baqh.foot_1 {
+  text-align: right;
+}
+
+#AbsenceRequest .tg th {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  /*padding:10px 5px;*/
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+}
+
+#AbsenceRequest tr.contents .tg-baqh {
+  font-size: 0.95em;
+}
+
+#AbsenceRequest .page-break {
+  page-break-before: always;
+}
+
+#AbsenceRequest .tg .tg-baqh {
+  text-align: center;
+  vertical-align: middle;
+  height: 44px;
+  font-size: 0.95em;
+}
+
+#AbsenceRequest .tg .tg-qj3h {
+  font-size: 1.4em;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#AbsenceRequest
+
+/*.tg .tg-lqy6{text-align:right;vertical-align:top}*/
+#AbsenceRequest .tg .tg-13pz {
+  /*등록번호*/
+  font-size: 1.1em;
+  text-align: center;
+  vertical-align: middle;
+  height: 23.2px;
+}
+
+#AbsenceRequest .span1 {
+  letter-spacing: 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+#AbsenceRequest .span2 {
+  font-size: 0.65em;
+}
+
+#AbsenceRequest #btn_print {
+  width: 21cm;
+  height: 35px;
+  font-size: 1.1em;
+  top: 0;
+  margin-bottom: 10px;
+}
+
+#AbsenceRequest .qc {
+  background-color: #ffff73;
+}
+
+#AbsenceRequest caption {
+  caption-side: bottom;
+}
+
+#AbsenceRequest .qc caption {
+  background-color: #ffff73;
+}
+
+#AbsenceRequest span.cap1 {
+  float: left;
+  font-size: 0.8em;
+}
+
+#AbsenceRequest span.cap2 {
+  /*float:right;*/
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+/*loading화면*/
+#AbsenceRequest #mask {
+  z-index: 9998;
+  position: absolute;
+  background-color: black;
+  opacity: 0.4;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: -1px;
+  /*없으면 인쇄버튼 들이 안가려짐*/
+}
+
+#AbsenceRequest .important-cell {
+  background-color: rgb(235, 235, 235);
+  font-weight: 600;
+}
+
+#AbsenceRequest .important-cell2 {
+  background-color: rgb(255, 247, 175);
+  font-weight: 600;
+}
+
+#AbsenceRequest .tb_at_bottom .tg-baqh {
+  height: 50px;
+}
+
+#AbsenceRequest #date {
+  margin-bottom: 1cm;
+}
+
+#AbsenceRequest #name {
+  display: inline-block;
+  width: 3.5cm;
+  text-align: center;
+}
+
+#AbsenceRequest .bottom {
+  font-size: 1.1em;
+}
+
+#AbsenceRequest #company {
+  margin-top: 5cm;
+  text-align: center;
+}
+
+#AbsenceRequest #button1 {
+  background-color: transparent;
+  color: #ff2015;
+  border: solid 2px #ff2015;
+  width: 2cm;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+#AbsenceRequest #button1:hover {
+  color: #820e08;
+  border: solid 2px #820e08;
+}
+
+#AbsenceRequest #button2 {
+  background-color: #1076ab;
+  color: white;
+  border: none;
+  width: 2cm;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+#AbsenceRequest #button2:hover {
+  background-color: #004c77;
+}
+
+#AbsenceRequest .button-head #button1,
+#AbsenceRequest .button-head #button2 {
+  font-family: "Noto Sans KR", "Myriad Pro", "dotum", sans-serif;
+  font-size: 18px;
+  font-weight: 100;
+}
+
+#AbsenceRequest .button_wrap {
+  width: 21cm;
+  text-align: right;
+}
+
+/**************** 지출결의서 ****************/
+
+#CashDisbursementVoucher .logo {
+  /* background-image: url(image/gst_logo2.png); */
+  background-repeat: no-repeat;
+  width: 60%;
+  height: 90%;
+  background-size: 100%;
+  display: inline-block;
+  background-position: center;
+}
+
+#CashDisbursementVoucher table {
+  border: 2px solid;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 17cm;
+}
+
+#CashDisbursementVoucher table.top_tb {
+  height: 5cm;
+}
+
+#CashDisbursementVoucher table td,
+#CashDisbursementVoucher table th {
+  font-size: 0.8em;
+}
+
+#CashDisbursementVoucher table.top_tb tr:nth-child(2) th:first-child,
+#CashDisbursementVoucher table.top_tb tr:nth-child(4) td:first-child {
+  height: 0.7cm;
+}
+
+#CashDisbursementVoucher table.top_tb tr:nth-child(2) th:nth-child(5) {
+  width: 0.5cm;
+}
+
+#CashDisbursementVoucher table.title_tb tr,
+#CashDisbursementVoucher table.main_tb tr {
+  height: 0.8cm;
+}
+
+#CashDisbursementVoucher table.main_tb tr:last-child {
+  height: 2.5cm;
+}
+
+#CashDisbursementVoucher table.main_tb {
+  border-bottom: none;
+  border-top: none;
+}
+
+#CashDisbursementVoucher table.main_tb:last-child {
+  border-bottom: solid 2px;
+}
+
+#CashDisbursementVoucher table.title_tb {
+  border-top: none;
+  border-bottom: none;
+}
+
+#CashDisbursementVoucher table.title_tb tr:first-child th {
+  border-top: none;
+}
+
+#CashDisbursementVoucher table.title_tb tr:last-child th {
+  border-bottom: none;
+}
+
+#CashDisbursementVoucher td,
+#CashDisbursementVoucher th {
+  font-family: Arial, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#CashDisbursementVoucher table.main_tb tr:last-child td:last-child {
+  text-align: left;
+  padding-left: 0.2cm;
+}
+
+#CashDisbursementVoucher .title {
+  font-size: 1.7em;
+}
+
+#CashDisbursementVoucher td.number {
+  text-align: right;
+  padding-right: 0.2cm;
+}
+
+#CashDisbursementVoucher .tg th {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  /*padding:10px 5px;*/
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+}
+
+#CashDisbursementVoucher .page-break {
+  page-break-before: always;
+}
+
+#CashDisbursementVoucher .important-cell {
+  background-color: rgb(235, 235, 235);
+  font-weight: 600;
+}
