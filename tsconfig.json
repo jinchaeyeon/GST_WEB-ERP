@@ -23,10 +23,6 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": [
-    "./src/"
-  ],
-  "exclude": [
-    "node_modules/*"
-  ]
+  "include": ["./src/", "gulpfile.js"],
+  "exclude": ["node_modules/*"]
 }

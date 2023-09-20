@@ -1,3 +1,4 @@
+import "./index.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css"; // icons
 import "primereact/resources/primereact.css"; // core css
@@ -9,7 +10,6 @@ import { RecoilRoot } from "recoil";
 import APPDDGD from "./APPDDGD";
 import APPWEBERP from "./APPWEBERP";
 import "./flags.css";
-import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
