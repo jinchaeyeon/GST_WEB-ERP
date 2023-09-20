@@ -597,6 +597,7 @@ const PanelBarNavContainer = (props: any) => {
                           ? "gear"
                           : undefined
                       }
+                      id={"WEBPanelIcons"}
                       className={path.menuId === "fav" ? "fav-menu" : ""}
                     >
                       {paths
