@@ -1,28 +1,42 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
   State, 
   DataResult, 
   process as processQuery 
 } from "@progress/kendo-data-query";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters } from "../store/types";
 import { 
   UseGetValueFromSessionItem, 
-  UseParaPc 
+  UseMessages, 
+  UseParaPc, 
+  findMessage,
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { useApi } from "../hooks/api";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
-import { GridContainer, GridContainerWrap } from "../CommonStyled";
-import { Box, Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
+import { 
+  FilterBox,
+  GridContainer, 
+  GridContainerWrap, 
+  NumberKeypad, 
+  NumberKeypadCell, 
+  NumberKeypadRow 
+} from "../CommonStyled";
+import { 
+  Box, 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  Grid, 
+  Typography 
+} from "@mui/material";
 import { isLoading } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
-import { Field } from "@progress/kendo-react-form";
 
-let check_userid = "";
 let deviceWidth = window.innerWidth;
 let isMobile = deviceWidth <= 1200;
-const DATA_ITEM_KEY = "custcd";
 
 const CR_A1101W: React.FC = () => {
   const processApi = useApi();
@@ -34,6 +48,11 @@ const CR_A1101W: React.FC = () => {
   UseParaPc(setPc);
   const [inputValue, setInputValue] = useState("");
   const [count, setCount] = useState(30);
+  const pathname: string = window.location.pathname.replace("/", "");
+  
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -47,7 +66,6 @@ const CR_A1101W: React.FC = () => {
   const [subDataResult, setSubDataResult] = useState<DataResult>(
     processQuery([], subDataState)
   );
-  
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -74,6 +92,7 @@ const CR_A1101W: React.FC = () => {
     mobile_no: "",
     userid: userid,
     custcd: "",
+    isSearch: true,
   });
 
   const [subfilters, setSubFilters] = useState({
@@ -84,10 +103,11 @@ const CR_A1101W: React.FC = () => {
     mobile_no: "",
     userid: userid,
     custcd: "",
+    isSearch: true,
   });
 
   // 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filter: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -122,14 +142,25 @@ const CR_A1101W: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+
+      if (totalRowCnt <= 0 && filters.mobile_no != "") {
+        alert("사용자정보가 존재하지 않습니다.");
+        return;
+      }
+
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+
     setLoading(false);
   };
 
-  const fetchSubGrid = async () => {
+  const fetchSubGrid = async (filter: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -169,55 +200,64 @@ const CR_A1101W: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
     }
+
+    setSubFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchMainGrid();
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
   }, [filters]);
 
   useEffect(() => {
-    fetchSubGrid();
+    if (subfilters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setSubFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      fetchSubGrid(deepCopiedFilters);
+    }
   }, [subfilters]);
 
-  const onCheckUser = async() => {
-    const mobile_no = filters.mobile_no;
-    let valid = false;
-
-    if (mobile_no != null && mobile_no != "") {
-      mainDataResult.data.map((item: any) => {
-        if (item.mobile_no == mobile_no) {
-          check_userid = item.user_id;
-          valid = true;
-        } else {
-          alert("사용자가 존재하지 않습니다.");
-          return;
-        }
-      });
-    } else {
-      alert("휴대폰번호를 입력해주세요.");
-      return;
+  const search = () => {
+    try {
+      if (
+        filters.mobile_no == "" || filters.mobile_no == undefined
+      ) {
+        throw findMessage(messagesData, "CR_A1101W_001");
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          mobile_no: filters.mobile_no,
+          isSearch: true,
+        }));
+        setSubFilters((prev) => ({
+          ...prev,
+          mobile_no: filters.mobile_no,
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
     }
 
-    if (valid) {
-      setSubFilters((prev) => ({
-        ...prev,
-        mobile_no: mobile_no,
-      }));
-    }
+    setCount(30); // 타이머 초기화
   };
 
   const resetInput = () => {
-     // 휴대폰 번호 빈값 처리 및 조회 reset
-     setInputValue("");
-     setFilters((prev) => ({
-       ...prev,
-       mobile_no: "",
-     }));
-     setSubFilters((prev) => ({
-      ...prev,
-       mobile_no: "",
-     }));
+    // 휴대폰 번호 빈값 처리 및 조회 reset
+    setInputValue("");
+    setCount(30);
+    setMainDataResult(processQuery([], mainDataState));
+    setSubDataResult(processQuery([], subDataState));
   };
 
   const [paraData, setParaData] = useState({
@@ -313,29 +353,139 @@ const CR_A1101W: React.FC = () => {
     if (count === 0) {
       clearInterval(id);
       resetInput();
-      setCount(30);
     };
     return () => clearInterval(id);
   }, [count]);
+
+  // 키패드 숫자 입력
+  const enterNumber = async(e: any) => {
+    const value = e.currentTarget.innerText;
+    let str = "";
+
+    if (value == "Del") {
+      // 뒤에서 한 문자씩 삭제
+      str = inputValue.slice(0, -1);
+    } else if (value != "") {
+      // 숫자 입력
+      str = inputValue + value;
+    } else {
+      // 삭제
+      str = "";
+    }
+
+    // Input 세팅
+    setInputValue(str);
+
+    // 조회조건 세팅
+    setFilters((prev) => ({
+      ...prev,
+      mobile_no: str,
+      isSearch: false,
+    }));
+
+    // 타이머 초기화
+    setCount(30);
+  };
 
   return (
     <>
       <GridContainerWrap>
         <GridContainer 
-          style = {{ width: isMobile ? "100%" : "45%", 
-                    height: isMobile ? "45%" : "97vh", 
-                    display: "flex",
-                    backgroundColor: "#f5b901",
-                    justifyContent: "center", 
-                    alignItems: "center" }}
+          style = {{
+            width: isMobile ? "100%" : "45%", 
+            height: isMobile ? "45%" : "86vh",
+          }}
         >
-          <img
-            src={`${process.env.PUBLIC_URL}/logo_ddgd.png`}
-            alt=""
-            width={isMobile ? "200px" : "400px"}
-            height={isMobile ? "200px" : "400px"}
-            style={{  borderRadius: "70%", overflow: "hidden", backgroundColor: "white" }}
-          />
+          <GridContainer 
+            style = {{ 
+              display: "flex",
+              backgroundColor: "#f5b901",
+              justifyContent: "center", 
+              alignItems: "center",
+              height: "45vh",
+              marginTop: "10px",
+            }}
+          >
+            <img
+              src={`${process.env.PUBLIC_URL}/logo_ddgd.png`}
+              alt=""
+              width={isMobile ? "200px" : "400px"}
+              height={isMobile ? "200px" : "400px"}
+              style={{ 
+                borderRadius: "70%", 
+                overflow: "hidden", 
+                backgroundColor: "white" 
+              }}
+            />
+          </GridContainer>
+          <GridContainer>
+            <div style = {{ 
+              display: "flex", 
+              justifyContent: "center", 
+              alignItems: "center",
+              marginTop: "10px",
+              marginBottom: "10px",
+              marginLeft: "5px",
+              }}
+            >
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody className="PR_A3000W">
+                  <tr>
+                    <td>
+                      <Input 
+                        name="mobile_no"
+                        type="text"
+                        onChange={filterInputChange}
+                        value={inputValue}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+              <Button
+                onClick={search}
+                style = {{ 
+                  marginLeft: "10px",
+                  backgroundColor: "#F7E8CF",
+                  width: "280px",
+                  height: "85px",
+                  fontSize: "30px",
+                }}
+              >
+                조회
+              </Button>
+            </div>
+          </GridContainer>
+          <GridContainer
+            style = {{
+              height: "38vh",
+            }}
+          >
+            <NumberKeypad style = {{ height : "100%"}}>
+              <NumberKeypadRow style = {{ height : "25%"}}>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>1</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>2</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>3</NumberKeypadCell>
+              </NumberKeypadRow>
+              <NumberKeypadRow style = {{ height : "25%"}}>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>4</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>5</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>6</NumberKeypadCell>
+              </NumberKeypadRow>
+              <NumberKeypadRow style = {{ height : "25%"}}>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>7</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>8</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>9</NumberKeypadCell>
+              </NumberKeypadRow>
+              <NumberKeypadRow style = {{ height : "25%"}}>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>
+                <span className={"k-icon k-i-x"}></span>
+                </NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>0</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>Del</NumberKeypadCell>
+              </NumberKeypadRow>
+            </NumberKeypad>
+          </GridContainer>
         </GridContainer>
         <GridContainer 
           style = {{
@@ -344,8 +494,8 @@ const CR_A1101W: React.FC = () => {
           }}
         >
           <GridContainer 
-            style = {{ height: "30%",
-                      marginTop: isMobile ? "50px" : "",
+            style = {{ height: "15%",
+                      marginTop: isMobile ? "50px" : "10px",
                       display: "flex",
                       justifyContent: "center", 
                       alignItems: "center" }} 
@@ -353,42 +503,19 @@ const CR_A1101W: React.FC = () => {
             <div 
               style={{ 
                 width: "100%",
-                height: "10vh",
+                height: "100%",
                 fontSize: "40px", 
                 marginBottom: "40px",
-                backgroundColor: "#F7E8CF", 
+                backgroundColor: "#f5b901", 
                 display: "flex",
                 justifyContent: "center", 
                 alignItems: "center"
                 }}
             >체크인독 출석체크</div>
-            <div style = {{ display: "flex", justifyContent: "center", 
-                            alignItems: "center" }}>
-              <Input 
-                name="mobile_no"
-                label="휴대폰번호(숫자만 입력)"
-                type="text"
-                onChange={filterInputChange}
-                value={inputValue}
-                size={30}
-              />
-              <Button
-                onClick={onCheckUser}
-                style = {{ 
-                  marginLeft: "10px", 
-                  marginTop: "10px", 
-                  backgroundColor: "#F7E8CF",
-                  width: "100px",
-                  height: "50px",
-                }}
-              >
-                조회
-              </Button>
-            </div>
           </GridContainer>
           <GridContainer 
             style = {{ 
-              height: `calc(60% - ${GAP}px)`, 
+              height: `calc(75% - ${GAP}px)`, 
               overflowY: "scroll", 
               maxHeight: `calc(70% - ${GAP}px)`,
               marginTop: isMobile ? "20px" : "",
@@ -540,7 +667,7 @@ const CR_A1101W: React.FC = () => {
                             fontFamily: "TheJamsil5Bold",
                           }}
                         >
-                            {item.point}점
+                          {item.point}점
                         </Typography>
                       </CardContent>
                     </Box>
