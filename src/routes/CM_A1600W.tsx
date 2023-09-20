@@ -1036,7 +1036,7 @@ const CM_A1600: React.FC = () => {
             <GridTitle>개인 스케줄러</GridTitle>
           </GridTitleContainer>
           <Scheduler
-            height={"82vh"}
+            height={"79vh"}
             data={schedulerDataResult}
             onDataChange={handleDataChange}
             defaultDate={displayDate}
