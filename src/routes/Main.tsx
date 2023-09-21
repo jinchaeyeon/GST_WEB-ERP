@@ -290,8 +290,7 @@ const Main: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const row = data.tables[0].Rows[0].useyn == "Y" ? false : true;
-      console.log(row)
+      const row = data.tables[0].Rows[0].use_yn == "Y" ? false : true;
       setVisible(row);
     } else {
       console.log("[오류 발생]");
@@ -602,7 +601,7 @@ const Main: React.FC = () => {
             E-MAIL
           </Button>
         </ButtonContainer>
-        {visible == false ? (
+        {!visible ? (
           <>
             <MainWorkStartEndContainer>
               <TextContainer theme={"#2289c3"}>

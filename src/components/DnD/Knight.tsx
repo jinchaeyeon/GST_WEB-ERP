@@ -2,6 +2,7 @@ import {
   useEffect,
   useRef,
   useState,
+  MouseEvent,
   type CSSProperties,
   type FC,
 } from "react";
@@ -43,6 +44,10 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
     }
   }, [info]);
 
+  const onClickMenu = (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    console.log("dd")
+  }
   return (
     <>
       <DragPreviewImage connect={preview} src={imgBase64} />
@@ -62,6 +67,7 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
             }
           });
         }}
+        onContextMenu={(e) => onClickMenu(e)}
       >
         <div
           style={{
