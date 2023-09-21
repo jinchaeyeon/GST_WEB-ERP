@@ -758,7 +758,7 @@ export const Gnv = styled.div<TGnv>`
   .k-panelbar-item-icon.k-icon.k-i-gear,
   .k-panelbar-item-icon.k-icon.k-i-star,
   .k-panelbar-item-icon.k-icon.k-i-star-outline {
-    color: ${(props) => props.theme};
+    color: ${(props) => props.theme} !important;
   }
 
   .k-selected > .k-panelbar-item-icon.k-icon.k-i-star-outline {

@@ -548,7 +548,7 @@ const PanelBarNavContainer = (props: any) => {
 
   return (
     <>
-      <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
+      <Wrapper isMobileMenuOpend={isMobileMenuOpend} className="DDGD">
         <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
         {isMenuOpend ? (
           <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#f5b901"}>
@@ -598,7 +598,6 @@ const PanelBarNavContainer = (props: any) => {
                           ? "gear"
                           : undefined
                       }
-                      id={"DDGDPanelIcons"}
                       className={path.menuId === "fav" ? "fav-menu" : ""}
                     >
                       {paths

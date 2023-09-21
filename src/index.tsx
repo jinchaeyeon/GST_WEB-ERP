@@ -22,8 +22,9 @@ const themes = {
 
 const defaultTheme = path.includes("localhost")
   ? //WEB ERP개발할떄 바꿀부분입니다.
-    "yellow"
-  : // "blue"
+  //"yellow"
+  "blue"
+  :
   path.split("/")[2].split(".")[1] == "gsti"
   ? "blue"
   : path.split("/")[2].split(".")[1] == "ddgd"

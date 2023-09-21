@@ -78,15 +78,6 @@ code {
   align-items: center;
 }
 
-#DDGDPanelIcons > .k-link > .k-panelbar-item-icon {
-  color: #f5b901 !important;
-}
-
-/*WEB ERP전용 CSS*/
-#WEBPanelIcons > .k-link > .k-panelbar-item-icon {
-  color: #2289c3 !important;
-}
-
 /*버튼 색상 변경 */
 .k-button-solid-primary {
   color: white !important;
