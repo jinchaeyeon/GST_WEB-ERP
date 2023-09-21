@@ -1,12 +1,18 @@
 import {
+  MouseEvent,
   useEffect,
   useRef,
   useState,
-  MouseEvent,
   type CSSProperties,
   type FC,
 } from "react";
 import { DragPreviewImage, useDrag } from "react-dnd";
+import { useRecoilState } from "recoil";
+import {
+  clickedState,
+  infoState,
+  pointsState
+} from "../../store/atoms";
 import { Layout } from "./Layout";
 
 const knightStyle: CSSProperties = {
@@ -27,6 +33,26 @@ export interface KnightProps {
 }
 
 export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
+  const [clicked, setClicked] = useRecoilState(clickedState);
+  const [information, setInformation] = useRecoilState(infoState);
+  const [points, setPoints] = useRecoilState(pointsState);
+
+  useEffect(() => {
+    const handleClick = () => {
+      setClicked("");
+      setInformation({
+        caption: "",
+        form_id: "",
+        key: "",
+      });
+      setPoints({
+        x: 0,
+        y: 0,
+      });
+    };
+    window.addEventListener("click", handleClick);
+  }, []);
+
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: ItemTypes.KNIGHT,
@@ -36,6 +62,7 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
     }),
     []
   );
+
   const [imgBase64, setImgBase64] = useState<string>(""); // 파일 base64
   const excelInput: any = useRef();
   useEffect(() => {
@@ -46,8 +73,32 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
 
   const onClickMenu = (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-    console.log("dd")
-  }
+
+    if (clicked == "") {
+      setClicked(`${x}${y}`);
+      setInformation({
+        caption: info.caption,
+        form_id: info.form_id,
+        key: info.row_index + "" + info.col_index
+      });
+      setPoints({
+        x: e.pageX,
+        y: e.pageY,
+      });
+    } else {
+      setClicked(`${x}${y}`);
+      setInformation({
+        caption: info.caption,
+        form_id: info.form_id,
+        key: info.row_index + "" + info.col_index
+      });
+      setPoints({
+        x: e.pageX,
+        y: e.pageY,
+      });
+    }
+  };
+
   return (
     <>
       <DragPreviewImage connect={preview} src={imgBase64} />

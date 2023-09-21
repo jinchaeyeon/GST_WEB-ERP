@@ -1150,7 +1150,6 @@ const Page: React.FC = () => {
   const onDetailSortChange = (e: any) => {
     setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
   const minGridWidth = React.useRef<number>(0);
   const grid = React.useRef<any>(null);
   const [applyMinWidth, setApplyMinWidth] = React.useState(false);
@@ -1165,8 +1164,10 @@ const Page: React.FC = () => {
       customOptionData.menuCustomColumnOptions["grdHeaderList"]?.map((item: TColumn) =>
         item.width !== undefined
           ? (minGridWidth.current += item.width)
-          : minGridWidth.current 
+          : minGridWidth.current
       );
+
+      minGridWidth.current += 50;
 
       setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
@@ -1174,10 +1175,11 @@ const Page: React.FC = () => {
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.clientWidth-87 < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth
+    ) {
       setApplyMinWidth(true);
-    } else if (grid.current.clientWidth-87 > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth-87);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
   };
@@ -1346,7 +1348,7 @@ const Page: React.FC = () => {
               //그룹기능
               id="grdHeaderList"
             >
-              <GridColumn cell={CommandCell} width="55px" />
+              <GridColumn cell={CommandCell} width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdHeaderList"]?.map(
                   (item: any, idx: number) =>

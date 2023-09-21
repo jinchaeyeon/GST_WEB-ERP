@@ -14,7 +14,7 @@ export const gridList: Array<TGrid> = [
         id: "col_class",
         field: "class",
         caption: "반",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_owner",
@@ -50,9 +50,8 @@ export const gridList: Array<TGrid> = [
         id: "col_remark",
         field: "remark",
         caption: "메모",
-        width: 100,
+        width: 200,
       },
-
       {
         id: "col_amt",
         field: "amt",
@@ -81,7 +80,7 @@ export const gridList: Array<TGrid> = [
         id: "col_dayofweek",
         field: "dayofweek",
         caption: "등원요일",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_manager",

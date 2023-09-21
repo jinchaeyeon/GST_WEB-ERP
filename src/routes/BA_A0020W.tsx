@@ -1158,6 +1158,9 @@ const BA_A0020: React.FC = () => {
   const resetAllGrid = () => {
     deletedMainRows = [];
     deletedMainRows2 = [];
+    setPage(initialPageState);
+    setPage2(initialPageState);
+    setPage3(initialPageState);
     setMainDataResult(process([], mainDataState));
     setSubDataResult(process([], subDataState));
     setSubDataResult2(process([], subDataState2));
