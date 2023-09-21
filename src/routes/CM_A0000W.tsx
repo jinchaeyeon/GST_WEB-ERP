@@ -214,7 +214,7 @@ const CM_A0000W: React.FC = () => {
       }));
       setWorkType("U");
       path.includes("localhost")
-        ? //WEB ERP개발할떄 바꿀부분입니다.
+        ? //WEB ERP개발할떄 바꿀부분입니다.(setDetailWindowVisible: WEB ERP, setDetailWindowVisible2: DDGD)
           //setDetailWindowVisible2(true) :
           setDetailWindowVisible(true)
         : path.split("/")[2].split(".")[1] == "gsti"
