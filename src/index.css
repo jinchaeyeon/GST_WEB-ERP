@@ -93,9 +93,18 @@ div.k-animation-container {
   z-index: 10100 !important;
 }
 
+.k-scheduler-edit-dialog > .k-window, .k-dialog > .k-window-content, .k-prompt-container {
+  padding-bottom : 70px !important;
+}
+
+.k-scheduler-edit-dialog > .k-window, .k-dialog > .k-window-actions {
+    margin-Left: 10px  !important;
+    padding-bottom: 40px !important;
+  }
+  
 .k-pager-md .k-pager-numbers-wrap {
-  justify-content: center !important;
-  width: 100%;
+    justify-content: center !important;
+    width: 100%;
 }
 
 .k-grouping-header {
