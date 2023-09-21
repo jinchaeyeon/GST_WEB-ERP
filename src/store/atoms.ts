@@ -1,11 +1,12 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
 import { DEFAULT_SESSION_ITEM } from "../components/CommonString";
 import {
+  TInfoItem,
   TLoginResult,
   TMenu,
   TPasswordExpirationInfo,
-  TSessionItem,
-  TToken,
+  TpointsItem,
+  TSessionItem
 } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
@@ -43,6 +44,30 @@ export const loginResultState = atom<TLoginResult>({
 export const menusState = atom<Array<TMenu>>({
   key: "menusState",
   default: null as any,
+});
+
+export const clickedState = atom<string>({
+  key: "clickedState",
+  default: "",
+});
+
+export const infoState = atom<TInfoItem>({
+  key: "infoState",
+  default: 
+    {
+      caption: "",
+      form_id: "",
+      key: ""
+    }
+});
+
+export const pointsState = atom<TpointsItem>({
+  key: "pointsState",
+  default: 
+    {
+      x: 0,
+      y: 0,
+    }
 });
 
 export const sessionItemState = atom<Array<TSessionItem>>({

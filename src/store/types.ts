@@ -58,6 +58,16 @@ export type TSessionItem = {
   value: string;
 };
 
+export type TInfoItem = {
+  caption: string;
+  form_id: string;
+  key: string;
+};
+
+export type TpointsItem = {
+  x: number;
+  y: number;
+};
 // Ok (정상)
 // Expired (만료됨) → 반드시 비밀번호 변경
 // BeforeExpiry (만료전) → 비밀번호 변경 알림

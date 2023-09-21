@@ -22,9 +22,10 @@ import React, {
 } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
+  ContextMenu,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -52,9 +53,15 @@ import { Layout, Position } from "../components/DnD/Layout";
 import { LayoutSquare } from "../components/DnD/LayoutSquare";
 import { Piece } from "../components/DnD/Piece";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import {
+  clickedState,
+  isLoading,
+  infoState,
+  pointsState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { Divider } from "@mui/material";
 
 export interface AppState {
   position: [number, number];
@@ -93,6 +100,10 @@ const SY_A0500W: React.FC = () => {
   const [[knightX, knightY, indexs], setKnightPos] = useState<Position>(
     layout.position
   );
+  const [clicked, setClicked] = useRecoilState(clickedState);
+  const [info, setInfo] = useRecoilState(infoState);
+  const [points, setPoints] = useRecoilState(pointsState);
+
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA002", setBizComponentData);
@@ -679,6 +690,26 @@ const SY_A0500W: React.FC = () => {
     }
   };
 
+  const removeCaption = (infomations: any) => {
+    const newData = detailDataResult.data.map((item) =>
+      infomations.key == item.row_index + "" + item.col_index
+        ? {
+            ...item,
+            caption: "",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setDetailDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+  
   return (
     <>
       <TitleContainer>
@@ -876,6 +907,19 @@ const SY_A0500W: React.FC = () => {
           </DndProvider>
         </GridContainer>
       </GridContainerWrap>
+      {clicked != "" && (
+        <ContextMenu top={points.y} left={points.x}>
+          <ul>
+            <li>{info.caption}</li>
+            <li>{info.form_id}</li>
+            <Divider />
+            <li>메뉴 등록</li>
+            <Divider />
+            <li onClick={() => removeCaption(info)}>초기화</li>
+            <li>제거</li>
+          </ul>
+        </ContextMenu>
+      )}
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

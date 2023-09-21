@@ -12,5 +12,5 @@ export interface PieceProps {
   info?: any;
 }
 
-export const Piece: FC<PieceProps> = ({ isKnight, x, y, layout, list, info }) =>
+export const Piece: FC<PieceProps> = ({ isKnight, x, y, layout, list, info}) =>
   list.length > 0 ? isKnight ? <Knight x={x} y={y} layout={layout} list={list} info={info}/> : null : null

@@ -9,6 +9,39 @@ type TColor = {
   theme: string;
 };
 
+type TLayout = {
+  top: number;
+  left: number;
+};
+
+/*우클릭 이벤트 박스*/
+export const ContextMenu = styled.div<TLayout>`
+  position: absolute;
+  width: 200px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-sizing: border-box;
+  border: 1px solid black;
+  z-index: 10000;
+  top: ${(props) => props.top}px;
+  left: ${(props) => props.left}px;
+
+  ul {
+    box-sizing: border-box;
+    margin: 0;
+    list-style: none;
+  }
+  ul li {
+    padding: 10px 10px;
+    font-weight: 600;
+  }
+
+  ul li:hover {
+    cursor: pointer;
+    background-color: #2289c3;
+  }
+`;
+
 export const TitleContainer = styled.div`
   display: flex;
   align-items: center;
