@@ -290,8 +290,8 @@ const Main: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const row = data.tables.length > 0 ? true : false;
-
+      const row = data.tables[0].Rows[0].useyn == "Y" ? false : true;
+      console.log(row)
       setVisible(row);
     } else {
       console.log("[오류 발생]");
