@@ -1245,25 +1245,25 @@ const AC_A0070W: React.FC = () => {
       minWidthGridMaster.current += 20;
       minWidthGridItem.current += 70; // rowstatus
 
-      setCurrentWidthGridMaster(gridMaster.current.offsetWidth);
-      setCurrentWidthGridItem(gridItem.current.offsetWidth);
+      setCurrentWidthGridMaster(gridMaster.current.clientWidth);
+      setCurrentWidthGridItem(gridItem.current.clientWidth);
 
-      setApplyMinWidthGridMaster(gridMaster.current.offsetWidth < minWidthGridMaster.current);
-      setApplyMinWidthGridItem(gridItem.current.offsetWidth < minWidthGridItem.current);
+      setApplyMinWidthGridMaster(gridMaster.current.clientWidth < minWidthGridMaster.current);
+      setApplyMinWidthGridItem(gridItem.current.clientWidth < minWidthGridItem.current);
 
     }
   }, [customOptionData]);
 
   const handleResize = () => {
 
-    const currentWidthMaster = gridMaster.current.offsetWidth;
+    const currentWidthMaster = gridMaster.current.clientWidth;
     setCurrentWidthGridMaster(currentWidthMaster);
     setApplyMinWidthGridMaster(currentWidthMaster < minWidthGridMaster.current);
 
-    if (gridItem.current.offsetWidth < minWidthGridItem.current && !applyMinWidthGridItem) {
+    if (gridItem.current.clientWidth < minWidthGridItem.current && !applyMinWidthGridItem) {
       setApplyMinWidthGridItem(true);
-    } else if (gridItem.current.offsetWidth > minWidthGridItem.current) {
-      setCurrentWidthGridItem(gridItem.current.offsetWidth);
+    } else if (gridItem.current.clientWidth > minWidthGridItem.current) {
+      setCurrentWidthGridItem(gridItem.current.clientWidth);
       setApplyMinWidthGridItem(false);
     }
 

@@ -1241,16 +1241,16 @@ const SY_A0125W: React.FC = () => {
           : minGridWidth.current 
       );
 
-      setGridCurrent(grid.current.offsetWidth);
-      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth -80  < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth -80  < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth-80 > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth-80);
+    } else if (grid.current.clientWidth-80 > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth-80);
       setApplyMinWidth(false);
     }
   };

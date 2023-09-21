@@ -97,15 +97,15 @@ const KendoWindow = ({
       height: event.height,
     });
 
-    // let a = grid.current.offsetWidth - 40;
+    // let a = grid.current.clientWidth - 40;
 
     if (
-      grid.current.offsetWidth < minGridWidth.current 
+      grid.current.clientWidth < minGridWidth.current 
       && !applyMinWidth
     ) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
   };
@@ -433,10 +433,10 @@ const KendoWindow = ({
           : minGridWidth.current
       );
 
-      // let a = grid.current.offsetWidth - 40;
+      // let a = grid.current.clientWidth - 40;
 
-      setGridCurrent(grid.current.offsetWidth);
-      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
     }
   }, [columnData]);
 

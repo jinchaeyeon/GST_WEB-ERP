@@ -396,16 +396,16 @@ const CM_B8100W: React.FC = () => {
           : minGridWidth.current 
       );
       minGridWidth.current-=20
-      setGridCurrent(grid.current.offsetWidth);
-      setApplyMinWidth(grid.current.offsetWidth< minGridWidth.current);
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth< minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
   };

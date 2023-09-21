@@ -675,71 +675,71 @@ const SA_B3100W: React.FC = () => {
             : minGridWidth4.current
       );
       if (grid.current) {
-        setGridCurrent(grid.current.offsetWidth);
+        setGridCurrent(grid.current.clientWidth);
       }
       if (grid2.current) {
-        setGridCurrent2(grid2.current.offsetWidth);
+        setGridCurrent2(grid2.current.clientWidth);
       }
       if (grid3.current) {
-        setGridCurrent3(grid3.current.offsetWidth);
+        setGridCurrent3(grid3.current.clientWidth);
       }
       if (grid4.current) {
-        setGridCurrent4(grid4.current.offsetWidth);
+        setGridCurrent4(grid4.current.clientWidth);
       }
       if (grid.current) {
-        setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
       if (grid2.current) {
-        setApplyMinWidth2(grid2.current.offsetWidth < minGridWidth2.current);
+        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
       if (grid3.current) {
-        setApplyMinWidth3(grid3.current.offsetWidth < minGridWidth3.current);
+        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
       }
       if (grid4.current) {
-        setApplyMinWidth4(grid4.current.offsetWidth < minGridWidth4.current);
+        setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
       }
     }
   }, [customOptionData]);
 
   const handleResize = () => {
     if (grid.current) {
-      if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
         setApplyMinWidth(true);
-      } else if (grid.current.offsetWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.offsetWidth);
+      } else if (grid.current.clientWidth > minGridWidth.current) {
+        setGridCurrent(grid.current.clientWidth);
         setApplyMinWidth(false);
       }
     }
     if (grid2.current) {
       if (
-        grid2.current.offsetWidth < minGridWidth2.current &&
+        grid2.current.clientWidth < minGridWidth2.current &&
         !applyMinWidth2
       ) {
         setApplyMinWidth2(true);
-      } else if (grid2.current.offsetWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.offsetWidth);
+      } else if (grid2.current.clientWidth > minGridWidth2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
         setApplyMinWidth2(false);
       }
     }
     if (grid3.current) {
       if (
-        grid3.current.offsetWidth < minGridWidth3.current &&
+        grid3.current.clientWidth < minGridWidth3.current &&
         !applyMinWidth3
       ) {
         setApplyMinWidth3(true);
-      } else if (grid3.current.offsetWidth > minGridWidth3.current) {
-        setGridCurrent3(grid3.current.offsetWidth);
+      } else if (grid3.current.clientWidth > minGridWidth3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
         setApplyMinWidth3(false);
       }
     }
     if (grid4.current) {
       if (
-        grid4.current.offsetWidth < minGridWidth4.current &&
+        grid4.current.clientWidth < minGridWidth4.current &&
         !applyMinWidth4
       ) {
         setApplyMinWidth4(true);
-      } else if (grid4.current.offsetWidth > minGridWidth4.current) {
-        setGridCurrent4(grid4.current.offsetWidth);
+      } else if (grid4.current.clientWidth > minGridWidth4.current) {
+        setGridCurrent4(grid4.current.clientWidth);
         setApplyMinWidth4(false);
       }
     }

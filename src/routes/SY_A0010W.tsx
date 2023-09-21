@@ -1185,16 +1185,16 @@ const Page: React.FC = () => {
           : minGridWidth.current 
       );
 
-      setGridCurrent(grid.current.offsetWidth);
-      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth-87 < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth-87 < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth-87 > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth-87);
+    } else if (grid.current.clientWidth-87 > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth-87);
       setApplyMinWidth(false);
     }
   };

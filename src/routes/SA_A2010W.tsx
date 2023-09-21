@@ -1134,24 +1134,24 @@ const SA_B2000: React.FC = () => {
             : minGridWidth2.current
       );
       minGridWidth.current += 50;
-      setGridCurrent(grid.current.offsetWidth);
-      setGridCurrent2(grid2.current.offsetWidth);
-      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.offsetWidth < minGridWidth2.current);
+      setGridCurrent(grid.current.clientWidth);
+      setGridCurrent2(grid2.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
-    if (grid2.current.offsetWidth < minGridWidth2.current && !applyMinWidth2) {
+    if (grid2.current.clientWidth < minGridWidth2.current && !applyMinWidth2) {
       setApplyMinWidth2(true);
-    } else if (grid2.current.offsetWidth > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.offsetWidth);
+    } else if (grid2.current.clientWidth > minGridWidth2.current) {
+      setGridCurrent2(grid2.current.clientWidth);
       setApplyMinWidth2(false);
     }
   };

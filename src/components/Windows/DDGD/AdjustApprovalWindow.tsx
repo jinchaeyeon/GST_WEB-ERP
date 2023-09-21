@@ -160,10 +160,10 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
       height: event.height,
     });
 
-    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
   };
@@ -460,8 +460,8 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
 
     minGridWidth.current += 60;
 
-    setGridCurrent(grid.current.offsetWidth);
-    setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
+    setGridCurrent(grid.current.clientWidth);
+    setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
   }, []);
 
   const setWidth = (Name: string, minWidth: number | undefined) => {

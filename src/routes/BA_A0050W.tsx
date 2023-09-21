@@ -2085,32 +2085,32 @@ const BA_A0050: React.FC = () => {
       minGridWidth.current -= 20;
       minGridWidth2.current -= 20;
       // minGridWidth3.current += 70;
-      setGridCurrent(grid.current.offsetWidth);
-      setGridCurrent2(grid2.current.offsetWidth);
-      setGridCurrent3(grid3.current.offsetWidth);
-      setApplyMinWidth(grid.current.offsetWidth < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.offsetWidth < minGridWidth2.current);
-      setApplyMinWidth3(grid3.current.offsetWidth < minGridWidth3.current);
+      setGridCurrent(grid.current.clientWidth);
+      setGridCurrent2(grid2.current.clientWidth);
+      setGridCurrent3(grid3.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
+      setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.offsetWidth < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.offsetWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.offsetWidth);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
-    if (grid2.current.offsetWidth < minGridWidth2.current && !applyMinWidth2) {
+    if (grid2.current.clientWidth < minGridWidth2.current && !applyMinWidth2) {
       setApplyMinWidth2(true);
-    } else if (grid2.current.offsetWidth > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.offsetWidth);
+    } else if (grid2.current.clientWidth > minGridWidth2.current) {
+      setGridCurrent2(grid2.current.clientWidth);
       setApplyMinWidth2(false);
     }
-    if (grid3.current.offsetWidth < minGridWidth3.current && !applyMinWidth3) {
+    if (grid3.current.clientWidth < minGridWidth3.current && !applyMinWidth3) {
       setApplyMinWidth3(true);
-    } else if (grid3.current.offsetWidth > minGridWidth3.current) {
-      setGridCurrent3(grid3.current.offsetWidth);
+    } else if (grid3.current.clientWidth > minGridWidth3.current) {
+      setGridCurrent3(grid3.current.clientWidth);
       setApplyMinWidth3(false);
     }
   };

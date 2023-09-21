@@ -34,22 +34,18 @@ code {
   height: 0;
 }
 
-/*Width 드래그 오류 수정
-.k-grid-header.k-grid-draggable-header {
-  padding: 0px;
-  user-select: none;
-  touch-action: none;
+/*드래그 오류 수정*/
+.k-grid-header, .k-grid-footer {
+  padding-inline-end: 0px !important;
 }
 
 .k-grid-content {
-  width: 100%;
-  min-height: 0px;
-  overflow: auto;
-  overflow-x: auto;
-  overflow-y: auto;
-  position: relative;
+  overflow: auto auto !important;
 }
-*/
+
+.k-grid table {
+  width: 100% !important;
+}
 
 /*DDGD 전용 css */
 .react-calendar {

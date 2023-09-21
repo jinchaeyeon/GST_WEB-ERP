@@ -80,7 +80,7 @@ import GANTT from "./routes/GANTT";
 import HU_A1000W from "./routes/HU_A1000W";
 import HU_A2070W from "./routes/HU_A2070W";
 import HU_A2100W from "./routes/HU_A2100W";
-import HU_A2140w from "./routes/HU_A2140w";
+import HU_A2140W from "./routes/HU_A2140W";
 import HU_A3020W from "./routes/HU_A3020W";
 import HU_A4100W from "./routes/HU_A4100W";
 import HU_A5020W from "./routes/HU_A5020W";
@@ -556,7 +556,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_A1000W" component={HU_A1000W} exact />
                   <AuthRoute path="/HU_A2070W" component={HU_A2070W} exact />
                   <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
-                  <AuthRoute path="/HU_A2140w" component={HU_A2140w} exact />
+                  <AuthRoute path="/HU_A2140W" component={HU_A2140W} exact />
                   <AuthRoute path="/HU_A3020W" component={HU_A3020W} exact />
                   <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
                   <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
