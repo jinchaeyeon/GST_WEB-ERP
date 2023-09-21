@@ -30,22 +30,31 @@ import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
-import {handleKeyPressSearch} from "../../CommonFunction";
+import { handleKeyPressSearch } from "../../CommonFunction";
 import FilterContainer from "../../../components/Containers/FilterContainer";
 type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void;
   workType: string;
   para?: Iparameters;
+  modal?: boolean;
 };
 
 const DATA_ITEM_KEY = "user_id";
 
-const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
+const KendoWindow = ({
+  setVisible,
+  workType,
+  setData,
+  para,
+  modal = false,
+}: IKendoWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 600,
+    width: isMobile == true ? deviceWidth : 600,
     height: 800,
   });
 
@@ -236,8 +245,8 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
   const search = () => {
     resetAllGrid();
     fetchMainGrid();
-  }
-  
+  };
+
   return (
     <Window
       title={"사용자리스트"}
@@ -246,6 +255,7 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <Title />
@@ -266,7 +276,7 @@ const KendoWindow = ({ setVisible, workType, setData, para }: IKendoWindow) => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-            <th>사용자 ID</th>
+              <th>사용자 ID</th>
               <td>
                 <Input
                   name="user_id"

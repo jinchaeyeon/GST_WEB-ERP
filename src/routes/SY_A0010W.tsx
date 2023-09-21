@@ -1,6 +1,17 @@
-import { DataResult, State, process } from "@progress/kendo-data-query";
+import {
+  DataResult,
+  GroupDescriptor,
+  GroupResult,
+  State,
+  groupBy,
+  process,
+} from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
+import {
+  setExpandedState,
+  setGroupIds,
+} from "@progress/kendo-react-data-tools";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -38,15 +49,9 @@ import {
   UseParaPc,
   UsePermissions,
   getQueryFromBizComponent,
-  handleKeyPressSearch,
-  rowsOfDataResult,
-  rowsWithSelectedDataResult,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
-import {
-  GAP,
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../components/CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import { useApi } from "../hooks/api";
@@ -69,6 +74,16 @@ const DETAIL_DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
+const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
+
+const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
+  const newDataState = groupBy(data, group);
+
+  setGroupIds({ data: newDataState, group: group });
+
+  return newDataState;
+};
+
 const Page: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -78,7 +93,11 @@ const Page: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
+  const [usedUserCnt, setUsedUserCnt] = useState(0);
+  const [group, setGroup] = React.useState(initialGroup);
+  const [total, setTotal] = useState(0);
 
+  const idGetter = getter(DATA_ITEM_KEY);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -101,14 +120,6 @@ const Page: React.FC = () => {
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
-  const [mainDataState, setMainDataState] = useState<State>({
-    group: [
-      {
-        field: "group_category_name",
-      },
-    ],
-    sort: [],
-  });
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
@@ -208,14 +219,15 @@ const Page: React.FC = () => {
     );
   };
 
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
+  const [resultState, setResultState] = React.useState<GroupResult[]>(
+    processWithGroups([], initialGroup)
   );
-  const [mainDataTotal, setMainDataTotal] = useState<number>(0);
 
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], detailDataState)
   );
+
+  const [collapsedState, setCollapsedState] = React.useState<string[]>([]);
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -422,9 +434,10 @@ const Page: React.FC = () => {
           }
         }
 
-        // 데이터 세팅
-        setMainDataTotal(totalRowCnt);
-        setMainDataResult((prev) => process(rows, mainDataState));
+        const newDataState = processWithGroups(rows, group);
+        setTotal(totalRowCnt);
+        setResultState(newDataState);
+
         if (totalRowCnt > 0) {
           const selectedRow =
             filters.find_row_value == ""
@@ -730,20 +743,6 @@ const Page: React.FC = () => {
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
   };
 
-  // selectedState가 바뀔때마다 data에 바뀐 selectedState 적용
-  useEffect(() => {
-    if (targetRowIndex !== null && gridRef.current) {
-      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
-      targetRowIndex = null;
-    }
-    setMainDataResult((prev) =>
-      process(
-        rowsWithSelectedDataResult(prev, selectedState, DATA_ITEM_KEY),
-        mainDataState
-      )
-    );
-  }, [selectedState]);
-
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
@@ -781,8 +780,6 @@ const Page: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainDataTotal(1);
-    setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
   };
 
@@ -913,10 +910,18 @@ const Page: React.FC = () => {
     }
   };
 
-  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
-    setMainDataResult((prev) => process(prev.data, event.dataState));
-    setMainDataState(event.dataState);
-  };
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [resultState]);
+
+  const newData = setExpandedState({
+    data: resultState,
+    collapsedIds: collapsedState,
+  });
 
   const onDetailDataStateChange = (event: GridDataStateChangeEvent) => {
     setDetailDataState(event.dataState);
@@ -924,11 +929,11 @@ const Page: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
-    var parts = mainDataTotal.toString().split(".");
+    var parts = total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총
-        {mainDataTotal == -1
+        {total == -1
           ? 0
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
             (parts[1] ? "." + parts[1] : "")}
@@ -962,7 +967,7 @@ const Page: React.FC = () => {
       return false;
     }
 
-    const data = rowsOfDataResult(mainDataResult).filter(
+    const data = newData.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
@@ -1000,7 +1005,7 @@ const Page: React.FC = () => {
           "@p_form_id": pathname,
           "@p_table_id": "comCodeMaster",
           "@p_orgdiv": "01",
-          "@p_ref_key": rowsOfDataResult(mainDataResult).filter(
+          "@p_ref_key": newData.filter(
             (row: any) =>
               row.num == Object.getOwnPropertyNames(selectedState)[0]
           )[0].group_code,
@@ -1060,7 +1065,7 @@ const Page: React.FC = () => {
             "@p_form_id": pathname,
             "@p_table_id": "comCodeMaster",
             "@p_orgdiv": "01",
-            "@p_ref_key": rowsOfDataResult(mainDataResult).filter(
+            "@p_ref_key": newData.filter(
               (row: any) =>
                 row.num == Object.getOwnPropertyNames(selectedState)[0]
             )[0].group_code,
@@ -1072,42 +1077,47 @@ const Page: React.FC = () => {
         } catch (error) {
           data3 = null;
         }
-        const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
-      const findRowIndex = rowsOfDataResult(mainDataResult).findIndex(
-        (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
-      );
+        const isLastDataDeleted = newData.length === 1 && filters.pgNum > 0;
+        const findRowIndex = newData.findIndex(
+          (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
+        );
 
-      if (isLastDataDeleted) {
-        setPage({
-          skip:
-            filters.pgNum == 1 || filters.pgNum == 0
-              ? 0
-              : PAGE_SIZE * (filters.pgNum - 2),
-          take: PAGE_SIZE,
-        });
+        if (isLastDataDeleted) {
+          setPage({
+            skip:
+              filters.pgNum == 1 || filters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
 
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-          pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
-          isSearch: true,
-        }));
-      } else {
-        resetAllGrid();
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value:
-            rowsOfDataResult(mainDataResult)[
-              findRowIndex < 1 ? 1 : findRowIndex - 1
-            ].group_code,
-            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
-          isSearch: true,
-        }));
-      }
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          resetAllGrid();
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value:
+              newData[findRowIndex < 1 ? 1 : findRowIndex - 1].group_code,
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        }
 
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+        if (paraDataDeleted.attdatnum)
+          setDeletedAttadatnums([paraDataDeleted.attdatnum]);
       }
     } else {
       console.log("[오류 발생]");
@@ -1138,7 +1148,7 @@ const Page: React.FC = () => {
   const reloadData = (workType: string, groupCode: string | undefined) => {
     if (workType === "U") {
       // 일반조회
-      const rows = rowsOfDataResult(mainDataResult).filter(
+      const rows = newData.filter(
         (item) => Object.getOwnPropertyNames(selectedState)[0] == item.num
       );
       setFilters((prev) => ({
@@ -1151,22 +1161,23 @@ const Page: React.FC = () => {
     }
   };
 
-  const onMainSortChange = (e: any) => {
-    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
   const onDetailSortChange = (e: any) => {
     setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const onExpandChange = (event: GridExpandChangeEvent) => {
-    const isExpanded =
-      event.dataItem.expanded === undefined
-        ? event.dataItem.aggregates
-        : event.dataItem.expanded;
-    event.dataItem.expanded = !isExpanded;
+  const onExpandChange = React.useCallback(
+    (event: GridExpandChangeEvent) => {
+      const item = event.dataItem;
 
-    setMainDataResult({ ...mainDataResult });
-  };
+      if (item.groupId) {
+        const collapsedIds = !event.value
+          ? [...collapsedState, item.groupId]
+          : collapsedState.filter((groupId) => groupId != item.groupId);
+        setCollapsedState(collapsedIds);
+      }
+    },
+    [collapsedState]
+  );
 
   const minGridWidth = React.useRef<number>(0);
   const grid = React.useRef<any>(null);
@@ -1179,10 +1190,11 @@ const Page: React.FC = () => {
       window.addEventListener("resize", handleResize);
 
       //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdHeaderList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current 
+      customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth.current += item.width)
+            : minGridWidth.current
       );
 
       setGridCurrent(grid.current.clientWidth);
@@ -1191,10 +1203,13 @@ const Page: React.FC = () => {
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.clientWidth-87 < minGridWidth.current && !applyMinWidth) {
+    if (
+      grid.current.clientWidth - 87 < minGridWidth.current &&
+      !applyMinWidth
+    ) {
       setApplyMinWidth(true);
-    } else if (grid.current.clientWidth-87 > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth-87);
+    } else if (grid.current.clientWidth - 87 > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth - 87);
       setApplyMinWidth(false);
     }
   };
@@ -1307,7 +1322,7 @@ const Page: React.FC = () => {
       <GridContainerWrap>
         <GridContainer width={`30%`}>
           <ExcelExport
-            data={rowsOfDataResult(mainDataResult)}
+            data={newData}
             ref={(exporter) => {
               _export = exporter;
             }}
@@ -1338,9 +1353,20 @@ const Page: React.FC = () => {
             </GridTitleContainer>
             <Grid
               style={{ height: "76.5vh" }}
-              data={mainDataResult}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
+              data={newData.map((item: { items: any[] }) => ({
+                ...item,
+                items: item.items.map((row: any) => ({
+                  ...row,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                })),
+              }))}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              //그룹기능
+              group={group}
+              groupable={true}
+              onExpandChange={onExpandChange}
+              expandField="expanded"
               //선택 기능
               dataItemKey={DATA_ITEM_KEY}
               selectedField={SELECTED_FIELD}
@@ -1349,9 +1375,8 @@ const Page: React.FC = () => {
                 mode: "single",
               }}
               onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataTotal}
+              //페이지네이션
+              total={total}
               skip={page.skip}
               take={page.take}
               pageable={true}
@@ -1359,17 +1384,6 @@ const Page: React.FC = () => {
               //원하는 행 위치로 스크롤 기능
               ref={gridRef}
               rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //그룹기능
-              groupable={true}
-              onExpandChange={onExpandChange}
-              expandField="expanded"
               id="grdHeaderList"
             >
               <GridColumn cell={CommandCell} width="55px" />

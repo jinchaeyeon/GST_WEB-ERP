@@ -425,7 +425,7 @@ const CR_A0020W: React.FC = () => {
           : minGridWidth.current
       );
 
-      minGridWidth.current += 55;
+      minGridWidth.current += 50;
 
       setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
@@ -847,7 +847,7 @@ const CR_A0020W: React.FC = () => {
             // editField={EDIT_FIELD}
             id="grdList"
           >
-            <GridColumn cell={ColumnCommandCell} width="55px" />
+            <GridColumn cell={ColumnCommandCell} width="50px" />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) => {

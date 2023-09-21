@@ -89,7 +89,8 @@ export type TSessionItemCode =
   | "orgdiv"
   | "location"
   | "position"
-  | "dptcd";
+  | "dptcd"
+  | "postcd";
 
 export type TPermissions = {
   view: boolean;
