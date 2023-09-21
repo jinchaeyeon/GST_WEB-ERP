@@ -1138,6 +1138,7 @@ const SY_A0025W: React.FC = () => {
             : minGridWidth2.current
       );
 
+      minGridWidth2.current += 50;
       setGridCurrent(grid.current.clientWidth);
       setGridCurrent2(grid2.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
@@ -1146,19 +1147,19 @@ const SY_A0025W: React.FC = () => {
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.clientWidth -25< minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.clientWidth-25 > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth-25);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
     if (
-      grid2.current.clientWidth-25 < minGridWidth2.current &&
+      grid2.current.clientWidth < minGridWidth2.current &&
       !applyMinWidth2
     ) {
       setApplyMinWidth2(true);
-    } else if (grid2.current.clientWidth-25 > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.clientWidth-25);
+    } else if (grid2.current.clientWidth > minGridWidth2.current) {
+      setGridCurrent2(grid2.current.clientWidth);
       setApplyMinWidth2(false);
     }
   };

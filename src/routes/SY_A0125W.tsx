@@ -1247,10 +1247,10 @@ const SY_A0125W: React.FC = () => {
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.clientWidth -80  < minGridWidth.current && !applyMinWidth) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
-    } else if (grid.current.clientWidth-80 > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth-80);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
   };
