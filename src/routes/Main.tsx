@@ -1,49 +1,54 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { getter } from "@progress/kendo-react-common";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
-  GridSelectionChangeEvent,
   GridFooterCellProps,
+  GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
+import React, { useCallback, useEffect, useState } from "react";
 // ES2015 module syntax
-import {
-  Scheduler,
-  DayView,
-  WeekView,
-  MonthView,
-} from "@progress/kendo-react-scheduler";
-import {
-  GridContainer,
-  GridTitle,
-  GridContainerWrap,
-  ButtonContainer,
-  GridTitleContainer,
-  ApprovalInner,
-  ApprovalBox,
-  MainTopContainer,
-  TextContainer,
-  MainWorkStartEndContainer,
-} from "../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState } from "recoil";
-import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
-import { Iparameters } from "../store/types";
 import {
-  chkScrollHandler,
-  convertDateToStr,
+  DayView,
+  MonthView,
+  Scheduler,
+  SchedulerItem,
+  SchedulerItemProps,
+  WeekView,
+} from "@progress/kendo-react-scheduler";
+import { bytesToBase64 } from "byte-base64";
+import { useRecoilState } from "recoil";
+import {
+  ApprovalBox,
+  ApprovalInner,
+  ButtonContainer,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  MainTopContainer,
+  MainWorkStartEndContainer,
+  TextContainer,
+} from "../CommonStyled";
+import CenterCell from "../components/Cells/CenterCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseParaPc,
+  chkScrollHandler,
+  convertDateToStr,
+  getQueryFromBizComponent,
   useGeoLocation,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
-import CenterCell from "../components/Cells/CenterCell";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import { useApi } from "../hooks/api";
+import { loginResultState, sessionItemState } from "../store/atoms";
+import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "datnum";
 
@@ -158,6 +163,7 @@ const Main: React.FC = () => {
   const [schedulerFilter, setSchedulerFilter] = useState({
     cboSchedulerType: "MY",
     user_id: userId,
+    isSearch: false,
   });
   const noticeParameters: Iparameters = {
     procedureName: "sys_sel_default_home_web",
@@ -251,8 +257,8 @@ const Main: React.FC = () => {
       "@p_frdt": "",
       "@p_todt": "",
       "@p_ref_date": "",
-      "@p_ref_key": "N"
-    }
+      "@p_ref_key": "N",
+    },
   };
 
   const fetchWorkTime = async () => {
@@ -425,7 +431,7 @@ const Main: React.FC = () => {
 
     if (data.isSuccess === true && data.tables[0]) {
       let rows = data.tables[0].Rows.map((row: any) => ({
-        //...row,
+        ...row,
         id: row.datnum,
         title: row.title,
         start: new Date(row.strtime),
@@ -434,6 +440,10 @@ const Main: React.FC = () => {
 
       setSchedulerDataResult(rows);
     }
+    setSchedulerFilter((prev) => ({
+      ...prev,
+      isSearch: false
+    }))
   };
 
   useEffect(() => {
@@ -447,7 +457,9 @@ const Main: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchScheduler();
+    if(schedulerFilter.isSearch === true) {
+      fetchScheduler();
+    }
   }, [schedulerFilter]);
 
   //그리드 리셋
@@ -586,9 +598,85 @@ const Main: React.FC = () => {
         cboSchedulerType: defaultOption.find(
           (item: any) => item.id === "cboSchedulerType"
         ).valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
+
+  const [colorData, setColorData] = useState<any[]>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const colorQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
+        )
+      );
+
+      fetchQuery(colorQueryStr, setColorData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
+
+  const CustomItem = (props: SchedulerItemProps) => {
+    let colorCode = "";
+    if (props.dataItem.colorID != undefined) {
+      if (
+        typeof props.dataItem.colorID == "number" ||
+        typeof props.dataItem.colorID == "string"
+      ) {
+        colorCode =
+          colorData.find(
+            (item: any) => item.sub_code == props.dataItem.colorID
+          ) == undefined
+            ? ""
+            : colorData.find(
+                (item: any) => item.sub_code == props.dataItem.colorID
+              ).color;
+      } else {
+        colorCode =
+          colorData.find(
+            (item: any) => item.sub_code == props.dataItem.colorID.sub_code
+          ) == undefined
+            ? ""
+            : colorData.find(
+                (item: any) => item.sub_code == props.dataItem.colorID.sub_code
+              ).color;
+      }
+    }
+    return (
+      <SchedulerItem
+        {...props}
+        style={{
+          ...props.style,
+          backgroundColor: colorCode,
+        }}
+      />
+    );
+  };
 
   return (
     <>
@@ -662,6 +750,7 @@ const Main: React.FC = () => {
             height={"718px"}
             data={schedulerDataResult}
             defaultDate={displayDate}
+            item={CustomItem}
           >
             <MonthView />
             <DayView />

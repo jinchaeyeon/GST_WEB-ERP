@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Grid,
   GridColumn,
@@ -18,6 +18,8 @@ import {
   WeekView,
   MonthView,
   SchedulerDataChangeEvent,
+  SchedulerItemProps,
+  SchedulerItem,
 } from "@progress/kendo-react-scheduler";
 import {
   GridContainer,
@@ -49,6 +51,7 @@ import {
   UsePermissions,
   handleKeyPressSearch,
   UseParaPc,
+  getQueryFromBizComponent,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -66,11 +69,15 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import TopButtons from "../components/Buttons/TopButtons";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import { FormWithCustomEditor } from "../components/custom-form";
+import { bytesToBase64 } from "byte-base64";
 
 const DATA_ITEM_KEY = "idx";
 let deletedTodoRows: object[] = [];
 let temp = 0;
 const CM_A1600: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
   const idGetter = getter(DATA_ITEM_KEY);
@@ -101,9 +108,46 @@ const CM_A1600: React.FC = () => {
     UsePermissions(setPermissions);
     UseCustomOption(pathname, setCustomOptionData);
   }
-
+  const [colorData, setColorData] = useState<any[]>([]);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_sysUserMaster_001,R_YN", setBizComponentData);
+  UseBizComponent(
+    "L_sysUserMaster_001,R_YN,L_APPOINTMENT_COLOR",
+    setBizComponentData
+  );
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const colorQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
+        )
+      );
+
+      fetchQuery(colorQueryStr, setColorData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const [todoDataState, setTodoDataState] = useState<State>({
     sort: [],
@@ -119,6 +163,7 @@ const CM_A1600: React.FC = () => {
       title: "Default Data",
       start: new Date("2021-01-01T08:30:00.000Z"),
       end: new Date("2021-01-01T09:00:00.000Z"),
+      colorID: 0,
     },
   ];
   const [schedulerDataResult, setSchedulerDataResult] = useState(defaultData);
@@ -160,15 +205,6 @@ const CM_A1600: React.FC = () => {
     }));
   };
 
-  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-  const filterInputChange = (e: any) => {
-    const { value, name } = e.target;
-    setTodoFilter((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const [todoFilter, setTodoFilter] = useState({
     pgSize: PAGE_SIZE,
     work_type: "TODOLIST",
@@ -183,6 +219,7 @@ const CM_A1600: React.FC = () => {
     work_type: "MY",
     person: userId,
     rdoplandiv: "Y",
+    isSearch: false,
   });
 
   const todoParameters: Iparameters = {
@@ -285,12 +322,17 @@ const CM_A1600: React.FC = () => {
           start: start,
           end: end,
           isAllDay: timeDiff === 8.64e7 ? true : false, // 24시간 차이 시 all day
+          colorID: colorData.find((item) => item.sub_code == row.colorID),
         };
       });
 
       setSchedulerDataResult(rows);
     }
     setLoading(false);
+    setSchedulerFilter((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
   };
 
   useEffect(() => {
@@ -302,10 +344,7 @@ const CM_A1600: React.FC = () => {
   }, [todoFilter, permissions]);
 
   useEffect(() => {
-    // if (customOptionData !== null) {
-    //   fetchScheduler();
-    // }
-    if (permissions !== null) fetchScheduler();
+    if (permissions !== null && schedulerFilter.isSearch) fetchScheduler();
   }, [schedulerFilter, permissions]);
 
   //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
@@ -352,6 +391,7 @@ const CM_A1600: React.FC = () => {
       alert(findMessage(messagesData, "CM_A1600W_001"));
       return false;
     }
+
     type TdataArr = {
       rowstatus_s: string[];
       datnum_s: string[];
@@ -395,6 +435,7 @@ const CM_A1600: React.FC = () => {
         description = "",
         title = "",
         isAllDay,
+        colorID,
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
@@ -417,7 +458,9 @@ const CM_A1600: React.FC = () => {
       dataArr.kind1_s.push("");
       dataArr.custcd_s.push("");
       dataArr.title_s.push(title);
-      dataArr.colorid_s.push("");
+      dataArr.colorid_s.push(
+        typeof colorID == "number" ? colorID : colorID.sub_code
+      );
     });
 
     setParaData((prev) => ({
@@ -566,6 +609,7 @@ const CM_A1600: React.FC = () => {
         ...prev,
         rdoplandiv: defaultOption.find((item: any) => item.id === "rdoplandiv")
           .valueCode,
+        isSearch: true,
       }));
 
       setTodoFilter((prev) => ({
@@ -643,10 +687,10 @@ const CM_A1600: React.FC = () => {
 
   const onAddClick = () => {
     todoDataResult.data.map((item) => {
-      if(item.num > temp){
-        temp = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
-  })
+    });
     const idx: number =
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
@@ -733,6 +777,7 @@ const CM_A1600: React.FC = () => {
       kind1_s: string[];
       custcd_s: string[];
       title_s: string[];
+      colorid_s: string[];
     };
 
     let dataArr: TData = {
@@ -745,6 +790,7 @@ const CM_A1600: React.FC = () => {
       kind1_s: [],
       custcd_s: [],
       title_s: [],
+      colorid_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
@@ -757,10 +803,8 @@ const CM_A1600: React.FC = () => {
         kind1,
         custcd,
         title,
+        colorID,
       } = item;
-
-      console.log("item");
-      console.log(item);
 
       const strtimeDate = new Date(dateformat(strtime));
 
@@ -779,10 +823,22 @@ const CM_A1600: React.FC = () => {
       dataArr.kind1_s.push(kind1);
       dataArr.custcd_s.push(custcd);
       dataArr.title_s.push(title);
+      dataArr.colorid_s.push(
+        typeof colorID == "number" ? colorID : colorID.sub_code
+      );
     });
 
     deletedTodoRows.forEach((item: any, idx: number) => {
-      const { datnum, contents, strtime, finyn, kind1, custcd, title } = item;
+      const {
+        datnum,
+        contents,
+        strtime,
+        finyn,
+        kind1,
+        custcd,
+        title,
+        colorID,
+      } = item;
 
       const strtimeDate = new Date(dateformat(strtime));
 
@@ -801,6 +857,9 @@ const CM_A1600: React.FC = () => {
       dataArr.kind1_s.push(kind1);
       dataArr.custcd_s.push(custcd);
       dataArr.title_s.push(title);
+      dataArr.colorid_s.push(
+        typeof colorID == "number" ? colorID : colorID.sub_code
+      );
     });
 
     setTodoParaDataSaved((prev) => ({
@@ -815,6 +874,7 @@ const CM_A1600: React.FC = () => {
       kind1_s: dataArr.kind1_s.join("|"),
       custcd_s: dataArr.custcd_s.join("|"),
       title_s: dataArr.title_s.join("|"),
+      colorid_s: dataArr.colorid_s.join("|"),
     }));
   };
 
@@ -971,6 +1031,45 @@ const CM_A1600: React.FC = () => {
       alert(e);
     }
   };
+
+  const CustomItem = (props: SchedulerItemProps) => {
+    let colorCode = "";
+    if (props.dataItem.colorID != undefined) {
+      if (
+        typeof props.dataItem.colorID == "number" ||
+        typeof props.dataItem.colorID == "string"
+      ) {
+        colorCode =
+          colorData.find(
+            (item: any) => item.sub_code == props.dataItem.colorID
+          ) == undefined
+            ? ""
+            : colorData.find(
+                (item: any) => item.sub_code == props.dataItem.colorID
+              ).color;
+      } else {
+        colorCode =
+          colorData.find(
+            (item: any) => item.sub_code == props.dataItem.colorID.sub_code
+          ) == undefined
+            ? ""
+            : colorData.find(
+                (item: any) => item.sub_code == props.dataItem.colorID.sub_code
+              ).color;
+      }
+    }
+
+    return (
+      <SchedulerItem
+        {...props}
+        style={{
+          ...props.style,
+          backgroundColor: colorCode,
+        }}
+      />
+    );
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1040,14 +1139,26 @@ const CM_A1600: React.FC = () => {
             data={schedulerDataResult}
             onDataChange={handleDataChange}
             defaultDate={displayDate}
-            editable={true}
+            editable={{
+              add: true,
+              remove: true,
+              drag: true,
+              resize: true,
+              select: true,
+              edit: true,
+            }}
+            item={CustomItem}
+            form={FormWithCustomEditor}
           >
             <WeekView />
             <MonthView />
             <DayView />
           </Scheduler>
         </GridContainer>
-        <GridContainerWrap flexDirection="column">
+        <GridContainerWrap
+          style={{ width: isMobile ? "" : "35%" }}
+          flexDirection="column"
+        >
           <ExcelExport
             data={todoDataResult.data}
             ref={(exporter) => {

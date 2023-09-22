@@ -1,3 +1,4 @@
+import { Divider } from "@mui/material";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -52,16 +53,16 @@ import {
 import { Layout, Position } from "../components/DnD/Layout";
 import { LayoutSquare } from "../components/DnD/LayoutSquare";
 import { Piece } from "../components/DnD/Piece";
+import DetailWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
 import {
   clickedState,
-  isLoading,
   infoState,
+  isLoading,
   pointsState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Divider } from "@mui/material";
 
 export interface AppState {
   position: [number, number];
@@ -190,7 +191,8 @@ const SY_A0500W: React.FC = () => {
     col_cnt: 4,
     row_cnt: 4,
   });
-
+  const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -250,7 +252,7 @@ const SY_A0500W: React.FC = () => {
       (item: any) => item.col_index == col && item.row_index == row
     )[0];
     return (
-      <div key={`${row}${col}`} style={style}>
+      <div key={`${row}${col}`} style={style} onClick={deletemenu}>
         <LayoutSquare
           x={row}
           y={col}
@@ -309,6 +311,32 @@ const SY_A0500W: React.FC = () => {
     setInformation((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const InfoChange = (e: any) => {
+    const { value, name } = e.target;
+
+    const newData = detailDataResult.data.map((item) =>
+      info.key == item.row_index + "" + item.col_index
+        ? {
+            ...item,
+            [name]: value,
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setDetailDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setInfo((prev) => ({
+      ...prev,
+      caption: value,
     }));
   };
 
@@ -526,6 +554,16 @@ const SY_A0500W: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
+    setClicked("");
+    setInfo({
+      caption: "",
+      form_id: "",
+      key: "",
+    });
+    setPoints({
+      x: 0,
+      y: 0,
+    });
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -708,8 +746,84 @@ const SY_A0500W: React.FC = () => {
         total: prev.total,
       };
     });
+    setClicked("");
+    setInfo({
+      caption: "",
+      form_id: "",
+      key: "",
+    });
+    setPoints({
+      x: 0,
+      y: 0,
+    });
   };
-  
+
+  const handleClick = (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+  };
+
+  const removeIcon = (infomations: any) => {
+    let newData: any[] = [];
+    //삭제 안 할 데이터 newData에 push
+    detailDataResult.data.forEach((item: any) => {
+      if (infomations.key != item.row_index + "" + item.col_index) {
+        newData.push(item);
+      }
+    });
+
+    setDetailDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const addCaption = (infomations: any) => {
+    const newData = detailDataResult.data.map((item) =>
+      info.key == item.row_index + "" + item.col_index
+        ? {
+            ...item,
+            caption: infomations.menu_name,
+            form_id: infomations.form_id,
+            menu_name: infomations.menu_name,
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setDetailDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setInfo((prev) => ({
+      ...prev,
+      caption: infomations.menu_name,
+      form_id: infomations.form_id,
+    }));
+    setClicked("");
+    setPoints({
+      x: 0,
+      y: 0,
+    });
+  };
+
+  const deletemenu = () => {
+    setClicked("");
+    setInfo({
+      caption: "",
+      form_id: "",
+      key: "",
+    });
+    setPoints({
+      x: 0,
+      y: 0,
+    });
+  }
+
   return (
     <>
       <TitleContainer>
@@ -910,15 +1024,36 @@ const SY_A0500W: React.FC = () => {
       {clicked != "" && (
         <ContextMenu top={points.y} left={points.x}>
           <ul>
-            <li>{info.caption}</li>
+            <li onClick={handleClick}>
+              <Input
+                name="caption"
+                type="text"
+                value={info.caption}
+                onChange={InfoChange}
+              />
+            </li>
             <li>{info.form_id}</li>
             <Divider />
-            <li>메뉴 등록</li>
+            <li
+              onClick={(e) => {
+                handleClick(e);
+                setDetailWindowVisible(true);
+              }}
+            >
+              메뉴 등록
+            </li>
             <Divider />
             <li onClick={() => removeCaption(info)}>초기화</li>
-            <li>제거</li>
+            <li onClick={() => removeIcon(info)}>제거</li>
           </ul>
         </ContextMenu>
+      )}
+      {detailWindowVisible && (
+        <DetailWindow
+          setVisible={setDetailWindowVisible}
+          reloadData={(data) => addCaption(data)}
+          modal={true}
+        />
       )}
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>

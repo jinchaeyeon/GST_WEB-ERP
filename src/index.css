@@ -194,6 +194,15 @@ code {
   cursor: pointer;
 }
 
+/*스케줄러 폼 변경*/
+#schulderform > .k-form-field > .k-label{
+  width: 20% !important;
+}
+
+#schulderform > .k-form-field > .k-form-field-wrap{
+  max-width: 100% !important;
+}
+
 /*버튼 색상 변경 */
 .k-button-solid-primary {
   color: white !important;
@@ -209,13 +218,18 @@ div.k-animation-container {
   z-index: 10100 !important;
 }
 
+.k-dialog-wrapper .k-dialog {
+  display: inline !important;
+  min-height: 150px !important;
+}
+
 .k-scheduler-edit-dialog > .k-window, .k-dialog > .k-window-content, .k-prompt-container {
   padding-bottom : 70px !important;
 }
 
 .k-scheduler-edit-dialog > .k-window, .k-dialog > .k-window-actions {
-    margin-Left: 10px  !important;
-    padding-bottom: 40px !important;
+    display: flex !important;
+    justify-content: flex-end !important;
   }
   
 .k-pager-md .k-pager-numbers-wrap {

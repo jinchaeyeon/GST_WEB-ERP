@@ -37,22 +37,6 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
   const [information, setInformation] = useRecoilState(infoState);
   const [points, setPoints] = useRecoilState(pointsState);
 
-  useEffect(() => {
-    const handleClick = () => {
-      setClicked("");
-      setInformation({
-        caption: "",
-        form_id: "",
-        key: "",
-      });
-      setPoints({
-        x: 0,
-        y: 0,
-      });
-    };
-    window.addEventListener("click", handleClick);
-  }, []);
-
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: ItemTypes.KNIGHT,
@@ -127,7 +111,7 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
           }}
         >
           <img
-            style={{ width: "auto", height: "100%" }}
+            style={{ height: "100%", width: "100%", objectFit: "contain"}}
             ref={excelInput}
             src={imgBase64}
             alt="UserImage"
