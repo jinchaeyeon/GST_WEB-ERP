@@ -20,13 +20,13 @@ export const gridList: Array<TGrid> = [
         id: "col_ordnum",
         field: "ordnum",
         caption: "수주번호",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_custnm",
         field: "custnm",
         caption: "업체명",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_ordsts",
@@ -110,7 +110,7 @@ export const gridList: Array<TGrid> = [
         id: "col_quokey",
         field: "quokey",
         caption: "견적번호",
-        width: 150,
+        width: 100,
       },
       {
         id: "col_remark",
@@ -122,7 +122,7 @@ export const gridList: Array<TGrid> = [
         id: "col_finyn",
         field: "finyn",
         caption: "완료여부",
-        width: 100,
+        width: 120,
       },
     ],
   },

@@ -8,7 +8,7 @@ export const gridList: Array<TGrid> = [
         id: "col_ordnum",
         field: "ordnum",
         caption: "수주번호",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_orddt",
@@ -26,7 +26,7 @@ export const gridList: Array<TGrid> = [
         id: "col_custcd",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm",
@@ -38,7 +38,7 @@ export const gridList: Array<TGrid> = [
         id: "col_rcvcustcd",
         field: "rcvcustcd",
         caption: "인수처코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_rcvcustnm",
@@ -56,13 +56,13 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_itemacnt",
@@ -74,13 +74,13 @@ export const gridList: Array<TGrid> = [
         id: "col_insiz",
         field: "insiz",
         caption: "규격",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_lotnum",
         field: "lotnum",
         caption: "LOT NO",
-        width: 200,
+        width: 100,
       },
       {
         id: "col_qty",
@@ -104,7 +104,7 @@ export const gridList: Array<TGrid> = [
         id: "col_qtyunit",
         field: "qtyunit",
         caption: "수량단위",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_unp",
@@ -140,7 +140,7 @@ export const gridList: Array<TGrid> = [
         id: "col_finyn",
         field: "finyn",
         caption: "완료여부",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_project",
@@ -152,7 +152,7 @@ export const gridList: Array<TGrid> = [
         id: "col_poregnum",
         field: "poregnum",
         caption: "PO번호",
-        width: 150,
+        width: 120,
       },
     ],
   },

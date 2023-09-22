@@ -2301,11 +2301,11 @@ const Page: React.FC = () => {
               resizable={true}
               id="grdList2"
             >
-              <GridColumn field="rowstatus" title=" " width="40px" />
+              <GridColumn field="rowstatus" title=" " width="50px" />
               <GridColumn
                 field="chk_yn"
                 title=" "
-                width="50px"
+                width="45px"
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&

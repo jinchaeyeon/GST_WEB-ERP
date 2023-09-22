@@ -14,7 +14,7 @@ export const gridList: Array<TGrid> = [
         id: "col_recdtfind",
         field: "recdtfind",
         caption: "출하처리번호",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_custcd",
@@ -97,7 +97,7 @@ export const gridList: Array<TGrid> = [
         id: "col_lotnum",
         field: "lotnum",
         caption: "LOT NO",
-        width: 150,
+        width: 100,
       },
     ],
   },

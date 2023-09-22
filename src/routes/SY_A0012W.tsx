@@ -1224,7 +1224,7 @@ const SY_A0120: React.FC = () => {
           : minGridWidth.current
       );
 
-      minGridWidth.current += 40;
+      minGridWidth.current += 45;
       setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
     }
@@ -1477,7 +1477,7 @@ const SY_A0120: React.FC = () => {
                 <GridColumn
                   field="rowstatus"
                   title=" "
-                  width="40px"
+                  width="45px"
                   editable={false}
                 />
                 {customOptionData !== null &&

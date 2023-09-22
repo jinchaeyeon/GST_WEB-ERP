@@ -20,7 +20,7 @@ export const gridList: Array<TGrid> = [
         id: "col_use_yn",
         field: "use_yn",
         caption: "사용유무",
-        width: 110,
+        width: 80,
       },
     ],
   }

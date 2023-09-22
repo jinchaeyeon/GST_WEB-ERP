@@ -1336,7 +1336,7 @@ const Page: React.FC = () => {
             : minGridWidth.current 
         );
 
-        minGridWidth.current += 55;
+        minGridWidth.current += 50;
         setGridCurrent(grid.current.clientWidth);
         setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
@@ -1497,7 +1497,7 @@ const Page: React.FC = () => {
               resizable={true}
               id="grdHeaderList"
             >
-              <GridColumn cell={CommandCell} width="55px" />
+              <GridColumn cell={CommandCell} width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
                   (item: any, idx: number) =>

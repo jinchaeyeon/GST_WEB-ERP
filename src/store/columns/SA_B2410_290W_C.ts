@@ -8,13 +8,13 @@ export const gridList: Array<TGrid> = [
         id: "col_custcd",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm",
         field: "custnm",
         caption: "업체명",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_qty",
@@ -49,19 +49,19 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemno",
         field: "itemno",
         caption: "품번",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_ordsiz",
@@ -79,7 +79,7 @@ export const gridList: Array<TGrid> = [
         id: "col_qtyunit",
         field: "qtyunit",
         caption: "수량단위",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_wonamt2",
@@ -108,13 +108,13 @@ export const gridList: Array<TGrid> = [
         id: "col_custcd2",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm2",
         field: "custnm",
         caption: "업체명",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_qty3",
@@ -196,7 +196,7 @@ export const gridList: Array<TGrid> = [
         id: "col_qtyunit2",
         field: "qtyunit",
         caption: "수량단위",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_unp",
@@ -232,7 +232,7 @@ export const gridList: Array<TGrid> = [
         id: "col_recdt",
         field: "recdt",
         caption: "매출번호",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_seq1",
