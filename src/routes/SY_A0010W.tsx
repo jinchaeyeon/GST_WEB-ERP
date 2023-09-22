@@ -1384,7 +1384,7 @@ const Page: React.FC = () => {
               rowHeight={30}
               id="grdHeaderList"
             >
-              <GridColumn cell={CommandCell} width="84px" />
+              <GridColumn cell={CommandCell} width="50px" />
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
                   (item: any, idx: number) =>

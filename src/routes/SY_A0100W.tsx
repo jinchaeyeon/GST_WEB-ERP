@@ -484,7 +484,7 @@ const App: React.FC = () => {
 
   const CusomizedGrid = () => {
     return (
-      <GridContainer clientWidth={CLIENT_WIDTH} inTab={true}>
+      <GridContainer width="100%" inTab={true}>
         <Grid
           style={{ height: "75vh" }}
           data={newData.map((item) => ({
@@ -724,7 +724,7 @@ const App: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+      <TabStrip style={{width: "100%"}} selected={tabSelected} onSelect={handleSelectTab}>
         <TabStripTab title="데이터 등록 현황">
           <CusomizedGrid></CusomizedGrid>
         </TabStripTab>

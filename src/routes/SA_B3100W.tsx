@@ -922,7 +922,7 @@ const SA_B3100W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "36.5vh" }}
+                  style={{ height: "33.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1003,7 +1003,7 @@ const SA_B3100W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "36.5vh" }}
+                  style={{ height: "33.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1169,7 +1169,7 @@ const SA_B3100W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "36.5vh" }}
+                  style={{ height: "33.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1469,7 +1469,7 @@ const SA_B3100W: React.FC = () => {
           <GridContainerWrap flexDirection="column">
             <GridContainer width={"100%"}>
               <Grid
-                style={{ height: "36.5vh" }}
+                style={{ height: "33.5vh" }}
                 data={process(
                   gridDataResult.data.map((row) => ({
                     ...row,
