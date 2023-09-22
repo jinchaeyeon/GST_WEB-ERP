@@ -1224,19 +1224,20 @@ const SY_A0120: React.FC = () => {
           : minGridWidth.current
       );
 
-      setGridCurrent(grid.current.clientWidth - 40);
-      setApplyMinWidth(grid.current.clientWidth - 40 < minGridWidth.current);
+      minGridWidth.current += 40;
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
     if (
-      grid.current.clientWidth - 40 < minGridWidth.current &&
+      grid.current.clientWidth < minGridWidth.current &&
       !applyMinWidth
     ) {
       setApplyMinWidth(true);
-    } else if (grid.current.clientWidth - 40 > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth - 40);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
   };

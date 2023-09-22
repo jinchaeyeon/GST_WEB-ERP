@@ -1986,30 +1986,32 @@ const Page: React.FC = () => {
             : minGridWidth2.current
       );
 
-      setGridCurrent(grid.current.clientWidth - 90);
-      setGridCurrent2(grid2.current.clientWidth - 90);
-      setApplyMinWidth(grid.current.clientWidth - 90 < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.clientWidth - 90 < minGridWidth2.current);
+      minGridWidth.current += 90;
+      minGridWidth2.current += 90;
+      setGridCurrent(grid.current.clientWidth);
+      setGridCurrent2(grid2.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
     }
   }, [customOptionData]);
 
   const handleResize = () => {
     if (
-      grid.current.clientWidth - 90 < minGridWidth.current &&
+      grid.current.clientWidth < minGridWidth.current &&
       !applyMinWidth
     ) {
       setApplyMinWidth(true);
-    } else if (grid.current.clientWidth - 90 > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth - 90);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(false);
     }
     if (
-      grid2.current.clientWidth - 90 < minGridWidth2.current &&
+      grid2.current.clientWidth < minGridWidth2.current &&
       !applyMinWidth2
     ) {
       setApplyMinWidth2(true);
-    } else if (grid2.current.clientWidth - 90 > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.clientWidth - 90);
+    } else if (grid2.current.clientWidth > minGridWidth2.current) {
+      setGridCurrent2(grid2.current.clientWidth);
       setApplyMinWidth2(false);
     }
   };
