@@ -8,7 +8,7 @@ export const gridList: Array<TGrid> = [
         id: "col_user_group_id",
         field: "user_group_id",
         caption: "사용자그룹ID",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_user_group_name",
