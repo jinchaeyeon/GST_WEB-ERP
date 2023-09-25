@@ -221,7 +221,15 @@ const Page: React.FC = () => {
   const [resultState, setResultState] = React.useState<GroupResult[]>(
     processWithGroups([], initialGroup)
   );
+  //그리드 데이터 스테이트
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
 
+  //그리드 데이터 결과값
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], detailDataState)
   );
@@ -434,6 +442,12 @@ const Page: React.FC = () => {
         }
 
         const newDataState = processWithGroups(rows, group);
+        setMainDataResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
+        });
         setTotal(totalRowCnt);
         setResultState(newDataState);
 
@@ -958,7 +972,7 @@ const Page: React.FC = () => {
       return false;
     }
 
-    const data = newData.filter(
+    const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
@@ -996,7 +1010,7 @@ const Page: React.FC = () => {
           "@p_form_id": pathname,
           "@p_table_id": "comCodeMaster",
           "@p_orgdiv": "01",
-          "@p_ref_key": newData.filter(
+          "@p_ref_key": mainDataResult.data.filter(
             (row: any) =>
               row.num == Object.getOwnPropertyNames(selectedState)[0]
           )[0].group_code,
@@ -1056,7 +1070,7 @@ const Page: React.FC = () => {
             "@p_form_id": pathname,
             "@p_table_id": "comCodeMaster",
             "@p_orgdiv": "01",
-            "@p_ref_key": newData.filter(
+            "@p_ref_key": mainDataResult.data.filter(
               (row: any) =>
                 row.num == Object.getOwnPropertyNames(selectedState)[0]
             )[0].group_code,
@@ -1068,8 +1082,8 @@ const Page: React.FC = () => {
         } catch (error) {
           data3 = null;
         }
-        const isLastDataDeleted = newData.length === 1 && filters.pgNum > 0;
-        const findRowIndex = newData.findIndex(
+        const isLastDataDeleted = mainDataResult.data.length === 1 && filters.pgNum > 0;
+        const findRowIndex = mainDataResult.data.findIndex(
           (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
         );
 
@@ -1097,7 +1111,7 @@ const Page: React.FC = () => {
           setFilters((prev) => ({
             ...prev,
             find_row_value:
-              newData[findRowIndex < 1 ? 1 : findRowIndex - 1].group_code,
+              mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1].group_code,
             pgNum: isLastDataDeleted
               ? prev.pgNum != 1
                 ? prev.pgNum - 1
