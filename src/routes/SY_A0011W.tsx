@@ -1402,7 +1402,7 @@ const Page: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>사용자구분</th>
+              <th>사용유무</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox

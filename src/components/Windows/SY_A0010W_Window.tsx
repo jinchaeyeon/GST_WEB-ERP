@@ -1438,7 +1438,7 @@ const KendoWindow = ({
                   </td>
                 </tr>
                 <tr>
-                  <th>첨부번호</th>
+                  <th>첨부파일</th>
                   <td colSpan={7}>
                     <Input
                       name="files"
@@ -1585,6 +1585,7 @@ const KendoWindow = ({
             width="120px"
             title="정렬순서"
             cell={NumberCell}
+            headerCell={RequiredHeader}
           />
           <GridColumn
             field="use_yn"
