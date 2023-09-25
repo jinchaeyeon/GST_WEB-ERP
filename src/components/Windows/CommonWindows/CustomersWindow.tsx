@@ -201,7 +201,7 @@ const KendoWindow = ({
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-      if (totalRowCnt) {
+      if (totalRowCnt > 0) {
         const selectedRow = rows[0];
         setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }

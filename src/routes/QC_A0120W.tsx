@@ -749,7 +749,7 @@ const QC_A0120: React.FC = () => {
       >
         <TabStripTab title="공정불량">
           <GridContainerWrap>
-            <GridContainer width="50%">
+            <GridContainer width="60%">
               <GridContainerWrap>
                 <Chart
                   onSeriesClick={onChartSeriesClick}
@@ -759,7 +759,6 @@ const QC_A0120: React.FC = () => {
                   <ChartLegend position="bottom" />
                   <ChartSeries>
                     <ChartSeriesItem
-                      //autoFit={true}
                       type="pie"
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "공정별"
@@ -779,7 +778,6 @@ const QC_A0120: React.FC = () => {
                   <ChartSeries>
                     <ChartSeriesItem
                       type="pie"
-                      width={1200}
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "설비별"
                       )}
@@ -829,14 +827,14 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
             </GridContainer>
-            <GridContainer width={`calc(50% - ${GAP}px)`}>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
               <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="소재불량">
           <GridContainerWrap>
-            <GridContainer width="50%">
+            <GridContainer width="60%">
               <GridContainerWrap>
                 <Chart
                   onSeriesClick={onChartSeriesClick}
@@ -915,14 +913,14 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
             </GridContainer>
-            <GridContainer width={`calc(50% - ${GAP}px)`}>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
               <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="검사불량">
           <GridContainerWrap>
-            <GridContainer width="25%">
+            <GridContainer width="30%">
               <GridContainerWrap>
                 <Chart
                   onSeriesClick={onChartSeriesClick}
@@ -964,7 +962,7 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
             </GridContainer>
-            <GridContainer width={`calc(75% - ${GAP}px)`}>
+            <GridContainer width={`calc(70% - ${GAP}px)`}>
               <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
             </GridContainer>
           </GridContainerWrap>
