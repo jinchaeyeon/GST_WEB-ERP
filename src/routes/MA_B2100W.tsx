@@ -7,6 +7,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { getter } from "@progress/kendo-react-common";
@@ -54,6 +55,7 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2100W_C";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import Page from "./CR_A1001W";
 
 const dateField = ["indt"];
 const DATA_ITEM_KEY = "reckey";
@@ -121,6 +123,8 @@ const MA_B2100W: React.FC = () => {
   const [PacListData, setPacListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
+  
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -559,6 +563,24 @@ const MA_B2100W: React.FC = () => {
     }
   };
 
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+
+  const pageChange = (event:GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch : true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
   return (
     <>
       <TitleContainer>
@@ -805,6 +827,13 @@ const MA_B2100W: React.FC = () => {
             fixedScroll={true}
             total={mainDataResult.total}
             onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}

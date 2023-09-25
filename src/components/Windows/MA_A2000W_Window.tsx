@@ -943,7 +943,7 @@ const CopyWindow = ({
           convertDateToStr(filters.purdt).substring(6, 8) < "01" ||
           convertDateToStr(filters.purdt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "MA_A2400W_001");
+          throw findMessage(messagesData, "MA_A2000W_001");
         } else if (
           filters.doexdiv == null ||
           filters.doexdiv == "" ||

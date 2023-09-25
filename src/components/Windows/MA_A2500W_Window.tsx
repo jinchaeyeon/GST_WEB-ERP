@@ -541,7 +541,7 @@ const CopyWindow = ({
     let valid = true;
     try {
       if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "MA_A2400W_003");
+        throw findMessage(messagesData, "MA_A2500W_004");
       } else if (
         convertDateToStr(filters.indt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.indt).substring(6, 8) > "31" ||

@@ -5,6 +5,7 @@ import {
   GridDataStateChangeEvent,
   GridEvent,
   GridSelectionChangeEvent,
+  GridPageChangeEvent,
   getSelectedState,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
@@ -37,6 +38,8 @@ import {
   UseCustomOption,
   UsePermissions,
   handleKeyPressSearch,
+  UseMessages,
+  findMessage,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -228,6 +231,41 @@ const MA_B7000: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  //페이지네이션 세팅
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+
+  const pageChange = (event:GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch : true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange2 = (event:GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch : true,
+    }));
+
+    setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   //조회조건 초기값
@@ -538,6 +576,9 @@ const MA_B7000: React.FC = () => {
     }
   }, [detailFilters2]);
 
+  const [messagesData, setMessagesData] = useState<any>(null);
+  UseMessages("MA_B7000W", setMessagesData);
+
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
@@ -758,8 +799,20 @@ const MA_B7000: React.FC = () => {
   }, [filters, permissions]);
 
   const search = () => {
-    resetAllGrid();
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    try{
+      if(
+        filters.ymdyyyy == null ||
+        filters.ymdyyyy == undefined
+        ){
+          throw findMessage(messagesData, "MA_B7000W_001");
+      } else{
+        resetAllGrid();
+        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      }
+      } catch(e){
+      alert(e);
+    }
+    
   };
 
   return (
@@ -1008,6 +1061,13 @@ const MA_B7000: React.FC = () => {
             fixedScroll={true}
             total={mainDataResult.total}
             onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -1075,6 +1135,13 @@ const MA_B7000: React.FC = () => {
             fixedScroll={true}
             total={detail1DataResult.total}
             onScroll={onDetail1ScrollHandler}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={3}
             //컬럼순서조정
             reorderable={true}
             //컬럼너비조정
@@ -1125,6 +1192,7 @@ const MA_B7000: React.FC = () => {
             fixedScroll={true}
             total={detail2DataResult.total}
             onScroll={onDetail2ScrollHandler}
+            // skip={page}
             //컬럼순서조정
             reorderable={true}
             //컬럼너비조정

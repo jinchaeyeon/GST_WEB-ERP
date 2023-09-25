@@ -1010,7 +1010,8 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
-    let valid = true;
+    setData(mainDataResult.data, filters, deletedMainRows);
+    let valid = false;
     mainDataResult.data.map((item) => {
       if (item.itemcd == "" && valid == true) {
         alert("품목코드를 채워주세요.");
@@ -1019,12 +1020,15 @@ const CopyWindow = ({
       }
     });
 
-    if (valid == true) {
-      setData(mainDataResult.data, filters, deletedMainRows);
-      if (workType == "N") {
-        onClose();
-      }
-    }
+    
+    // if (valid = true) {
+    //   setData(mainDataResult.data, filters, deletedMainRows);
+    //   if (workType == "N") {
+    //     onClose();
+    //   }
+    // }
+    
+    
   };
 
   const onDeleteClick = (e: any) => {

@@ -53,6 +53,8 @@ import {
   UseDesignInfo,
   UsePermissions,
   handleKeyPressSearch,
+  UseMessages,
+  findMessage,
 } from "../components/CommonFunction";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { ICustData } from "../hooks/interfaces";
@@ -131,6 +133,9 @@ const MA_B3000W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
+
+  const [messagesData, setMessagesData] = useState<any>(null);
+  UseMessages("MA_B3000W", setMessagesData);
 
   const [gridDataState, setGridDataState] = useState<State>({
     sort: [],
@@ -516,7 +521,18 @@ const onGridScrollHandler = (event: GridEvent) => {
   };
 
   const search = () => {
-    resetGrid();
+    try{
+      if(
+        filters.yyyy == null ||
+        filters.yyyy == undefined
+      ) {
+        throw findMessage(messagesData, "MA_B3000W_001");
+      } else {
+        resetGrid();
+      }
+    }catch(e){
+      alert(e)
+    }
   };
 
   return (

@@ -48,7 +48,6 @@ import {
   chkScrollHandler,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
   getQueryFromBizComponent,
   UseParaPc,
   toDate,
@@ -58,6 +57,8 @@ import {
   isValidDate,
   getItemQuery,
   toDate2,
+  UseMessages,
+  findMessage,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -1296,22 +1297,24 @@ const CopyWindow = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
+    
     mainDataResult.data.map((item) => {
-      if (
-        (item.itemcd == "" || item.itemnm == "" || item.qty == 0) &&
-        valid == true
-      ) {
-        alert("필수항목(품목코드, 품목명, 수량을 채워주세요.)");
-        valid = false;
-        return false;
-      }
+      //MA_A2700W.tsx로 옮김
+      // if (
+      //   (item.itemcd == "" || item.itemnm == "" || item.qty == 0) &&
+      //   valid == true
+      // ) {
+      //   alert("필수항목(품목코드, 품목명, 수량을 채워주세요.)");
+      //   valid = false;
+      //   return false;
+      // }
     });
 
     if (valid == true) {
       setData(mainDataResult.data, filters, deletedMainRows);
-      if (workType == "N") {
-        onClose();
-      }
+      // if (workType == "N") {
+      //   onClose();
+      // }
     }
   };
 

@@ -53,6 +53,8 @@ import {
   UseDesignInfo,
   UsePermissions,
   handleKeyPressSearch,
+  UseMessages,
+  findMessage,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { IItemData } from "../hooks/interfaces";
@@ -159,6 +161,9 @@ const MA_B3100: React.FC = () => {
     setTabSelected(e.selected);
     resetGrid();
   };
+
+  const [messagesData, setMessagesData] = useState<any>(null);
+  UseMessages("MA_B3100W", setMessagesData);
 
   let gridRef : any = useRef(null); 
   useEffect(() => {
@@ -525,7 +530,18 @@ const onGridScrollHandler = (event: GridEvent) => {
   };
 
   const search = () => {
-    resetGrid();
+    try{
+      if(
+        filters.yyyy == null ||
+        filters.yyyy == undefined
+      ){
+        throw findMessage(messagesData, "MA_B3100W_001");
+      }else{
+        resetGrid();
+      }
+    }catch(e){
+      alert(e);
+    }
   };
 
   return (

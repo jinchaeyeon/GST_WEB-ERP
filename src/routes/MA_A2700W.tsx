@@ -1389,41 +1389,51 @@ const MA_A2700W: React.FC = () => {
     let valid = true;
 
     try {
-      if (data.length == 0) {
-        throw findMessage(messagesData, "MA_A2700W_001");
-      } else if (
-        convertDateToStr(filter.indt).substring(0, 4) < "1997" ||
-        convertDateToStr(filter.indt).substring(6, 8) > "31" ||
-        convertDateToStr(filter.indt).substring(6, 8) < "01" ||
-        convertDateToStr(filter.indt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_002");
-      } else if (
-        filter.location == "" ||
-        filter.location == null ||
-        filter.location == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_003");
-      } else if (
-        filter.inuse == "" ||
-        filter.inuse == null ||
-        filter.inuse == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_004");
-      } else if (
-        filter.doexdiv == "" ||
-        filter.doexdiv == null ||
-        filter.doexdiv == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2700W_005");
-      }
-      for (var i = 0; i < data.length; i++) {
-        if (data[i].qty == 0) {
-          alert("수량은 필수입니다.");
+      mainDataResult.data.map((item) => {
+        if (
+          (item.itemcd == "" || item.itemnm == "" || item.qty == 0) &&
+          valid == true
+        ) {
+          alert("필수항목(품목코드, 품목명, 수량을 채워주세요.)");
+          valid = false;
           return false;
+        } else if (data.length == 0) {
+          throw findMessage(messagesData, "MA_A2700W_001");
+        } else if (
+          convertDateToStr(filter.indt).substring(0, 4) < "1997" ||
+          convertDateToStr(filter.indt).substring(6, 8) > "31" ||
+          convertDateToStr(filter.indt).substring(6, 8) < "01" ||
+          convertDateToStr(filter.indt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "MA_A2700W_002");
+        } else if (
+          filter.location == "" ||
+          filter.location == null ||
+          filter.location == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2700W_003");
+        } else if (
+          filter.inuse == "" ||
+          filter.inuse == null ||
+          filter.inuse == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2700W_004");
+        } else if (
+          filter.doexdiv == "" ||
+          filter.doexdiv == null ||
+          filter.doexdiv == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A2700W_005");
         }
-      }
-    } catch (e) {
+        for (var i = 0; i < data.length; i++) {
+          if (data[i].qty == 0) {
+            alert("수량은 필수입니다.");
+            return false;
+          }
+        }
+      });
+    }
+    catch (e) {
       alert(e);
       valid = false;
     }

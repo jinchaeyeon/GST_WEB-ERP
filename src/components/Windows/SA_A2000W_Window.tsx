@@ -1082,6 +1082,27 @@ const KendoWindow = ({
           throw findMessage(messagesData, "SA_A2000W_009");
         }
       });
+      if(
+        filters.doexdiv == null ||
+        filters.doexdiv == "" ||
+        filters.doexdiv == undefined ||
+        filters.taxdiv == null ||
+        filters.taxdiv == "" ||
+        filters.taxdiv == undefined ||
+        filters.orddt == null ||
+        filters.orddt == "" ||
+        filters.orddt == undefined ||
+        filters.dlvdt == null ||
+        filters.dlvdt == "" ||
+        filters.dlvdt == undefined ||
+        filters.custcd == null ||
+        filters.custcd == "" ||
+        filters.custcd == undefined ||
+        filters.custnm == null ||
+        filters.custnm == undefined
+        ){
+          throw findMessage(messagesData, "SA_A2000W_008");
+        }
     } catch (e) {
       alert(e);
       valid = false;
