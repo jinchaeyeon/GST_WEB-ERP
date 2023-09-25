@@ -63,7 +63,7 @@ const idGetter = getter(DATA_ITEM_KEY);
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
-  reloadData(workType: string, groupCode?: string): void;
+  reloadData(workType: string, groupCode: string): void;
   workType: string;
   group_code?: string;
   isCopy: boolean;

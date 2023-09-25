@@ -333,7 +333,7 @@ const CommentsGrid = (props: {
   });
 
   const paraSaved: Iparameters = {
-    procedureName: "sys_sav_comments ",
+    procedureName: "sys_sav_comments",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -519,15 +519,23 @@ const CommentsGrid = (props: {
           isSearch: true,
         }));
       } else {
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: dataResult.data.filter(
-            (item: any) =>
-              item[DATA_ITEM_KEY] ==
-              Object.getOwnPropertyNames(selectedState)[0]
-          )[0].seq,
-          isSearch: true,
-        }));
+        if(dataResult.total < 1) {
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: "",
+            isSearch: true,
+          }));
+        } else {
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: dataResult.data.filter(
+              (item: any) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0].seq,
+            isSearch: true,
+          }));
+        }
       }
 
       deletedRows = [];

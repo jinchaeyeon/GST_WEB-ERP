@@ -1136,15 +1136,11 @@ const Page: React.FC = () => {
     }));
   };
 
-  const reloadData = (workType: string, groupCode: string | undefined) => {
+  const reloadData = (workType: string, groupCode: string) => {
     if (workType === "U") {
-      // 일반조회
-      const rows = newData.filter(
-        (item) => Object.getOwnPropertyNames(selectedState)[0] == item.num
-      );
       setFilters((prev) => ({
         ...prev,
-        find_row_value: rows[0].group_code,
+        find_row_value: groupCode,
         isSearch: true,
       }));
     } else {
