@@ -1,28 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
-import {
-  Grid,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridEvent,
-  GridFooterCellProps,
-} from "@progress/kendo-react-grid";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
-import {
-  Title,
-  FilterBox,
-  GridContainer,
-  GridTitle,
-  GridContainerWrap,
-  TitleContainer,
-  ButtonContainer,
-  GridTitleContainer,
-  ButtonInInput,
-} from "../CommonStyled";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
 import {
   Chart,
   ChartLegend,
@@ -30,42 +7,89 @@ import {
   ChartSeriesItem,
   ChartTitle,
 } from "@progress/kendo-react-charts";
-import "hammerjs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
-import YearCalendar from "../components/Calendars/YearCalendar";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
-  chkScrollHandler,
-  convertDateToStr,
-  getQueryFromBizComponent,
-  setDefaultDate,
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import { bytesToBase64 } from "byte-base64";
+import "hammerjs";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import {
   UseBizComponent,
   UseCustomOption,
-  UsePermissions,
-  handleKeyPressSearch,
-  findMessage,
   UseMessages,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
 } from "../components/CommonFunction";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { IItemData } from "../hooks/interfaces";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../components/CommonString";
-import NumberCell from "../components/Cells/NumberCell";
-import DateCell from "../components/Cells/DateCell";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
+import { IItemData } from "../hooks/interfaces";
+import { isLoading } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
+
+const DATA_ITEM_KEY = "num";
 
 const QC_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
-
+  let gridRef: any = useRef(null);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const idGetter = getter(DATA_ITEM_KEY);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setDetailFilters1((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -81,11 +105,6 @@ const QC_A0120: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
-        // cboLocation: defaultOption.find(
-        //   (item: any) => item.id === "cboLocation"
-        // ).valueCode,
-        // radFinyn: defaultOption.find((item: any) => item.id === "radFinyn")
-        //   .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -159,15 +178,20 @@ const QC_A0120: React.FC = () => {
   const [detail1DataResult, setDetail1DataResult] = useState<DataResult>(
     process([], detail1DataState)
   );
-
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [detail1PgNum, setDetail1PgNum] = useState(1);
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
-    onRefreshClick();
     setTabSelected(e.selected);
-    resetAllGrid();
+    setPage(initialPageState); // 페이지 초기화
+    fetchMainGrid(e.selected);
+    setDetailFilters1((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -224,58 +248,37 @@ const QC_A0120: React.FC = () => {
     select_item: "all",
     select_code: "%",
     dptcd: "",
+    isSearch: true,
+    pgNum: 1,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_QC_A0120W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "CHART",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_div": tabSelected,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.ymdFrdt),
-      "@p_todt": convertDateToStr(filters.ymdTodt),
-      "@p_proccd": filters.cboProccd,
-      "@p_fxcode": filters.cboFxcode,
-      "@p_badcd": filters.cboBadcd,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_select_item": filters.select_item,
-      "@p_select_code": filters.select_code,
-      "@p_dptcd": filters.cboDptcd,
-    },
-  };
-
-  const detailParameters: Iparameters = {
-    procedureName: "P_QC_A0120W_Q",
-    pageNumber: detail1PgNum,
-    pageSize: detailFilters1.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_div": tabSelected,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.ymdFrdt),
-      "@p_todt": convertDateToStr(filters.ymdTodt),
-      "@p_proccd": filters.cboProccd,
-      "@p_fxcode": filters.cboFxcode,
-      "@p_badcd": filters.cboBadcd,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_select_item": filters.select_item,
-      "@p_select_code": filters.select_code,
-      "@p_dptcd": filters.cboDptcd,
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
-    if (!permissions?.view) return;
+  const fetchMainGrid = async (tab: any) => {
     let data: any;
     setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_QC_A0120W_Q",
+      pageNumber: 1,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "CHART",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_div": tab,
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.ymdFrdt),
+        "@p_todt": convertDateToStr(filters.ymdTodt),
+        "@p_proccd": filters.cboProccd,
+        "@p_fxcode": filters.cboFxcode,
+        "@p_badcd": filters.cboBadcd,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_select_item": filters.select_item,
+        "@p_select_code": filters.select_code,
+        "@p_dptcd": filters.cboDptcd,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -286,13 +289,41 @@ const QC_A0120: React.FC = () => {
       const rows = data.tables[0].Rows;
 
       setMainDataResult(rows);
+      setDetailFilters1((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }));
     }
     setLoading(false);
   };
 
-  const fetchDetailGrid1 = async () => {
+  const fetchDetailGrid1 = async (detailFilters1: any) => {
     let data: any;
     setLoading(true);
+
+    const detailParameters: Iparameters = {
+      procedureName: "P_QC_A0120W_Q",
+      pageNumber: detailFilters1.pgNum,
+      pageSize: detailFilters1.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_div": tabSelected,
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.ymdFrdt),
+        "@p_todt": convertDateToStr(filters.ymdTodt),
+        "@p_proccd": filters.cboProccd,
+        "@p_fxcode": filters.cboFxcode,
+        "@p_badcd": filters.cboBadcd,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_select_item": filters.select_item,
+        "@p_select_code": filters.select_code,
+        "@p_dptcd": filters.cboDptcd,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
@@ -302,34 +333,23 @@ const QC_A0120: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
-      if (totalRowCnt > 0)
-        setDetail1DataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
+      setDetail1DataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+      }
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (customOptionData !== null) fetchMainGrid();
-  }, [mainPgNum]);
-
-  useEffect(() => {
-    if (customOptionData !== null) fetchDetailGrid1();
-  }, [detail1PgNum]);
-
-  useEffect(() => {
-    if (customOptionData !== null) resetAllGrid();
-  }, [detailFilters1]);
-
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setDetail1PgNum(1);
+    setTabSelected(0);
+    setPage(initialPageState); // 페이지 초기화
     setMainDataResult([]);
     setDetail1DataResult(process([], detail1DataState));
   };
@@ -342,21 +362,21 @@ const QC_A0120: React.FC = () => {
     }
   };
 
-  //스크롤 핸들러
-  const onDetail1ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, detail1PgNum, PAGE_SIZE))
-      setDetail1PgNum((prev) => prev + 1);
-  };
-
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onDetail1DataStateChange = (event: GridDataStateChangeEvent) => {
     setDetail1DataState(event.dataState);
   };
 
   const detail1TotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = detail1DataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {detail1DataResult.total}건
+        총
+        {detail1DataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -410,15 +430,6 @@ const QC_A0120: React.FC = () => {
     });
   };
 
-  const onRefreshClick = () => {
-    setSelectedChartData({
-      gubun: "전체",
-      argument: "-",
-    });
-
-    setDetail1DataState({});
-  };
-
   type TCusomizedGrid = {
     maxWidth: string;
   };
@@ -432,10 +443,33 @@ const QC_A0120: React.FC = () => {
       isInitSearch === false &&
       permissions !== null
     ) {
-      fetchMainGrid();
+      fetchMainGrid(tabSelected);
       setIsInitSearch(true);
     }
   }, [filters, permissions]);
+
+  useEffect(() => {
+    if (
+      detailFilters1.isSearch &&
+      permissions !== null &&
+      customOptionData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(detailFilters1);
+      setDetailFilters1((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      fetchDetailGrid1(deepCopiedFilters);
+    }
+  }, [detailFilters1, permissions]);
+
+  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+
+    setSelectedState(newSelectedState);
+  };
 
   const CusomizedGrid = (props: TCusomizedGrid) => {
     const { maxWidth } = props;
@@ -448,25 +482,18 @@ const QC_A0120: React.FC = () => {
               name="gubun"
               type="text"
               value={selectedChartData.gubun}
-              readOnly
+              className="readonly"
             />
             <Input
               name="argument"
               type="text"
               value={selectedChartData.argument}
-              readOnly
+              className="readonly"
             />
-            <Button
-              onClick={onRefreshClick}
-              themeColor={"primary"}
-              fillMode={"outline"}
-              icon="refresh"
-              title="동기화"
-            ></Button>
           </ButtonContainer>
         </GridTitleContainer>
         <Grid
-          style={{ height: "68.5vh" }}
+          style={{ height: "78.5vh" }}
           data={process(
             detail1DataResult.data.map((row) => ({
               ...row,
@@ -480,18 +507,33 @@ const QC_A0120: React.FC = () => {
                 (item: any) => item.user_id === row.prodemp
               )?.user_name,
               badpct: Math.round(row.badpct),
+              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),
             detail1DataState
           )}
           {...detail1DataState}
           onDataStateChange={onDetail1DataStateChange}
-          //정렬기능
-          sortable={true}
-          onSortChange={onDetail1SortChange}
+          //선택 기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onDetailSelectionChange}
           //스크롤 조회 기능
           fixedScroll={true}
           total={detail1DataResult.total}
-          onScroll={onDetail1ScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
+          //원하는 행 위치로 스크롤 기능
+          ref={gridRef}
+          rowHeight={30}
+          //정렬기능
+          sortable={true}
+          onSortChange={onDetail1SortChange}
           //컬럼순서조정
           reorderable={true}
           //컬럼너비조정
@@ -565,8 +607,12 @@ const QC_A0120: React.FC = () => {
         throw findMessage(messagesData, "QC_A0120W_001");
       } else {
         resetAllGrid();
-        fetchMainGrid();
-        fetchDetailGrid1();
+        fetchMainGrid(0);
+        setDetailFilters1((prev) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
       }
     } catch (e) {
       alert(e);
@@ -594,21 +640,21 @@ const QC_A0120: React.FC = () => {
             <tr>
               <th>불량일자</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.ymdFrdt,
-                      end: filters.ymdTodt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        ymdFrdt: e.value.start,
-                        ymdTodt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.ymdFrdt,
+                    end: filters.ymdTodt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      ymdFrdt: e.value.start,
+                      ymdTodt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>품목코드</th>
               <td>
                 <Input
@@ -696,10 +742,14 @@ const QC_A0120: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+      <TabStrip
+        style={{ width: "100%" }}
+        selected={tabSelected}
+        onSelect={handleSelectTab}
+      >
         <TabStripTab title="공정불량">
           <GridContainerWrap>
-            <GridContainer>
+            <GridContainer width="60%">
               <GridContainerWrap>
                 <Chart
                   onSeriesClick={onChartSeriesClick}
@@ -709,7 +759,6 @@ const QC_A0120: React.FC = () => {
                   <ChartLegend position="bottom" />
                   <ChartSeries>
                     <ChartSeriesItem
-                      //autoFit={true}
                       type="pie"
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "공정별"
@@ -729,7 +778,6 @@ const QC_A0120: React.FC = () => {
                   <ChartSeries>
                     <ChartSeriesItem
                       type="pie"
-                      width={1200}
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "설비별"
                       )}
@@ -779,13 +827,14 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
             </GridContainer>
-
-            <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
+              <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+            </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="소재불량">
           <GridContainerWrap>
-            <GridContainer maxWidth="100%">
+            <GridContainer width="60%">
               <GridContainerWrap>
                 <Chart
                   onSeriesClick={onChartSeriesClick}
@@ -818,7 +867,6 @@ const QC_A0120: React.FC = () => {
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "설비별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
@@ -839,7 +887,6 @@ const QC_A0120: React.FC = () => {
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "불량유형별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
@@ -858,7 +905,6 @@ const QC_A0120: React.FC = () => {
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "품목별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
@@ -867,13 +913,14 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
             </GridContainer>
-
-            <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
+              <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+            </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
         <TabStripTab title="검사불량">
           <GridContainerWrap>
-            <GridContainer maxWidth="100%">
+            <GridContainer width="30%">
               <GridContainerWrap>
                 <Chart
                   onSeriesClick={onChartSeriesClick}
@@ -887,7 +934,6 @@ const QC_A0120: React.FC = () => {
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "불량유형별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
@@ -908,7 +954,6 @@ const QC_A0120: React.FC = () => {
                       data={mainDataResult.filter(
                         (item: any) => item.gubun === "품목별"
                       )}
-                      //data={mainDataResult}
                       field="value"
                       categoryField="category"
                       labels={{ visible: true, content: labelContent }}
@@ -917,8 +962,9 @@ const QC_A0120: React.FC = () => {
                 </Chart>
               </GridContainerWrap>
             </GridContainer>
-
-            <CusomizedGrid maxWidth="1050px"></CusomizedGrid>
+            <GridContainer width={`calc(70% - ${GAP}px)`}>
+              <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+            </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
@@ -928,6 +974,7 @@ const QC_A0120: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+          modal={true}
         />
       )}
     </>

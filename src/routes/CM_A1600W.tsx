@@ -1,57 +1,58 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { getter } from "@progress/kendo-react-common";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
-  GridSelectionChangeEvent,
   GridFooterCellProps,
   GridItemChangeEvent,
+  GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
+import React, { useCallback, useEffect, useState } from "react";
 // ES2015 module syntax
+import { Button } from "@progress/kendo-react-buttons";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
-  Scheduler,
   DayView,
-  WeekView,
   MonthView,
+  Scheduler,
   SchedulerDataChangeEvent,
-  SchedulerItemProps,
-  SchedulerItem,
+  WeekView
 } from "@progress/kendo-react-scheduler";
-import {
-  GridContainer,
-  GridTitle,
-  GridContainerWrap,
-  ButtonContainer,
-  GridTitleContainer,
-  TitleContainer,
-  Title,
-  FilterBox,
-} from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
-import { Iparameters, TPermissions } from "../store/types";
 import {
-  chkScrollHandler,
-  convertDateToStrWithTime,
-  convertDateToStr,
-  dateformat,
-  dateformat2,
-  getGridItemChangedData,
+  ButtonContainer,
+  FilterBox,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import DateCell from "../components/Cells/DateCell";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import {
   UseBizComponent,
   UseCustomOption,
-  setDefaultDate,
   UseMessages,
-  findMessage,
-  UsePermissions,
-  handleKeyPressSearch,
   UseParaPc,
+  UsePermissions,
+  chkScrollHandler,
+  convertDateToStr,
+  convertDateToStrWithTime,
+  dateformat,
+  dateformat2,
+  findMessage,
+  getGridItemChangedData,
   getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -59,22 +60,21 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import DateCell from "../components/Cells/DateCell";
-import { Button } from "@progress/kendo-react-buttons";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
-import TopButtons from "../components/Buttons/TopButtons";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { FormWithCustomEditor } from "../components/custom-form";
-import { bytesToBase64 } from "byte-base64";
+import { CustomEditItem } from "../custom-item";
+import { useApi } from "../hooks/api";
+import { isLoading, loginResultState } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
 
-const DATA_ITEM_KEY = "idx";
+const DATA_ITEM_KEY = "num";
 let deletedTodoRows: object[] = [];
 let temp = 0;
+let temp2 = 0;
 const CM_A1600: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -269,7 +269,6 @@ const CM_A1600: React.FC = () => {
   };
 
   const fetchTodoGrid = async () => {
-    if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -281,25 +280,22 @@ const CM_A1600: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+      const rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
-        idx: idx,
         strtime: convertDateToStr(new Date(row.strtime)),
       }));
 
-      if (totalRowCnt > 0)
-        setTodoDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
+      setTodoDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
     }
     setLoading(false);
   };
 
   const fetchScheduler = async () => {
-    if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -336,16 +332,16 @@ const CM_A1600: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isInitSearch === false && permissions !== null) {
+    if (isInitSearch === false) {
       //if (customOptionData !== null && isInitSearch === false) {
       fetchTodoGrid();
       setIsInitSearch(true);
     }
-  }, [todoFilter, permissions]);
+  }, [todoFilter]);
 
   useEffect(() => {
-    if (permissions !== null && schedulerFilter.isSearch) fetchScheduler();
-  }, [schedulerFilter, permissions]);
+    if (schedulerFilter.isSearch) fetchScheduler();
+  }, [schedulerFilter]);
 
   //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
   const onTodoSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -367,6 +363,20 @@ const CM_A1600: React.FC = () => {
   const onTodoDataStateChange = (event: GridDataStateChangeEvent) => {
     setTodoDataState(event.dataState);
   };
+  let str = false;
+
+  useEffect(() => {
+    window.addEventListener('keydown', function (e) {
+      if(e.shiftKey) {
+        str = true;
+      }
+    });
+    return () => {
+      window.removeEventListener('keydown', function(){
+
+      });
+    }
+  })
   //그리드 푸터
   const todoTotalFooterCell = (props: GridFooterCellProps) => {
     return (
@@ -420,9 +430,15 @@ const CM_A1600: React.FC = () => {
       colorid_s: [],
     };
 
-    created.forEach((item) => (item["rowstatus"] = "N"));
-    updated.forEach((item) => (item["rowstatus"] = "U"));
-    deleted.forEach((item) => (item["rowstatus"] = "D"));
+    if(str == false) {
+      created.forEach((item) => (item["rowstatus"] = "N"));
+      updated.forEach((item) => (item["rowstatus"] = "U"));
+      deleted.forEach((item) => (item["rowstatus"] = "D"));
+    } else {
+      created.forEach((item) => (item["rowstatus"] = "N"));
+      updated.forEach((item) => (item["rowstatus"] = "N"));
+      deleted.forEach((item) => (item["rowstatus"] = "D"));
+    }
 
     const mergedArr = [...created, ...updated, ...deleted];
 
@@ -431,15 +447,14 @@ const CM_A1600: React.FC = () => {
         datnum = "",
         start,
         end,
-        rowstatus,
+        rowstatus = "",
         description = "",
         title = "",
         isAllDay,
         colorID,
       } = item;
-
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.datnum_s.push(datnum);
+      dataArr.datnum_s.push(rowstatus == "N" ? "" : datnum);
       dataArr.strtime_s.push(
         isAllDay
           ? convertDateToStrWithTime(start).substr(0, 8) + " 0:0"
@@ -480,7 +495,7 @@ const CM_A1600: React.FC = () => {
       colorid_s: dataArr.colorid_s.join("|"),
     }));
   };
-
+ 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -587,6 +602,7 @@ const CM_A1600: React.FC = () => {
 
     if (data.isSuccess === true) {
       fetchScheduler();
+      str = false;
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1032,44 +1048,6 @@ const CM_A1600: React.FC = () => {
     }
   };
 
-  const CustomItem = (props: SchedulerItemProps) => {
-    let colorCode = "";
-    if (props.dataItem.colorID != undefined) {
-      if (
-        typeof props.dataItem.colorID == "number" ||
-        typeof props.dataItem.colorID == "string"
-      ) {
-        colorCode =
-          colorData.find(
-            (item: any) => item.sub_code == props.dataItem.colorID
-          ) == undefined
-            ? ""
-            : colorData.find(
-                (item: any) => item.sub_code == props.dataItem.colorID
-              ).color;
-      } else {
-        colorCode =
-          colorData.find(
-            (item: any) => item.sub_code == props.dataItem.colorID.sub_code
-          ) == undefined
-            ? ""
-            : colorData.find(
-                (item: any) => item.sub_code == props.dataItem.colorID.sub_code
-              ).color;
-      }
-    }
-
-    return (
-      <SchedulerItem
-        {...props}
-        style={{
-          ...props.style,
-          backgroundColor: colorCode,
-        }}
-      />
-    );
-  };
-
   return (
     <>
       <TitleContainer>
@@ -1139,15 +1117,8 @@ const CM_A1600: React.FC = () => {
             data={schedulerDataResult}
             onDataChange={handleDataChange}
             defaultDate={displayDate}
-            editable={{
-              add: true,
-              remove: true,
-              drag: true,
-              resize: true,
-              select: true,
-              edit: true,
-            }}
-            item={CustomItem}
+            editable={true}
+            editItem={CustomEditItem}
             form={FormWithCustomEditor}
           >
             <WeekView />

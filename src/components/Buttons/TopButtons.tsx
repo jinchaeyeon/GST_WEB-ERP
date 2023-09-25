@@ -9,11 +9,17 @@ import { UseGetValueFromSessionItem } from "../CommonFunction";
 
 interface ITopButtons {
   search: () => void;
-  exportExcel: () => void;
+  exportExcel?: () => void;
   permissions: TPermissions;
+  disable?: boolean;
 }
 
-const TopButtons = ({ search, exportExcel, permissions }: ITopButtons) => {
+const TopButtons = ({
+  search,
+  exportExcel,
+  permissions,
+  disable = false,
+}: ITopButtons) => {
   const pathname: string = window.location.pathname.replace("/", "");
   const processApi = useApi();
   const [menus, setMenus] = useRecoilState(menusState);
@@ -73,16 +79,21 @@ const TopButtons = ({ search, exportExcel, permissions }: ITopButtons) => {
       >
         조회
       </Button>
-      <Button
-        title="Export Excel"
-        onClick={exportExcel}
-        icon="download"
-        fillMode="outline"
-        themeColor={"primary"}
-        disabled={permissions.print ? false : true}
-      >
-        Excel
-      </Button>
+      {disable ? (
+        ""
+      ) : (
+        <Button
+          title="Export Excel"
+          onClick={exportExcel}
+          icon="download"
+          fillMode="outline"
+          themeColor={"primary"}
+          disabled={permissions.print ? false : true}
+        >
+          Excel
+        </Button>
+      )}
+
       <Button
         onClick={saveFav}
         title="즐겨찾기"

@@ -12,7 +12,6 @@ import {
   setExpandedState,
   setGroupIds,
 } from "@progress/kendo-react-data-tools";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridCellProps,
@@ -222,7 +221,15 @@ const Page: React.FC = () => {
   const [resultState, setResultState] = React.useState<GroupResult[]>(
     processWithGroups([], initialGroup)
   );
+  //그리드 데이터 스테이트
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
 
+  //그리드 데이터 결과값
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], detailDataState)
   );
@@ -435,6 +442,12 @@ const Page: React.FC = () => {
         }
 
         const newDataState = processWithGroups(rows, group);
+        setMainDataResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
+        });
         setTotal(totalRowCnt);
         setResultState(newDataState);
 
@@ -902,14 +915,6 @@ const Page: React.FC = () => {
     setDetailSelectedState(newSelectedState);
   };
 
-  //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
-
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (targetRowIndex !== null && gridRef.current) {
@@ -967,7 +972,7 @@ const Page: React.FC = () => {
       return false;
     }
 
-    const data = newData.filter(
+    const data = mainDataResult.data.filter(
       (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
@@ -1005,7 +1010,7 @@ const Page: React.FC = () => {
           "@p_form_id": pathname,
           "@p_table_id": "comCodeMaster",
           "@p_orgdiv": "01",
-          "@p_ref_key": newData.filter(
+          "@p_ref_key": mainDataResult.data.filter(
             (row: any) =>
               row.num == Object.getOwnPropertyNames(selectedState)[0]
           )[0].group_code,
@@ -1065,7 +1070,7 @@ const Page: React.FC = () => {
             "@p_form_id": pathname,
             "@p_table_id": "comCodeMaster",
             "@p_orgdiv": "01",
-            "@p_ref_key": newData.filter(
+            "@p_ref_key": mainDataResult.data.filter(
               (row: any) =>
                 row.num == Object.getOwnPropertyNames(selectedState)[0]
             )[0].group_code,
@@ -1077,8 +1082,8 @@ const Page: React.FC = () => {
         } catch (error) {
           data3 = null;
         }
-        const isLastDataDeleted = newData.length === 1 && filters.pgNum > 0;
-        const findRowIndex = newData.findIndex(
+        const isLastDataDeleted = mainDataResult.data.length === 1 && filters.pgNum > 0;
+        const findRowIndex = mainDataResult.data.findIndex(
           (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
         );
 
@@ -1106,7 +1111,7 @@ const Page: React.FC = () => {
           setFilters((prev) => ({
             ...prev,
             find_row_value:
-              newData[findRowIndex < 1 ? 1 : findRowIndex - 1].group_code,
+              mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1].group_code,
             pgNum: isLastDataDeleted
               ? prev.pgNum != 1
                 ? prev.pgNum - 1
@@ -1145,15 +1150,11 @@ const Page: React.FC = () => {
     }));
   };
 
-  const reloadData = (workType: string, groupCode: string | undefined) => {
+  const reloadData = (workType: string, groupCode: string) => {
     if (workType === "U") {
-      // 일반조회
-      const rows = newData.filter(
-        (item) => Object.getOwnPropertyNames(selectedState)[0] == item.num
-      );
       setFilters((prev) => ({
         ...prev,
-        find_row_value: rows[0].group_code,
+        find_row_value: groupCode,
         isSearch: true,
       }));
     } else {
@@ -1234,8 +1235,8 @@ const Page: React.FC = () => {
           {permissions !== null && (
             <TopButtons
               search={search}
-              exportExcel={exportExcel}
               permissions={permissions}
+              disable={true}
             />
           )}
         </ButtonContainer>
@@ -1319,12 +1320,6 @@ const Page: React.FC = () => {
 
       <GridContainerWrap>
         <GridContainer width={`30%`}>
-          <ExcelExport
-            data={newData}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-          >
             <GridTitleContainer>
               <GridTitle>요약정보</GridTitle>
               {permissions !== null && (
@@ -1407,7 +1402,6 @@ const Page: React.FC = () => {
                     )
                 )}
             </Grid>
-          </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(70% - ${GAP}px)`}>
           <GridTitleContainer>

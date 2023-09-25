@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridCellProps,
@@ -48,7 +47,7 @@ import {
   UsePermissions,
   getQueryFromBizComponent,
   getYn,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -65,7 +64,6 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0011W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Item } from "devextreme-react/gantt";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -246,7 +244,7 @@ const Page: React.FC = () => {
       [name]: value,
     }));
   };
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -676,14 +674,6 @@ const Page: React.FC = () => {
     [allMenuSelectedState]
   );
 
-  //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
-
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
@@ -784,13 +774,13 @@ const Page: React.FC = () => {
     if (!window.confirm("삭제하시겠습니까?")) {
       return false;
     }
-    if(mainDataResult.data.length == 0) {
+    if (mainDataResult.data.length == 0) {
       alert("데이터가 없습니다");
     } else {
       const data = mainDataResult.data.filter(
         (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
-  
+
       setParaDataDeleted((prev) => ({
         ...prev,
         work_type: "D",
@@ -829,14 +819,18 @@ const Page: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
-          pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
+          pgNum: isLastDataDeleted
+            ? prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
           isSearch: true,
         }));
       } else {
         resetAllGrid();
         setFilters((prev) => ({
           ...prev,
-          find_row_value: 
+          find_row_value:
             mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
               .user_group_id,
           pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
@@ -1317,54 +1311,52 @@ const Page: React.FC = () => {
     ? allMenuDataResult.editItem[ALL_MENU_DATA_ITEM_KEY]
     : null;
 
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
 
-  
-    const minGridWidth = React.useRef<number>(0);
-    const grid = React.useRef<any>(null);
-    const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-    const [gridCurrent, setGridCurrent] = React.useState(0);
-  
-    React.useEffect(() => {
-      if (customOptionData != null) {
-        grid.current = document.getElementById("grdHeaderList");
-        window.addEventListener("resize", handleResize);
-  
-        //가장작은 그리드 이름
-        customOptionData.menuCustomColumnOptions["grdHeaderList"].map((item: TColumn) =>
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdHeaderList");
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
+        (item: TColumn) =>
           item.width !== undefined
             ? (minGridWidth.current += item.width)
-            : minGridWidth.current 
-        );
+            : minGridWidth.current
+      );
 
-        minGridWidth.current += 50;
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      }
-    }, [customOptionData]);
-  
-    const handleResize = () => {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    };
-  
-    const setWidth = (Name: string, minWidth: number | undefined) => {
-      if (minWidth == undefined) {
-        minWidth = 0;
-      }
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-  
-      return width;
-    };
+      minGridWidth.current += 50;
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+    }
+  }, [customOptionData]);
 
-    
+  const handleResize = () => {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    let width = applyMinWidth
+      ? minWidth
+      : minWidth +
+        (gridCurrent - minGridWidth.current) /
+          customOptionData.menuCustomColumnOptions[Name].length;
+
+    return width;
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1374,8 +1366,8 @@ const Page: React.FC = () => {
           {permissions && (
             <TopButtons
               search={search}
-              exportExcel={exportExcel}
               permissions={permissions}
+              disable={true}
             />
           )}
         </ButtonContainer>
@@ -1402,7 +1394,7 @@ const Page: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>사용자구분</th>
+              <th>사용유무</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
@@ -1422,201 +1414,180 @@ const Page: React.FC = () => {
 
       <GridContainerWrap>
         <GridContainer width={`30%`}>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
+          <GridTitleContainer>
+            <GridTitle>사용자그룹 정보</GridTitle>
+
+            {permissions && (
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="file-add"
+                  disabled={permissions.save ? false : true}
+                >
+                  생성
+                </Button>
+                <Button
+                  onClick={onDeleteClick}
+                  icon="delete"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
+                >
+                  삭제
+                </Button>
+              </ButtonContainer>
+            )}
+          </GridTitleContainer>
+          <Grid
+            style={{ height: "80.5vh" }}
+            data={process(
+              mainDataResult.data.map((row, idx) => ({
+                ...row,
+                use_yn: useYnListData.find(
+                  (item: any) => item.code === row.use_yn
+                )?.name,
+                postcd: postcdListData.find(
+                  (item: any) => item.sub_code === row.postcd
+                )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
             }}
+            onSelectionChange={onMainSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            id="grdHeaderList"
           >
-            <GridTitleContainer>
-              <GridTitle>사용자그룹 정보</GridTitle>
-              
-              {permissions && (
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="file-add"
-                    disabled={permissions.save ? false : true}
-                  >
-                    생성
-                  </Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    icon="delete"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    disabled={permissions.delete ? false : true}
-                  >
-                    삭제
-                  </Button>
-                </ButtonContainer>
-                )}
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "80.5vh" }}
-              data={process(
-                mainDataResult.data.map((row, idx) => ({
-                  ...row,
-                  use_yn: useYnListData.find(
-                    (item: any) => item.code === row.use_yn
-                  )?.name,
-                  postcd: postcdListData.find(
-                    (item: any) => item.sub_code === row.postcd
-                  )?.code_name,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-                mainDataState
+            <GridColumn cell={CommandCell} width="50px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={setWidth("grdHeaderList", item.width)}
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
               )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onMainSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              id="grdHeaderList"
-            >
-              <GridColumn cell={CommandCell} width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={setWidth("grdHeaderList", item.width)}
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
+          </Grid>
         </GridContainer>
         <GridContainer width={`calc(45% - ${GAP}px)`}>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-          >
-            <GridTitleContainer>
-              <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
-              {permissions !== null && (
-                <ButtonContainer>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                </ButtonContainer>
-              )}
-            </GridTitleContainer>
+          <GridTitleContainer>
+            <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
+            {permissions !== null && (
+              <ButtonContainer>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+              </ButtonContainer>
+            )}
+          </GridTitleContainer>
 
-            <TreeList
-              style={{ height: "80.5vh", overflow: "auto" }}
-              data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
-                extendDataItem(item, SUB_ITEMS_FIELD, {
-                  [EXPANDED_FIELD]: expanded.includes(
-                    item[USER_MENU_DATA_ITEM_KEY]
-                  ),
-                  [EDIT_FIELD]:
-                    item[USER_MENU_DATA_ITEM_KEY] === editItemId
-                      ? editItemField
-                      : undefined,
-                  [SELECTED_FIELD]: userMenuSelectedState[idGetter2(item)], //선택된 데이터
-                })
-              )}
-              subItemsField={SUB_ITEMS_FIELD}
-              expandField={EXPANDED_FIELD}
-              onExpandChange={onUserMenuExpandChange}
-              // 수정 기능
-              editField={EDIT_FIELD}
-              cellRender={renderers.cellRender}
-              onItemChange={onUserMenuItemChange}
-              // 행 드래그 앤 드롭 기능
-              rowRender={userMenuRowRender}
-              // 컬럼 리스트
-              columns={userMenuColumns}
-              // 선택
-              selectable={{
-                enabled: true,
-                drag: false,
-                cell: false,
-                mode: "single",
-              }}
-              selectedField={SELECTED_FIELD}
-              onSelectionChange={onUserMenuSelectionChange}
-            />
-          </ExcelExport>
+          <TreeList
+            style={{ height: "80.5vh", overflow: "auto" }}
+            data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
+              extendDataItem(item, SUB_ITEMS_FIELD, {
+                [EXPANDED_FIELD]: expanded.includes(
+                  item[USER_MENU_DATA_ITEM_KEY]
+                ),
+                [EDIT_FIELD]:
+                  item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                    ? editItemField
+                    : undefined,
+                [SELECTED_FIELD]: userMenuSelectedState[idGetter2(item)], //선택된 데이터
+              })
+            )}
+            subItemsField={SUB_ITEMS_FIELD}
+            expandField={EXPANDED_FIELD}
+            onExpandChange={onUserMenuExpandChange}
+            // 수정 기능
+            editField={EDIT_FIELD}
+            cellRender={renderers.cellRender}
+            onItemChange={onUserMenuItemChange}
+            // 행 드래그 앤 드롭 기능
+            rowRender={userMenuRowRender}
+            // 컬럼 리스트
+            columns={userMenuColumns}
+            // 선택
+            selectable={{
+              enabled: true,
+              drag: false,
+              cell: false,
+              mode: "single",
+            }}
+            selectedField={SELECTED_FIELD}
+            onSelectionChange={onUserMenuSelectionChange}
+          />
         </GridContainer>
         <GridContainer width={`calc(35% - ${GAP}px)`}>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
+          <GridTitleContainer>
+            <GridTitle>[참조] 전체 메뉴</GridTitle>
+          </GridTitleContainer>
+          <TreeList
+            style={{ height: "80.8vh" }}
+            data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
+              extendDataItem(item, SUB_ITEMS_FIELD, {
+                [EXPANDED_FIELD]: allMenuDataResult.expanded.includes(
+                  item[ALL_MENU_DATA_ITEM_KEY]
+                ),
+                [EDIT_FIELD]:
+                  item[ALL_MENU_DATA_ITEM_KEY] == editItemId2
+                    ? allMenuDataResult.editItemField
+                    : undefined,
+                [SELECTED_FIELD]: allMenuSelectedState[idGetter2(item)], //선택된 데이터
+              })
+            )}
+            expandField={EXPANDED_FIELD}
+            subItemsField={SUB_ITEMS_FIELD}
+            onExpandChange={onAllMenuExpandChange}
+            //선택 기능
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              drag: false,
+              cell: false,
+              mode: "single",
             }}
-          >
-            <GridTitleContainer>
-              <GridTitle>[참조] 전체 메뉴</GridTitle>
-            </GridTitleContainer>
-            <TreeList
-              style={{ height: "80.8vh" }}
-              data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
-                extendDataItem(item, SUB_ITEMS_FIELD, {
-                  [EXPANDED_FIELD]: allMenuDataResult.expanded.includes(
-                    item[ALL_MENU_DATA_ITEM_KEY]
-                  ),
-                  [EDIT_FIELD]:
-                    item[ALL_MENU_DATA_ITEM_KEY] == editItemId2
-                      ? allMenuDataResult.editItemField
-                      : undefined,
-                  [SELECTED_FIELD]: allMenuSelectedState[idGetter2(item)], //선택된 데이터
-                })
-              )}
-              expandField={EXPANDED_FIELD}
-              subItemsField={SUB_ITEMS_FIELD}
-              onExpandChange={onAllMenuExpandChange}
-              //선택 기능
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                drag: false,
-                cell: false,
-                mode: "single",
-              }}
-              onSelectionChange={onAllMenuSelectionChange}
-              //드래그용 행
-              rowRender={allMenuRowRender}
-              columns={allMenuColumns}
-            ></TreeList>
-          </ExcelExport>
+            onSelectionChange={onAllMenuSelectionChange}
+            //드래그용 행
+            rowRender={allMenuRowRender}
+            columns={allMenuColumns}
+          ></TreeList>
         </GridContainer>
       </GridContainerWrap>
       {detailWindowVisible && (
@@ -1642,8 +1613,8 @@ const Page: React.FC = () => {
           modal={true}
         />
       )}
-            {/* 컨트롤 네임 불러오기 용 */}
-            {gridList.map((grid: TGrid) =>
+      {/* 컨트롤 네임 불러오기 용 */}
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

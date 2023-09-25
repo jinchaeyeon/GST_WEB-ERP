@@ -1,8 +1,11 @@
 import {
+  DataResult,
   GroupDescriptor,
   GroupResult,
+  State,
   getter,
   groupBy,
+  process,
 } from "@progress/kendo-data-query";
 import {
   getSelectedState,
@@ -46,9 +49,8 @@ import {
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
-  CLIENT_WIDTH,
   PAGE_SIZE,
-  SELECTED_FIELD,
+  SELECTED_FIELD
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
@@ -129,6 +131,14 @@ const App: React.FC = () => {
 
   const [resultState, setResultState] = React.useState<GroupResult[]>(
     processWithGroups([], initialGroup)
+  );
+  //그리드 데이터 스테이트
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+  //그리드 데이터 결과값
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
   );
   const [collapsedState, setCollapsedState] = React.useState<string[]>([]);
   //선택 상태
@@ -286,7 +296,7 @@ const App: React.FC = () => {
         "@p_work_type": filters.work_type,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.cboLocation,
-        "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0,6),
+        "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0, 6),
         "@p_is_all_menu": programFilters.is_all_menu,
         "@p_user_groupping": programFilters.user_groupping,
       },
@@ -304,7 +314,7 @@ const App: React.FC = () => {
     } catch (error) {
       data = null;
     }
-   
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const usedUserCnt = data.returnString;
@@ -345,6 +355,12 @@ const App: React.FC = () => {
 
       const newDataState = processWithGroups(rows, group);
       setTotal(totalRowCnt);
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
       setResultState(newDataState);
 
       if (totalRowCnt > 0) {
@@ -485,80 +501,87 @@ const App: React.FC = () => {
   const CusomizedGrid = () => {
     return (
       <GridContainer width="100%" inTab={true}>
-        <Grid
-          style={{ height: "75vh" }}
-          data={newData.map((item) => ({
-            ...item,
-            items: item.items.map((row: any) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-            })),
-          }))}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          //그룹기능
-          group={group}
-          groupable={true}
-          onExpandChange={onExpandChange}
-          expandField="expanded"
-          //선택 기능
-          dataItemKey={DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
           }}
-          onSelectionChange={onMainSelectionChange}
-          //페이지네이션
-          total={total}
-          skip={page.skip}
-          take={page.take}
-          pageable={true}
-          onPageChange={pageChange}
-          //원하는 행 위치로 스크롤 기능
-          ref={gridRef}
-          rowHeight={30}
         >
-          {tabSelected === 2 && (
+          <Grid
+            style={{ height: "75vh" }}
+            data={newData.map((item) => ({
+              ...item,
+              items: item.items.map((row: any) => ({
+                ...row,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+            }))}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            //그룹기능
+            group={group}
+            groupable={true}
+            onExpandChange={onExpandChange}
+            expandField="expanded"
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onMainSelectionChange}
+            //페이지네이션
+            total={total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+          >
+            {tabSelected === 2 && (
+              <GridColumn
+                field="user_name"
+                title="사용자"
+                width="120px"
+                footerCell={TotalFooterCell}
+              />
+            )}
             <GridColumn
-              field="user_name"
-              title="사용자"
-              width="120px"
-              footerCell={TotalFooterCell}
+              field="form_id"
+              title="프로그램ID"
+              width="140px"
+              footerCell={
+                tabSelected !== 2 ? TotalFooterCell : UsedUserFooterCell
+              }
             />
-          )}
-          <GridColumn
-            field="form_id"
-            title="프로그램ID"
-            width="140px"
-            footerCell={
-              tabSelected !== 2 ? TotalFooterCell : UsedUserFooterCell
-            }
-          />
-          <GridColumn
-            field="menu_name"
-            title="프로그램명"
-            width="140px"
-            footerCell={
-              tabSelected === 2 ? TitleFooterCell : UsedUserFooterCell
-            }
-          />
-          {tabSelected !== 2 && (
             <GridColumn
-              field="user_name"
-              title="사용자"
-              width="120px"
-              footerCell={TitleFooterCell}
+              field="menu_name"
+              title="프로그램명"
+              width="140px"
+              footerCell={
+                tabSelected === 2 ? TitleFooterCell : UsedUserFooterCell
+              }
             />
-          )}
-          <GridColumn title="일자">{createDateColumn()}</GridColumn>
-          <GridColumn
-            field={tabSelected === 0 ? "data_cnt_tt" : "use_cnt_tt"}
-            title="합계"
-            width="120px"
-            footerCell={DateFooterCell}
-          />
-        </Grid>
+            {tabSelected !== 2 && (
+              <GridColumn
+                field="user_name"
+                title="사용자"
+                width="120px"
+                footerCell={TitleFooterCell}
+              />
+            )}
+            <GridColumn title="일자">{createDateColumn()}</GridColumn>
+            <GridColumn
+              field={tabSelected === 0 ? "data_cnt_tt" : "use_cnt_tt"}
+              title="합계"
+              width="120px"
+              footerCell={DateFooterCell}
+            />
+          </Grid>
+        </ExcelExport>
       </GridContainer>
     );
   };
@@ -724,7 +747,11 @@ const App: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <TabStrip style={{width: "100%"}} selected={tabSelected} onSelect={handleSelectTab}>
+      <TabStrip
+        style={{ width: "100%" }}
+        selected={tabSelected}
+        onSelect={handleSelectTab}
+      >
         <TabStripTab title="데이터 등록 현황">
           <CusomizedGrid></CusomizedGrid>
         </TabStripTab>

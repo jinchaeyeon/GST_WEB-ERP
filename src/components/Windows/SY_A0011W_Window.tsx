@@ -280,7 +280,7 @@ const KendoWindow = ({
               <td>
                 <Input
                   name="memo"
-                  type="number"
+                  type="text"
                   value={initialVal.memo}
                   onChange={filterInputChange}
                 />

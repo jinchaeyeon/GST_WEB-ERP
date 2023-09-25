@@ -63,7 +63,7 @@ const idGetter = getter(DATA_ITEM_KEY);
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
-  reloadData(workType: string, groupCode?: string): void;
+  reloadData(workType: string, groupCode: string): void;
   workType: string;
   group_code?: string;
   isCopy: boolean;
@@ -844,10 +844,16 @@ const KendoWindow = ({
     //검증
     try {
       detailDataResult.data.forEach((item: any, idx: number) => {
-        if (initialVal.code_length < item.sub_code.length && valid == true) {
-          throw findMessage(messagesData, "SY_A0010W_007");
-          valid = false;
+        if (!item.sub_code) {
+          throw findMessage(messagesData, "SY_A0010W_004");
         }
+        if (!item.code_name) {
+          throw findMessage(messagesData, "SY_A0010W_005");
+        }
+        if (!item.sort_seq) {
+          throw findMessage(messagesData, "SY_A0010W_006");
+        }
+        
         detailDataResult.data.forEach((chkItem: any, chkIdx: number) => {
           if (
             item.sub_code === chkItem.sub_code &&
@@ -858,16 +864,12 @@ const KendoWindow = ({
             valid = false;
           }
         });
+
+        if (initialVal.code_length < item.sub_code.length && valid == true) {
+          throw findMessage(messagesData, "SY_A0010W_007");
+          valid = false;
+        }
         
-        if (!item.sub_code) {
-          throw findMessage(messagesData, "SY_A0010W_004");
-        }
-        if (!item.code_name) {
-          throw findMessage(messagesData, "SY_A0010W_005");
-        }
-        if (!item.sort_seq) {
-          throw findMessage(messagesData, "SY_A0010W_006");
-        }
         if (!initialVal.group_code) {
           throw findMessage(messagesData, "SY_A0010W_008");
         }
@@ -1438,7 +1440,7 @@ const KendoWindow = ({
                   </td>
                 </tr>
                 <tr>
-                  <th>첨부번호</th>
+                  <th>첨부파일</th>
                   <td colSpan={7}>
                     <Input
                       name="files"
@@ -1585,6 +1587,7 @@ const KendoWindow = ({
             width="120px"
             title="정렬순서"
             cell={NumberCell}
+            headerCell={RequiredHeader}
           />
           <GridColumn
             field="use_yn"
