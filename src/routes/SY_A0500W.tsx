@@ -1,7 +1,6 @@
 import { Divider } from "@mui/material";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
@@ -598,12 +597,6 @@ const SY_A0500W: React.FC = () => {
     }));
   };
 
-  let _export: ExcelExport | null | undefined;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
@@ -833,101 +826,94 @@ const SY_A0500W: React.FC = () => {
           {permissions && (
             <TopButtons
               search={search}
-              exportExcel={exportExcel}
               permissions={permissions}
+              disable={true}
             />
           )}
         </ButtonContainer>
       </TitleContainer>
       <GridContainerWrap>
         <GridContainer width="25%">
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-          >
-            <GridTitleContainer>
-              <GridTitle>요약정보</GridTitle>
-            </GridTitleContainer>
-            <FormBoxWrap>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th style={{ width: "10%" }}>사업장</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="location"
-                          value={filters.location}
-                          customOptionData={customOptionData}
-                          changeData={filterComboBoxChange}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
-            <Grid
-              style={{ height: "79vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  location: locationListData.find(
-                    (item: any) => item.sub_code == row.location
-                  )?.code_name,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onMainSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              id="grdList"
-            >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={setWidth("grdList", item.width)}
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
+          <GridTitleContainer>
+            <GridTitle>요약정보</GridTitle>
+          </GridTitleContainer>
+          <FormBoxWrap>
+            <FormBox>
+              <tbody>
+                <tr>
+                  <th style={{ width: "10%" }}>사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="location"
+                        value={filters.location}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
                       />
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FormBox>
+          </FormBoxWrap>
+          <Grid
+            style={{ height: "79vh" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                location: locationListData.find(
+                  (item: any) => item.sub_code == row.location
+                )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onMainSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            id="grdList"
+          >
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={setWidth("grdList", item.width)}
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
         </GridContainer>
         <GridContainer width={`calc(75% - ${GAP}px)`}>
           <GridTitleContainer>

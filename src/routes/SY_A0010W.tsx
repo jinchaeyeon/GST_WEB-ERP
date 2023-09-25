@@ -12,7 +12,6 @@ import {
   setExpandedState,
   setGroupIds,
 } from "@progress/kendo-react-data-tools";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridCellProps,
@@ -902,14 +901,6 @@ const Page: React.FC = () => {
     setDetailSelectedState(newSelectedState);
   };
 
-  //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
-
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (targetRowIndex !== null && gridRef.current) {
@@ -1234,8 +1225,8 @@ const Page: React.FC = () => {
           {permissions !== null && (
             <TopButtons
               search={search}
-              exportExcel={exportExcel}
               permissions={permissions}
+              disable={true}
             />
           )}
         </ButtonContainer>
@@ -1319,12 +1310,6 @@ const Page: React.FC = () => {
 
       <GridContainerWrap>
         <GridContainer width={`30%`}>
-          <ExcelExport
-            data={newData}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-          >
             <GridTitleContainer>
               <GridTitle>요약정보</GridTitle>
               {permissions !== null && (
@@ -1407,7 +1392,6 @@ const Page: React.FC = () => {
                     )
                 )}
             </Grid>
-          </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(70% - ${GAP}px)`}>
           <GridTitleContainer>
