@@ -32,7 +32,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
-        width: 180,
+        width: 120,
       },
       {
         id: "col_insiz",
@@ -56,13 +56,13 @@ export const gridList: Array<TGrid> = [
         id: "col_remark",
         field: "remark",
         caption: "증상",
-        width: 250,
+        width: 200,
       },
       {
         id: "col_extra_field5",
         field: "extra_field5",
         caption: "조치내용",
-        width: 250,
+        width: 200,
       },
       {
         id: "col_enddt",
