@@ -208,8 +208,6 @@ const MA_B2700W: React.FC = () => {
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [workType, setWorkType] = useState<"N" | "U">("N");
-
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -358,7 +356,6 @@ const MA_B2700W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
         ...prev,
-        pgNum: 1,
         find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
@@ -379,7 +376,6 @@ const MA_B2700W: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //엑셀 내보내기
@@ -407,27 +403,6 @@ const MA_B2700W: React.FC = () => {
         건
       </td>
     );
-  };
-
-  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
-    mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-    );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
-
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
   };
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -882,7 +857,7 @@ const MA_B2700W: React.FC = () => {
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
-          workType={workType}
+          workType={"N"}
           setData={setCustData}
           modal={true}
         />
@@ -890,7 +865,7 @@ const MA_B2700W: React.FC = () => {
       {custWindowVisible2 && (
         <CustomersWindow
           setVisible={setCustWindowVisible2}
-          workType={workType}
+          workType={"N"}
           setData={setCustData2}
           modal={true}
         />
