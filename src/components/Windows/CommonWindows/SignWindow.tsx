@@ -57,7 +57,7 @@ type IWindow = {
   reference_key: string;
 };
 const topHeight = 10;
-const bottomHeight = 80;
+const bottomHeight = 40;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
 const SignWindow = ({ setVisible, reference_key }: IWindow) => {
@@ -720,7 +720,7 @@ const SignWindow = ({ setVisible, reference_key }: IWindow) => {
       onClose={onClose}
       modal={true}
     >
-      <GridContainer height= "50%">
+      <GridContainer height= "35vh">
         <GridTitleContainer>
           <GridTitle>참석자</GridTitle>
           <ButtonContainer>
@@ -797,7 +797,7 @@ const SignWindow = ({ setVisible, reference_key }: IWindow) => {
           />
         </Grid>
       </GridContainer>
-      <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
+      <GridContainer height="33vh">
         <GridTitleContainer>
           <GridTitle>서명란</GridTitle>
         </GridTitleContainer>

@@ -11,7 +11,7 @@ const Sign = (props: any) => {
       smooth={true}
       maximizable={false}
       hideLine={true}
-      style={{height: "100%", width: "100%", border: "2px solid #7a76ce"}}
+      style={{height: "90%", width: "100%", border: "2px solid #2289c3"}}
       disabled={disabled}
       exportScale={0.662}
     />

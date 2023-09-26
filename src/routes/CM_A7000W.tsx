@@ -25,6 +25,7 @@ import {
   findMessage, 
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  setDefaultDate,
   toDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -247,6 +248,19 @@ const CM_A7000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      setFilters((prev) => ({
+        ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
+      }));
+    }
+  }, [customOptionData]);
 
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
@@ -1020,10 +1034,10 @@ const CM_A7000W: React.FC = () => {
                         end: filters.todt,
                       }}
                       onChange={(e:{ value: {start: any; end: any}}) =>
-                              setFilters((prev) => ({
-                                  ...prev,
-                                  frdt: e.value.start,
-                                  todt: e.value.end,
+                        setFilters((prev) => ({
+                            ...prev,
+                            frdt: e.value.start,
+                            todt: e.value.end,
                         }))
                       }
                       className="required"
@@ -1319,7 +1333,7 @@ const CM_A7000W: React.FC = () => {
                           themeColor={"primary"}
                           style={{ width: "100%"}}
                           onClick={() => {
-                            if (filters.workType == "N") {
+                            if (workType == "N") {
                               alert("회의록 저장 후 등록할 수 있습니다.");
                             } else if (
                               Object.getOwnPropertyNames(
