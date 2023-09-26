@@ -590,7 +590,7 @@ const MA_B3000W: React.FC = () => {
     if (customOptionData != null) {
       grid1.current = document.getElementById("grdMonthList");
 
-      window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", handleResize1);
 
       //가장작은 그리드 이름
       customOptionData.menuCustomColumnOptions["grdMonthList"].map((item: TColumn) =>
@@ -642,7 +642,7 @@ const MA_B3000W: React.FC = () => {
     if (customOptionData != null) {
       grid2.current = document.getElementById("grdQuarterList");
 
-      window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", handleResize2);
 
       //가장작은 그리드 이름
       customOptionData.menuCustomColumnOptions["grdQuarterList"].map((item: TColumn) =>
@@ -819,7 +819,7 @@ const MA_B3000W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "32vh" }}
+                  style={{ height: "28vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -902,7 +902,7 @@ const MA_B3000W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "32vh" }}
+                  style={{ height: "28vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1048,7 +1048,7 @@ const MA_B3000W: React.FC = () => {
                 }}
               >
                 <Grid
-                  style={{ height: "32vh" }}
+                  style={{ height: "28vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
