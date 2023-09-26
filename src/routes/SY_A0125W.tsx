@@ -1241,6 +1241,8 @@ const SY_A0125W: React.FC = () => {
           : minGridWidth.current 
       );
 
+      minGridWidth.current += 50;
+      
       setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
     }

@@ -1978,7 +1978,7 @@ const Page: React.FC = () => {
       );
 
       minGridWidth.current += 90;
-      minGridWidth2.current += 90;
+      minGridWidth2.current += 95;
       setGridCurrent(grid.current.clientWidth);
       setGridCurrent2(grid2.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
