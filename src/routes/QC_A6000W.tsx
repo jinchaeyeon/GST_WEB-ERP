@@ -116,7 +116,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 export const FormContext = createContext<{
-  bool: boolean;
+  key: string;
+  setKey: (d: any) => void;
+  bool: number;
   setBool: (d: any) => void;
   mainDataState: State;
   setMainDataState: (d: any) => void;
@@ -133,8 +135,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  const { bool, setBool, mainDataState, setMainDataState } =
-    useContext(FormContext);
+  const { setBool, setKey } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : 0;
 
@@ -142,9 +143,12 @@ const ColumnCommandCell = (props: GridCellProps) => {
   const onAttWndClick = () => {
     setBadWindowVisible(true);
   };
-  const getBadData = () => {
-    setBool(!bool);
+
+  const getBadData = (qty: any) => {
+    setKey(dataItem.renum + "-" + dataItem.reseq);
+    setBool(qty);
   };
+
   const defaultRendering = (
     <td
       className={className}
@@ -171,9 +175,9 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {badWindowVisible && (
         <Badwindow
           setVisible={setBadWindowVisible}
-          setData={getBadData}
-          workType={"FILTER"}
+          setData={(str) => getBadData(str)}
           renum={dataItem.renum}
+          modal={true}
         />
       )}
     </>
@@ -224,7 +228,40 @@ const QC_A6000: React.FC = () => {
     });
   };
 
-  const [bool, setBool] = useState<boolean>(false);
+  const [bool, setBool] = useState<number>(0);
+  const [key, setKey] = useState<string>("");
+
+  useEffect(() => {
+    if (key != "") {
+      const newData = mainDataResult.data.map((item) =>
+        item.renum + "-" + item.reseq == key
+          ? {
+              ...item,
+              rowstatus: "U",
+              badqty: bool,
+            }
+          : {
+              ...item,
+            }
+      );
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+
+      setKey("");
+      setBool(0);
+    }
+  }, [bool, key]);
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -242,6 +279,7 @@ const QC_A6000: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -344,7 +382,6 @@ const QC_A6000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -765,11 +802,19 @@ const QC_A6000: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map((item) => ({
-        ...item,
-        rowstatus: item.rowstatus == "N" ? "N" : "U",
-        [EDIT_FIELD]: undefined,
-      }));
+      const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] ==
+      Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
       setTempResult((prev: { total: any }) => {
         return {
           data: newData,
@@ -1076,6 +1121,8 @@ const QC_A6000: React.FC = () => {
       </FilterContainer>
       <FormContext.Provider
         value={{
+          key,
+          setKey,
           bool,
           setBool,
           mainDataState,

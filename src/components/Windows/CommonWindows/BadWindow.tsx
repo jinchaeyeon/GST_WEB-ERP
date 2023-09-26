@@ -1,50 +1,46 @@
-import { useEffect, useState, useCallback } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridEvent,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { bytesToBase64 } from "byte-base64";
+import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
 } from "../../../CommonStyled";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import {
-  chkScrollHandler,
-  UseBizComponent,
-  UseParaPc,
-  UseGetValueFromSessionItem,
-  findMessage,
-  UseMessages,
-  convertDateToStr,
-} from "../../CommonFunction";
+import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
-  EDIT_FIELD,
-  COM_CODE_DEFAULT_VALUE,
-} from "../../CommonString";
+import { isLoading } from "../../../store/atoms";
+import { Iparameters } from "../../../store/types";
 import NumberCell from "../../Cells/NumberCell";
 import {
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
 } from "../../CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
-import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -55,14 +51,13 @@ type TdataArr = {
 };
 
 type IWindow = {
-  workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
-  setData(event?: any): void;
+  setData(str: any): void;
   renum: string;
-  //data : 선택한 품목 데이터를 전달하는 함수
+  modal?: boolean;
 };
 
-const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
+const Badwindow = ({ setVisible, setData, renum, modal = false }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -70,13 +65,30 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 500,
+    width: isMobile == true ? deviceWidth : 500,
     height: 650,
   });
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -146,11 +158,15 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [filters, setFilters] = useState({
     orgdiv: "01",
     itemcd: "",
@@ -159,24 +175,9 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
     todt: "",
     bnatur: "",
     renum: renum == undefined ? "" : renum,
+    isSearch: true,
+    pgNum: 1,
   });
-
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_QC_A6000W_Q",
-    pageNumber: mainPgNum,
-    pageSize: PAGE_SIZE,
-    parameters: {
-      "@p_work_type": "BAD",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_frdt": filters.frdt,
-      "@p_todt": filters.todt,
-      "@p_bnatur": filters.bnatur,
-      "@p_renum": filters.renum,
-    },
-  };
 
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
@@ -245,7 +246,7 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
     }
 
     if (data.isSuccess === true) {
-      setData();
+      setData(data.returnString);
       onClose();
     } else {
       console.log("[오류 발생]");
@@ -260,14 +261,26 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
     }
   }, [ParaData]);
 
-  useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
-
   //그리드 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     let data: any;
-
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_QC_A6000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: PAGE_SIZE,
+      parameters: {
+        "@p_work_type": "BAD",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_frdt": filters.frdt,
+        "@p_todt": filters.todt,
+        "@p_bnatur": filters.bnatur,
+        "@p_renum": filters.renum,
+        "@p_find_row_value": "",
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -284,14 +297,22 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+
+      if (totalRowCnt > 0) {
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+      }
     }
   };
 
-  //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
-  };
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -370,12 +391,19 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
+
   const onMainItemChange3 = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -410,7 +438,6 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : {
@@ -418,11 +445,22 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
               [EDIT_FIELD]: undefined,
             }
       );
-
-      setIfSelectFirstRow(false);
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setMainDataResult((prev) => {
         return {
           data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: mainDataResult.data,
           total: prev.total,
         };
       });
@@ -430,17 +468,50 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
   };
 
   const exitEdit3 = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item: any) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   return (
@@ -451,6 +522,7 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <GridContainer>
         <Grid
@@ -484,7 +556,10 @@ const Badwindow = ({ workType, setVisible, setData, renum }: IWindow) => {
           //스크롤 조회기능
           fixedScroll={true}
           total={mainDataResult.total}
-          onScroll={onScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
           //정렬기능
           sortable={true}
           onSortChange={onMainSortChange}
