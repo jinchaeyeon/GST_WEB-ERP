@@ -1,62 +1,60 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
   GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import {
-  chkScrollHandler,
-  convertDateToStr,
-  getQueryFromBizComponent,
-  setDefaultDate,
-  UseBizComponent,
-  UseCustomOption,
-  UsePermissions,
-  handleKeyPressSearch,
-  findMessage,
-  UseMessages,
-} from "../components/CommonFunction";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  UseBizComponent,
+  UseCustomOption,
+  UseMessages,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+} from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2000W_C";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const dateField = ["purdt"];
 const DATA_ITEM_KEY = "purno";
@@ -159,8 +157,6 @@ const MA_B2000W: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [workType, setWorkType] = useState<"N" | "U">("N");
-
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -218,7 +214,6 @@ const MA_B2000W: React.FC = () => {
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
   });
 
   //조회조건 파라미터
@@ -254,7 +249,7 @@ const MA_B2000W: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async (filters : any) => {
+  const fetchMainGrid = async (filters: any) => {
     // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -335,7 +330,7 @@ const MA_B2000W: React.FC = () => {
     }
   }, [filters]);
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -379,24 +374,20 @@ const MA_B2000W: React.FC = () => {
   };
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    var parts = parseInt(sum).toString().split(".");
+    return parts[0] != "NaN" ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    ) : (
+      <td></td>
+    );
   };
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -521,13 +512,13 @@ const MA_B2000W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
-  const pageChange = (event:GridPageChangeEvent) => {
+  const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch : true,
+      isSearch: true,
     }));
 
     setPage({
@@ -535,15 +526,48 @@ const MA_B2000W: React.FC = () => {
       take: initialPageState.take,
     });
   };
+
   const minGridWidth = React.useRef<number>(0);
   const grid = React.useRef<any>(null);
   const [applyMinWidth, setApplyMinWidth] = React.useState(false);
   const [gridCurrent, setGridCurrent] = React.useState(0);
 
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+
+      if (grid.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      }
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current) {
+      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.clientWidth > minGridWidth.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(false);
+      }
+    }
+  };
+
   const setWidth = (Name: string, minWidth: number | undefined) => {
     if (minWidth == undefined) {
       minWidth = 0;
     }
+
     if (grid.current && Name == "grdList") {
       let width = applyMinWidth
         ? minWidth
@@ -552,7 +576,7 @@ const MA_B2000W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
   };
 
   return (
@@ -576,21 +600,21 @@ const MA_B2000W: React.FC = () => {
             <tr>
               <th>발주일자</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.ymdFrdt,
-                      end: filters.ymdTodt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        ymdFrdt: e.value.start,
-                        ymdTodt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.ymdFrdt,
+                    end: filters.ymdTodt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      ymdFrdt: e.value.start,
+                      ymdTodt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -695,17 +719,6 @@ const MA_B2000W: React.FC = () => {
                   />
                 )}
               </td>
-              <th>사업부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="position"
-                    value={filters.position}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
               <th>프로젝트</th>
               <td>
                 <Input
@@ -769,6 +782,7 @@ const MA_B2000W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
@@ -780,7 +794,7 @@ const MA_B2000W: React.FC = () => {
                         key={idx}
                         field={item.fieldName}
                         title={item.caption}
-                        width={item.width}
+                        width={setWidth("grdList", item.width)}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
@@ -797,7 +811,6 @@ const MA_B2000W: React.FC = () => {
                             ? gridSumQtyFooterCell2
                             : undefined
                         }
-                        locked={item.fixed === "None" ? false : true}
                       ></GridColumn>
                     )
                 )}
@@ -807,7 +820,7 @@ const MA_B2000W: React.FC = () => {
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
-          workType={workType}
+          workType={"N"}
           setData={setCustData}
           modal={true}
         />
@@ -820,7 +833,7 @@ const MA_B2000W: React.FC = () => {
           modal={true}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
@@ -838,7 +851,3 @@ const MA_B2000W: React.FC = () => {
 };
 
 export default MA_B2000W;
-function onChange(event: InputChangeEvent): void {
-  throw new Error("Function not implemented.");
-}
-

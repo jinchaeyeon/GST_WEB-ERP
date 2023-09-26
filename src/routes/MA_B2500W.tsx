@@ -217,10 +217,7 @@ const MA_B2500W: React.FC = () => {
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
-  const [workType, setWorkType] = useState<"N" | "U">("N");
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -274,10 +271,8 @@ const MA_B2500W: React.FC = () => {
     bnatur: "",
     inuse: "",
     find_row_value: "",
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
   });
 
   //조회조건 파라미터
@@ -314,7 +309,7 @@ const MA_B2500W: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async (filters : any) => {
+  const fetchMainGrid = async (filters: any) => {
     // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -395,7 +390,7 @@ const MA_B2500W: React.FC = () => {
     }
   }, [filters]);
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -409,7 +404,7 @@ const MA_B2500W: React.FC = () => {
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
   };
-  
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -437,24 +432,20 @@ const MA_B2500W: React.FC = () => {
   };
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = 0;
+    let sum = "";
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    var parts = parseInt(sum).toString().split(".");
+    return parts[0] != "NaN" ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    ) : (
+      <td></td>
+    );
   };
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -469,9 +460,7 @@ const MA_B2500W: React.FC = () => {
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
-  const onCustWndClick2 = () => {
-    setCustWindowVisible2(true);
-  };
+
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
@@ -533,13 +522,7 @@ const MA_B2500W: React.FC = () => {
       custnm: data.custnm,
     }));
   };
-  const setCustData2 = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      outcustcd: data.custcd,
-      outcustnm: data.custnm,
-    }));
-  };
+
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
@@ -587,13 +570,13 @@ const MA_B2500W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
-  const pageChange = (event:GridPageChangeEvent) => {
+  const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch : true,
+      isSearch: true,
     }));
 
     setPage({
@@ -601,7 +584,59 @@ const MA_B2500W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-  
+
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+
+      if (grid.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      }
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current) {
+      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.clientWidth > minGridWidth.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(false);
+      }
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+
+    if (grid.current && Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -634,21 +669,21 @@ const MA_B2500W: React.FC = () => {
               </td>
               <th>입고일자</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.frdt,
-                      end: filters.todt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        frdt: e.value.start,
-                        todt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -815,6 +850,7 @@ const MA_B2500W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
@@ -826,7 +862,7 @@ const MA_B2500W: React.FC = () => {
                         key={idx}
                         field={item.fieldName}
                         title={item.caption}
-                        width={item.width}
+                        width={setWidth("grdList", item.width)}
                         cell={
                           dateField.includes(item.fieldName)
                             ? DateCell
@@ -835,11 +871,11 @@ const MA_B2500W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 
-                          ? mainTotalFooterCell 
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell2
-                          : undefined
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
+                            : undefined
                         }
                       ></GridColumn>
                     )
@@ -850,16 +886,9 @@ const MA_B2500W: React.FC = () => {
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
-          workType={workType}
+          workType={"N"}
           setData={setCustData}
           modal={true}
-        />
-      )}
-      {custWindowVisible2 && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible2}
-          workType={workType}
-          setData={setCustData2}
         />
       )}
       {itemWindowVisible && (
@@ -870,7 +899,7 @@ const MA_B2500W: React.FC = () => {
           modal={true}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}
