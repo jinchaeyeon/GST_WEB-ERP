@@ -45,9 +45,9 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../../../store/atoms";
 import Sign from "../../Sign/Sign";
 import { SignatureChangeEvent } from "@progress/kendo-react-inputs";
-import RequiredHeader from "../../RequiredHeader";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
+import RequiredHeader from "../../HeaderCells/RequiredHeader";
 
 let deletedMainRows: any[] = [];
 let temp = 0;
