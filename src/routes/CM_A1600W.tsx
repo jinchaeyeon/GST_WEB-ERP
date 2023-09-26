@@ -4,13 +4,13 @@ import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
   GridFooterCellProps,
   GridItemChangeEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -19,7 +19,7 @@ import {
   MonthView,
   Scheduler,
   SchedulerDataChangeEvent,
-  WeekView
+  WeekView,
 } from "@progress/kendo-react-scheduler";
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -43,7 +43,6 @@ import {
   UseMessages,
   UseParaPc,
   UsePermissions,
-  chkScrollHandler,
   convertDateToStr,
   convertDateToStrWithTime,
   dateformat,
@@ -74,7 +73,8 @@ import { Iparameters, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
 let deletedTodoRows: object[] = [];
 let temp = 0;
-let temp2 = 0;
+let targetRowIndex: null | number = null;
+
 const CM_A1600: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -87,6 +87,22 @@ const CM_A1600: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setTodoFilter((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   const [permissions, setPermissions] = useState<TPermissions | null>(
     OLD_COMPANY.includes(companyCode)
       ? {
@@ -152,11 +168,15 @@ const CM_A1600: React.FC = () => {
   const [todoDataState, setTodoDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [todoDataResult, setTodoDataResult] = useState<DataResult>(
     process([], todoDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const defaultData: any[] = [
     {
       id: 0,
@@ -175,10 +195,6 @@ const CM_A1600: React.FC = () => {
   const [todoSelectedState, setTodoSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [todoPgNum, setTodoPgNum] = useState(1);
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
@@ -213,6 +229,9 @@ const CM_A1600: React.FC = () => {
     rdofinyn: "N",
     frdt: new Date(),
     todt: new Date(),
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
   const [schedulerFilter, setSchedulerFilter] = useState({
@@ -221,29 +240,6 @@ const CM_A1600: React.FC = () => {
     rdoplandiv: "Y",
     isSearch: false,
   });
-
-  const todoParameters: Iparameters = {
-    procedureName: "P_CM_A1600W_Q",
-    pageNumber: todoPgNum,
-    pageSize: todoFilter.pgSize,
-    parameters: {
-      "@p_work_type": todoFilter.work_type,
-      "@p_orgdiv": todoFilter.orgdiv,
-      "@p_recdt": "",
-      "@p_recdt1": "",
-      "@p_dptcd": "",
-      "@p_postcd": "",
-      "@p_userid": userId,
-      "@p_rtrchk": "N",
-      "@p_frdt": convertDateToStr(todoFilter.frdt),
-      "@p_person": schedulerFilter.person,
-      "@p_todt": convertDateToStr(todoFilter.todt),
-      "@p_finyn": todoFilter.rdofinyn,
-      "@p_plandiv": "Y",
-      "@p_stddiv": "",
-      "@p_serviceid": "",
-    },
-  };
 
   const schedulerParameters: Iparameters = {
     procedureName: "P_CM_A1600W_Q",
@@ -268,10 +264,33 @@ const CM_A1600: React.FC = () => {
     },
   };
 
-  const fetchTodoGrid = async () => {
+  let gridRef: any = useRef(null);
+
+  const fetchTodoGrid = async (todoFilter: any) => {
     let data: any;
     setLoading(true);
-
+    const todoParameters: Iparameters = {
+      procedureName: "P_CM_A1600W_Q",
+      pageNumber: todoFilter.pgNum,
+      pageSize: todoFilter.pgSize,
+      parameters: {
+        "@p_work_type": todoFilter.work_type,
+        "@p_orgdiv": todoFilter.orgdiv,
+        "@p_recdt": "",
+        "@p_recdt1": "",
+        "@p_dptcd": "",
+        "@p_postcd": "",
+        "@p_userid": userId,
+        "@p_rtrchk": "N",
+        "@p_frdt": convertDateToStr(todoFilter.frdt),
+        "@p_person": schedulerFilter.person,
+        "@p_todt": convertDateToStr(todoFilter.todt),
+        "@p_finyn": todoFilter.rdofinyn,
+        "@p_plandiv": "Y",
+        "@p_stddiv": "",
+        "@p_serviceid": "",
+      },
+    };
     try {
       data = await processApi<any>("procedure", todoParameters);
     } catch (error) {
@@ -284,13 +303,44 @@ const CM_A1600: React.FC = () => {
         ...row,
         strtime: convertDateToStr(new Date(row.strtime)),
       }));
+      if (todoFilter.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.itemcd == todoFilter.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
       setTodoDataResult((prev) => {
         return {
           data: rows,
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          todoFilter.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.itemcd == todoFilter.find_row_value);
+
+        if (selectedRow != undefined) {
+          setTodoSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setTodoSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      }
     }
     setLoading(false);
   };
@@ -331,17 +381,31 @@ const CM_A1600: React.FC = () => {
     }));
   };
 
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false) {
-      //if (customOptionData !== null && isInitSearch === false) {
-      fetchTodoGrid();
-      setIsInitSearch(true);
+    if (todoFilter.isSearch && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(todoFilter);
+      setTodoFilter((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchTodoGrid(deepCopiedFilters);
     }
-  }, [todoFilter]);
+  }, [todoFilter, permissions]);
 
   useEffect(() => {
     if (schedulerFilter.isSearch) fetchScheduler();
   }, [schedulerFilter]);
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [todoDataResult]);
 
   //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
   const onTodoSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -353,12 +417,6 @@ const CM_A1600: React.FC = () => {
     setTodoSelectedState(newSelectedState);
   };
 
-  //스크롤 핸들러
-  const onTodoScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, todoPgNum, PAGE_SIZE))
-      setTodoPgNum((prev) => prev + 1);
-  };
-
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onTodoDataStateChange = (event: GridDataStateChangeEvent) => {
     setTodoDataState(event.dataState);
@@ -366,17 +424,15 @@ const CM_A1600: React.FC = () => {
   let str = false;
 
   useEffect(() => {
-    window.addEventListener('keydown', function (e) {
-      if(e.shiftKey) {
+    window.addEventListener("keydown", function (e) {
+      if (e.shiftKey) {
         str = true;
       }
     });
     return () => {
-      window.removeEventListener('keydown', function(){
-
-      });
-    }
-  })
+      window.removeEventListener("keydown", function () {});
+    };
+  });
   //그리드 푸터
   const todoTotalFooterCell = (props: GridFooterCellProps) => {
     return (
@@ -430,7 +486,7 @@ const CM_A1600: React.FC = () => {
       colorid_s: [],
     };
 
-    if(str == false) {
+    if (str == false) {
       created.forEach((item) => (item["rowstatus"] = "N"));
       updated.forEach((item) => (item["rowstatus"] = "U"));
       deleted.forEach((item) => (item["rowstatus"] = "D"));
@@ -495,7 +551,7 @@ const CM_A1600: React.FC = () => {
       colorid_s: dataArr.colorid_s.join("|"),
     }));
   };
- 
+
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -648,39 +704,85 @@ const CM_A1600: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = todoDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-
-    setTodoDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (field != "rowstatus") {
+      const newData = todoDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setTodoDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: todoDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit = () => {
-    const newData = todoDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setTodoDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != todoDataResult.data) {
+      const newData = todoDataResult.data.map(
+        (item: { [x: string]: string; rowstatus: string }) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(todoSelectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+      );
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setTodoDataResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = todoDataResult.data.map((item: any) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setTodoDataResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -708,7 +810,7 @@ const CM_A1600: React.FC = () => {
       }
     });
     const idx: number =
-      Number(Object.getOwnPropertyNames(selectedState)[0]) ??
+      Number(Object.getOwnPropertyNames(todoSelectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
       null;
     if (idx === null) return false;
@@ -729,28 +831,47 @@ const CM_A1600: React.FC = () => {
         total: prev.total + 1,
       };
     });
+    setPage((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setTodoSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
   const onRemoveClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
     let newData: any[] = [];
-
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
     todoDataResult.data.forEach((item: any, index: number) => {
       if (!todoSelectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        deletedTodoRows.push(item);
+        if(!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedTodoRows.push(newData2);
+        }
+        Object.push(index);
       }
     });
-
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = todoDataResult.data[Math.min(...Object2)];
+    } else {
+      data = todoDataResult.data[Math.min(...Object) - 1];
+    }
     //newData 생성
     setTodoDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object.length,
     }));
-
-    //선택 상태 초기화
-    setTodoSelectedState({});
+    setTodoSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
   };
 
   const onSaveClick = () => {
@@ -998,9 +1119,12 @@ const CM_A1600: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      setTodoPgNum(1);
-      setTodoDataResult(process([], todoDataState));
-      fetchTodoGrid();
+      setTodoFilter((prev) => ({
+        ...prev,
+        find_row_value: data.returnString,
+        pgNum: 1,
+        isSearch: true,
+      }));
       fetchScheduler();
 
       deletedTodoRows = [];
@@ -1038,9 +1162,12 @@ const CM_A1600: React.FC = () => {
       ) {
         throw findMessage(messagesData, "CM_A1600W_003");
       } else {
-        setTodoPgNum(1);
-        setTodoDataResult(process([], todoDataState));
-        fetchTodoGrid();
+        setTodoFilter((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
         fetchScheduler();
       }
     } catch (e) {
@@ -1249,7 +1376,13 @@ const CM_A1600: React.FC = () => {
                 //스크롤 조회 기능
                 fixedScroll={true}
                 total={todoDataResult.total}
-                onScroll={onTodoScrollHandler}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정

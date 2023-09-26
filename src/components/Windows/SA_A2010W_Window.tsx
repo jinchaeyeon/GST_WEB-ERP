@@ -2717,12 +2717,14 @@ const KendoWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
+          if(!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedRows.push(newData2);
+        }
         Object.push(index);
-        deletedRows.push(newData2);
       }
     });
 

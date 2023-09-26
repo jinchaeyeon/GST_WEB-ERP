@@ -1296,12 +1296,14 @@ const BA_A0100W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
+       if(!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
         Object.push(index);
-        deletedMainRows.push(newData2);
       }
     });
     if (Math.min(...Object) < Math.min(...Object2)) {
@@ -1329,12 +1331,14 @@ const BA_A0100W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
+        if(!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows2.push(newData2);
+        }
         Object.push(index);
-        deletedMainRows2.push(newData2);
       }
     });
 

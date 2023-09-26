@@ -432,12 +432,14 @@ const PS_A0060_301W: React.FC = () => {
         newData.push(item); //선택된 데이터
         Object2.push(index);
       } else {
-        const deletedData = {
-          ...item,
-          rowstatus: "D",
-        };
+        if(!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
         Object.push(index);
-        deletedMainRows.push(deletedData);
       }
     });
 
