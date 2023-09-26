@@ -902,12 +902,12 @@ const CR_A0010W: React.FC = () => {
       hold_check_yn: "N",
       home_menu_id: "",
       ip_check_yn: "N",
-      location: "",
+      location: filters.cboLocation,
       mbouseyn: "N",
       memo: "",
       mobile_no: "",
       opengb: "",
-      orgdiv: "01",
+      orgdiv: filters.cboOrgdiv ? filters.cboOrgdiv : "01",
       password: "",
       password_confirm: "",
       position: "",
@@ -949,7 +949,7 @@ const CR_A0010W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if(!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1265,6 +1265,97 @@ const CR_A0010W: React.FC = () => {
     return width;
   };
 
+  // 행추가만 하는 방식
+  // const saveExcel = (jsonArr: any[]) => {
+  //   if (jsonArr.length == 0) {
+  //     alert("데이터가 없습니다.");
+  //   } else {
+  //     setLoading(true);
+  //     let valid = true;
+  //     jsonArr.map((item: any) => {
+  //       Object.keys(item).map((items: any) => {
+  //         if (
+  //           items != "사용자ID" &&
+  //           items != "사용자명" &&
+  //           items != "전화번호" &&
+  //           items != "휴대폰번호" &&
+  //           items != "생년월일"
+  //         ) {
+  //           valid = false;
+  //         }
+  //       });
+  //     });
+  //     if (valid == true) {
+  //       mainDataResult.data.map((item) => {
+  //         if (item.num > temp) {
+  //           temp = item.num;
+  //         }
+  //       });
+
+  //       jsonArr.forEach((item: any, idx: number) => {
+  //         const {
+  //           사용자ID = "",
+  //           사용자명 = "",
+  //           전화번호 = "",
+  //           휴대폰번호 = "",
+  //           생년월일 = "",
+  //         } = item;
+
+  //         const newDataItem = {
+  //           [DATA_ITEM_KEY]: ++temp,
+  //           apply_start_date: convertDateToStr(new Date()),
+  //           apply_end_date: "99991231",
+  //           bircd: "Y",
+  //           birdt: 생년월일.toString(),
+  //           custcd: "",
+  //           dptcd: "",
+  //           email: "",
+  //           hold_check_yn: "N",
+  //           home_menu_id: "",
+  //           ip_check_yn: "N",
+  //           location: filters.cboLocation,
+  //           mbouseyn: "N",
+  //           memo: "",
+  //           mobile_no: 휴대폰번호,
+  //           opengb: "",
+  //           orgdiv: filters.cboOrgdiv ? filters.cboOrgdiv : "01",
+  //           password: 사용자ID,
+  //           password_confirm: 사용자ID,
+  //           position: "",
+  //           postcd: "",
+  //           profile_image: "",
+  //           rtrchk: "N",
+  //           tel_no: 전화번호,
+  //           temp: 사용자ID,
+  //           usediv: "Y",
+  //           user_category: "EXTERNAL",
+  //           user_id: 사용자ID,
+  //           user_ip: "",
+  //           user_name: 사용자명,
+  //           rowstatus: "N",
+  //         };
+  //         console.log(newDataItem)
+  //         setMainDataResult((prev) => {
+  //           return {
+  //             data: [newDataItem, ...prev.data],
+  //             total: prev.total + 1,
+  //           };
+  //         });
+  //         setPage((prev) => ({
+  //           ...prev,
+  //           skip: 0,
+  //           take: prev.take + 1,
+  //         }));
+  //         setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+  //       });
+  //     } else {
+  //       alert("양식이 맞지 않습니다.");
+  //     }
+  //     setLoading(false);
+  //   }
+  // };
+
+  // 바로 저장하는 방식
   const saveExcel = (jsonArr: any[]) => {
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
@@ -1291,7 +1382,11 @@ const CR_A0010W: React.FC = () => {
           }
         });
 
-        jsonArr.forEach((item: any, idx: number) => {
+
+        let isSuccess:boolean = true;
+        let errorMessage:string = "";
+        let returnString:string = "";
+        jsonArr.forEach(async (item: any, idx: number) => {
           const {
             사용자ID = "",
             사용자명 = "",
@@ -1299,60 +1394,94 @@ const CR_A0010W: React.FC = () => {
             휴대폰번호 = "",
             생년월일 = "",
           } = item;
-
-          const newDataItem = {
-            [DATA_ITEM_KEY]: ++temp,
-            apply_start_date: convertDateToStr(new Date()),
-            apply_end_date: "99991231",
-            bircd: "Y",
-            birdt: 생년월일.toString(),
-            custcd: "",
-            dptcd: "",
-            email: "",
-            hold_check_yn: "N",
-            home_menu_id: "",
-            ip_check_yn: "N",
-            location: "",
-            mbouseyn: "N",
-            memo: "",
-            mobile_no: 휴대폰번호,
-            opengb: "",
-            orgdiv: "01",
-            password: 사용자ID,
-            password_confirm: 사용자ID,
-            position: "",
-            postcd: "",
-            profile_image: "",
-            rtrchk: "N",
-            tel_no: 전화번호,
-            temp: "",
-            usediv: "Y",
-            user_category: "EXTERNAL",
-            user_id: 사용자ID,
-            user_ip: "",
-            user_name: 사용자명,
-            rowstatus: "N",
+          
+          const para: Iparameters = {
+            procedureName: "P_CR_A0010W_S",
+            pageNumber: 1,
+            pageSize: 10,
+            parameters: {
+              "@p_work_type": "N",
+              "@p_user_id": 사용자ID,
+              "@p_user_name": 사용자명,
+              "@p_password": 사용자ID,
+              "@p_password_confirm": 사용자ID,
+              "@p_salt": cryptoRandomString({ length: 32 }) ,
+              "@p_user_category": "EXTERNAL",
+              "@p_email": "",
+              "@p_tel_no": 전화번호,
+              "@p_mobile_no": 휴대폰번호,
+              "@p_apply_start_date": convertDateToStr(new Date()),
+              "@p_apply_end_date": "99991231",
+              "@p_hold_check_yn": "N",
+              "@p_memo": "",
+              "@p_ip_check_yn": "N",
+              "@p_orgdiv": filters.cboOrgdiv ? filters.cboOrgdiv : "01",
+              "@p_location": filters.cboLocation,
+              "@p_dptcd": "",
+              "@p_postcd": "",
+              "@p_rtrchk": "N",
+              "@p_usediv": "Y",
+              "@p_opengb": "",
+              "@p_profile_image": "",
+              "@p_user_ip": "",
+              "@p_birdt": 생년월일.toString(),
+              "@p_bircd": "Y",
+              "@p_mbouseyn": "N",
+              "@p_position": "",
+              "@p_home_menu_id": "",
+              "@p_id": userId,
+              "@p_pc": pc,
+            },
           };
-          console.log(newDataItem)
-          setMainDataResult((prev) => {
-            return {
-              data: [newDataItem, ...prev.data],
-              total: prev.total + 1,
-            };
-          });
-          setPage((prev) => ({
-            ...prev,
-            skip: 0,
-            take: prev.take + 1,
-          }));
-          setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+  
+          let data: any;
+  
+          try {
+            data = await processApi<any>("procedure", para);
+          } catch (error) {
+            data = null;
+          }
+  
+          if (data.isSuccess === true) {
+            returnString = data.returnString;
+          } else {
+            console.log("[오류 발생]");
+            console.log(data);
+    
+            isSuccess = false;
+            errorMessage = data.resultMessage;
+          }
+
+          // if (data.isSuccess !== true) {
+          //   console.log("[오류 발생]");
+          //   console.log(data);
+          //   throw data.resultMessage;
+          // } else {
+          //   setFilters((prev) => ({
+          //     ...prev,
+          //     find_row_value: data.returnString,
+          //     isSearch: true,
+          //   }));
+          // }
+          
         });
+
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: returnString,
+          isSearch: true,
+        }));
+
+        if (!isSuccess) { // 실패한 자료가 있는 경우
+          alert(errorMessage);
+        }
       } else {
         alert("양식이 맞지 않습니다.");
       }
       setLoading(false);
     }
   };
+
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
   const onAttachmentsWndClick = () => {

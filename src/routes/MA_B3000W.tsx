@@ -8,6 +8,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridFooterCellProps,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -163,31 +164,6 @@ const MA_B3000W: React.FC = () => {
     resetGrid();
   };
   let gridRef : any = useRef(null); 
-  useEffect(() => {
-    if (customOptionData !== null) {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (filters.find_row_value !== "" && gridDataResult.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = gridDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value
-        );
-
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.container.scroll(0, scrollHeight);
-
-        //초기화
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-        }));
-      }
-    }
-    // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-    // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-    else if (filters.scrollDirrection === "up") {
-      gridRef.container.scroll(0, 20);
-    }
-  }, [gridDataResult]);
 
   useEffect(() => {
     search();
@@ -236,15 +212,13 @@ const MA_B3000W: React.FC = () => {
     mm: "",
     rdoAmtdiv: "",
     find_row_value: "",
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
     pgSize: PAGE_SIZE,
   });
 
   //그리드 데이터 조회
-  const fetchGrid = async (workType: string, custcd?: string) => {
+  const fetchGrid = async (workType: string, custcd?: string, ) => {
     if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -279,18 +253,46 @@ const MA_B3000W: React.FC = () => {
         workType === "MONTH" ||
         workType === "QUARTER"
       ) {
-        const totalRowCnt2 = data.tables[0].TotalRowCount;
+        const totalRowCnt = data.tables[0].TotalRowCount;
         setGridDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt2,
+            data: rows,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+        if (totalRowCnt > 0) {
+          const selectedRow =
+            filters.find_row_value == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+                );
+  
+          if (selectedRow != undefined) {
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          } else {
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          }
         }
+        if (totalRowCnt > 0) {
+          const selectedRow =
+            filters.find_row_value == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+                );
+  
+          if (selectedRow != undefined) {
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          } else {
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          }
+        }
+       
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
       }
       // 공통 차트
       else if (workType === "MCHART" || workType === "QCHART") {
@@ -311,10 +313,15 @@ const MA_B3000W: React.FC = () => {
           companies: newRows.companies,
           series: newRows.series,
         });
+
       }
     }
     setFilters((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
@@ -364,11 +371,6 @@ const MA_B3000W: React.FC = () => {
   //그리드 리셋
   const resetGrid = () => {
     setGridDataResult(process([], gridDataState));
-    setAllChartDataResult({
-      companies: [""],
-      series: [0],
-    });
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -406,39 +408,6 @@ const MA_B3000W: React.FC = () => {
     }
   };
 
- 
-//스크롤 핸들러
-const onGridScrollHandler = (event: GridEvent) => {
-  if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-  let pgNumWithGap =
-    filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-  // 스크롤 최하단 이벤트
-  if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-    setFilters((prev) => ({
-      ...prev,
-      scrollDirrection: "down",
-      pgNum: pgNumWithGap + 1,
-      pgGap: prev.pgGap + 1,
-      isSearch: true,
-    }));
-
-    return false;
-  }
-
-  pgNumWithGap =
-    filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-  // 스크롤 최상단 이벤트
-  if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-    setFilters((prev) => ({
-      ...prev,
-      scrollDirrection: "up",
-      pgNum: pgNumWithGap - 1,
-      pgGap: prev.pgGap + 1,
-      isSearch: true,
-    }));
-  }
-};
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
     setGridDataState(event.dataState);
@@ -529,9 +498,190 @@ const onGridScrollHandler = (event: GridEvent) => {
         throw findMessage(messagesData, "MA_B3000W_001");
       } else {
         resetGrid();
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
       }
     }catch(e){
       alert(e)
+    }
+  };
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+  
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdAllList");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdAllList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+
+      if (grid.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      }
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current) {
+      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.clientWidth > minGridWidth.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(false);
+      }
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+
+    if (grid.current && Name == "grdAllList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+  };
+
+  const minGridWidth1 = React.useRef<number>(0);
+  const grid1 = React.useRef<any>(null);
+  const [applyMinWidth1, setApplyMinWidth1] = React.useState(false);
+  const [gridCurrent1, setGridCurrent1] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid1.current = document.getElementById("grdMonthList");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdMonthList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth1.current += item.width)
+          : minGridWidth1.current
+      );
+
+      if (grid1.current) {
+        setGridCurrent1(grid1.current.clientWidth);
+        setApplyMinWidth1(grid1.current.clientWidth < minGridWidth1.current);
+      }
+    }
+  }, [customOptionData]);
+
+  const handleResize1 = () => {
+    if (grid1.current) {
+      if (grid1.current.clientWidth < minGridWidth1.current && !applyMinWidth1) {
+        setApplyMinWidth1(true);
+      } else if (grid1.current.clientWidth > minGridWidth1.current) {
+        setGridCurrent1(grid1.current.clientWidth);
+        setApplyMinWidth1(false);
+      }
+    }
+  };
+
+  const setWidth1 = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+
+    if (grid1.current && Name == "grdMonthList") {
+      let width = applyMinWidth1
+        ? minWidth
+        : minWidth +
+          (gridCurrent1 - minGridWidth1.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+  };
+
+  const minGridWidth2 = React.useRef<number>(0);
+  const grid2 = React.useRef<any>(null);
+  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
+  const [gridCurrent2, setGridCurrent2] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid2.current = document.getElementById("grdQuarterList");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdQuarterList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth2.current += item.width)
+          : minGridWidth2.current
+      );
+
+      if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
+        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
+      }
+    }
+  }, [customOptionData]);
+
+  const handleResize2 = () => {
+    if (grid2.current) {
+      if (grid2.current.clientWidth < minGridWidth2.current && !applyMinWidth2) {
+        setApplyMinWidth2(true);
+      } else if (grid2.current.clientWidth > minGridWidth2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
+        setApplyMinWidth2(false);
+      }
+    }
+  };
+
+  const setWidth2 = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+
+    if (grid2.current && Name == "grdQuarterList") {
+      let width = applyMinWidth2
+        ? minWidth
+        : minWidth +
+          (gridCurrent2 - minGridWidth2.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
     }
   };
 
@@ -693,7 +843,13 @@ const onGridScrollHandler = (event: GridEvent) => {
                   //스크롤 조회 기능
                   fixedScroll={true}
                   total={gridDataResult.total}
-                  onScroll={onGridScrollHandler}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
                   //정렬기능
                   sortable={true}
                   onSortChange={onGridSortChange}
@@ -701,6 +857,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  id="grdAllList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdAllList"].map(
@@ -710,7 +867,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                             key={idx}
                             field={item.fieldName}
                             title={item.caption}
-                            width={item.width}
+                            width={setWidth("grdAllList", item.width)}
                             cell={
                               numberField.includes(item.fieldName)
                                 ? NumberCell
@@ -769,7 +926,13 @@ const onGridScrollHandler = (event: GridEvent) => {
                   //스크롤 조회 기능
                   fixedScroll={true}
                   total={gridDataResult.total}
-                  onScroll={onGridScrollHandler}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
                   //정렬기능
                   sortable={true}
                   onSortChange={onGridSortChange}
@@ -777,6 +940,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  id="grdMonthList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -788,7 +952,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                             key={idx}
                             field={item.fieldName.replace("qty", "amt")}
                             title={item.caption}
-                            width={item.width}
+                            width={setWidth1("grdMonthList", item.width)}
                             cell={
                               numberField.includes(item.fieldName)
                                 ? NumberCell
@@ -908,7 +1072,13 @@ const onGridScrollHandler = (event: GridEvent) => {
                   //스크롤 조회 기능
                   fixedScroll={true}
                   total={gridDataResult.total}
-                  onScroll={onGridScrollHandler}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
                   //정렬기능
                   sortable={true}
                   onSortChange={onGridSortChange}
@@ -916,6 +1086,7 @@ const onGridScrollHandler = (event: GridEvent) => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  id="gridQuarterList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -1111,6 +1282,7 @@ const onGridScrollHandler = (event: GridEvent) => {
           setVisible={setCustWindowVisible}
           workType={"FILTER"}
           setData={setCustData}
+          modal={true}
         />
       )}
       {/* 컨트롤 네임 불러오기 용 */}
