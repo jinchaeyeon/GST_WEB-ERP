@@ -10,7 +10,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -42,7 +42,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -230,7 +230,7 @@ const QC_A2500W: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.num]: true });
+      setDetailSelectedState({ [rowData[DETAIL_DATA_ITEM_KEY]]: true });
 
       setWorkType("U");
       setDetailWindowVisible(true);
@@ -403,6 +403,7 @@ const QC_A2500W: React.FC = () => {
         "@p_gubun": filters.gubun,
         "@p_badkey": filters.badkey,
         "@p_planno": filters.planno,
+        "@p_find_row_value" : filters.find_row_value
       },
     };
     try {
@@ -419,7 +420,7 @@ const QC_A2500W: React.FC = () => {
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
             (row: any) =>
-              row.badnum + "-" + row.badseq == filters.find_row_value
+              row.badnum + "-" + row.badseq == filters.find_row_value.split("|")[0]
           );
           targetRowIndex = findRowIndex;
         }
@@ -449,7 +450,7 @@ const QC_A2500W: React.FC = () => {
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  row.badnum + "-" + row.badseq == filters.find_row_value
+                  row.badnum + "-" + row.badseq == filters.find_row_value.split("|")[0]
               );
 
         if (selectedRow != undefined) {
@@ -510,6 +511,7 @@ const QC_A2500W: React.FC = () => {
         "@p_gubun": filters.gubun,
         "@p_badkey": detailFilters.badkey,
         "@p_planno": filters.planno,
+        "@p_find_row_value": detailFilters.find_row_value
       },
     };
     try {
@@ -519,14 +521,14 @@ const QC_A2500W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (detailFilters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
           const findRowIndex = rows.findIndex(
             (row: any) =>
-              row.badnum + "-" + row.badseq == detailFilters.find_row_value
+              row.badnum + "-" + row.badseq + "|" + row.datnum == detailFilters.find_row_value
           );
           targetRowIndex2 = findRowIndex;
         }
@@ -556,7 +558,7 @@ const QC_A2500W: React.FC = () => {
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  row.badnum + "-" + row.badseq == detailFilters.find_row_value
+                  row.badnum + "-" + row.badseq + "|" + row.datnum == detailFilters.find_row_value
               );
 
         if (selectedRow != undefined) {
@@ -802,7 +804,7 @@ const QC_A2500W: React.FC = () => {
         (row: any) =>
           row.num == Object.getOwnPropertyNames(detailselectedState)[0]
       );
-      resetAllGrid();
+      setDetailDataResult(process([], detailDataState));
       if (isLastDataDeleted) {
         setPage2({
           skip:
@@ -954,161 +956,6 @@ const QC_A2500W: React.FC = () => {
       alert(e);
     }
   };
-
-  const [ParaData, setParaData] = useState({
-    pgSize: PAGE_SIZE,
-    workType: "N",
-    orgdiv: "01",
-    location: "01",
-    datnum: "",
-    attdatnum: "",
-    baddt: "",
-    badnum: "",
-    badseq: 0,
-    causedcd: "",
-    contents: "",
-    crsdiv1: "",
-    custcd: "",
-    custnm: "",
-    errtext: "",
-    files: "",
-    itemcd: "",
-    itemnm: "",
-    lotnum: "",
-    person: "",
-    proccd: "",
-    protext: "",
-    qcdt: "",
-    qty: 0,
-    recdt: "",
-    renum: "",
-    reseq: 0,
-    title: "",
-  });
-
-  const setCopyData = (filter: any) => {
-    setParaData((prev) => ({
-      ...prev,
-      workType: workType,
-      orgdiv: "01",
-      location: "01",
-      datnum: filter.datnum,
-      attdatnum: filter.attdatnum,
-      baddt: convertDateToStr(filter.baddt),
-      badnum: filter.badnum,
-      badseq: filter.badseq,
-      causedcd: filter.causedcd,
-      contents: filter.contents,
-      crsdiv1: filter.crsdiv1,
-      custcd: filter.custcd,
-      custnm: filter.custnm,
-      errtext: filter.errtext,
-      files: filter.files,
-      itemcd: filter.itemcd,
-      itemnm: filter.itemnm,
-      lotnum: filter.lotnum,
-      person: filter.person,
-      proccd: filter.proccd,
-      protext: filter.protext,
-      qcdt: convertDateToStr(filter.qcdt),
-      qty: filter.qty,
-      recdt: convertDateToStr(filter.recdt),
-      renum: filter.renum,
-      reseq: filter.reseq,
-      title: filter.title,
-    }));
-  };
-
-  const para: Iparameters = {
-    procedureName: "P_QC_A2500W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
-      "@p_datnum": ParaData.datnum,
-      "@p_recdt": ParaData.recdt,
-      "@p_baddt": ParaData.baddt,
-      "@p_custcd": ParaData.custcd,
-      "@p_itemcd": ParaData.itemcd,
-      "@p_proccd": ParaData.proccd,
-      "@p_lotnum": ParaData.lotnum,
-      "@p_qty": ParaData.qty,
-      "@p_person": ParaData.person,
-      "@p_title": ParaData.title,
-      "@p_contents": ParaData.contents,
-      "@p_errtext": ParaData.errtext,
-      "@p_qcdt": ParaData.qcdt,
-      "@p_protext": ParaData.protext,
-      "@p_renum": ParaData.renum,
-      "@p_reseq": ParaData.reseq,
-      "@p_badnum": ParaData.badnum,
-      "@p_badseq": ParaData.badseq,
-      "@p_attdatnum": ParaData.attdatnum,
-      "@p_causedcd": ParaData.causedcd,
-      "@p_crsdiv1": ParaData.crsdiv1,
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_form_id": "QC_A2500W",
-    },
-  };
-  const [reload, setreload] = useState<boolean>(false);
-
-  const fetchTodoGridSaved = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", para);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      setreload(!reload);
-      setParaData({
-        pgSize: PAGE_SIZE,
-        workType: workType,
-        orgdiv: "01",
-        location: "01",
-        datnum: "",
-        attdatnum: "",
-        baddt: "",
-        badnum: "",
-        badseq: 0,
-        causedcd: "",
-        contents: "",
-        crsdiv1: "",
-        custcd: "",
-        custnm: "",
-        errtext: "",
-        files: "",
-        itemcd: "",
-        itemnm: "",
-        lotnum: "",
-        person: "",
-        proccd: "",
-        protext: "",
-        qcdt: "",
-        qty: 0,
-        recdt: "",
-        renum: "",
-        reseq: 0,
-        title: "",
-      });
-      resetAllGrid();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (ParaData.causedcd != "") {
-      fetchTodoGridSaved();
-    }
-  }, [ParaData]);
 
   const minGridWidth = React.useRef<number>(0);
   const minGridWidth2 = React.useRef<number>(0);
@@ -1375,7 +1222,7 @@ const QC_A2500W: React.FC = () => {
             <GridTitle>불량내역</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "37.5vh" }}
+            style={{ height: "34vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1542,7 +1389,6 @@ const QC_A2500W: React.FC = () => {
         <DetailWindow
           setVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
-          setData={setCopyData}
           data={
             detailDataResult.data.filter(
               (item: any) =>
@@ -1566,7 +1412,13 @@ const QC_A2500W: React.FC = () => {
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
-          reload={reload}
+          reloadData={(str) =>
+            setDetailFilters((prev) => ({
+              ...prev,
+              find_row_value: str,
+              isSearch: true,
+            }))
+          }
           modal={true}
         />
       )}
