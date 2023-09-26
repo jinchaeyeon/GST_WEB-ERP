@@ -57,10 +57,7 @@ import {
   numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -149,7 +146,7 @@ const SA_B2221: React.FC = () => {
       take: initialPageState.take,
     });
   };
-  
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -215,12 +212,11 @@ const SA_B2221: React.FC = () => {
     }));
   };
 
-
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
 
- useEffect(() => {
+  useEffect(() => {
     if (targetRowIndex !== null && gridRef.current) {
       gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
       targetRowIndex = null;
@@ -335,7 +331,11 @@ const SA_B2221: React.FC = () => {
         setYearTitle(Object.values(rows[0]));
       }
       // 공통 그리드
-      else if (workType === "GRID" ||workType === "MONTH" || workType === "QUARTER") {
+      else if (
+        workType === "GRID" ||
+        workType === "MONTH" ||
+        workType === "QUARTER"
+      ) {
         const totalRowCnt2 = data.tables[0].TotalRowCount;
 
         setGridDataResult((prev) => {
@@ -395,20 +395,20 @@ const SA_B2221: React.FC = () => {
       permissions !== null &&
       bizComponentData !== null
     ) {
-    setFilters((prev) => ({ ...prev, isSearch: false }));
-    fetchGrid("TITLE");
+      setFilters((prev) => ({ ...prev, isSearch: false }));
+      fetchGrid("TITLE");
 
-    if (tabSelected === 0) {
-      fetchGrid("TOTAL");
-      fetchGrid("GRID");
-    } else if (tabSelected === 1) {
-      fetchGrid("MONTH");
-      fetchGrid("MCHART");
-    } else if (tabSelected === 2) {
-      fetchGrid("QUARTER");
-      fetchGrid("QCHART");
+      if (tabSelected === 0) {
+        fetchGrid("TOTAL");
+        fetchGrid("GRID");
+      } else if (tabSelected === 1) {
+        fetchGrid("MONTH");
+        fetchGrid("MCHART");
+      } else if (tabSelected === 2) {
+        fetchGrid("QUARTER");
+        fetchGrid("QCHART");
+      }
     }
-  }
   }, [filters, permissions]);
 
   //그리드 리셋
@@ -568,7 +568,6 @@ const SA_B2221: React.FC = () => {
     }
   };
 
-
   const minGridWidth = React.useRef<number>(0);
   const minGridWidth2 = React.useRef<number>(0);
   const minGridWidth3 = React.useRef<number>(0);
@@ -612,20 +611,14 @@ const SA_B2221: React.FC = () => {
       );
       if (grid.current) {
         setGridCurrent(grid.current.clientWidth);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-      }
-      if (grid.current) {
         setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
       if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
       if (grid3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
         setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
       }
     }
@@ -837,7 +830,7 @@ const SA_B2221: React.FC = () => {
                 }}
               >
                 <Grid
-                     style={{ height: "33.5vh" }}
+                  style={{ height: "33.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -907,7 +900,7 @@ const SA_B2221: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="월별">
           <GridContainerWrap flexDirection="column">
-          <GridContainer width={"100%"}>
+            <GridContainer width={"100%"}>
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
@@ -915,7 +908,7 @@ const SA_B2221: React.FC = () => {
                 }}
               >
                 <Grid
-                   style={{ height: "33.5vh" }}
+                  style={{ height: "33.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1006,7 +999,9 @@ const SA_B2221: React.FC = () => {
                         content: (e) => numberWithCommas(e.value) + "",
                       }}
                       type="line"
-                      data={chartDataResult.map((item: any) => Math.round(item.qty))}
+                      data={chartDataResult.map((item: any) =>
+                        Math.round(item.qty)
+                      )}
                     />
                     <ChartSeriesItem
                       labels={{
@@ -1014,7 +1009,9 @@ const SA_B2221: React.FC = () => {
                         content: (e) => numberWithCommas(e.value) + "",
                       }}
                       type="bar"
-                      data={chartDataResult.map((item: any) => Math.round(item.amt))}
+                      data={chartDataResult.map((item: any) =>
+                        Math.round(item.amt)
+                      )}
                     />
                   </ChartSeries>
                 </Chart>
@@ -1033,12 +1030,12 @@ const SA_B2221: React.FC = () => {
                       categoryField="mm"
                       startAngle={150}
                     >
-                          <ChartSeriesLabels
+                      <ChartSeriesLabels
                         position="outsideEnd"
                         background="none"
                         content={labelContent}
                       />
-                      </ChartSeriesItem>
+                    </ChartSeriesItem>
                   </ChartSeries>
                 </Chart>
               </GridContainer>
@@ -1047,7 +1044,7 @@ const SA_B2221: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="분기별">
           <GridContainerWrap flexDirection="column">
-          <GridContainer width={"100%"}>
+            <GridContainer width={"100%"}>
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
@@ -1055,7 +1052,7 @@ const SA_B2221: React.FC = () => {
                 }}
               >
                 <Grid
-               style={{ height: "33.5vh" }}
+                  style={{ height: "33.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,

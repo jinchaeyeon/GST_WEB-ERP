@@ -1247,37 +1247,27 @@ const SA_B2410: React.FC = () => {
         (item: TColumn) =>
           item.width !== undefined
             ? (minGridWidth5.current += item.width)
-            : minGridWidth5.current 
+            : minGridWidth5.current
       );
 
       if (grid.current) {
         setGridCurrent(grid.current.clientWidth);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-      }
-      if (grid4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-      }
-      if (grid5.current) {
-        setGridCurrent5(grid5.current.clientWidth);
-      }
-      if (grid.current) {
         setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
       if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
       if (grid3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
         setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
       }
       if (grid4.current) {
+        setGridCurrent4(grid4.current.clientWidth);
         setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
       }
       if (grid5.current) {
+        setGridCurrent5(grid5.current.clientWidth);
         setApplyMinWidth5(grid5.current.clientWidth < minGridWidth5.current);
       }
     }
@@ -1350,7 +1340,7 @@ const SA_B2410: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
     if (grid2.current && Name == "grdList2") {
       let width = applyMinWidth2
         ? minWidth
@@ -1359,7 +1349,7 @@ const SA_B2410: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
     if (grid3.current && Name == "grdList3") {
       let width = applyMinWidth3
         ? minWidth
@@ -1368,7 +1358,7 @@ const SA_B2410: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
     if (grid4.current && Name == "grdList4") {
       let width = applyMinWidth4
         ? minWidth
@@ -1377,7 +1367,7 @@ const SA_B2410: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
     if (grid5.current && Name == "grdList5") {
       let width = applyMinWidth5
         ? minWidth
@@ -1520,7 +1510,11 @@ const SA_B2410: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab} style={{width: "100%"}}>
+      <TabStrip
+        selected={tabSelected}
+        onSelect={handleSelectTab}
+        style={{ width: "100%" }}
+      >
         <TabStripTab title="업체별">
           <GridContainer width="100%">
             <ExcelExport

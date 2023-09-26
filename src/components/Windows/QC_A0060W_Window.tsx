@@ -1,83 +1,94 @@
-import { useEffect, useState, useCallback } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridEvent,
+  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
-  GridCellProps,
 } from "@progress/kendo-react-grid";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { TextArea } from "@progress/kendo-react-inputs";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
-import CopyWindow2 from "./MA_A2500W_Order_Window";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  Title,
-  TitleContainer,
   ButtonInInput,
-  GridTitleContainer,
-  FormBoxWrap,
   FormBox,
+  FormBoxWrap,
+  GridContainer,
   GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
-import { useRecoilState } from "recoil";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import { useApi } from "../../hooks/api";
+import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  chkScrollHandler,
+  deletedAttadatnumsState,
+  isLoading,
+  loginResultState,
+  unsavedAttadatnumsState,
+} from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
   UseBizComponent,
   UseCustomOption,
   UseMessages,
-  getQueryFromBizComponent,
   UseParaPc,
-  toDate,
   convertDateToStr,
-  getGridItemChangedData,
-  dateformat,
-  isValidDate,
   findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
   setDefaultDate,
+  toDate,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { loginResultState } from "../../store/atoms";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useSetRecoilState } from "recoil";
 import {
-  isLoading,
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
-} from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
-import { FormComboBoxCell, FormComboBox } from "../Editors";
-import ComboBoxCell from "../Cells/ComboBoxCell";
-import { NumberInput } from "adaptivecards";
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
+import { CellRender, RowRender } from "../Renderers/Renderers";
+import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
+import CopyWindow2 from "./MA_A2500W_Order_Window";
 
 type IWindow = {
   workType: "N" | "U" | "R";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void;
-  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
+  reloadData(workType: string): void;
   rev: boolean;
+  modal?: boolean;
+};
+
+type TdataArr = {
+  rowstatus_d: string[];
+  stdseq_d: string[];
+  inspeccd_d: string[];
+  qc_gubun_d: string[];
+  qc_sort_d: string[];
+  qc_unit_d: string[];
+  qc_spec_d: string[];
+  qc_base_d: string[];
+  qc_min_d: string[];
+  qc_max_d: string[];
+  qc_scope1_d: string[];
+  qc_scope2_d: string[];
+  chkmed_d: string[];
+  cycle_d: string[];
+  qty_d: string[];
+  remark_d: string[];
 };
 
 type Idata = {
@@ -131,22 +142,24 @@ const CopyWindow = ({
   workType,
   data,
   setVisible,
-  setData,
-  reload,
+  reloadData,
   rev,
+  modal = false,
 }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
-  const [loginResult] = useRecoilState(loginResultState);
-  const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const DATA_ITEM_KEY = "num";
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
@@ -182,32 +195,28 @@ const CopyWindow = ({
     }
   }, [customOptionData]);
 
-  useEffect(() => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
-  }, [reload]);
-
   const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+  const [tempState, setTempState] = useState<State>({
     sort: [],
   });
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -247,24 +256,10 @@ const CopyWindow = ({
     setVisible(false);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
+
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -302,13 +297,6 @@ const CopyWindow = ({
     itemlvl5: string;
     custitemnm: string;
   }
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
 
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
@@ -337,33 +325,34 @@ const CopyWindow = ({
     stdnum: "",
     rev: "",
     find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  const parameters: Iparameters = {
-    procedureName: "P_QC_A0060W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": "01",
-      "@p_location": filters.location,
-      "@p_mngnum": filters.mngnum,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_proccd": filters.proccd,
-      "@p_stdnum": filters.stdnum,
-      "@p_stdrev": filters.stdrev,
-      "@p_qcgb": filters.qcgb,
-      "@p_rev": filters.rev,
-      "@p_find_row_value": filters.find_row_value,
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    const parameters: Iparameters = {
+      procedureName: "P_QC_A0060W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": "01",
+        "@p_location": filters.location,
+        "@p_mngnum": filters.mngnum,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_proccd": filters.proccd,
+        "@p_stdnum": filters.stdnum,
+        "@p_stdrev": filters.stdrev,
+        "@p_qcgb": filters.qcgb,
+        "@p_rev": filters.rev,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -382,15 +371,15 @@ const CopyWindow = ({
               ...row,
             }
       );
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
 
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-        setIsInitSearch(true);
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
@@ -399,17 +388,20 @@ const CopyWindow = ({
     setLoading(false);
   };
 
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (workType != "N" && isInitSearch === false) {
-      fetchMainGrid();
+    if (workType != "N" && filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
-  useEffect(() => {
-    if (customOptionData !== null && workType === "U") {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     if (workType !== "N" && data != undefined) {
@@ -429,21 +421,11 @@ const CopyWindow = ({
         remark: data.remark1,
         stdnum: data.stdnum,
         rev: data.rev,
+        isSearch: true,
+        pgNum: 1,
       }));
     }
   }, []);
-
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
-    }
-  }, [mainDataResult]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -453,16 +435,6 @@ const CopyWindow = ({
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -500,10 +472,10 @@ const CopyWindow = ({
     if (dataItem.length === 0) return false;
 
     mainDataResult.data.map((item) => {
-      if(item.num > temp2){
-        temp2 = item.num
+      if (item.num > temp2) {
+        temp2 = item.num;
       }
-  })
+    });
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp2;
@@ -555,7 +527,7 @@ const CopyWindow = ({
           mainDataResult.data[i].qc_sort == mainDataResult.data[j].qc_sort &&
           valid == true
         ) {
-          alert("정렬순서가 겹칩니다. 수정해주세요.");
+          alert("검사순번이 겹칩니다. 수정해주세요.");
           valid = false;
           return false;
         }
@@ -598,42 +570,351 @@ const CopyWindow = ({
         mainDataResult.data.filter((item) => item.qc_gubun == "").length > 0
       ) {
         throw findMessage(messagesData, "QC_A0060W_007");
-      } else {
-        if (valid == true) {
-          setData(mainDataResult.data, filters, deletedMainRows);
-          deletedMainRows = [];
-          setUnsavedAttadatnums([]);
-          if (workType == "N" || workType == "R") {
-            onClose();
-          }
-        }
       }
     } catch (e) {
       alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length > 0) {
+      let dataArr: TdataArr = {
+        rowstatus_d: [],
+        stdseq_d: [],
+        inspeccd_d: [],
+        qc_gubun_d: [],
+        qc_sort_d: [],
+        qc_unit_d: [],
+        qc_spec_d: [],
+        qc_base_d: [],
+        qc_min_d: [],
+        qc_max_d: [],
+        qc_scope1_d: [],
+        qc_scope2_d: [],
+        chkmed_d: [],
+        cycle_d: [],
+        qty_d: [],
+        remark_d: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          stdseq = "",
+          inspeccd = "",
+          qc_gubun = "",
+          qc_sort = "",
+          qc_unit = "",
+          qc_spec = "",
+          qc_base = "",
+          qc_min = "",
+          qc_max = "",
+          qc_scope1 = "",
+          qc_scope2 = "",
+          chkmed = "",
+          cycle = "",
+          qty = "",
+          remark = "",
+        } = item;
+
+        dataArr.rowstatus_d.push(workType == "R" ? "N" : rowstatus);
+        dataArr.stdseq_d.push(stdseq);
+        dataArr.inspeccd_d.push(inspeccd);
+        dataArr.qc_gubun_d.push(qc_gubun);
+        dataArr.qc_sort_d.push(qc_sort);
+        dataArr.qc_unit_d.push(qc_unit);
+        dataArr.qc_spec_d.push(qc_spec);
+        dataArr.qc_base_d.push(qc_base);
+        dataArr.qc_min_d.push(qc_min);
+        dataArr.qc_max_d.push(qc_max);
+        dataArr.qc_scope1_d.push(qc_scope1);
+        dataArr.qc_scope2_d.push(qc_scope2);
+        dataArr.chkmed_d.push(chkmed);
+        dataArr.cycle_d.push(cycle);
+        dataArr.qty_d.push(qty);
+        dataArr.remark_d.push(remark);
+      });
+      deletedMainRows.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          stdseq = "",
+          inspeccd = "",
+          qc_gubun = "",
+          qc_sort = "",
+          qc_unit = "",
+          qc_spec = "",
+          qc_base = "",
+          qc_min = "",
+          qc_max = "",
+          qc_scope1 = "",
+          qc_scope2 = "",
+          chkmed = "",
+          cycle = "",
+          qty = "",
+          remark = "",
+        } = item;
+
+        dataArr.rowstatus_d.push(workType == "R" ? "N" : rowstatus);
+        dataArr.stdseq_d.push(stdseq);
+        dataArr.inspeccd_d.push(inspeccd);
+        dataArr.qc_gubun_d.push(qc_gubun);
+        dataArr.qc_sort_d.push(qc_sort);
+        dataArr.qc_unit_d.push(qc_unit);
+        dataArr.qc_spec_d.push(qc_spec);
+        dataArr.qc_base_d.push(qc_base);
+        dataArr.qc_min_d.push(qc_min);
+        dataArr.qc_max_d.push(qc_max);
+        dataArr.qc_scope1_d.push(qc_scope1);
+        dataArr.qc_scope2_d.push(qc_scope2);
+        dataArr.chkmed_d.push(chkmed);
+        dataArr.cycle_d.push(cycle);
+        dataArr.qty_d.push(qty);
+        dataArr.remark_d.push(remark);
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: workType == "R" ? "REV" : workType,
+        dptcd: "",
+        stdnum: filters.stdnum,
+        stdrev: filters.stdrev,
+        qcgb: filters.qcgb,
+        itemcd: filters.itemcd,
+        proccd: filters.proccd,
+        recdt: filters.recdt,
+        attdatnum: filters.attdatnum,
+        remark1: filters.remark,
+        mngnum: filters.mngnum,
+        rev_reason: filters.rev_reason,
+        userid: userId,
+        pc: pc,
+        form_id: "MA_A2400W",
+        serviceid: companyCode,
+        rowstatus_d: dataArr.rowstatus_d.join("|"),
+        stdseq_d: dataArr.stdseq_d.join("|"),
+        inspeccd_d: dataArr.inspeccd_d.join("|"),
+        qc_gubun_d: dataArr.qc_gubun_d.join("|"),
+        qc_sort_d: dataArr.qc_sort_d.join("|"),
+        qc_unit_d: dataArr.qc_unit_d.join("|"),
+        qc_spec_d: dataArr.qc_spec_d.join("|"),
+        qc_base_d: dataArr.qc_base_d.join("|"),
+        qc_min_d: dataArr.qc_min_d.join("|"),
+        qc_max_d: dataArr.qc_max_d.join("|"),
+        qc_scope1_d: dataArr.qc_scope1_d.join("|"),
+        qc_scope2_d: dataArr.qc_scope2_d.join("|"),
+        chkmed_d: dataArr.chkmed_d.join("|"),
+        cycle_d: dataArr.cycle_d.join("|"),
+        qty_d: dataArr.qty_d.join("|"),
+        remark_d: dataArr.remark_d.join("|"),
+      }));
+    } else {
+      setParaData((prev) => ({
+        ...prev,
+        workType: workType == "R" ? "REV" : workType,
+        dptcd: "",
+        stdnum: filters.stdnum,
+        stdrev: filters.stdrev,
+        qcgb: filters.qcgb,
+        itemcd: filters.itemcd,
+        proccd: filters.proccd,
+        recdt: filters.recdt,
+        attdatnum: filters.attdatnum,
+        remark1: filters.remark,
+        mngnum: filters.mngnum,
+        rev_reason: filters.rev_reason,
+        userid: userId,
+        pc: pc,
+        form_id: "MA_A2400W",
+        serviceid: companyCode,
+      }));
     }
   };
 
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    stdnum: "",
+    stdrev: 0,
+    qcgb: "",
+    itemcd: "",
+    proccd: "",
+    recdt: new Date(),
+    attdatnum: "",
+    remark1: "",
+    mngnum: "",
+    rev_reason: "",
+    rowstatus_d: "",
+    stdseq_d: "",
+    inspeccd_d: "",
+    qc_gubun_d: "",
+    qc_sort_d: "",
+    qc_unit_d: "",
+    qc_spec_d: "",
+    qc_base_d: "",
+    qc_min_d: "",
+    qc_max_d: "",
+    qc_scope1_d: "",
+    qc_scope2_d: "",
+    chkmed_d: "",
+    cycle_d: "",
+    qty_d: "",
+    remark_d: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_QC_A0060W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_location": ParaData.location,
+      "@p_dptcd": ParaData.dptcd,
+      "@p_stdnum": ParaData.stdnum,
+      "@p_stdrev": ParaData.stdrev,
+      "@p_qcgb": ParaData.qcgb,
+      "@p_itemcd": ParaData.itemcd,
+      "@p_proccd": ParaData.proccd,
+      "@p_recdt": convertDateToStr(ParaData.recdt),
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark1": ParaData.remark1,
+      "@p_mngnum": ParaData.mngnum,
+      "@p_rev_reason": ParaData.rev_reason,
+      "@p_rowstatus_d": ParaData.rowstatus_d,
+      "@p_stdseq_d": ParaData.stdseq_d,
+      "@p_inspeccd_d": ParaData.inspeccd_d,
+      "@p_qc_gubun_d": ParaData.qc_gubun_d,
+      "@p_qc_sort_d": ParaData.qc_sort_d,
+      "@p_qc_unit_d": ParaData.qc_unit_d,
+      "@p_qc_spec_d": ParaData.qc_spec_d,
+      "@p_qc_base_d": ParaData.qc_base_d,
+      "@p_qc_min_d": ParaData.qc_min_d,
+      "@p_qc_max_d": ParaData.qc_max_d,
+      "@p_qc_scope1_d": ParaData.qc_scope1_d,
+      "@p_qc_scope2_d": ParaData.qc_scope2_d,
+      "@p_chkmed_d": ParaData.chkmed_d,
+      "@p_cycle_d": ParaData.cycle_d,
+      "@p_qty_d": ParaData.qty_d,
+      "@p_remark_d": ParaData.remark_d,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "P_QC_A0060W",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      deletedMainRows = []; //초기화
+      if (workType == "U") {
+        reloadData(data.returnString);
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+        }));
+      } else {
+        reloadData(data.returnString);
+        setVisible(false);
+      }
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "",
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        stdnum: "",
+        stdrev: 0,
+        qcgb: "",
+        itemcd: "",
+        proccd: "",
+        recdt: new Date(),
+        attdatnum: "",
+        remark1: "",
+        mngnum: "",
+        rev_reason: "",
+        rowstatus_d: "",
+        stdseq_d: "",
+        inspeccd_d: "",
+        qc_gubun_d: "",
+        qc_sort_d: "",
+        qc_unit_d: "",
+        qc_spec_d: "",
+        qc_base_d: "",
+        qc_min_d: "",
+        qc_max_d: "",
+        qc_scope1_d: "",
+        qc_scope2_d: "",
+        chkmed_d: "",
+        cycle_d: "",
+        qty_d: "",
+        remark_d: "",
+      })
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
     mainDataResult.data.forEach((item: any, index: number) => {
       if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
       } else {
         const newData2 = {
           ...item,
           rowstatus: "D",
         };
+        Object.push(index);
         deletedMainRows.push(newData2);
       }
     });
 
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object) - 1];
+    }
+
     setMainDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object.length,
     }));
-
-    setMainDataState({});
+    if (Object.length > 0) {
+      setSelectedState({
+        [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+      });
+    }
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -721,7 +1002,6 @@ const CopyWindow = ({
           item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
             ? {
                 ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
                 [EDIT_FIELD]: field,
               }
             : {
@@ -730,10 +1010,22 @@ const CopyWindow = ({
               }
         );
 
-        setIfSelectFirstRow(false);
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
         setMainDataResult((prev) => {
           return {
             data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        setTempResult((prev) => {
+          return {
+            data: mainDataResult.data,
             total: prev.total,
           };
         });
@@ -742,101 +1034,136 @@ const CopyWindow = ({
   };
 
   const exitEdit = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      qc_scope1:
-        item.qc_gubun == "02" || item.qc_gubun == "03" || item.qc_gubun == "10"
-          ? 0
-          : item.qc_scope1,
-      qc_scope2:
-        item.qc_gubun == "01" ||
-        item.qc_gubun == "02" ||
-        item.qc_gubun == "03" ||
-        item.qc_gubun == "04" ||
-        item.qc_gubun == "05" ||
-        item.qc_gubun == "06" ||
-        item.qc_gubun == "10"
-          ? 0
-          : item.qc_scope2,
-      qc_min:
-        item.qc_gubun == "01"
-          ? item.qc_base - item.qc_scope1
-          : item.qc_gubun == "03"
-          ? item.qc_base
-          : item.qc_gubun == "04"
-          ? item.qc_base
-          : item.qc_gubun == "05"
-          ? item.qc_base - item.qc_scope1
-          : item.qc_gubun == "06"
-          ? item.qc_base
-          : item.qc_gubun == "07"
-          ? item.qc_base - item.qc_scope1
-          : item.qc_gubun == "08"
-          ? item.qc_base - item.qc_scope1
-          : item.qc_gubun == "09"
-          ? item.qc_base + item.qc_scope1
-          : 0,
-      qc_max:
-        item.qc_gubun == "01"
-          ? item.qc_base + item.qc_scope1
-          : item.qc_gubun == "02"
-          ? item.qc_base
-          : item.qc_gubun == "04"
-          ? item.qc_base + item.qc_scope1
-          : item.qc_gubun == "05"
-          ? item.qc_base
-          : item.qc_gubun == "06"
-          ? item.qc_scope1
-          : item.qc_gubun == "07"
-          ? item.qc_base + item.qc_scope2
-          : item.qc_gubun == "08"
-          ? item.qc_base - item.qc_scope2
-          : item.qc_gubun == "09"
-          ? item.qc_base + item.qc_scope2
-          : 0,
-      qc_spec:
-        item.qc_gubun == "01"
-          ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
-              item.qc_base + item.qc_scope1
-            }${item.qc_unit}`
-          : item.qc_gubun == "02"
-          ? `${item.qc_base}${item.qc_unit} 이하`
-          : item.qc_gubun == "03"
-          ? `${item.qc_base}${item.qc_unit} 이상`
-          : item.qc_gubun == "04"
-          ? `${item.qc_base}${item.qc_unit} - ${item.qc_base + item.qc_scope1}${
-              item.qc_unit
-            }`
-          : item.qc_gubun == "05"
-          ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${item.qc_base}${
-              item.qc_unit
-            }`
-          : item.qc_gubun == "06"
-          ? `${item.qc_base}${item.qc_unit} - ${item.qc_scope1}${item.qc_unit}`
-          : item.qc_gubun == "07"
-          ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
-              item.qc_base + item.qc_scope2
-            }${item.qc_unit}`
-          : item.qc_gubun == "08"
-          ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
-              item.qc_base - item.qc_scope2
-            }${item.qc_unit}`
-          : item.qc_gubun == "09"
-          ? `${item.qc_base + item.qc_scope1}${item.qc_unit} - ${
-              item.qc_base + item.qc_scope2
-            }${item.qc_unit}`
-          : item.qc_gubun == "10"
-          ? `${item.qc_base}${item.qc_unit} 고정`
-          : item.qc_spec,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              qc_scope1:
+                item.qc_gubun == "02" ||
+                item.qc_gubun == "03" ||
+                item.qc_gubun == "10"
+                  ? 0
+                  : item.qc_scope1,
+              qc_scope2:
+                item.qc_gubun == "01" ||
+                item.qc_gubun == "02" ||
+                item.qc_gubun == "03" ||
+                item.qc_gubun == "04" ||
+                item.qc_gubun == "05" ||
+                item.qc_gubun == "06" ||
+                item.qc_gubun == "10"
+                  ? 0
+                  : item.qc_scope2,
+              qc_min:
+                item.qc_gubun == "01"
+                  ? item.qc_base - item.qc_scope1
+                  : item.qc_gubun == "03"
+                  ? item.qc_base
+                  : item.qc_gubun == "04"
+                  ? item.qc_base
+                  : item.qc_gubun == "05"
+                  ? item.qc_base - item.qc_scope1
+                  : item.qc_gubun == "06"
+                  ? item.qc_base
+                  : item.qc_gubun == "07"
+                  ? item.qc_base - item.qc_scope1
+                  : item.qc_gubun == "08"
+                  ? item.qc_base - item.qc_scope1
+                  : item.qc_gubun == "09"
+                  ? item.qc_base + item.qc_scope1
+                  : 0,
+              qc_max:
+                item.qc_gubun == "01"
+                  ? item.qc_base + item.qc_scope1
+                  : item.qc_gubun == "02"
+                  ? item.qc_base
+                  : item.qc_gubun == "04"
+                  ? item.qc_base + item.qc_scope1
+                  : item.qc_gubun == "05"
+                  ? item.qc_base
+                  : item.qc_gubun == "06"
+                  ? item.qc_scope1
+                  : item.qc_gubun == "07"
+                  ? item.qc_base + item.qc_scope2
+                  : item.qc_gubun == "08"
+                  ? item.qc_base - item.qc_scope2
+                  : item.qc_gubun == "09"
+                  ? item.qc_base + item.qc_scope2
+                  : 0,
+              qc_spec:
+                item.qc_gubun == "01"
+                  ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
+                      item.qc_base + item.qc_scope1
+                    }${item.qc_unit}`
+                  : item.qc_gubun == "02"
+                  ? `${item.qc_base}${item.qc_unit} 이하`
+                  : item.qc_gubun == "03"
+                  ? `${item.qc_base}${item.qc_unit} 이상`
+                  : item.qc_gubun == "04"
+                  ? `${item.qc_base}${item.qc_unit} - ${
+                      item.qc_base + item.qc_scope1
+                    }${item.qc_unit}`
+                  : item.qc_gubun == "05"
+                  ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
+                      item.qc_base
+                    }${item.qc_unit}`
+                  : item.qc_gubun == "06"
+                  ? `${item.qc_base}${item.qc_unit} - ${item.qc_scope1}${item.qc_unit}`
+                  : item.qc_gubun == "07"
+                  ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
+                      item.qc_base + item.qc_scope2
+                    }${item.qc_unit}`
+                  : item.qc_gubun == "08"
+                  ? `${item.qc_base - item.qc_scope1}${item.qc_unit} - ${
+                      item.qc_base - item.qc_scope2
+                    }${item.qc_unit}`
+                  : item.qc_gubun == "09"
+                  ? `${item.qc_base + item.qc_scope1}${item.qc_unit} - ${
+                      item.qc_base + item.qc_scope2
+                    }${item.qc_unit}`
+                  : item.qc_gubun == "10"
+                  ? `${item.qc_base}${item.qc_unit} 고정`
+                  : item.qc_spec,
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -912,6 +1239,8 @@ const CopyWindow = ({
       stdrev: stdrevs,
       stdseq: 0,
     };
+    setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
     setMainDataResult((prev) => {
       return {
         data: [newDataItem, ...prev.data],
@@ -929,7 +1258,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
@@ -1002,8 +1331,7 @@ const CopyWindow = ({
                     name="itemnm"
                     type="text"
                     value={filters.itemnm}
-                    onChange={filterInputChange}
-                    className="required"
+                    className="readonly"
                   />
                 </td>
                 <th>검사구분</th>
@@ -1094,7 +1422,6 @@ const CopyWindow = ({
             <ButtonContainer>
               <Button
                 onClick={onAddClick}
-                fillMode="outline"
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
@@ -1136,7 +1463,6 @@ const CopyWindow = ({
             //스크롤 조회기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -1179,7 +1505,6 @@ const CopyWindow = ({
               field="qc_base"
               title="측정기준값"
               width="100px"
-              // footerCell={gridSumQtyFooterCell}
               cell={NumberCell}
             />
             <GridColumn
@@ -1233,13 +1558,6 @@ const CopyWindow = ({
           </ButtonContainer>
         </BottomContainer>
       </Window>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={workType}
-          setData={setCustData}
-        />
-      )}
       {CopyWindowVisible && (
         <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}

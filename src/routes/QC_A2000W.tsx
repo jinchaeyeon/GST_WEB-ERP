@@ -2234,27 +2234,24 @@ const QC_A2000: React.FC = () => {
       minGridWidth2.current += 50;
       if (grid.current) {
         setGridCurrent(grid.current.clientWidth);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-      }
-      if (grid.current) {
         setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
       if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
     }
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
+    if (grid.current) {
+      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.clientWidth > minGridWidth.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(false);
+      }
     }
-
     if (grid2.current) {
       if (
         grid2.current.clientWidth < minGridWidth2.current &&

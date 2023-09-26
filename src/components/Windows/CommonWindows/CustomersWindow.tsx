@@ -11,7 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -27,9 +27,11 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
-import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
-import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import { UseBizComponent, getQueryFromBizComponent, handleKeyPressSearch } from "../../CommonFunction";
+import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+import { bytesToBase64 } from "byte-base64";
+
 type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void;
@@ -65,6 +67,42 @@ const KendoWindow = ({
     //업체구분, 사용여부,
     setBizComponentData
   );
+
+  const [custdivListData, setCustdivListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const custdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
+      );
+
+      fetchQuery(custdivQueryStr, setCustdivListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -178,7 +216,11 @@ const KendoWindow = ({
         filters.pgSize,
       custcd: filters.custcd,
       custnm: filters.custnm,
-      custdiv: filters.custdiv,
+      custdiv: custdivListData.find(
+        (item: any) => item.sub_code === filters.custdiv
+      )?.code_name == undefined ? "" : custdivListData.find(
+        (item: any) => item.sub_code === filters.custdiv
+      )?.code_name,
       useyn:
         filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
     };

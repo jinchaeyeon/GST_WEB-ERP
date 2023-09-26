@@ -20,25 +20,25 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
-        width: 250,
+        width: 150,
       },
       {
         id: "col_insiz",
         field: "insiz",
         caption: "규격",
-        width: 200,
+        width: 120,
       },
       {
         id: "col_lotnum",
         field: "lotnum",
         caption: "LOT NO",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_qty",
@@ -163,7 +163,7 @@ export const gridList: Array<TGrid> = [
         id: "col_usetype",
         field: "usetype",
         caption: "투입경로",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_procseq",
@@ -203,7 +203,7 @@ export const gridList: Array<TGrid> = [
         id: "col_insiz3",
         field: "insiz",
         caption: "규격",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_user_name",
@@ -250,7 +250,7 @@ export const gridList: Array<TGrid> = [
         id: "col_insiz4",
         field: "insiz",
         caption: "규격",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_lotnum4",

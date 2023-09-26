@@ -72,6 +72,7 @@ type IWindow = {
   setData(filter: object): void;
   reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
   basicdata? : Idata2;
+  modal? : boolean;
 };
 
 type Idata = {
@@ -121,6 +122,7 @@ const CopyWindow = ({
   setData,
   reload,
   basicdata,
+  modal = false
 }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -463,7 +465,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>

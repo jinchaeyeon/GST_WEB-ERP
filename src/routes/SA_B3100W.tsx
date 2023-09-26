@@ -354,7 +354,7 @@ const SA_B3100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
 
@@ -676,26 +676,18 @@ const SA_B3100W: React.FC = () => {
       );
       if (grid.current) {
         setGridCurrent(grid.current.clientWidth);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-      }
-      if (grid4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-      }
-      if (grid.current) {
         setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
       if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
       if (grid3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
         setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
       }
       if (grid4.current) {
+        setGridCurrent4(grid4.current.clientWidth);
         setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
       }
     }
@@ -757,7 +749,7 @@ const SA_B3100W: React.FC = () => {
             customOptionData.menuCustomColumnOptions[Name].length;
 
       return width;
-    } 
+    }
     if (grid2.current && Name == "grdMonthList") {
       let width = applyMinWidth2
         ? minWidth
@@ -1328,7 +1320,7 @@ const SA_B3100W: React.FC = () => {
                                 item.caption === "전기" ? "jtotal" : "dtotal"
                               }
                               footerCell={gridSumQtyFooterCell}
-                              width={setWidth("grdQuarterList", item.width/4)}
+                              width={setWidth("grdQuarterList", item.width / 4)}
                             />
                           </GridColumn>
                         ) : (

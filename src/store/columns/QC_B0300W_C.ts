@@ -14,7 +14,7 @@ export const gridList: Array<TGrid> = [
         id: "col_fxnm",
         field: "fxnm",
         caption: "설비명",
-        width: 180,
+        width: 150,
       },
       {
         id: "col_proccd",
@@ -26,7 +26,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
-        width: 180,
+        width: 150,
       },
       {
         id: "col_inspeccd",
@@ -38,7 +38,7 @@ export const gridList: Array<TGrid> = [
         id: "col_qc_spec",
         field: "qc_spec",
         caption: "측정기준명",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_sample",
@@ -74,7 +74,7 @@ export const gridList: Array<TGrid> = [
         id: "col_Cpk",
         field: "Cpk",
         caption: "단기공정능력",
-        width: 200,
+        width: 120,
       },
     ],
   },

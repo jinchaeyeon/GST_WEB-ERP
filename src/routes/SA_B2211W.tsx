@@ -313,7 +313,7 @@ const SA_B2211W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-  
+
     if (data.isSuccess === true && data.tables.length > 0) {
       const rows = data.tables[0].Rows;
       if (gridRef.current) {
@@ -613,20 +613,14 @@ const SA_B2211W: React.FC = () => {
       );
       if (grid.current) {
         setGridCurrent(grid.current.clientWidth);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-      }
-      if (grid.current) {
         setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
       if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
       if (grid3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
         setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
       }
     }

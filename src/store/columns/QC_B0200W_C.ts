@@ -44,19 +44,19 @@ export const gridList: Array<TGrid> = [
         id: "col_qcperson",
         field: "qcperson",
         caption: "검사자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_qcdecision",
         field: "qcdecision",
         caption: "판정",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_prodemp",
         field: "prodemp",
         caption: "작업자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_proccd",
@@ -74,7 +74,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm",
@@ -151,25 +151,25 @@ export const gridList: Array<TGrid> = [
         id: "col_person",
         field: "person",
         caption: "검사자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_qcdecision2",
         field: "qcdecision",
         caption: "판정",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_prodemp2",
         field: "prodemp",
         caption: "작업자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_itemcd2",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm2",
@@ -231,10 +231,27 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList3",
     columns: [
       {
+        id: "col_inspeccd2",
+        field: "inspeccd",
+        caption: "검사항목",
+        width: 120,
+      },
+      {
+        id: "col_qc_spec2",
+        field: "qc_spec",
+        caption: "측정기준명",
+        width: 120,
+      },
+    ]
+  },
+  {
+    gridName: "grdList4",
+    columns: [
+      {
         id: "col_차수",
         field: "차수",
         caption: "차수",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_검사일자",
@@ -258,13 +275,13 @@ export const gridList: Array<TGrid> = [
         id: "col_측정소요시간",
         field: "측정소요시간",
         caption: "측정소요시간",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_검사자",
         field: "검사자",
         caption: "검사자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_외경",
@@ -276,7 +293,7 @@ export const gridList: Array<TGrid> = [
         id: "col_비고",
         field: "비고",
         caption: "비고",
-        width: 250,
+        width: 200,
       },
       {
         id: "col_검사실적번호",
