@@ -197,6 +197,7 @@ const QC_A3000: React.FC = () => {
         qcno: defaultOption.find((item: any) => item.id === "qcno").valueCode,
         person: defaultOption.find((item: any) => item.id === "person")
           .valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -557,9 +558,27 @@ const QC_A3000: React.FC = () => {
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          setDetailFilters((prev) => ({
+            ...prev,
+            itemcd: selectedRow.itemcd,
+            renum: selectedRow.renum,
+            reseq: selectedRow.reseq,
+            isSearch: true,
+            pgNum: 1,
+          }));
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          setDetailFilters((prev) => ({
+            ...prev,
+            itemcd: rows[0].itemcd,
+            renum: rows[0].renum,
+            reseq: rows[0].reseq,
+            isSearch: true,
+            pgNum: 1,
+          }));
         }
+      } else {
+        resetAllGrid();
       }
     } else {
       console.log("[오류 발생]");
@@ -621,7 +640,8 @@ const QC_A3000: React.FC = () => {
         if (gridRef2.current) {
           const findRowIndex = rows.findIndex(
             (row: any) =>
-              row.renum + "-" + row.reseq == detailFilters.find_row_value
+              row.renum + "-" + row.reseq + "|" + row.qcnum ==
+              detailFilters.find_row_value
           );
           targetRowIndex2 = findRowIndex;
         }
@@ -649,13 +669,16 @@ const QC_A3000: React.FC = () => {
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  row.renum + "-" + row.reseq == detailFilters.find_row_value
+                  row.renum + "-" + row.reseq + "|" + row.qcnum ==
+                  detailFilters.find_row_value
               );
 
         if (selectedRow != undefined) {
           setDetailSelectedState({ [selectedRow[DETAIL_DATA_ITEM_KEY]]: true });
           setInformation((prev) => ({
             ...prev,
+            itemcd: selectedRow.itemcd,
+            itemnm: selectedRow.itemnm,
             attdatnum: selectedRow.attdatnum,
             badqty: selectedRow.badqty,
             endtime: selectedRow.endtime,
@@ -672,10 +695,21 @@ const QC_A3000: React.FC = () => {
             remark: selectedRow.remark,
             strtime: selectedRow.strtime,
           }));
+          setDetailFilters2((prev) => ({
+            ...prev,
+            itemcd: selectedRow.itemcd,
+            renum: selectedRow.renum == undefined ? "" : selectedRow.renum,
+            reseq: selectedRow.reseq == undefined ? 0 : selectedRow.reseq,
+            qcnum: selectedRow.qcnum == undefined ? "" : selectedRow.qcnum,
+            isSearch: true,
+            pgNum: 1,
+          }));
         } else {
           setDetailSelectedState({ [rows[0][DETAIL_DATA_ITEM_KEY]]: true });
           setInformation((prev) => ({
             ...prev,
+            itemcd: rows[0].itemcd,
+            itemnm: rows[0].itemnm,
             attdatnum: rows[0].attdatnum,
             badqty: rows[0].badqty,
             endtime: rows[0].endtime,
@@ -692,7 +726,35 @@ const QC_A3000: React.FC = () => {
             remark: rows[0].remark,
             strtime: rows[0].strtime,
           }));
+          setDetailFilters2((prev) => ({
+            ...prev,
+            itemcd: rows[0].itemcd,
+            renum: rows[0].renum == undefined ? "" : rows[0].renum,
+            reseq: rows[0].reseq == undefined ? 0 : rows[0].reseq,
+            qcnum: rows[0].qcnum == undefined ? "" : rows[0].qcnum,
+            isSearch: true,
+            pgNum: 1,
+          }));
         }
+      } else {
+        setInformation({
+          workType: "U",
+          attdatnum: "",
+          badqty: 0,
+          endtime: "",
+          files: "",
+          itemcd: "",
+          itemnm: "",
+          person: "",
+          qcdecision: "",
+          qcdt: new Date(),
+          qcno: "",
+          qcnum: "",
+          qcqty: 0,
+          remark: "",
+          strtime: "",
+        });
+        setDetailDataResult2(process([], detailDataState2));
       }
     } else {
       console.log("[오류 발생]");
@@ -795,6 +857,23 @@ const QC_A3000: React.FC = () => {
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
+
+        if (totalRowCnt > 0) {
+          const selectedRow =
+            detailFilters2.find_row_value == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) =>
+                    row.renum + "-" + row.reseq == detailFilters.find_row_value
+                );
+          if (selectedRow != undefined) {
+            setDetailSelectedState2({
+              [selectedRow[DETAIL_DATA_ITEM_KEY]]: true,
+            });
+          } else {
+            setDetailSelectedState2({ [rows[0][DETAIL_DATA_ITEM_KEY]]: true });
+          }
+        }
       } else if (datas.qcyn == "등록" && information.workType == "U") {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows;
@@ -805,6 +884,22 @@ const QC_A3000: React.FC = () => {
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
+        if (totalRowCnt > 0) {
+          const selectedRow =
+            detailFilters2.find_row_value == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) =>
+                    row.renum + "-" + row.reseq == detailFilters.find_row_value
+                );
+          if (selectedRow != undefined) {
+            setDetailSelectedState2({
+              [selectedRow[DETAIL_DATA_ITEM_KEY]]: true,
+            });
+          } else {
+            setDetailSelectedState2({ [rows[0][DETAIL_DATA_ITEM_KEY]]: true });
+          }
+        }
       } else if (datas.qcyn == "미등록" && information.workType == "N") {
         const totalRowCnt = data.tables[1].TotalRowCount;
         const rows = data.tables[1].Rows;
@@ -815,6 +910,22 @@ const QC_A3000: React.FC = () => {
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
+        if (totalRowCnt > 0) {
+          const selectedRow =
+            detailFilters2.find_row_value == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) =>
+                    row.renum + "-" + row.reseq == detailFilters.find_row_value
+                );
+          if (selectedRow != undefined) {
+            setDetailSelectedState2({
+              [selectedRow[DETAIL_DATA_ITEM_KEY]]: true,
+            });
+          } else {
+            setDetailSelectedState2({ [rows[0][DETAIL_DATA_ITEM_KEY]]: true });
+          }
+        }
       } else {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows;
@@ -829,6 +940,12 @@ const QC_A3000: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      setDetailDataResult2((prev) => {
+        return {
+          data: [],
+          total: 0,
+        };
+      });
     }
     // 필터 isSearch false처리, pgNum 세팅
     setDetailFilters2((prev) => ({
@@ -911,6 +1028,18 @@ const QC_A3000: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    setDetailFilters((prev) => ({
+      ...prev,
+      itemcd: selectedRowData.itemcd,
+      renum: selectedRowData.renum,
+      reseq: selectedRowData.reseq,
+      isSearch: true,
+      pgNum: 1,
+    }));
   };
 
   const ondetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -924,14 +1053,6 @@ const QC_A3000: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    setDetailFilters2((prev) => ({
-      ...prev,
-      itemcd: selectedRowData.itemcd,
-      renum: selectedRowData.renum == undefined ? "" : selectedRowData.renum,
-      reseq: selectedRowData.reseq == undefined ? 0 : selectedRowData.reseq,
-      qcnum: selectedRowData.qcnum == undefined ? "" : selectedRowData.qcnum,
-    }));
-
     const user = usersListData.find(
       (item: any) => item.user_name === selectedRowData.person
     )?.user_id;
@@ -943,6 +1064,8 @@ const QC_A3000: React.FC = () => {
     setInformation((prev) => ({
       ...prev,
       workType: "U",
+      itemcd: selectedRowData.itemcd,
+      itemnm: selectedRowData.itemnm,
       attdatnum: selectedRowData.attdatnum,
       badqty: selectedRowData.badqty,
       endtime: selectedRowData.endtime,
@@ -958,6 +1081,16 @@ const QC_A3000: React.FC = () => {
       qcqty: selectedRowData.qcqty,
       remark: selectedRowData.remark,
       strtime: selectedRowData.strtime,
+    }));
+
+    setDetailFilters2((prev) => ({
+      ...prev,
+      itemcd: selectedRowData.itemcd,
+      renum: selectedRowData.renum == undefined ? "" : selectedRowData.renum,
+      reseq: selectedRowData.reseq == undefined ? 0 : selectedRowData.reseq,
+      qcnum: selectedRowData.qcnum == undefined ? "" : selectedRowData.qcnum,
+      isSearch: true,
+      pgNum: 1,
     }));
   };
 
@@ -1055,16 +1188,11 @@ const QC_A3000: React.FC = () => {
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
-    setDetailFilters2((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      renum: data.renum,
-      reseq: data.reseq,
-      qcnum: "",
-    }));
     setInformation((prev) => ({
       ...prev,
       workType: "N",
+      itemcd: data.itemcd,
+      itemnm: data.itemnm,
       attdatnum: "",
       badqty: 0,
       files: "",
@@ -1077,6 +1205,16 @@ const QC_A3000: React.FC = () => {
       remark: "",
       strtime: convertDateToStrWithTime2(new Date()),
       endtime: convertDateToStrWithTime2(new Date()),
+    }));
+
+    setDetailFilters2((prev) => ({
+      ...prev,
+      itemcd: data.itemcd,
+      renum: data.renum,
+      reseq: data.reseq,
+      qcnum: "",
+      isSearch: true,
+      pgNum: 1,
     }));
   };
 
@@ -1100,7 +1238,7 @@ const QC_A3000: React.FC = () => {
     try {
       if (mainDataResult.total == 0) {
         throw findMessage(messagesData, "QC_A3000W_001");
-      } else if (detailDataResult2.total == 0) {
+      } else if (detailDataResult.total == 0) {
         throw findMessage(messagesData, "QC_A3000W_002");
       } else {
         setParaDataDeleted((prev) => ({
@@ -1125,7 +1263,77 @@ const QC_A3000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
+      const isLastDataDeleted2 =
+        detailDataResult.data.length === 1 && detailFilters.pgNum == 1;
+      const findRow2 = mainDataResult.data.filter(
+        (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      if (isLastDataDeleted2) {
+        if (mainDataResult.data.length == 1) {
+          setPage({
+            skip:
+              filters.pgNum == 1 || filters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: findRow2.renum + "-" + findRow2.reseq,
+            pgNum:
+              mainDataResult.data.length == 1
+                ? prev.pgNum != 1
+                  ? prev.pgNum - 1
+                  : prev.pgNum
+                : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: findRow2.renum + "-" + findRow2.reseq,
+            isSearch: true,
+          }));
+        }
+      } else {
+        const isLastDataDeleted =
+          detailDataResult.data.length === 1 && detailFilters.pgNum > 0;
+        const findRowIndex = detailDataResult.data.findIndex(
+          (row: any) =>
+            row.num == Object.getOwnPropertyNames(detailSelectedState)[0]
+        );
+
+        if (isLastDataDeleted) {
+          setPage2({
+            skip:
+              detailFilters.pgNum == 1 || detailFilters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (detailFilters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+
+          setDetailFilters((prev) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          setDetailFilters((prev) => ({
+            ...prev,
+            find_row_value:
+              data.returnString +
+              "|" +
+              detailDataResult.data[findRowIndex == 0 ? 0 : findRowIndex - 1]
+                .qcnum,
+            isSearch: true,
+          }));
+        }
+      }
       // 첨부파일 삭제
       if (paraDataDeleted.attdatnum)
         setDeletedAttadatnums([paraDataDeleted.attdatnum]);
@@ -1314,8 +1522,43 @@ const QC_A3000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
-
+      setDetailFilters((prev) => ({
+        ...prev,
+        find_row_value: data.returnString,
+        isSearch: true,
+      }));
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "N",
+        orgdiv: "01",
+        location: "01",
+        renum: "",
+        reseq: 0,
+        qcnum: "",
+        qcdt: new Date(),
+        person: "",
+        qcno: "",
+        qcqty: 0,
+        badqty: 0,
+        strtime: "",
+        endtime: "",
+        qcdecision: "",
+        attdatnum: "",
+        remark: "",
+        itemcd: "",
+        rowstatus_s: "",
+        qcseq_s: "",
+        stdnum_s: "",
+        stdrev_s: "",
+        stdseq_s: "",
+        qc_sort_s: "",
+        inspeccd_s: "",
+        qc_spec_s: "",
+        qcvalue1_s: "",
+        qcresult1_s: "",
+        userid: userId,
+        pc: pc,
+      });
       // 초기화
       setUnsavedAttadatnums([]);
     } else {
@@ -1417,11 +1660,20 @@ const QC_A3000: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != detailDataResult2.data) {
-      const newData = detailDataResult2.data.map((item) => ({
-        ...item,
-        rowstatus: item.rowstatus == "N" ? "N" : "U",
-        [EDIT_FIELD]: undefined,
-      }));
+      const newData = detailDataResult2.data.map(
+        (item: { [x: string]: string; rowstatus: string }) =>
+          item[DETAIL_DATA_ITEM_KEY2] ==
+          Object.getOwnPropertyNames(detailSelectedState2)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+      );
       setTempResult((prev: { total: any }) => {
         return {
           data: newData,
@@ -1501,6 +1753,23 @@ const QC_A3000: React.FC = () => {
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
     setDetailDataResult2(process([], detailDataState2));
+    setInformation({
+      workType: "U",
+      attdatnum: "",
+      badqty: 0,
+      endtime: "",
+      files: "",
+      itemcd: "",
+      itemnm: "",
+      person: "",
+      qcdecision: "",
+      qcdt: new Date(),
+      qcno: "",
+      qcnum: "",
+      qcqty: 0,
+      remark: "",
+      strtime: "",
+    });
   };
 
   const onSaveClick = () => {
@@ -2180,7 +2449,7 @@ const QC_A3000: React.FC = () => {
                     name="files"
                     type="text"
                     value={information.files}
-                    onChange={InforInputChange}
+                    className="readonly"
                   />
                   <ButtonInInput>
                     <Button
