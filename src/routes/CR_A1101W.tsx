@@ -463,26 +463,26 @@ const CR_A1101W: React.FC = () => {
           >
             <NumberKeypad style = {{ height : "100%"}}>
               <NumberKeypadRow style = {{ height : "25%"}}>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>1</NumberKeypadCell>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>2</NumberKeypadCell>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>3</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901"}} onClick={enterNumber}>1</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>2</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>3</NumberKeypadCell>
               </NumberKeypadRow>
               <NumberKeypadRow style = {{ height : "25%"}}>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>4</NumberKeypadCell>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>5</NumberKeypadCell>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>6</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>4</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>5</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>6</NumberKeypadCell>
               </NumberKeypadRow>
               <NumberKeypadRow style = {{ height : "25%"}}>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>7</NumberKeypadCell>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>8</NumberKeypadCell>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>9</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>7</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>8</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>9</NumberKeypadCell>
               </NumberKeypadRow>
               <NumberKeypadRow style = {{ height : "25%"}}>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>
                 <span className={"k-icon k-i-x"}></span>
                 </NumberKeypadCell>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>0</NumberKeypadCell>
-                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none" }} onClick={enterNumber}>Del</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>0</NumberKeypadCell>
+                <NumberKeypadCell style = {{ fontSize: "35px", userSelect: "none", backgroundColor: "#f5b901" }} onClick={enterNumber}>Del</NumberKeypadCell>
               </NumberKeypadRow>
             </NumberKeypad>
           </GridContainer>
