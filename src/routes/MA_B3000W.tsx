@@ -112,9 +112,6 @@ const MA_B3000W: React.FC = () => {
     setBizComponentData
   );
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [yearTitle, setYearTitle] = useState([]);
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -151,8 +148,6 @@ const MA_B3000W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [gridPgNum, setGridPgNum] = useState(1);
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
@@ -361,7 +356,6 @@ const MA_B3000W: React.FC = () => {
         fetchGrid("QCHART");
       } 
     }
-    setIsInitSearch(true);
   }
   }, [filters, permissions]);
 
