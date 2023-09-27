@@ -1389,8 +1389,8 @@ const BA_A0100W: React.FC = () => {
             ? (minGridWidth2.current += item.width)
             : minGridWidth2.current
       );
-      minGridWidth.current += 45;
-      minGridWidth2.current += 45;
+      minGridWidth.current += 50;
+      minGridWidth2.current += 50;
       setGridCurrent(grid.current.clientWidth);
       setGridCurrent2(grid2.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
@@ -1591,7 +1591,7 @@ const BA_A0100W: React.FC = () => {
               <GridColumn
                 field="rowstatus"
                 title=" "
-                width="45px"
+                width="50px"
                 editable={false}
               />
               {customOptionData !== null &&
@@ -1699,7 +1699,7 @@ const BA_A0100W: React.FC = () => {
             <GridColumn
               field="rowstatus"
               title=" "
-              width="45px"
+              width="50px"
               editable={false}
             />
             {customOptionData !== null &&

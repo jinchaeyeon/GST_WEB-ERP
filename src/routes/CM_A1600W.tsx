@@ -261,6 +261,7 @@ const CM_A1600: React.FC = () => {
       "@p_plandiv": schedulerFilter.rdoplandiv,
       "@p_stddiv": "",
       "@p_serviceid": "",
+      "@p_find_row_value": "",
     },
   };
 
@@ -289,6 +290,7 @@ const CM_A1600: React.FC = () => {
         "@p_plandiv": "Y",
         "@p_stddiv": "",
         "@p_serviceid": "",
+        "@p_find_row_value": todoFilter.find_row_value
       },
     };
     try {
@@ -307,7 +309,7 @@ const CM_A1600: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd == todoFilter.find_row_value
+            (row: any) => row.datnum == todoFilter.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -333,7 +335,7 @@ const CM_A1600: React.FC = () => {
         const selectedRow =
           todoFilter.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.itemcd == todoFilter.find_row_value);
+            : rows.find((row: any) => row.datnum == todoFilter.find_row_value);
 
         if (selectedRow != undefined) {
           setTodoSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -940,7 +942,6 @@ const CM_A1600: React.FC = () => {
         kind1,
         custcd,
         title,
-        colorID,
       } = item;
 
       const strtimeDate = new Date(dateformat(strtime));
@@ -960,9 +961,6 @@ const CM_A1600: React.FC = () => {
       dataArr.kind1_s.push(kind1);
       dataArr.custcd_s.push(custcd);
       dataArr.title_s.push(title);
-      dataArr.colorid_s.push(
-        typeof colorID == "number" ? colorID : colorID.sub_code
-      );
     });
 
     deletedTodoRows.forEach((item: any, idx: number) => {
@@ -994,9 +992,6 @@ const CM_A1600: React.FC = () => {
       dataArr.kind1_s.push(kind1);
       dataArr.custcd_s.push(custcd);
       dataArr.title_s.push(title);
-      dataArr.colorid_s.push(
-        typeof colorID == "number" ? colorID : colorID.sub_code
-      );
     });
 
     setTodoParaDataSaved((prev) => ({
