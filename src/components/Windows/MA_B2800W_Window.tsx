@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import * as React from "react";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -9,6 +9,7 @@ import {
   GridDataStateChangeEvent,
   getSelectedState,
   GridSelectionChangeEvent,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { DataResult, process, State, getter } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
@@ -77,6 +78,8 @@ const numberField2 = [
   "inqty",
   "inamt",
 ];
+let targetRowIndex: null | number = null;
+
 const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -205,6 +208,8 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
     poregnum: "",
     project: "",
     doexdiv: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
   //팝업 조회 파라미터
@@ -240,52 +245,123 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
     },
   };
 
-  useEffect(() => {
-    if (filters.purnum != "") {
-      fetchMainGrid();
-    }
-  }, [filters]);
+  // useEffect(() => {
+  //   if (filters.purnum != "") {
+  //     fetchMainGrid();
+  //   }
+  // }, [filters]);
 
   //요약정보 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters : any) => {
     let data: any;
     setLoading(true);
-
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
-
-    if (data !== null) {
+    if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
-      if (totalRowCnt) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
       }
-    } else {
-      console.log("[오류 발생]")
-      console.log(data);
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+              );
+
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      }
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (filters.isSearch != null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+
+  const pageChange = (event:GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch : true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  let gridRef : any = useRef(null); 
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
     setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
-  };
-
-  //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -380,7 +456,13 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
           //스크롤 조회 기능
           fixedScroll={true}
           total={mainDataResult.total}
-          onScroll={onScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
+          //원하는 행 위치로 스크롤 기능
+          ref={gridRef}
+          rowHeight={30}
           //정렬기능
           sortable={true}
           onSortChange={onMainSortChange}
