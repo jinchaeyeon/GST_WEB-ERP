@@ -1,31 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import * as ReactDOM from "react-dom";
-import {
-  Grid,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridFooterCellProps,
-  GridPageChangeEvent,
-} from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
-import {
-  Title,
-  FilterBox,
-  GridContainer,
-  GridContainerWrap,
-  TitleContainer,
-  ButtonContainer,
-  ButtonInInput,
-} from "../CommonStyled";
+import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
 import {
   Chart,
   ChartCategoryAxis,
@@ -40,25 +14,49 @@ import {
   ChartValueAxis,
   ChartValueAxisItem,
 } from "@progress/kendo-react-charts";
-import "hammerjs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import YearCalendar from "../components/Calendars/YearCalendar";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
-  chkScrollHandler,
-  convertDateToStr,
-  numberWithCommas,
-  setDefaultDate,
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
+} from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import "hammerjs";
+import React, { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridContainerWrap,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
+import YearCalendar from "../components/Calendars/YearCalendar";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
-  UsePermissions,
-  handleKeyPressSearch,
   UseMessages,
+  UsePermissions,
+  convertDateToStr,
   findMessage,
+  handleKeyPressSearch,
+  numberWithCommas,
+  setDefaultDate
 } from "../components/CommonFunction";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import { ICustData } from "../hooks/interfaces";
 import {
   CLIENT_WIDTH,
   GNV_WIDTH,
@@ -66,15 +64,14 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import NumberCell from "../components/Cells/NumberCell";
-import DateCell from "../components/Cells/DateCell";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { gridList } from "../store/columns/MA_B3000W_C";
-import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import { useApi } from "../hooks/api";
+import { ICustData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/MA_B3000W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const numberField: string[] = [
   "qty01",
