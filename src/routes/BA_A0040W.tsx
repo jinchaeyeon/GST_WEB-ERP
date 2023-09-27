@@ -554,7 +554,7 @@ const BA_A0040: React.FC = () => {
               qtyunitListData.find(
                 (item: any) => item.sub_code == selectedRow.invunit
               )?.code_name == undefined
-                ? selectedRow.invunit
+                ? selectedRow.invunit == undefined ? "" : selectedRow.invunit
                 : qtyunitListData.find(
                     (item: any) => item.sub_code == selectedRow.invunit
                   )?.code_name,
@@ -1590,14 +1590,13 @@ const BA_A0040: React.FC = () => {
       "@p_itemlvl2": infomation.itemlvl2,
       "@p_itemlvl3": infomation.itemlvl3,
       "@p_itemlvl4": infomation.itemlvl4,
-      "@p_invunit":
-        qtyunitListData.find(
-          (item: any) => item.code_name == infomation.invunit
-        )?.sub_code == undefined
-          ? infomation.invunit
-          : qtyunitListData.find(
-              (item: any) => item.code_name == infomation.invunit
-            )?.sub_code,
+      "@p_invunit": infomation.invunit != "" ? qtyunitListData.find(
+        (item: any) => item.code_name == infomation.invunit
+      )?.sub_code == undefined
+        ? infomation.invunit
+        : qtyunitListData.find(
+            (item: any) => item.code_name == infomation.invunit
+          )?.sub_code : "",
       "@p_bomyn": infomation.bomyn,
       "@p_qcyn": infomation.qcyn,
       "@p_unitwgt": infomation.unitwgt,
