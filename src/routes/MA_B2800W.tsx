@@ -1,73 +1,73 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import {
-  Grid,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridFooterCellProps,
-  GridCellProps,
-  GRID_COL_INDEX_ATTRIBUTE,
-  GridItemChangeEvent,
-} from "@progress/kendo-react-grid";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
 import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { gridList } from "../store/columns/MA_B2800W_C";
-import FilterContainer from "../components/Containers/FilterContainer";
 import {
-  Title,
+  GRID_COL_INDEX_ATTRIBUTE,
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
+} from "@progress/kendo-react-grid";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  chkScrollHandler,
-  convertDateToStr,
-  findMessage,
-  getQueryFromBizComponent,
-  setDefaultDate,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch,
+  convertDateToStr,
   dateformat2,
+  findMessage,
   getGridItemChangedData,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate
 } from "../components/CommonFunction";
-import MA_B2800W_Window from "../components/Windows/MA_B2800W_Window";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DateCell from "../components/Cells/DateCell";
-import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
-import CenterCell from "../components/Cells/CenterCell";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import MA_B2800W_Window from "../components/Windows/MA_B2800W_Window";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/MA_B2800W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
+let targetRowIndex: null | number = null;
 
 const CustomLockedCell = (props: GridCellProps) => {
   const field = props.field || "";
@@ -103,17 +103,10 @@ type TPurData = {
 
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
-    ariaColumnIndex,
-    columnIndex,
     dataItem,
-    field = "",
     render,
-    onChange,
-    className = "",
   } = props;
   const { setPutInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
-  const value = field && dataItem[field] ? dataItem[field] : "";
 
   const setPurData = () => {
     if(dataItem != undefined) {
@@ -277,8 +270,6 @@ const MA_B2800W: React.FC = () => {
     sort: [],
   });
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -290,8 +281,6 @@ const MA_B2800W: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
-
-  const [mainPgNum, setMainPgNum] = useState(1);
 
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
@@ -347,6 +336,9 @@ const MA_B2800W: React.FC = () => {
     poregnum: "",
     project: "",
     doexdiv: "",
+    pgNum: 1,
+    isSearch: true,
+    find_row_value: "",
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -358,7 +350,7 @@ const MA_B2800W: React.FC = () => {
   //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_MA_B2800W_Q",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": "LIST",
@@ -389,8 +381,8 @@ const MA_B2800W: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
-    if (!permissions?.view) return;
+  const fetchMainGrid = async (filters : any) => {
+    // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -398,42 +390,86 @@ const MA_B2800W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
-      if (totalRowCnt > 0)
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+              );
+
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      }
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      customOptionData !== null &&
-      isInitSearch === false &&
-      permissions !== null
-    ) {
-      fetchMainGrid();
-      setIsInitSearch(true);
+    if (filters.isSearch && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters]);
+
+  let gridRef : any = useRef(null); 
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchMainGrid();
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
     }
-  }, [mainPgNum]);
+  }, [mainDataResult]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -453,8 +489,6 @@ const MA_B2800W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setIfSelectFirstRow(true);
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
   };
 
@@ -476,20 +510,13 @@ const MA_B2800W: React.FC = () => {
       purseq: selectedRowData.purseq,
     }));
   };
-
+  
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();
     }
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
-    setIfSelectFirstRow(false);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -630,15 +657,43 @@ const MA_B2800W: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "MA_B2800W_001");
+      } else if (
+        filters.purdt == null ||
+        filters.purdt == "" ||
+        filters.purdt == undefined
+      ) {
+        throw findMessage(messagesData, "MA_B2800W_002");
       } else {
         resetAllGrid();
-        if (mainPgNum == 1) {
-          fetchMainGrid();
-        }
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
       }
     } catch (e) {
       alert(e);
     }
+  };
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+
+  const pageChange = (event:GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch : true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   const createColumn = () => {
@@ -929,6 +984,7 @@ const MA_B2800W: React.FC = () => {
                     changeData={filterComboBoxChange}
                     textField="name"
                     valueField="code"
+                    className="required"
                   />
                 )}
               </th>
@@ -1142,10 +1198,16 @@ const MA_B2800W: React.FC = () => {
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
             //컬럼순서조정
             reorderable={true}
             //컬럼너비조정
@@ -1172,6 +1234,7 @@ const MA_B2800W: React.FC = () => {
           setVisible={setCustWindowVisible}
           workType={workType}
           setData={setCustData}
+          modal={true}
         />
       )}
       {itemWindowVisible && (
@@ -1179,6 +1242,7 @@ const MA_B2800W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+          modal={true}
         />
       )}
       {windowVisible && (

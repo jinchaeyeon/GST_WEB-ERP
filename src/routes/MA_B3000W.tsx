@@ -151,7 +151,6 @@ const MA_B3000W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
-    onRefreshClick();
     setTabSelected(e.selected);
     resetGrid();
   };
@@ -456,18 +455,6 @@ const MA_B3000W: React.FC = () => {
       minimumFractionDigits: 3, //소수점
     });
     return `${props.dataItem.mm} : ${formatedNumber}`;
-  };
-
-  const [selectedChartData, setSelectedChartData] = useState({
-    gubun: "전체",
-    argument: "-",
-  });
-
-  const onRefreshClick = () => {
-    setSelectedChartData({
-      gubun: "전체",
-      argument: "-",
-    });
   };
 
   const quarterDonutRenderTooltip = (context: any) => {
