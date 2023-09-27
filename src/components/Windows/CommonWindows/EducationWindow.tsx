@@ -7,6 +7,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
   GridEvent,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import { DataResult, process, State, getter } from "@progress/kendo-data-query";
@@ -63,21 +64,25 @@ type TPara = {
 type TKendoWindow = {
   getVisible(isVisible: boolean): void;
   setData(data: object): void;
+  modal?: boolean;
   // para: TPara;
 };
 
 const KendoWindow = ({
   getVisible,
   setData,
+  modal = false,
 }: // para = { user_id: "", user_name: "" },
 TKendoWindow) => {
   // 비즈니스 컴포넌트 조회
   const idGetter = getter(SUB_DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 460,
+    width: isMobile == true ? deviceWidth : 460,
     height: 700,
   });
 
@@ -111,61 +116,23 @@ TKendoWindow) => {
     [id: string]: boolean | number[];
   }>({});
 
-  let gridRef : any = useRef(null); 
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (filters.find_row_value !== "" && detailDataResult.total > 0) {
-      const ROW_HEIGHT = 35.56;
-      const idx = detailDataResult.data.findIndex(
-        (item) => idGetter(item) === filters.find_row_value
-      );
+  let gridRef: any = useRef(null);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
 
-      const scrollHeight = ROW_HEIGHT * idx;
-      gridRef.container.scroll(0, scrollHeight);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
-      //초기화
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value: "",
-        tab: 0,
-      }));
-    }
-    // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-    // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-    else if (filters.scrollDirrection === "up") {
-      gridRef.container.scroll(0, 20);
-    }
-  }, [detailDataResult]);
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
 
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -223,18 +190,16 @@ TKendoWindow) => {
       const totalRowCnt = data.data.TotalRowCount;
       const rows = data.data.Rows;
 
-      if (totalRowCnt) {
-        setDetailDataResult((prev: any) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedState({ [firstRowData[SUB_DATA_ITEM_KEY]]: true });
-        }
+      setDetailDataResult((prev: any) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow = rows[0];
+        setSelectedState({ [selectedRow[SUB_DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
@@ -273,12 +238,11 @@ TKendoWindow) => {
     setFilters((prev: any) => ({
       ...prev,
       find_row_value: "",
-      scrollDirrection: "down",
       pgNum: 1,
       isSearch: true,
-      pgGap: 0,
-    }))
-  }
+    }));
+  };
+
   return (
     <Window
       title={"교육기준정보"}
@@ -287,15 +251,12 @@ TKendoWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <Title></Title>
         <ButtonContainer>
-          <Button
-            onClick={search}
-            icon="search"
-            themeColor={"primary"}
-          >
+          <Button onClick={search} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
@@ -327,7 +288,7 @@ TKendoWindow) => {
         </FilterBox>
       </FilterContainer>
       <GridContainerWrap height="calc(100% - 160px)">
-        <GridContainer>
+        <GridContainer width="100%">
           <GridTitleContainer>
             <GridTitle>용어목록</GridTitle>
           </GridTitleContainer>
@@ -345,7 +306,13 @@ TKendoWindow) => {
             }}
             onSelectionChange={onSubDataSelectionChange}
             fixedScroll={true}
-            onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
             onRowDoubleClick={onRowDoubleClick}
             style={{ height: `calc(100% - 40px)` }}
           >
