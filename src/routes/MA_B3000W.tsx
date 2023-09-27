@@ -112,9 +112,6 @@ const MA_B3000W: React.FC = () => {
     setBizComponentData
   );
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [yearTitle, setYearTitle] = useState([]);
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -152,11 +149,8 @@ const MA_B3000W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [gridPgNum, setGridPgNum] = useState(1);
-
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
-    onRefreshClick();
     setTabSelected(e.selected);
     resetGrid();
   };
@@ -361,7 +355,6 @@ const MA_B3000W: React.FC = () => {
         fetchGrid("QCHART");
       } 
     }
-    setIsInitSearch(true);
   }
   }, [filters, permissions]);
 
@@ -462,18 +455,6 @@ const MA_B3000W: React.FC = () => {
       minimumFractionDigits: 3, //소수점
     });
     return `${props.dataItem.mm} : ${formatedNumber}`;
-  };
-
-  const [selectedChartData, setSelectedChartData] = useState({
-    gubun: "전체",
-    argument: "-",
-  });
-
-  const onRefreshClick = () => {
-    setSelectedChartData({
-      gubun: "전체",
-      argument: "-",
-    });
   };
 
   const quarterDonutRenderTooltip = (context: any) => {
