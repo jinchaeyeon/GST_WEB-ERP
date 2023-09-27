@@ -540,9 +540,7 @@ const CM_A0000W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value:
-            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1][
-              DATA_ITEM_KEY
-            ],
+            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1].datnum,
           pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,
         }));
@@ -594,6 +592,7 @@ const CM_A0000W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState);
     setMainDataResult(process([], mainDataState));
   };
 

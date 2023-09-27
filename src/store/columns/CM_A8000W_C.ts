@@ -14,7 +14,7 @@ export const gridList: Array<TGrid> = [
         id: "col_valueboxnm",
         field: "valueboxnm",
         caption: "ValueBox명",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_fnscore",
@@ -32,7 +32,7 @@ export const gridList: Array<TGrid> = [
         id: "col_exptime",
         field: "exptime",
         caption: "개발예상시간",
-        width: 150,
+        width: 100,
       },
       {
         id: "col_useyn",
@@ -44,7 +44,7 @@ export const gridList: Array<TGrid> = [
         id: "col_remark2",
         field: "remark2",
         caption: "비고",
-        width: 250,
+        width: 200,
       },
       {
         id: "col_valBasecode",
