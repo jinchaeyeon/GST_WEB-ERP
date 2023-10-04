@@ -1744,8 +1744,6 @@ const BA_A0040: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
-
       // 마지막 페이지의 1개 남은 데이터 삭제 시, 앞 페이지 조회하고, 그 외는 페이지 유지
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 1;
@@ -1753,6 +1751,8 @@ const BA_A0040: React.FC = () => {
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      resetAllGrid();
+
       if (isLastDataDeleted) {
         setPage({
           skip: PAGE_SIZE * (filters.pgNum - 2),

@@ -1389,7 +1389,7 @@ const SA_B3000W: React.FC = () => {
                       type="line"
                       data={chartDataResult
                         .filter((item: any) => item.series === "당기")
-                        .map((item: any) => item.qty)}
+                        .map((item: any) => item.qty1)}
                     />
                     <ChartSeriesItem
                       name="전기수량"
@@ -1400,7 +1400,7 @@ const SA_B3000W: React.FC = () => {
                       type="line"
                       data={chartDataResult
                         .filter((item: any) => item.series === "전기")
-                        .map((item: any) => item.qty)}
+                        .map((item: any) => item.qty2)}
                     />
                     <ChartSeriesItem
                       name="당기"
@@ -1409,8 +1409,6 @@ const SA_B3000W: React.FC = () => {
                         content: (e) => numberWithCommas(e.value) + "",
                       }}
                       type="bar"
-                      // gap={2}
-                      // spacing={0.25}
                       data={chartDataResult
                         .filter((item: any) => item.series === "당기")
                         .map((item: any) => item.amt)}
@@ -1422,8 +1420,6 @@ const SA_B3000W: React.FC = () => {
                         content: (e) => numberWithCommas(e.value) + "",
                       }}
                       type="bar"
-                      // gap={2}
-                      // spacing={0.25}"
                       data={chartDataResult
                         .filter((item: any) => item.series === "전기")
                         .map((item: any) => item.amt)}

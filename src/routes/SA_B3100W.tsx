@@ -1372,7 +1372,7 @@ const SA_B3100W: React.FC = () => {
                       type="line"
                       data={chartDataResult
                         .filter((item: any) => item.series === "당기")
-                        .map((item: any) => item.qty)}
+                        .map((item: any) => item.qty1)}
                     />
                     <ChartSeriesItem
                       name="전기수량"
@@ -1383,7 +1383,7 @@ const SA_B3100W: React.FC = () => {
                       type="line"
                       data={chartDataResult
                         .filter((item: any) => item.series === "전기")
-                        .map((item: any) => item.qty)}
+                        .map((item: any) => item.qty2)}
                     />
                     <ChartSeriesItem
                       name="당기"
