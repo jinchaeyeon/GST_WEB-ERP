@@ -32,6 +32,11 @@ code {
   height: 0px;
 } 
 
+/*step 설정*/
+.k-step-list-vertical, .k-progressbar {
+  height: 77vh !important;
+}
+
 /*드래그 오류 수정*/
 .k-grid-header, .k-grid-footer {
   padding-inline-end: 0px !important;

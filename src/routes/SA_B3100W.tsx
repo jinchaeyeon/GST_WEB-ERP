@@ -213,7 +213,8 @@ const SA_B3100W: React.FC = () => {
 
   const [gridDataResult, setGridDataResult] = useState<DataResult>(
     process([], gridDataState)
-  );
+  ); 
+  console.log(gridDataResult)
   const [allChartDataResult, setAllChartDataResult] = useState({
     companies: [""],
     series: [0],
@@ -1056,7 +1057,7 @@ const SA_B3100W: React.FC = () => {
                             <GridColumn
                               title={"수량"}
                               cell={NumberCell}
-                              field={item.fieldName}
+                              field={item.fieldName.replace("amt", "qty")}
                               footerCell={gridSumQtyFooterCell}
                               width={setWidth("grdMonthList", item.width / 2)}
                             />
@@ -1064,7 +1065,7 @@ const SA_B3100W: React.FC = () => {
                             <GridColumn
                               title={"금액"}
                               cell={NumberCell}
-                              field={item.fieldName.replace("qty", "amt")}
+                              field={item.fieldName}
                               footerCell={gridSumQtyFooterCell}
                               width={setWidth("grdMonthList", item.width / 2)}
                             />
