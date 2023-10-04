@@ -14,7 +14,7 @@ export const gridList: Array<TGrid> = [
         id: "col_person",
         field: "person",
         caption: "작성자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_title",
