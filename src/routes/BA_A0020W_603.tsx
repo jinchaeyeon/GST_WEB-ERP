@@ -11,13 +11,13 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import {
   Checkbox,
   CheckboxChangeEvent,
   Input,
-  InputChangeEvent
+  InputChangeEvent,
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
@@ -62,7 +62,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -287,8 +287,8 @@ const BA_A0020_603: React.FC = () => {
       setInfomation((prev) => ({
         ...prev,
         raduseyn2: defaultOption.find((item: any) => item.id === "raduseyn2")
-        .valueCode,
-      }))
+          .valueCode,
+      }));
     }
   }, [customOptionData]);
 
@@ -304,7 +304,7 @@ const BA_A0020_603: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [itemlvl1ListData, setItemlvl1ListData] = useState([
-    COM_CODE_DEFAULT_VALUE,    
+    COM_CODE_DEFAULT_VALUE,
   ]);
 
   useEffect(() => {
@@ -319,7 +319,6 @@ const BA_A0020_603: React.FC = () => {
 
       fetchQuery(custdivQueryStr, setCustdivListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-
     }
   }, [bizComponentData]);
 
@@ -480,7 +479,7 @@ const BA_A0020_603: React.FC = () => {
     workType: "U",
     custcd: "자동생성",
     custnm: "",
-    custdiv: "",
+    custdiv: "B",
     custabbr: "",
     compnm_eng: "",
     inunpitem: "",
@@ -534,7 +533,7 @@ const BA_A0020_603: React.FC = () => {
     orgdiv: "01",
     custcd: "",
     custnm: "",
-    custdiv: "",
+    custdiv: "B",
     bizregnum: "",
     ceonm: "",
     raduseyn: "Y",
@@ -549,7 +548,7 @@ const BA_A0020_603: React.FC = () => {
     workType: "CustPerson",
     custcd: infomation.custcd,
     custnm: "",
-    custdiv: "",
+    custdiv: "B",
     bizregnum: "",
     ceonm: "",
     useyn: "",
@@ -563,7 +562,7 @@ const BA_A0020_603: React.FC = () => {
     workType: "MONEY",
     custcd: infomation.custcd,
     custnm: "",
-    custdiv: "",
+    custdiv: "B",
     bizregnum: "",
     ceonm: "",
     useyn: "",
@@ -810,7 +809,7 @@ const BA_A0020_603: React.FC = () => {
           workType: "N",
           custcd: "자동생성",
           custnm: "",
-          custdiv: "A",
+          custdiv: "B",
           custabbr: "",
           compnm_eng: "",
           inunpitem: "SYS01",
@@ -898,14 +897,7 @@ const BA_A0020_603: React.FC = () => {
         "@p_useyn": subfilters.useyn,
         "@p_custcd": subfilters.custcd,
         "@p_custnm": subfilters.custnm,
-        "@p_custdiv":
-          custdivListData.find(
-            (item: any) => item.code_name === subfilters.custdiv
-          )?.sub_code == undefined
-            ? ""
-            : custdivListData.find(
-                (item: any) => item.code_name === subfilters.custdiv
-              )?.sub_code,
+        "@p_custdiv": "B",
         "@p_bizregnum": subfilters.bizregnum,
         "@p_ceonm": subfilters.ceonm,
         "@p_company_code": companyCode,
@@ -1001,14 +993,7 @@ const BA_A0020_603: React.FC = () => {
         "@p_useyn": subfilters2.useyn,
         "@p_custcd": subfilters2.custcd,
         "@p_custnm": subfilters2.custnm,
-        "@p_custdiv":
-          custdivListData.find(
-            (item: any) => item.code_name === subfilters2.custdiv
-          )?.sub_code == undefined
-            ? ""
-            : custdivListData.find(
-                (item: any) => item.code_name === subfilters2.custdiv
-              )?.sub_code,
+        "@p_custdiv": "B",
         "@p_bizregnum": subfilters2.bizregnum,
         "@p_ceonm": subfilters2.ceonm,
         "@p_company_code": companyCode,
@@ -1206,7 +1191,7 @@ const BA_A0020_603: React.FC = () => {
       unpitem: selectedRowData.unpitem,
       ceonm: selectedRowData.ceonm,
       address: selectedRowData.address,
-      bizdiv:selectedRowData.bizdiv,
+      bizdiv: selectedRowData.bizdiv,
       repreregno: selectedRowData.repreregno,
       address_eng: selectedRowData.address_eng,
       estbdt: isValidDate(selectedRowData.estbdt)
@@ -1230,13 +1215,14 @@ const BA_A0020_603: React.FC = () => {
       scmyn: selectedRowData.scmyn == "Y" ? "Y" : "N",
       pariodyn: selectedRowData.pariodyn == "Y" ? "Y" : "N",
       attdatnum: selectedRowData.attdatnum,
-      itemlvl1 :  itemlvl1ListData.find(
-            (item: any) => item.code_name === selectedRowData.itemlvl1
-          )?.sub_code == undefined
-            ? selectedRowData.itemlvl1
-            : itemlvl1ListData.find(
-                (item: any) => item.code_name === selectedRowData.itemlvl1
-              )?.sub_code,
+      itemlvl1:
+        itemlvl1ListData.find(
+          (item: any) => item.code_name === selectedRowData.itemlvl1
+        )?.sub_code == undefined
+          ? selectedRowData.itemlvl1
+          : itemlvl1ListData.find(
+              (item: any) => item.code_name === selectedRowData.itemlvl1
+            )?.sub_code,
 
       itemlvl2: selectedRowData.itemlvl2,
       itemlvl3: selectedRowData.itemlvl3,
@@ -1382,7 +1368,7 @@ const BA_A0020_603: React.FC = () => {
       workType: "N",
       custcd: "자동생성",
       custnm: "",
-      custdiv: "A",
+      custdiv: "B",
       custabbr: "",
       compnm_eng: "",
       inunpitem: "SYS01",
@@ -1870,7 +1856,7 @@ const BA_A0020_603: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1905,7 +1891,7 @@ const BA_A0020_603: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1958,7 +1944,7 @@ const BA_A0020_603: React.FC = () => {
     orgdiv: "01",
     custcd: "",
     custnm: "",
-    custdiv: "",
+    custdiv: "B",
     custabbr: "",
     bizdiv: "",
     bizregnum: "",
@@ -2038,16 +2024,9 @@ const BA_A0020_603: React.FC = () => {
       "@p_auto": paraData.auto,
       "@p_custcd": paraData.custcd,
       "@p_custnm": paraData.custnm,
-      "@p_custdiv":
-        custdivListData.find(
-          (item: any) => item.code_name === infomation.custdiv
-        )?.sub_code == undefined
-          ? ""
-          : custdivListData.find(
-              (item: any) => item.code_name === infomation.custdiv
-            )?.sub_code,
+      "@p_custdiv": "B",
       "@p_custabbr": paraData.custabbr,
-      "@p_bizdiv":paraData.bizdiv,
+      "@p_bizdiv": paraData.bizdiv,
       "@p_bizregnum": paraData.bizregnum,
       "@p_ceonm": paraData.ceonm,
       "@p_repreregno": paraData.repreregno,
@@ -2214,7 +2193,7 @@ const BA_A0020_603: React.FC = () => {
               (item: any) => item.code_name === infomation.custdiv
             )?.sub_code,
       "@p_custabbr": infomation.custabbr,
-      "@p_bizdiv":infomation.bizdiv,
+      "@p_bizdiv": infomation.bizdiv,
       "@p_bizregnum": infomation.bizregnum,
       "@p_ceonm": infomation.ceonm,
       "@p_repreregno": infomation.repreregno,
@@ -2243,13 +2222,14 @@ const BA_A0020_603: React.FC = () => {
       "@p_etax": infomation.etax,
       "@p_inunpitem": infomation.inunpitem,
       "@p_email": infomation.email,
-      "@p_itemlvl1": itemlvl1ListData.find(
-        (item: any) => item.code_name === infomation.itemlvl1
-      )?.sub_code == undefined
-        ? infomation.itemlvl1
-        : itemlvl1ListData.find(
-            (item: any) => item.code_name === infomation.itemlvl1
-          )?.sub_code,
+      "@p_itemlvl1":
+        itemlvl1ListData.find(
+          (item: any) => item.code_name === infomation.itemlvl1
+        )?.sub_code == undefined
+          ? infomation.itemlvl1
+          : itemlvl1ListData.find(
+              (item: any) => item.code_name === infomation.itemlvl1
+            )?.sub_code,
 
       "@p_itemlvl2": infomation.itemlvl2,
       "@p_itemlvl3": infomation.itemlvl3,
@@ -2690,7 +2670,7 @@ const BA_A0020_603: React.FC = () => {
     let valid = true;
     try {
       if (infomation.custnm == "") {
-        throw findMessage(messagesData, "BA_A0020W_001");  //업체명을 입력하세요.
+        throw findMessage(messagesData, "BA_A0020W_001"); //업체명을 입력하세요.
       }
       if (infomation.custdiv == "") {
         throw findMessage(messagesData, "BA_A0020W_002"); //업체구분을 입력하세요.
@@ -2803,7 +2783,7 @@ const BA_A0020_603: React.FC = () => {
         orgdiv: "01",
         custcd: "",
         custnm: "",
-        custdiv: "",
+        custdiv: "B",
         custabbr: "",
         bizdiv: "",
         bizregnum: "",
@@ -2958,7 +2938,7 @@ const BA_A0020_603: React.FC = () => {
       ...event.page,
     });
   };
-  
+
   const minGridWidth = React.useRef<number>(0);
   const grid = React.useRef<any>(null);
   const [applyMinWidth, setApplyMinWidth] = React.useState(false);
@@ -3034,7 +3014,7 @@ const BA_A0020_603: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>업체관리</Title>
+        <Title>고객관리</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -3181,204 +3161,204 @@ const BA_A0020_603: React.FC = () => {
             style={{ width: "100%" }}
           >
             <TabStripTab title="상세정보">
-                            <GridContainer>
-              <GridTitleContainer>
-                <GridTitle>상세정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick2}
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onDeleteClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button>
-                  <Button
-                    onClick={onSaveClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    저장
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <FormBoxWrap style={{ height: isMobile ? "100%" : "67.2vh" }}>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th style={{ width: "15%" }}>업체코드</th>
-                      {infomation.custcd != "자동생성" && yn == true ? (
-                        <>
-                          <td>
-                            <Input
-                              name="custcd"
-                              type="text"
-                              value={infomation.custcd}
-                              className="readonly"
-                            />
-                          </td>
-                        </>
-                      ) : (
-                        <>
-                          <td>
-                            {yn == true ? (
-                              <div className="filter-item-wrap">
-                                <Input
-                                  name="custcd"
-                                  type="text"
-                                  value={"자동생성"}
-                                  className="readonly"
-                                  style={{ width: "100%" }}
-                                />
-                                <ButtonInInput>
-                                  <Checkbox
-                                    defaultChecked={true}
-                                    value={yn}
-                                    onChange={CheckChange}
-                                    style={{
-                                      marginTop: "7px",
-                                      marginRight: "5px",
-                                    }}
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>상세정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick2}
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                    <Button
+                      onClick={onSaveClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    >
+                      저장
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <FormBoxWrap style={{ height: isMobile ? "100%" : "67.2vh" }}>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th style={{ width: "15%" }}>업체코드</th>
+                        {infomation.custcd != "자동생성" && yn == true ? (
+                          <>
+                            <td>
+                              <Input
+                                name="custcd"
+                                type="text"
+                                value={infomation.custcd}
+                                className="readonly"
+                              />
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td>
+                              {yn == true ? (
+                                <div className="filter-item-wrap">
+                                  <Input
+                                    name="custcd"
+                                    type="text"
+                                    value={"자동생성"}
+                                    className="readonly"
+                                    style={{ width: "100%" }}
                                   />
-                                </ButtonInInput>
-                              </div>
-                            ) : (
-                              <div className="filter-item-wrap">
-                                <Input
-                                  name="custcd"
-                                  type="text"
-                                  value={infomation.custcd}
-                                  onChange={InputChange}
-                                />
-                                <ButtonInInput>
-                                  <Checkbox
-                                    defaultChecked={true}
-                                    value={yn}
-                                    onChange={CheckChange}
-                                    style={{
-                                      marginTop: "7px",
-                                      marginRight: "5px",
-                                    }}
+                                  <ButtonInInput>
+                                    <Checkbox
+                                      defaultChecked={true}
+                                      value={yn}
+                                      onChange={CheckChange}
+                                      style={{
+                                        marginTop: "7px",
+                                        marginRight: "5px",
+                                      }}
+                                    />
+                                  </ButtonInInput>
+                                </div>
+                              ) : (
+                                <div className="filter-item-wrap">
+                                  <Input
+                                    name="custcd"
+                                    type="text"
+                                    value={infomation.custcd}
+                                    onChange={InputChange}
                                   />
-                                </ButtonInInput>
-                              </div>
-                            )}
-                          </td>
-                        </>
-                      )}
-                    </tr>
-                    <tr>
-                      <th style={{ width: "15%" }}>회사명</th>
-                      <td>
-                        <Input
-                          name="custnm"
-                          type="text"
-                          value={infomation.custnm}
-                          onChange={InputChange}
-                          className="required"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style={{ width: "15%" }}>그룹명(모기업)</th>
-                      <td>
-                        <Input
-                          name="custabbr"
-                          type="text"
-                          value={infomation.custabbr}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style={{ width: "15%" }}>주소</th>
-                      <td>
-                        <Input
-                          name="address"
-                          type="text"
-                          value={infomation.address}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style={{ width: "15%" }}>기업 분류</th>
-                      <td>
-                      {bizComponentData !== null && (
-                          <BizComponentComboBox
+                                  <ButtonInInput>
+                                    <Checkbox
+                                      defaultChecked={true}
+                                      value={yn}
+                                      onChange={CheckChange}
+                                      style={{
+                                        marginTop: "7px",
+                                        marginRight: "5px",
+                                      }}
+                                    />
+                                  </ButtonInInput>
+                                </div>
+                              )}
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                      <tr>
+                        <th style={{ width: "15%" }}>회사명</th>
+                        <td>
+                          <Input
+                            name="custnm"
+                            type="text"
+                            value={infomation.custnm}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: "15%" }}>그룹명(모기업)</th>
+                        <td>
+                          <Input
+                            name="custabbr"
+                            type="text"
+                            value={infomation.custabbr}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: "15%" }}>주소</th>
+                        <td>
+                          <Input
+                            name="address"
+                            type="text"
+                            value={infomation.address}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: "15%" }}>기업 분류</th>
+                        <td>
+                          <Input
                             name="custdiv"
-                            value={infomation.custdiv}
-                            bizComponentId="L_BA026"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                            textField={"code_name"}
-                            valueField={"sub_code"}
+                            type="text"
+                            value={
+                              custdivListData.find(
+                                (item: any) =>
+                                  item.sub_code == infomation.custdiv
+                              )?.code_name
+                            }
+                            className="readonly"
                           />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style={{ width: "15%" }}>개발분야</th>
-                      <td>
-                      <Input
-                          name="comptype"
-                          type="text"
-                          value={infomation.comptype}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style={{ width: "15%" }}>상장유무</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionRadioGroup
-                            name="raduseyn2"
-                            customOptionData={customOptionData}
-                            changeData={RadioChange}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: "15%" }}>개발분야</th>
+                        <td>
+                          <Input
+                            name="comptype"
+                            type="text"
+                            value={infomation.comptype}
+                            onChange={InputChange}
                           />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style={{ width: "15%" }}>신용평가 등급</th>
-                      <td>
-                      {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="itemlvl1"
-                            value={infomation.itemlvl1}
-                            bizComponentId="L_BA075"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                            textField={"code_name"}
-                            valueField={"sub_code"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: "15%" }}>상장유무</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionRadioGroup
+                              name="raduseyn2"
+                              customOptionData={customOptionData}
+                              changeData={RadioChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: "15%" }}>신용평가 등급</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="itemlvl1"
+                              value={infomation.itemlvl1}
+                              bizComponentId="L_BA075"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              textField={"code_name"}
+                              valueField={"sub_code"}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: "15%" }}>계약 이력</th>
+                        <td>
+                          <Input
+                            name="contractHistory"
+                            type="text"
+                            value={infomation.contractHistory}
+                            onChange={InputChange}
                           />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style={{ width: "15%" }}>계약 이력</th>
-                      <td>
-                        <Input
-                          name="contractHistory"
-                          type="text"
-                          value={infomation.contractHistory}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-            </GridContainer>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
             </TabStripTab>
             <TabStripTab
               title="재무현황"

@@ -622,6 +622,12 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         </GridContainer>
         <BottomContainer>
           <ButtonContainer>
+          <Button
+              themeColor={"primary"}
+              onClick={() => setData({})}
+            >
+              미참조
+            </Button>
             <Button
               themeColor={"primary"}
               onClick={() =>
@@ -630,7 +636,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
                     item[DATA_ITEM_KEY] ==
                     Object.getOwnPropertyNames(selectedState)[0]
                 )[0] == undefined
-                  ? ""
+                  ? {}
                   : setData(
                       mainDataResult.data.filter(
                         (item) =>

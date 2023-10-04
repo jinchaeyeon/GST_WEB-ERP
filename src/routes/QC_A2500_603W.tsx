@@ -405,7 +405,9 @@ const BA_A0020_603: React.FC = () => {
     datnum: "",
     ordnum: "",
     ordseq: 0,
-    person: "",
+    devperson: "",
+    apperson: "",
+    chkperson2: "",
   });
 
   //그리드 데이터 조회
@@ -578,7 +580,9 @@ const BA_A0020_603: React.FC = () => {
         datnum: rows[0].datnum,
         ordnum: rows[0].ordnum,
         ordseq: rows[0].ordseq,
-        person: rows[0].person,
+        devperson: rows[0].devperson,
+        apperson: rows[0].apperson,
+        chkperson2: rows[0].chkperson2,
       });
 
       setCommentDataResult((prev) => {
@@ -875,14 +879,11 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
-    deletedMainRows = [];
-    deletedMainRows2 = [];
-    deletedMainRows3 = [];
+    const selectedRowData = event.dataItem;
+    setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
     setCommentDataResult(process([], commentDataState));
     setCommentDataResult2(process([], commentDataState2));
     setCommentDataResult3(process([], commentDataState3));
-    const selectedRowData = event.dataItem;
-    setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
     setCommentFilters((prev) => ({
       ...prev,
       datnum: selectedRowData.datnum,
@@ -891,6 +892,9 @@ const BA_A0020_603: React.FC = () => {
     }));
     setTabSelected(1);
     setWorkType("U");
+    deletedMainRows = [];
+    deletedMainRows2 = [];
+    deletedMainRows3 = [];
   };
 
   const onAddClick = () => {
@@ -898,6 +902,7 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const setData = (data: any) => {
+    setDetailWindowVisible(false);
     setInformation({
       orgdiv: data.orgdiv == undefined ? "01" : data.orgdiv,
       ref_key: data.ref_key == undefined ? "" : data.ref_key,
@@ -919,7 +924,9 @@ const BA_A0020_603: React.FC = () => {
       datnum: "",
       ordnum: data.ordnum == undefined ? "" : data.ordnum,
       ordseq: data.ordseq == undefined ? 0 : data.ordseq,
-      person: "",
+      devperson: data.devperson == undefined ? "" : data.devperson,
+      apperson: data.apperson == undefined ? "" : data.apperson,
+      chkperson2: data.chkperson2 == undefined ? "" : data.chkperson2,
     });
     deletedMainRows = [];
     deletedMainRows2 = [];
@@ -1364,7 +1371,7 @@ const BA_A0020_603: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1399,7 +1406,7 @@ const BA_A0020_603: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1434,7 +1441,7 @@ const BA_A0020_603: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1564,6 +1571,9 @@ const BA_A0020_603: React.FC = () => {
       requiretext: Information.requiretext,
       protext: Information.protext,
       errtext: Information.errtext,
+      devperson: Information.devperson,
+      chkperson: Information.chkperson2,
+      apperson: Information.apperson,
       row_status_cause_s: dataArr.row_status_cause_s.join("|"),
       id_cause_s: dataArr.id_cause_s.join("|"),
       seq_cause_s: dataArr.seq_cause_s.join("|"),
@@ -1596,6 +1606,9 @@ const BA_A0020_603: React.FC = () => {
     requiretext: "",
     protext: "",
     errtext: "",
+    devperson: "",
+    chkperson: "",
+    apperson: "",
     row_status_cause_s: "",
     id_cause_s: "",
     seq_cause_s: "",
@@ -1631,6 +1644,9 @@ const BA_A0020_603: React.FC = () => {
       "@p_requiretext": paraData.requiretext,
       "@p_protext": paraData.protext,
       "@p_errtext": paraData.errtext,
+      "@p_devperson": paraData.devperson,
+      "@p_chkperson": paraData.chkperson,
+      "@p_apperson": paraData.apperson,
       "@p_row_status_cause_s": paraData.row_status_cause_s,
       "@p_id_cause_s": paraData.id_cause_s,
       "@p_seq_cause_s": paraData.seq_cause_s,
@@ -2078,14 +2094,21 @@ const BA_A0020_603: React.FC = () => {
                       fontSize: "0.8vw",
                       fontWeight: 500,
                       marginBottom: "10px",
+                      display: "flex",
                     }}
                   >
-                    작성자 :{" "}
-                    {
-                      userListData.find(
-                        (items: any) => items.user_id == Information.person
-                      )?.user_name
-                    }
+                    <p style={{ minWidth: "70px" }}>작성자 :</p>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="devperson"
+                        value={Information.devperson}
+                        type="new"
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
                   </Typography>
                   <TextArea
                     value={Information.requiretext}
@@ -2198,14 +2221,21 @@ const BA_A0020_603: React.FC = () => {
                       fontSize: "0.8vw",
                       fontWeight: 500,
                       marginBottom: "10px",
+                      display: "flex",
                     }}
                   >
-                    작성자 :{" "}
-                    {
-                      userListData.find(
-                        (items: any) => items.user_id == Information.person
-                      )?.user_name
-                    }
+                    <p style={{ minWidth: "70px" }}>작성자 :</p>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="chkperson2"
+                        value={Information.chkperson2}
+                        type="new"
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
                   </Typography>
                   <TextArea
                     value={Information.protext}
@@ -2318,14 +2348,21 @@ const BA_A0020_603: React.FC = () => {
                       fontSize: "0.8vw",
                       fontWeight: 500,
                       marginBottom: "10px",
+                      display: "flex",
                     }}
                   >
-                    작성자 :{" "}
-                    {
-                      userListData.find(
-                        (items: any) => items.user_id == Information.person
-                      )?.user_name
-                    }
+                    <p style={{ minWidth: "70px" }}>작성자 :</p>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="apperson"
+                        value={Information.apperson}
+                        type="new"
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
                   </Typography>
                   <TextArea
                     value={Information.errtext}
