@@ -1,4 +1,4 @@
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+
 import { 
   ButtonContainer, 
   ButtonInInput, 
@@ -52,6 +52,7 @@ import { useApi } from "../hooks/api";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Button } from "@progress/kendo-react-buttons";
 import DateCell from "../components/Cells/DateCell";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
@@ -166,8 +167,8 @@ const CM_A7000W: React.FC = () => {
     });
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
+  const onCustWndClick = () => {    
+    setCustWindowVisible(true);    
   };
 
   const onAttachPbWndClick = () => {
@@ -187,12 +188,15 @@ const CM_A7000W: React.FC = () => {
   };
 
   const setCustData = (data: ICustData) => {
-    setInformation((prev: any) => {
-      return {
-        ...prev,
-        custcd: data.custcd,
-      };
-    });
+  
+      setInformation((prev: any) => {
+        return {
+          ...prev,
+          custcd: data.custcd,
+          custnm: data.custnm,
+        };
+      });
+    
   };
 
   const setProjectData = (data: any) => {
@@ -539,17 +543,41 @@ const CM_A7000W: React.FC = () => {
           filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.meetingnum == filters.find_row_value);
-        if (selectedRow != undefined) {
+      
+         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          
           setDetailFilters((prev) => ({
             ...prev,
             meetingnum: selectedRow.meetingnum,
             pgNum: 1,
             isSearch: true,
           }));
+
           setWorkType("U");
+
+          setInformation({
+            orgdiv: selectedRow.orgdiv,
+            meetingnum: selectedRow.meetingnum,
+            custcd: selectedRow.custcd,
+            recdt: toDate(selectedRow.recdt),
+            meetingid: selectedRow.meetingid,
+            attdatnum: selectedRow.attdatnum,
+            files: selectedRow.files,
+            remark2: selectedRow.remark2,
+            unshared: selectedRow.unshared,
+            place: selectedRow.place,
+            meetingnm: selectedRow.meetingnm,
+            ref_key: selectedRow.ref_key,
+            title: selectedRow.title,
+            usegb: selectedRow.usegb,
+            attdatnum_private: selectedRow.attdatnum_private,
+            files_private: selectedRow.files_private,
+          });
+
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+
           setDetailFilters((prev) => ({
             ...prev,
             meetingnum: rows[0].meetingnum,
@@ -558,25 +586,6 @@ const CM_A7000W: React.FC = () => {
           }));
           setWorkType("U");
         }
-
-        setInformation({
-          orgdiv: selectedRow.orgidv,
-          meetingnum: selectedRow.meetingnum,
-          custcd: selectedRow.custcd,
-          recdt: toDate(selectedRow.recdt),
-          meetingid: selectedRow.meetingid,
-          attdatnum: selectedRow.attdatnum,
-          files: selectedRow.files,
-          remark2: selectedRow.remark2,
-          unshared: selectedRow.unshared,
-          place: selectedRow.place,
-          meetingnm: selectedRow.meetingnm,
-          ref_key: selectedRow.ref_key,
-          title: selectedRow.title,
-          usegb: selectedRow.usegb,
-          attdatnum_private: selectedRow.attdatnum_private,
-          files_private: selectedRow.files_private,
-        });
       } else {
         setWorkType("");
         resetAllGrid();
@@ -628,7 +637,7 @@ const CM_A7000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -648,6 +657,31 @@ const CM_A7000W: React.FC = () => {
         };
       });
 
+      const selectedRow = rows[0];
+
+      if(selectedRow != undefined)
+      {
+        setInformation({
+          orgdiv: selectedRow.orgdiv,
+          meetingnum: selectedRow.meetingnum,
+          custcd: selectedRow.custcd,
+          recdt: toDate(selectedRow.recdt),
+          meetingid: selectedRow.meetingid,
+          attdatnum: selectedRow.attdatnum,
+          files: selectedRow.files,
+          remark2: selectedRow.remark2,
+          unshared: selectedRow.unshared,
+          place: selectedRow.place,
+          meetingnm: selectedRow.meetingnm,
+          ref_key: selectedRow.ref_key,
+          title: selectedRow.title,
+          usegb: selectedRow.usegb,
+          attdatnum_private: selectedRow.attdatnum_private,
+          files_private: selectedRow.files_private,
+        });
+
+      }
+  
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -676,7 +710,7 @@ const CM_A7000W: React.FC = () => {
   useEffect(() => {
     if (detailfilters.isSearch && permissions !== null) {
       const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(detailfilters);
+      const deepCopiedFilters = _.cloneDeep(detailfilters);      
       setDetailFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
@@ -734,12 +768,16 @@ const CM_A7000W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
+
   };
 
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
-    setDetailDataResult(process([], detailDataState));
+    
     const selectedRowData = event.dataItem;
+
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
+    setDetailDataResult(process([], detailDataState));   
+   
     setDetailFilters((prev) => ({
       ...prev,
       meetingnum: selectedRowData.meetingnum,
@@ -748,6 +786,7 @@ const CM_A7000W: React.FC = () => {
     }));
 
     setTabSelected(1);
+
     setWorkType("U");
   };
 
@@ -846,6 +885,7 @@ const CM_A7000W: React.FC = () => {
       pc: pc,
       formid: "CM_A7000W",
     });
+
   };
 
   useEffect(() => {
@@ -863,8 +903,6 @@ const CM_A7000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
-    console.log(para);
 
     if (data.isSuccess === true) {
       if (workType == "N" || workType == "D") {
@@ -1025,6 +1063,12 @@ const CM_A7000W: React.FC = () => {
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
+              <colgroup>
+                <col width="0%" />
+                <col width="20%" />
+                <col width="0%" />
+                <col width="80%" />                
+              </colgroup>
                 <tr>
                   <th>회의일</th>
                   <td>
@@ -1043,21 +1087,19 @@ const CM_A7000W: React.FC = () => {
                       className="required"
                     />
                   </td>
-                </tr>
-                <tr>
-                  <th>업체</th>
-                  <td>
+                  <th>고객사</th>
+                  <td>  
                     <Input
                       name="custnm"
                       type="text"
                       value={filters.custnm}
                       onChange={filterInputChange}
-                    />
-                  </td>
+                    />                   
+                  </td>                
                 </tr>
                 <tr>
                   <th>제목 및 내용</th>
-                  <td>
+                  <td colSpan={3}>
                     <Input
                       name="title"
                       type="text"
@@ -1169,6 +1211,7 @@ const CM_A7000W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
+
         <TabStripTab 
           title = "상세정보"
           disabled={
@@ -1474,7 +1517,7 @@ const CM_A7000W: React.FC = () => {
       )}
       {custWindowVisible && (
         <CustomersWindow
-          workType=""
+          workType="N"
           setVisible={setCustWindowVisible}
           setData={setCustData}
           modal={true}

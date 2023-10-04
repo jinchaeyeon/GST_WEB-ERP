@@ -1,88 +1,92 @@
-import React, { useCallback, useEffect, useRef, useState ,createContext, } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as ReactDOM from "react-dom";
 import {
-    Grid,
-    GridColumn,
-    GridEvent,
-    GridFooterCellProps,
-    GridCellProps,
-  } from "@progress/kendo-react-grid";
-  import { DatePicker } from "@progress/kendo-react-dateinputs";
-  import { ExcelExport } from "@progress/kendo-react-excel-export";
-  import { getter } from "@progress/kendo-react-common";
-  import { DataResult, process, State } from "@progress/kendo-data-query";
-  import {
-    Title,
-    FilterBox,
-    GridContainer,
-    GridTitle,
-    TitleContainer,
-    ButtonContainer,
-    GridTitleContainer,
-    GridContainerWrap,
-    FormBox,
-    FormBoxWrap,
-  } from "../CommonStyled";
-  import { Input } from "@progress/kendo-react-inputs";
-  import FilterContainer from "../components/Containers/FilterContainer";
-  import { useApi } from "../hooks/api";
-  import { Iparameters, TPermissions,TColumn, TGrid } from "../store/types";
-  import {
-    chkScrollHandler,
-    convertDateToStr,
-    UseBizComponent,
-    UsePermissions,
-    UseGetValueFromSessionItem,
-    UseCustomOption,
-    UseMessages,
-    findMessage,
-    dateformat2,
-    isValidDate,
-  } from "../components/CommonFunction";
-  import { gridList } from "../store/columns/HU_B4001W_C";
-  import DateCell from "../components/Cells/DateCell";
-  import NumberCell from "../components/Cells/NumberCell";
-  import ComboBoxCell from "../components/Cells/ComboBoxCell";
+  Grid,
+  GridColumn,
+  GridEvent,
+  GridFooterCellProps,
+  GridCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import { getter } from "@progress/kendo-react-common";
+import { DataResult, process, State } from "@progress/kendo-data-query";
+import {
+  Title,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  TitleContainer,
+  ButtonContainer,
+  GridTitleContainer,
+  GridContainerWrap,
+  FormBox,
+  FormBoxWrap,
+} from "../CommonStyled";
+import { Input } from "@progress/kendo-react-inputs";
+import FilterContainer from "../components/Containers/FilterContainer";
+import { useApi } from "../hooks/api";
+import { Iparameters, TPermissions, TColumn, TGrid } from "../store/types";
+import {
+  chkScrollHandler,
+  convertDateToStr,
+  UseBizComponent,
+  UsePermissions,
+  UseGetValueFromSessionItem,
+  UseCustomOption,
+  UseMessages,
+  findMessage,
+  dateformat2,
+  isValidDate,
+} from "../components/CommonFunction";
+import { gridList } from "../store/columns/HU_B4001W_C";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import { SELECTED_FIELD, PAGE_SIZE } from "../components/CommonString";
+import TopButtons from "../components/Buttons/TopButtons";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
+import Calendar from "../components/Calendars/Calendar";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 
-  import {
-    SELECTED_FIELD,
-    PAGE_SIZE,
-  } from "../components/CommonString";
-  import TopButtons from "../components/Buttons/TopButtons";
-  import { useSetRecoilState } from "recoil";
-  import { isLoading } from "../store/atoms";
-  import Calendar from "../components/Calendars/Calendar";
-  import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+const DATA_ITEM_KEY_USE = "reckey";
+const DATA_ITEM_KEY_ADJ = "reckey";
+let targetRowIndex: null | number = null;
 
-  const DATA_ITEM_KEY_USE = "reckey";  
-  const DATA_ITEM_KEY_ADJ = "reckey";  
-  const NumberField = ["cnt","qty"];
-  const DateField = ["startdate"];  
-  const ComboField = ["adjdiv", "insert_userid"];
+const NumberField = ["cnt", "qty"];
+const DateField = ["startdate"];
+const CustomComboField = ["adjdiv", "insert_userid"];
 
-  const CustomComboBoxCell = (props: GridCellProps) => {    
-    const [bizComponentData, setBizComponentData] = useState([]);
-    
-    // 조정구분, 사용자 
-    UseBizComponent("L_HU092,L_sysUserMaster_001", setBizComponentData);  
-  
-    const field = props.field ?? "";
-    const bizComponentIdVal =
-      field === "adjdiv" ? "L_HU092" : field === "insert_userid" ? "L_sysUserMaster_001" : "";
-  
-    const bizComponent = bizComponentData.find(
-      (item: any) => item.bizComponentId === bizComponentIdVal
-    );
-  
-    return bizComponent ? (
-      <ComboBoxCell
-        bizComponent={bizComponent}
-        {...props}
-      />
-    ) : (
-      <td></td>
-    );
-  };
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_HU092,L_sysUserMaster_001", setBizComponentData);
+
+  const field = props.field ?? "";
+
+  const bizComponentIdVal =
+    field === "adjdiv"
+      ? "L_HU092"
+      : field === "insert_userid"
+      ? "L_sysUserMaster_001"
+      : "";
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      {...props}
+      className="editable-new-only"
+    />
+  ) : (
+    <td></td>
+  );
+};
 
 const HU_B4001W: React.FC = () => {
   let grdUse: any = useRef(null);
@@ -103,6 +107,21 @@ const HU_B4001W: React.FC = () => {
 
   // 조회조건
   const [filters, setFilters] = useState<{ [name: string]: any }>({
+    orgdiv: "01",
+    ymdFrdt: new Date(),
+    cboPrsnnum: "",
+
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+
+    pgGap: 0,
+    scrollDirrection: "down",
+    pgSize: PAGE_SIZE,
+  });
+
+
+  const [subfilters, setsubFilters] = useState({
     orgdiv: "01",
     ymdFrdt: new Date(),
     cboPrsnnum: "",
@@ -149,10 +168,13 @@ const HU_B4001W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
+  const [subSelectedState, setSubSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -162,6 +184,7 @@ const HU_B4001W: React.FC = () => {
       let prsnnum = defaultOption.find(
         (item: any) => item.id === "cboPrsnnum"
       ).valueCode;
+
       setFilters((prev) => ({
         ...prev,
         cboPrsnnum: prsnnum === "" || prsnnum === undefined ? userId : prsnnum,
@@ -174,23 +197,57 @@ const HU_B4001W: React.FC = () => {
     if (filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
-      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      fetchMainGrid(deepCopiedFilters);
+
+       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
 
   // 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
   useEffect(() => {
+    console.log(grdUse.current);
     if (grdUse.current) {
       grdUse.current.scrollIntoView({ rowIndex: 0 });
     }
-  }, [useDataResult]);
 
-  useEffect(() => {
     if (grdAdj.current) {
       grdAdj.current.scrollIntoView({ rowIndex: 0 });
     }
-  }, [adjDataResult]);
+  }, [adjDataResult, useDataResult]);
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page1, setPage1] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+
+  const pageChange1 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage1({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setsubFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const ComboBoxChange = (e: any) => {
@@ -216,7 +273,9 @@ const HU_B4001W: React.FC = () => {
   const resetAllGrid = () => {
     setUseDataResult(process([], useDataState));
     setAdjDataResult(process([], adjDataState));
+
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setsubFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //그리드 데이터 조회
@@ -235,7 +294,7 @@ const HU_B4001W: React.FC = () => {
         "@p_prsnnum": filters.cboPrsnnum,
       },
     };
-
+    
     setLoading(true);
 
     try {
@@ -258,7 +317,6 @@ const HU_B4001W: React.FC = () => {
         usedday: 0,
         ramainday: 0,
       });
-
       if (totalRowCnt > 0) {
         setUserInfo({
           prsnnum: row.prsnnum,
@@ -273,21 +331,22 @@ const HU_B4001W: React.FC = () => {
         });
       }
 
-      //연차상세      
+      //연차상세
       setUseDataResult((prev) => {
         return {
           data: [...data.tables[1].Rows],
-          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+          total:
+            data.tables[1].TotalRowCount === -1
+              ? 0
+              : data.tables[1].TotalRowCount,
         };
       });
 
-      totalRowCnt = data.tables[1].TotalRowCount;
-      
-      if (totalRowCnt > 0) {
+      if (data.tables[1].TotalRowCount > 0) {
         setSelectedState({ [data.tables[1].Rows[0][DATA_ITEM_KEY_USE]]: true });
       }
-      
-      // 연차조정    
+
+      // 연차조정
       setAdjDataResult((prev) => {
         return {
           data: [...data.tables[2].Rows],
@@ -298,12 +357,11 @@ const HU_B4001W: React.FC = () => {
         };
       });
 
-      totalRowCnt = data.tables[2].TotalRowCount;
-      if(totalRowCnt > 0)
-      {
-        setSelectedState({ [data.tables[2].Rows[0][DATA_ITEM_KEY_ADJ]]: true });
+      if (data.tables[2].TotalRowCount > 0) {
+        setSubSelectedState({
+          [data.tables[2].Rows[0][DATA_ITEM_KEY_ADJ]]: true,
+        });
       }
-
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -325,44 +383,32 @@ const HU_B4001W: React.FC = () => {
 
   //그리드 푸터
   const grdTotalFooterCell = (props: GridFooterCellProps) => {
-    let dataResult;
-
+    
+    let dataResult: DataResult = props.field === "yyyymm" ? adjDataResult : props.field === "qty" ? adjDataResult : useDataResult; 
+   
     if (props.field === "yyyymm" || props.field === "startdate") {
-      
-      dataResult = props.field === "yyyymm" ? adjDataResult : useDataResult;
-      
       return (
         <td colSpan={props.colSpan} style={props.style}>
           총 {dataResult.total}건
         </td>
       );
     }
-    else if(props.field === "qty") {
-       let sumqty = 0;
-      adjDataResult.data.forEach((element) => {
-        sumqty += element.qty;
+    else if (props.field === "qty" || props.field === "cnt") {
+      let sumqty = 0;
+      dataResult.data.forEach((element) => {
+        sumqty +=  props.field === "qty" ?  element.qty : element.cnt ;
       });
 
       return (
-        <td colSpan={props.colSpan} style={props.style}>
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
           {sumqty}
         </td>
       );
     }
-    else 
-    {let sumqty = 0;
-        useDataResult.data.forEach((element) => {
-          sumqty += element.cnt;
-        });
-  
-        return (
-          <td colSpan={props.colSpan} style={props.style}>
-            {sumqty}
-          </td>
-        );
-
+    else {
+      return <td colSpan={props.colSpan} style={props.style}></td>;
     }
-  };  
+  }
 
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
@@ -410,12 +456,13 @@ const HU_B4001W: React.FC = () => {
         throw findMessage(messagesData, "HU_B4001W_002"); //성명은 필수 입력 항목입니다.
         return;
       }
+
       resetAllGrid();
     } catch (e) {
       alert(e);
     }
   };
-
+  
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -488,13 +535,13 @@ const HU_B4001W: React.FC = () => {
           <FormBox>
             <tbody>
               <tr>
-                <th style={{textAlign :"center"}}> 사번 </th>
-                <th style={{textAlign :"center"}}> 성명 </th>
-                <th style={{textAlign :"center"}}> 입사일 </th>
-                <th style={{textAlign :"center"}}> 퇴사일 </th>
-                <th style={{textAlign :"center"}}> 발생 </th>
-                <th style={{textAlign :"center"}}> 사용 </th>
-                <th style={{textAlign :"center"}}> 잔여 </th>
+                <th style={{ textAlign: "center" }}> 사번 </th>
+                <th style={{ textAlign: "center" }}> 성명 </th>
+                <th style={{ textAlign: "center" }}> 입사일 </th>
+                <th style={{ textAlign: "center" }}> 퇴사일 </th>
+                <th style={{ textAlign: "center" }}> 발생 </th>
+                <th style={{ textAlign: "center" }}> 사용 </th>
+                <th style={{ textAlign: "center" }}> 잔여 </th>
               </tr>
               <tr>
                 <td>
@@ -590,6 +637,10 @@ const HU_B4001W: React.FC = () => {
             fixedScroll={true}
             total={useDataResult.total}
             onScroll={onMainScrollHandler}
+            skip={page1.skip}
+            take={page1.take}
+            pageable={true}
+            onPageChange={pageChange1}
             // //원하는 행 위치로 스크롤 기능
             ref={grdUse}
             //정렬기능
@@ -609,13 +660,13 @@ const HU_B4001W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={item.width}                    
+                      width={item.width}
                       cell={
-                         DateField.includes(item.fieldName)
-                        ? DateCell
-                        : NumberField.includes(item.fieldName)
-                        ? NumberCell
-                        : undefined
+                        DateField.includes(item.fieldName)
+                          ? DateCell
+                          : NumberField.includes(item.fieldName)
+                          ? NumberCell
+                          : undefined
                       }
                       footerCell={grdTotalFooterCell}
                     />
@@ -633,7 +684,7 @@ const HU_B4001W: React.FC = () => {
             data={process(
               adjDataResult.data.map((row) => ({
                 ...row,
-                [SELECTED_FIELD]: selectedState[idGetter_adj(row)],
+                [SELECTED_FIELD]: subSelectedState[idGetter_adj(row)],
               })),
               adjDataState
             )}
@@ -649,6 +700,10 @@ const HU_B4001W: React.FC = () => {
             fixedScroll={true}
             total={adjDataResult.total}
             onScroll={onMainScrollHandler}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
             //원하는 행 위치로 스크롤 기능
             ref={grdAdj}
             //정렬기능
@@ -668,18 +723,15 @@ const HU_B4001W: React.FC = () => {
                       field={item.fieldName}
                       title={item.caption}
                       width={item.width}
-                      cell={ 
-                         NumberField.includes(item.fieldName)
-                       ? NumberCell
-                      //  : ComboField.includes(item.fieldName)
-                      //  ? CustomComboBoxCell
-                       : undefined
-                     }
-                      footerCell={
-                        (item.fieldName === "yyyymm" || item.fieldName === "qty")
-                          ? grdTotalFooterCell
-                          : undefined
+                      cell={
+                        NumberField.includes(item.fieldName)
+                          ? NumberCell
+                          : DateField.includes(item.fieldName)
+                          ? DateCell
+                          : // : CustomComboField.includes(item.fieldName) ? CustomComboBoxCell :
+                            undefined
                       }
+                      footerCell={grdTotalFooterCell}
                     />
                   )
               )}
