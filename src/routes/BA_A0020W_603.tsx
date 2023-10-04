@@ -464,16 +464,6 @@ const BA_A0020_603: React.FC = () => {
     }));
   };
 
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const [infomation, setInfomation] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "U",
@@ -1511,13 +1501,6 @@ const BA_A0020_603: React.FC = () => {
     setCustWindowVisible(true);
   };
 
-  const onAttachmentsWndClick = () => {
-    setAttachmentsWindowVisible(true);
-  };
-
-  const onZipCodeWndClick = () => {
-    setZipCodeWindowVisibile(true);
-  };
   const handleSelectTab = (e: any) => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);

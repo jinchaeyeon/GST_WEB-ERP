@@ -24,6 +24,7 @@ import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
 import React, { Suspense, lazy, useEffect, useState } from "react";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import styled, { createGlobalStyle } from "styled-components";
@@ -143,6 +144,7 @@ import QC_B0040W from "./routes/QC_B0040W";
 import QC_B0100W from "./routes/QC_B0100W";
 import QC_B0200W from "./routes/QC_B0200W";
 import QC_B0300W from "./routes/QC_B0300W";
+import SA_A1000_603W from "./routes/SA_A1000_603W";
 import SA_A2000W from "./routes/SA_A2000W";
 import SA_A2010W from "./routes/SA_A2010W";
 import SA_A2300W from "./routes/SA_A2300W";
@@ -176,7 +178,6 @@ import {
   isMobileMenuOpendState,
   loginResultState,
 } from "./store/atoms";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -411,11 +412,11 @@ const AppInner: React.FC = () => {
 
   const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
-  
+
   useEffect(() => {
     switcher({ theme: "blue" });
-  },[])
-  
+  }, []);
+
   return (
     <>
       <LocalizationProvider
@@ -433,9 +434,7 @@ const AppInner: React.FC = () => {
           }
         >
           <Suspense fallback={<div></div>}>
-            <GlobalStyle
-              isMobileMenuOpend={isMobileMenuOpend}
-            />
+            <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
             <Router>
               <Switch>
                 <Route path="/" component={Login} exact />
@@ -443,7 +442,7 @@ const AppInner: React.FC = () => {
                 <PanelBarNavContainerWEBERP>
                   {/* 메인 홈 */}
                   <AuthRoute path="/Home" component={Main} exact />
-                  
+
                   {/* 기준정보 */}
                   <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
                   <AuthRoute path="/BA_A0020W" component={BA_A0020W} exact />
@@ -567,7 +566,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
                   <AuthRoute path="/HU_B4001W" component={HU_B4001W} exact />
                   <AuthRoute path="/HU_B4000W" component={HU_B4000W} exact />
-                  
+
                   {/* 회계관리 */}
                   <AuthRoute path="/AC_A0020W" component={AC_A0020W} exact />
                   <AuthRoute path="/AC_A0030W" component={AC_A0030W} exact />
@@ -639,12 +638,12 @@ const AppInner: React.FC = () => {
                     component={QC_A2500_603W}
                     exact
                   />
+                  <AuthRoute path="/CM_A7000W" component={CM_A7000W} exact />
                   <AuthRoute
-                    path="/CM_A7000W"
-                    component={CM_A7000W}
+                    path="/SA_A1000_603W"
+                    component={SA_A1000_603W}
                     exact
                   />
-
                   {/* 에러페이지 */}
                   <AuthRoute path="/Error" component={NotFound} exact />
                 </PanelBarNavContainerWEBERP>
