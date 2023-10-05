@@ -744,7 +744,7 @@ const MA_B7000: React.FC = () => {
       targetRowIndex2 = null;
     }
   }, [detail1DataResult]);
-
+//
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동3
     if (targetRowIndex3 !== null && gridRef3.current) {
