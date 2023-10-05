@@ -61,6 +61,11 @@ const domain: any = {
     action: "delete",
     url: "api/files/:attached",
   }, // AttachmentNum 자체를 삭제
+
+  // 바이오톡스텍 회의록관리
+  "meeting-query": { action: "get", url: "api/data/html-doc" },
+  "meeting-save": { action: "post", url: "api/data/html-doc?folder=CM_A7000W" },
+  "meeting-download": { action: "get", url: "api/data/html-doc/file"},
 };
 let isTokenRefreshing = false;
 let refreshSubscribers: any[] = [];

@@ -1,13 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import {
-  Editor,
-  EditorMountEvent,
-  EditorTools,
-  EditorUtils,
-  ProseMirror,
-} from "@progress/kendo-react-editor";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -79,9 +72,6 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
-import { insertImagePlugin } from "../components/UploadImgFunction/insertImagePlugin";
-import { InsertImage } from "../components/UploadImgFunction/insertImageTool";
-import { insertImageFiles } from "../components/UploadImgFunction/utils";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -97,15 +87,15 @@ import { gridList } from "../store/columns/CM_A7000W_C";
 import {
   Iparameters,
   TColumn,
+  TEditorHandle,
   TGrid,
-  TInsertImageFiles,
   TPermissions,
 } from "../store/types";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import RichEditor from "../components/RichEditor";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
-const { imageResizing } = EditorUtils;
 const DateField = ["recdt"];
 const attdatnumField = ["files"];
 
@@ -215,8 +205,7 @@ const CM_A7000W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
-  const editor = React.createRef<Editor>();
-  const textarea = React.createRef<HTMLTextAreaElement>();
+  const refEditorRef = useRef<TEditorHandle>(null);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -361,12 +350,7 @@ const CM_A7000W: React.FC = () => {
         files_private: data.files_private,
       });
 
-      setDetailFilters((prev) => ({
-        ...prev,
-        meetingnum: data.meetingnum,
-        pgNum: 1,
-        isSearch: true,
-      }));
+      fetchDetail();
     }
     setTabSelected(e.selected);
   };
@@ -566,15 +550,6 @@ const CM_A7000W: React.FC = () => {
     isSearch: true,
   });
 
-  const [detailfilters, setDetailFilters] = useState({
-    pgSize: PAGE_SIZE,
-    workType: "DETAIL",
-    meetingnum: "",
-    meetingseq: 0,
-    pgNum: 1,
-    isSearch: true,
-  });
-
   const [information, setInformation] = useState({
     orgdiv: orgdiv,
     meetingnum: "",
@@ -633,7 +608,7 @@ const CM_A7000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.meetingnum == filters.find_row_value
+            (row: any) => row.orgdiv + "_" + row.meetingnum == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -661,53 +636,22 @@ const CM_A7000W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.meetingnum == filters.find_row_value);
+            : rows.find((row: any) => row.orgdiv + "_" + row.meetingnum == filters.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
 
-          setDetailFilters((prev) => ({
-            ...prev,
-            meetingnum: selectedRow.meetingnum,
-            pgNum: 1,
-            isSearch: true,
-          }));
-
           setWorkType("U");
-
-          setInformation({
-            orgdiv: selectedRow.orgdiv,
-            meetingnum: selectedRow.meetingnum,
-            custcd: selectedRow.custcd,
-            recdt: toDate(selectedRow.recdt),
-            meetingid: selectedRow.meetingid,
-            attdatnum: selectedRow.attdatnum,
-            files: selectedRow.files,
-            remark2: selectedRow.remark2,
-            unshared: selectedRow.unshared,
-            place: selectedRow.place,
-            meetingnm: selectedRow.meetingnm,
-            ref_key: selectedRow.ref_key,
-            title: selectedRow.title,
-            usegb: selectedRow.usegb,
-            attdatnum_private: selectedRow.attdatnum_private,
-            files_private: selectedRow.files_private,
-          });
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
 
-          setDetailFilters((prev) => ({
-            ...prev,
-            meetingnum: rows[0].meetingnum,
-            pgNum: 1,
-            isSearch: true,
-          }));
           setWorkType("U");
         }
       } else {
         setWorkType("");
         resetAllGrid();
       }
+      
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -724,87 +668,44 @@ const CM_A7000W: React.FC = () => {
     setLoading(false);
   };
 
-  //그리드 데이터 조회
-  const fetchDetailGrid = async (detailfilters: any) => {
+  const fetchDetail = async () => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
     //조회조건 파라미터
-    const parameters: Iparameters = {
-      procedureName: "P_CM_A7000W_Q",
-      pageNumber: filters.pgNum,
-      pageSize: filters.pgSize,
-      parameters: {
-        "@p_work_type": detailfilters.workType,
-        "@p_orgdiv": filters.orgdiv,
-        "@p_meetingnum": detailfilters.meetingnum,
-        "@p_frdt": convertDateToStr(filters.frdt),
-        "@p_todt": convertDateToStr(filters.todt),
-        "@p_custnm": filters.custnm,
-        "@p_title": filters.title,
-        "@p_usegb": filters.usegb,
-        "@p_person": filters.person,
-        "@p_find_row_value": filters.find_row_value,
-      },
+    const mainDataId = Object.getOwnPropertyNames(selectedState)[0];
+    const selectedRowData = mainDataResult.data.find(
+      (item) => item[DATA_ITEM_KEY] == mainDataId
+    );
+    
+    const id = orgdiv + "_" + selectedRowData["meetingnum"];
+
+    const para = {
+      folder: "CM_A7000W",
+      id: id,
     };
 
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("meeting-query", para);
     } catch (error) {
       data = null;
     }
+    
+    if (data !== null && data.document !== "") {
+      const reference = data.document;
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-
-      //Editor에 값 세팅
-      if (editor.current && textarea.current) {
-        const view = editor.current.view;
-        if (view && textarea.current) {
-          EditorUtils.setHtml(view, textarea.current.value);
-        }
+      // Edior에 HTML & CSS 세팅
+      if (refEditorRef.current) {
+        refEditorRef.current.setHtml(reference);
       }
-
-      setDetailDataResult(() => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
-
-      const selectedRow = rows[0];
-
-      if (selectedRow != undefined) {
-        setInformation({
-          orgdiv: selectedRow.orgdiv,
-          meetingnum: selectedRow.meetingnum,
-          custcd: selectedRow.custcd,
-          recdt: toDate(selectedRow.recdt),
-          meetingid: selectedRow.meetingid,
-          attdatnum: selectedRow.attdatnum,
-          files: selectedRow.files,
-          remark2: selectedRow.remark2,
-          unshared: selectedRow.unshared,
-          place: selectedRow.place,
-          meetingnm: selectedRow.meetingnm,
-          ref_key: selectedRow.ref_key,
-          title: selectedRow.title,
-          usegb: selectedRow.usegb,
-          attdatnum_private: selectedRow.attdatnum_private,
-          files_private: selectedRow.files_private,
-        });
-      }
+      
     } else {
-      console.log("[오류 발생]");
+      console.log("[에러발생]");
       console.log(data);
 
-      if (editor.current) {
-        const view = editor.current.view;
-        if (view) {
-          EditorUtils.setHtml(view, "");
-        }
+      if (refEditorRef.current) {
+        refEditorRef.current.setHtml("");
       }
     }
     setLoading(false);
@@ -819,16 +720,6 @@ const CM_A7000W: React.FC = () => {
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions]);
-
-  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
-  useEffect(() => {
-    if (detailfilters.isSearch && permissions !== null) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(detailfilters);
-      setDetailFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
-      fetchDetailGrid(deepCopiedFilters);
-    }
-  }, [detailfilters, permissions]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -908,22 +799,34 @@ const CM_A7000W: React.FC = () => {
     const selectedRowData = event.dataItem;
 
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
-    setDetailDataResult(process([], detailDataState));
-
-    setDetailFilters((prev) => ({
-      ...prev,
-      meetingnum: selectedRowData.meetingnum,
-      pgNum: 1,
-      isSearch: true,
-    }));
-
     setTabSelected(1);
 
     setWorkType("U");
+
+    setInformation({
+      orgdiv: selectedRowData.orgdiv,
+      meetingnum: selectedRowData.meetingnum,
+      custcd: selectedRowData.custcd,
+      recdt: toDate(selectedRowData.recdt),
+      meetingid: selectedRowData.meetingid,
+      attdatnum: selectedRowData.attdatnum,
+      files: selectedRowData.files,
+      remark2: selectedRowData.remark2,
+      unshared: selectedRowData.unshared,
+      place: selectedRowData.place,
+      meetingnm: selectedRowData.meetingnm,
+      ref_key: selectedRowData.ref_key,
+      title: selectedRowData.title,
+      usegb: selectedRowData.usegb,
+      attdatnum_private: selectedRowData.attdatnum_private,
+      files_private: selectedRowData.files_private,
+    });
+    fetchDetail();
   };
 
   //저장 파라미터 초기 값
   const [paraDataSaved, setParaDataSaved] = useState({
+    fileBytes: "",
     workType: "",
     orgdiv: orgdiv,
     meetingnum: "",
@@ -946,37 +849,8 @@ const CM_A7000W: React.FC = () => {
     formid: "CM_A7000W",
   });
 
-  const para: Iparameters = {
-    procedureName: "P_CM_A7000W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": paraDataSaved.workType,
-      "@p_orgdiv": paraDataSaved.orgdiv,
-      "@p_meetingnum": paraDataSaved.meetingnum,
-      "@p_meetingseq": paraDataSaved.meetingseq,
-      "@p_custcd": paraDataSaved.custcd,
-      "@p_recdt": paraDataSaved.recdt,
-      "@p_meetingid": paraDataSaved.meetingid,
-      "@p_title": paraDataSaved.title,
-      "@p_attdatnum": paraDataSaved.attdatnum,
-      "@p_remark2": paraDataSaved.remark2,
-      "@p_usegb": paraDataSaved.usegb,
-      "@p_unshared": paraDataSaved.unshared,
-      "@p_place": paraDataSaved.place,
-      "@p_meetingnm": paraDataSaved.meetingnm,
-      "@p_ref_key": paraDataSaved.ref_key,
-      "@p_attdatnum_private": paraDataSaved.attdatnum_private,
-      "@p_contents": paraDataSaved.contents,
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_form_id": "CM_A7000W",
-    },
-  };
-
   const onSaveClick = () => {
     let valid = true;
-
     try {
       if (
         convertDateToStr(information.recdt).substring(0, 4) < "1997" ||
@@ -985,10 +859,8 @@ const CM_A7000W: React.FC = () => {
         convertDateToStr(information.recdt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "CM_A7000W_001");
-      } else if (information.custcd == "") {
+      } else if ( information.custcd == "" ) {
         throw findMessage(messagesData, "CM_A7000W_002");
-      } else if (information.title == "") {
-        throw findMessage(messagesData, "CM_A7000W_003");
       }
     } catch (e) {
       alert(e);
@@ -997,11 +869,19 @@ const CM_A7000W: React.FC = () => {
 
     if (!valid) return false;
 
+    let editorContent: any = "";
+    if (refEditorRef.current) {
+      editorContent = refEditorRef.current.getContent();
+    }
+    const bytes = require("utf8-bytes");
+    const convertedEditorContent = bytesToBase64(bytes(editorContent));
+
     setParaDataSaved({
+      fileBytes: convertedEditorContent,
       workType: workType,
       orgdiv: orgdiv,
       meetingnum: information.meetingnum,
-      meetingseq: detailfilters.meetingseq,
+      meetingseq: 0,
       custcd: information.custcd,
       recdt: convertDateToStr(information.recdt),
       meetingid: information.meetingid,
@@ -1031,8 +911,37 @@ const CM_A7000W: React.FC = () => {
     let data: any;
     setLoading(true);
 
+    const para = {
+      procedureName: "P_CM_A7000W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": paraDataSaved.workType,
+        "@p_orgdiv": paraDataSaved.orgdiv,
+        "@p_meetingnum": paraDataSaved.meetingnum,
+        "@p_meetingseq": paraDataSaved.meetingseq,
+        "@p_custcd": paraDataSaved.custcd,
+        "@p_recdt": paraDataSaved.recdt,
+        "@p_meetingid": paraDataSaved.meetingid,
+        "@p_title": paraDataSaved.title,
+        "@p_attdatnum": paraDataSaved.attdatnum,
+        "@p_remark2": paraDataSaved.remark2,
+        "@p_usegb": paraDataSaved.usegb,
+        "@p_unshared": paraDataSaved.unshared,
+        "@p_place": paraDataSaved.place,
+        "@p_meetingnm": paraDataSaved.meetingnm,
+        "@p_ref_key": paraDataSaved.ref_key,
+        "@p_attdatnum_private": paraDataSaved.attdatnum_private,
+        "@p_contents": paraDataSaved.contents,
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "CM_A7000W"
+      },
+      fileBytes: paraDataSaved.fileBytes,
+    }
+  
     try {
-      data = await processApi<any>("procedure", para);
+      data = await processApi<any>("meeting-save", para);
     } catch (error) {
       data = null;
     }
@@ -1043,6 +952,7 @@ const CM_A7000W: React.FC = () => {
       } else {
         setTabSelected(1);
       }
+      
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1050,6 +960,8 @@ const CM_A7000W: React.FC = () => {
         find_row_value: data.returnString,
         isSearch: true,
       }));
+      fetchDetail();
+
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1107,71 +1019,6 @@ const CM_A7000W: React.FC = () => {
     }
   };
 
-  const {
-    Bold,
-    Italic,
-    Underline,
-    Strikethrough,
-    Subscript,
-    Superscript,
-    AlignLeft,
-    AlignCenter,
-    AlignRight,
-    AlignJustify,
-    Indent,
-    Outdent,
-    OrderedList,
-    UnorderedList,
-    Undo,
-    Redo,
-    FontSize,
-    FontName,
-    FormatBlock,
-    Link,
-    Unlink,
-    ViewHtml,
-    InsertTable,
-    AddRowBefore,
-    AddRowAfter,
-    AddColumnBefore,
-    AddColumnAfter,
-    DeleteRow,
-    DeleteColumn,
-    DeleteTable,
-    MergeCells,
-    SplitCell,
-  } = EditorTools;
-
-  const onImageInsert = (args: TInsertImageFiles) => {
-    const { files, view, event } = args;
-    const nodeType = view.state.schema.nodes.image;
-
-    const position =
-      event.type === "drop"
-        ? view.posAtCoords({ left: event.clientX, top: event.clientY })
-        : null;
-
-    insertImageFiles({ view, files, nodeType, position });
-
-    return files.length > 0;
-  };
-
-  const onMount = (event: EditorMountEvent) => {
-    const state = event.viewProps.state;
-    const plugins = [
-      ...state.plugins,
-      insertImagePlugin(onImageInsert),
-      imageResizing(),
-    ];
-
-    return new ProseMirror.EditorView(
-      { mount: event.dom },
-      {
-        ...event.viewProps,
-        state: ProseMirror.EditorState.create({ doc: state.doc, plugins }),
-      }
-    );
-  };
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
 
@@ -1656,32 +1503,11 @@ const CM_A7000W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer width={`calc(70% - ${GAP}px)`}>
+            <GridContainer style = {{ width: `calc(70% - ${GAP}px)`, height: "80vh" }}>
               <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
               </GridTitleContainer>
-              <Editor
-                tools={[
-                  [Bold, Italic, Underline, Strikethrough],
-                  [Subscript, Superscript],
-                  [AlignLeft, AlignCenter, AlignRight, AlignJustify],
-                  [Indent, Outdent],
-                  [OrderedList, UnorderedList],
-                  FontSize,
-                  FontName,
-                  FormatBlock,
-                  [Undo, Redo],
-                  [Link, Unlink, InsertImage, ViewHtml],
-                  [InsertTable],
-                  [AddRowBefore, AddRowAfter, AddColumnBefore, AddColumnAfter],
-                  [DeleteRow, DeleteColumn, DeleteTable],
-                  [MergeCells, SplitCell],
-                ]}
-                contentStyle={{ height: "68vh" }}
-                style={{ marginTop: "4.6px" }}
-                ref={editor}
-                onMount={onMount}
-              />
+              <RichEditor id="refEditor" ref={refEditorRef} />
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
@@ -1733,7 +1559,7 @@ const CM_A7000W: React.FC = () => {
       {signWindowVisible && (
         <SignWindow
           setVisible={setSignWindowVisible}
-          reference_key={filters.orgdiv + "_" + detailfilters.meetingnum}
+          reference_key={filters.orgdiv + "_" + information.meetingnum}
           modal={true}
         />
       )}

@@ -179,6 +179,12 @@ export type TInsertImageFiles = {
   event?: any;
 };
 
+export type TEditorHandle = {
+  getContent: () => string;
+  setHtml: (html: string) => string;
+  updateEditable: (editable: boolean) => void;
+};
+
 export type TSysMessageKey =
   | "QuestionToDeleteAllDataInCodeWithFormat"
   | "RequiredFieldWithFormat"

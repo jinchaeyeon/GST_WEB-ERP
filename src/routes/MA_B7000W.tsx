@@ -584,10 +584,13 @@ const MA_B7000: React.FC = () => {
     setLoading(false);
   };
 
+  
+
   //그리드 데이터 조회3
   const fetchDetailGrid2 = async (detailFilters: any) => {
     let data: any;
     setLoading(true);
+
     const detailParameters: Iparameters = {
       procedureName: "P_MA_B7000W_Q",
       pageNumber: detailFilters.pgNum,
@@ -613,6 +616,7 @@ const MA_B7000: React.FC = () => {
         "@p_company_code": companyCode,
         },
     };
+
     try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
@@ -622,6 +626,7 @@ const MA_B7000: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+
       if (detailFilters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef3.current) {
@@ -629,8 +634,9 @@ const MA_B7000: React.FC = () => {
             (row: any) =>
               row[DETAIL_DATA_ITEM_KEY] == detailFilters.find_row_value
           );
-          targetRowIndex3 = findRowIndex;
+          targetRowIndex2 = findRowIndex;
         }
+
         // find_row_value 데이터가 존재하는 페이지로 설정
         setPage3({
           skip: PAGE_SIZE * (data.pageNumber - 1),
@@ -639,7 +645,7 @@ const MA_B7000: React.FC = () => {
       } else {
         // 첫번째 행으로 스크롤 이동
         if (gridRef3.current) {
-          targetRowIndex3 = 0;
+          targetRowIndex2 = 0;
         }
       }
 
@@ -649,6 +655,7 @@ const MA_B7000: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+
       if (totalRowCnt > 0) {
         const selectedRow =
           detailFilters.find_row_value == ""
@@ -1370,7 +1377,7 @@ const MA_B7000: React.FC = () => {
             pageable={true}
             onPageChange={pageChange3}
             //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
+            ref={gridRef3}
             rowHeight={30}
             //컬럼순서조정
             reorderable={true}
