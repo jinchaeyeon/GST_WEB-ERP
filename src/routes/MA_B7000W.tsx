@@ -236,7 +236,7 @@ const MA_B7000: React.FC = () => {
       [name]: value,
     }));
   };
-
+ 
   //페이지네이션 세팅
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
