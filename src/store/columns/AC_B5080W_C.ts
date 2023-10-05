@@ -14,7 +14,7 @@ export const gridList: Array<TGrid> = [
         id: "col_reckey",
         field: "reckey",
         caption: "출고번호",
-        width: 250,
+        width: 150,
       },
       {
         id: "col_custcd",
@@ -26,13 +26,13 @@ export const gridList: Array<TGrid> = [
         id: "col_custnm",
         field: "custnm",
         caption: "업체명",
-        width: 250,
+        width: 150,
       },
       {
         id: "col_poregnum",
         field: "poregnum",
         caption: "PO번호",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_taxdiv",
@@ -70,7 +70,7 @@ export const gridList: Array<TGrid> = [
         caption: "금액",
         width: 100,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList2",
@@ -91,13 +91,13 @@ export const gridList: Array<TGrid> = [
         id: "col_gubun",
         field: "gubun",
         caption: "구분",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_custcd2",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm2",
@@ -121,19 +121,19 @@ export const gridList: Array<TGrid> = [
         id: "col_inordtype",
         field: "inordtype",
         caption: "매출형태",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_doexdiv",
         field: "doexdiv",
         caption: "내수구분",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_amtunit",
         field: "amtunit",
         caption: "화폐단위",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_wonchgrat",
@@ -171,8 +171,9 @@ export const gridList: Array<TGrid> = [
         caption: "등록일자",
         width: 150,
       },
-    ]
-  },  {
+    ],
+  },
+  {
     gridName: "grdList3",
     columns: [
       {
@@ -191,13 +192,13 @@ export const gridList: Array<TGrid> = [
         id: "col_taxnum",
         field: "taxnum",
         caption: "구분",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_custcd3",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm3",
@@ -259,8 +260,9 @@ export const gridList: Array<TGrid> = [
         caption: "등록일자",
         width: 150,
       },
-    ]
-  },  {
+    ],
+  },
+  {
     gridName: "grdList4",
     columns: [
       {
@@ -279,13 +281,13 @@ export const gridList: Array<TGrid> = [
         id: "col_inkind",
         field: "inkind",
         caption: "입고유형",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_custcd4",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm4",
@@ -297,7 +299,7 @@ export const gridList: Array<TGrid> = [
         id: "col_doexdiv2",
         field: "doexdiv",
         caption: "내수구분",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_taxdiv3",
@@ -353,8 +355,9 @@ export const gridList: Array<TGrid> = [
         caption: "등록일자",
         width: 150,
       },
-    ]
-  },  {
+    ],
+  },
+  {
     gridName: "grdList5",
     columns: [
       {
@@ -379,7 +382,7 @@ export const gridList: Array<TGrid> = [
         id: "col_acntdiv",
         field: "acntdiv",
         caption: "전표처리구분",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_custregnum2",
@@ -391,7 +394,7 @@ export const gridList: Array<TGrid> = [
         id: "col_custcd5",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm5",
@@ -403,7 +406,7 @@ export const gridList: Array<TGrid> = [
         id: "col_rcvcustcd",
         field: "rcvcustcd",
         caption: "인수처코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_rcvcustnm",
@@ -435,8 +438,9 @@ export const gridList: Array<TGrid> = [
         caption: "등록일자",
         width: 150,
       },
-    ]
-  },  {
+    ],
+  },
+  {
     gridName: "grdList6",
     columns: [
       {
@@ -461,13 +465,13 @@ export const gridList: Array<TGrid> = [
         id: "col_inkind2",
         field: "inkind",
         caption: "입고유형",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_custcd6",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm6",
@@ -479,7 +483,7 @@ export const gridList: Array<TGrid> = [
         id: "col_doexdiv3",
         field: "doexdiv",
         caption: "내수구분",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_taxdiv4",
@@ -523,7 +527,7 @@ export const gridList: Array<TGrid> = [
         caption: "등록일자",
         width: 150,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList7",
@@ -544,31 +548,31 @@ export const gridList: Array<TGrid> = [
         id: "col_inputpath",
         field: "inputpath",
         caption: "전표입력경로",
-        width: 130,
+        width: 120,
       },
       {
         id: "col_dramt",
         field: "dramt",
         caption: "차변금액",
-        width: 150,
+        width: 100,
       },
       {
         id: "col_cramt",
         field: "cramt",
         caption: "대변금액",
-        width: 150,
+        width: 100,
       },
       {
         id: "col_dcamt",
         field: "dcamt",
         caption: "차변-대변",
-        width: 150,
+        width: 100,
       },
       {
         id: "col_remark3",
         field: "remark3",
         caption: "적요",
-        width: 300,
+        width: 200,
       },
       {
         id: "col_insert_userid6",
@@ -594,6 +598,6 @@ export const gridList: Array<TGrid> = [
         caption: "수정일자",
         width: 150,
       },
-    ]
+    ],
   },
 ];

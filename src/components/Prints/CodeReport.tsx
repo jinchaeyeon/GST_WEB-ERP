@@ -1,11 +1,11 @@
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { useEffect, useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
 import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
 import { convertDateToStr, numberWithCommas } from "../CommonFunction";
-import ReactToPrint from "react-to-print";
-import { Button } from "@progress/kendo-react-buttons";
-import { DataResult, process, State } from "@progress/kendo-data-query";
 
 const CodeReport = (filters: any) => {
   const [mainDataState, setMainDataState] = useState<State>({
@@ -21,7 +21,7 @@ const CodeReport = (filters: any) => {
   const parameters: Iparameters = {
     procedureName: "P_AC_B1280W_Q",
     pageNumber: filters.data.pgNum,
-    pageSize: 1000,
+    pageSize: filters.data.pgSize,
     parameters: {
       "@p_work_type": "LIST",
       "@p_orgdiv": filters.data.orgdiv,
@@ -48,23 +48,20 @@ const CodeReport = (filters: any) => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-      }
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
     }
   };
 
   useEffect(() => {
-    if(mainDataResult.total == 0){
+    if (mainDataResult.total == 0) {
       fetchMainGrid();
     }
   });
-
 
   const componentRef = useRef(null);
 
@@ -109,7 +106,7 @@ const CodeReport = (filters: any) => {
           mainDataResult.data.map((item1: any, idx1: number) =>
             idx1 === 0 || idx1 % 10 === 0 ? (
               <>
-                <table className="main_tb" style={{width: "100%"}}>
+                <table className="main_tb" style={{ width: "100%" }}>
                   <colgroup>
                     <col width="10%" />
                     <col width="8%" />
@@ -135,8 +132,12 @@ const CodeReport = (filters: any) => {
                           <td className="center">{item2.ackey}</td>
                           <td>{item2.acntnm}</td>
                           <td>{item2.stdrmknm1}</td>
-                          <td className="number">{numberWithCommas(item2.dramt)}</td>
-                          <td className="number">{numberWithCommas(item2.cramt)}</td>
+                          <td className="number">
+                            {numberWithCommas(item2.dramt)}
+                          </td>
+                          <td className="number">
+                            {numberWithCommas(item2.cramt)}
+                          </td>
                           <td>{item2.remark3}</td>
                           <td className="center">{item2.custnm}</td>
                         </tr>

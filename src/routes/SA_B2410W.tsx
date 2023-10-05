@@ -366,7 +366,6 @@ const SA_B2410: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
         ...prev,
-        pgNum: 1,
         find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
@@ -386,6 +385,7 @@ const SA_B2410: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState)
     setMainDataResult(process([], mainDataState));
   };
 

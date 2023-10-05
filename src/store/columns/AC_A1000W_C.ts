@@ -62,19 +62,19 @@ export const gridList: Array<TGrid> = [
         id: "col_insert_time",
         field: "insert_time",
         caption: "등록일자",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_update_time",
         field: "update_time",
         caption: "수정일자",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_insert_pc",
         field: "insert_pc",
         caption: "등록PC",
-        width: 120,
+        width: 200,
       },
       {
         id: "col_slipdiv",

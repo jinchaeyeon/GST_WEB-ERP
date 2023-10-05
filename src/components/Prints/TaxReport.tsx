@@ -22,7 +22,7 @@ const TaxReport = (filters: any) => {
     const parameters: Iparameters = {
       procedureName: "P_AC_B5000W_Q",
       pageNumber: filters.data.pgNum,
-      pageSize: 1000,
+      pageSize: filters.data.pgSize,
       parameters: {
         "@p_work_type": "LIST",
         "@p_orgdiv": filters.data.orgdiv,

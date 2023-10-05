@@ -94,9 +94,6 @@ const checkBoxField:string[] = [
   "bookregyn",
 ];
 
-const comboBoxField:string[] = [
-];
-
 const numberField:string[] = [
   "cbalamt",
   "dbalamt"
@@ -175,57 +172,6 @@ const ColumnCommandCell = (props: any) => {
 
   const controltype = dataItem.controltype;
 
-  // if (controltype == "L") {
-  //   let bizComponentIdVal: string;
-
-  //   bizComponentIdVal = "L_AC061";
-
-  //   const bizComponent:any = bizComponentData?.find(
-  //     (item: any) => item.bizComponentId === bizComponentIdVal
-  //   );
-  
-  //   const dataTypeColumns = [
-  //     {
-  //       field: "sub_code",
-  //       header: "code",
-  //       width: 150,
-  //     },
-  //     {
-  //       field: "code_name",
-  //       header: "name",
-  //       width: 150,
-  //     },
-  //   ];
-
-  //   const value = bizComponent.data.Rows.find((x:any) => x.sub_code == props.dataItem.mngdata);
-
-  //   tdResult = <td {...td.props}>  
-  //     {
-  //       (props.dataItem[EDIT_FIELD] == field 
-  //         && bizComponent) 
-  //         ? <MultiColumnComboBox
-  //             data={bizComponent.data.Rows}
-  //             value={value}
-  //             columns={dataTypeColumns}
-  //             textField={"sub_code"}
-  //             onChange={(event:ComboBoxChangeEvent) => {
-  //               setSubDataResult((prev) => {
-  //                 return {
-  //                   data: [...prev.data.map((row, index) => ({
-  //                     ...row,
-  //                     mngdata: index == props.dataIndex ? event.value.sub_code : row.mngdata,
-  //                     mngdatanm: index == props.dataIndex ? event.value.code_name : row.mngdatanm
-  //                   }))],
-  //                   total: prev.total,
-  //                 };
-  //               })
-  //             }}
-  //           />
-        
-  //         : props.dataItem[field]
-  //     }
-  //   </td>
-  // }
   if (controltype == "B") {
     defaultRendering = (
       <td
@@ -280,9 +226,6 @@ const ColumnCommandCell = (props: any) => {
       </td>
     )
   }
-  // else if (controltype == "T") {
-
-  // }
 
   return (
     <>
@@ -303,6 +246,7 @@ const ColumnCommandCell = (props: any) => {
             mngitemcd6: ""
           }}
           index={1}
+          modal={true}
         />
       )}
     </>
@@ -319,15 +263,15 @@ const AC_A0070W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const pathname = window.location.pathname.replace("/", "");
-  // const [loginResult] = useRecoilState(loginResultState);
-  // const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
   const gridRef: any = useRef<any>(null);
 
-  const [page, setPage] = useState({ skip: 0, take: PAGE_SIZE });
-
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+  
   //폼 메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -1498,7 +1442,7 @@ const AC_A0070W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
           </GridTitleContainer>
-          <FormBoxWrap style={{ height: "41vh", overflow: "auto"}} /*67.5*/> 
+          <FormBoxWrap border={true}> 
             <FormBox>
               <tbody>
                 <tr>

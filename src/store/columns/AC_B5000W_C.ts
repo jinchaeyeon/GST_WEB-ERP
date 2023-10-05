@@ -20,7 +20,7 @@ export const gridList: Array<TGrid> = [
         id: "col_custnm",
         field: "custnm",
         caption: "업체코드명",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_splyamt",
@@ -38,13 +38,13 @@ export const gridList: Array<TGrid> = [
         id: "col_items",
         field: "items",
         caption: "거래품목",
-        width: 400,
+        width: 150,
       },
       {
         id: "col_taxtype",
         field: "taxtype",
         caption: "계산서유형",
-        width: 250,
+        width: 120,
       },
       {
         id: "col_ackey",

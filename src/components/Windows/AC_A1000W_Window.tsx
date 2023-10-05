@@ -41,10 +41,7 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
-import {
-  isLoading,
-  unsavedAttadatnumsState
-} from "../../store/atoms";
+import { isLoading, unsavedAttadatnumsState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
@@ -52,12 +49,14 @@ import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
+  UseParaPc,
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -73,15 +72,61 @@ type IWindow = {
   workType: "N" | "A" | "C";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(
-    data: object,
-    filter: object,
-    deletedMainRows: object,
-    worktype: string
-  ): void;
-  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
-  chkyn: boolean;
-  modal?: boolean;
+  setData(str: string): void;
+    modal?: boolean;
+};
+
+type TdataArr = {
+  rowstatus_s: string[];
+  acseq2_s: string[];
+  acntses_s: string[];
+  drcrdiv_s: string[];
+  acntcd_s: string[];
+  acntchr_s: string[];
+  alcchr_s: string[];
+  acntbaldiv_s: string[];
+  budgyn_s: string[];
+  partacnt_s: string[];
+  slipamt_s: string[];
+  usedptcd_s: string[];
+  mngdrcustyn_s: string[];
+  mngcrcustyn_s: string[];
+  mngsumcustyn_s: string[];
+  mngdramtyn_s: string[];
+  mngcramtyn_s: string[];
+  mngdrrateyn_s: string[];
+  mngcrrateyn_s: string[];
+  custcd_s: string[];
+  custnm_s: string[];
+  mngamt_s: string[];
+  rate_s: string[];
+  mngitemcd1_s: string[];
+  mngitemcd2_s: string[];
+  mngitemcd3_s: string[];
+  mngitemcd4_s: string[];
+  mngitemcd5_s: string[];
+  mngitemcd6_s: string[];
+  mngdata1_s: string[];
+  mngdata2_s: string[];
+  mngdata3_s: string[];
+  mngdata4_s: string[];
+  mngdata5_s: string[];
+  mngdata6_s: string[];
+  mngdatanm1_s: string[];
+  mngdatanm2_s: string[];
+  mngdatanm3_s: string[];
+  mngdatanm4_s: string[];
+  mngdatanm5_s: string[];
+  mngdatanm6_s: string[];
+  budgcd_s: string[];
+  stdrmkcd_s: string[];
+  remark3_s: string[];
+  evidentialkind_s: string[];
+  autorecnum_s: string[];
+  taxtype_s: string[];
+  propertykind_s: string[];
+  creditcd_s: string[];
+  reason_intax_deduction_s: string[];
 };
 
 type Acnt = {
@@ -124,6 +169,7 @@ type Acnt = {
   system_yn: string;
   useyn: string;
 };
+
 type Idata = {
   location: string;
   acntdt: string;
@@ -155,6 +201,7 @@ type Idata = {
   evidentialkind: string;
   creditcd: string;
   reason_intax_deduction: string;
+  printcnt: number;
 };
 
 let deletedMainRows: object[] = [];
@@ -568,8 +615,6 @@ const CopyWindow = ({
   data,
   setVisible,
   setData,
-  reload,
-  chkyn,
   modal = false,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
@@ -580,6 +625,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   const [worktype, setWorkType] = useState<string>(workType);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -1353,6 +1401,7 @@ const CopyWindow = ({
     creditcd: "",
     reason_intax_deduction: "",
     find_row_value: "",
+    printcnt: 0,
     pgNum: 1,
     isSearch: true,
   });
@@ -1521,6 +1570,7 @@ const CopyWindow = ({
         evidentialkind: data.evidentialkind,
         creditcd: data.creditcd,
         reason_intax_deduction: data.reason_intax_deduction,
+        printcnt: data.printcnt == undefined ? 0 : data.printcnt,
         isSearch: true,
         find_row_value: "",
         pgNum: 1,
@@ -1552,7 +1602,7 @@ const CopyWindow = ({
           approvaldt: filters.approvaldt,
           attdatnum: "",
           autorecnum: "",
-          bizregnum: chkyn == true ? datas.bizregnum : "",
+          bizregnum: "",
           budgcd: "",
           budgyn: "N",
           closeyn: filters.closeyn,
@@ -1568,8 +1618,8 @@ const CopyWindow = ({
           creditcd: "",
           creditnm: "",
           creditnum: "",
-          custcd: chkyn == true ? datas.custcd : "",
-          custnm: chkyn == true ? datas.custnm : "",
+          custcd: "",
+          custnm: "",
           dptcd: filters.dptcd,
           drcrdiv: i.toString(),
           evidentialkind: "",
@@ -1619,7 +1669,7 @@ const CopyWindow = ({
           propertykind: "",
           rate: 0,
           reason_intax_deduction: "",
-          remark3: chkyn == true ? datas.remark3 : "",
+          remark3: "",
           slipamt: 0,
           slipamt_1: 0,
           slipamt_2: 0,
@@ -1715,6 +1765,159 @@ const CopyWindow = ({
 
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "W",
+    orgdiv: "01",
+    location: "01",
+    actdt: new Date(),
+    acseq1: 0,
+    acntdt: new Date(),
+    dptcd: "",
+    slipdiv: "",
+    consultdt: "",
+    consultnum: 0,
+    inputpath: "",
+    closeyn: "",
+    approvaldt: "",
+    apperson: "",
+    remark3: "",
+    printcnt: 0,
+    position: "",
+    inoutdiv: "",
+    rowstatus_s: "",
+    acseq2_s: "",
+    acntses_s: "",
+    drcrdiv_s: "",
+    acntcd_s: "",
+    acntchr_s: "",
+    alcchr_s: "",
+    acntbaldiv_s: "",
+    budgyn_s: "",
+    partacnt_s: "",
+    slipamt_s: "",
+    usedptcd_s: "",
+    mngdrcustyn_s: "",
+    mngcrcustyn_s: "",
+    mngsumcustyn_s: "",
+    mngdramtyn_s: "",
+    mngcramtyn_s: "",
+    mngdrrateyn_s: "",
+    mngcrrateyn_s: "",
+    custcd_s: "",
+    custnm_s: "",
+    mngamt_s: "",
+    rate_s: "",
+    mngitemcd1_s: "",
+    mngitemcd2_s: "",
+    mngitemcd3_s: "",
+    mngitemcd4_s: "",
+    mngitemcd5_s: "",
+    mngitemcd6_s: "",
+    mngdata1_s: "",
+    mngdata2_s: "",
+    mngdata3_s: "",
+    mngdata4_s: "",
+    mngdata5_s: "",
+    mngdata6_s: "",
+    mngdatanm1_s: "",
+    mngdatanm2_s: "",
+    mngdatanm3_s: "",
+    mngdatanm4_s: "",
+    mngdatanm5_s: "",
+    mngdatanm6_s: "",
+    budgcd_s: "",
+    stdrmkcd_s: "",
+    remark3_s: "",
+    evidentialkind_s: "",
+    autorecnum_s: "",
+    taxtype_s: "",
+    propertykind_s: "",
+    creditcd_s: "",
+    reason_intax_deduction_s: "",
+    attdatnum: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_AC_A1000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_location": ParaData.location,
+      "@p_actdt": convertDateToStr(ParaData.actdt),
+      "@p_acseq1": ParaData.acseq1,
+      "@p_acntdt": convertDateToStr(ParaData.acntdt),
+      "@p_dptcd": ParaData.dptcd,
+      "@p_slipdiv": ParaData.slipdiv,
+      "@p_consultdt": ParaData.consultdt,
+      "@p_consultnum": ParaData.consultnum,
+      "@p_inputpath": ParaData.inputpath,
+      "@p_closeyn": ParaData.closeyn,
+      "@p_approvaldt": ParaData.approvaldt,
+      "@p_apperson": ParaData.apperson,
+      "@p_remark3": ParaData.remark3,
+      "@p_printcnt": ParaData.printcnt,
+      "@p_position": ParaData.position,
+      "@p_inoutdiv": ParaData.inoutdiv,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_acseq2_s": ParaData.acseq2_s,
+      "@p_acntses_s": ParaData.acntses_s,
+      "@p_drcrdiv_s": ParaData.drcrdiv_s,
+      "@p_acntcd_s": ParaData.acntcd_s,
+      "@p_acntchr_s": ParaData.acntchr_s,
+      "@p_alcchr_s": ParaData.alcchr_s,
+      "@p_acntbaldiv_s": ParaData.acntbaldiv_s,
+      "@p_budgyn_s": ParaData.budgyn_s,
+      "@p_partacnt_s": ParaData.partacnt_s,
+      "@p_slipamt_s": ParaData.slipamt_s,
+      "@p_usedptcd_s": ParaData.usedptcd_s,
+      "@p_mngdrcustyn_s": ParaData.mngdrcustyn_s,
+      "@p_mngcrcustyn_s": ParaData.mngcrcustyn_s,
+      "@p_mngsumcustyn_s": ParaData.mngsumcustyn_s,
+      "@p_mngdramtyn_s": ParaData.mngdramtyn_s,
+      "@p_mngcramtyn_s": ParaData.mngcramtyn_s,
+      "@p_mngdrrateyn_s": ParaData.mngdrrateyn_s,
+      "@p_mngcrrateyn_s": ParaData.mngcrrateyn_s,
+      "@p_custcd_s": ParaData.custcd_s,
+      "@p_custnm_s": ParaData.custnm_s,
+      "@p_mngamt_s": ParaData.mngamt_s,
+      "@p_rate_s": ParaData.rate_s,
+      "@p_mngitemcd1_s": ParaData.mngitemcd1_s,
+      "@p_mngitemcd2_s": ParaData.mngitemcd2_s,
+      "@p_mngitemcd3_s": ParaData.mngitemcd3_s,
+      "@p_mngitemcd4_s": ParaData.mngitemcd4_s,
+      "@p_mngitemcd5_s": ParaData.mngitemcd5_s,
+      "@p_mngitemcd6_s": ParaData.mngitemcd6_s,
+      "@p_mngdata1_s": ParaData.mngdata1_s,
+      "@p_mngdata2_s": ParaData.mngdata2_s,
+      "@p_mngdata3_s": ParaData.mngdata3_s,
+      "@p_mngdata4_s": ParaData.mngdata4_s,
+      "@p_mngdata5_s": ParaData.mngdata5_s,
+      "@p_mngdata6_s": ParaData.mngdata6_s,
+      "@p_mngdatanm1_s": ParaData.mngdatanm1_s,
+      "@p_mngdatanm2_s": ParaData.mngdatanm2_s,
+      "@p_mngdatanm3_s": ParaData.mngdatanm3_s,
+      "@p_mngdatanm4_s": ParaData.mngdatanm4_s,
+      "@p_mngdatanm5_s": ParaData.mngdatanm5_s,
+      "@p_mngdatanm6_s": ParaData.mngdatanm6_s,
+      "@p_budgcd_s": ParaData.budgcd_s,
+      "@p_stdrmkcd_s": ParaData.stdrmkcd_s,
+      "@p_remark3_s": ParaData.remark3_s,
+      "@p_evidentialkind_s": ParaData.evidentialkind_s,
+      "@p_autorecnum_s": ParaData.autorecnum_s,
+      "@p_taxtype_s": ParaData.taxtype_s,
+      "@p_propertykind_s": ParaData.propertykind_s,
+      "@p_creditcd_s": ParaData.creditcd_s,
+      "@p_reason_intax_deduction_s": ParaData.reason_intax_deduction_s,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "AC_A1000W",
+    },
   };
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
@@ -1875,10 +2078,494 @@ const CopyWindow = ({
           throw findMessage(messagesData, "AC_A1000W_001");
         } else {
           if (valid == true) {
-            setData(mainDataResult.data, filters, deletedMainRows, worktype);
-            deletedMainRows = [];
-            if (worktype == "N") {
-              onClose();
+            let valid = true;
+            const dataItem = mainDataResult.data.filter((item: any) => {
+              return (
+                (item.rowstatus === "N" || item.rowstatus === "U") &&
+                item.rowstatus !== undefined
+              );
+            });
+
+            if (dataItem.length === 0 && deletedMainRows.length == 0) {
+              setParaData((prev) => ({
+                ...prev,
+                workType: worktype,
+                location: filters.location,
+                actdt: filters.actdt,
+                acseq1: filters.acseq1,
+                acntdt: filters.acntdt,
+                dptcd: filters.dptcd,
+                slipdiv: filters.slipdiv == undefined ? "" : filters.slipdiv,
+                consultdt: filters.consultdt,
+                consultnum: filters.consultnum,
+                inputpath: filters.inputpath,
+                closeyn: filters.closeyn,
+                approvaldt: filters.approvaldt,
+                apperson: filters.apperson,
+                remark3: filters.remark3,
+                printcnt: filters.printcnt == undefined ? 0 : filters.printcnt,
+                position: filters.position,
+                inoutdiv: filters.inoutdiv,
+                attdatnum: filters.attdatnum,
+              }));
+            } else {
+              let dataArr: TdataArr = {
+                rowstatus_s: [],
+                acseq2_s: [],
+                acntses_s: [],
+                drcrdiv_s: [],
+                acntcd_s: [],
+                acntchr_s: [],
+                alcchr_s: [],
+                acntbaldiv_s: [],
+                budgyn_s: [],
+                partacnt_s: [],
+                slipamt_s: [],
+                usedptcd_s: [],
+                mngdrcustyn_s: [],
+                mngcrcustyn_s: [],
+                mngsumcustyn_s: [],
+                mngdramtyn_s: [],
+                mngcramtyn_s: [],
+                mngdrrateyn_s: [],
+                mngcrrateyn_s: [],
+                custcd_s: [],
+                custnm_s: [],
+                mngamt_s: [],
+                rate_s: [],
+                mngitemcd1_s: [],
+                mngitemcd2_s: [],
+                mngitemcd3_s: [],
+                mngitemcd4_s: [],
+                mngitemcd5_s: [],
+                mngitemcd6_s: [],
+                mngdata1_s: [],
+                mngdata2_s: [],
+                mngdata3_s: [],
+                mngdata4_s: [],
+                mngdata5_s: [],
+                mngdata6_s: [],
+                mngdatanm1_s: [],
+                mngdatanm2_s: [],
+                mngdatanm3_s: [],
+                mngdatanm4_s: [],
+                mngdatanm5_s: [],
+                mngdatanm6_s: [],
+                budgcd_s: [],
+                stdrmkcd_s: [],
+                remark3_s: [],
+                evidentialkind_s: [],
+                autorecnum_s: [],
+                taxtype_s: [],
+                propertykind_s: [],
+                creditcd_s: [],
+                reason_intax_deduction_s: [],
+              };
+              dataItem.forEach((item: any, idx: number) => {
+                const {
+                  rowstatus = "",
+                  acseq2 = "",
+                  acntses = "",
+                  drcrdiv = "",
+                  acntcd = "",
+                  acntchr = "",
+                  alcchr = "",
+                  acntbaldiv = "",
+                  budgyn = "",
+                  partacnt = "",
+                  slipamt_1 = "",
+                  slipamt_2 = "",
+                  usedptcd = "",
+                  mngdrcustyn = "",
+                  mngcrcustyn = "",
+                  mngsumcustyn = "",
+                  mngdramtyn = "",
+                  mngcramtyn = "",
+                  mngdrrateyn = "",
+                  mngcrrateyn = "",
+                  custcd = "",
+                  custnm = "",
+                  mngamt = "",
+                  rate = "",
+                  mngitemcd1 = "",
+                  mngitemcd2 = "",
+                  mngitemcd3 = "",
+                  mngitemcd4 = "",
+                  mngitemcd5 = "",
+                  mngitemcd6 = "",
+                  mngdata1 = "",
+                  mngdata2 = "",
+                  mngdata3 = "",
+                  mngdata4 = "",
+                  mngdata5 = "",
+                  mngdata6 = "",
+                  mngdatanm1 = "",
+                  mngdatanm2 = "",
+                  mngdatanm3 = "",
+                  mngdatanm4 = "",
+                  mngdatanm5 = "",
+                  mngdatanm6 = "",
+                  budgcd = "",
+                  stdrmkcd = "",
+                  remark3 = "",
+                  evidentialkind = "",
+                  autorecnum = "",
+                  taxtype = "",
+                  propertykind = "",
+                  creditcd = "",
+                  reason_intax_deduction = "",
+                } = item;
+                dataArr.rowstatus_s.push(rowstatus);
+                dataArr.acseq2_s.push(
+                  acseq2 == undefined || acseq2 == "" ? 0 : acseq2
+                );
+                dataArr.acntses_s.push(acntses == undefined ? "" : acntses);
+                dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
+                dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
+                dataArr.acntchr_s.push(acntchr == undefined ? "" : acntchr);
+                dataArr.alcchr_s.push(alcchr == undefined ? "" : alcchr);
+                dataArr.acntbaldiv_s.push(
+                  acntbaldiv == undefined ? "" : acntbaldiv
+                );
+                dataArr.budgyn_s.push(budgyn == undefined ? "" : budgyn);
+                dataArr.partacnt_s.push(partacnt == undefined ? "" : partacnt);
+                if (slipamt_1 != 0) {
+                  dataArr.slipamt_s.push(slipamt_1);
+                } else if (slipamt_2 != 0) {
+                  dataArr.slipamt_s.push(slipamt_2);
+                }
+                dataArr.usedptcd_s.push(usedptcd == undefined ? "" : usedptcd);
+                dataArr.mngdrcustyn_s.push(
+                  mngdrcustyn == undefined ? "" : mngdrcustyn
+                );
+                dataArr.mngcrcustyn_s.push(
+                  mngcrcustyn == undefined ? "" : mngcrcustyn
+                );
+                dataArr.mngsumcustyn_s.push(
+                  mngsumcustyn == undefined ? "" : mngsumcustyn
+                );
+                dataArr.mngdramtyn_s.push(
+                  mngdramtyn == undefined ? "" : mngdramtyn
+                );
+                dataArr.mngcramtyn_s.push(
+                  mngcramtyn == undefined ? "" : mngcramtyn
+                );
+                dataArr.mngdrrateyn_s.push(
+                  mngdrrateyn == undefined ? "" : mngdrrateyn
+                );
+                dataArr.mngcrrateyn_s.push(
+                  mngcrrateyn == undefined ? "" : mngcrrateyn
+                );
+                dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+                dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+                dataArr.mngamt_s.push(mngamt == undefined ? 0 : mngamt);
+                dataArr.rate_s.push(rate == undefined ? 0 : rate);
+                dataArr.mngitemcd1_s.push(
+                  mngitemcd1 == undefined ? "" : mngitemcd1
+                );
+                dataArr.mngitemcd2_s.push(
+                  mngitemcd2 == undefined ? "" : mngitemcd2
+                );
+                dataArr.mngitemcd3_s.push(
+                  mngitemcd3 == undefined ? "" : mngitemcd3
+                );
+                dataArr.mngitemcd4_s.push(
+                  mngitemcd4 == undefined ? "" : mngitemcd4
+                );
+                dataArr.mngitemcd5_s.push(
+                  mngitemcd5 == undefined ? "" : mngitemcd5
+                );
+                dataArr.mngitemcd6_s.push(
+                  mngitemcd6 == undefined ? "" : mngitemcd6
+                );
+                dataArr.mngdata1_s.push(mngdata1 == undefined ? "" : mngdata1);
+                dataArr.mngdata2_s.push(mngdata2 == undefined ? "" : mngdata2);
+                dataArr.mngdata3_s.push(mngdata3 == undefined ? "" : mngdata3);
+                dataArr.mngdata4_s.push(mngdata4 == undefined ? "" : mngdata4);
+                dataArr.mngdata5_s.push(mngdata5 == undefined ? "" : mngdata5);
+                dataArr.mngdata6_s.push(mngdata6 == undefined ? "" : mngdata6);
+                dataArr.mngdatanm1_s.push(
+                  mngdatanm1 == undefined ? "" : mngdatanm1
+                );
+                dataArr.mngdatanm2_s.push(
+                  mngdatanm2 == undefined ? "" : mngdatanm2
+                );
+                dataArr.mngdatanm3_s.push(
+                  mngdatanm3 == undefined ? "" : mngdatanm3
+                );
+                dataArr.mngdatanm4_s.push(
+                  mngdatanm4 == undefined ? "" : mngdatanm4
+                );
+                dataArr.mngdatanm5_s.push(
+                  mngdatanm5 == undefined ? "" : mngdatanm5
+                );
+                dataArr.mngdatanm6_s.push(
+                  mngdatanm6 == undefined ? "" : mngdatanm6
+                );
+                dataArr.budgcd_s.push(budgcd == undefined ? "" : budgcd);
+                dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
+                dataArr.remark3_s.push(remark3 == undefined ? "" : remark3);
+                dataArr.evidentialkind_s.push(
+                  evidentialkind == undefined ? "" : evidentialkind
+                );
+                dataArr.autorecnum_s.push(
+                  autorecnum == undefined ? "" : autorecnum
+                );
+                dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
+                dataArr.propertykind_s.push(
+                  propertykind == undefined ? "" : propertykind
+                );
+                dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
+                dataArr.reason_intax_deduction_s.push(
+                  reason_intax_deduction == undefined
+                    ? ""
+                    : reason_intax_deduction
+                );
+              });
+              deletedMainRows.forEach((item: any, idx: number) => {
+                const {
+                  rowstatus = "",
+                  acseq2 = "",
+                  acntses = "",
+                  drcrdiv = "",
+                  acntcd = "",
+                  acntchr = "",
+                  alcchr = "",
+                  attdatnum = "",
+                  acntbaldiv = "",
+                  budgyn = "",
+                  partacnt = "",
+                  slipamt_1 = "",
+                  slipamt_2 = "",
+                  usedptcd = "",
+                  mngdrcustyn = "",
+                  mngcrcustyn = "",
+                  mngsumcustyn = "",
+                  mngdramtyn = "",
+                  mngcramtyn = "",
+                  mngdrrateyn = "",
+                  mngcrrateyn = "",
+                  custcd = "",
+                  custnm = "",
+                  mngamt = "",
+                  rate = "",
+                  mngitemcd1 = "",
+                  mngitemcd2 = "",
+                  mngitemcd3 = "",
+                  mngitemcd4 = "",
+                  mngitemcd5 = "",
+                  mngitemcd6 = "",
+                  mngdata1 = "",
+                  mngdata2 = "",
+                  mngdata3 = "",
+                  mngdata4 = "",
+                  mngdata5 = "",
+                  mngdata6 = "",
+                  mngdatanm1 = "",
+                  mngdatanm2 = "",
+                  mngdatanm3 = "",
+                  mngdatanm4 = "",
+                  mngdatanm5 = "",
+                  mngdatanm6 = "",
+                  budgcd = "",
+                  stdrmkcd = "",
+                  remark3 = "",
+                  evidentialkind = "",
+                  autorecnum = "",
+                  taxtype = "",
+                  propertykind = "",
+                  creditcd = "",
+                  reason_intax_deduction = "",
+                } = item;
+                dataArr.rowstatus_s.push(rowstatus);
+                dataArr.acseq2_s.push(
+                  acseq2 == undefined || acseq2 == "" ? 0 : acseq2
+                );
+                dataArr.acntses_s.push(acntses == undefined ? "" : acntses);
+                dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
+                dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
+                dataArr.acntchr_s.push(acntchr == undefined ? "" : acntchr);
+                dataArr.alcchr_s.push(alcchr == undefined ? "" : alcchr);
+                dataArr.acntbaldiv_s.push(
+                  acntbaldiv == undefined ? "" : acntbaldiv
+                );
+                dataArr.budgyn_s.push(budgyn == undefined ? "" : budgyn);
+                dataArr.partacnt_s.push(partacnt == undefined ? "" : partacnt);
+                if (slipamt_1 != 0) {
+                  dataArr.slipamt_s.push(slipamt_1);
+                } else if (slipamt_2 != 0) {
+                  dataArr.slipamt_s.push(slipamt_2);
+                }
+                dataArr.usedptcd_s.push(usedptcd == undefined ? "" : usedptcd);
+                dataArr.mngdrcustyn_s.push(
+                  mngdrcustyn == undefined || mngdrcustyn == ""
+                    ? "N"
+                    : mngdrcustyn
+                );
+                dataArr.mngcrcustyn_s.push(
+                  mngcrcustyn == undefined || mngcrcustyn == ""
+                    ? "N"
+                    : mngcrcustyn
+                );
+                dataArr.mngsumcustyn_s.push(
+                  mngsumcustyn == undefined || mngsumcustyn == ""
+                    ? "N"
+                    : mngsumcustyn
+                );
+                dataArr.mngdramtyn_s.push(
+                  mngdramtyn == undefined || mngdramtyn == "" ? "N" : mngdramtyn
+                );
+                dataArr.mngcramtyn_s.push(
+                  mngcramtyn == undefined || mngcramtyn == "" ? "N" : mngcramtyn
+                );
+                dataArr.mngdrrateyn_s.push(
+                  mngdrrateyn == undefined || mngdrrateyn == ""
+                    ? "N"
+                    : mngdrrateyn
+                );
+                dataArr.mngcrrateyn_s.push(
+                  mngcrrateyn == undefined || mngcrrateyn == ""
+                    ? "N"
+                    : mngcrrateyn
+                );
+                dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+                dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+                dataArr.mngamt_s.push(mngamt == undefined ? 0 : mngamt);
+                dataArr.rate_s.push(rate == undefined ? 0 : rate);
+                dataArr.mngitemcd1_s.push(
+                  mngitemcd1 == undefined ? "" : mngitemcd1
+                );
+                dataArr.mngitemcd2_s.push(
+                  mngitemcd2 == undefined ? "" : mngitemcd2
+                );
+                dataArr.mngitemcd3_s.push(
+                  mngitemcd3 == undefined ? "" : mngitemcd3
+                );
+                dataArr.mngitemcd4_s.push(
+                  mngitemcd4 == undefined ? "" : mngitemcd4
+                );
+                dataArr.mngitemcd5_s.push(
+                  mngitemcd5 == undefined ? "" : mngitemcd5
+                );
+                dataArr.mngitemcd6_s.push(
+                  mngitemcd6 == undefined ? "" : mngitemcd6
+                );
+                dataArr.mngdata1_s.push(mngdata1 == undefined ? "" : mngdata1);
+                dataArr.mngdata2_s.push(mngdata2 == undefined ? "" : mngdata2);
+                dataArr.mngdata3_s.push(mngdata3 == undefined ? "" : mngdata3);
+                dataArr.mngdata4_s.push(mngdata4 == undefined ? "" : mngdata4);
+                dataArr.mngdata5_s.push(mngdata5 == undefined ? "" : mngdata5);
+                dataArr.mngdata6_s.push(mngdata6 == undefined ? "" : mngdata6);
+                dataArr.mngdatanm1_s.push(
+                  mngdatanm1 == undefined ? "" : mngdatanm1
+                );
+                dataArr.mngdatanm2_s.push(
+                  mngdatanm2 == undefined ? "" : mngdatanm2
+                );
+                dataArr.mngdatanm3_s.push(
+                  mngdatanm3 == undefined ? "" : mngdatanm3
+                );
+                dataArr.mngdatanm4_s.push(
+                  mngdatanm4 == undefined ? "" : mngdatanm4
+                );
+                dataArr.mngdatanm5_s.push(
+                  mngdatanm5 == undefined ? "" : mngdatanm5
+                );
+                dataArr.mngdatanm6_s.push(
+                  mngdatanm6 == undefined ? "" : mngdatanm6
+                );
+                dataArr.budgcd_s.push(budgcd == undefined ? "" : budgcd);
+                dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
+                dataArr.remark3_s.push(remark3 == undefined ? "" : remark3);
+                dataArr.evidentialkind_s.push(
+                  evidentialkind == undefined ? "" : evidentialkind
+                );
+                dataArr.autorecnum_s.push(
+                  autorecnum == undefined ? "" : autorecnum
+                );
+                dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
+                dataArr.propertykind_s.push(
+                  propertykind == undefined ? "" : propertykind
+                );
+                dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
+                dataArr.reason_intax_deduction_s.push(
+                  reason_intax_deduction == undefined
+                    ? ""
+                    : reason_intax_deduction
+                );
+              });
+              setParaData((prev) => ({
+                ...prev,
+                workType: worktype,
+                location: filters.location,
+                actdt: filters.actdt,
+                acseq1: filters.acseq1,
+                acntdt: filters.acntdt,
+                dptcd: filters.dptcd,
+                slipdiv: filters.slipdiv == undefined ? "" : filters.slipdiv,
+                consultdt: filters.consultdt,
+                consultnum: filters.consultnum,
+                inputpath: filters.inputpath,
+                closeyn: filters.closeyn,
+                approvaldt: filters.approvaldt,
+                apperson: filters.apperson,
+                remark3: filters.remark3,
+                printcnt: filters.printcnt == undefined ? 0 : filters.printcnt,
+                position: filters.position,
+                inoutdiv: filters.inoutdiv,
+                attdatnum: filters.attdatnum,
+                rowstatus_s: dataArr.rowstatus_s.join("|"),
+                acseq2_s: dataArr.acseq2_s.join("|"),
+                acntses_s: dataArr.acntses_s.join("|"),
+                drcrdiv_s: dataArr.drcrdiv_s.join("|"),
+                acntcd_s: dataArr.acntcd_s.join("|"),
+                acntchr_s: dataArr.acntchr_s.join("|"),
+                alcchr_s: dataArr.alcchr_s.join("|"),
+                acntbaldiv_s: dataArr.acntbaldiv_s.join("|"),
+                budgyn_s: dataArr.budgyn_s.join("|"),
+                partacnt_s: dataArr.partacnt_s.join("|"),
+                slipamt_s: dataArr.slipamt_s.join("|"),
+                usedptcd_s: dataArr.usedptcd_s.join("|"),
+                mngdrcustyn_s: dataArr.mngdrcustyn_s.join("|"),
+                mngcrcustyn_s: dataArr.mngcrcustyn_s.join("|"),
+                mngsumcustyn_s: dataArr.mngsumcustyn_s.join("|"),
+                mngdramtyn_s: dataArr.mngdramtyn_s.join("|"),
+                mngcramtyn_s: dataArr.mngcramtyn_s.join("|"),
+                mngdrrateyn_s: dataArr.mngdrrateyn_s.join("|"),
+                mngcrrateyn_s: dataArr.mngcrrateyn_s.join("|"),
+                custcd_s: dataArr.custcd_s.join("|"),
+                custnm_s: dataArr.custnm_s.join("|"),
+                mngamt_s: dataArr.mngamt_s.join("|"),
+                rate_s: dataArr.rate_s.join("|"),
+                mngitemcd1_s: dataArr.mngitemcd1_s.join("|"),
+                mngitemcd2_s: dataArr.mngitemcd2_s.join("|"),
+                mngitemcd3_s: dataArr.mngitemcd3_s.join("|"),
+                mngitemcd4_s: dataArr.mngitemcd4_s.join("|"),
+                mngitemcd5_s: dataArr.mngitemcd5_s.join("|"),
+                mngitemcd6_s: dataArr.mngitemcd6_s.join("|"),
+                mngdata1_s: dataArr.mngdata1_s.join("|"),
+                mngdata2_s: dataArr.mngdata2_s.join("|"),
+                mngdata3_s: dataArr.mngdata3_s.join("|"),
+                mngdata4_s: dataArr.mngdata4_s.join("|"),
+                mngdata5_s: dataArr.mngdata5_s.join("|"),
+                mngdata6_s: dataArr.mngdata6_s.join("|"),
+                mngdatanm1_s: dataArr.mngdatanm1_s.join("|"),
+                mngdatanm2_s: dataArr.mngdatanm2_s.join("|"),
+                mngdatanm3_s: dataArr.mngdatanm3_s.join("|"),
+                mngdatanm4_s: dataArr.mngdatanm4_s.join("|"),
+                mngdatanm5_s: dataArr.mngdatanm5_s.join("|"),
+                mngdatanm6_s: dataArr.mngdatanm6_s.join("|"),
+                budgcd_s: dataArr.budgcd_s.join("|"),
+                stdrmkcd_s: dataArr.stdrmkcd_s.join("|"),
+                remark3_s: dataArr.remark3_s.join("|"),
+                evidentialkind_s: dataArr.evidentialkind_s.join("|"),
+                autorecnum_s: dataArr.autorecnum_s.join("|"),
+                taxtype_s: dataArr.taxtype_s.join("|"),
+                propertykind_s: dataArr.propertykind_s.join("|"),
+                creditcd_s: dataArr.creditcd_s.join("|"),
+                reason_intax_deduction_s:
+                  dataArr.reason_intax_deduction_s.join("|"),
+              }));
             }
           }
         }
@@ -1886,6 +2573,111 @@ const CopyWindow = ({
         alert(e);
       }
     }
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "W") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setData(data.returnString);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: data.returnString,
+        isSearch: true,
+      }));
+      if (ParaData.workType == "N") {
+        onClose();
+      }
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "W",
+        orgdiv: "01",
+        location: "01",
+        actdt: new Date(),
+        acseq1: 0,
+        acntdt: new Date(),
+        dptcd: "",
+        slipdiv: "",
+        consultdt: "",
+        consultnum: 0,
+        inputpath: "",
+        closeyn: "",
+        approvaldt: "",
+        apperson: "",
+        remark3: "",
+        printcnt: 0,
+        position: "",
+        inoutdiv: "",
+        rowstatus_s: "",
+        acseq2_s: "",
+        acntses_s: "",
+        drcrdiv_s: "",
+        acntcd_s: "",
+        acntchr_s: "",
+        alcchr_s: "",
+        acntbaldiv_s: "",
+        budgyn_s: "",
+        partacnt_s: "",
+        slipamt_s: "",
+        usedptcd_s: "",
+        mngdrcustyn_s: "",
+        mngcrcustyn_s: "",
+        mngsumcustyn_s: "",
+        mngdramtyn_s: "",
+        mngcramtyn_s: "",
+        mngdrrateyn_s: "",
+        mngcrrateyn_s: "",
+        custcd_s: "",
+        custnm_s: "",
+        mngamt_s: "",
+        rate_s: "",
+        mngitemcd1_s: "",
+        mngitemcd2_s: "",
+        mngitemcd3_s: "",
+        mngitemcd4_s: "",
+        mngitemcd5_s: "",
+        mngitemcd6_s: "",
+        mngdata1_s: "",
+        mngdata2_s: "",
+        mngdata3_s: "",
+        mngdata4_s: "",
+        mngdata5_s: "",
+        mngdata6_s: "",
+        mngdatanm1_s: "",
+        mngdatanm2_s: "",
+        mngdatanm3_s: "",
+        mngdatanm4_s: "",
+        mngdatanm5_s: "",
+        mngdatanm6_s: "",
+        budgcd_s: "",
+        stdrmkcd_s: "",
+        remark3_s: "",
+        evidentialkind_s: "",
+        autorecnum_s: "",
+        taxtype_s: "",
+        propertykind_s: "",
+        creditcd_s: "",
+        reason_intax_deduction_s: "",
+        attdatnum: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage)
+    }
+    setLoading(false);
   };
 
   const onDeleteClick = (e: any) => {
@@ -2421,7 +3213,7 @@ const CopyWindow = ({
         approvaldt: filters.approvaldt,
         attdatnum: "",
         autorecnum: "",
-        bizregnum: chkyn == true ? datas.bizregnum : "",
+        bizregnum: "",
         budgcd: "",
         budgyn: "N",
         closeyn: filters.closeyn,
@@ -2437,8 +3229,8 @@ const CopyWindow = ({
         creditcd: "",
         creditnm: "",
         creditnum: "",
-        custcd: chkyn == true ? datas.custcd : "",
-        custnm: chkyn == true ? datas.custnm : "",
+        custcd: "",
+        custnm: "",
         dptcd: filters.dptcd,
         drcrdiv: i.toString(),
         evidentialkind: "",
@@ -2488,7 +3280,7 @@ const CopyWindow = ({
         propertykind: "",
         rate: 0,
         reason_intax_deduction: "",
-        remark3: chkyn == true ? datas.remark3 : "",
+        remark3: "",
         slipamt: 0,
         slipamt_1: 0,
         slipamt_2: 0,
@@ -2502,7 +3294,11 @@ const CopyWindow = ({
       };
 
       setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
-
+      setPage((prev) => ({
+        ...prev,
+        skip: 0,
+        take: prev.take + 1,
+      }));
       setMainDataResult((prev) => {
         return {
           data: [newDataItem, ...prev.data],
