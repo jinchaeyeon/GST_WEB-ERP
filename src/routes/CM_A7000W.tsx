@@ -849,34 +849,6 @@ const CM_A7000W: React.FC = () => {
     formid: "CM_A7000W",
   });
 
-  const para: Iparameters = {
-    procedureName: "P_CM_A7000W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": paraDataSaved.workType,
-      "@p_orgdiv": paraDataSaved.orgdiv,
-      "@p_meetingnum": paraDataSaved.meetingnum,
-      "@p_meetingseq": paraDataSaved.meetingseq,
-      "@p_custcd": paraDataSaved.custcd,
-      "@p_recdt": paraDataSaved.recdt,
-      "@p_meetingid": paraDataSaved.meetingid,
-      "@p_title": paraDataSaved.title,
-      "@p_attdatnum": paraDataSaved.attdatnum,
-      "@p_remark2": paraDataSaved.remark2,
-      "@p_usegb": paraDataSaved.usegb,
-      "@p_unshared": paraDataSaved.unshared,
-      "@p_place": paraDataSaved.place,
-      "@p_meetingnm": paraDataSaved.meetingnm,
-      "@p_ref_key": paraDataSaved.ref_key,
-      "@p_attdatnum_private": paraDataSaved.attdatnum_private,
-      "@p_contents": paraDataSaved.contents,
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_form_id": "CM_A7000W",
-    },
-  };
-
   const onSaveClick = () => {
     let valid = true;
     try {
@@ -937,7 +909,6 @@ const CM_A7000W: React.FC = () => {
 
   const fetchTodoGridSaved = async () => {
     let data: any;
-    let data1: any;
     setLoading(true);
 
     const para = {
@@ -970,7 +941,7 @@ const CM_A7000W: React.FC = () => {
     }
   
     try {
-      data = await processApi<any>("procedure", para);
+      data = await processApi<any>("meeting-save", para);
     } catch (error) {
       data = null;
     }
@@ -981,14 +952,7 @@ const CM_A7000W: React.FC = () => {
       } else {
         setTabSelected(1);
       }
-      if (data.returnString !== "") {
-        try {
-          data1 = await processApi<any>("meeting-save", para);
-        } catch (error) {
-          data1 = null;
-        }
-      }
-
+      
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
