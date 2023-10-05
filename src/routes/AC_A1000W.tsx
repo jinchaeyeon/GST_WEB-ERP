@@ -1983,6 +1983,7 @@ const AC_A1000W: React.FC = () => {
               ? []
               : mainDataResult.data.filter((item: any) => item.chk == true)
           }
+          modal={true}
         />
       )}
       {receiveWindow && (
@@ -2000,6 +2001,7 @@ const AC_A1000W: React.FC = () => {
                 )[0]
           }
           setData={setOK}
+          modal={true}
         />
       )}
       {paymentWindow && (

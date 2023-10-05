@@ -24,13 +24,16 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 type IWindow = {
   data?: any;
   setVisible(t: boolean): void;
+  modal?: boolean;
 };
 
-const CopyWindow = ({ data, setVisible }: IWindow) => {
+const CopyWindow = ({ data, setVisible, modal = false }: IWindow) => {
+    let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 500,
+    width: isMobile == true ? deviceWidth : 500,
     height: 220,
   });
 
@@ -100,7 +103,7 @@ const CopyWindow = ({ data, setVisible }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
