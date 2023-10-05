@@ -160,8 +160,6 @@ const MA_B2800W: React.FC = () => {
 
   useEffect(() => {
     if(purInfo.purnum != "" && purInfo.recnum != "") {
-      setSelectedState({ [purInfo.recnum]: true });
-      
       setDetailFilters((prev) => ({
         ...prev,
         purnum: purInfo.purnum,
@@ -468,22 +466,6 @@ const MA_B2800W: React.FC = () => {
     if (targetRowIndex !== null && gridRef.current) {
       gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
       targetRowIndex = null;
-    }
-  }, [mainDataResult]);
-
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setDetailFilters((prev) => ({
-          ...prev,
-          purnum: firstRowData.purnum,
-          purseq: firstRowData.purseq,
-        }));
-      }
     }
   }, [mainDataResult]);
 
