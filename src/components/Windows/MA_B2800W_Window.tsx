@@ -318,7 +318,7 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
   };
 
   useEffect(() => {
-    if (filters.isSearch != null) {
+    if (filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -358,11 +358,6 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
     }
   }, [mainDataResult]);
 
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-  };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
