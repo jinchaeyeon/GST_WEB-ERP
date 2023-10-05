@@ -101,6 +101,8 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        dtgb: defaultOption.find((item: any) => item.id === "dtgb")
+        .valueCode,
         isSearch: true,
       }));
     }

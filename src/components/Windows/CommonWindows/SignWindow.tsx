@@ -55,12 +55,13 @@ let temp = 0;
 type IWindow = {
   setVisible(t: boolean): void;
   reference_key: string;
+  modal?: boolean;
 };
 const topHeight = 10;
 const bottomHeight = 40;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
-const SignWindow = ({ setVisible, reference_key }: IWindow) => {
+const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -720,7 +721,7 @@ const SignWindow = ({ setVisible, reference_key }: IWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
-      modal={true}
+      modal={modal}
     >
       <GridContainer height= "35vh">
         <GridTitleContainer>
