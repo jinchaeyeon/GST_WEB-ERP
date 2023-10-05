@@ -1,73 +1,73 @@
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useContext,
-  createContext,
-} from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridEvent,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
-  GridCellProps,
-  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { InputChangeEvent, NumericTextBox } from "@progress/kendo-react-inputs";
+import {
+  Input,
+  InputChangeEvent,
+  NumericTextBox,
+} from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  ButtonInInput,
-  GridTitleContainer,
-  FormBoxWrap,
-  FormBox,
-  GridTitle,
   ButtonInGridInput,
+  ButtonInInput,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
-import { useRecoilState } from "recoil";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import { useApi } from "../../hooks/api";
+import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  chkScrollHandler,
+  isLoading,
+  unsavedAttadatnumsState
+} from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
   UseBizComponent,
   UseCustomOption,
   UseMessages,
-  getQueryFromBizComponent,
-  UseParaPc,
-  toDate,
   convertDateToStr,
-  getGridItemChangedData,
   findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  toDate
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { loginResultState, unsavedAttadatnumsState } from "../../store/atoms";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { EDIT_FIELD } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
+import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
-import AccountWindow from "./CommonWindows/AccountWindow";
-import StandardWindow from "./CommonWindows/StandardWindow";
-import CodeWindow from "./CommonWindows/CodeWindow";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import AC_A1000W_Note_Window from "./AC_A1000W_Note_Window";
-import ComboBoxCell from "../Cells/ComboBoxCell";
+import AccountWindow from "./CommonWindows/AccountWindow";
+import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import CodeWindow from "./CommonWindows/CodeWindow";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import StandardWindow from "./CommonWindows/StandardWindow";
 
 type IWindow = {
   workType: "N" | "A" | "C";
@@ -581,10 +581,6 @@ const CopyWindow = ({
     height: 900,
   });
   const [worktype, setWorkType] = useState<string>(workType);
-  const [loginResult] = useRecoilState(loginResultState);
-  const userId = loginResult ? loginResult.userId : "";
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -630,7 +626,7 @@ const CopyWindow = ({
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
-    if (customOptionData !== null && worktype != "A") {
+    if (customOptionData !== null && worktype == "N") {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
       setFilters((prev) => ({
         ...prev,
@@ -1451,19 +1447,19 @@ const CopyWindow = ({
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
-        if (totalRowCnt > 0) {
-          const selectedRow =
-            filters.find_row_value == ""
-              ? rows[0]
-              : rows.find(
-                  (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
-                );
+      }
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+              );
 
-          if (selectedRow != undefined) {
-            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-          } else {
-            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-          }
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
         }
       }
     } else {
@@ -1959,10 +1955,6 @@ const CopyWindow = ({
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    setEditIndex(dataItem[DATA_ITEM_KEY]);
-    if (field) {
-      setEditedField(field);
-    }
     let valid = true;
     if (
       field == "acntnm" ||
@@ -2013,22 +2005,381 @@ const CopyWindow = ({
   };
 
   const exitEdit = () => {
-    if (editedField !== "acntcd" && editedField !== "stdrmkcd") {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              slipamt_1: item.drcrdiv == "2" ? 0 : item.slipamt_1,
-              slipamt_2: item.drcrdiv == "1" ? 0 : item.slipamt_2,
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+    if (tempResult.data != mainDataResult.data) {
+      if (editedField !== "acntcd" && editedField !== "stdrmkcd") {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                slipamt_1: item.drcrdiv == "2" ? 0 : item.slipamt_1,
+                slipamt_2: item.drcrdiv == "1" ? 0 : item.slipamt_2,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
 
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (editedField == "stdrmkcd") {
+        mainDataResult.data.map(async (item) => {
+          if (editIndex === item.num) {
+            const data = codeListData.find(
+              (items: any) => items.stdrmkcd == item.stdrmkcd
+            );
+
+            if (data == undefined) {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      stdrmkcd: item.stdrmkcd,
+                      stdrmknm: item.stdrmknm,
+                      acntcd: item.acntcd,
+                      acntnm: item.acntnm,
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            } else {
+              const data2 = acntListData.find(
+                (items: any) => items.acntcd == data.acntcd
+              );
+
+              let datas: any;
+              const select = mainDataResult.data.filter(
+                (item) =>
+                  item.num ==
+                  parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              )[0];
+              const parameters2: Iparameters = {
+                procedureName: "P_AC_A1000W_Q",
+                pageNumber: filters.pgNum,
+                pageSize: filters.pgSize,
+                parameters: {
+                  "@p_work_type": "ITEM",
+                  "@p_orgdiv": filters.orgdiv,
+                  "@p_actdt": convertDateToStr(filters.acntdt),
+                  "@p_acseq1": 0,
+                  "@p_acnum": "",
+                  "@p_acseq2": 0,
+                  "@p_acntcd": data2 == undefined ? "" : data2?.acntcd,
+                  "@p_frdt": "",
+                  "@p_todt": "",
+                  "@p_location": "",
+                  "@p_person": "",
+                  "@p_inputpath": "",
+                  "@p_custcd": "",
+                  "@p_custnm": "",
+                  "@p_slipdiv": "",
+                  "@p_remark3": "",
+                  "@p_maxacseq2": 0,
+                  "@p_framt": 0,
+                  "@p_toamt": 0,
+                  "@p_position": "",
+                  "@p_inoutdiv": "",
+                  "@p_drcrdiv": select.drcrdiv,
+                  "@p_actdt_s": "",
+                  "@p_acseq1_s": "",
+                  "@p_printcnt_s": "",
+                  "@p_rowstatus_s": "",
+                  "@p_chk_s": "",
+                  "@p_ackey_s": "",
+                  "@p_acntnm": "",
+                  "@p_find_row_value": "",
+                },
+              };
+
+              try {
+                datas = await processApi<any>("procedure", parameters2);
+              } catch (error) {
+                datas = null;
+              }
+
+              const rows = datas.tables[0].Rows[0];
+              if (data != undefined && data2 != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item.num ==
+                  parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                    ? {
+                        ...item,
+                        acntcd: data.acntcd,
+                        acntnm: data.acntnm,
+                        stdrmkcd: data.stdrmkcd,
+                        stdrmknm: data.stdrmknm1,
+                        mngitemnm1: data2.mngitemnm1,
+                        mngitemnm2: data2.mngitemnm2,
+                        mngitemnm3: data2.mngitemnm3,
+                        mngitemnm4: data2.mngitemnm4,
+                        mngitemnm5: data2.mngitemnm5,
+                        mngitemnm6: data2.mngitemnm6,
+                        acntbaldiv: rows.acntbaldiv,
+                        acntchr: rows.acntchr,
+                        acntdiv: rows.acntdiv,
+                        acntgrp: rows.acntgrp,
+                        budgyn: rows.budgyn,
+                        controltype1: rows.controltype1,
+                        controltype2: rows.controltype2,
+                        controltype3: rows.controltype3,
+                        controltype4: rows.controltype4,
+                        controltype5: rows.controltype5,
+                        controltype6: rows.controltype6,
+                        diststd: rows.diststd,
+                        makesha: rows.makesha,
+                        mngcramtyn: rows.mngcramtyn,
+                        mngcrcustyn: rows.mngcrcustyn,
+                        mngcrrateyn: rows.mngcrrateyn,
+                        mngdramtyn: rows.mngdramtyn,
+                        mngdrcustyn: rows.mngdrcustyn,
+                        mngdrrateyn: rows.mngdrrateyn,
+                        mngitemcd1: rows.mngitemcd1,
+                        mngitemcd2: rows.mngitemcd2,
+                        mngitemcd3: rows.mngitemcd3,
+                        mngitemcd4: rows.mngitemcd4,
+                        mngitemcd5: rows.mngitemcd5,
+                        mngitemcd6: rows.mngitemcd6,
+                        prodyn: rows.prodyn,
+                        profitchr: rows.profitchr,
+                        profitsha: rows.profitsha,
+                        relacntcd: rows.relacntcd,
+                        relacntgrp: rows.relacntgrp,
+                        show_collect_yn: rows.show_collect_yn,
+                        show_payment_yn: rows.show_payment_yn,
+                        sho_pur_sal_yn: rows.sho_pur_sal_yn,
+                        slipentyn: rows.slipentyn,
+                        soyn: rows.soyn,
+                        system_yn: rows.system_yn,
+                        useyn: rows.useyn,
+                        rowstatus: item.rowstatus === "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
+            }
+          }
+        });
+      } else {
+        mainDataResult.data.map(async (item) => {
+          if (editIndex === item.num) {
+            let acntcds = item.acntcds;
+            const data = acntListData.find(
+              (items: any) => items.acntcd == item.acntcd
+            );
+
+            if (data == undefined) {
+              const newData = mainDataResult.data.map((item: any) =>
+                item.num ==
+                parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                  ? {
+                      ...item,
+                      acntcd: acntcds,
+                      acntnm: item.acntnm,
+                      mngitemnm1: item.mngitemnm1,
+                      mngitemnm2: item.mngitemnm2,
+                      mngitemnm3: item.mngitemnm3,
+                      mngitemnm4: item.mngitemnm4,
+                      mngitemnm5: item.mngitemnm5,
+                      mngitemnm6: item.mngitemnm6,
+                      rowstatus: item.rowstatus === "N" ? "N" : "U",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            } else {
+              let datas: any;
+              const select = mainDataResult.data.filter(
+                (item) =>
+                  item.num ==
+                  parseInt(Object.getOwnPropertyNames(selectedState)[0])
+              )[0];
+              const parameters2: Iparameters = {
+                procedureName: "P_AC_A1000W_Q",
+                pageNumber: filters.pgNum,
+                pageSize: filters.pgSize,
+                parameters: {
+                  "@p_work_type": "ITEM",
+                  "@p_orgdiv": filters.orgdiv,
+                  "@p_actdt": convertDateToStr(filters.acntdt),
+                  "@p_acseq1": 0,
+                  "@p_acnum": "",
+                  "@p_acseq2": 0,
+                  "@p_acntcd": data.acntcd,
+                  "@p_frdt": "",
+                  "@p_todt": "",
+                  "@p_location": "",
+                  "@p_person": "",
+                  "@p_inputpath": "",
+                  "@p_custcd": "",
+                  "@p_custnm": "",
+                  "@p_slipdiv": "",
+                  "@p_remark3": "",
+                  "@p_maxacseq2": 0,
+                  "@p_framt": 0,
+                  "@p_toamt": 0,
+                  "@p_position": "",
+                  "@p_inoutdiv": "",
+                  "@p_drcrdiv": select.drcrdiv,
+                  "@p_actdt_s": "",
+                  "@p_acseq1_s": "",
+                  "@p_printcnt_s": "",
+                  "@p_rowstatus_s": "",
+                  "@p_chk_s": "",
+                  "@p_ackey_s": "",
+                  "@p_acntnm": "",
+                  "@p_find_row_value": "",
+                },
+              };
+
+              try {
+                datas = await processApi<any>("procedure", parameters2);
+              } catch (error) {
+                datas = null;
+              }
+
+              const rows = datas.tables[0].Rows[0];
+              if (data != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item.num ==
+                  parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                    ? {
+                        ...item,
+                        acntcd: data.acntcd,
+                        acntnm: data.acntnm,
+                        mngitemnm1: data.mngitemnm1,
+                        mngitemnm2: data.mngitemnm2,
+                        mngitemnm3: data.mngitemnm3,
+                        mngitemnm4: data.mngitemnm4,
+                        mngitemnm5: data.mngitemnm5,
+                        mngitemnm6: data.mngitemnm6,
+                        acntbaldiv: rows.acntbaldiv,
+                        acntchr: rows.acntchr,
+                        acntdiv: rows.acntdiv,
+                        acntgrp: rows.acntgrp,
+                        budgyn: rows.budgyn,
+                        controltype1: rows.controltype1,
+                        controltype2: rows.controltype2,
+                        controltype3: rows.controltype3,
+                        controltype4: rows.controltype4,
+                        controltype5: rows.controltype5,
+                        controltype6: rows.controltype6,
+                        diststd: rows.diststd,
+                        makesha: rows.makesha,
+                        mngcramtyn: rows.mngcramtyn,
+                        mngcrcustyn: rows.mngcrcustyn,
+                        mngcrrateyn: rows.mngcrrateyn,
+                        mngdramtyn: rows.mngdramtyn,
+                        mngdrcustyn: rows.mngdrcustyn,
+                        mngdrrateyn: rows.mngdrrateyn,
+                        mngitemcd1: rows.mngitemcd1,
+                        mngitemcd2: rows.mngitemcd2,
+                        mngitemcd3: rows.mngitemcd3,
+                        mngitemcd4: rows.mngitemcd4,
+                        mngitemcd5: rows.mngitemcd5,
+                        mngitemcd6: rows.mngitemcd6,
+                        prodyn: rows.prodyn,
+                        profitchr: rows.profitchr,
+                        profitsha: rows.profitsha,
+                        relacntcd: rows.relacntcd,
+                        relacntgrp: rows.relacntgrp,
+                        show_collect_yn: rows.show_collect_yn,
+                        show_payment_yn: rows.show_payment_yn,
+                        sho_pur_sal_yn: rows.sho_pur_sal_yn,
+                        slipentyn: rows.slipentyn,
+                        soyn: rows.soyn,
+                        system_yn: rows.system_yn,
+                        useyn: rows.useyn,
+                        rowstatus: item.rowstatus === "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
+            }
+          }
+        });
+      }
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
       setTempResult((prev) => {
         return {
           data: newData,
@@ -2040,345 +2391,6 @@ const CopyWindow = ({
           data: newData,
           total: prev.total,
         };
-      });
-    } else if (editedField == "stdrmkcd") {
-      mainDataResult.data.map(async (item) => {
-        if (editIndex === item.num) {
-          const data = codeListData.find(
-            (items: any) => items.stdrmkcd == item.stdrmkcd
-          );
-
-          if (data == undefined) {
-            const newData = mainDataResult.data.map((item) =>
-              item[DATA_ITEM_KEY] ==
-              Object.getOwnPropertyNames(selectedState)[0]
-                ? {
-                    ...item,
-                    rowstatus: item.rowstatus == "N" ? "N" : "U",
-                    stdrmkcd: item.stdrmkcd,
-                    stdrmknm: item.stdrmknm,
-                    acntcd: item.acntcd,
-                    acntnm: item.acntnm,
-                    [EDIT_FIELD]: undefined,
-                  }
-                : {
-                    ...item,
-                    [EDIT_FIELD]: undefined,
-                  }
-            );
-
-            setTempResult((prev) => {
-              return {
-                data: newData,
-                total: prev.total,
-              };
-            });
-            setMainDataResult((prev) => {
-              return {
-                data: newData,
-                total: prev.total,
-              };
-            });
-          } else {
-            const data2 = acntListData.find(
-              (items: any) => items.acntcd == data.acntcd
-            );
-
-            let datas: any;
-            const select = mainDataResult.data.filter(
-              (item) =>
-                item.num ==
-                parseInt(Object.getOwnPropertyNames(selectedState)[0])
-            )[0];
-            const parameters2: Iparameters = {
-              procedureName: "P_AC_A1000W_Q",
-              pageNumber: filters.pgNum,
-              pageSize: filters.pgSize,
-              parameters: {
-                "@p_work_type": "ITEM",
-                "@p_orgdiv": filters.orgdiv,
-                "@p_actdt": convertDateToStr(filters.acntdt),
-                "@p_acseq1": 0,
-                "@p_acnum": "",
-                "@p_acseq2": 0,
-                "@p_acntcd": data2 == undefined ? "" : data2?.acntcd,
-                "@p_frdt": "",
-                "@p_todt": "",
-                "@p_location": "",
-                "@p_person": "",
-                "@p_inputpath": "",
-                "@p_custcd": "",
-                "@p_custnm": "",
-                "@p_slipdiv": "",
-                "@p_remark3": "",
-                "@p_maxacseq2": 0,
-                "@p_framt": 0,
-                "@p_toamt": 0,
-                "@p_position": "",
-                "@p_inoutdiv": "",
-                "@p_drcrdiv": select.drcrdiv,
-                "@p_actdt_s": "",
-                "@p_acseq1_s": "",
-                "@p_printcnt_s": "",
-                "@p_rowstatus_s": "",
-                "@p_chk_s": "",
-                "@p_ackey_s": "",
-                "@p_acntnm": "",
-                "@p_find_row_value": "",
-              },
-            };
-
-            try {
-              datas = await processApi<any>("procedure", parameters2);
-            } catch (error) {
-              datas = null;
-            }
-
-            const rows = datas.tables[0].Rows[0];
-            if (data != undefined && data2 != undefined) {
-              const newData = mainDataResult.data.map((item) =>
-                item.num ==
-                parseInt(Object.getOwnPropertyNames(selectedState)[0])
-                  ? {
-                      ...item,
-                      acntcd: data.acntcd,
-                      acntnm: data.acntnm,
-                      stdrmkcd: data.stdrmkcd,
-                      stdrmknm: data.stdrmknm1,
-                      mngitemnm1: data2.mngitemnm1,
-                      mngitemnm2: data2.mngitemnm2,
-                      mngitemnm3: data2.mngitemnm3,
-                      mngitemnm4: data2.mngitemnm4,
-                      mngitemnm5: data2.mngitemnm5,
-                      mngitemnm6: data2.mngitemnm6,
-                      acntbaldiv: rows.acntbaldiv,
-                      acntchr: rows.acntchr,
-                      acntdiv: rows.acntdiv,
-                      acntgrp: rows.acntgrp,
-                      budgyn: rows.budgyn,
-                      controltype1: rows.controltype1,
-                      controltype2: rows.controltype2,
-                      controltype3: rows.controltype3,
-                      controltype4: rows.controltype4,
-                      controltype5: rows.controltype5,
-                      controltype6: rows.controltype6,
-                      diststd: rows.diststd,
-                      makesha: rows.makesha,
-                      mngcramtyn: rows.mngcramtyn,
-                      mngcrcustyn: rows.mngcrcustyn,
-                      mngcrrateyn: rows.mngcrrateyn,
-                      mngdramtyn: rows.mngdramtyn,
-                      mngdrcustyn: rows.mngdrcustyn,
-                      mngdrrateyn: rows.mngdrrateyn,
-                      mngitemcd1: rows.mngitemcd1,
-                      mngitemcd2: rows.mngitemcd2,
-                      mngitemcd3: rows.mngitemcd3,
-                      mngitemcd4: rows.mngitemcd4,
-                      mngitemcd5: rows.mngitemcd5,
-                      mngitemcd6: rows.mngitemcd6,
-                      prodyn: rows.prodyn,
-                      profitchr: rows.profitchr,
-                      profitsha: rows.profitsha,
-                      relacntcd: rows.relacntcd,
-                      relacntgrp: rows.relacntgrp,
-                      show_collect_yn: rows.show_collect_yn,
-                      show_payment_yn: rows.show_payment_yn,
-                      sho_pur_sal_yn: rows.sho_pur_sal_yn,
-                      slipentyn: rows.slipentyn,
-                      soyn: rows.soyn,
-                      system_yn: rows.system_yn,
-                      useyn: rows.useyn,
-                      rowstatus: item.rowstatus === "N" ? "N" : "U",
-                      [EDIT_FIELD]: undefined,
-                    }
-                  : {
-                      ...item,
-                      [EDIT_FIELD]: undefined,
-                    }
-              );
-              setTempResult((prev) => {
-                return {
-                  data: newData,
-                  total: prev.total,
-                };
-              });
-              setMainDataResult((prev) => {
-                return {
-                  data: newData,
-                  total: prev.total,
-                };
-              });
-            }
-          }
-        }
-      });
-    } else {
-      mainDataResult.data.map(async (item) => {
-        if (editIndex === item.num) {
-          let acntcds = item.acntcds;
-          const data = acntListData.find(
-            (items: any) => items.acntcd == item.acntcd
-          );
-
-          if (data == undefined) {
-            const newData = mainDataResult.data.map((item: any) =>
-              item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-                ? {
-                    ...item,
-                    acntcd: acntcds,
-                    acntnm: item.acntnm,
-                    mngitemnm1: item.mngitemnm1,
-                    mngitemnm2: item.mngitemnm2,
-                    mngitemnm3: item.mngitemnm3,
-                    mngitemnm4: item.mngitemnm4,
-                    mngitemnm5: item.mngitemnm5,
-                    mngitemnm6: item.mngitemnm6,
-                    rowstatus: item.rowstatus === "N" ? "N" : "U",
-                    [EDIT_FIELD]: undefined,
-                  }
-                : {
-                    ...item,
-                    [EDIT_FIELD]: undefined,
-                  }
-            );
-            setTempResult((prev) => {
-              return {
-                data: newData,
-                total: prev.total,
-              };
-            });
-            setMainDataResult((prev) => {
-              return {
-                data: newData,
-                total: prev.total,
-              };
-            });
-          } else {
-            let datas: any;
-            const select = mainDataResult.data.filter(
-              (item) =>
-                item.num ==
-                parseInt(Object.getOwnPropertyNames(selectedState)[0])
-            )[0];
-            const parameters2: Iparameters = {
-              procedureName: "P_AC_A1000W_Q",
-              pageNumber: filters.pgNum,
-              pageSize: filters.pgSize,
-              parameters: {
-                "@p_work_type": "ITEM",
-                "@p_orgdiv": filters.orgdiv,
-                "@p_actdt": convertDateToStr(filters.acntdt),
-                "@p_acseq1": 0,
-                "@p_acnum": "",
-                "@p_acseq2": 0,
-                "@p_acntcd": data.acntcd,
-                "@p_frdt": "",
-                "@p_todt": "",
-                "@p_location": "",
-                "@p_person": "",
-                "@p_inputpath": "",
-                "@p_custcd": "",
-                "@p_custnm": "",
-                "@p_slipdiv": "",
-                "@p_remark3": "",
-                "@p_maxacseq2": 0,
-                "@p_framt": 0,
-                "@p_toamt": 0,
-                "@p_position": "",
-                "@p_inoutdiv": "",
-                "@p_drcrdiv": select.drcrdiv,
-                "@p_actdt_s": "",
-                "@p_acseq1_s": "",
-                "@p_printcnt_s": "",
-                "@p_rowstatus_s": "",
-                "@p_chk_s": "",
-                "@p_ackey_s": "",
-                "@p_acntnm": "",
-                "@p_find_row_value": "",
-              },
-            };
-
-            try {
-              datas = await processApi<any>("procedure", parameters2);
-            } catch (error) {
-              datas = null;
-            }
-
-            const rows = datas.tables[0].Rows[0];
-            if (data != undefined) {
-              const newData = mainDataResult.data.map((item) =>
-                item.num ==
-                parseInt(Object.getOwnPropertyNames(selectedState)[0])
-                  ? {
-                      ...item,
-                      acntcd: data.acntcd,
-                      acntnm: data.acntnm,
-                      mngitemnm1: data.mngitemnm1,
-                      mngitemnm2: data.mngitemnm2,
-                      mngitemnm3: data.mngitemnm3,
-                      mngitemnm4: data.mngitemnm4,
-                      mngitemnm5: data.mngitemnm5,
-                      mngitemnm6: data.mngitemnm6,
-                      acntbaldiv: rows.acntbaldiv,
-                      acntchr: rows.acntchr,
-                      acntdiv: rows.acntdiv,
-                      acntgrp: rows.acntgrp,
-                      budgyn: rows.budgyn,
-                      controltype1: rows.controltype1,
-                      controltype2: rows.controltype2,
-                      controltype3: rows.controltype3,
-                      controltype4: rows.controltype4,
-                      controltype5: rows.controltype5,
-                      controltype6: rows.controltype6,
-                      diststd: rows.diststd,
-                      makesha: rows.makesha,
-                      mngcramtyn: rows.mngcramtyn,
-                      mngcrcustyn: rows.mngcrcustyn,
-                      mngcrrateyn: rows.mngcrrateyn,
-                      mngdramtyn: rows.mngdramtyn,
-                      mngdrcustyn: rows.mngdrcustyn,
-                      mngdrrateyn: rows.mngdrrateyn,
-                      mngitemcd1: rows.mngitemcd1,
-                      mngitemcd2: rows.mngitemcd2,
-                      mngitemcd3: rows.mngitemcd3,
-                      mngitemcd4: rows.mngitemcd4,
-                      mngitemcd5: rows.mngitemcd5,
-                      mngitemcd6: rows.mngitemcd6,
-                      prodyn: rows.prodyn,
-                      profitchr: rows.profitchr,
-                      profitsha: rows.profitsha,
-                      relacntcd: rows.relacntcd,
-                      relacntgrp: rows.relacntgrp,
-                      show_collect_yn: rows.show_collect_yn,
-                      show_payment_yn: rows.show_payment_yn,
-                      sho_pur_sal_yn: rows.sho_pur_sal_yn,
-                      slipentyn: rows.slipentyn,
-                      soyn: rows.soyn,
-                      system_yn: rows.system_yn,
-                      useyn: rows.useyn,
-                      rowstatus: item.rowstatus === "N" ? "N" : "U",
-                      [EDIT_FIELD]: undefined,
-                    }
-                  : {
-                      ...item,
-                      [EDIT_FIELD]: undefined,
-                    }
-              );
-              setTempResult((prev) => {
-                return {
-                  data: newData,
-                  total: prev.total,
-                };
-              });
-              setMainDataResult((prev) => {
-                return {
-                  data: newData,
-                  total: prev.total,
-                };
-              });
-            }
-          }
-        }
       });
     }
   };

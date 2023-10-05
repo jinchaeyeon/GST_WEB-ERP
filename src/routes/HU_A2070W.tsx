@@ -114,7 +114,6 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   // const textField = field === "prsnnum" ? "prsnnm" : undefined;
   const valueField = field === "prsnnum" ? "user_id" : undefined;
   const textField = field === "prsnnum" ? "user_name" : undefined;
-  
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
