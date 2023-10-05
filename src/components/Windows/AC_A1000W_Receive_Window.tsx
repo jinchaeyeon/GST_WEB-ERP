@@ -11,12 +11,9 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import {
-  Checkbox,
-  Input
-} from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -30,7 +27,7 @@ import {
   GridContainer,
   GridTitle,
   GridTitleContainer,
-  TitleContainer
+  TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -49,9 +46,14 @@ import {
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -59,7 +61,7 @@ import CustomersWindow from "./CommonWindows/CustomersWindow";
 type IWindow = {
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(t: boolean): void;
+  setData(t: string): void;
   modal?: boolean;
 };
 
@@ -574,7 +576,7 @@ const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
         custnm_s: "",
         remark1_s: "",
       });
-      setData(true);
+      setData(data.returnString);
       onClose();
     } else {
       console.log("[오류 발생]");
@@ -734,15 +736,33 @@ const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
     setPage(initialPageState);
     setMainDataResult(process([], mainDataState));
   };
+
   const search = () => {
-    resetAllGrid();
-    setFilters((prev) => ({
-      ...prev,
-      pgNum: 1,
-      find_row_value: "",
-      isSearch: true,
-    }));
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_B1300W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_B1300W_001");
+      } else {
+        setPage(initialPageState); // 페이지 초기화
+        resetAllGrid(); // 데이터 초기화
+        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
+
   return (
     <>
       <Window

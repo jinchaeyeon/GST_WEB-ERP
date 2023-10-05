@@ -17,6 +17,7 @@ import {
   GridDataStateChangeEvent,
   GridItemChangeEvent,
   GridCellProps,
+  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import { InputChangeEvent, NumericTextBox } from "@progress/kendo-react-inputs";
@@ -80,6 +81,7 @@ type IWindow = {
   ): void;
   reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
   chkyn: boolean;
+  modal?: boolean;
 };
 
 type Acnt = {
@@ -156,6 +158,7 @@ type Idata = {
 };
 
 let deletedMainRows: object[] = [];
+let targetRowIndex: null | number = null;
 
 interface IAccountData {
   acntcd: string;
@@ -567,11 +570,14 @@ const CopyWindow = ({
   setData,
   reload,
   chkyn,
+  modal = false,
 }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
   const [worktype, setWorkType] = useState<string>(workType);
@@ -579,7 +585,22 @@ const CopyWindow = ({
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   const DATA_ITEM_KEY = "num";
   const [acntcd, setAcntcd] = useState<string>("");
   const [acntnm, setAcntnm] = useState<string>("");
@@ -602,15 +623,10 @@ const CopyWindow = ({
   UseMessages(pathname, setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  const [AcntDatas, setAcntDatas] = useState<Acnt | undefined>();
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-  useEffect(() => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
-  }, [reload]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -653,7 +669,7 @@ const CopyWindow = ({
 
         const parameters2: Iparameters = {
           procedureName: "P_AC_A1000W_Q",
-          pageNumber: mainPgNum,
+          pageNumber: filters.pgNum,
           pageSize: filters.pgSize,
           parameters: {
             "@p_work_type": "ITEM",
@@ -751,7 +767,12 @@ const CopyWindow = ({
                   ...item,
                 }
           );
-
+          setTempResult((prev: { total: any }) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
           setMainDataResult((prev) => {
             return {
               data: newData,
@@ -797,7 +818,7 @@ const CopyWindow = ({
 
         const parameters2: Iparameters = {
           procedureName: "P_AC_A1000W_Q",
-          pageNumber: mainPgNum,
+          pageNumber: filters.pgNum,
           pageSize: filters.pgSize,
           parameters: {
             "@p_work_type": "ITEM",
@@ -897,6 +918,12 @@ const CopyWindow = ({
                   ...item,
                 }
           );
+          setTempResult((prev: { total: any }) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
           setMainDataResult((prev) => {
             return {
               data: newData,
@@ -998,11 +1025,15 @@ const CopyWindow = ({
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -1012,9 +1043,6 @@ const CopyWindow = ({
   const [standardWindowVisible, setStandardWindowVisible] =
     useState<boolean>(false);
   const [noteWindowVisible, setNoteWindowVisible] = useState<boolean>(false);
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -1077,7 +1105,12 @@ const CopyWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
-
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -1098,7 +1131,12 @@ const CopyWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
-
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -1124,7 +1162,12 @@ const CopyWindow = ({
             [EDIT_FIELD]: undefined,
           }
     );
-
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -1183,17 +1226,6 @@ const CopyWindow = ({
     setIndex(6);
     setStandardWindowVisible(true);
   };
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
 
   interface IStandard {
     item1: string;
@@ -1244,7 +1276,12 @@ const CopyWindow = ({
             ...item,
           }
     );
-
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -1270,7 +1307,12 @@ const CopyWindow = ({
             ...item,
           }
     );
-
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -1314,51 +1356,53 @@ const CopyWindow = ({
     evidentialkind: "",
     creditcd: "",
     reason_intax_deduction: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  const parameters: Iparameters = {
-    procedureName: "P_AC_A1000W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_actdt": convertDateToStr(filters.acntdt),
-      "@p_acseq1": filters.acseq1,
-      "@p_acnum": "",
-      "@p_acseq2": 0,
-      "@p_acntcd": "",
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_location": filters.location,
-      "@p_person": "",
-      "@p_inputpath": "",
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_slipdiv": "",
-      "@p_remark3": "",
-      "@p_maxacseq2": 0,
-      "@p_framt": 0,
-      "@p_toamt": 0,
-      "@p_position": filters.position,
-      "@p_inoutdiv": filters.inoutdiv,
-      "@p_drcrdiv": "",
-      "@p_actdt_s": "",
-      "@p_acseq1_s": "",
-      "@p_printcnt_s": "",
-      "@p_rowstatus_s": "",
-      "@p_chk_s": "",
-      "@p_ackey_s": "",
-      "@p_acntnm": "",
-      "@p_find_row_value": "",
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A1000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_actdt": convertDateToStr(filters.acntdt),
+        "@p_acseq1": filters.acseq1,
+        "@p_acnum": "",
+        "@p_acseq2": 0,
+        "@p_acntcd": "",
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_location": filters.location,
+        "@p_person": "",
+        "@p_inputpath": "",
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_slipdiv": "",
+        "@p_remark3": "",
+        "@p_maxacseq2": 0,
+        "@p_framt": 0,
+        "@p_toamt": 0,
+        "@p_position": filters.position,
+        "@p_inoutdiv": filters.inoutdiv,
+        "@p_drcrdiv": "",
+        "@p_actdt_s": "",
+        "@p_acseq1_s": "",
+        "@p_printcnt_s": "",
+        "@p_rowstatus_s": "",
+        "@p_chk_s": "",
+        "@p_ackey_s": "",
+        "@p_acntnm": "",
+        "@p_find_row_value": "",
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -1368,7 +1412,26 @@ const CopyWindow = ({
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.actdt + "-" + row.acseq1 == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
       if (workType == "C") {
         const newData = rows.map((item: any) => ({
           ...item,
@@ -1382,34 +1445,51 @@ const CopyWindow = ({
           };
         });
       } else {
+        setMainDataResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
+        });
         if (totalRowCnt > 0) {
-          setMainDataResult((prev) => {
-            return {
-              data: rows,
-              total: totalRowCnt == -1 ? 0 : totalRowCnt,
-            };
-          });
-          setIsInitSearch(true);
+          const selectedRow =
+            filters.find_row_value == ""
+              ? rows[0]
+              : rows.find(
+                  (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
+                );
+
+          if (selectedRow != undefined) {
+            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          } else {
+            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          }
         }
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   useEffect(() => {
-    if (worktype != "N" && isInitSearch === false) {
-      fetchMainGrid();
+    if (worktype != "N" && filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
-  useEffect(() => {
-    if (customOptionData !== null && worktype === "A") {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     if ((worktype === "A" || worktype === "C") && data != undefined) {
@@ -1445,16 +1525,19 @@ const CopyWindow = ({
         evidentialkind: data.evidentialkind,
         creditcd: data.creditcd,
         reason_intax_deduction: data.reason_intax_deduction,
+        isSearch: true,
+        find_row_value: "",
+        pgNum: 1,
       }));
     } else {
       const datas = mainDataResult.data[mainDataResult.data.length - 1];
 
       for (var i = 1; i < 3; i++) {
         mainDataResult.data.map((item) => {
-          if(item.num > temp2){
-            temp2 = item.num
+          if (item.num > temp2) {
+            temp2 = item.num;
           }
-      })
+        });
         const newDataItem = {
           [DATA_ITEM_KEY]: ++temp2,
           ackey: filters.ackey,
@@ -1559,21 +1642,23 @@ const CopyWindow = ({
             total: prev.total + 1,
           };
         });
+        setPage((prev) => ({
+          ...prev,
+          skip: 0,
+          take: prev.take + 1,
+        }));
+        setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
       }
     }
   }, []);
 
+  let gridRef: any = React.useRef(null);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        if (firstRowData != undefined) {
-          setSelectedState({ [firstRowData.num]: true });
-        }
-
-        setIfSelectFirstRow(true);
-      }
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
     }
   }, [mainDataResult]);
 
@@ -1585,8 +1670,7 @@ const CopyWindow = ({
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
+
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
@@ -1600,12 +1684,6 @@ const CopyWindow = ({
       creditcd: selectedRowData.creditcd,
       reason_intax_deduction: selectedRowData.reason_intax_deduction,
     }));
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -1629,9 +1707,11 @@ const CopyWindow = ({
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
         건
       </td>
     );
@@ -1814,26 +1894,40 @@ const CopyWindow = ({
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
     mainDataResult.data.forEach((item: any, index: number) => {
-      if (!selectedState[item[DATA_ITEM_KEY]]) {
+      if (item.chk != true) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
-
-        deletedMainRows.push(newData2);
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+        Object.push(index);
       }
     });
 
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object) - 1];
+    }
+
     setMainDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object.length,
     }));
-
-    setMainDataState({});
+    if (Object.length > 0) {
+      setSelectedState({
+        [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+      });
+    }
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -1885,22 +1979,33 @@ const CopyWindow = ({
 
     if (valid == true) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
+          : { ...item, [EDIT_FIELD]: undefined }
       );
-
-      setIfSelectFirstRow(false);
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setMainDataResult((prev) => {
         return {
           data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult.data,
           total: prev.total,
         };
       });
@@ -1909,15 +2014,27 @@ const CopyWindow = ({
 
   const exitEdit = () => {
     if (editedField !== "acntcd" && editedField !== "stdrmkcd") {
-      const newData = mainDataResult.data.map((item) => ({
-        ...item,
-        slipamt_1: item.drcrdiv == "2" ? 0 : item.slipamt_1,
-        slipamt_2: item.drcrdiv == "1" ? 0 : item.slipamt_2,
-        [EDIT_FIELD]: undefined,
-      }));
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              slipamt_1: item.drcrdiv == "2" ? 0 : item.slipamt_1,
+              slipamt_2: item.drcrdiv == "1" ? 0 : item.slipamt_2,
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-      setIfSelectFirstRow(false);
-
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -1932,10 +2049,12 @@ const CopyWindow = ({
           );
 
           if (data == undefined) {
-            const newData = mainDataResult.data.map((item: any) =>
-              item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+            const newData = mainDataResult.data.map((item) =>
+              item[DATA_ITEM_KEY] ==
+              Object.getOwnPropertyNames(selectedState)[0]
                 ? {
                     ...item,
+                    rowstatus: item.rowstatus == "N" ? "N" : "U",
                     stdrmkcd: item.stdrmkcd,
                     stdrmknm: item.stdrmknm,
                     acntcd: item.acntcd,
@@ -1947,6 +2066,13 @@ const CopyWindow = ({
                     [EDIT_FIELD]: undefined,
                   }
             );
+
+            setTempResult((prev) => {
+              return {
+                data: newData,
+                total: prev.total,
+              };
+            });
             setMainDataResult((prev) => {
               return {
                 data: newData,
@@ -1966,7 +2092,7 @@ const CopyWindow = ({
             )[0];
             const parameters2: Iparameters = {
               procedureName: "P_AC_A1000W_Q",
-              pageNumber: mainPgNum,
+              pageNumber: filters.pgNum,
               pageSize: filters.pgSize,
               parameters: {
                 "@p_work_type": "ITEM",
@@ -2070,6 +2196,12 @@ const CopyWindow = ({
                       [EDIT_FIELD]: undefined,
                     }
               );
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
               setMainDataResult((prev) => {
                 return {
                   data: newData,
@@ -2101,6 +2233,7 @@ const CopyWindow = ({
                     mngitemnm4: item.mngitemnm4,
                     mngitemnm5: item.mngitemnm5,
                     mngitemnm6: item.mngitemnm6,
+                    rowstatus: item.rowstatus === "N" ? "N" : "U",
                     [EDIT_FIELD]: undefined,
                   }
                 : {
@@ -2108,6 +2241,12 @@ const CopyWindow = ({
                     [EDIT_FIELD]: undefined,
                   }
             );
+            setTempResult((prev) => {
+              return {
+                data: newData,
+                total: prev.total,
+              };
+            });
             setMainDataResult((prev) => {
               return {
                 data: newData,
@@ -2123,7 +2262,7 @@ const CopyWindow = ({
             )[0];
             const parameters2: Iparameters = {
               procedureName: "P_AC_A1000W_Q",
-              pageNumber: mainPgNum,
+              pageNumber: filters.pgNum,
               pageSize: filters.pgSize,
               parameters: {
                 "@p_work_type": "ITEM",
@@ -2225,6 +2364,12 @@ const CopyWindow = ({
                       [EDIT_FIELD]: undefined,
                     }
               );
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
               setMainDataResult((prev) => {
                 return {
                   data: newData,
@@ -2240,10 +2385,10 @@ const CopyWindow = ({
 
   const onAddClick = () => {
     mainDataResult.data.map((item) => {
-        if(item.num > temp){
-          temp = item.num
-        }
-    })
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
     const datas = mainDataResult.data[mainDataResult.data.length - 1];
     for (var i = 1; i < 3; i++) {
       const newDataItem = {
@@ -2344,6 +2489,8 @@ const CopyWindow = ({
         rowstatus: "N",
       };
 
+      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
       setMainDataResult((prev) => {
         return {
           data: [newDataItem, ...prev.data],
@@ -2368,7 +2515,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
@@ -2496,7 +2643,6 @@ const CopyWindow = ({
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick}
-                        fillMode="outline"
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
@@ -2538,7 +2684,13 @@ const CopyWindow = ({
                     //스크롤 조회기능
                     fixedScroll={true}
                     total={mainDataResult.total}
-                    onScroll={onMainScrollHandler}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
                     //정렬기능
                     sortable={true}
                     onSortChange={onMainSortChange}

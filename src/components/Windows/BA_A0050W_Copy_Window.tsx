@@ -240,7 +240,7 @@ const KendoWindow = ({
   }>({});
 
   const [filters, setFilters] = useState({
-    pgSize: 20,
+    pgSize: PAGE_SIZE,
     workType: "COPY",
     orgdiv: "01",
     itemcd: "",
@@ -253,7 +253,7 @@ const KendoWindow = ({
   });
 
   const [filters2, setFilters2] = useState({
-    pgSize: 20,
+    pgSize: PAGE_SIZE,
     workType: "PASTE",
     orgdiv: "01",
     itemcd: "",

@@ -1511,10 +1511,12 @@ const AC_A1000W: React.FC = () => {
   const onPayment = () => {
     setPaymentWindowVisible(true);
   };
-  const setOK = (Ok: boolean) => {
-    if (Ok == true) {
-      resetAllGrid();
-    }
+  const setOK = (Ok: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      find_row_value: Ok,
+      isSearch: true
+    }))
   };
 
   const pageChange = (event: GridPageChangeEvent) => {
@@ -1972,6 +1974,7 @@ const AC_A1000W: React.FC = () => {
           }
           reload={reload}
           chkyn={filters.chkyn}
+          modal={true}
         />
       )}
       {printWindow && (
@@ -2000,7 +2003,7 @@ const AC_A1000W: React.FC = () => {
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
-          setData={setOK}
+          setData={(str) => setOK(str)}
           modal={true}
         />
       )}
@@ -2018,7 +2021,7 @@ const AC_A1000W: React.FC = () => {
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0]
           }
-          setData={setOK}
+          setData={(str) => setOK(str)}
         />
       )}
       {gridList.map((grid: TGrid) =>

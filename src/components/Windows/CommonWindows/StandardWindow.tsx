@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
-  GridCellProps,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { useEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -21,14 +20,12 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
-import { IWindowPosition } from "../../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import FilterContainer from "../../../components/Containers/FilterContainer";
+import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { Iparameters } from "../../../store/types";
+import { UseBizComponent } from "../../CommonFunction";
+import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 interface IMng {
   mngitemcd1: string;
   mngitemcd2: string;
@@ -44,13 +41,23 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   mngitemcd: IMng;
   index: number;
+  modal?: boolean;
 };
 
-const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWindow) => {
+const StandardWindow = ({
+  workType,
+  setVisible,
+  setData,
+  mngitemcd,
+  index,
+  modal = false,
+}: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 800,
+    width: isMobile == true ? deviceWidth : 800,
     height: 800,
   });
   const DATA_ITEM_KEY = "item1";
@@ -61,28 +68,24 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
 
   useEffect(() => {
     let mng = "";
-    if(index == 1){
+    if (index == 1) {
       mng = mngitemcd.mngitemcd1;
-    } else if(index == 2){
+    } else if (index == 2) {
       mng = mngitemcd.mngitemcd2;
-    }
-    else if(index == 3){
+    } else if (index == 3) {
       mng = mngitemcd.mngitemcd3;
-    }
-    else if(index == 4){
+    } else if (index == 4) {
       mng = mngitemcd.mngitemcd4;
-    }
-    else if(index == 5){
+    } else if (index == 5) {
       mng = mngitemcd.mngitemcd5;
-    }
-    else if(index == 6){
+    } else if (index == 6) {
       mng = mngitemcd.mngitemcd6;
     }
     setFilters((prev) => ({
       ...prev,
       mngitemcd: mng,
-    }))
-  }, [])
+    }));
+  }, []);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -94,16 +97,6 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -128,48 +121,68 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
   };
 
   const processApi = useApi();
-  const [isInitSearch, setIsInitSearch] = useState(false);
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-  const [mainPgNum, setMainPgNum] = useState(1);
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
 
   const [filters, setFilters] = useState({
+    pgSize: PAGE_SIZE,
     mngitemcd: "",
     sub_code: "",
     code_name: "",
     div: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_AC_A0020W_POP_Q",
-    pageNumber: mainPgNum,
-    pageSize: PAGE_SIZE,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_orgdiv": "01",
-      "@p_mngitemcd": filters.mngitemcd,
-      "@p_sub_code": filters.sub_code,
-      "@p_code_name": filters.code_name,
-      "@p_div": filters.div,
-    },
-  };
   useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
-  useEffect(() => {
-    if (isInitSearch === false) {
-      fetchMainGrid();
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-  //그리드 조회
-  const fetchMainGrid = async () => {
-    let data: any;
 
+  //그리드 조회
+  const fetchMainGrid = async (filters: any) => {
+    let data: any;
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A0020W_POP_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "LIST",
+        "@p_orgdiv": "01",
+        "@p_mngitemcd": filters.mngitemcd,
+        "@p_sub_code": filters.sub_code,
+        "@p_code_name": filters.code_name,
+        "@p_div": filters.div,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -182,24 +195,32 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
 
       setMainDataResult((prev) => {
         return {
-          data: [...prev.data, ...rows],
+          data: rows,
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-      setIsInitSearch(true);
+      if (totalRowCnt > 0) {
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setMainDataResult(process([], {}));
-  };
-
-  //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    setPage(initialPageState); // 페이지 초기화
+    setMainDataResult(process([], mainDataState));
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -209,27 +230,6 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
 
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const CommandCell = (props: GridCellProps) => {
-    const onSelectClick = () => {
-      // 부모로 데이터 전달, 창 닫기
-      const selectedData = props.dataItem;
-      setData(selectedData);
-      if (workType === "ROW_ADD") onClose();
-    };
-
-    return (
-      <td className="k-command-cell">
-        <Button
-          className="k-grid-edit-command"
-          themeColor={"primary"}
-          fillMode="outline"
-          onClick={onSelectClick}
-          icon="check"
-        ></Button>
-      </td>
-    );
   };
 
   const onRowDoubleClick = (props: any) => {
@@ -256,9 +256,15 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -271,6 +277,7 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <Title></Title>
@@ -278,7 +285,11 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
           <Button
             onClick={() => {
               resetAllGrid();
-              fetchMainGrid();
+              setFilters((prev) => ({
+                ...prev,
+                pgNum: 1,
+                isSearch: true,
+              }));
             }}
             icon="search"
             themeColor={"primary"}
@@ -337,7 +348,10 @@ const StandardWindow = ({ workType, setVisible, setData, mngitemcd, index }: IWi
           //스크롤 조회기능
           fixedScroll={true}
           total={mainDataResult.total}
-          onScroll={onScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
           //정렬기능
           sortable={true}
           onSortChange={onMainSortChange}
