@@ -1,34 +1,25 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridCellProps,
   GridColumn,
+  GridDataStateChangeEvent,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
   GridPageChangeEvent,
-  GridRowDoubleClickEvent,
 } from "@progress/kendo-react-grid";
 import {
   Input,
   InputChangeEvent,
   TextArea,
 } from "@progress/kendo-react-inputs";
-import {
-  Step,
-  Stepper,
-  TabStrip,
-  TabStripTab,
-} from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -41,16 +32,13 @@ import {
   FormBox,
   FormBoxWrap,
   GridContainer,
-  GridContainerWrap,
   GridTitle,
   GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
-import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 
@@ -59,50 +47,23 @@ import {
   UseCustomOption,
   UsePermissions,
   chkScrollHandler,
-  toDate,
+  getQueryFromBizComponent,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
-  EDIT_FIELD,
-  GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import DetailWindow from "../components/Windows/HU_A1000W_Window";
 import { useApi } from "../hooks/api";
-import { IAttachmentData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-let targetRowIndex: null | number = null;
 
 const DATA_ITEM_KEY = "prsnnum";
 const dateField = ["regorgdt", "rtrdt"];
-const comboField = ["postcd"];
-
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_HU005", setBizComponentData);
-
-  const field = props.field ?? "";
-
-  const bizComponentIdVal =
-    field === "postcd"
-      ? "L_HU005"
-      : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
-  );
-  return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
-  ) : (
-    <td />
-  );
-};
 
 const HU_A1000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -113,9 +74,10 @@ const HU_A1000W: React.FC = () => {
   UsePermissions(setPermissions);
 
   let grdList: any = useRef(null);
-
-  const [isCopy, setIsCopy] = useState(false);
+  let targetRowIndex: null | number = null;
+  
   const [workType, setWorkType] = useState<"N" | "U">("N");
+  const [isCopy, setIsCopy] = useState(false);
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
@@ -140,6 +102,16 @@ const HU_A1000W: React.FC = () => {
     pgSize: PAGE_SIZE,
   });
 
+  //조회조건 초기값
+  const [detailFilters, setDetailFilters] = useState({   
+    pgSize: PAGE_SIZE,
+    prsnnum: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+
   // 요약정보
   const [grdListDataState, setGrdListDataState] = useState<State>({
     sort: [],
@@ -149,9 +121,61 @@ const HU_A1000W: React.FC = () => {
     process([], grdListDataState)
   );
 
-  const [selectedGrdListState, setSelectedGrdListState] = useState<{
+  const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
+  // 비즈니스 컴포넌트 조회
+  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  UseBizComponent("L_dptcd_001, L_HU005", setBizComponentData);
+
+  const [dptcdListData, setDptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
+  ]);
+
+  const [postcdListData, setPostcdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData.length > 0) {
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      const postcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+      );
+      fetchQueryData(dptcdQueryStr, setDptcdListData);
+      fetchQueryData(postcdQueryStr, setPostcdListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQueryData = useCallback(
+    async (queryStr: string, setListData: any) => {
+      let data: any;
+
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setListData(rows);
+      }
+    },
+    []
+  );
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -180,10 +204,13 @@ const HU_A1000W: React.FC = () => {
     }
   }, [filters, permissions]);
 
-  //선택 상태
-  const [selectedState, setSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
+  // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+  useEffect(() => {
+    if (targetRowIndex !== null && grdList.current) {
+      grdList.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [grdListDataResult]);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -254,8 +281,17 @@ const HU_A1000W: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
+
     setSelectedState(newSelectedState);
+
+    setPage(initialPageState);
   };
+
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onDataStateChange = (event: GridDataStateChangeEvent) => {
+    setGrdListDataState(event.dataState);
+  };
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
@@ -287,7 +323,7 @@ const HU_A1000W: React.FC = () => {
 
       parameters: {
         "@p_work_type": "LIST",
-        "@p_orgdiv": filters.orgdiv,
+        "@p_orgdiv": "01",
         "@p_location": filters.location,
         "@p_dptcd": filters.dptcd,
         "@p_prsnnum": filters.prsnnum,
@@ -296,7 +332,7 @@ const HU_A1000W: React.FC = () => {
         "@p_find_row_value": filters.find_row_value,
       },
     };
-
+    
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -311,8 +347,7 @@ const HU_A1000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (grdList.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) =>
-              row.quonum + "-" + row.quorev == filters.find_row_value
+            (row: any) => row.prsnnum == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -340,10 +375,7 @@ const HU_A1000W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find(
-                (row: any) =>
-                  row.quonum + "-" + row.quorev == filters.find_row_value
-              );
+            : rows.find((row: any) => row.prsnnum == filters.find_row_value);
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
         } else {
@@ -366,42 +398,47 @@ const HU_A1000W: React.FC = () => {
     setLoading(false);
   };
 
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setGrdListDataResult(process([], grdListDataState));
+  const search = () => {
+    setPage(initialPageState); // 페이지 초기화
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
-  const search = () => {
-    try {
-      resetAllGrid();
-    } catch (e) {
-      alert(e);
-    }
+  const CommandCell = (props: GridCellProps) => {
+    
+    const onEditClick = () => {
+
+      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
+      const rowData = props.dataItem;
+      setSelectedState({ [rowData.DATA_ITEM_KEY]: true });
+
+      setDetailFilters((prev) => ({
+        ...prev,
+        prsnnum: rowData.prsnnum,
+      }));
+
+      setIsCopy(false);
+      setWorkType("U");
+
+      setDetailWindowVisible(true);
+    };
+
+    return (
+      <td className="k-command-cell">
+        <Button
+          className="k-grid-edit-command"
+          themeColor={"primary"}
+          fillMode="outline"
+          onClick={onEditClick}
+          icon="edit"
+        ></Button>
+      </td>
+    );
   };
 
-  const reloadData = (workType: string) => {
-    // //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
-    // if (workType === "U") {
-    //   setIfSelectFirstRow(false);
-    // } else {
-    //   setIfSelectFirstRow(true);
-    // }
-    // resetAllGrid();
-    // setFilters((prev) => ({
-    //   ...prev,
-    //   find_row_value: "",
-    //   scrollDirrection: "down",
-    //   pgNum: 1,
-    //   isSearch: true,
-    //   pgGap: 0,
-    // }));
-    // fetchDetailGrid();
-  };
 
   // 신규등록
   const onAddClick = () => {
-    setIsCopy(false);
+   // setIsCopy(false);
     setWorkType("N");
     setDetailWindowVisible(true);
   };
@@ -437,7 +474,7 @@ const HU_A1000W: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="cboDptcd"
+                    name="dptcd"
                     value={filters.dptcd}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
@@ -512,11 +549,18 @@ const HU_A1000W: React.FC = () => {
           data={process(
             grdListDataResult.data.map((row) => ({
               ...row,
-              [SELECTED_FIELD]: selectedGrdListState[idGetter(row)],
+              dptcd: dptcdListData.find(
+                (items: any) => items.dptcd == row.dptcd
+              )?.dptnm,
+              postcd: postcdListData.find(
+                (items: any) => items.sub_code == row.postcd
+              )?.code_name,
+              [SELECTED_FIELD]: selectedState[idGetter(row)],
             })),
             grdListDataState
           )}
           {...grdListDataState}
+          onDataStateChange={onDataStateChange}
           //선택 기능
           dataItemKey={DATA_ITEM_KEY}
           selectedField={SELECTED_FIELD}
@@ -543,6 +587,7 @@ const HU_A1000W: React.FC = () => {
           resizable={true}
           id="grdList"
         >
+           <GridColumn cell={CommandCell} width="50px" />
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList"].map(
               (item: any, idx: number) =>
@@ -554,11 +599,7 @@ const HU_A1000W: React.FC = () => {
                     title={item.caption}
                     width={item.width}
                     cell={
-                         dateField.includes(item.fieldName)
-                        ? DateCell
-                        : comboField.includes(item.fieldName)
-                        ? CustomComboBoxCell
-                        : undefined
+                      dateField.includes(item.fieldName) ? DateCell : undefined
                     }
                     //footerCell={grdTotalFooterCell}
                   />
@@ -579,15 +620,21 @@ const HU_A1000W: React.FC = () => {
           />
         ))
       )}
-      {/* {detailWindowVisible && (
+      {detailWindowVisible && (
         <DetailWindow
           getVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U 
           prsnnum={detailFilters.prsnnum}
           isCopy={isCopy}
-          reloadData={reloadData}
+          reloadData={(returnString: string) => {
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: returnString,
+              isSearch: true,
+            }));
+          }}
         />
-      )} */}
+      )}
     </>
   );
 };
