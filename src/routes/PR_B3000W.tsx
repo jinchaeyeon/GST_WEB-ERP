@@ -1,147 +1,91 @@
-import React, { useEffect, useRef, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { Window } from "@progress/kendo-react-dialogs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridFooterCellProps,
-  GridItemChangeEvent,
-  GridCellProps,
 } from "@progress/kendo-react-grid";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
+import NumberCell from "../components/Cells/NumberCell";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import {
-  chkScrollHandler,
-  convertDateToStr,
-  dateformat2,
-  findMessage,
-  getGridItemChangedData,
-  getItemQuery,
-  setDefaultDate,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
   UsePermissions,
+  convertDateToStr,
+  dateformat2,
+  findMessage,
+  getQueryFromBizComponent,
   handleKeyPressSearch,
-  UseParaPc,
-  UseGetValueFromSessionItem,
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
-  EDIT_FIELD,
+  COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import TopButtons from "../components/Buttons/TopButtons";
-import { gridList } from "../store/columns/PR_B3000W_C";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { IItemData } from "../hooks/interfaces";
-import NumberCell from "../components/Cells/NumberCell";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, sessionItemState } from "../store/atoms";
-import CenterCell from "../components/Cells/CenterCell";
-import { Window } from "@progress/kendo-react-dialogs";
-import WorkDailyReport from "../components/Prints/WorkDailyReport";
-import { bytesToBase64 } from "byte-base64";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import WorkDailyReport from "../components/Prints/WorkDailyReport";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
+import { IItemData } from "../hooks/interfaces";
+import { isLoading, sessionItemState } from "../store/atoms";
+import { gridList } from "../store/columns/PR_B3000W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
-let deletedRows: any[] = [];
+let targetRowIndex: null | number = null;
 
 const numberField = ["qty"];
 const centerField = ["proddt", "strtime", "endtime"];
-const comboBoxField = [
-  "proccd",
-  "prodemp",
-  "prodmac",
-  "itemlvl1",
-  "itemlvl2",
-  "itemlvl3",
-];
 
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  // 공정,설비,작업자,대분류,중분류,소분류
-  UseBizComponent(
-    "L_PR010,L_fxcode,L_sysUserMaster_001,L_BA171,L_BA172,L_BA173",
-    setBizComponentData
-  );
-
-  const field = props.field ?? "";
-  const bizComponentIdVal =
-    field === "proccd"
-      ? "L_PR010"
-      : field === "itemlvl1"
-      ? "L_BA171"
-      : field === "itemlvl2"
-      ? "L_BA172"
-      : field === "itemlvl3"
-      ? "L_BA173"
-      : field === "prodemp"
-      ? "L_sysUserMaster_001"
-      : field === "prodmac"
-      ? "L_fxcode"
-      : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
-  );
-
-  const valueField =
-    field === "prodmac"
-      ? "fxcode"
-      : field === "prodemp"
-      ? "user_id"
-      : undefined;
-  const textField =
-    field === "prodmac"
-      ? "fxfull"
-      : field === "prodemp"
-      ? "user_name"
-      : undefined;
-
-  return bizComponent ? (
-    <ComboBoxCell
-      bizComponent={bizComponent}
-      textField={textField}
-      valueField={valueField}
-      {...props}
-    />
-  ) : (
-    <td></td>
-  );
-};
-let temp = 0;
 const PR_B3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pathname: string = window.location.pathname.replace("/", "");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -165,7 +109,82 @@ const PR_B3000W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 공정,설비,작업자
-  UseBizComponent("L_PR010,L_fxcode,L_sysUserMaster_001", setBizComponentData);
+  UseBizComponent(
+    "L_PR010,L_BA171, L_BA172, L_BA173,L_fxcode,L_sysUserMaster_001",
+    setBizComponentData
+  );
+
+  const [itemlvl1ListData, setItemlvl1ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [prodempListData, setProdempListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
+  const [proccdListData, setProccdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [prodmacListData, setProdmacListData] = React.useState([
+    { fxcode: "", fxfull: "" },
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const itemlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+      );
+      const itemlvl2QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+      );
+      const itemlvl3QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+      );
+      const prodmacQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+      );
+      const prodempQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
+      );
+      const proccdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+      );
+      fetchQuery(proccdQueryStr, setProccdListData);
+      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
+      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
+      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      fetchQuery(prodmacQueryStr, setProdmacListData);
+      fetchQuery(prodempQueryStr, setProdempListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const [sessionItem] = useRecoilState(sessionItemState);
   const setLoading = useSetRecoilState(isLoading);
@@ -185,20 +204,19 @@ const PR_B3000W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  //그리드 별 페이지 넘버
-  const [mainPgNum, setMainPgNum] = useState(1);
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
 
   const onPrintWndClick = () => {
-    window.scrollTo(0, 0);
-    setPreviewVisible((prev) => !prev);
+    if (mainDataResult.total > 0) {
+      window.scrollTo(0, 0);
+      setPreviewVisible((prev) => !prev);
+    } else {
+      alert("데이터가 없습니다.");
+    }
   };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
@@ -251,39 +269,37 @@ const PR_B3000W: React.FC = () => {
     custnm: "",
     service_id: "20190218001",
     find_row_value: "",
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_PR_B3000W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.work_type,
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.ymdFrdt),
-      "@p_todt": convertDateToStr(filters.ymdTodt),
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_proccd": filters.cboProccd,
-      "@p_prodmac": filters.cboProdmac,
-      "@p_prodemp": filters.cboProdemp,
-      "@p_lotnum": filters.lotnum,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_service_id": filters.service_id,
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     if (!permissions?.view) return;
     let data: any;
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_PR_B3000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.work_type,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.ymdFrdt),
+        "@p_todt": convertDateToStr(filters.ymdTodt),
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_proccd": filters.cboProccd,
+        "@p_prodmac": filters.cboProdmac,
+        "@p_prodemp": filters.cboProdemp,
+        "@p_lotnum": filters.lotnum,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_service_id": filters.service_id,
+      },
+    };
 
     setLoading(true);
     try {
@@ -298,62 +314,107 @@ const PR_B3000W: React.FC = () => {
         ...row,
       }));
 
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-        }
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
-      console.log("[에러발생]");
+      console.log("[오류 발생]");
       console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
   };
-  let gridRef : any = useRef(null); 
-
-  //메인 그리드 데이터 변경 되었을 때
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData !== null) {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = mainDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value
-        );
+    if (filters.isSearch && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
 
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.container.scroll(0, scrollHeight);
+  let gridRef: any = useRef(null);
 
-        //초기화
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-        }));
-      }
-      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (filters.scrollDirrection === "up") {
-        gridRef.container.scroll(0, 20);
-      }
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
     }
   }, [mainDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
+    setPage(initialPageState);
     setMainDataResult(process([], mainDataState));
+  };
+
+  //엑셀 내보내기
+  let _export: ExcelExport | null | undefined;
+  const exportExcel = () => {
+    if (_export !== null && _export !== undefined) {
+      _export.save();
+    }
+  };
+
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -367,407 +428,10 @@ const PR_B3000W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
-  };
-
-  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
-  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
-    setMainDataState(event.dataState);
-  };
-
-  //그리드 푸터
-  const mainTotalFooterCell = (props: GridFooterCellProps) => {
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
-      </td>
-    );
-  };
-
   //그리드 정렬 이벤트
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
-  // 최초 한번만 실행
-  useEffect(() => {
-    if (
-      filters.isSearch &&
-      permissions !== null &&
-      customOptionData !== null
-    ) {
-      setFilters((prev) => ({ ...prev, isSearch: false }));
-      fetchMainGrid();
-    }
-  }, [filters, permissions]);
-
-  const onMainItemChange = (event: GridItemChangeEvent) => {
-    getGridItemChangedData(
-      event,
-      mainDataResult,
-      setMainDataResult,
-      DATA_ITEM_KEY
-    );
-  };
-
-  const enterEdit = (dataItem: any, field: string) => {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-
-    let index = 0;
-    mainDataResult.data.forEach((item, idx) => {
-      if (item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]) {
-        index = idx;
-      }
-    });
-
-    setEditIndex(index);
-    if (field) setEditedField(field);
-  };
-
-  const exitEdit = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-
-    mainDataResult.data.forEach((item, index) => {
-      if (editedField === "itemcd" && editIndex === index) {
-        const queryStr = getItemQuery({ itemcd: item.itemcd, itemnm: "" });
-
-        fetchItemData(queryStr);
-        return false;
-      }
-    });
-  };
-
-  const fetchItemData = async (queryStr: string) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-
-      if (rowCount > 0) {
-        setItemData(rows[0]);
-      }
-    }
-  };
-
-  const customCellRender = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const onAddClick = () => {
-    mainDataResult.data.map((item) => {
-      if(item.num > temp){
-        temp = item.num
-      }
-  })
-    const idx: number =
-      Number(Object.getOwnPropertyNames(selectedState)[0]) ??
-      //Number(planDataResult.data[0].idx) ??
-      null;
-    if (idx === null) return false;
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item.num === idx
-    );
-
-    const newDataItem = {
-      [DATA_ITEM_KEY]: ++temp,
-      rowstatus: "N",
-      qty: 0,
-      totwgt: 0,
-    };
-    setMainDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
-      };
-    });
-  };
-
-  const onRemoveClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
-    let newData: any[] = [];
-
-    mainDataResult.data.forEach((item: any, index: number) => {
-      if (!selectedState[item[DATA_ITEM_KEY]]) {
-        newData.push(item);
-      } else {
-        deletedRows.push(item);
-      }
-    });
-
-    //newData 생성
-    setMainDataResult((prev) => ({
-      data: newData,
-      total: newData.length,
-    }));
-
-    //선택 상태 초기화
-    setSelectedState({});
-  };
-
-  const onSaveClick = async () => {
-    const dataItem = mainDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-    if (dataItem.length === 0 && deletedRows.length === 0) return false;
-
-    //검증
-    let valid = true;
-    try {
-      dataItem.forEach((item: any) => {
-        if (!item.itemcd) {
-          throw findMessage(messagesData, "PR_A9100W_001");
-        }
-
-        if (!item.lotnum) {
-          throw findMessage(messagesData, "PR_A9100W_002");
-        }
-
-        if (!item.qty) {
-          throw findMessage(messagesData, "PR_A9100W_003");
-        }
-      });
-    } catch (e) {
-      alert(e);
-      valid = false;
-    }
-
-    if (!valid) return false;
-
-    type TRowsArr = {
-      rowstatus_s: string[];
-      yyyymm_s: string[];
-      itemcd_s: string[];
-      proccd_s: string[];
-      lotnum_s: string[];
-      location_s: string[];
-      qty_s: string[];
-      totwgt_s: string[];
-      pgmdiv_s: string[];
-    };
-
-    let rowsArr: TRowsArr = {
-      rowstatus_s: [],
-      yyyymm_s: [],
-      itemcd_s: [],
-      proccd_s: [],
-      lotnum_s: [],
-      location_s: [],
-      qty_s: [],
-      totwgt_s: [],
-      pgmdiv_s: [],
-    };
-
-    const yyyymm = convertDateToStr(new Date()).slice(0, 4) + "00";
-    const location = sessionItem.find(
-      (sessionItem) => sessionItem.code === "location"
-    )!.value;
-
-    dataItem.forEach((item: any) => {
-      const { rowstatus, itemcd, proccd, lotnum, qty, totwgt, pgmdiv } = item;
-
-      rowsArr.rowstatus_s.push(rowstatus);
-      rowsArr.yyyymm_s.push(yyyymm);
-      rowsArr.itemcd_s.push(itemcd);
-      rowsArr.proccd_s.push(proccd); // getCodeFromValue
-      rowsArr.lotnum_s.push(lotnum);
-      rowsArr.location_s.push(location);
-      rowsArr.qty_s.push(qty);
-      rowsArr.totwgt_s.push(totwgt);
-      rowsArr.pgmdiv_s.push(pgmdiv);
-    });
-
-    deletedRows.forEach((item: any) => {
-      const { yyyymm, itemcd, proccd, lotnum, qty, totwgt, pgmdiv } = item;
-
-      rowsArr.rowstatus_s.push("D");
-      rowsArr.yyyymm_s.push(yyyymm);
-      rowsArr.itemcd_s.push(itemcd);
-      rowsArr.proccd_s.push(proccd); // getCodeFromValue
-      rowsArr.lotnum_s.push(lotnum);
-      rowsArr.location_s.push(location);
-      rowsArr.qty_s.push(qty);
-      rowsArr.totwgt_s.push(totwgt);
-      rowsArr.pgmdiv_s.push(pgmdiv);
-    });
-
-    setParaData((prev) => ({
-      ...prev,
-      work_type: "U",
-      rowstatus_s: rowsArr.rowstatus_s.join("|"),
-      yyyymm_s: rowsArr.yyyymm_s.join("|"),
-      itemcd_s: rowsArr.itemcd_s.join("|"),
-      proccd_s: rowsArr.proccd_s.join("|"),
-      lotnum_s: rowsArr.lotnum_s.join("|"),
-      location_s: rowsArr.location_s.join("|"),
-      qty_s: rowsArr.qty_s.join("|"),
-      totwgt_s: rowsArr.totwgt_s.join("|"),
-      pgmdiv_s: rowsArr.pgmdiv_s.join("|"),
-    }));
-  };
-
-  const fetchGridSaved = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", paraSaved);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      deletedRows = []; //초기화
-      search();
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
-    }
-
-    paraData.work_type = ""; //초기화
-  };
-
-  const userId = UseGetValueFromSessionItem("user_id");
-
-  //프로시저 파라미터 초기값
-  const [paraData, setParaData] = useState({
-    work_type: "",
-    rowstatus_s: "",
-    orgdiv: sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")
-      ?.value,
-    yyyymm_s: "",
-    itemcd_s: "",
-    proccd_s: "",
-    lotnum_s: "",
-    location_s: "",
-    qty_s: "",
-    totwgt_s: "",
-    pgmdiv_s: "",
-    userid: userId,
-    pc: pc,
-    form_id: pathname,
-  });
-
-  const paraSaved: Iparameters = {
-    procedureName: "P_PR_A9100W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": paraData.work_type,
-      "@p_rowstatus_s": paraData.rowstatus_s,
-      "@p_orgdiv": paraData.orgdiv,
-      "@p_yyyymm_s": paraData.yyyymm_s,
-      "@p_itemcd_s": paraData.itemcd_s,
-      "@p_proccd_s": paraData.proccd_s,
-      "@p_lotnum_s": paraData.lotnum_s,
-      "@p_location_s": paraData.location_s,
-      "@p_qty_s": paraData.qty_s,
-      "@p_totwgt_s": paraData.totwgt_s,
-      "@p_pgmdiv_s": paraData.pgmdiv_s,
-      "@p_userid": paraData.userid,
-      "@p_pc": paraData.pc,
-      "@p_form_id": paraData.form_id,
-    },
-  };
-
-  useEffect(() => {
-    if (paraData.work_type !== "") fetchGridSaved();
-  }, [paraData]);
 
   const search = () => {
     try {
@@ -787,16 +451,67 @@ const PR_B3000W: React.FC = () => {
         throw findMessage(messagesData, "PR_B3000W_001");
       } else {
         resetAllGrid();
-        fetchMainGrid();
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
       }
     } catch (e) {
       alert(e);
     }
   };
-  const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [editedField, setEditedField] = useState("");
 
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
+
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+      setApplyMinWidth(true);
+    } else if (grid.current.clientWidth > minGridWidth.current) {
+      setGridCurrent(grid.current.clientWidth);
+      setApplyMinWidth(false);
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    if (Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+  };
 
   return (
     <>
@@ -819,21 +534,21 @@ const PR_B3000W: React.FC = () => {
             <tr>
               <th>생산일자</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.ymdFrdt,
-                      end: filters.ymdTodt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        ymdFrdt: e.value.start,
-                        ymdTodt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.ymdFrdt,
+                    end: filters.ymdTodt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      ymdFrdt: e.value.start,
+                      ymdTodt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
 
               <th>품목코드</th>
               <td>
@@ -945,6 +660,24 @@ const PR_B3000W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row, idx) => ({
                 ...row,
+                itemlvl1: itemlvl1ListData.find(
+                  (item: any) => item.sub_code == row.itemlvl1
+                )?.code_name,
+                itemlvl2: itemlvl2ListData.find(
+                  (item: any) => item.sub_code == row.itemlvl2
+                )?.code_name,
+                itemlvl3: itemlvl3ListData.find(
+                  (item: any) => item.sub_code == row.itemlvl3
+                )?.code_name,
+                prodmac: prodmacListData.find(
+                  (items: any) => items.fxcode === row.prodmac
+                )?.fxfull,
+                prodemp: prodempListData.find(
+                  (items: any) => items.user_id === row.prodemp
+                )?.user_name,
+                proccd: proccdListData.find(
+                  (item: any) => item.sub_code === row.proccd
+                )?.code_name,
                 proddt: dateformat2(row.proddt),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
@@ -963,7 +696,13 @@ const PR_B3000W: React.FC = () => {
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -971,11 +710,7 @@ const PR_B3000W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            //incell 수정 기능
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
+            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -985,33 +720,33 @@ const PR_B3000W: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={item.width}
+                      width={setWidth("grdList", item.width)}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell
-                          : comboBoxField.includes(item.fieldName)
-                          ? CustomComboBoxCell
                           : centerField.includes(item.fieldName)
                           ? CenterCell
                           : undefined
                       }
-                      className="read-only"
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
+                          : undefined
                       }
-                      editable={false}
                     />
                   )
               )}
           </Grid>
         </ExcelExport>
       </GridContainer>
-
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
-          workType={editIndex === undefined ? "FILTER" : "ROW_ADD"}
+          workType={"FILTER"}
           setData={setItemData}
+          modal={true}
         />
       )}
 
@@ -1023,6 +758,7 @@ const PR_B3000W: React.FC = () => {
           }}
           initialHeight={794}
           initialWidth={1123}
+          modal={true}
         >
           <WorkDailyReport data={filters} />
         </Window>

@@ -840,7 +840,11 @@ const HU_A2100W: React.FC = () => {
     };
 
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
-
+    setPage((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
     setMainDataResult((prev) => {
       return {
         data: [newDataItem, ...prev.data],

@@ -1271,7 +1271,7 @@ const SA_B2410: React.FC = () => {
         setApplyMinWidth5(grid5.current.clientWidth < minGridWidth5.current);
       }
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current) {

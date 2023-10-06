@@ -692,7 +692,7 @@ const SA_B3100W: React.FC = () => {
         setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
       }
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current) {
