@@ -1,90 +1,157 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
-  GridDataStateChangeEvent,
   GridEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridFooterCellProps,
-  GridCellProps,
-  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridRowDoubleClickEvent,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
 import {
-  Title,
-  FilterBox,
-  GridContainer,
-  GridTitle,
-  TitleContainer,
+  Input,
+  InputChangeEvent,
+  TextArea,
+} from "@progress/kendo-react-inputs";
+import {
+  Step,
+  Stepper,
+  TabStrip,
+  TabStripTab,
+} from "@progress/kendo-react-layout";
+import { bytesToBase64 } from "byte-base64";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useSetRecoilState } from "recoil";
+import {
   ButtonContainer,
-  GridTitleContainer,
   ButtonInInput,
+  FilterBox,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import TopButtons from "../components/Buttons/TopButtons";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+
 import {
   UseBizComponent,
-  UsePermissions,
-  UseParaPc,
-  UseGetValueFromSessionItem,
   UseCustomOption,
-  UseMessages,
-  getQueryFromBizComponent,
-  findMessage,
-  toDate
+  UsePermissions,
+  chkScrollHandler,
+  toDate,
 } from "../components/CommonFunction";
-import DetailWindow from "../components/Windows/HU_A1000W_Window";
-import UserWindow from "../components/Windows/CommonWindows/UserWindow";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import {
-  SELECTED_FIELD,
-  EDIT_FIELD,
   COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
   GAP,
   PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
+import FilterContainer from "../components/Containers/FilterContainer";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import { useApi } from "../hooks/api";
+import { IAttachmentData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { Button } from "@progress/kendo-react-buttons";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { bytesToBase64 } from "byte-base64";
-import { filter } from "@progress/kendo-data-query/dist/npm/transducers";
-import DateCell from "../components/Cells/DateCell";
-import { Console } from "console";
+import { gridList } from "../store/columns/HU_A1000W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+
+let targetRowIndex: null | number = null;
 
 const DATA_ITEM_KEY = "prsnnum";
+const dateField = ["regorgdt", "rtrdt"];
+const comboField = ["postcd"];
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_HU005", setBizComponentData);
+
+  const field = props.field ?? "";
+
+  const bizComponentIdVal =
+    field === "postcd"
+      ? "L_HU005"
+      : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
+};
 
 const HU_A1000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
+  let grdList: any = useRef(null);
+
   const [isCopy, setIsCopy] = useState(false);
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  //조회조건 초기값
+  const [filters, setFilters] = useState({
+    work_type: "LIST",
+    orgdiv: "",
+    location: "",
+    dptcd: "",
+    dptnm: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "", // 재직여부
+
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+
+    pgGap: 0,
+    scrollDirrection: "down",
+    pgSize: PAGE_SIZE,
+  });
+
+  // 요약정보
+  const [grdListDataState, setGrdListDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [grdListDataResult, setGrdListDataResult] = useState<DataResult>(
+    process([], grdListDataState)
+  );
+
+  const [selectedGrdListState, setSelectedGrdListState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -105,72 +172,13 @@ const HU_A1000W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  // BizComponentID 세팅
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_dptcd_001, L_HU005",
-    // 부서, 직위
-    setBizComponentData
-  );  
-
-  //공통코드 리스트 조회 ()
-  const [dptcdLstsListData, setDptcdListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
-
-  const [postcdListData, setPostcdListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
-
+  // 최초 한번만 실행
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_HU005"
-        )
-      );
-      fetchQuery(dptcdQueryStr,  setDptcdListData);
-      fetchQuery(postcdQueryStr, setPostcdListData);
+    if (customOptionData != null && filters.isSearch && permissions !== null) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
+      fetchMainGrid();
     }
-  }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
-
-  //그리드 데이터 스테이트
-  const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
-  });
-
-  //그리드 데이터 결과값
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
-  );
+  }, [filters, permissions]);
 
   //선택 상태
   const [selectedState, setSelectedState] = useState<{
@@ -207,127 +215,163 @@ const HU_A1000W: React.FC = () => {
     }));
   };
 
-  //조회조건 초기값
-  const [filters, setFilters] = useState({
-    work_type: "LIST",
-    orgdiv: "",
-    location: "",
-    dptcd: "",
-    prsnnum: "",
-    prsnnm: "",
-    rtrchk: "", // 재직여부
-    pgNum: 1,
-    isSearch: true,
-    pgGap: 0,
-    isCopy: true,
-    find_row_value: "",
-    pgSize: PAGE_SIZE,
-  });
+  //스크롤 핸들러
+  const onMainScrollHandler = (event: GridEvent) => {
+    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
+    let pgNumWithGap =
+      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
 
-  const [detailFilters, setDetailFilters] = useState({
-    pgSize: PAGE_SIZE,
-    prsnnum: "",
-  });  
+    // 스크롤 최하단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "down",
+        pgNum: pgNumWithGap + 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+      return false;
+    }
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_HU_A1000W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_dptcd": filters.dptcd,
-      "@p_prsnnum": filters.prsnnum,
-      "@p_prsnnm": filters.prsnnm,
-      "@p_rtrchk": filters.rtrchk,
-    },
+    pgNumWithGap =
+      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+    // 스크롤 최상단 이벤트
+    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
+      setFilters((prev) => ({
+        ...prev,
+        scrollDirrection: "up",
+        pgNum: pgNumWithGap - 1,
+        pgGap: prev.pgGap + 1,
+        isSearch: true,
+      }));
+    }
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setSelectedState(newSelectedState);
+  };
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-   
-    if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+
+      parameters: {
+        "@p_work_type": "LIST",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_dptcd": filters.dptcd,
+        "@p_prsnnum": filters.prsnnum,
+        "@p_prsnnm": filters.prsnnm,
+        "@p_rtrchk": filters.rtrchk,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (grdList.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) =>
+              row.quonum + "-" + row.quorev == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (grdList.current) {
+          targetRowIndex = 0;
         }
       }
+
+      setGrdListDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find(
+                (row: any) =>
+                  row.quonum + "-" + row.quorev == filters.find_row_value
+              );
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
-    
     setLoading(false);
   };
-
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState),
-  );
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainDataResult(process([], mainDataState));
+    setGrdListDataResult(process([], grdListDataState));
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
-  const fetchDetailGrid = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", parameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-
-      if (totalRowCnt > 0)
-        setDetailDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
-    }
-    setLoading(false);
-  };
-
-
-  // 최초 한번만 실행
-  useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null) {
-      setFilters((prev) => ({ ...prev, isSearch: false }));
-      fetchMainGrid();
-    }
-  }, [filters, permissions]);  
-  
   const search = () => {
     try {
       resetAllGrid();
@@ -336,60 +380,26 @@ const HU_A1000W: React.FC = () => {
     }
   };
 
-  const CommandCell = (props: GridCellProps) => {
- 
-    const onEditClick = () => {      
-      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      const rowData = props.dataItem;
-      setSelectedState({ [rowData.prsnnum]: true });
-
-      setDetailFilters((prev) => ({
-        ...prev,
-       prsnnum: rowData.prsnnum,
-      }));
-
-      setIsCopy(false);
-      setWorkType("U");
-      setDetailWindowVisible(true);
-    };
-
-    return (
-      <td className="k-command-cell">
-        <Button
-          className="k-grid-edit-command"
-          themeColor={"primary"}
-          fillMode="outline"
-          onClick={onEditClick}        
-          icon="edit"
-        ></Button>
-      </td>
-    );
-  };
-
   const reloadData = (workType: string) => {
-    //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택 
-    if (workType === "U") {
-      setIfSelectFirstRow(false);
-
-    } else {
-      setIfSelectFirstRow(true);
-    }
-
-    resetAllGrid();   
-    
-    setFilters((prev) => ({
-      ...prev,
-      find_row_value: "",
-      scrollDirrection: "down",
-      pgNum: 1,
-      isSearch: true,
-      pgGap: 0,
-    }));
-    
-    fetchDetailGrid();
+    // //수정한 경우 행선택 유지, 신규건은 첫번째 행 선택
+    // if (workType === "U") {
+    //   setIfSelectFirstRow(false);
+    // } else {
+    //   setIfSelectFirstRow(true);
+    // }
+    // resetAllGrid();
+    // setFilters((prev) => ({
+    //   ...prev,
+    //   find_row_value: "",
+    //   scrollDirrection: "down",
+    //   pgNum: 1,
+    //   isSearch: true,
+    //   pgGap: 0,
+    // }));
+    // fetchDetailGrid();
   };
 
-  // 신규등록 
+  // 신규등록
   const onAddClick = () => {
     setIsCopy(false);
     setWorkType("N");
@@ -498,21 +508,15 @@ const HU_A1000W: React.FC = () => {
           </ButtonContainer>
         </GridTitleContainer>
         <Grid
-          style={{ height: "70%" }}
+          style={{ height: "77vh" }}
           data={process(
-            mainDataResult.data.map((row) => ({
+            grdListDataResult.data.map((row) => ({
               ...row,
-              dptcd: dptcdLstsListData.find(
-                (item: any) => item.dptcd === row.dptcd
-              )?.dptnm,
-              postcd: postcdListData.find(
-                (item: any) => item.sub_code === row.postcd
-              )?.code_name,
-              [SELECTED_FIELD]: selectedState[idGetter(row)],
+              [SELECTED_FIELD]: selectedGrdListState[idGetter(row)],
             })),
-            mainDataState
+            grdListDataState
           )}
-          {...mainDataState}
+          {...grdListDataState}
           //선택 기능
           dataItemKey={DATA_ITEM_KEY}
           selectedField={SELECTED_FIELD}
@@ -520,30 +524,62 @@ const HU_A1000W: React.FC = () => {
             enabled: true,
             mode: "single",
           }}
+          onSelectionChange={onSelectionChange}
+          //스크롤 조회 기능
+          fixedScroll={true}
+          total={grdListDataResult.total}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
+          onScroll={onMainScrollHandler}
+          // //원하는 행 위치로 스크롤 기능
+          ref={grdList}
+          //정렬기능
+          sortable={true}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+          id="grdList"
         >
-          <GridColumn cell={CommandCell} width="55px" />
-          <GridColumn field="dptcd" title="부서" width="120px" />
-          <GridColumn field="postcd" title="직위" width="120px" />
-          <GridColumn field="prsnnum" title="사번" width="150px" />
-          <GridColumn field="prsnnm" title="성명" width="150px" />
-          <GridColumn field="perregnum" title="주민번호" width="200px" />
-          <GridColumn
-            field="regorgdt"
-            title="입사일"
-            cell={DateCell}
-            width="120px"
-          />
-          <GridColumn
-            field="rtrdt"
-            title="퇴사일"
-            cell={DateCell}
-            width="120px"
-          />
-          <GridColumn field="extnum" title="내선번호" width="150px" />
-          <GridColumn field="phonenum" title="핸드폰번호" width="150px" />
+          {customOptionData !== null &&
+            customOptionData.menuCustomColumnOptions["grdList"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 && (
+                  <GridColumn
+                    key={idx}
+                    id={item.id}
+                    field={item.fieldName}
+                    title={item.caption}
+                    width={item.width}
+                    cell={
+                         dateField.includes(item.fieldName)
+                        ? DateCell
+                        : comboField.includes(item.fieldName)
+                        ? CustomComboBoxCell
+                        : undefined
+                    }
+                    //footerCell={grdTotalFooterCell}
+                  />
+                )
+            )}
         </Grid>
       </GridContainer>
-      {detailWindowVisible && (
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
+      {/* {detailWindowVisible && (
         <DetailWindow
           getVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U 
@@ -551,8 +587,7 @@ const HU_A1000W: React.FC = () => {
           isCopy={isCopy}
           reloadData={reloadData}
         />
-      )}
-
+      )} */}
     </>
   );
 };
