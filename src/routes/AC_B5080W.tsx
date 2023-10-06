@@ -1188,7 +1188,7 @@ const AC_B5080W: React.FC = () => {
         setApplyMinWidth7(grid7.current.clientWidth < minGridWidth7.current);
       }
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current) {

@@ -77,7 +77,6 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { bytesToBase64 } from "byte-base64";
 import { useThemeSwitcher } from "react-css-theme-switcher";
@@ -132,12 +131,10 @@ const idGetter = getter(FORM_DATA_INDEX);
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
-  reloadData(workType: string): void;
   workType: string;
   ordkey?: string;
   itemcd?: string;
-  isCopy: boolean;
-  para?: Iparameters; //{};
+  modal?: boolean;
 };
 
 type TProcessData = {
@@ -1001,12 +998,10 @@ const FormGridMtr = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
 const KendoWindow = ({
   getVisible,
-  reloadData,
   workType,
   ordkey,
   itemcd,
-  isCopy,
-  para,
+  modal = false
 }: TKendoWindow) => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [pc, setPc] = useState("");
@@ -1477,13 +1472,11 @@ const KendoWindow = ({
       if (workType === "U") {
         resetAllGrid();
 
-        reloadData("U");
         fetchMain();
         fetchPrcGrid();
         fetchMtrGrid();
       } else {
         getVisible(false);
-        reloadData("N");
       }
     } else {
       alert("[" + data.statusCode + "] " + data.resultMessage);
@@ -1727,7 +1720,7 @@ const KendoWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <Form
           onSubmit={handleSubmit}
@@ -1778,10 +1771,6 @@ const KendoWindow = ({
                         <InfoLabel>수주량</InfoLabel>
                         <InfoValue>{infoVal.qty}</InfoValue>
                       </InfoItem>
-                      {/* <InfoItem>
-                <InfoLabel>기계획량</InfoLabel>
-                <InfoValue id=""></InfoValue>
-              </InfoItem> */}
                       <InfoItem>
                         <InfoLabel>잔량</InfoLabel>
                         <InfoValue>{infoVal.planqty}</InfoValue>
@@ -1798,26 +1787,6 @@ const KendoWindow = ({
                               });
                             }}
                           ></button>
-
-                          {/* <FieldWrap>
-                <Field
-                  label={"완료예정일"}
-                  name={"frdt"}
-                  component={FormDatePicker}
-                  className="required"
-                />
-              </FieldWrap>
-
-              <FieldWrap>
-                <Field
-                  label={"담당자"}
-                  name={"person"}
-                  component={FormDropDownList}
-                  queryStr={usersQuery}
-                  className="required"
-                />
-              </FieldWrap> */}
-
                           <FieldWrap>
                             <Field
                               label={"계획수량"}
@@ -1844,7 +1813,6 @@ const KendoWindow = ({
                     name="materialList"
                     dataItemKey={FORM_DATA_INDEX}
                     component={FormGridMtr}
-                    //validator={arrayLengthValidator}
                   />
                 </GridContainer>
               </GridContainerWrap>
@@ -1858,7 +1826,6 @@ const KendoWindow = ({
             </FormElement>
           )}
         />
-
         {custWindowVisible && (
           <CustomersWindow
             setVisible={setCustWindowVisible}

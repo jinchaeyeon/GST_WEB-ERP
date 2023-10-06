@@ -48,7 +48,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 1200,
+    height: 900,
   });
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -524,11 +524,11 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <GridColumn
             field="itemcd"
             title="품목코드"
-            width="200px"
+            width="150px"
             footerCell={mainTotalFooterCell}
           />
 
-          <GridColumn field="itemnm" title="품목명" width="200px" />
+          <GridColumn field="itemnm" title="품목명" width="150px" />
           <GridColumn field="insiz" title="규격" width="120px" />
           <GridColumn field="model" title="MODEL" width="120px" />
           <GridColumn field="spec" title="사양" width="120px" />
@@ -582,10 +582,10 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <GridColumn
             field="itemcd"
             title="품목코드"
-            width="200px"
+            width="150px"
             footerCell={keepingTotalFooterCell}
           />
-          <GridColumn field="itemnm" title="품목명" width="200px" />
+          <GridColumn field="itemnm" title="품목명" width="150px" />
           <GridColumn field="insiz" title="규격" width="120px" />
           <GridColumn field="model" title="MODEL" width="120px" />
           <GridColumn field="spec" title="사양" width="120px" />

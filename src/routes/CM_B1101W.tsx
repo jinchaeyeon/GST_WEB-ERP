@@ -809,7 +809,7 @@ const CM_B1101W: React.FC = () => {
         setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
       }
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current) {
