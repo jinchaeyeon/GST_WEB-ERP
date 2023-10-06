@@ -68,4 +68,82 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    // 일지상세
+    gridName: "grdJournalList",
+    columns: [
+      {
+        id: "col_recdt",
+        field: "recdt",
+        caption: "등록일자",
+        width: 120,
+      },
+      {
+        id: "col_title",
+        field: "title",
+        caption: "제목",
+        width: 150,
+      },
+      {
+        id: "col_contents",
+        field: "contents",
+        caption: "내용",
+        width: 200,
+      },
+    ],
+  },
+  {
+    // 연차조정
+    gridName: "grdAdjList",
+    columns: [
+      {
+        id: "col_yyyy",
+        field: "yyyy",
+        caption: "기준년도",
+        width: 120,
+      },
+      {
+        id: "col_prsnnum",
+        field: "prsnnum",
+        caption: "사번",
+        width: 120,
+      },
+      {
+        id: "col_prsnm",
+        field: "prsnm",
+        caption: "사원명",
+        width: 120,
+      },
+      {
+        id: "col_adjdiv",
+        field: "adjdiv",
+        caption: "조정구분",
+        width: 120,
+      },
+      {
+        id: "col_qty",
+        field: "qty",
+        caption: "연차횟수",
+        width: 100,
+      },
+      {
+        id: "col_remark",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+      {
+        id: "col_recdt_adj",
+        field: "recdt",
+        caption: "작성일",
+        width: 120,
+      },
+      {
+        id: "col_insert_userid",
+        field: "insert_userid",
+        caption: "등록자",
+        width: 120,
+      },
+    ],
+  },
 ];
