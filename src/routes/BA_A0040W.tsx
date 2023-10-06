@@ -929,7 +929,7 @@ const BA_A0040: React.FC = () => {
     setyn(true);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    console.log(selectedRowData)
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "U",
@@ -954,7 +954,7 @@ const BA_A0040: React.FC = () => {
       row_values: selectedRowData.row_values,
       safeqty: selectedRowData.safeqty,
       unitwgt: selectedRowData.unitwgt,
-      invunit: selectedRowData.invunit,
+      invunit: selectedRowData.invunit == undefined ? "" : selectedRowData.invunit,
       dwgno: selectedRowData.dwgno,
       maker: selectedRowData.maker,
       qcyn: selectedRowData.qcyn == "Y" ? "Y" : "N",

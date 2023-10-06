@@ -1392,7 +1392,7 @@ const CM_A8210W: React.FC = () => {
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current) {

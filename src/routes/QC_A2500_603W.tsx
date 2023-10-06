@@ -854,7 +854,7 @@ const BA_A0020_603: React.FC = () => {
       setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {

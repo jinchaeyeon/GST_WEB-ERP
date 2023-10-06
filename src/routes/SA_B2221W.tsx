@@ -622,7 +622,7 @@ const SA_B2221: React.FC = () => {
         setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
       }
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current) {
@@ -806,7 +806,7 @@ const SA_B2221: React.FC = () => {
                   <ChartCategoryAxisItem
                     categories={allChartDataResult.companies}
                   >
-                    <ChartCategoryAxisTitle text="업체" />
+                    <ChartCategoryAxisTitle text="품목" />
                   </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
                 <ChartSeries>

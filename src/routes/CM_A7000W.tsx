@@ -463,7 +463,7 @@ const CM_A7000W: React.FC = () => {
       setGridCurrent(grid.current.clientWidth);
       setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {

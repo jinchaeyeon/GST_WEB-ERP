@@ -53,17 +53,20 @@ import ItemsWindow from "./CommonWindows/ItemsWindow";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal?: boolean;
 };
 
 const DATA_ITEM_KEY = "num";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let temp = 0;
 
-const PlanWindow = ({ setVisible, setData }: IWindow) => {
+const PlanWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1500,
+    width: isMobile == true ? deviceWidth : 1500,
     height: 800,
   });
   const setLoading = useSetRecoilState(isLoading);
@@ -602,7 +605,7 @@ const PlanWindow = ({ setVisible, setData }: IWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
-      modal={true}
+      modal={modal}
     >
       <TitleContainer style={{ float: "right"}}>
         <ButtonContainer>

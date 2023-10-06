@@ -1763,7 +1763,7 @@ const MA_B7200W: React.FC = () => {
         setApplyMinWidth5(grid5.current.clientWidth < minGridWidth5.current);
       }
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
