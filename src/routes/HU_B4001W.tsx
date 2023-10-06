@@ -94,7 +94,7 @@ const HU_B4001W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         cboPrsnnum: prsnnum === "" || prsnnum === undefined ? userId : prsnnum,
-        isSearch: false
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -526,30 +526,34 @@ const HU_B4001W: React.FC = () => {
     if (filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
-      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      setUseFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      setAdjFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid(deepCopiedFilters);
+      fetchUseGrid(deepCopiedFilters);
+      fetchAdjGrid(deepCopiedFilters);
     }
   }, [filters]);
 
-  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
-  useEffect(() => {
-    if (usefilters.isSearch) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(usefilters);
-      setUseFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      fetchUseGrid(deepCopiedFilters);
-    }
-  }, [usefilters]);
+  // //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  // useEffect(() => {
+  //   if (usefilters.isSearch) {
+  //     const _ = require("lodash");
+  //     const deepCopiedFilters = _.cloneDeep(usefilters);
+  //     setUseFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+  //     fetchUseGrid(deepCopiedFilters);
+  //   }
+  // }, [usefilters]);
 
-  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
-  useEffect(() => {
-    if (adjfilters.isSearch) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(adjfilters);
-      setAdjFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      fetchAdjGrid(deepCopiedFilters);
-    }
-  }, [adjfilters]);
+  // //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  // useEffect(() => {
+  //   if (adjfilters.isSearch) {
+  //     const _ = require("lodash");
+  //     const deepCopiedFilters = _.cloneDeep(adjfilters);
+  //     setAdjFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+  //     fetchAdjGrid(deepCopiedFilters);
+  //   }
+  // }, [adjfilters]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
